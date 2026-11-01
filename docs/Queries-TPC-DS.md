@@ -82,7 +82,7 @@ A `mariadbcs-…` connection (MariaDB ColumnStore) matches the keys `MariaDB` an
 | Q30 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`state_limit`) |
 | Q31 | ClickHouse | Numerators of the quarterly ratios converted with `toFloat64` (ClickHouse truncates `Decimal` division) |
 | Q32 | ClickHouse | Correlated scalar subquery rewritten as a join (`limit_item_sk`) |
-| Q33 | MariaDBCS | Aggregation in a derived table, so that `ORDER BY` works on the sum |
+| Q33 | ClickHouse, PostgreSQL | `NULLS FIRST`, as these two sort NULL last |
 | Q35 | ClickHouse, MariaDBCS | `EXISTS` rewritten as `IN`; MariaDBCS: `EXISTS ... OR EXISTS` as a join with a `UNION` |
 | Q36 | MariaDB, MariaDBCS, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDB maps real NULLs to a sentinel because it has no `GROUPING()`; MariaDBCS emulates the rollup with `UNION ALL` |
 | Q38 | MariaDBCS | `INTERSECT` as `GROUP BY ... HAVING count(*) = 3` |
@@ -93,7 +93,7 @@ A `mariadbcs-…` connection (MariaDB ColumnStore) matches the keys `MariaDB` an
 | Q49 | ClickHouse | Union wrapped as a derived table |
 | Q51 | MySQL | `FULL OUTER JOIN` not supported; rewritten with `UNION ALL` |
 | Q54 | MySQL | `CAST(… AS INT)` not supported; replaced by `CAST(… AS SIGNED)` |
-| Q56 | MariaDBCS | Aggregation in a derived table, so that `ORDER BY` works on the sum |
+| Q56 | ClickHouse, PostgreSQL | `NULLS FIRST`, as these two sort NULL last |
 | Q57 | ClickHouse, MariaDBCS | Alias and CTE qualification adjusted (ClickHouse); `lag()`/`lead()` instead of self joins, filter as `HAVING` (MariaDBCS) |
 | Q58 | ClickHouse, MonetDB | Alias adjusted (ClickHouse); numerators converted with `+ 0.0e0` (MonetDB, which rounds `DECIMAL` division) |
 | Q61 | MariaDBCS | Cross join as a join on a constant key |
@@ -170,7 +170,7 @@ overrides above; the reasons are:
 | MariaDBCS | Q6, Q23, Q44 | Scalar subqueries in a function or in `HAVING` are refused: derived tables, joined |
 | MariaDBCS | Q9 | A subquery in `SELECT` is refused: all buckets as conditional aggregates of one scan of `store_sales`. **Remark:** the row of `reason` is left out, it only gives the one row of the result |
 | MariaDBCS | Q21 | `CAST(... AS FLOAT)` is refused: `+ 0.0e0` |
-| MariaDBCS | Q33, Q56 | `ORDER BY total_sales IS NOT NULL` over an alias of an aggregate is refused: the aggregation goes into a derived table. **Remark:** on MariaDB `total_sales` in the `ORDER BY` of Q33 means the inner column, not the sum, so the rows cut by `LIMIT 100` can differ; the sums of all groups are the same |
+| ClickHouse, PostgreSQL | Q33, Q56 | `ORDER BY total_sales NULLS FIRST`. The main text is the reference query, MySQL, MariaDB, MariaDBCS and MonetDB sort NULL first by default. `ORDER BY total_sales IS NOT NULL, total_sales` does not work here: `total_sales` in an expression means the column of the inner query. PostgreSQL refuses that, MySQL and MariaDB sort by the wrong value |
 | MariaDBCS | Q14, Q77 | Rollup by a join with one row per level, grouped by the level and the kept columns, so the expensive input is read once (a `UNION ALL` per level took more than 280 s for Q14, and the server died at 32 GiB) |
 | MariaDB, MySQL | Q80 | `concat()` instead of `\|\|`, which is logical OR there |
 | MonetDB | Q70 | `ROLLUP` emulated with three `UNION ALL` blocks (grand total rank 1, subtotal ranks across all states) |
@@ -178,7 +178,7 @@ overrides above; the reasons are:
 | MySQL | Q51, Q97 | `FULL OUTER JOIN` rewritten with `UNION ALL` |
 | MariaDB | Q5, Q14, Q77, Q80 | Nested CTE workaround (MariaDB <10.4) |
 | all | Q12, Q20, Q36, Q98, Q78 | `(sum(x)+0.0e0)*100/…` and `ss_qty*1.0/…` instead of plain division: the same value, but ClickHouse no longer truncates `Decimal` division and PostgreSQL and MonetDB no longer divide integers |
-| all | Q5, Q12, Q15, Q18, Q20, Q21, Q22, Q27, Q33, Q35, Q36, Q51, Q56, Q62, Q65, Q67, Q70, Q72, Q74, Q76, Q79, Q80, Q86, Q93, Q99 | Explicit NULL ordering: `ORDER BY col IS NOT NULL, col` puts NULLs **first** on every system (MySQL, MariaDB and MonetDB do this by default; PostgreSQL and ClickHouse sort NULLs last) |
+| all | Q5, Q12, Q15, Q18, Q20, Q21, Q22, Q27, Q35, Q36, Q51, Q62, Q65, Q67, Q70, Q72, Q74, Q76, Q79, Q80, Q86, Q93, Q99 | Explicit NULL ordering: `ORDER BY col IS NOT NULL, col` puts NULLs **first** on every system (MySQL, MariaDB and MonetDB do this by default; PostgreSQL and ClickHouse sort NULLs last) |
 | all | Q72 | The column `d1.d_week_seq` is aliased `d_week_seq`, because ClickHouse otherwise labels it `D1.D_WEEK_SEQ` and the result comparison treats the column names as different |
 
 ### Syntactic Differences (same result set, dialect adaptation)
@@ -219,7 +219,7 @@ The two that still differ:
 | Query | Systems | Cause |
 |-------|---------|-------|
 | Q75 | ClickHouse, ClickHouseCluster | A rounded sum differs by 1 (float against decimal summation at a `.5` boundary) |
-| Q56 | MySQL, MariaDB, MonetDB vs. PostgreSQL, ClickHouse | `total_sales` can be NULL and the systems sort NULL first or last. Fixed afterwards with the same `is not null` ordering as elsewhere, not re-run |
+| Q56 | MySQL, MariaDB, MonetDB vs. PostgreSQL, ClickHouse | `total_sales` can be NULL and the systems sort NULL first or last. Fixed afterwards with `NULLS FIRST` for PostgreSQL and ClickHouse: Q33 and Q56 identical on all seven DBMS with 5 parameter sets at SF 1 |
 
 Q67 differed on MonetDB in an earlier run (rows near the `LIMIT` boundary); it agreed in the final run and the
 cause was not isolated.
@@ -245,7 +245,7 @@ The comparison is done by dbmsbenchmarker (`tools.py` and `benchmarker.py`), not
 
 | Cause | Queries | Change |
 |-------|---------|--------|
-| NULL sorts first in MySQL, MariaDB and MonetDB and last in PostgreSQL and ClickHouse, so `LIMIT` kept different rows | Q20, Q27, Q33, Q56, Q67, Q74, Q76, Q99 | `ORDER BY col is not null, col` (Q74 orders by a `CASE` over its three key columns) |
+| NULL sorts first in MySQL, MariaDB and MonetDB and last in PostgreSQL and ClickHouse, so `LIMIT` kept different rows | Q20, Q27, Q33, Q56, Q67, Q74, Q76, Q99 | `ORDER BY col is not null, col` (Q74 orders by a `CASE` over its three key columns); Q33 and Q56 `NULLS FIRST` for PostgreSQL and ClickHouse |
 | ClickHouse returned `''` instead of `NULL` for subtotal keys of `ROLLUP` | Q5, Q18, Q67, Q77, Q80 | `group_by_use_nulls = 1` in the ClickHouse deployment profile |
 | ClickHouse truncates `Decimal` division, MonetDB rounds `DECIMAL` division and averages to two decimals | Q7, Q12, Q18, Q20, Q26, Q31, Q36, Q44, Q58, Q66, Q98 | Numerator or average computed as `double` (`+ 0.0e0`, `toFloat64`, `cast(… as double)`), partly as MonetDB or ClickHouse overrides |
 | Integer division in PostgreSQL and MonetDB | Q78 | `ss_qty*1.0/…` |

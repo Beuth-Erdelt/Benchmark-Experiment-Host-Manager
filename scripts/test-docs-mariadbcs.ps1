@@ -38,7 +38,7 @@ bexhoma tpch `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDB MariaDBCS  sf=1"
 
 
-#### TPC-DS next to MariaDB; the test SQL warnings fails on Q33, see docs/DBMS.md
+#### TPC-DS next to MariaDB; the test SQL warnings fails on Q39, which has columns of the same name
 bexhoma tpcds `
   -dbms MariaDB MariaDBCS       <# DBMS under test #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `

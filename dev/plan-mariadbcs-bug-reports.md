@@ -54,7 +54,7 @@ Not to report:
 - `INTERSECT`, `EXCEPT`: known, MCOL-5598.
 - `MCS-1000`, `MCS-3022`, `MCS-3033`, `MCS-3016`, `MCS-3013`, `MCS-2061`, `MCS-1001`: documented or at least clear limits.
 - `ERROR 1030` with concurrent `LOAD DATA` into a table: documented that loads of a table block each other. The error instead of waiting may be worth a question, see open points.
-- Q33, Q56: the problem is the shared main text, not ColumnStore. `ORDER BY total_sales IS NOT NULL` over an aggregate is refused by PostgreSQL (`tmp1.total_sales must appear in the GROUP BY clause`), and MariaDB takes the inner column.
+- Q33, Q56: fixed in bexhoma, the reference query and `NULLS FIRST` for PostgreSQL and ClickHouse. ColumnStore refusing `ORDER BY total_sales IS NOT NULL` was right.
 
 ## 3. Check for duplicates
 

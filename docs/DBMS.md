@@ -686,8 +686,8 @@ So loading times of MariaDBCS are not the best the DBMS can do.
 **Queries** run with dialect `MySQL`; the variants named `MariaDBCS` and `MariaDB` apply on top, as connection names start with them.
 TPC-H (22) and SSB (13) run completely.
 Compared with the result sets of MariaDB at SF 1 (`-xdt`, same run), all queries of TPC-H and SSB (normal and flat) are identical.
-All 99 queries of TPC-DS run, 30 of them with a `MariaDBCS` variant, and 98 are identical.
-Q33 has the same sums for all groups; on MariaDB its `ORDER BY total_sales` means the inner column, not the sum, so `LIMIT 100` cuts one other row.
+The numbers are compared as bexhoma stores them, rounded to `precision` of the query: whole numbers in TPC-DS and SSB.
+All 99 queries of TPC-DS run, 28 of them with a `MariaDBCS` variant. Their results are the same. The test `SQL warnings` fails because of Q39: it has columns of the same name, so the comparison cannot sort its rows.
 
 Without 11 of the variants ColumnStore 25.10.6 gives wrong results or fails, some of them without an error:
 
@@ -698,7 +698,7 @@ Without 11 of the variants ColumnStore 25.10.6 gives wrong results or fails, som
 | Q93 | Inner joins | `LEFT JOIN` with a filter on the outer table in `WHERE` keeps the rows without a match: 90,919 groups instead of 7,164 |
 | Q18, Q22, Q27, Q36, Q67, Q70, Q86 | Rollup emulated with `UNION ALL` | `GROUP BY ... WITH ROLLUP` directly on a table kills `PrimProc` with a segmentation fault in `funcexp::FuncExp::evaluate`, also on 1,305 rows; very small tables do not show it. On a derived table it runs, but gives wrong results |
 
-The other 19 variants are for queries that ColumnStore refuses as they are, see [TPC-DS queries](Queries-TPC-DS.html) for the rewrites:
+The other 17 variants are for queries that ColumnStore refuses as they are, see [TPC-DS queries](Queries-TPC-DS.html) for the rewrites:
 
 | Queries | Result |
 |---|---|
@@ -706,11 +706,9 @@ The other 19 variants are for queries that ColumnStore refuses as they are, see 
 | Q10, Q35, Q45 | `MCS-3033: Correlated subquery within OR operator` |
 | Q6, Q23, Q44 | `MCS-3022: Scalar subquery within a function` |
 | Q8, Q14, Q38, Q87 | `INTERSECT`, `EXCEPT` are not supported |
-| Q33, Q56 | `MCS-2061` |
 | Q9 | `MCS-3016: Function or Operator with sub query on the SELECT clause` |
 | Q21 | `MCS-1001: Function 'float_typecast' isn't supported` |
 
-So the test `SQL warnings` fails for TPC-DS on MariaDBCS, because of Q33.
 
 Memory depends on the number of cores of the node, since ColumnStore starts threads per core.
 TPC-DS at SF 1 fits 16 Gi on nodes with 96 or 128 cores. On a node with 224 cores the SUT was killed at the limit of 16 Gi in Q18 (`OOMKilled`, `ExeMgr has allocated too much memory`), 32 Gi are enough there, with a peak of 14 GiB.

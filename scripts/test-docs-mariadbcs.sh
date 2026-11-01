@@ -57,7 +57,7 @@ bexhoma tpch \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB MariaDBCS  sf=1"
 
 
-#### TPC-DS next to MariaDB; the test SQL warnings fails on Q33, see docs/DBMS.md
+#### TPC-DS next to MariaDB; the test SQL warnings fails on Q39, which has columns of the same name
 bexhoma tpcds \
   -dbms MariaDB MariaDBCS \
   -sf 1 \

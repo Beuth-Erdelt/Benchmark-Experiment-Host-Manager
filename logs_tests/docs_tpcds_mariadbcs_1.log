@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1793491593
-Experiment                    : starts at 2026-11-01 01:06:33.549979 (186983.4954902)
+Experiment                    : has code 1793529751
+Experiment                    : starts at 2026-11-01 11:42:32.148742 (225141.9648676)
 Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
 TPC-DS (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q99.
@@ -30,8 +30,8 @@ MariaDB-1                     : deployments ['sut']
 MariaDB-1                     : stateful sets []
 MariaDB-1                     : pvcs ['sut']
 MariaDB-1                     : found labels on pvc = []
-MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1793491593
-MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1793491593
+MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1793529751
+MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1793529751
 MariaDB-1                     : name of SUT PVC name = bexhoma-storage-ma-nvme-tpcds-1
 MariaDB-1                     : storage bexhoma-storage-ma-nvme-tpcds-1 should be removed
 - waiting 10s -               : done
@@ -41,93 +41,93 @@ MariaDBCS-1                   : deployments ['sut']
 MariaDBCS-1                   : stateful sets []
 MariaDBCS-1                   : pvcs ['sut']
 MariaDBCS-1                   : found labels on pvc = []
-MariaDBCS-1                   : name of SUT pods = bexhoma-sut-mariadbcs-1-1793491593
-MariaDBCS-1                   : name of SUT service = bexhoma-sut-mariadbcs-1-1793491593
+MariaDBCS-1                   : name of SUT pods = bexhoma-sut-mariadbcs-1-1793529751
+MariaDBCS-1                   : name of SUT service = bexhoma-sut-mariadbcs-1-1793529751
 MariaDBCS-1                   : name of SUT PVC name = bexhoma-storage-mc-nvme-tpcds-1
 MariaDBCS-1                   : storage bexhoma-storage-mc-nvme-tpcds-1 should be removed
 - waiting 10s -               : done
 MariaDBCS-1                   : storage bexhoma-storage-mc-nvme-tpcds-1 is gone
-Loop pass                     : took 24.3s (2 kubectl calls 1.5s, 20 API requests 2.5s)
+Loop pass                     : took 28.1s (2 kubectl calls 5.3s, 20 API requests 1.8s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
 MariaDBCS-1                   : waits for health check to succeed
-Loop pass                     : took 5.1s (0 kubectl calls 0.0s, 28 API requests 1.4s)
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 28 API requests 2.1s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
 MariaDBCS-1                   : is not loaded yet
-MariaDBCS-1                   : will start loading but not before 2026-11-01 00:09:05 (that is in 60 secs)
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 28 API requests 1.6s)
+MariaDBCS-1                   : will start loading but not before 2026-11-01 10:45:06 (that is in 60 secs)
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 28 API requests 1.4s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
 MariaDBCS-1                   : is not loaded yet
-MariaDBCS-1                   : will start loading but not before 2026-11-01 00:09:05
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 25 API requests 1.4s)
+MariaDBCS-1                   : will start loading but not before 2026-11-01 10:45:06
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 25 API requests 1.3s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
 MariaDBCS-1                   : is not loaded yet
 MariaDBCS-1                   : load durability relaxed, scripts []
-MariaDBCS-1                   : connect to pod bexhoma-sut-mariadbcs-1-1793491593-7c8955767f-zb7z2 to load scripts
+MariaDBCS-1                   : connect to pod bexhoma-sut-mariadbcs-1-1793529751-775569b975-ct7qj to load scripts
 MariaDBCS-1                   : list of pvcs ['bexhoma-storage-mc-nvme-tpcds-1']
 MariaDBCS-1                   : will be labeling bexhoma-storage-mc-nvme-tpcds-1
 MariaDBCS-1                   : start asynch loading scripts of type schema
 MariaDBCS-1                   : waits for the Schema scripts (schema=True) before starting the loading jobs
-MariaDBCS-1                   : Schema scripts done after 22s
+MariaDBCS-1                   : Schema scripts done after 29s
 MariaDBCS-1                   : is loading
-Loop pass                     : took 30.8s (5 kubectl calls 3.7s, 55 API requests 4.7s)
+Loop pass                     : took 41.5s (5 kubectl calls 6.8s, 58 API requests 5.7s)
 - waiting 30s -               : done
 MariaDB-1                     : is not loaded yet
-MariaDB-1                     : will start loading but not before 2026-11-01 00:11:10 (that is in 60 secs)
+MariaDB-1                     : will start loading but not before 2026-11-01 10:47:20 (that is in 60 secs)
 MariaDBCS-1                   : is loading
-Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 32 API requests 3.2s)
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 32 API requests 1.7s)
 - waiting 30s -               : done
 MariaDB-1                     : is not loaded yet
-MariaDB-1                     : will start loading but not before 2026-11-01 00:11:10
+MariaDB-1                     : will start loading but not before 2026-11-01 10:47:20
 MariaDBCS-1                   : is loading
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 29 API requests 1.7s)
+Loop pass                     : took 15.2s (0 kubectl calls 0.0s, 29 API requests 1.7s)
 - waiting 30s -               : done
 MariaDB-1                     : is not loaded yet
 MariaDB-1                     : load durability relaxed, scripts ['durability-relaxed.sh', 'restoredurability-relaxed.sh']
-MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1793491593-db65856ff-cwr6x to load scripts
+MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1793529751-56c796c58c-2x6ns to load scripts
 MariaDB-1                     : list of pvcs ['bexhoma-storage-ma-nvme-tpcds-1']
 MariaDB-1                     : will be labeling bexhoma-storage-ma-nvme-tpcds-1
 MariaDB-1                     : start asynch loading scripts of type schema
 MariaDB-1                     : waits for the Schema scripts (schema=True) before starting the loading jobs
-MariaDB-1                     : Schema scripts done after 4s
+MariaDB-1                     : Schema scripts done after 8s
 MariaDB-1                     : is loading
 MariaDBCS-1                   : is loading
-Loop pass                     : took 13.4s (8 kubectl calls 6.0s, 50 API requests 3.1s)
+Loop pass                     : took 27.7s (11 kubectl calls 14.2s, 53 API requests 4.1s)
 - waiting 30s -               : done
 MariaDB-1                     : is loading
 MariaDBCS-1                   : showing loader times (tpcds-loader)
-MariaDBCS-1                   : generator times (start/end per pod and container) [(1793491784, 1793491784)]
-MariaDBCS-1                   : loader times (start/end per pod and container) [(1793491787, 1793491897)]
-MariaDBCS-1                   : total times (start/end per pod and container) [(1793491784, 1793491784), (1793491787, 1793491897)]
+MariaDBCS-1                   : generator times (start/end per pod and container) [(1793529970, 1793529970)]
+MariaDBCS-1                   : loader times (start/end per pod and container) [(1793529971, 1793530077)]
+MariaDBCS-1                   : total times (start/end per pod and container) [(1793529970, 1793529970), (1793529971, 1793530077)]
 MariaDBCS-1                   : generator timespan (first to last [s]) = 0
-MariaDBCS-1                   : loader timespan (first to last [s]) = 110
-MariaDBCS-1                   : total timespan (first to last [s]) = 113
+MariaDBCS-1                   : loader timespan (first to last [s]) = 106
+MariaDBCS-1                   : total timespan (first to last [s]) = 107
 MariaDBCS-1                   : list of pvcs ['bexhoma-storage-mc-nvme-tpcds-1']
 MariaDBCS-1                   : will be labeling bexhoma-storage-mc-nvme-tpcds-1
-MariaDBCS-1                   : connect to pod bexhoma-sut-mariadbcs-1-1793491593-7c8955767f-zb7z2 to load scripts
+MariaDBCS-1                   : connect to pod bexhoma-sut-mariadbcs-1-1793529751-775569b975-ct7qj to load scripts
 MariaDBCS-1                   : list of pvcs ['bexhoma-storage-mc-nvme-tpcds-1']
 MariaDBCS-1                   : will be labeling bexhoma-storage-mc-nvme-tpcds-1
 MariaDBCS-1                   : start asynch loading scripts of type index
 MariaDBCS-1                   : is loading
-Loop pass                     : took 17.1s (18 kubectl calls 13.6s, 43 API requests 3.3s)
+Loop pass                     : took 24.6s (15 kubectl calls 21.4s, 41 API requests 2.2s)
 - waiting 30s -               : done
 MariaDB-1                     : is loading
 MariaDBCS-1                   : is loading
-Loop pass                     : took 5.7s (0 kubectl calls 0.0s, 30 API requests 1.4s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 30 API requests 1.5s)
 - waiting 30s -               : done
 MariaDB-1                     : showing loader times (tpcds-loader)
-MariaDB-1                     : generator times (start/end per pod and container) [(1793491887, 1793491887)]
-MariaDB-1                     : loader times (start/end per pod and container) [(1793491888, 1793491984)]
-MariaDB-1                     : total times (start/end per pod and container) [(1793491887, 1793491887), (1793491888, 1793491984)]
+MariaDB-1                     : generator times (start/end per pod and container) [(1793530082, 1793530082)]
+MariaDB-1                     : loader times (start/end per pod and container) [(1793530083, 1793530169)]
+MariaDB-1                     : total times (start/end per pod and container) [(1793530082, 1793530082), (1793530083, 1793530169)]
 MariaDB-1                     : generator timespan (first to last [s]) = 0
-MariaDB-1                     : loader timespan (first to last [s]) = 96
-MariaDB-1                     : total timespan (first to last [s]) = 97
+MariaDB-1                     : loader timespan (first to last [s]) = 86
+MariaDB-1                     : total timespan (first to last [s]) = 87
 MariaDB-1                     : list of pvcs ['bexhoma-storage-ma-nvme-tpcds-1']
 MariaDB-1                     : will be labeling bexhoma-storage-ma-nvme-tpcds-1
-MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1793491593-db65856ff-cwr6x to load scripts
+MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1793529751-56c796c58c-2x6ns to load scripts
 MariaDB-1                     : list of pvcs ['bexhoma-storage-ma-nvme-tpcds-1']
 MariaDB-1                     : will be labeling bexhoma-storage-ma-nvme-tpcds-1
 MariaDB-1                     : start asynch loading scripts of type index
@@ -135,115 +135,107 @@ MariaDB-1                     : is loading
 MariaDBCS-1                   : list of pvcs ['bexhoma-storage-mc-nvme-tpcds-1']
 MariaDBCS-1                   : will be labeling bexhoma-storage-mc-nvme-tpcds-1
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDBCS-1-1793491593 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDBCS-1-1793529751 initialized to 1.
 MariaDBCS-1                   : benchmarks done 0 of 2. This will be client 1
 mariadbcs-1-1-1-1             : start benchmarking (benchmark_run=1)
-MariaDBCS-1                   : reset (reset_1_1_1) completed in 14s
+MariaDBCS-1                   : reset (reset_1_1_1) completed in 13s
 mariadbcs-1-1-1-1             : needs monitoring (common metrics) for deployment sut
-MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793491593-7c8955767f-zb7z2 and write to pvc bexhoma-storage-mc-nvme-tpcds-1
-MariaDBCS-1                   : benchmarking results in folder C:\data\benchmarks/1793491593
-MariaDBCS-1                   : submitted benchmarker job in 19.1s (5 kubectl calls 6.6s, 30 API requests 3.2s)
+MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793529751-775569b975-ct7qj and write to pvc bexhoma-storage-mc-nvme-tpcds-1
+MariaDBCS-1                   : benchmarking results in folder C:\data\benchmarks/1793529751
+MariaDBCS-1                   : submitted benchmarker job in 20.8s (5 kubectl calls 6.9s, 30 API requests 3.2s)
 mariadbcs-1-1-1-1             : needs monitoring (common metrics) for deployment sut
 mariadbcs-1-1-1-1             : collecting loading metrics of SUT at connection mariadbcs-1-1-1-1
 mariadbcs-1-1-1-1             : collecting metrics of data generator at connection mariadbcs-1-1-1-1
 mariadbcs-1-1-1-1             : collecting metrics of data injector at connection mariadbcs-1-1-1-1
-mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491593(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491593(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793491593-1-.+", namespace="perdelt", container="datagenerator"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793491593-1-.+", namespace="perdelt", container="datagenerator"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793491593-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793491593-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-1-1-1             : WARNING metric missing for loader: CPU Throttling Rate [s/s]
-mariadbcs-1-1-1-1             : WARNING metric missing for loader: CPU Throttled Time [s]
-mariadbcs-1-1-1-1             : WARNING metric missing for loader: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
-mariadbcs-1-1-1-1             : WARNING metric missing for loader: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793529751(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793529751(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793529751-1-.+", namespace="perdelt", container="datagenerator"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793529751-1-.+", namespace="perdelt", container="datagenerator"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793529751-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793529751-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mariadbcs-1-1-1-1             : WARNING metric missing for loading: CPU Throttling Rate [s/s]
 mariadbcs-1-1-1-1             : WARNING metric missing for loading: CPU Throttled Time [s]
+mariadbcs-1-1-1-1             : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+mariadbcs-1-1-1-1             : WARNING metric missing for loader: CPU Throttled Time [s]
+mariadbcs-1-1-1-1             : WARNING metric missing for loader: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+mariadbcs-1-1-1-1             : WARNING metric missing for loader: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
-mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
+mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU Utilization Time [s]
-mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU System Time [s]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU User Time [s]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU Throttled Time [s]
+mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU System Time [s]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
-Experiment                    : fetched 3 metric sets in 9s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 22.9s, 0 API requests 0.0s)
-Loop pass                     : took 65.4s (39 kubectl calls 63.6s, 75 API requests 6.0s)
+Experiment                    : fetched 3 metric sets in 7s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 14.6s, 0 API requests 0.0s)
+Loop pass                     : took 88.2s (39 kubectl calls 76.6s, 75 API requests 7.4s)
 - waiting 30s -               : done
 MariaDB-1                     : is loading
 MariaDBCS-1                   : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 30 API requests 1.5s)
-- waiting 30s -               : done
-MariaDB-1                     : is loading
-MariaDBCS-1                   : has running benchmarks
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 28 API requests 1.4s)
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 30 API requests 2.3s)
 - waiting 30s -               : done
 MariaDB-1                     : list of pvcs ['bexhoma-storage-ma-nvme-tpcds-1']
 MariaDB-1                     : will be labeling bexhoma-storage-ma-nvme-tpcds-1
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1793491593 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1793529751 initialized to 1.
 MariaDB-1                     : benchmarks done 0 of 2. This will be client 1
 MariaDBCS-1                   : has running benchmarks
 mariadb-1-1-1-1               : start benchmarking (benchmark_run=1)
 MariaDB-1                     : reset (reset_1_1_1) completed in 5s
 mariadb-1-1-1-1               : needs monitoring (common metrics) for deployment sut
-MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1793491593-db65856ff-cwr6x and write to pvc bexhoma-storage-ma-nvme-tpcds-1
-MariaDB-1                     : benchmarking results in folder C:\data\benchmarks/1793491593
-MariaDB-1                     : submitted benchmarker job in 17.4s (4 kubectl calls 4.1s, 27 API requests 3.5s)
+MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1793529751-56c796c58c-2x6ns and write to pvc bexhoma-storage-ma-nvme-tpcds-1
+MariaDB-1                     : benchmarking results in folder C:\data\benchmarks/1793529751
+MariaDB-1                     : submitted benchmarker job in 20.0s (4 kubectl calls 7.8s, 27 API requests 2.9s)
 mariadb-1-1-1-1               : needs monitoring (common metrics) for deployment sut
 mariadb-1-1-1-1               : collecting loading metrics of SUT at connection mariadb-1-1-1-1
 mariadb-1-1-1-1               : collecting metrics of data generator at connection mariadb-1-1-1-1
 mariadb-1-1-1-1               : collecting metrics of data injector at connection mariadb-1-1-1-1
-mariadb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793491593(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793491593(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadb-1-1793491593-1-.+", namespace="perdelt", container="datagenerator"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadb-1-1793491593-1-.+", namespace="perdelt", container="datagenerator"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadb-1-1793491593-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadb-1-1793491593-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadb-1-1-1-1               : WARNING metric missing for loading: CPU Throttling Rate [s/s]
-mariadb-1-1-1-1               : WARNING metric missing for loading: CPU Throttled Time [s]
-mariadb-1-1-1-1               : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
-mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
-mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
-mariadb-1-1-1-1               : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
-mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU Throttled Time [s]
-mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU Utilization Time [s]
-mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU User Time [s]
-mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU System Time [s]
-mariadb-1-1-1-1               : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
-mariadb-1-1-1-1               : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+mariadb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793529751(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793529751(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadb-1-1793529751-1-.+", namespace="perdelt", container="datagenerator"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadb-1-1793529751-1-.+", namespace="perdelt", container="datagenerator"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadb-1-1793529751-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadb-1-1793529751-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mariadb-1-1-1-1               : WARNING metric missing for loader: CPU Throttling Rate [s/s]
 mariadb-1-1-1-1               : WARNING metric missing for loader: CPU Throttled Time [s]
 mariadb-1-1-1-1               : WARNING metric missing for loader: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
 mariadb-1-1-1-1               : WARNING metric missing for loader: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
-Experiment                    : fetched 3 metric sets in 5s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 11.7s, 0 API requests 0.0s)
-Loop pass                     : took 36.8s (21 kubectl calls 28.0s, 63 API requests 5.7s)
+mariadb-1-1-1-1               : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
+mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
+mariadb-1-1-1-1               : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
+mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU Utilization Time [s]
+mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU Throttled Time [s]
+mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU User Time [s]
+mariadb-1-1-1-1               : WARNING metric missing for datagenerator: CPU System Time [s]
+mariadb-1-1-1-1               : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+mariadb-1-1-1-1               : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+mariadb-1-1-1-1               : WARNING metric missing for loading: CPU Throttling Rate [s/s]
+mariadb-1-1-1-1               : WARNING metric missing for loading: CPU Throttled Time [s]
+Experiment                    : fetched 3 metric sets in 7s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 15.2s, 0 API requests 0.0s)
+Loop pass                     : took 53.1s (21 kubectl calls 41.5s, 63 API requests 5.4s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-MariaDBCS-1                   : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 34 API requests 1.8s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-mariadbcs-1-1-1-1             : wrote benchmarking_timespans to /data/benchmarks/1793491593/mariadbcs-1-1-1-1.config
+mariadbcs-1-1-1-1             : wrote benchmarking_timespans to /data/benchmarks/1793529751/mariadbcs-1-1-1-1.config
 mariadbcs-1-1-1-1             : showing benchmarker times
-mariadbcs-1-1-1-1             : benchmarker timespan job from 1793492054 to 1793492265
-mariadbcs-1-1-1-1             : benchmarker timespan pods from 1793492056 to 1793492247
-mariadbcs-1-1-1-1             : benchmarker timespan (start to end single container [s]) = 191
-mariadbcs-1-1-1-1             : benchmarker times (start/end per pod and container) = [(1793492056, 1793492247)]
-mariadbcs-1-1-1-1             : found and updated times {'benchmarker': [(1793492056, 1793492247)]}
+mariadbcs-1-1-1-1             : benchmarker timespan job from 1793530278 to 1793530441
+mariadbcs-1-1-1-1             : benchmarker timespan pods from 1793530309 to 1793530422
+mariadbcs-1-1-1-1             : benchmarker timespan (start to end single container [s]) = 113
+mariadbcs-1-1-1-1             : benchmarker times (start/end per pod and container) = [(1793530309, 1793530422)]
+mariadbcs-1-1-1-1             : found and updated times {'benchmarker': [(1793530309, 1793530422)]}
 mariadbcs-1-1-1-1             : needs monitoring (common metrics) for deployment sut
 mariadbcs-1-1-1-1             : collecting execution metrics of SUT at connection mariadbcs-1-1-1-1
 mariadbcs-1-1-1-1             : collecting metrics of benchmarker at connection mariadbcs-1-1-1-1
-MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793491593-7c8955767f-zb7z2 and write to pvc bexhoma-storage-mc-nvme-tpcds-1
-mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491593(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491593(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793491593-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793491593-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793529751-775569b975-ct7qj and write to pvc bexhoma-storage-mc-nvme-tpcds-1
+mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793529751(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793529751(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793529751-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793529751-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mariadbcs-1-1-1-1             : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 mariadbcs-1-1-1-1             : WARNING metric missing for benchmarking: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 5s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 8.1s, 0 API requests 0.0s)
-Loop pass                     : took 16.0s (9 kubectl calls 11.5s, 40 API requests 2.1s)
+Experiment                    : fetched 2 metric sets in 7s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 11.5s, 0 API requests 0.0s)
+Loop pass                     : took 18.6s (9 kubectl calls 18.4s, 42 API requests 3.4s)
 MariaDB-1                     : has running benchmarks
 MariaDBCS-1                   : can be stopped
-MariaDBCS-1                   : had 0 restarts at worker bexhoma-sut-mariadbcs-1-1793491593-7c8955767f-zb7z2
-Loop pass                     : took 9.7s (3 kubectl calls 3.6s, 45 API requests 2.0s)
+MariaDBCS-1                   : had 0 restarts at worker bexhoma-sut-mariadbcs-1-1793529751-775569b975-ct7qj
+Loop pass                     : took 6.8s (3 kubectl calls 3.9s, 45 API requests 2.3s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 MariaDBCS-1                   : starts again
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 21 API requests 1.0s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 21 API requests 1.9s)
 MariaDB-1                     : has running benchmarks
 MariaDBCS-1                   : will start now
 MariaDBCS-1                   : deployments ['sut']
@@ -251,9 +243,9 @@ MariaDBCS-1                   : stateful sets []
 MariaDBCS-1                   : pvcs ['sut']
 MariaDBCS-1                   : list of pvcs ['bexhoma-storage-mc-nvme-tpcds-1']
 MariaDBCS-1                   : storage bexhoma-storage-mc-nvme-tpcds-1 exists
-MariaDBCS-1                   : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '38', 'time_ingested': '110', 'time_initconstraints': '1', 'time_initindexes': '2', 'time_initschema': '20', 'time_initstatistics': '16', 'time_loading': '171', 'time_loading_end': '1793491971', 'time_loading_start': '1793491753', 'time_schema': '20'}
-MariaDBCS-1                   : name of SUT pods = bexhoma-sut-mariadbcs-1-1793491593
-MariaDBCS-1                   : name of SUT service = bexhoma-sut-mariadbcs-1-1793491593
+MariaDBCS-1                   : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '38', 'time_ingested': '106', 'time_initconstraints': '2', 'time_initindexes': '2', 'time_initschema': '25', 'time_initstatistics': '15', 'time_loading': '172', 'time_loading_end': '1793530176', 'time_loading_start': '1793529915', 'time_schema': '27'}
+MariaDBCS-1                   : name of SUT pods = bexhoma-sut-mariadbcs-1-1793529751
+MariaDBCS-1                   : name of SUT service = bexhoma-sut-mariadbcs-1-1793529751
 MariaDBCS-1                   : name of SUT PVC name = bexhoma-storage-mc-nvme-tpcds-1
 MariaDBCS-1                   : loading values taken from the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
 MariaDBCS-1                   : copied label data = True
@@ -262,100 +254,77 @@ MariaDBCS-1                   : copied label loaded = True
 MariaDBCS-1                   : copied label schema = True
 MariaDBCS-1                   : copied label time_generated = 0
 MariaDBCS-1                   : copied label time_index = 38
-MariaDBCS-1                   : copied label time_ingested = 110
-MariaDBCS-1                   : copied label time_initconstraints = 1
+MariaDBCS-1                   : copied label time_ingested = 106
+MariaDBCS-1                   : copied label time_initconstraints = 2
 MariaDBCS-1                   : copied label time_initindexes = 2
-MariaDBCS-1                   : copied label time_initschema = 20
-MariaDBCS-1                   : copied label time_initstatistics = 16
-MariaDBCS-1                   : copied label time_loading = 171
-MariaDBCS-1                   : copied label time_loading_end = 1793491971
-MariaDBCS-1                   : copied label time_loading_start = 1793491753
-MariaDBCS-1                   : copied label time_schema = 20
+MariaDBCS-1                   : copied label time_initschema = 25
+MariaDBCS-1                   : copied label time_initstatistics = 15
+MariaDBCS-1                   : copied label time_loading = 172
+MariaDBCS-1                   : copied label time_loading_end = 1793530176
+MariaDBCS-1                   : copied label time_loading_start = 1793529915
+MariaDBCS-1                   : copied label time_schema = 27
 MariaDBCS-1                   : loading is set to finished
-Loop pass                     : took 2.2s (1 kubectl calls 0.7s, 26 API requests 1.4s)
+Loop pass                     : took 3.1s (1 kubectl calls 1.3s, 26 API requests 1.3s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-MariaDBCS-1                   : waits for health check to succeed
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 29 API requests 1.5s)
+MariaDBCS-1                   : will start benchmarking but not before 2026-11-01 10:56:27 (that is in 60 secs)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 29 API requests 1.3s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-MariaDBCS-1                   : will start benchmarking but not before 2026-11-01 00:20:40 (that is in 60 secs)
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 29 API requests 1.4s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MariaDBCS-1                   : will start benchmarking but not before 2026-11-01 00:20:40
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 26 API requests 1.0s)
+MariaDBCS-1                   : will start benchmarking but not before 2026-11-01 10:56:27
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 26 API requests 1.3s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MariaDBCS-1-1793491593 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MariaDBCS-1-1793529751 initialized to 1.
 MariaDBCS-1                   : benchmarks done 1 of 2. This will be client 1
 mariadbcs-1-2-1-1             : start benchmarking (benchmark_run=1)
-MariaDBCS-1                   : reset (reset_2_1_1) completed in 16s
+MariaDBCS-1                   : reset (reset_2_1_1) completed in 15s
 mariadbcs-1-2-1-1             : needs monitoring (common metrics) for deployment sut
-MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793491593-59b479fbf4-r9mk7 and write to pvc bexhoma-storage-mc-nvme-tpcds-1
-MariaDBCS-1                   : benchmarking results in folder C:\data\benchmarks/1793491593
-MariaDBCS-1                   : submitted benchmarker job in 16.3s (3 kubectl calls 2.6s, 27 API requests 4.0s)
-Loop pass                     : took 38.0s (9 kubectl calls 22.3s, 61 API requests 5.9s)
+MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793529751-5f554bd449-n7tdd and write to pvc bexhoma-storage-mc-nvme-tpcds-1
+MariaDBCS-1                   : benchmarking results in folder C:\data\benchmarks/1793529751
+MariaDBCS-1                   : submitted benchmarker job in 19.9s (3 kubectl calls 4.5s, 27 API requests 4.0s)
+Loop pass                     : took 48.6s (9 kubectl calls 26.6s, 61 API requests 6.7s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 MariaDBCS-1                   : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 32 API requests 2.0s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-MariaDBCS-1                   : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 30 API requests 1.3s)
+Loop pass                     : took 3.6s (0 kubectl calls 0.0s, 32 API requests 2.4s)
 - waiting 30s -               : done
 MariaDBCS-1                   : has running benchmarks
-mariadb-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1793491593/mariadb-1-1-1-1.config
+mariadb-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1793529751/mariadb-1-1-1-1.config
 mariadb-1-1-1-1               : showing benchmarker times
-mariadb-1-1-1-1               : benchmarker timespan job from 1793492188 to 1793492582
-mariadb-1-1-1-1               : benchmarker timespan pods from 1793492191 to 1793492552
-mariadb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 361
-mariadb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1793492191, 1793492552)]
-mariadb-1-1-1-1               : found and updated times {'benchmarker': [(1793492191, 1793492552)]}
+mariadb-1-1-1-1               : benchmarker timespan job from 1793530394 to 1793530708
+mariadb-1-1-1-1               : benchmarker timespan pods from 1793530397 to 1793530686
+mariadb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 289
+mariadb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1793530397, 1793530686)]
+mariadb-1-1-1-1               : found and updated times {'benchmarker': [(1793530397, 1793530686)]}
 mariadb-1-1-1-1               : needs monitoring (common metrics) for deployment sut
 mariadb-1-1-1-1               : collecting execution metrics of SUT at connection mariadb-1-1-1-1
 mariadb-1-1-1-1               : collecting metrics of benchmarker at connection mariadb-1-1-1-1
-MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1793491593-db65856ff-cwr6x and write to pvc bexhoma-storage-ma-nvme-tpcds-1
-mariadb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793491593(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793491593(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadb-1-1793491593-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadb-1-1793491593-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1793529751-56c796c58c-2x6ns and write to pvc bexhoma-storage-ma-nvme-tpcds-1
+mariadb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793529751(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793529751(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadb-1-1793529751-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadb-1-1793529751-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mariadb-1-1-1-1               : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 mariadb-1-1-1-1               : WARNING metric missing for benchmarking: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 5s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 8.2s, 0 API requests 0.0s)
-Loop pass                     : took 16.4s (9 kubectl calls 12.9s, 38 API requests 2.1s)
+Experiment                    : fetched 2 metric sets in 7s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.3s, 0 API requests 0.0s)
+Loop pass                     : took 15.4s (9 kubectl calls 17.0s, 38 API requests 2.2s)
 MariaDB-1                     : can be stopped
-MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1793491593-db65856ff-cwr6x
+MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1793529751-56c796c58c-2x6ns
 MariaDBCS-1                   : has running benchmarks
-Loop pass                     : took 3.8s (3 kubectl calls 1.8s, 43 API requests 1.8s)
+Loop pass                     : took 6.4s (3 kubectl calls 3.7s, 43 API requests 2.2s)
 - waiting 30s -               : done
 MariaDB-1                     : starts again
-mariadbcs-1-2-1-1             : wrote benchmarking_timespans to /data/benchmarks/1793491593/mariadbcs-1-2-1-1.config
-mariadbcs-1-2-1-1             : showing benchmarker times
-mariadbcs-1-2-1-1             : benchmarker timespan job from 1793492479 to 1793492627
-mariadbcs-1-2-1-1             : benchmarker timespan pods from 1793492482 to 1793492617
-mariadbcs-1-2-1-1             : benchmarker timespan (start to end single container [s]) = 135
-mariadbcs-1-2-1-1             : benchmarker times (start/end per pod and container) = [(1793492482, 1793492617)]
-mariadbcs-1-2-1-1             : found and updated times {'benchmarker': [(1793492482, 1793492617)]}
-mariadbcs-1-2-1-1             : needs monitoring (common metrics) for deployment sut
-mariadbcs-1-2-1-1             : collecting execution metrics of SUT at connection mariadbcs-1-2-1-1
-mariadbcs-1-2-1-1             : collecting metrics of benchmarker at connection mariadbcs-1-2-1-1
-MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793491593-59b479fbf4-r9mk7 and write to pvc bexhoma-storage-mc-nvme-tpcds-1
-mariadbcs-1-2-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491593(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491593(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-2-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793491593-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793491593-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-2-1-1             : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
-mariadbcs-1-2-1-1             : WARNING metric missing for benchmarking: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 7.2s, 0 API requests 0.0s)
-Loop pass                     : took 9.7s (9 kubectl calls 10.8s, 27 API requests 1.6s)
+MariaDBCS-1                   : has running benchmarks
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 19 API requests 1.0s)
 MariaDB-1                     : will start now
 MariaDB-1                     : deployments ['sut']
 MariaDB-1                     : stateful sets []
 MariaDB-1                     : pvcs ['sut']
 MariaDB-1                     : list of pvcs ['bexhoma-storage-ma-nvme-tpcds-1']
 MariaDB-1                     : storage bexhoma-storage-ma-nvme-tpcds-1 exists
-MariaDB-1                     : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '124', 'time_ingested': '96', 'time_initconstraints': '41', 'time_initindexes': '79', 'time_initschema': '1', 'time_initstatistics': '2', 'time_loading': '224', 'time_loading_end': '1793492139', 'time_loading_start': '1793491879', 'time_schema': '3'}
-MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1793491593
-MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1793491593
+MariaDB-1                     : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '104', 'time_ingested': '86', 'time_initconstraints': '33', 'time_initindexes': '63', 'time_initschema': '2', 'time_initstatistics': '2', 'time_loading': '196', 'time_loading_end': '1793530336', 'time_loading_start': '1793530068', 'time_schema': '5'}
+MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1793529751
+MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1793529751
 MariaDB-1                     : name of SUT PVC name = bexhoma-storage-ma-nvme-tpcds-1
 MariaDB-1                     : DDL values taken from the volume: histograms=off
 MariaDB-1                     : loading values taken from the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
@@ -364,101 +333,120 @@ MariaDB-1                     : copied label index = True
 MariaDB-1                     : copied label loaded = True
 MariaDB-1                     : copied label schema = True
 MariaDB-1                     : copied label time_generated = 0
-MariaDB-1                     : copied label time_index = 124
-MariaDB-1                     : copied label time_ingested = 96
-MariaDB-1                     : copied label time_initconstraints = 41
-MariaDB-1                     : copied label time_initindexes = 79
-MariaDB-1                     : copied label time_initschema = 1
+MariaDB-1                     : copied label time_index = 104
+MariaDB-1                     : copied label time_ingested = 86
+MariaDB-1                     : copied label time_initconstraints = 33
+MariaDB-1                     : copied label time_initindexes = 63
+MariaDB-1                     : copied label time_initschema = 2
 MariaDB-1                     : copied label time_initstatistics = 2
-MariaDB-1                     : copied label time_loading = 224
-MariaDB-1                     : copied label time_loading_end = 1793492139
-MariaDB-1                     : copied label time_loading_start = 1793491879
-MariaDB-1                     : copied label time_schema = 3
+MariaDB-1                     : copied label time_loading = 196
+MariaDB-1                     : copied label time_loading_end = 1793530336
+MariaDB-1                     : copied label time_loading_start = 1793530068
+MariaDB-1                     : copied label time_schema = 5
 MariaDB-1                     : loading is set to finished
+MariaDBCS-1                   : has running benchmarks
+Loop pass                     : took 2.6s (1 kubectl calls 1.3s, 24 API requests 1.3s)
+- waiting 30s -               : done
+MariaDB-1                     : waits for health check to succeed
+mariadbcs-1-2-1-1             : wrote benchmarking_timespans to /data/benchmarks/1793529751/mariadbcs-1-2-1-1.config
+mariadbcs-1-2-1-1             : showing benchmarker times
+mariadbcs-1-2-1-1             : benchmarker timespan job from 1793530632 to 1793530795
+mariadbcs-1-2-1-1             : benchmarker timespan pods from 1793530645 to 1793530761
+mariadbcs-1-2-1-1             : benchmarker timespan (start to end single container [s]) = 116
+mariadbcs-1-2-1-1             : benchmarker times (start/end per pod and container) = [(1793530645, 1793530761)]
+mariadbcs-1-2-1-1             : found and updated times {'benchmarker': [(1793530645, 1793530761)]}
+mariadbcs-1-2-1-1             : needs monitoring (common metrics) for deployment sut
+mariadbcs-1-2-1-1             : collecting execution metrics of SUT at connection mariadbcs-1-2-1-1
+mariadbcs-1-2-1-1             : collecting metrics of benchmarker at connection mariadbcs-1-2-1-1
+MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793529751-5f554bd449-n7tdd and write to pvc bexhoma-storage-mc-nvme-tpcds-1
+mariadbcs-1-2-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793529751(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793529751(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadbcs-1-2-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793529751-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793529751-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadbcs-1-2-1-1             : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+mariadbcs-1-2-1-1             : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 7s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.4s, 0 API requests 0.0s)
+Loop pass                     : took 15.8s (9 kubectl calls 17.2s, 35 API requests 2.4s)
+MariaDB-1                     : waits for health check to succeed
 MariaDBCS-1                   : can be stopped
-MariaDBCS-1                   : had 0 restarts at worker bexhoma-sut-mariadbcs-1-1793491593-59b479fbf4-r9mk7
-Loop pass                     : took 4.5s (4 kubectl calls 2.7s, 37 API requests 1.8s)
+MariaDBCS-1                   : had 0 restarts at worker bexhoma-sut-mariadbcs-1-1793529751-5f554bd449-n7tdd
+Loop pass                     : took 6.7s (3 kubectl calls 4.2s, 40 API requests 2.0s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 18 API requests 1.1s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 1.1s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 18 API requests 1.0s)
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 18 API requests 1.1s)
 - waiting 30s -               : done
-MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+MariaDB-1                     : will start benchmarking but not before 2026-11-01 11:03:19 (that is in 60 secs)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 18 API requests 1.0s)
 - waiting 30s -               : done
-MariaDB-1                     : will start benchmarking but not before 2026-11-01 00:27:33 (that is in 60 secs)
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 18 API requests 1.0s)
-- waiting 30s -               : done
-MariaDB-1                     : will start benchmarking but not before 2026-11-01 00:27:33
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 15 API requests 0.8s)
+MariaDB-1                     : will start benchmarking but not before 2026-11-01 11:03:19
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 15 API requests 0.7s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MariaDB-1-1793491593 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MariaDB-1-1793529751 initialized to 1.
 MariaDB-1                     : benchmarks done 1 of 2. This will be client 1
 mariadb-1-2-1-1               : start benchmarking (benchmark_run=1)
-MariaDB-1                     : reset (reset_2_1_1) completed in 5s
+MariaDB-1                     : reset (reset_2_1_1) completed in 7s
 mariadb-1-2-1-1               : needs monitoring (common metrics) for deployment sut
-MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1793491593-86cbdb5855-7px2t and write to pvc bexhoma-storage-ma-nvme-tpcds-1
-MariaDB-1                     : benchmarking results in folder C:\data\benchmarks/1793491593
-MariaDB-1                     : submitted benchmarker job in 20.6s (3 kubectl calls 2.7s, 27 API requests 6.9s)
-Loop pass                     : took 36.2s (13 kubectl calls 14.5s, 50 API requests 8.2s)
+MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1793529751-c4cc56787-4nj5m and write to pvc bexhoma-storage-ma-nvme-tpcds-1
+MariaDB-1                     : benchmarking results in folder C:\data\benchmarks/1793529751
+MariaDB-1                     : submitted benchmarker job in 20.4s (3 kubectl calls 6.5s, 27 API requests 2.7s)
+Loop pass                     : took 42.2s (13 kubectl calls 24.6s, 50 API requests 5.7s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 21 API requests 1.1s)
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 21 API requests 2.3s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 19 API requests 1.0s)
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 1.0s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 19 API requests 1.0s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 19 API requests 1.2s)
+Loop pass                     : took 7.0s (0 kubectl calls 0.0s, 19 API requests 1.3s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 19 API requests 1.9s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 19 API requests 1.4s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 3.4s (0 kubectl calls 0.0s, 19 API requests 0.9s)
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 19 API requests 2.3s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 19 API requests 0.9s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
-mariadb-1-2-1-1               : wrote benchmarking_timespans to /data/benchmarks/1793491593/mariadb-1-2-1-1.config
+mariadb-1-2-1-1               : wrote benchmarking_timespans to /data/benchmarks/1793529751/mariadb-1-2-1-1.config
 mariadb-1-2-1-1               : showing benchmarker times
-mariadb-1-2-1-1               : benchmarker timespan job from 1793492890 to 1793493241
-mariadb-1-2-1-1               : benchmarker timespan pods from 1793492893 to 1793493222
-mariadb-1-2-1-1               : benchmarker timespan (start to end single container [s]) = 329
-mariadb-1-2-1-1               : benchmarker times (start/end per pod and container) = [(1793492893, 1793493222)]
-mariadb-1-2-1-1               : found and updated times {'benchmarker': [(1793492893, 1793493222)]}
+mariadb-1-2-1-1               : benchmarker timespan job from 1793531041 to 1793531403
+mariadb-1-2-1-1               : benchmarker timespan pods from 1793531044 to 1793531365
+mariadb-1-2-1-1               : benchmarker timespan (start to end single container [s]) = 321
+mariadb-1-2-1-1               : benchmarker times (start/end per pod and container) = [(1793531044, 1793531365)]
+mariadb-1-2-1-1               : found and updated times {'benchmarker': [(1793531044, 1793531365)]}
 mariadb-1-2-1-1               : needs monitoring (common metrics) for deployment sut
 mariadb-1-2-1-1               : collecting execution metrics of SUT at connection mariadb-1-2-1-1
 mariadb-1-2-1-1               : collecting metrics of benchmarker at connection mariadb-1-2-1-1
-MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1793491593-86cbdb5855-7px2t and write to pvc bexhoma-storage-ma-nvme-tpcds-1
-mariadb-1-2-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793491593(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793491593(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadb-1-2-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadb-1-1793491593-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadb-1-1793491593-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1793529751-c4cc56787-4nj5m and write to pvc bexhoma-storage-ma-nvme-tpcds-1
+mariadb-1-2-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793529751(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadb-1-1793529751(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadb-1-2-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadb-1-1793529751-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadb-1-1793529751-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mariadb-1-2-1-1               : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 mariadb-1-2-1-1               : WARNING metric missing for benchmarking: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 5s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 7.9s, 0 API requests 0.0s)
-Loop pass                     : took 12.0s (9 kubectl calls 13.4s, 27 API requests 1.7s)
+Experiment                    : fetched 2 metric sets in 7s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.6s, 0 API requests 0.0s)
+Loop pass                     : took 17.2s (9 kubectl calls 17.9s, 27 API requests 2.3s)
 MariaDB-1                     : can be stopped
-MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1793491593-86cbdb5855-7px2t
-Loop pass                     : took 3.4s (3 kubectl calls 1.7s, 32 API requests 1.5s)
-Experiment                    : ends at 2026-11-01 01:34:14.282060 (188644.2224223) - 1660.73s total
+MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1793529751-c4cc56787-4nj5m
+Loop pass                     : took 7.6s (3 kubectl calls 5.2s, 32 API requests 2.0s)
+Experiment                    : ends at 2026-11-01 12:10:22.540420 (226812.3500663) - 1670.39s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
@@ -471,8 +459,8 @@ Result workflow complete
 ### Workload
 TPC-DS Queries SF=1
 * Type: tpcds
-* Duration: 1661s 
-* Code: 1793491593
+* Duration: 1671s 
+* Code: 1793529751
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=1) data is loaded and benchmark is executed.
@@ -502,8 +490,8 @@ TPC-DS Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:669958
-  * datadisk:4582
+  * disk:678747
+  * datadisk:4586
   * volume_size:30G
   * volume_used:4.5G
   * cpu_list:0-223
@@ -515,15 +503,15 @@ TPC-DS Queries SF=1
     * sut: 1 x, 4.0 CPU, 32.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793491593
+    * code:1793529751
 * mariadb-1-2-1-1-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:670525
-  * datadisk:4583
+  * disk:680924
+  * datadisk:4587
   * volume_size:30G
   * volume_used:4.5G
   * cpu_list:0-223
@@ -535,14 +523,14 @@ TPC-DS Queries SF=1
     * sut: 1 x, 4.0 CPU, 32.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793491593
+    * code:1793529751
 * mariadbcs-1-1-1-1-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:668393
+  * disk:675709
   * datadisk:579
   * volume_size:30G
   * volume_used:740M
@@ -555,14 +543,14 @@ TPC-DS Queries SF=1
     * sut: 1 x, 4.0 CPU, 32.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793491593
+    * code:1793529751
 * mariadbcs-1-2-1-1-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:669961
+  * disk:675105
   * datadisk:579
   * volume_size:30G
   * volume_used:740M
@@ -575,7 +563,7 @@ TPC-DS Queries SF=1
     * sut: 1 x, 4.0 CPU, 32.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793491593
+    * code:1793529751
 
 ### Inherited Loading
 * loading skipped, loading times copied from an earlier repetition: MariaDB-1-2, MariaDBCS-1-2
@@ -586,10 +574,10 @@ TPC-DS Queries SF=1
 * MariaDBCS-1: loading values of the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1793491593-db65856ff-cwr6x: 0
-* bexhoma-sut-mariadb-1-1793491593-86cbdb5855-7px2t: 0
-* bexhoma-sut-mariadbcs-1-1793491593-7c8955767f-zb7z2: 0
-* bexhoma-sut-mariadbcs-1-1793491593-59b479fbf4-r9mk7: 0
+* bexhoma-sut-mariadb-1-1793529751-56c796c58c-2x6ns: 0
+* bexhoma-sut-mariadb-1-1793529751-c4cc56787-4nj5m: 0
+* bexhoma-sut-mariadbcs-1-1793529751-775569b975-ct7qj: 0
+* bexhoma-sut-mariadbcs-1-1793529751-5f554bd449-n7tdd: 0
 
 ### Workflow
 
@@ -613,10 +601,10 @@ TPC-DS Queries SF=1
 
 |               |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:--------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MariaDB-1-1   |                1 |    1 |      224.00 |           3.00 |            0.00 |         96.00 |          124.00 |              1 |           0 |             | None           |             0 | False         |               16.07 | False               |
-| MariaDB-1-2   |                2 |    1 |      224.00 |           3.00 |            0.00 |         96.00 |          124.00 |              1 |           0 |             | None           |             0 | False         |               16.07 | True                |
-| MariaDBCS-1-1 |                1 |    1 |      171.00 |          20.00 |            0.00 |        110.00 |           38.00 |              1 |           0 |             | None           |             0 | False         |               21.05 | False               |
-| MariaDBCS-1-2 |                2 |    1 |      171.00 |          20.00 |            0.00 |        110.00 |           38.00 |              1 |           0 |             | None           |             0 | False         |               21.05 | True                |
+| MariaDB-1-1   |                1 |    1 |      196.00 |           5.00 |            0.00 |         86.00 |          104.00 |              1 |           0 |             | None           |             0 | False         |               18.37 | False               |
+| MariaDB-1-2   |                2 |    1 |      196.00 |           5.00 |            0.00 |         86.00 |          104.00 |              1 |           0 |             | None           |             0 | False         |               18.37 | True                |
+| MariaDBCS-1-1 |                1 |    1 |      172.00 |          27.00 |            0.00 |        106.00 |           38.00 |              1 |           0 |             | None           |             0 | False         |               20.93 | False               |
+| MariaDBCS-1-2 |                2 |    1 |      172.00 |          27.00 |            0.00 |        106.00 |           38.00 |              1 |           0 |             | None           |             0 | False         |               20.93 | True                |
 
 ### Benchmarking
 
@@ -624,19 +612,19 @@ TPC-DS Queries SF=1
 
 | DBMS                | configuration   | phase           | job               |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                 |
 |:--------------------|:----------------|:----------------|:------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:--------------------|
-| mariadb-1-1-1-1-1   | MariaDB-1       | mariadb-1-1-1   | mariadb-1-1-1-1   |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        361 |            0.81 |             4457.06 |            987.26 |          -1 | mariadb-1-1-1-1-1   |
-| mariadb-1-2-1-1-1   | MariaDB-1       | mariadb-1-2-1   | mariadb-1-2-1-1   |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        329 |            0.71 |             5064.35 |           1083.28 |          -1 | mariadb-1-2-1-1-1   |
-| mariadbcs-1-1-1-1-1 | MariaDBCS-1     | mariadbcs-1-1-1 | mariadbcs-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        191 |            0.86 |             4177.89 |           1865.97 |          -1 | mariadbcs-1-1-1-1-1 |
-| mariadbcs-1-2-1-1-1 | MariaDBCS-1     | mariadbcs-1-2-1 | mariadbcs-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        135 |            0.86 |             4191.89 |           2640.00 |          -1 | mariadbcs-1-2-1-1-1 |
+| mariadb-1-1-1-1-1   | MariaDB-1       | mariadb-1-1-1   | mariadb-1-1-1-1   |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        289 |            0.65 |             5555.85 |           1233.22 |          -1 | mariadb-1-1-1-1-1   |
+| mariadb-1-2-1-1-1   | MariaDB-1       | mariadb-1-2-1   | mariadb-1-2-1-1   |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        321 |            0.71 |             5057.47 |           1110.28 |          -1 | mariadb-1-2-1-1-1   |
+| mariadbcs-1-1-1-1-1 | MariaDBCS-1     | mariadbcs-1-1-1 | mariadbcs-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        113 |            0.86 |             4205.32 |           3153.98 |          -1 | mariadbcs-1-1-1-1-1 |
+| mariadbcs-1-2-1-1-1 | MariaDBCS-1     | mariadbcs-1-2-1 | mariadbcs-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        116 |            0.86 |             4188.79 |           3072.41 |          -1 | mariadbcs-1-2-1-1-1 |
 
 #### Per Phase
 
 |                 | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:----------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mariadb-1-1-1   | mariadb-1-1-1   |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        361 |            0.81 |             4457.06 |            987.26 |          -1 |
-| mariadb-1-2-1   | mariadb-1-2-1   |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        329 |            0.71 |             5064.35 |           1083.28 |          -1 |
-| mariadbcs-1-1-1 | mariadbcs-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        191 |            0.86 |             4177.89 |           1865.97 |          -1 |
-| mariadbcs-1-2-1 | mariadbcs-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        135 |            0.86 |             4191.89 |           2640.00 |          -1 |
+| mariadb-1-1-1   | mariadb-1-1-1   |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        289 |            0.65 |             5555.85 |           1233.22 |          -1 |
+| mariadb-1-2-1   | mariadb-1-2-1   |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        321 |            0.71 |             5057.47 |           1110.28 |          -1 |
+| mariadbcs-1-1-1 | mariadbcs-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        113 |            0.86 |             4205.32 |           3153.98 |          -1 |
+| mariadbcs-1-2-1 | mariadbcs-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        116 |            0.86 |             4188.79 |           3072.41 |          -1 |
 
 #### Query Completion per Phase
 
@@ -654,112 +642,112 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 | phase           | job               |   experiment_run |   client |   benchmark_run |   time_reset | reset_failed   |
 |:----------------|:------------------|-----------------:|---------:|----------------:|-------------:|:---------------|
 | mariadb-1-1-1   | mariadb-1-1-1-1   |                1 |        1 |               1 |         5.00 |                |
-| mariadb-1-2-1   | mariadb-1-2-1-1   |                2 |        1 |               1 |         5.00 |                |
-| mariadbcs-1-1-1 | mariadbcs-1-1-1-1 |                1 |        1 |               1 |        14.00 |                |
-| mariadbcs-1-2-1 | mariadbcs-1-2-1-1 |                2 |        1 |               1 |        16.00 |                |
+| mariadb-1-2-1   | mariadb-1-2-1-1   |                2 |        1 |               1 |         7.00 |                |
+| mariadbcs-1-1-1 | mariadbcs-1-1-1-1 |                1 |        1 |               1 |        13.00 |                |
+| mariadbcs-1-2-1 | mariadbcs-1-2-1-1 |                2 |        1 |               1 |        15.00 |                |
 
 ### Latency of Timer Execution [ms]
 | Queries       |   mariadb-1-1-1-1-1 |   mariadb-1-2-1-1-1 |   mariadbcs-1-1-1-1-1 |   mariadbcs-1-2-1-1-1 |
 |:--------------|--------------------:|--------------------:|----------------------:|----------------------:|
-| TPC-DS Q1     |                7.80 |               11.29 |               2140.50 |               2248.36 |
-| TPC-DS Q2     |             4210.45 |             4045.53 |               3160.66 |               2780.29 |
-| TPC-DS Q3     |                6.02 |              126.76 |               1198.57 |               1444.68 |
-| TPC-DS Q4     |            10234.37 |             9366.39 |               1603.55 |               1524.93 |
-| TPC-DS Q5     |             8434.43 |             7499.46 |               4674.08 |               3954.73 |
-| TPC-DS Q6     |             1161.67 |              587.42 |               1198.57 |               1178.53 |
-| TPC-DS Q7     |             3243.62 |             9226.52 |               2121.16 |               1980.66 |
-| TPC-DS Q8     |              308.42 |              249.66 |                667.62 |                628.78 |
-| TPC-DS Q9     |             4081.96 |             3761.25 |                414.42 |                286.33 |
-| TPC-DS Q10    |               86.14 |               68.05 |                752.13 |                958.73 |
-| TPC-DS Q11    |             7135.07 |             7104.86 |               1028.58 |               1000.69 |
-| TPC-DS Q12    |              284.89 |              187.97 |                597.36 |                532.95 |
-| TPC-DS Q13    |              897.10 |              680.93 |               1425.67 |               1597.19 |
-| TPC-DS Q14a+b |            48403.13 |            42567.54 |               5690.58 |               5400.66 |
-| TPC-DS Q15    |              129.80 |              115.35 |                685.77 |                648.88 |
-| TPC-DS Q16    |             8025.39 |             7150.09 |                652.66 |                717.19 |
-| TPC-DS Q17    |              585.98 |              520.22 |               1407.62 |               1309.36 |
-| TPC-DS Q18    |             1829.73 |             1592.24 |               1476.71 |               1405.60 |
-| TPC-DS Q19    |              200.92 |              427.90 |               1024.85 |                816.95 |
-| TPC-DS Q20    |              387.07 |              344.27 |                685.44 |                444.18 |
-| TPC-DS Q21    |             3974.51 |             2148.13 |               1400.10 |               1938.98 |
-| TPC-DS Q22    |             9179.48 |            22049.74 |               1133.49 |               1294.31 |
-| TPC-DS Q23a+b |            46180.34 |            42878.79 |               3430.52 |               3035.66 |
-| TPC-DS Q24a+b |               22.29 |               22.18 |               1435.80 |               1278.80 |
-| TPC-DS Q25    |              136.40 |              135.57 |               1013.02 |               1426.87 |
-| TPC-DS Q26    |             1130.26 |              652.02 |                859.75 |                733.70 |
-| TPC-DS Q27    |             3005.67 |             2631.04 |               1221.73 |                956.44 |
-| TPC-DS Q28    |             2923.36 |             2555.29 |                309.73 |                409.29 |
-| TPC-DS Q29    |               82.96 |               67.86 |               1201.69 |               1331.50 |
-| TPC-DS Q30    |               81.67 |               76.95 |                862.75 |                900.70 |
-| TPC-DS Q31    |             1055.23 |             1071.13 |               1037.36 |               1215.96 |
-| TPC-DS Q32    |               10.20 |                5.27 |                911.81 |                537.82 |
-| TPC-DS Q33    |              460.44 |              117.26 |                770.58 |                808.65 |
-| TPC-DS Q34    |             3284.84 |             2487.78 |                259.47 |                258.47 |
-| TPC-DS Q35    |              979.03 |             1000.48 |                672.07 |                700.99 |
-| TPC-DS Q36    |             2397.54 |             2148.39 |                596.40 |                657.09 |
-| TPC-DS Q37    |             4052.32 |             3223.43 |                351.99 |                487.08 |
-| TPC-DS Q38    |             6812.18 |             5536.44 |                801.56 |                703.48 |
-| TPC-DS Q39a+b |             1107.81 |             1055.70 |               1767.23 |               1651.23 |
-| TPC-DS Q40    |              552.91 |              141.97 |               1092.46 |                850.29 |
-| TPC-DS Q41    |              399.81 |              351.53 |                370.12 |                343.88 |
-| TPC-DS Q42    |              222.39 |              162.10 |                427.13 |                426.81 |
-| TPC-DS Q43    |              820.60 |              930.28 |                301.78 |                268.44 |
-| TPC-DS Q44    |                1.34 |                1.94 |                334.21 |                331.14 |
-| TPC-DS Q45    |              108.49 |              181.20 |                515.70 |                539.97 |
-| TPC-DS Q46    |             3310.38 |             3023.87 |                302.38 |                369.80 |
-| TPC-DS Q47    |            13630.66 |            13330.59 |               1377.28 |               1215.36 |
-| TPC-DS Q48    |              903.12 |              867.39 |                841.17 |                827.37 |
-| TPC-DS Q49    |               98.93 |               91.76 |                672.84 |                655.08 |
-| TPC-DS Q50    |               65.90 |               22.40 |                686.95 |                756.77 |
-| TPC-DS Q51    |             6917.41 |             6916.95 |               2059.40 |               1849.04 |
-| TPC-DS Q52    |              204.68 |              163.91 |                455.81 |                446.26 |
-| TPC-DS Q53    |              124.96 |               95.87 |                622.50 |                669.26 |
-| TPC-DS Q54    |              948.80 |              918.25 |                639.13 |                595.46 |
-| TPC-DS Q55    |              213.63 |              166.66 |                430.40 |                437.67 |
-| TPC-DS Q56    |              142.42 |              121.32 |                928.48 |                972.95 |
-| TPC-DS Q57    |             4900.90 |             4648.30 |                924.97 |               1122.00 |
-| TPC-DS Q58    |             5219.11 |             4582.37 |                932.87 |                783.84 |
-| TPC-DS Q59    |             7938.60 |             7025.93 |               1345.55 |                988.67 |
-| TPC-DS Q60    |              546.95 |              479.61 |               1036.27 |                978.46 |
-| TPC-DS Q61    |              288.87 |              252.30 |                230.61 |                262.74 |
-| TPC-DS Q62    |             1661.51 |             1290.99 |               1178.64 |               1030.62 |
-| TPC-DS Q63    |              115.42 |              102.48 |                531.83 |                530.87 |
-| TPC-DS Q64    |              572.75 |              445.36 |               3072.96 |               3450.59 |
-| TPC-DS Q65    |             6078.83 |             4611.30 |                630.94 |                638.04 |
-| TPC-DS Q66    |             1340.08 |              977.29 |               1240.37 |               1177.22 |
-| TPC-DS Q67    |             6346.71 |             5448.04 |               3332.29 |               2811.09 |
-| TPC-DS Q68    |             2782.26 |             2614.16 |                330.00 |                298.15 |
-| TPC-DS Q69    |              310.28 |              296.53 |                931.83 |                930.14 |
-| TPC-DS Q70    |             7630.35 |             6287.73 |                985.95 |               1032.10 |
-| TPC-DS Q71    |              398.94 |              343.30 |                425.66 |                485.06 |
-| TPC-DS Q72    |             1163.08 |              635.70 |               1345.24 |               1346.23 |
-| TPC-DS Q73    |             2383.20 |             2291.33 |                346.92 |                244.59 |
-| TPC-DS Q74    |             5441.24 |             4381.35 |                878.93 |                922.78 |
-| TPC-DS Q75    |             4745.16 |             4113.66 |               1205.45 |               1288.34 |
-| TPC-DS Q76    |              833.66 |              618.38 |                501.82 |                685.09 |
-| TPC-DS Q77    |             6359.65 |             4831.07 |               1046.35 |               1005.64 |
-| TPC-DS Q78    |             5043.77 |             4402.88 |               1612.30 |               1778.79 |
-| TPC-DS Q79    |             3452.59 |             2692.47 |                859.67 |                804.41 |
-| TPC-DS Q80    |              498.11 |              486.60 |               1122.36 |               1144.77 |
-| TPC-DS Q81    |              225.42 |              172.83 |                897.61 |                856.10 |
-| TPC-DS Q82    |             3641.08 |             3018.67 |                742.61 |                836.96 |
-| TPC-DS Q83    |              951.80 |             1089.77 |                733.01 |                719.76 |
-| TPC-DS Q84    |               52.18 |               38.64 |                594.60 |                608.23 |
-| TPC-DS Q85    |              121.74 |               95.66 |               2450.60 |               2513.66 |
-| TPC-DS Q86    |              725.87 |              619.49 |                468.27 |                520.74 |
-| TPC-DS Q87    |             7112.84 |             5523.84 |                646.71 |                671.07 |
-| TPC-DS Q88    |            11892.37 |             9835.96 |               1206.42 |               1249.03 |
-| TPC-DS Q89    |             1193.88 |              988.00 |                679.06 |                544.93 |
-| TPC-DS Q90    |              333.48 |              122.64 |                423.78 |                456.18 |
-| TPC-DS Q91    |               20.13 |               14.15 |                796.09 |               1219.43 |
-| TPC-DS Q92    |                5.49 |                6.26 |                434.24 |                492.77 |
-| TPC-DS Q93    |               45.96 |               38.23 |                468.97 |                476.56 |
-| TPC-DS Q94    |              734.40 |              363.38 |               1362.14 |                847.26 |
-| TPC-DS Q95    |              682.03 |              663.40 |               1050.58 |               1037.88 |
-| TPC-DS Q96    |              662.27 |              818.38 |                427.09 |                455.76 |
-| TPC-DS Q97    |             4926.07 |             4413.00 |                570.17 |                671.09 |
-| TPC-DS Q98    |              879.53 |              770.80 |                507.33 |                978.12 |
-| TPC-DS Q99    |             2745.82 |             2795.67 |               1110.58 |                978.89 |
+| TPC-DS Q1     |                9.76 |               11.12 |               2264.41 |               2381.79 |
+| TPC-DS Q2     |             4262.34 |             3905.36 |               2805.83 |               2851.36 |
+| TPC-DS Q3     |               12.08 |              162.48 |               1167.33 |               1177.42 |
+| TPC-DS Q4     |             9814.68 |             9882.70 |               1601.13 |               1430.01 |
+| TPC-DS Q5     |             7407.51 |             8661.68 |               3819.24 |               3424.23 |
+| TPC-DS Q6     |              766.04 |              729.70 |               1162.91 |               1170.60 |
+| TPC-DS Q7     |             2744.05 |             8703.33 |               1531.31 |               1529.86 |
+| TPC-DS Q8     |              310.59 |              379.14 |                657.01 |                759.93 |
+| TPC-DS Q9     |             3413.38 |             4256.59 |                180.12 |                276.49 |
+| TPC-DS Q10    |               41.51 |               51.59 |                788.76 |                781.31 |
+| TPC-DS Q11    |             6102.49 |             7610.07 |               1116.09 |                985.30 |
+| TPC-DS Q12    |              202.09 |              239.94 |                658.69 |                536.68 |
+| TPC-DS Q13    |              694.46 |              863.57 |               1530.40 |               1261.82 |
+| TPC-DS Q14a+b |            36591.15 |            46296.09 |               5873.43 |               5437.31 |
+| TPC-DS Q15    |              119.18 |              145.99 |                584.44 |                595.16 |
+| TPC-DS Q16    |             7471.87 |             9402.96 |                670.91 |                708.27 |
+| TPC-DS Q17    |              528.65 |              788.45 |               1061.46 |               1181.97 |
+| TPC-DS Q18    |             1430.23 |             1870.36 |               1416.68 |               1583.79 |
+| TPC-DS Q19    |              190.61 |              200.66 |                807.29 |                838.52 |
+| TPC-DS Q20    |              346.96 |              449.29 |                498.84 |                510.61 |
+| TPC-DS Q21    |              959.27 |             4826.63 |               1307.61 |               1424.09 |
+| TPC-DS Q22    |            14015.32 |            10867.73 |               1079.58 |               1196.85 |
+| TPC-DS Q23a+b |            41736.42 |            44231.65 |               3176.01 |               3004.98 |
+| TPC-DS Q24a+b |               24.71 |               31.28 |               4318.28 |               4451.39 |
+| TPC-DS Q25    |              129.49 |              151.24 |               1096.43 |               1148.39 |
+| TPC-DS Q26    |              654.76 |              812.96 |                803.36 |                792.49 |
+| TPC-DS Q27    |             2424.83 |             3096.53 |               1033.75 |                946.50 |
+| TPC-DS Q28    |             2550.67 |             3264.20 |                478.57 |                398.15 |
+| TPC-DS Q29    |               39.86 |               44.68 |               1187.69 |               1163.28 |
+| TPC-DS Q30    |               28.99 |               33.54 |                930.65 |                888.21 |
+| TPC-DS Q31    |              978.10 |             1180.72 |               1104.65 |               1023.32 |
+| TPC-DS Q32    |                4.14 |                4.62 |                568.97 |                596.62 |
+| TPC-DS Q33    |              119.63 |              154.13 |               1096.97 |                857.55 |
+| TPC-DS Q34    |             2709.66 |             3110.30 |                260.03 |                281.80 |
+| TPC-DS Q35    |              832.77 |             1180.65 |                770.72 |                796.42 |
+| TPC-DS Q36    |             2233.34 |             2569.62 |                694.16 |                666.35 |
+| TPC-DS Q37    |             3363.45 |             4110.71 |                557.58 |                534.64 |
+| TPC-DS Q38    |             5420.18 |             6979.23 |                645.25 |                710.39 |
+| TPC-DS Q39a+b |             1044.65 |             1268.86 |               1679.16 |               1757.46 |
+| TPC-DS Q40    |              137.34 |              174.40 |                750.50 |                899.09 |
+| TPC-DS Q41    |              315.28 |              445.49 |                371.97 |                406.38 |
+| TPC-DS Q42    |              308.81 |              262.54 |                410.97 |                477.47 |
+| TPC-DS Q43    |              828.70 |             1039.02 |                291.08 |                287.42 |
+| TPC-DS Q44    |                1.16 |                0.94 |                336.91 |                218.63 |
+| TPC-DS Q45    |               98.53 |              125.40 |                652.65 |                548.21 |
+| TPC-DS Q46    |             2649.93 |             3392.69 |                286.37 |                256.71 |
+| TPC-DS Q47    |             9171.80 |            10051.16 |               1114.41 |               1170.87 |
+| TPC-DS Q48    |             1121.36 |              935.47 |                802.50 |                947.08 |
+| TPC-DS Q49    |              102.12 |               98.81 |                671.32 |                827.58 |
+| TPC-DS Q50    |               21.70 |               17.92 |                700.43 |                753.04 |
+| TPC-DS Q51    |             6032.61 |             6725.69 |               1824.96 |               1953.28 |
+| TPC-DS Q52    |              220.13 |              200.70 |                430.64 |                442.55 |
+| TPC-DS Q53    |              124.91 |              125.24 |                572.57 |                647.42 |
+| TPC-DS Q54    |              924.39 |             1031.74 |                603.42 |                593.70 |
+| TPC-DS Q55    |              164.92 |              177.74 |                525.87 |                434.00 |
+| TPC-DS Q56    |              149.16 |              166.55 |                942.04 |                972.47 |
+| TPC-DS Q57    |             4367.94 |             4567.26 |                911.36 |               1069.90 |
+| TPC-DS Q58    |             4652.95 |             4551.09 |                825.91 |                836.98 |
+| TPC-DS Q59    |             6877.46 |             6896.27 |               1091.02 |               1148.08 |
+| TPC-DS Q60    |              280.87 |              215.35 |                973.32 |                982.61 |
+| TPC-DS Q61    |              277.04 |              266.59 |                300.72 |                281.26 |
+| TPC-DS Q62    |             1348.75 |             1335.40 |               1072.77 |               1143.87 |
+| TPC-DS Q63    |              101.33 |              100.00 |                534.07 |                808.24 |
+| TPC-DS Q64    |              525.70 |              509.39 |               3168.06 |               3339.63 |
+| TPC-DS Q65    |             4767.92 |             4408.83 |                636.83 |                691.00 |
+| TPC-DS Q66    |             1005.92 |              939.76 |               1288.39 |               1292.56 |
+| TPC-DS Q67    |             5891.42 |             5206.68 |               2885.98 |               2865.09 |
+| TPC-DS Q68    |             2795.06 |             2387.15 |                410.20 |                255.91 |
+| TPC-DS Q69    |              343.01 |              307.10 |               1021.40 |                853.14 |
+| TPC-DS Q70    |             6192.99 |             6089.16 |                973.07 |                991.32 |
+| TPC-DS Q71    |              400.23 |              358.04 |                467.65 |                432.57 |
+| TPC-DS Q72    |              609.85 |              597.48 |               1239.76 |               1315.26 |
+| TPC-DS Q73    |             2152.57 |             2103.66 |                265.26 |                271.30 |
+| TPC-DS Q74    |             4589.21 |             4874.39 |                917.08 |                839.16 |
+| TPC-DS Q75    |             4274.53 |             4039.88 |               1213.82 |               1356.78 |
+| TPC-DS Q76    |              404.32 |              336.56 |                541.83 |                537.46 |
+| TPC-DS Q77    |             5108.24 |             4695.13 |               1021.19 |               1195.02 |
+| TPC-DS Q78    |             4869.05 |             4532.82 |               1655.94 |               1520.40 |
+| TPC-DS Q79    |             2467.27 |             2390.14 |                711.61 |                817.85 |
+| TPC-DS Q80    |              421.72 |              411.98 |               1135.21 |               1221.41 |
+| TPC-DS Q81    |              155.34 |              154.49 |                872.69 |                816.30 |
+| TPC-DS Q82    |             3263.73 |             2958.34 |                652.46 |                558.65 |
+| TPC-DS Q83    |              739.57 |              729.35 |                807.13 |                834.87 |
+| TPC-DS Q84    |               44.01 |               45.22 |                647.73 |                679.21 |
+| TPC-DS Q85    |              125.44 |              112.80 |               2438.72 |               2518.94 |
+| TPC-DS Q86    |              640.16 |              641.27 |                525.85 |                537.14 |
+| TPC-DS Q87    |             5953.26 |             5443.06 |                730.63 |                778.27 |
+| TPC-DS Q88    |            11658.47 |            10751.17 |               1234.77 |               1248.21 |
+| TPC-DS Q89    |             1076.82 |             1080.96 |                656.99 |                623.75 |
+| TPC-DS Q90    |              279.25 |              108.95 |                460.92 |                472.43 |
+| TPC-DS Q91    |               15.79 |               15.79 |                942.82 |                887.72 |
+| TPC-DS Q92    |                4.33 |                4.11 |                494.01 |                525.79 |
+| TPC-DS Q93    |               34.56 |               32.35 |                491.61 |                515.02 |
+| TPC-DS Q94    |              148.54 |              156.85 |               1011.23 |                999.60 |
+| TPC-DS Q95    |              600.41 |              621.98 |               1042.58 |               1080.34 |
+| TPC-DS Q96    |              632.67 |              500.52 |                528.96 |                522.94 |
+| TPC-DS Q97    |             4586.68 |             4098.95 |                620.29 |                611.19 |
+| TPC-DS Q98    |              687.49 |              701.37 |                562.94 |                543.23 |
+| TPC-DS Q99    |             2520.19 |             2681.73 |               1101.86 |                916.61 |
 
 ### Errors (failed queries)
 
@@ -769,8 +757,8 @@ No errors
 
 |                     |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
 |:--------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
-| mariadb-1-1-1-1-1   |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| mariadb-1-2-1-1-1   |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+| mariadb-1-1-1-1-1   |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+| mariadb-1-2-1-1-1   |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
 | mariadbcs-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
 
 ### Monitoring
@@ -779,8 +767,8 @@ No errors
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1   |       211.73 |      1.17 |           4.08 |                  4.19 |
-| mariadbcs-1-1-1-1 |       154.41 |      1.35 |           9.40 |                 10.16 |
+| mariadb-1-1-1-1   |       170.69 |      1.16 |           3.89 |                  4.01 |
+| mariadbcs-1-1-1-1 |       153.60 |      1.18 |          10.38 |                 11.15 |
 
 ### Loading phase: component data generator
 
@@ -793,36 +781,36 @@ No errors
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1   |         1.11 |      0.02 |           0.00 |                  0.00 |
-| mariadbcs-1-1-1-1 |         1.12 |      0.01 |           0.01 |                  0.01 |
+| mariadb-1-1-1-1   |         0.99 |      0.02 |           0.00 |                  0.00 |
+| mariadbcs-1-1-1-1 |         1.15 |      0.02 |           0.01 |                  0.01 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1   |       297.09 |      1.00 |           4.48 |                  4.49 |
-| mariadb-1-2-1-1   |       281.56 |      1.00 |           2.77 |                  2.77 |
-| mariadbcs-1-1-1-1 |       704.24 |      8.16 |          16.45 |                 17.22 |
-| mariadbcs-1-2-1-1 |       895.36 |     14.54 |          11.72 |                 11.92 |
+| mariadb-1-1-1-1   |       268.83 |      1.00 |           4.33 |                  4.34 |
+| mariadb-1-2-1-1   |       275.92 |      1.00 |           2.67 |                  2.67 |
+| mariadbcs-1-1-1-1 |       833.68 |     11.00 |          20.86 |                 21.62 |
+| mariadbcs-1-2-1-1 |       729.16 |     12.33 |          12.51 |                 12.70 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1   |        13.16 |      0.30 |           0.32 |                  0.32 |
-| mariadb-1-2-1-1   |        12.90 |      0.02 |           0.29 |                  0.30 |
-| mariadbcs-1-1-1-1 |        12.86 |      0.03 |           0.30 |                  0.30 |
-| mariadbcs-1-2-1-1 |        13.88 |      0.30 |           0.32 |                  0.32 |
+| mariadb-1-1-1-1   |        12.79 |      0.02 |           0.32 |                  0.33 |
+| mariadb-1-2-1-1   |        12.80 |      0.34 |           0.30 |                  0.31 |
+| mariadbcs-1-1-1-1 |        13.10 |      0.04 |           0.29 |                  0.30 |
+| mariadbcs-1-2-1-1 |        12.37 |      0.30 |           0.29 |                  0.29 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * Memory Usage, Working Set [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization [CPUs] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Memory Usage incl. Page Cache [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU User Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU System Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
@@ -838,19 +826,19 @@ No errors
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Utilization [CPUs] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Memory Usage incl. Page Cache [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Memory Usage, Working Set [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU System Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU User Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
