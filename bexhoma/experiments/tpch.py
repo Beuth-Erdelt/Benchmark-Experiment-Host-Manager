@@ -57,6 +57,11 @@ DBMS_DEFAULTS: dict[str, dict[str, str]] = {
         'storage_prefix': 'mariadb',
         'refresh_template': 'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
     },
+    'MariaDBCS': {
+        'docker': 'MariaDBCS', 'dialect': 'MySQL',
+        'jobtemplate_loading': 'jobtemplate-loading-tpch-MariaDB.yml',
+        'storage_prefix': 'mariadbcs',
+    },
     'MySQL': {
         'docker': 'MySQL', 'dialect': 'MySQL',
         'jobtemplate_loading': 'jobtemplate-loading-tpch-MySQL.yml',
@@ -64,7 +69,7 @@ DBMS_DEFAULTS: dict[str, dict[str, str]] = {
         'refresh_template': 'jobtemplate-benchmarking-tpch-refresh-MySQL.yml',
     },
     'CedarDB': {
-        'docker': 'CedarDB', 'dialect': 'PostgreSQL',
+        'docker': 'CedarDB', 'dialect': 'CedarDB',   # key of the query variants in queries-tpch.config
         'jobtemplate_loading': 'jobtemplate-loading-tpch-PostgreSQL.yml',
         'storage_prefix': 'cedardb',
     },

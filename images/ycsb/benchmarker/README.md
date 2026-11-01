@@ -19,10 +19,10 @@ drivers, and the workload template placeholder reference.
 5. Increment and poll the Redis counter
    `bexhoma-benchmarker-podcount-<CONNECTION>-<EXPERIMENT>` until all
    `BEXHOMA_NUM_PODS` pods are ready.
-6. Write `db.properties` (JDBC or Redis branch, optionally with batch settings).
+6. Write `db.properties` (JDBC, Redis or Cassandra branch, optionally with batch settings).
 7. Copy workload template → `/tmp/workload`; substitute placeholder tokens via
    `sed`.
-8. Run `ycsb run` (redis / redis-cluster / jdbc branch, with or without `-s`).
+8. Run `ycsb run` (redis / redis-cluster / cassandra / jdbc branch, with or without `-s`).
 9. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END` to stdout for the
    evaluator.
 
@@ -36,11 +36,12 @@ drivers, and the workload template placeholder reference.
 
 ### Target DBMS connection
 
-* `BEXHOMA_DBMS_TYPE`: Backend type — `jdbc`, `redis`, or `redis-cluster`.
+* `BEXHOMA_DBMS_TYPE`: Backend type — `jdbc`, `redis`, `redis-cluster`, or `cassandra`.
 * `BEXHOMA_URL`: JDBC connection URL (e.g. `jdbc:postgresql://host:5432/ycsb`). Used when `YCSB_USE_HOSTLIST=0`.
 * `BEXHOMA_URL_LIST`: Comma-separated list of JDBC URLs for multi-host setups. Used when `YCSB_USE_HOSTLIST=1`.
-* `BEXHOMA_HOST`: Redis host. Ignored for JDBC.
-* `BEXHOMA_PORT`: Redis port. Ignored for JDBC.
+* `BEXHOMA_HOST`: Redis or Cassandra host. Ignored for JDBC, and for Cassandra when `BEXHOMA_WORKER_LIST` is set.
+* `BEXHOMA_PORT`: Redis or Cassandra port. Ignored for JDBC, and for Cassandra when `BEXHOMA_WORKER_LIST` is set.
+* `BEXHOMA_WORKER_LIST`: Comma-separated worker pods. Cassandra connects to these on port 9042, when not empty.
 * `BEXHOMA_JAR`: JDBC driver jar file name (must exist in `jars/` inside the image — see Dockerfile for bundled drivers).
 * `BEXHOMA_DRIVER`: JDBC driver class name (e.g. `org.postgresql.Driver`).
 * `BEXHOMA_USER`: Database user (`db.user`).

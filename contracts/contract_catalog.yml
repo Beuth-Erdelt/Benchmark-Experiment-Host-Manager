@@ -470,7 +470,7 @@ workloads:
           template, so peak-resource validation for a pinned benchmarking node
           must count them rather than the SUT limits"
     out_of_scope:
-      systems: [MonetDB, MySQL, MariaDB, DatabaseService, Citus, CedarDB, ClickHouse, ClickHouseCluster]
+      systems: [MonetDB, MySQL, MariaDB, MariaDBCS, DatabaseService, Citus, CedarDB, ClickHouse, ClickHouseCluster]
       why: "the full tpch workload also supports these systems. They are trimmed
         out here to keep this contract focused on the PostgreSQL/PgDuckDB pair
         chosen for the prototype, so an experiment.yml naming any of them fails
@@ -694,7 +694,7 @@ workloads:
     supports: [PostgreSQL]
     out_of_scope:
       systems: [MySQL, MariaDB, YugabyteDB, CockroachDB, TiDB, DatabaseService,
-        PGBouncer, Redis, Citus, CedarDB, Dragonfly]
+        PGBouncer, Redis, Citus, CedarDB, Dragonfly, Cassandra]
       why: "the full ycsb workload also supports these; trimmed to PostgreSQL for
         this contract's prototype scope (matching workloads.tpch). Connection
         pooling (PGBouncer) and per-system knobs (TiDB PD nodes, SUT replicas)

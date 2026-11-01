@@ -33,11 +33,12 @@ Same as the benchmarker ([images/ycsb/benchmarker/README.md](https://github.com/
 
 ### Target DBMS connection
 
-* `BEXHOMA_DBMS_TYPE`: Backend type — `jdbc`, `redis`, or `redis-cluster`.
+* `BEXHOMA_DBMS_TYPE`: Backend type — `jdbc`, `redis`, `redis-cluster`, or `cassandra`.
 * `BEXHOMA_URL`: JDBC connection URL (e.g. `jdbc:postgresql://host:5432/ycsb`). Used when `YCSB_USE_HOSTLIST=0`.
 * `BEXHOMA_URL_LIST`: Comma-separated list of JDBC URLs for multi-host setups. Used when `YCSB_USE_HOSTLIST=1`.
-* `BEXHOMA_HOST`: Redis host. Ignored for JDBC.
-* `BEXHOMA_PORT`: Redis port. Ignored for JDBC.
+* `BEXHOMA_HOST`: Redis or Cassandra host. Ignored for JDBC, and for Cassandra when `BEXHOMA_WORKER_LIST` is set.
+* `BEXHOMA_PORT`: Redis or Cassandra port. Ignored for JDBC, and for Cassandra when `BEXHOMA_WORKER_LIST` is set.
+* `BEXHOMA_WORKER_LIST`: Comma-separated worker pods. Cassandra connects to these on port 9042, when not empty.
 * `BEXHOMA_JAR`: JDBC driver jar file name (must exist in `jars/` inside the image — see Dockerfile for bundled drivers).
 * `BEXHOMA_DRIVER`: JDBC driver class name (e.g. `org.postgresql.Driver`).
 * `BEXHOMA_USER`: Database user (`db.user`).

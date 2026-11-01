@@ -251,7 +251,7 @@ Other DBMS for SSB, by effort (all have TPC-H templates in bexhoma):
 | Citus | PostgreSQL loader as is | Textbook star-schema case: `lineorder` distributed, dimensions as reference tables (scripts per variant); optional columnar access method |
 | MySQL, MariaDB | new loader image (`LOAD DATA`) | Row stores as a baseline; slow loads known from TPC-H |
 
-Not planned (decided 2026-10-28): CedarDB, YugabyteDB, CockroachDB.
+Not planned (decided 2026-10-28): YugabyteDB, CockroachDB. CedarDB added 2026-10-31 (#830).
 
 Steps per DBMS (sketch, after ClickHouseCluster; each with `ssb.py` block,
 `experiments/ssb/<DBMS>/` scripts for normal and flat, unit tests, cluster

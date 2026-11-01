@@ -748,6 +748,28 @@ bexhoma tpch `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H reset PgDuckDB"
 
 
+#### TPC-H Reset CedarDB
+bexhoma tpch `
+  -dbms CedarDB                 <# ANALYZE, persist n/a, counters n/a #> `
+  -sf 1                         <# scaling factor #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne "1,2"                     <# two client rounds -- the reset runs before each #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 8                        <# threads per loader pod #> `
+  -xii                          <# create indexes after loading #> `
+  -xic                          <# create constraints after loading #> `
+  -xis                          <# recompute statistics after loading #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -ar                           <# activate configured reset scripts before each round #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpch_cedardb.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H reset CedarDB"
+
+
 #### TPC-H Reset MonetDB
 bexhoma tpch `
   -dbms MonetDB                 <# ANALYZE, persist n/a, counters n/a #> `

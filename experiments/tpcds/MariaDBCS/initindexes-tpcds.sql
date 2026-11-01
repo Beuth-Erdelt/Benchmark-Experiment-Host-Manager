@@ -1,7 +1,6 @@
 -- Benchmark-Experiment-Host-Manager | experiments/tpcds/MariaDBCS
 -- Authors: Patrick K. Erdelt
--- Copyright (C) 2020 Patrick K. Erdelt
+-- Copyright (C) 2026 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Placeholder - MariaDB ColumnStore manages its own columnar indexes
---          internally; explicit CREATE INDEX statements are not applicable.
+-- Purpose: Placeholder, MariaDB ColumnStore has no secondary indexes. No statements are executed.

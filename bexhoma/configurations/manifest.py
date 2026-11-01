@@ -469,6 +469,7 @@ class ManifestBuilder:
                 name_worker=name_worker, worker_number=0,
                 worker_service=name_service_headless)
             env_default['BEXHOMA_WORKER_FIRST'] = worker_full_name
+        env_default.update(cfg.dockertemplate.get('client_env', {}))
         env = {**env_default, **env}
         cfg.logger.debug('ManifestBuilder.create_manifest_job({})'.format(jobname))
         cfg.logger.debug(env)

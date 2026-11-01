@@ -1,0 +1,7 @@
+-- Benchmark-Experiment-Host-Manager | experiments/benchbase/wikipedia/PostgreSQL
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Schema initialisation placeholder for the wikipedia benchmark on PostgreSQL.
+--          Benchbase creates the wikipedia tables automatically at runtime.

@@ -33,7 +33,7 @@ if __name__ == '__main__':
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: profile import, run queries, start SUT only, load data, empty tables, or summarize results', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test (default: PostgreSQL, MonetDB, ClickHouse)', choices=['PostgreSQL', 'MonetDB', 'ClickHouse', 'ClickHouseCluster', 'PgDuckDB', 'Citus', 'MySQL', 'MariaDB'], default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test (default: PostgreSQL, MonetDB, ClickHouse)', choices=['PostgreSQL', 'MonetDB', 'ClickHouse', 'CedarDB', 'ClickHouseCluster', 'PgDuckDB', 'Citus', 'MySQL', 'MariaDB', 'MariaDBCS'], default=[], nargs='*')
     parser.add_argument('-xsv',   '--xschema-variant', help='normal: star schema (4 dimensions + lineorder); flat: one denormalized table lineorder_flat, generated as flat files', choices=SCHEMA_VARIANTS, default='normal', dest='schema_variant')
     parser.add_argument('-xdim',  '--xdimensions', help='star schema on a multi-node DBMS (ClickHouseCluster, Citus): replicated = a full copy of each dimension on every node (Citus: reference tables), joins run locally per shard; distributed = dimensions spread over the nodes like lineorder, joined across nodes per query (ignored by single-node DBMS and with -xsv flat)', choices=DIMENSION_VARIANTS, default='replicated', dest='dimensions')
     parser.add_argument('-xqv',   '--xquery-variant', help='spec: the 13 queries with the constants of the SSB specification; random: random parameters that keep the filter factor of each query', choices=QUERY_VARIANTS, default='spec', dest='query_variant')
@@ -210,6 +210,21 @@ if __name__ == '__main__':
                     )
                 config.set_benchmarking_parameters()
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("CedarDB" in args.dbms):
+                # CedarDB (PostgreSQL protocol, reuses PostgreSQL's loading job; own scripts)
+                config = configurations.default(experiment=experiment, docker='CedarDB', dialect='PostgreSQL', alias='DBMS A7')
+                # With -ar: ANALYZE before each round; no CHECKPOINT and no counters to reset
+                config.set_benchmark_resetscript(['reset-ssb.sql'])
+                config.set_storage(
+                    storageConfiguration = 'cedardb'
+                    )
+                config.jobtemplate_loading = "jobtemplate-loading-ssb-PostgreSQL.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = str(loading_pods_total),
+                    PODS_PARALLEL = str(split_portion),
+                    )
+                config.set_benchmarking_parameters()
+                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MonetDB" in args.dbms or len(args.dbms) == 0):
                 # MonetDB
                 config = configurations.default(experiment=experiment, docker='MonetDB', dialect='MonetDB', alias='DBMS A1')
@@ -274,6 +289,29 @@ if __name__ == '__main__':
                     MARIADB_DATABASE = "ssb",
                     )
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+            if ("MariaDBCS" in args.dbms):
+                # MariaDB ColumnStore (reuses MariaDB's loading job; own scripts)
+                # one loader pod, whatever -nlp says: concurrent LOAD DATA into a table fails with
+                # error 1030 and the loader goes on, so rows would be missing (cpimport works in parallel)
+                if int(loading_pods_total) > 1:
+                    print('MariaDBCS: loads with 1 pod, ignoring -nlp ' + str(loading_pods_total))
+                config = configurations.default(experiment=experiment, docker='MariaDBCS', dialect='MySQL', alias='DBMS A8')
+                # With -ar: ANALYZE TABLE before each round; no dirty pages and no counters to reset
+                config.set_benchmark_resetscript(['reset-ssb.sql' if schema_variant == 'normal' else 'reset-ssb-flat.sql'])
+                config.set_storage(
+                    storageConfiguration = 'mariadbcs'
+                    )
+                config.jobtemplate_loading = "jobtemplate-loading-ssb-MariaDB.yml"
+                config.set_loading_parameters(
+                    PODS_TOTAL = "1",
+                    PODS_PARALLEL = "1",
+                    )
+                config.set_benchmarking_parameters()
+                # the container creates the database and grants it to the user bexhoma
+                config.set_sut_parameters(
+                    MARIADB_DATABASE = "ssb",
+                    )
+                config.set_loading(parallel=1, num_pods=1)
             if ("ClickHouseCluster" in args.dbms):
                 # ClickHouse cluster: coordinator (SUT) and num_worker shards
                 config = configurations.default(experiment=experiment, docker='ClickHouseCluster', dialect='Clickhouse', alias='DBMS C1', worker=num_worker)

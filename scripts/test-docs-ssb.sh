@@ -591,6 +591,47 @@ bexhoma ssb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB PgDuckDB  sf=1"
 
 
+#### SSB CedarDB (Example-SSB.md)
+# -dbms CedarDB                DBMS under test
+# -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
+# -xii                          create indexes after data load
+# -xic                          add primary and foreign keys after data load
+# -xis                          run statistics after data load
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
+# -xdt                          also measure data transfer volume per query
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -ks no                        remove the SUT at the end
+bexhoma ssb \
+  -dbms CedarDB \
+  -sf 1 \
+  -xii \
+  -xic \
+  -xis \
+  -nlp 8 \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ks no \
+  run &>$LOG_DIR/docs_ssb_cedardb.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB CedarDB  sf=1"
+
+
 #### SSB Citus (Example-SSB.md)
 # -dbms Citus                   DBMS under test
 # -nw 3                         number of worker nodes

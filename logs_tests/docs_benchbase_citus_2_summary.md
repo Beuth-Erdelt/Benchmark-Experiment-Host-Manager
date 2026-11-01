@@ -3,14 +3,14 @@
 ### Workload
 Benchbase Workload tpcc SF=128
 * Type: benchbase
-* Duration: 7630s 
-* Code: 1792802242
+* Duration: 7549s 
+* Code: 1793437718
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 128. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 20 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.8.
+  * Experiment uses bexhoma version 0.11.11.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['Citus'].
   * Import is handled by 1 processes (pods).
@@ -30,12 +30,12 @@ Benchbase Workload tpcc SF=128
 
 ### Connections
 * citus-1-1-1-1 uses docker image citusdata/citus:14.2.0
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:965183
+  * disk:862789
   * datadisk:43
   * volume_size:98G
   * volume_used:43M
@@ -45,51 +45,51 @@ Benchbase Workload tpcc SF=128
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:2164173172736
+    * RAM:2164173156352
     * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
-    * host:6.8.0-137-generic
+    * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:965183
-    * datadisk:9469
+    * disk:862789
+    * datadisk:6466
     * volume_size:98G
-    * volume_used:9.3G
+    * volume_used:6.4G
     * cpu_list:0-223
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * worker 1
-    * RAM:540597891072
-    * CPU:Intel(R) Xeon(R) 6767P
-    * Cores:256
-    * host:6.8.0-137-generic
-    * node:cl-worker39
-    * disk:310740
-    * datadisk:7126
-    * volume_size:98G
-    * volume_used:7.0G
-    * cpu_list:0-255
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 2
-    * RAM:1081742753792
-    * CPU:AMD EPYC 7502 32-Core Processor
-    * Cores:128
-    * host:6.8.0-146-generic
-    * node:cl-worker29
-    * disk:471199
-    * datadisk:6425
-    * volume_size:98G
-    * volume_used:6.3G
-    * cpu_list:0-127
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 3
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:350817
-    * datadisk:7370
+    * disk:538980
+    * datadisk:8547
     * volume_size:98G
-    * volume_used:7.2G
+    * volume_used:8.4G
+    * cpu_list:0-127
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * worker 2
+    * RAM:540597891072
+    * CPU:Intel(R) Xeon(R) 6767P
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker39
+    * disk:234080
+    * datadisk:9264
+    * volume_size:98G
+    * volume_used:9.1G
+    * cpu_list:0-255
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * worker 3
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:573725
+    * datadisk:6218
+    * volume_size:98G
+    * volume_used:6.1G
     * cpu_list:0-127
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * resources_total: 20.0 CPU, 320.0 GiB RAM requested in 5 pods
@@ -97,143 +97,143 @@ Benchbase Workload tpcc SF=128
     * worker: 4 x, 16.0 CPU, 256.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792802242
+    * code:1793437718
     * BEXHOMA_REPLICAS:1
     * BEXHOMA_SHARDS:48
     * BEXHOMA_WORKERS:4
 * citus-1-1-2-1 uses docker image citusdata/citus:14.2.0
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:965514
-  * datadisk:463
+  * disk:862758
+  * datadisk:438
   * volume_size:98G
-  * volume_used:463M
+  * volume_used:438M
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:2164173172736
+    * RAM:2164173156352
     * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
-    * host:6.8.0-137-generic
+    * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:965515
-    * datadisk:26107
+    * disk:862758
+    * datadisk:18115
     * volume_size:98G
-    * volume_used:26G
+    * volume_used:18G
     * cpu_list:0-223
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * worker 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:538983
+    * datadisk:14940
+    * volume_size:98G
+    * volume_used:15G
+    * cpu_list:0-127
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * worker 2
     * RAM:540597891072
     * CPU:Intel(R) Xeon(R) 6767P
     * Cores:256
     * host:6.8.0-137-generic
     * node:cl-worker39
-    * disk:310741
-    * datadisk:11989
+    * disk:235771
+    * datadisk:16497
     * volume_size:98G
-    * volume_used:12G
+    * volume_used:17G
     * cpu_list:0-255
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 2
+  * worker 3
     * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:471200
-    * datadisk:10222
+    * disk:573725
+    * datadisk:10192
     * volume_size:98G
     * volume_used:10G
     * cpu_list:0-127
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 3
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:350819
-    * datadisk:12136
-    * volume_size:98G
-    * volume_used:12G
-    * cpu_list:0-127
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * resources_total: 20.0 CPU, 320.0 GiB RAM requested in 5 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
     * worker: 4 x, 16.0 CPU, 256.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792802242
+    * code:1793437718
     * BEXHOMA_REPLICAS:1
     * BEXHOMA_SHARDS:48
     * BEXHOMA_WORKERS:4
 * citus-1-1-3-1 uses docker image citusdata/citus:14.2.0
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:965528
-  * datadisk:509
+  * disk:863864
+  * datadisk:453
   * volume_size:98G
-  * volume_used:509M
+  * volume_used:453M
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:2164173172736
+    * RAM:2164173156352
     * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
-    * host:6.8.0-137-generic
+    * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:965528
-    * datadisk:41832
+    * disk:863864
+    * datadisk:27806
     * volume_size:98G
-    * volume_used:41G
+    * volume_used:28G
     * cpu_list:0-223
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * worker 1
-    * RAM:540597891072
-    * CPU:Intel(R) Xeon(R) 6767P
-    * Cores:256
-    * host:6.8.0-137-generic
-    * node:cl-worker39
-    * disk:310742
-    * datadisk:16078
-    * volume_size:98G
-    * volume_used:16G
-    * cpu_list:0-255
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 2
-    * RAM:1081742753792
-    * CPU:AMD EPYC 7502 32-Core Processor
-    * Cores:128
-    * host:6.8.0-146-generic
-    * node:cl-worker29
-    * disk:471201
-    * datadisk:16013
-    * volume_size:98G
-    * volume_used:16G
-    * cpu_list:0-127
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 3
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:350821
-    * datadisk:16102
+    * disk:538971
+    * datadisk:21581
     * volume_size:98G
-    * volume_used:16G
+    * volume_used:22G
+    * cpu_list:0-127
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * worker 2
+    * RAM:540597891072
+    * CPU:Intel(R) Xeon(R) 6767P
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker39
+    * disk:235798
+    * datadisk:23118
+    * volume_size:98G
+    * volume_used:23G
+    * cpu_list:0-255
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * worker 3
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:573726
+    * datadisk:14378
+    * volume_size:98G
+    * volume_used:15G
     * cpu_list:0-127
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * resources_total: 20.0 CPU, 320.0 GiB RAM requested in 5 pods
@@ -241,71 +241,71 @@ Benchbase Workload tpcc SF=128
     * worker: 4 x, 16.0 CPU, 256.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792802242
+    * code:1793437718
     * BEXHOMA_REPLICAS:1
     * BEXHOMA_SHARDS:48
     * BEXHOMA_WORKERS:4
 * citus-1-1-4-1 uses docker image citusdata/citus:14.2.0
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:965512
-  * datadisk:700
+  * disk:863624
+  * datadisk:730
   * volume_size:98G
-  * volume_used:700M
+  * volume_used:730M
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:2164173172736
+    * RAM:2164173156352
     * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
-    * host:6.8.0-137-generic
+    * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:965512
-    * datadisk:43052
+    * disk:863624
+    * datadisk:30951
     * volume_size:98G
-    * volume_used:43G
+    * volume_used:31G
     * cpu_list:0-223
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * worker 1
-    * RAM:540597891072
-    * CPU:Intel(R) Xeon(R) 6767P
-    * Cores:256
-    * host:6.8.0-137-generic
-    * node:cl-worker39
-    * disk:310722
-    * datadisk:20365
-    * volume_size:98G
-    * volume_used:20G
-    * cpu_list:0-255
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 2
-    * RAM:1081742753792
-    * CPU:AMD EPYC 7502 32-Core Processor
-    * Cores:128
-    * host:6.8.0-146-generic
-    * node:cl-worker29
-    * disk:471202
-    * datadisk:20583
-    * volume_size:98G
-    * volume_used:21G
-    * cpu_list:0-127
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 3
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:350823
-    * datadisk:17961
+    * disk:540124
+    * datadisk:23948
     * volume_size:98G
-    * volume_used:18G
+    * volume_used:24G
+    * cpu_list:0-127
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * worker 2
+    * RAM:540597891072
+    * CPU:Intel(R) Xeon(R) 6767P
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker39
+    * disk:235807
+    * datadisk:25856
+    * volume_size:98G
+    * volume_used:26G
+    * cpu_list:0-255
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * worker 3
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:575684
+    * datadisk:17299
+    * volume_size:98G
+    * volume_used:17G
     * cpu_list:0-127
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * resources_total: 20.0 CPU, 320.0 GiB RAM requested in 5 pods
@@ -313,17 +313,17 @@ Benchbase Workload tpcc SF=128
     * worker: 4 x, 16.0 CPU, 256.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792802242
+    * code:1793437718
     * BEXHOMA_REPLICAS:1
     * BEXHOMA_SHARDS:48
     * BEXHOMA_WORKERS:4
 
 ### SUT Container Restarts
-* bexhoma-sut-citus-1-1792802242-678c5bfdbc-vx62g: 0
-* bexhoma-worker-citus-nvme-benchbase-tpcc-128-0: 0
-* bexhoma-worker-citus-nvme-benchbase-tpcc-128-1: 0
-* bexhoma-worker-citus-nvme-benchbase-tpcc-128-2: 0
-* bexhoma-worker-citus-nvme-benchbase-tpcc-128-3: 0
+* bexhoma-sut-citus-1-1793437718-6685597896-g7z6v: 0
+* bx-w-citus-nvme-benchbase-tpcc-128-0: 0
+* bx-w-citus-nvme-benchbase-tpcc-128-1: 0
+* bx-w-citus-nvme-benchbase-tpcc-128-2: 0
+* bx-w-citus-nvme-benchbase-tpcc-128-3: 0
 
 ### Workflow
 
@@ -347,7 +347,7 @@ Benchbase Workload tpcc SF=128
 
 |           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| Citus-1-1 |                1 |  128 |     1740.00 |           6.00 |            0.00 |       1719.00 |           15.00 |              1 |           1 |             | None           |             0 | False         |              264.83 | False               |
+| Citus-1-1 |                1 |  128 |     1719.00 |           4.00 |            0.00 |       1699.00 |           16.00 |              1 |           1 |             | None           |             0 | False         |              268.06 | False               |
 
 ### Benchmarking
 
@@ -355,30 +355,30 @@ Benchbase Workload tpcc SF=128
 
 | DBMS            | phase       | job           |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |    time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------|:------------|:--------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|--------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| citus-1-1-1-1-1 | citus-1-1-1 | citus-1-1-1-1 |                1 |          64 |    16384 |        1 |               1 |       1 |          -1 | 1200.00 |            0 |                        5718.52 |                     5692.88 |         0.00 |                                                      27678.00 |                                              11189.00 |
-| citus-1-1-2-1-1 | citus-1-1-2 | citus-1-1-2-1 |                1 |          32 |     8192 |        2 |               1 |       1 |          -1 | 1200.00 |            9 |                        2677.84 |                     2655.36 |         0.00 |                                                      29347.00 |                                              11945.00 |
-| citus-1-1-2-1-2 | citus-1-1-2 | citus-1-1-2-1 |                1 |          32 |     8192 |        2 |               1 |       2 |          -1 | 1200.00 |            8 |                        2649.75 |                     2627.66 |         0.00 |                                                      29700.00 |                                              12072.00 |
-| citus-1-1-3-1-1 | citus-1-1-3 | citus-1-1-3-1 |                1 |          16 |     4096 |        3 |               1 |       1 |          -1 | 1200.00 |            8 |                         909.44 |                      897.78 |         0.00 |                                                      37293.00 |                                              17587.00 |
-| citus-1-1-3-1-2 | citus-1-1-3 | citus-1-1-3-1 |                1 |          16 |     4096 |        3 |               1 |       2 |          -1 | 1200.00 |           10 |                         909.09 |                      897.43 |         0.00 |                                                      37115.00 |                                              17594.00 |
-| citus-1-1-3-1-3 | citus-1-1-3 | citus-1-1-3-1 |                1 |          16 |     4096 |        3 |               1 |       3 |          -1 | 1200.00 |           11 |                         882.41 |                      871.09 |         0.00 |                                                      38029.00 |                                              18126.00 |
-| citus-1-1-3-1-4 | citus-1-1-3 | citus-1-1-3-1 |                1 |          16 |     4096 |        3 |               1 |       4 |          -1 | 1200.00 |            7 |                         887.84 |                      876.28 |         0.00 |                                                      37653.00 |                                              18015.00 |
-| citus-1-1-4-1-1 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       1 |          -1 | 1200.00 |            3 |                         258.44 |                      254.78 |         0.00 |                                                      81721.00 |                                              30943.00 |
-| citus-1-1-4-1-2 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       2 |          -1 | 1200.00 |            2 |                         255.33 |                      251.86 |         0.00 |                                                      82621.00 |                                              31320.00 |
-| citus-1-1-4-1-3 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       3 |          -1 | 1200.00 |            2 |                         250.25 |                      246.82 |         0.00 |                                                      85086.00 |                                              31960.00 |
-| citus-1-1-4-1-4 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       4 |          -1 | 1200.00 |            3 |                         246.84 |                      243.40 |         0.00 |                                                      86317.00 |                                              32397.00 |
-| citus-1-1-4-1-5 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       5 |          -1 | 1200.00 |            6 |                         247.24 |                      243.76 |         0.00 |                                                      87226.00 |                                              32345.00 |
-| citus-1-1-4-1-6 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       6 |          -1 | 1200.00 |            2 |                         254.95 |                      251.45 |         0.00 |                                                      82066.00 |                                              31371.00 |
-| citus-1-1-4-1-7 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       7 |          -1 | 1200.00 |            4 |                         263.09 |                      259.55 |         0.00 |                                                      79603.00 |                                              30396.00 |
-| citus-1-1-4-1-8 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       8 |          -1 | 1200.00 |            2 |                         257.44 |                      253.85 |         0.00 |                                                      82892.00 |                                              31064.00 |
+| citus-1-1-1-1-1 | citus-1-1-1 | citus-1-1-1-1 |                1 |          64 |    16384 |        1 |               1 |       1 |          -1 | 1200.00 |            0 |                        5417.35 |                     5393.26 |         0.00 |                                                      31178.00 |                                              11810.00 |
+| citus-1-1-2-1-1 | citus-1-1-2 | citus-1-1-2-1 |                1 |          32 |     8192 |        2 |               1 |       1 |          -1 | 1200.00 |            9 |                        2441.27 |                     2420.73 |         0.00 |                                                      33646.00 |                                              13103.00 |
+| citus-1-1-2-1-2 | citus-1-1-2 | citus-1-1-2-1 |                1 |          32 |     8192 |        2 |               1 |       2 |          -1 | 1200.00 |           11 |                        2427.75 |                     2407.35 |         0.00 |                                                      33599.00 |                                              13176.00 |
+| citus-1-1-3-1-1 | citus-1-1-3 | citus-1-1-3-1 |                1 |          16 |     4096 |        3 |               1 |       1 |          -1 | 1200.00 |           15 |                         979.87 |                      967.28 |         0.00 |                                                      39320.00 |                                              16321.00 |
+| citus-1-1-3-1-2 | citus-1-1-3 | citus-1-1-3-1 |                1 |          16 |     4096 |        3 |               1 |       2 |          -1 | 1200.00 |            6 |                        1001.69 |                      988.98 |         0.00 |                                                      38210.00 |                                              15966.00 |
+| citus-1-1-3-1-3 | citus-1-1-3 | citus-1-1-3-1 |                1 |          16 |     4096 |        3 |               1 |       3 |          -1 | 1200.00 |           16 |                         988.64 |                      975.84 |         0.00 |                                                      39114.00 |                                              16177.00 |
+| citus-1-1-3-1-4 | citus-1-1-3 | citus-1-1-3-1 |                1 |          16 |     4096 |        3 |               1 |       4 |          -1 | 1200.00 |            6 |                         981.39 |                      968.94 |         0.00 |                                                      39105.00 |                                              16297.00 |
+| citus-1-1-4-1-1 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       1 |          -1 | 1200.00 |            7 |                         303.49 |                      299.33 |         0.00 |                                                      74694.00 |                                              26348.00 |
+| citus-1-1-4-1-2 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       2 |          -1 | 1200.00 |            4 |                         298.71 |                      294.60 |         0.00 |                                                      76878.00 |                                              26772.00 |
+| citus-1-1-4-1-3 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       3 |          -1 | 1200.00 |            4 |                         296.75 |                      292.75 |         0.00 |                                                      76748.00 |                                              26948.00 |
+| citus-1-1-4-1-4 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       4 |          -1 | 1200.00 |            3 |                         305.33 |                      301.12 |         0.00 |                                                      74731.00 |                                              26191.00 |
+| citus-1-1-4-1-5 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       5 |          -1 | 1200.00 |            1 |                         292.95 |                      288.94 |         0.00 |                                                      78030.00 |                                              27298.00 |
+| citus-1-1-4-1-6 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       6 |          -1 | 1200.00 |            2 |                         305.84 |                      301.71 |         0.00 |                                                      72160.00 |                                              26147.00 |
+| citus-1-1-4-1-7 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       7 |          -1 | 1200.00 |            4 |                         298.09 |                      293.99 |         0.00 |                                                      74966.00 |                                              26825.00 |
+| citus-1-1-4-1-8 | citus-1-1-4 | citus-1-1-4-1 |                1 |           8 |     2048 |        4 |               1 |       8 |          -1 | 1200.00 |            4 |                         301.19 |                      297.04 |         0.00 |                                                      75306.00 |                                              26551.00 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |    time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:------------|:------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|--------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| citus-1-1-1 | citus-1-1-1 |                1 |          64 |    16384 |               1 |           1 |          -1 | 1200.00 |            0 |                        5718.52 |                     5692.88 |         0.00 |                                                      27678.00 |                                              11189.00 |
-| citus-1-1-2 | citus-1-1-2 |                1 |          64 |    16384 |               1 |           2 |          -1 | 1200.00 |           17 |                        5327.59 |                     5283.02 |         0.00 |                                                      29700.00 |                                              12008.50 |
-| citus-1-1-3 | citus-1-1-3 |                1 |          64 |    16384 |               1 |           4 |          -1 | 1200.00 |           36 |                        3588.78 |                     3542.58 |         0.00 |                                                      38029.00 |                                              17830.50 |
-| citus-1-1-4 | citus-1-1-4 |                1 |          64 |    16384 |               1 |           8 |          -1 | 1200.00 |           24 |                        2033.60 |                     2005.49 |         0.00 |                                                      87226.00 |                                              31474.50 |
+| citus-1-1-1 | citus-1-1-1 |                1 |          64 |    16384 |               1 |           1 |          -1 | 1200.00 |            0 |                        5417.35 |                     5393.26 |         0.00 |                                                      31178.00 |                                              11810.00 |
+| citus-1-1-2 | citus-1-1-2 |                1 |          64 |    16384 |               1 |           2 |          -1 | 1200.00 |           20 |                        4869.02 |                     4828.08 |         0.00 |                                                      33646.00 |                                              13139.50 |
+| citus-1-1-3 | citus-1-1-3 |                1 |          64 |    16384 |               1 |           4 |          -1 | 1200.00 |           43 |                        3951.59 |                     3901.05 |         0.00 |                                                      39320.00 |                                              16190.25 |
+| citus-1-1-4 | citus-1-1-4 |                1 |          64 |    16384 |               1 |           8 |          -1 | 1200.00 |           29 |                        2402.34 |                     2369.48 |         0.00 |                                                      78030.00 |                                              26635.00 |
 
 ### Monitoring
 
@@ -386,55 +386,55 @@ Benchbase Workload tpcc SF=128
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| citus-1-1-1-1 |       777.27 |      2.88 |           1.86 |                  1.90 |
-| citus-1-1-2-1 |       777.27 |      2.88 |           1.86 |                  1.90 |
-| citus-1-1-3-1 |       777.27 |      2.88 |           1.86 |                  1.90 |
-| citus-1-1-4-1 |       777.27 |      2.88 |           1.86 |                  1.90 |
+| citus-1-1-1-1 |       870.48 |      2.67 |           2.07 |                  2.11 |
+| citus-1-1-2-1 |       870.48 |      2.67 |           2.07 |                  2.11 |
+| citus-1-1-3-1 |       870.48 |      2.67 |           2.07 |                  2.11 |
+| citus-1-1-4-1 |       870.48 |      2.67 |           2.07 |                  2.11 |
 
 ### Loading phase: component worker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| citus-1-1-1-1 |      4176.69 |      9.80 |          16.34 |                 45.98 |
-| citus-1-1-2-1 |      4176.69 |      9.80 |          16.34 |                 45.98 |
-| citus-1-1-3-1 |      4176.69 |      9.80 |          16.34 |                 45.98 |
-| citus-1-1-4-1 |      4176.69 |      9.80 |          16.34 |                 45.98 |
+| citus-1-1-1-1 |      4681.64 |      8.82 |          15.83 |                 45.53 |
+| citus-1-1-2-1 |      4681.64 |      8.82 |          15.83 |                 45.53 |
+| citus-1-1-3-1 |      4681.64 |      8.82 |          15.83 |                 45.53 |
+| citus-1-1-4-1 |      4681.64 |      8.82 |          15.83 |                 45.53 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| citus-1-1-1-1 |    181178.57 |    121.33 |           0.33 |                  0.33 |
-| citus-1-1-2-1 |    181178.57 |    121.33 |           0.33 |                  0.33 |
-| citus-1-1-3-1 |    181178.57 |    121.33 |           0.33 |                  0.33 |
-| citus-1-1-4-1 |    181178.57 |    121.33 |           0.33 |                  0.33 |
+| citus-1-1-1-1 |    189554.53 |    120.94 |           0.40 |                  0.40 |
+| citus-1-1-2-1 |    189554.53 |    120.94 |           0.40 |                  0.40 |
+| citus-1-1-3-1 |    189554.53 |    120.94 |           0.40 |                  0.40 |
+| citus-1-1-4-1 |    189554.53 |    120.94 |           0.40 |                  0.40 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| citus-1-1-1-1 |     15372.42 |     14.03 |           0.91 |                  1.36 |
-| citus-1-1-2-1 |     13645.48 |     11.87 |           0.91 |                  1.41 |
-| citus-1-1-3-1 |      8465.62 |      8.17 |           0.92 |                  1.60 |
-| citus-1-1-4-1 |      4247.09 |      4.08 |           0.92 |                  1.73 |
+| citus-1-1-1-1 |     15305.20 |     13.60 |           0.90 |                  1.32 |
+| citus-1-1-2-1 |     13501.65 |     12.45 |           0.90 |                  1.33 |
+| citus-1-1-3-1 |     10421.12 |     10.18 |           0.91 |                  1.62 |
+| citus-1-1-4-1 |      5778.91 |      5.34 |           0.91 |                  1.78 |
 
 ### Benchmarking phase: component worker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| citus-1-1-1-1 |     33465.32 |     31.25 |          26.53 |                 85.30 |
-| citus-1-1-2-1 |     31354.04 |     28.23 |          33.07 |                120.61 |
-| citus-1-1-3-1 |     23900.15 |     23.12 |          36.97 |                136.42 |
-| citus-1-1-4-1 |     14002.64 |     13.22 |          38.91 |                141.19 |
+| citus-1-1-1-1 |     35092.91 |     31.66 |          26.43 |                 83.89 |
+| citus-1-1-2-1 |     33423.49 |     29.02 |          32.32 |                116.90 |
+| citus-1-1-3-1 |     25439.45 |     22.44 |          36.50 |                132.15 |
+| citus-1-1-4-1 |     12618.53 |     11.30 |          39.08 |                144.26 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| citus-1-1-1-1 |      7008.43 |      6.45 |           1.00 |                  1.00 |
-| citus-1-1-2-1 |      7656.96 |      6.85 |           0.68 |                  0.70 |
-| citus-1-1-3-1 |      5473.37 |      5.13 |           0.41 |                  0.41 |
-| citus-1-1-4-1 |      2778.79 |      2.98 |           0.29 |                  0.29 |
+| citus-1-1-1-1 |      7301.16 |      6.62 |           0.94 |                  0.94 |
+| citus-1-1-2-1 |      7123.43 |      6.29 |           0.86 |                  0.89 |
+| citus-1-1-3-1 |      6398.81 |      6.57 |           0.41 |                  0.41 |
+| citus-1-1-4-1 |      3971.19 |      5.02 |           0.30 |                  0.30 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection citus-1-1-1-1 (bexhoma-metrics-citus-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -470,6 +470,8 @@ Benchbase Workload tpcc SF=128
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]

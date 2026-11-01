@@ -4,21 +4,23 @@
     <!-- Connection details -->
     <type>COCKROACHDB</type>
     <driver>org.postgresql.Driver</driver>
-    <url>jdbc:postgresql://localhost:26257/benchbase?sslmode=disable&amp;ApplicationName=seats&amp;reWriteBatchedInserts=true</url>
-    <username>root</username>
-    <password></password>
-    <isolation>TRANSACTION_SERIALIZABLE</isolation>
-    <batchsize>128</batchsize>
+    <url>jdbc:postgresql://BEXHOMA_HOST:BEXHOMA_PORT/BEXHOMA_DATABASE?sslmode=disable&amp;ApplicationName=seats&amp;reWriteBatchedInserts=true</url>
+    <username>BEXHOMA_USER</username>
+    <password>BEXHOMA_PASSWORD</password>
+    <isolation>BENCHBASE_ISOLATION</isolation>
+    <batchsize>BENCHBASE_BATCHSIZE</batchsize>
+    <newConnectionPerTxn>BENCHBASE_NEWCONNPERTXN</newConnectionPerTxn>
 
     <!-- Scalefactor in SEATS scales by *1000 the number of customers-->
-    <scalefactor>1</scalefactor>
+    <scalefactor>BEXHOMA_SF</scalefactor>
 
     <!-- The workload -->
-    <terminals>1</terminals>
+    <terminals>BENCHBASE_TERMINALS</terminals>
     <works>
         <work>
-            <time>300</time>
-            <rate>10000</rate>
+            <time>BENCHBASE_TIME</time>
+            <warmup>BENCHBASE_WARMUP</warmup>
+            <rate>BENCHBASE_TARGET</rate>
             <weights>10, 10, 35, 20, 10, 15</weights>
         </work>
     </works>

@@ -57,46 +57,61 @@ parameter substitution.
 A query is overridden for a system when the connection name starts with the override key (case-insensitive)
 or when the connection's `dialect` equals it. MariaDB and MySQL connections both have the dialect `MySQL`, but a
 `mariadb-…` connection also matches the `MariaDB` key, so the two can run different SQL.
+A `mariadbcs-…` connection (MariaDB ColumnStore) matches the keys `MariaDB` and `MariaDBCS`; the last key in the query wins, so `MariaDBCS` comes last.
 
-39 queries carry a `'DBMS'` key with dialect-specific SQL for one or more systems:
+53 queries carry a `'DBMS'` key with dialect-specific SQL for one or more systems:
 
 | Query | DBMS overrides | Reason |
 |-------|---------------|--------|
 | Q1 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`store_limit`) |
 | Q5 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround (MariaDB <10.4); `GROUP BY ROLLUP` syntax differences |
-| Q6 | ClickHouse | Correlated scalar subquery rewritten as a join with the per-category average |
+| Q6 | ClickHouse, MariaDBCS | Correlated scalar subquery rewritten as a join with the per-category average; MariaDBCS: scalar subqueries as derived tables |
 | Q7 | MonetDB | Averages computed as `double` (MonetDB averages `DECIMAL` columns with two decimals) |
-| Q10 | ClickHouse | `EXISTS` rewritten as `IN` |
-| Q14a+b | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `INTERSECT` substitute (MariaDB); dialect-specific SQL for the others |
+| Q8 | MariaDBCS | `INTERSECT` as `GROUP BY ... HAVING count(*) = 2` |
+| Q9 | MariaDBCS | All buckets as conditional aggregates of one scan |
+| Q10 | ClickHouse, MariaDBCS | `EXISTS` rewritten as `IN`; MariaDBCS: `EXISTS ... OR EXISTS` as a join with a `UNION` |
+| Q14a+b | Exasol, MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `INTERSECT` substitute (MariaDB); dialect-specific SQL for the others; MariaDBCS: `INTERSECT` as `GROUP BY ... HAVING count(*) = 3`, rollup by a join with one row per level |
 | Q16 | ClickHouse | `EXISTS` on another warehouse rewritten as `IN` over `GROUP BY … HAVING` |
-| Q18 | MariaDB, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences |
-| Q22 | MariaDB, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences |
+| Q18 | MariaDB, MariaDBCS, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDBCS emulates the rollup with `UNION ALL` |
+| Q21 | MariaDBCS | `CAST(... AS FLOAT)` as `+ 0.0e0` |
+| Q22 | MariaDB, MariaDBCS, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDBCS emulates the rollup with `UNION ALL` |
+| Q23a+b | MariaDBCS | Scalar subquery in `HAVING` as a join |
 | Q26 | MonetDB | Averages computed as `double` (MonetDB averages `DECIMAL` columns with two decimals) |
-| Q27 | MariaDB, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; the MariaDB version wraps the rollup so that an `ORDER BY` is possible |
+| Q27 | MariaDB, MariaDBCS, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; the MariaDB version wraps the rollup so that an `ORDER BY` is possible; MariaDBCS emulates the rollup with `UNION ALL` |
+| Q28 | MariaDBCS | Cross join as a join on a constant key |
 | Q30 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`state_limit`) |
 | Q31 | ClickHouse | Numerators of the quarterly ratios converted with `toFloat64` (ClickHouse truncates `Decimal` division) |
 | Q32 | ClickHouse | Correlated scalar subquery rewritten as a join (`limit_item_sk`) |
-| Q35 | ClickHouse | `EXISTS` rewritten as `IN` |
-| Q36 | MariaDB, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDB maps real NULLs to a sentinel because it has no `GROUPING()` |
+| Q33 | ClickHouse, PostgreSQL | `NULLS FIRST`, as these two sort NULL last |
+| Q35 | ClickHouse, MariaDBCS | `EXISTS` rewritten as `IN`; MariaDBCS: `EXISTS ... OR EXISTS` as a join with a `UNION` |
+| Q36 | MariaDB, MariaDBCS, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDB maps real NULLs to a sentinel because it has no `GROUPING()`; MariaDBCS emulates the rollup with `UNION ALL` |
+| Q38 | MariaDBCS | `INTERSECT` as `GROUP BY ... HAVING count(*) = 3` |
 | Q41 | ClickHouse | Correlated count rewritten as `IN` over `i_manufact` |
-| Q44 | MonetDB | Averages computed as `double` (MonetDB averages `DECIMAL` columns with two decimals) |
-| Q47 | ClickHouse | Alias and CTE qualification adjusted |
+| Q44 | MariaDBCS, MonetDB | Averages computed as `double` (MonetDB averages `DECIMAL` columns with two decimals); MariaDBCS: scalar subquery in `HAVING` as a join |
+| Q45 | MariaDBCS | `IN` subquery in `OR` as a `LEFT JOIN` |
+| Q47 | ClickHouse, MariaDBCS | Alias and CTE qualification adjusted (ClickHouse); `lag()`/`lead()` instead of self joins, filter as `HAVING` (MariaDBCS) |
 | Q49 | ClickHouse | Union wrapped as a derived table |
 | Q51 | MySQL | `FULL OUTER JOIN` not supported; rewritten with `UNION ALL` |
 | Q54 | MySQL | `CAST(… AS INT)` not supported; replaced by `CAST(… AS SIGNED)` |
-| Q57 | ClickHouse | Alias and CTE qualification adjusted |
+| Q56 | ClickHouse, PostgreSQL | `NULLS FIRST`, as these two sort NULL last |
+| Q57 | ClickHouse, MariaDBCS | Alias and CTE qualification adjusted (ClickHouse); `lag()`/`lead()` instead of self joins, filter as `HAVING` (MariaDBCS) |
 | Q58 | ClickHouse, MonetDB | Alias adjusted (ClickHouse); numerators converted with `+ 0.0e0` (MonetDB, which rounds `DECIMAL` division) |
+| Q61 | MariaDBCS | Cross join as a join on a constant key |
 | Q66 | ClickHouse, MonetDB, PostgreSQL | String concatenation `\|\|` → `CONCAT()`; derived-table qualification (ClickHouse) |
-| Q67 | MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences |
+| Q67 | MariaDBCS, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDBCS emulates the rollup with `UNION ALL` |
 | Q69 | ClickHouse | `EXISTS` / `NOT EXISTS` rewritten as `IN` / `NOT IN` |
-| Q70 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MonetDB emulates the rollup with `UNION ALL` (grand-total rank 1, subtotal ranks across all states) |
-| Q72 | MariaDB | `STRAIGHT_JOIN`; the days of the same week are reached as primary-key lookups (`d_date_sk` ±6 with the same `d_week_seq`) instead of a full scan of `date_dim`, then `inventory` by its primary key (default plan over 15 minutes, now seconds). Assumes the days of a week lie within 6 `d_date_sk` values of each other |
-| Q77 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP` syntax differences |
+| Q70 | Exasol, MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MonetDB emulates the rollup with `UNION ALL` (grand-total rank 1, subtotal ranks across all states); MariaDBCS emulates it too and ranks the levels afterwards |
+| Q72 | MariaDB, MariaDBCS | MariaDBCS: the days of a week as CTE `date_pairs`. MariaDB: `STRAIGHT_JOIN`; the days of the same week are reached as primary-key lookups (`d_date_sk` ±6 with the same `d_week_seq`) instead of a full scan of `date_dim`, then `inventory` by its primary key (default plan over 15 minutes, now seconds). Assumes the days of a week lie within 6 `d_date_sk` values of each other |
+| Q77 | Exasol, MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP` syntax differences; MariaDBCS: cross join as a join on a constant key, rollup by a join with one row per level |
 | Q80 | Exasol, MariaDB, MemSQL, MonetDB, MySQL, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP`; MariaDB/MySQL use `concat()` because `\|\|` is logical OR there |
 | Q81 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`state_limit`) |
 | Q84 | MonetDB, PostgreSQL | String concatenation `\|\|` → `CONCAT()` |
-| Q86 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDB maps real NULLs to a sentinel because it has no `GROUPING()` |
+| Q86 | Exasol, MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDB maps real NULLs to a sentinel because it has no `GROUPING()`; MariaDBCS emulates the rollup with `UNION ALL` |
+| Q87 | MariaDBCS | `EXCEPT` as `GROUP BY ... HAVING` |
+| Q88 | MariaDBCS | Cross join as a join on a constant key |
+| Q90 | MariaDBCS | Cross join as a join on a constant key |
 | Q92 | ClickHouse | Correlated scalar subquery rewritten as a join (`limit_item_sk`) |
+| Q93 | MariaDBCS | `LEFT JOIN` with a filter on the outer table in `WHERE` written as inner joins |
 | Q94 | ClickHouse, MariaDB | `EXISTS` / `NOT EXISTS` on another warehouse rewritten as `IN` over `GROUP BY … HAVING count(distinct ws_warehouse_sk) > 1` (ClickHouse does not decorrelate; MariaDB took over 15 minutes) |
 | Q95 | MariaDB | The `web_sales` self join is replaced by the orders with more than one warehouse (`GROUP BY … HAVING count(distinct ws_warehouse_sk) > 1`) |
 | Q97 | MySQL | `FULL OUTER JOIN` not supported; rewritten with `UNION ALL + GROUP BY` |
@@ -144,13 +159,26 @@ overrides above; the reasons are:
 | MariaDB | Q95 | The `web_sales` self join replaced by the set of orders with more than one warehouse |
 | MariaDB | Q72 | `STRAIGHT_JOIN` (an optimizer hint) and day-by-day primary-key lookups on `date_dim`. **Assumes the days of one week lie within 6 `d_date_sk` values of each other**, which holds for the TPC-DS calendar |
 | MariaDB | Q27, Q36, Q86 | MariaDB has no `GROUPING()` and no `ORDER BY` next to `ROLLUP`: the rollup is wrapped in a derived table, and real NULL categories are mapped to the sentinel `'~'` before the rollup so that they are not taken for subtotals |
+| MariaDBCS | Q18, Q22, Q27, Q36, Q67, Q70, Q86 | `WITH ROLLUP` emulated: the joins and filters go into the CTE `rollup_input`, each rollup level is its own `GROUP BY`, with `NULL` for the dropped columns, joined by `UNION ALL`. Q70 ranks the levels afterwards. **Remarks:** this is not a minor modification in the TPC's sense. `WITH ROLLUP` directly on a table kills `PrimProc` (ColumnStore 25.10.6), and `WITH ROLLUP` on a derived table runs but gives wrong results. Each level reads `rollup_input` again, so the timings of these queries are not those of a rollup |
+| MariaDBCS | Q47, Q57 | `lag()` and `lead()` in the CTE `v1` instead of two self joins of it, and the final filter as `HAVING` of an outer `GROUP BY` over all columns. **Remarks:** ColumnStore mixes up the instances of the CTE, and a `WHERE` on a CTE reaches its window functions |
+| MariaDBCS | Q72 | The days of a week as CTE `date_pairs`. **Remarks:** the join with computed keys of the MariaDB variant gives no rows and no error in ColumnStore, the main text exceeds the memory of the join |
+| MariaDBCS | Q93 | Inner joins instead of `LEFT JOIN`, which is the same because of the filter on `sr_reason_sk`. **Remarks:** ColumnStore keeps the rows without a match |
+| MariaDBCS | Q8, Q14, Q38, Q87 | `INTERSECT` and `EXCEPT` are not supported: `UNION ALL` of the distinct rows, then `GROUP BY ... HAVING` on how many of the parts have a row. NULLs count as equal, as in `INTERSECT` |
+| MariaDBCS | Q28, Q61, Q77, Q88, Q90 | A cross join of subqueries is refused: each gets a constant column, joined on it |
+| MariaDBCS | Q10, Q35 | `EXISTS ... OR EXISTS` is refused, and so is a `UNION` in `IN`: a join with the `UNION` of the customers as a derived table |
+| MariaDBCS | Q45 | `IN` subquery in `OR` is refused: a `LEFT JOIN` with the items, `IS NOT NULL` in the `OR` |
+| MariaDBCS | Q6, Q23, Q44 | Scalar subqueries in a function or in `HAVING` are refused: derived tables, joined |
+| MariaDBCS | Q9 | A subquery in `SELECT` is refused: all buckets as conditional aggregates of one scan of `store_sales`. **Remark:** the row of `reason` is left out, it only gives the one row of the result |
+| MariaDBCS | Q21 | `CAST(... AS FLOAT)` is refused: `+ 0.0e0` |
+| ClickHouse, PostgreSQL | Q33, Q56 | `ORDER BY total_sales NULLS FIRST`. The main text is the reference query, MySQL, MariaDB, MariaDBCS and MonetDB sort NULL first by default. `ORDER BY total_sales IS NOT NULL, total_sales` does not work here: `total_sales` in an expression means the column of the inner query. PostgreSQL refuses that, MySQL and MariaDB sort by the wrong value |
+| MariaDBCS | Q14, Q77 | Rollup by a join with one row per level, grouped by the level and the kept columns, so the expensive input is read once (a `UNION ALL` per level took more than 280 s for Q14, and the server died at 32 GiB) |
 | MariaDB, MySQL | Q80 | `concat()` instead of `\|\|`, which is logical OR there |
 | MonetDB | Q70 | `ROLLUP` emulated with three `UNION ALL` blocks (grand total rank 1, subtotal ranks across all states) |
 | MonetDB | Q7, Q18, Q26, Q44, Q58 | Averages and numerators as `double`, because MonetDB rounds `DECIMAL` averages and divisions to two decimals |
 | MySQL | Q51, Q97 | `FULL OUTER JOIN` rewritten with `UNION ALL` |
 | MariaDB | Q5, Q14, Q77, Q80 | Nested CTE workaround (MariaDB <10.4) |
 | all | Q12, Q20, Q36, Q98, Q78 | `(sum(x)+0.0e0)*100/…` and `ss_qty*1.0/…` instead of plain division: the same value, but ClickHouse no longer truncates `Decimal` division and PostgreSQL and MonetDB no longer divide integers |
-| all | Q5, Q12, Q15, Q18, Q20, Q21, Q22, Q27, Q33, Q35, Q36, Q51, Q56, Q62, Q65, Q67, Q70, Q72, Q74, Q76, Q79, Q80, Q86, Q93, Q99 | Explicit NULL ordering: `ORDER BY col IS NOT NULL, col` puts NULLs **first** on every system (MySQL, MariaDB and MonetDB do this by default; PostgreSQL and ClickHouse sort NULLs last) |
+| all | Q5, Q12, Q15, Q18, Q20, Q21, Q22, Q27, Q35, Q36, Q51, Q62, Q65, Q67, Q70, Q72, Q74, Q76, Q79, Q80, Q86, Q93, Q99 | Explicit NULL ordering: `ORDER BY col IS NOT NULL, col` puts NULLs **first** on every system (MySQL, MariaDB and MonetDB do this by default; PostgreSQL and ClickHouse sort NULLs last) |
 | all | Q72 | The column `d1.d_week_seq` is aliased `d_week_seq`, because ClickHouse otherwise labels it `D1.D_WEEK_SEQ` and the result comparison treats the column names as different |
 
 ### Syntactic Differences (same result set, dialect adaptation)
@@ -191,7 +219,7 @@ The two that still differ:
 | Query | Systems | Cause |
 |-------|---------|-------|
 | Q75 | ClickHouse, ClickHouseCluster | A rounded sum differs by 1 (float against decimal summation at a `.5` boundary) |
-| Q56 | MySQL, MariaDB, MonetDB vs. PostgreSQL, ClickHouse | `total_sales` can be NULL and the systems sort NULL first or last. Fixed afterwards with the same `is not null` ordering as elsewhere, not re-run |
+| Q56 | MySQL, MariaDB, MonetDB vs. PostgreSQL, ClickHouse | `total_sales` can be NULL and the systems sort NULL first or last. Fixed afterwards with `NULLS FIRST` for PostgreSQL and ClickHouse: Q33 and Q56 identical on all seven DBMS with 5 parameter sets at SF 1 |
 
 Q67 differed on MonetDB in an earlier run (rows near the `LIMIT` boundary); it agreed in the final run and the
 cause was not isolated.
@@ -217,7 +245,7 @@ The comparison is done by dbmsbenchmarker (`tools.py` and `benchmarker.py`), not
 
 | Cause | Queries | Change |
 |-------|---------|--------|
-| NULL sorts first in MySQL, MariaDB and MonetDB and last in PostgreSQL and ClickHouse, so `LIMIT` kept different rows | Q20, Q27, Q33, Q56, Q67, Q74, Q76, Q99 | `ORDER BY col is not null, col` (Q74 orders by a `CASE` over its three key columns) |
+| NULL sorts first in MySQL, MariaDB and MonetDB and last in PostgreSQL and ClickHouse, so `LIMIT` kept different rows | Q20, Q27, Q33, Q56, Q67, Q74, Q76, Q99 | `ORDER BY col is not null, col` (Q74 orders by a `CASE` over its three key columns); Q33 and Q56 `NULLS FIRST` for PostgreSQL and ClickHouse |
 | ClickHouse returned `''` instead of `NULL` for subtotal keys of `ROLLUP` | Q5, Q18, Q67, Q77, Q80 | `group_by_use_nulls = 1` in the ClickHouse deployment profile |
 | ClickHouse truncates `Decimal` division, MonetDB rounds `DECIMAL` division and averages to two decimals | Q7, Q12, Q18, Q20, Q26, Q31, Q36, Q44, Q58, Q66, Q98 | Numerator or average computed as `double` (`+ 0.0e0`, `toFloat64`, `cast(… as double)`), partly as MonetDB or ClickHouse overrides |
 | Integer division in PostgreSQL and MonetDB | Q78 | `ss_qty*1.0/…` |

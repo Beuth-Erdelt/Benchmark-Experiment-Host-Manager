@@ -1,0 +1,7 @@
+-- Benchmark-Experiment-Host-Manager | experiments/benchbase/ycsb/CedarDB
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2026 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Schema initialisation placeholder for benchbase YCSB on CedarDB.
+--          Benchbase creates the tables automatically at runtime.

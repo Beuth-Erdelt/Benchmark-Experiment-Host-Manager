@@ -54,14 +54,14 @@ Files whose names contain `filled` are generated variants with Bexhoma placehold
 | `PostgreSQL` | `public` or `{BEXHOMA_SCHEMA}` | `COPY … FROM … DELIMITER '\|' NULL ''` | PK + FK (combined ALTER TABLE) | `synchronous_commit` disabled during load; `-schema` variants available |
 | `MySQL` | `tpch` | `LOAD DATA INFILE … FIELDS TERMINATED BY '\|'` | PK + FK (combined ALTER TABLE) | `SET GLOBAL local_infile = 1`; zero-date mode disabled |
 | `MariaDB` | `tpch` | `LOAD DATA INFILE … FIELDS TERMINATED BY '\|'` | PK + FK (combined ALTER TABLE) | Same as MySQL |
-| `MariaDBCS` | `tpch` | `cpimport` bulk loader | None (columnar engine) | `engine=columnstore` on every table |
+| `MariaDBCS` | `tpch` | `LOAD DATA LOCAL` of the MariaDB loaders (`cpimport` inside), one pod | None (columnar engine) | `ENGINE = ColumnStore` on every table |
 | `Clickhouse` | `tpch` | `cat … \| clickhouse-client --format_csv_delimiter="\|"` | None | `ENGINE = MergeTree() ORDER BY …`; `Int32` / `Float64` types |
 | `CockroachDB` | varies | `COPY` / `INSERT` | PK + FK | PostgreSQL-compatible SQL |
 | `YugabyteDB` | varies | `COPY` | PK + FK | PostgreSQL-compatible SQL |
 | `DB2` | varies | SQL | PK + FK | IBM DB2 dialect |
 | `MonetDB` | varies | `COPY … INTO … FROM … USING DELIMITERS '\|'` | PK (FK optional) | `initschemadummy` variant used for loading |
-| `CedarDB` | `public` | `COPY … FROM … DELIMITER '\|' NULL ''` | PK + FK | `initschemadummy` variant used for loading |
-| `DatabaseService` | `public` | `COPY … FROM … DELIMITER '\|' NULL ''` | PK + FK | `initschemadummy` variant used for loading |
+| `CedarDB` | `public` | `COPY … FROM … DELIMITER '\|' NULL ''` | PK + FK | `\COPY` of the PostgreSQL loader with the plain schema; no SF100 (64 GiB limit) |
+| `DatabaseService` | `public` | `COPY … FROM … DELIMITER '\|' NULL ''` | PK + FK | `\COPY` of the PostgreSQL loader with the plain schema; no SF100 (64 GiB limit) |
 | `Exasol` | `public` | `IMPORT INTO … FROM LOCAL CSV FILE …` | PK (optimizer hint) + FK | PKs placed in `initindexes`; columnar zone maps replace secondary indexes |
 | `Kinetica` | (default) | SQL `INSERT` | PK | `CREATE REPLICATED TABLE` for dimensions; `SHARD KEY` for fact tables; replicated-only variant available |
 | `MemSQL` | `tpch` | `LOAD DATA INFILE … FIELDS TERMINATED BY '\|'` | PK (CLUSTERED COLUMNSTORE) | FK not supported; `ADD INDEX USING HASH` for lookups |

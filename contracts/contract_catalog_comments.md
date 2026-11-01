@@ -582,7 +582,7 @@ Scope decisions:
 
 - **PostgreSQL only.** The full `ycsb.py` supports a dozen engines (MySQL,
   MariaDB, YugabyteDB, CockroachDB, TiDB, DatabaseService, PGBouncer, Redis,
-  Citus, CedarDB, Dragonfly); all are listed under `out_of_scope.systems`.
+  Citus, CedarDB, Dragonfly, Cassandra); all are listed under `out_of_scope.systems`.
   Connection pooling (PGBouncer's `-xnpp/-xnpi/-xnpo`) and the per-system
   knobs (`-xnsr` SUT replicas, `-xnpd` TiDB PD nodes) only matter for those
   engines, so they are left out of the catalog block entirely rather than

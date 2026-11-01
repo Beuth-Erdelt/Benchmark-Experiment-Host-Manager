@@ -177,6 +177,7 @@ Each DBMS configuration (in `dockers`) references one of these sets by name via 
 | `cockroachdb` | CockroachDB (worker nodes) |
 | `dragonfly` | Dragonfly, DragonflyCluster (worker nodes) |
 | `redis` | Redis (worker nodes) |
+| `cassandra` | Cassandra (SUT), CassandraCluster (worker nodes) |
 
 Each named set follows the same structure as `metrics` above.
 See [Monitoring](Monitoring.md) for details on enabling and interpreting application metrics.

@@ -1,4 +1,4 @@
-﻿================
+================
  Bexhoma Python Package
 ================
 
@@ -36,9 +36,14 @@
     ./Example-CockroachDB.md
     ./Example-TiDB.md
     ./Example-ClickHouse.md
+    ./Example-MariaDBCS.md
     ./Example-Redis.md
     ./Example-Dragonfly.md
+    ./Example-Valkey.md
+    ./Example-Garnet.md
+    ./Example-Cassandra.md
     ./Example-PGBouncer.md
+    ./Example-Other-DBMS.md
     ./Example-CloudDatabase.md
     ./Example-custom.md
     ./Example-Multi-Tenant.md

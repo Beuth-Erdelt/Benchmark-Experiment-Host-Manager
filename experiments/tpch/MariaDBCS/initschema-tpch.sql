@@ -1,29 +1,25 @@
 -- Benchmark-Experiment-Host-Manager | experiments/tpch/MariaDBCS
 -- Authors: Patrick K. Erdelt
--- Copyright (C) 2020 Patrick K. Erdelt
+-- Copyright (C) 2026 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Create the tpch database and TPC-H tables using the MariaDB
---          ColumnStore (columnar) engine. ColumnStore tables do not support
---          primary keys, foreign keys, or secondary indexes.
-
-CREATE DATABASE tpch;
-
-CREATE USER 'benchmark'@'%' IDENTIFIED BY 'My_s3cure-Passw0rd';
-GRANT ALL PRIVILEGES ON *.* TO 'benchmark'@'%' IDENTIFIED BY 'My_s3cure-Passw0rd' WITH GRANT OPTION;
+-- Purpose: Create the TPC-H tables with the ColumnStore engine, in the database
+--          the container creates (MARIADB_DATABASE). Columns as in tpch/MariaDB;
+--          ColumnStore has no primary keys, foreign keys or secondary indexes.
+--          No curly braces in this file: bexhoma may fill it with str.format().
 
 CREATE TABLE tpch.nation (
     n_nationkey  INTEGER       NOT NULL,
     n_name       CHAR(25)      NOT NULL,
     n_regionkey  INTEGER       NOT NULL,
     n_comment    VARCHAR(152)
-) ENGINE = columnstore;
+) ENGINE = ColumnStore;
 
 CREATE TABLE tpch.region (
     r_regionkey  INTEGER       NOT NULL,
     r_name       CHAR(25)      NOT NULL,
     r_comment    VARCHAR(152)
-) ENGINE = columnstore;
+) ENGINE = ColumnStore;
 
 CREATE TABLE tpch.part (
     p_partkey      INTEGER       NOT NULL,
@@ -35,7 +31,7 @@ CREATE TABLE tpch.part (
     p_container    CHAR(10)      NOT NULL,
     p_retailprice  DECIMAL(15,2) NOT NULL,
     p_comment      VARCHAR(23)   NOT NULL
-) ENGINE = columnstore;
+) ENGINE = ColumnStore;
 
 CREATE TABLE tpch.supplier (
     s_suppkey    INTEGER       NOT NULL,
@@ -45,7 +41,7 @@ CREATE TABLE tpch.supplier (
     s_phone      CHAR(15)      NOT NULL,
     s_acctbal    DECIMAL(15,2) NOT NULL,
     s_comment    VARCHAR(101)  NOT NULL
-) ENGINE = columnstore;
+) ENGINE = ColumnStore;
 
 CREATE TABLE tpch.partsupp (
     ps_partkey     INTEGER       NOT NULL,
@@ -53,7 +49,7 @@ CREATE TABLE tpch.partsupp (
     ps_availqty    INTEGER       NOT NULL,
     ps_supplycost  DECIMAL(15,2) NOT NULL,
     ps_comment     VARCHAR(199)  NOT NULL
-) ENGINE = columnstore;
+) ENGINE = ColumnStore;
 
 CREATE TABLE tpch.customer (
     c_custkey     INTEGER       NOT NULL,
@@ -64,7 +60,7 @@ CREATE TABLE tpch.customer (
     c_acctbal     DECIMAL(15,2) NOT NULL,
     c_mktsegment  CHAR(10)      NOT NULL,
     c_comment     VARCHAR(117)  NOT NULL
-) ENGINE = columnstore;
+) ENGINE = ColumnStore;
 
 CREATE TABLE tpch.orders (
     o_orderkey       INTEGER       NOT NULL,
@@ -76,7 +72,7 @@ CREATE TABLE tpch.orders (
     o_clerk          CHAR(15)      NOT NULL,
     o_shippriority   INTEGER       NOT NULL,
     o_comment        VARCHAR(79)   NOT NULL
-) ENGINE = columnstore;
+) ENGINE = ColumnStore;
 
 CREATE TABLE tpch.lineitem (
     l_orderkey       INTEGER       NOT NULL,
@@ -95,4 +91,4 @@ CREATE TABLE tpch.lineitem (
     l_shipinstruct   CHAR(25)      NOT NULL,
     l_shipmode       CHAR(10)      NOT NULL,
     l_comment        VARCHAR(44)   NOT NULL
-) ENGINE = columnstore;
+) ENGINE = ColumnStore;

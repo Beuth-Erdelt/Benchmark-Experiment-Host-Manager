@@ -272,13 +272,13 @@ folder declares.
 |---|---|---|---|---|
 | PostgreSQL | `public` (default) or `{BEXHOMA_SCHEMA}` | `COPY … FROM … DELIMITER '|' NULL ''` | Full PK + FK; combined `ALTER TABLE` | load durability via `durability-*.sql`; -schema variants |
 | MySQL / MariaDB | `tpch` database | `LOAD DATA INFILE … FIELDS TERMINATED BY '|'` | Full PK + FK; combined `ALTER TABLE` | `SET GLOBAL local_infile = 1`; zero-date mode |
-| MariaDBCS | `tpch` database | `cpimport` bulk loader | None (columnar engine) | `engine=columnstore` on every table |
+| MariaDBCS | `tpch` database | `LOAD DATA LOCAL` of the MariaDB loaders (`cpimport` inside), one pod | None (columnar engine) | `ENGINE = ColumnStore` on every table |
 | Clickhouse | `tpch` database | `cat … \| clickhouse-client --format_csv_delimiter="\|"` | None | `ENGINE = MergeTree() ORDER BY …`; uses `Int32` not `INTEGER` |
 | CockroachDB | varies | SQL `INSERT` / COPY | PK + FK | Similar to PostgreSQL syntax |
 | YugabyteDB | varies | SQL | PK + FK | PostgreSQL-compatible |
 | DB2 | varies | SQL | PK + FK | Keyword `NOT NULL` same; type names may differ |
 | MonetDB | varies | SQL COPY | PK; FK optional | `initschemadummy` needed |
-| CedarDB | varies | SQL | PK + FK | `initschemadummy` needed |
+| CedarDB | `public` | SQL | PK + FK | Client `\COPY` of the PostgreSQL loaders; no `CHECKPOINT` |
 | DatabaseService | varies | SQL | PK + FK | `initschemadummy` needed |
 | OmniSci / HeavyAI | `tpch` | SQL | None (analytical) | Multiple shard variants |
 | Exasol | varies | SQL | PK + FK | |
@@ -337,6 +337,7 @@ folder declares.
 | `ycsb/CockroachDB` | Done |
 | `ycsb/DatabaseService` | Done |
 | `ycsb/Dragonfly` | Done |
+| `ycsb/Cassandra` | Done |
 | `ycsb/Kinetica` | Done |
 | `ycsb/MariaDB` | Done |
 | `ycsb/MonetDB` | Done |

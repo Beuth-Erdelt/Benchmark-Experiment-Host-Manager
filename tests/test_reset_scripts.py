@@ -35,7 +35,7 @@ from .test_resource_sweep import _AnyDockers, _AnyVolumes, _dbms_choices, _Sweep
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 #: DBMS without reset scripts (plan decision D1).
-NO_RESET = {'CedarDB', 'DatabaseService'}
+NO_RESET = {'DatabaseService'}
 
 _FLUSH = 'reset-flush.sh'
 _COUNTERS = 'reset-counters.sh'
@@ -51,8 +51,10 @@ EXPECTED = {
         'CockroachDB': ['reset-ycsb.sql'],
         'TiDB': ['reset-ycsb.sql'],
         'Citus': ['reset-ycsb.sql'],
+        'CedarDB': ['reset-ycsb.sql'],
         'Dragonfly': ['save-snapshot.sh'],
         'Redis': ['save-snapshot.sh'],
+        'Cassandra': ['save-snapshot.sh'],
     },
     'benchbase.py': {
         'PostgreSQL': ['reset-benchbase.sql'],
@@ -63,6 +65,7 @@ EXPECTED = {
         'CockroachDB': ['reset-benchbase.sql'],
         'TiDB': ['reset-benchbase.sql'],
         'Citus': ['reset-benchbase.sql'],
+        'CedarDB': ['reset-benchbase.sql'],
     },
     'hammerdb.py': {
         'PostgreSQL': ['reset-tpcc.sql'],
@@ -76,7 +79,9 @@ EXPECTED = {
         'MonetDB': ['reset-tpch.sql'],
         'MySQL': ['reset-tpch.sql', _FLUSH],
         'MariaDB': ['reset-tpch.sql', _FLUSH],
+        'MariaDBCS': ['reset-tpch.sql'],
         'Citus': ['reset-tpch.sql'],
+        'CedarDB': ['reset-tpch.sql'],
         'ClickHouse': [_FLUSH],
         'ClickHouseCluster': ['reset-tpch.sql', _FLUSH],
     },
@@ -85,6 +90,7 @@ EXPECTED = {
         'MonetDB': ['reset-tpcds.sql'],
         'MySQL': ['reset-tpcds.sql', _FLUSH],
         'MariaDB': ['reset-tpcds.sql', _FLUSH],
+        'MariaDBCS': ['reset-tpcds.sql'],
         'ClickHouse': [_FLUSH],
         'ClickHouseCluster': ['reset-tpcds.sql', _FLUSH],
     },
@@ -95,13 +101,15 @@ EXPECTED = {
         'ClickHouseCluster': ['reset-ssb.sql', _FLUSH],
         'PgDuckDB': ['reset-ssb.sql'],
         'Citus': ['reset-ssb.sql'],
+        'CedarDB': ['reset-ssb.sql'],
         'MySQL': ['reset-ssb.sql', _FLUSH],
         'MariaDB': ['reset-ssb.sql', _FLUSH],
+        'MariaDBCS': ['reset-ssb.sql'],
     },
 }
 
 #: Benchbase benchmarks other than tpcc have folders (and resets) only for these DBMS (R4).
-BENCHBASE_NON_TPCC = {'PostgreSQL', 'PGBouncer'}
+BENCHBASE_NON_TPCC = {'PostgreSQL', 'PGBouncer', 'CedarDB'}
 
 
 def _run_script(script: str, *argv: str) -> tuple:
@@ -179,7 +187,7 @@ class ResetCompletenessTest(unittest.TestCase):
         self.assert_complete('ssb.py')
 
     def test_benchbase(self):
-        for benchmark in ('tpcc', 'twitter', 'ycsb', 'chbenchmark'):
+        for benchmark in ('tpcc', 'twitter', 'ycsb', 'chbenchmark', 'auctionmark', 'epinions', 'hyadapt', 'noop', 'otmetrics', 'resourcestresser', 'seats', 'sibench', 'smallbank', 'tatp', 'voter', 'wikipedia'):
             self.assert_complete('benchbase.py', '-xbt', benchmark, benchmark=benchmark)
 
     def test_yugabytedb_tpcc_uses_its_own_database(self):
@@ -529,7 +537,7 @@ class WarnMissingResetScriptsTest(unittest.TestCase):
             experiment = types.SimpleNamespace(
                 resetscript_active=True, cluster=types.SimpleNamespace(experiments_configfolder=tmp_dir),
                 configurations=[config('ok', 'PostgreSQL', ['reset-ycsb.sql']),
-                                config('none', 'CedarDB', []),
+                                config('none', 'DatabaseService', []),
                                 config('missing', 'PostgreSQL', ['reset-ycsb.sql', 'gone.sh']),
                                 config('legacy', 'PostgreSQL', [], legacy=['reset-ycsb.sql'])])
             out = io.StringIO()

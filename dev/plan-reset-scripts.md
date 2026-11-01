@@ -12,7 +12,7 @@ workloads. Where a step has no equivalent in a DBMS, the script says so instead 
 Scope:
 - DBMS: PostgreSQL, PGBouncer, PgDuckDB, Citus, MySQL, MariaDB, MonetDB, YugabyteDB, CockroachDB,
   TiDB, Dragonfly (standalone, cluster, replica), Redis (standalone, cluster).
-  **CedarDB and DatabaseService are out of scope.**
+  **DatabaseService is out of scope.** CedarDB added 2026-10-31 (#830): statistics only.
 - Benchmarks: YCSB, Benchbase (tpcc, twitter, ycsb, chbenchmark), HammerDB TPC-C, TPC-H, TPC-DS.
 
 Related: [plan-oltp-storage-dbms](plan-oltp-storage-dbms.md) (WP4: scripts on workers),
@@ -25,7 +25,7 @@ is done separately, before this plan.
 
 | # | Decision |
 |---|---|
-| D1 | CedarDB and DatabaseService are ignored here (no reset scripts for them). Citus is in scope (revised 2026-10-19). |
+| D1 | DatabaseService is ignored here (no reset scripts). Citus is in scope (revised 2026-10-19), CedarDB too (revised 2026-10-31). |
 | D2 | Scripts stay in the folder structure `experiments/<benchmark>/<DBMS>/` (Benchbase: `experiments/benchbase/<benchmark>/<DBMS>/`). Duplicates between benchmarks are accepted. PGBouncer and PgDuckDB keep using the PostgreSQL folder (`path_experiment_docker`). |
 | D3 | `-ar` stays opt-in. |
 | D4 | One contract for all reset scripts (section 2). |

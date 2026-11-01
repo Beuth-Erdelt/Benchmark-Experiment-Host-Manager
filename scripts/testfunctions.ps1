@@ -47,29 +47,40 @@ function Wait-BexhomaProcess {
     Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): bexhoma $ProcessName has terminated."
 }
 
+function Write-LogFile {
+    # UTF-8 without BOM and with LF, as in the repository. In Windows PowerShell,
+    # Set-Content and Out-File -Encoding utf8 write a BOM, Out-File also CRLF.
+    # A file with these bytes already is not written, so git sees no change.
+    param([string]$Path, [string]$Content)
+    $bytes = (New-Object System.Text.UTF8Encoding($false)).GetBytes(($Content -replace "`r`n", "`n"))
+    if ((Test-Path $Path) -and
+        [Convert]::ToBase64String([IO.File]::ReadAllBytes($Path)) -ceq [Convert]::ToBase64String($bytes)) {
+        return
+    }
+    [IO.File]::WriteAllBytes($Path, $bytes)
+}
+
 function Invoke-CleanLogs {
     Write-Host "Removing connection warning lines from log files..."
     Get-ChildItem -Path $LOG_DIR -Filter "*.log" -Recurse | ForEach-Object {
-        $content = Get-Content $_.FullName -Raw
-        if ($null -eq $content) { return }
-        $original = $content
-        $content = $content -replace '(?m)^Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens\.\r?\n', ''
-        $content = $content -replace '(?m)^Exception when calling CoreV1Api->.*\r?\nReason: Unauthorized\r?\nHTTP response headers: HTTPHeaderDict\(.*\r?\nHTTP response body: .*\r?\n(\r?\n)*Create new access token\r?\n', ''
-        if ($content -ne $original) {
-            Set-Content $_.FullName $content -Encoding utf8 -NoNewline
-        }
+        # .NET reads UTF-8 without a BOM correctly, Get-Content takes it for ANSI
+        $content = [IO.File]::ReadAllText($_.FullName) -replace "`r`n", "`n"
+        $content = $content -replace '(?m)^Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens\.\n', ''
+        $content = $content -replace '(?m)^Exception when calling CoreV1Api->.*\nReason: Unauthorized\nHTTP response headers: HTTPHeaderDict\(.*\nHTTP response body: .*\n(\n)*Create new access token\n', ''
+        Write-LogFile -Path $_.FullName -Content $content
     }
 
     Write-Host "Extracting summaries from log files..."
     Get-ChildItem -Path $LOG_DIR -Filter "*.log" | ForEach-Object {
-        $filename = $_.BaseName
         Write-Host "Cleaning $($_.FullName)"
-        $show = $false
-        $summary = @(foreach ($line in Get-Content $_.FullName) {
-            if ($line -match '## Show Summary') { $show = $true }
-            if ($show) { $line }
-        })
-        $summary | Out-File "$LOG_DIR\${filename}_summary.md" -Encoding utf8
+        $content = [IO.File]::ReadAllText($_.FullName)
+        $start = [regex]::Match($content, '(?m)^.*## Show Summary')
+        $summary = ''
+        if ($start.Success) {
+            $summary = $content.Substring($start.Index)
+            if (-not $summary.EndsWith("`n")) { $summary += "`n" }
+        }
+        Write-LogFile -Path (Join-Path $_.DirectoryName "$($_.BaseName)_summary.md") -Content $summary
     }
 
     Write-Host "Extraction complete! Files are saved in $LOG_DIR."

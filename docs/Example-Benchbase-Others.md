@@ -2,9 +2,9 @@
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
-Benchbase contains 18 benchmarks.
+Benchbase contains 18 benchmarks, 16 of which can be selected in bexhoma (`-xbt`; TPC-H and TPC-DS are excluded).
 In principle, all of them can be run in bexhoma.
-So far, only a few have been fully implemented and tested.
+Twitter, CH-benCHmark and YCSB have been run with full examples; the remaining ones are listed at the end with small test runs.
 Further examples are listed below.
 
 **The results are not official benchmark results.
@@ -1766,7 +1766,1692 @@ Benchbase Workload ycsb SF=1000
 
 </details>
 
+## More Benchbase Workloads
+
+All Benchbase workloads are available for every DBMS bexhoma supports with Benchbase (PostgreSQL, MySQL, MariaDB, CockroachDB, YugabyteDB, TiDB, Citus, CedarDB, PGBouncer, DatabaseService).
+Select one with `-xbt`.
+The Benchbase XML config templates contain placeholders for the connection (host, port, database, user, password), isolation level, batch size, scale factor, terminals (`-nbt`), duration (`-xsd`), warm-up and target throughput (`-xtb` x `-xnbf`), so the same command line works for all of them.
+Workload-specific details (tables, transaction mix) are defined by Benchbase.
+
+`tpch` and `tpcds` are not offered via `-xbt`: TPC-H has no timed workload in Benchbase and TPC-DS has no config.
+For these, see the TPC-H and TPC-DS examples of bexhoma.
+
+The following examples run at a small scale on PostgreSQL.
+They are collected in [scripts/test-docs-benchbase-others.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-benchbase-others.sh).
+Each example shows the summary of its run.
+
+## AuctionMark Benchmark
+
+<img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/auctionmark.png" alt="drawing" width="600"/>
+
+> AuctionMark benchmark is an Online Transaction Processing (OLTP) workload that simulates the activities found in a well-known auction site.
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+2. AuctionMark project: https://hstore.cs.brown.edu/projects/auctionmark/
+3. Benchbase wiki page (AuctionMark): https://github.com/cmu-db/benchbase/wiki/AuctionMark
+
+### AuctionMark Simple Testrun
 
 
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt auctionmark \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_auctionmark_simple.log
+```
 
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_auctionmark_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_auctionmark_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload auctionmark SF=1
+* Type: benchbase
+* Duration: 419s 
+* Code: 1793465463
+* Benchbase runs the auctionmark benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'auctionmark'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:862419
+  * datadisk:657
+  * volume_size:1.8T
+  * volume_used:843G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793465463
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793465463-85544b5fc7-x2jh7: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       30.00 |           6.00 |            0.00 |         19.00 |            5.00 |              1 |           1 |             |                |             0 | False         |              120.00 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |            0 |                         860.68 |                      817.21 |         0.00 |                                                      19027.00 |                                               4585.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |            0 |                         860.68 |                      817.21 |         0.00 |                                                      19027.00 |                                               4585.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## Epinions.com Benchmark
+
+<img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/epinions.png" alt="drawing" width="600"/>
+
+> This benchmark is derived from the Epinions.com consumer review website. It uses data collected from a previous study [23] together with additional statistics extracted from the website. This workload is centered on users interacting with other users and writing reviews for various items in the database (e.g., products). It consists of nine different transactions, of which four interact with user records only, four interact with item records only, and one interacts with all of the tables in the database. Users have both an n-to-m relationship with items (i.e., representing user reviews and ratings of items) and an n-to-m relationship with users.
+
+> This workload emerged from one of the original “social networking” websites and thus provides an interesting challenge for relational DBMSs. It is similar to the Twitter benchmark, except that its many-to-many relationships are traversed using SQL joins (as opposed to application-side joins), and it has more complex interactions between its tables.
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+2. Epinions: https://en.wikipedia.org/wiki/Epinions
+3. Benchbase wiki page (Epinions.com): https://github.com/cmu-db/benchbase/wiki/epinions
+
+### Epinions Simple Testrun
+
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt epinions \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_epinions_simple.log
+```
+
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_epinions_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_epinions_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload epinions SF=1
+* Type: benchbase
+* Duration: 434s 
+* Code: 1793465473
+* Benchbase runs the epinions benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'epinions'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:862421
+  * datadisk:43
+  * volume_size:1.8T
+  * volume_used:843G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793465473
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793465473-6758fd9dfc-xfcqq: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       13.00 |           4.00 |            0.00 |          1.00 |            8.00 |              1 |           1 |             |                |             0 | False         |              276.92 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |            0 |                        1024.02 |                     1024.02 |         0.00 |                                                       1522.00 |                                                828.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |            0 |                        1024.02 |                     1024.02 |         0.00 |                                                       1522.00 |                                                828.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## HYADAPT Benchmark
+
+Benchbase provides no description for this workload (its README lists it as "pending configuration files"). The data is a single table `HTABLE`, accessed by the procedure `ReadRecord1`.
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+
+### HYADAPT Simple Testrun
+
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt hyadapt \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_hyadapt_simple.log
+```
+
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_hyadapt_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_hyadapt_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload hyadapt SF=1
+* Type: benchbase
+* Duration: 435s 
+* Code: 1793465483
+* Benchbase runs the hyadapt benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'hyadapt'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:862426
+  * datadisk:41
+  * volume_size:1.8T
+  * volume_used:843G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793465483
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793465483-d59649dc4-tx6rt: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       11.00 |           4.00 |            0.00 |          1.00 |            6.00 |              1 |           1 |             |                |             0 | False         |              327.27 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |            0 |                        1024.02 |                     1024.02 |         0.00 |                                                       1405.00 |                                                753.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |            0 |                        1024.02 |                     1024.02 |         0.00 |                                                       1405.00 |                                                753.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## NoOp Benchmark
+
+<img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/noop.png" alt="drawing" width="600"/>
+
+The NoOp workload executes no real queries and only measures the overhead of the connection round trip (the Benchbase wiki page has no description of it).
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+2. Benchbase wiki page (NoOp): https://github.com/cmu-db/benchbase/wiki/NoOp
+
+### NoOp Simple Testrun
+
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt noop \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_noop_simple.log
+```
+
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_noop_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_noop_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload noop SF=1
+* Type: benchbase
+* Duration: 371s 
+* Code: 1793459094
+* Benchbase runs the noop benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'noop'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:862178
+  * datadisk:39
+  * volume_size:1.8T
+  * volume_used:842G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793459094
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793459094-7965f8db58-87jjp: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |        6.00 |           2.00 |            0.00 |          1.00 |            3.00 |              1 |           1 |             |                |             0 | False         |              600.00 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |            0 |                        1024.02 |                     1024.02 |         0.00 |                                                        720.00 |                                                389.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |            0 |                        1024.02 |                     1024.02 |         0.00 |                                                        720.00 |                                                389.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## OT-Metrics Benchmark
+
+OT-Metrics is the OtterTune Metrics Timeseries Benchmark. The procedure `GetSessionRange` reads ranges of observations of a session. Benchbase provides no further description.
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+2. Benchbase wiki page (OT-Metrics): https://github.com/cmu-db/benchbase/wiki/OT-Metrics
+
+### OT-Metrics Simple Testrun
+
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt otmetrics \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_otmetrics_simple.log
+```
+
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_otmetrics_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_otmetrics_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload otmetrics SF=1
+* Type: benchbase
+* Duration: 401s 
+* Code: 1793459472
+* Benchbase runs the otmetrics benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'otmetrics'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:864540
+  * datadisk:3099
+  * volume_size:1.8T
+  * volume_used:845G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793459472
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793459472-7bd7bb948-b6lz9: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       28.00 |           3.00 |            0.00 |         22.00 |            3.00 |              1 |           1 |             |                |             0 | False         |              128.57 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |            0 |                        1024.03 |                     1024.03 |         0.00 |                                                       1756.00 |                                               1004.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |            0 |                        1024.03 |                     1024.03 |         0.00 |                                                       1756.00 |                                               1004.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## ResourceStresser Benchmark
+
+<img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/resourcestresser.png" alt="drawing" width="600"/>
+
+> [...] ResourceStresser as a purely synthetic benchmark that can create isolated contention on system resources.
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+2. Benchbase wiki page (ResourceStresser): https://github.com/cmu-db/benchbase/wiki/Resource-Stresser
+
+### ResourceStresser Simple Testrun
+
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt resourcestresser \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_resourcestresser_simple.log
+```
+
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+ResourceStresser is purely synthetic: its contention transactions sleep while holding row locks, so latency is dominated by waiting and the throughput does not follow the target. Expect roughly 1 request/s and a few errors from lock conflicts at this size.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_resourcestresser_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_resourcestresser_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload resourcestresser SF=1
+* Type: benchbase
+* Duration: 432s 
+* Code: 1793459481
+* Benchbase runs the resourcestresser benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'resourcestresser'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:864540
+  * datadisk:40
+  * volume_size:1.8T
+  * volume_used:845G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793459481
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793459481-7cc58cbcf9-sgj75: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |        6.00 |           3.00 |            0.00 |          1.00 |            2.00 |              1 |           1 |             |                |             0 | False         |              600.00 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |           39 |                           1.02 |                        0.73 |         0.00 |                                                   19035908.00 |                                            3523255.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |           39 |                           1.02 |                        0.73 |         0.00 |                                                   19035908.00 |                                            3523255.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## SEATS Benchmark
+
+<img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/seats.png" alt="drawing" width="600"/>
+
+> The SEATS benchmark models an airline ticketing system where customers search for flights and make on-line reservations [35]. It consists of eight tables and six transaction types. Approximately 60% of the transactions are read-only (e.g., customers searching for open seats), while the other 40% involve creating, updating, and deleting reservation records.
+
+> The benchmark is designed to emulate a back-end system that processes requests from multiple applications that each provides disparate inputs. Thus, many of its transactions use secondary indexes or foreign-key joins to find the primary key of a customer’s reservation record. For example, customers may access the system using various credentials, including their frequent flyer number, their customer account number, or their login name.
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+2. SEATS project: https://hstore.cs.brown.edu/projects/seats/
+3. Benchbase wiki page (SEATS): https://github.com/cmu-db/benchbase/wiki/Seats
+
+### SEATS Simple Testrun
+
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt seats \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_seats_simple.log
+```
+
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_seats_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_seats_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload seats SF=1
+* Type: benchbase
+* Duration: 402s 
+* Code: 1793459492
+* Benchbase runs the seats benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'seats'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:864541
+  * datadisk:509
+  * volume_size:1.8T
+  * volume_used:845G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793459492
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793459492-7cf8d774dd-gdvbz: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       18.00 |           3.00 |            0.00 |         12.00 |            3.00 |              1 |           1 |             |                |             0 | False         |              200.00 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |            0 |                        1025.03 |                     1023.95 |         0.00 |                                                       4600.00 |                                               1914.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |            0 |                        1025.03 |                     1023.95 |         0.00 |                                                       4600.00 |                                               1914.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## SIBench Benchmark
+
+<img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/sitest.png" alt="drawing" width="600"/>
+
+> SIBench is a microbenchamark designed to explore snapshot isolation in DBMSs [12]. It contains a single key/value table and two transactions that fetch the minimum value of a column or increment a single value of an entry. This workload creates a situation where the DBMS must resolve read-write conflicts while also stressing the CPU by scanning the table for the minimum value.
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+2. Benchbase wiki page (SIBench): https://github.com/cmu-db/benchbase/wiki/SIBench
+
+### SIBench Simple Testrun
+
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt sibench \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_sibench_simple.log
+```
+
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_sibench_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_sibench_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload sibench SF=1
+* Type: benchbase
+* Duration: 402s 
+* Code: 1793459523
+* Benchbase runs the sibench benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'sibench'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:864563
+  * datadisk:39
+  * volume_size:1.8T
+  * volume_used:845G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793459523
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793459523-5f7c454d49-mdrt8: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |        5.00 |           2.00 |            0.00 |          1.00 |            2.00 |              1 |           1 |             |                |             0 | False         |              720.00 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |            0 |                        1024.02 |                     1024.02 |         0.00 |                                                       1619.00 |                                                914.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |            0 |                        1024.02 |                     1024.02 |         0.00 |                                                       1619.00 |                                                914.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## SmallBank Benchmark
+
+<img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/smallbank.png" alt="drawing" width="600"/>
+
+> This workload models a banking application where transactions perform simple read and update operations on customers’ accounts [11]. All of the transactions involve a small number of tuples. The transactions’ access patterns are skewed such that a small number of accounts receive most of the requests. We also extended the original SmallBank implementation to include an additional transaction that transfers money between accounts.
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+2. Michael Cahill: Serializable Isolation for Snapshot Databases (thesis): https://ses.library.usyd.edu.au/bitstream/handle/2123/5353/michael-cahill-2009-thesis.pdf
+3. Benchbase wiki page (SmallBank): https://github.com/cmu-db/benchbase/wiki/SmallBank
+
+### SmallBank Simple Testrun
+
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt smallbank \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_smallbank_simple.log
+```
+
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_smallbank_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_smallbank_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload smallbank SF=1
+* Type: benchbase
+* Duration: 400s 
+* Code: 1793459879
+* Benchbase runs the smallbank benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'smallbank'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:863064
+  * datadisk:1298
+  * volume_size:1.8T
+  * volume_used:843G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793459879
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793459879-74659d5cd-57vx8: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       10.00 |           3.00 |            0.00 |          5.00 |            2.00 |              1 |           1 |             |                |             0 | False         |              360.00 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |            0 |                        1024.02 |                     1020.59 |         0.00 |                                                       3553.00 |                                               1801.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |            0 |                        1024.02 |                     1020.59 |         0.00 |                                                       3553.00 |                                               1801.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## TATP Benchmark
+
+<img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/tatp.png" alt="drawing" width="600"/>
+
+> The TATP benchmark simulates a typical Home Location Register (HLR) database used by a mobile carrier. The HLR is an application mobile network operators use to store all relevant information about valid subscribers, including the mobile phone number, the services to which they have subscribed, access privileges, and the current location of the subscriber's handset. Every call to and from a mobile phone involves look ups against the HLRs of both parties, making it a perfect example of a demanding, high-throughput environment where the workloads are pertinent to all applications requiring extreme speed: telecommunications, financial services, gaming, event processing and alerting, reservation systems, and so on.
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+2. TATP benchmark: http://tatpbenchmark.sourceforge.net/
+3. Benchbase wiki page (TATP): https://github.com/cmu-db/benchbase/wiki/TATP
+
+### TATP Simple Testrun
+
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt tatp \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_tatp_simple.log
+```
+
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_tatp_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_tatp_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload tatp SF=1
+* Type: benchbase
+* Duration: 399s 
+* Code: 1793459901
+* Benchbase runs the tatp benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'tatp'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:863065
+  * datadisk:364
+  * volume_size:1.8T
+  * volume_used:843G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793459901
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793459901-65599c6876-nhj84: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       15.00 |           2.00 |            0.00 |         10.00 |            3.00 |              1 |           1 |             |                |             0 | False         |              240.00 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |            0 |                        1024.02 |                      982.86 |         0.00 |                                                       1773.00 |                                                844.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |            0 |                        1024.02 |                      982.86 |         0.00 |                                                       1773.00 |                                                844.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## Voter Benchmark
+
+<img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/voter.png" alt="drawing" width="600"/>
+
+> The Voter workload is derived from the software system used to record votes for a Japanese and Canadian television talent show. As users call in to vote on their favorite contestant during the show, the application invokes transactions that update the total number of votes for each contestant. The DBMS records the number of votes made by each user up to a fixed limit. A separate transaction is periodically invoked to compute vote totals during the show. This benchmark is designed to saturate the DBMS with many short-lived transactions that all update a small number of records.
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+2. VoltDB Voter example: https://github.com/VoltDB/voltdb/tree/master/examples/voter
+3. Benchbase wiki page (Voter): https://github.com/cmu-db/benchbase/wiki/Voter
+
+### Voter Simple Testrun
+
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt voter \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_voter_simple.log
+```
+
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_voter_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_voter_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload voter SF=1
+* Type: benchbase
+* Duration: 402s 
+* Code: 1793459920
+* Benchbase runs the voter benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'voter'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:863065
+  * datadisk:40
+  * volume_size:1.8T
+  * volume_used:843G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793459920
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793459920-84c77f6846-h8g5l: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |        6.00 |           3.00 |            0.00 |          1.00 |            2.00 |              1 |           1 |             |                |             0 | False         |              600.00 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |            0 |                        1024.01 |                     1024.03 |         0.00 |                                                       3131.00 |                                               1629.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |            0 |                        1024.01 |                     1024.03 |         0.00 |                                                       3131.00 |                                               1629.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## Wikipedia Benchmark
+
+<img src="https://raw.githubusercontent.com/wiki/cmu-db/benchbase/img/wikipedia.png" alt="drawing" width="600"/>
+
+> This workload is based on the popular on-line encyclopedia. Since the website’s underlying software, MediaWiki, is open-source, we are able to use the real schema, transactions, and queries as used in the live website. This benchmark’s workload is derived from (1) data dumps, (2) statistical information on the read/write ratios, and (3) front-end access patterns [38] and several personal email communications with the Wikipedia administrators. Although the total size of the Wikipedia database exceeds 4TB, a significant portion of it is historical or archival data (e.g., every article revision is stored in the database). Thus, the working set size at any time is much smaller than the overall data.
+
+1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
+2. Benchbase wiki page (Wikipedia): https://github.com/cmu-db/benchbase/wiki/Wikipedia
+
+### Wikipedia Simple Testrun
+
+
+Example:
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -xbt wikipedia \
+  -xsd 2 \
+  -xtb 1024 \
+  -xnbf 1 \
+  -nbp 1 \
+  -nbt 4 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 10Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_wikipedia_simple.log
+```
+
+This starts a clean PostgreSQL, loads scale factor 1 (`-sf`), and runs the workload for 2 minutes (`-xsd`) with 4 terminals (`-nbt`) in 1 pod (`-nbp`).
+For another DBMS, change `-dbms`.
+
+#### Evaluate Results
+
+At the end of a benchmark you will see a summary like
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_wikipedia_simple_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_wikipedia_simple.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload wikipedia SF=1
+* Type: benchbase
+* Duration: 405s 
+* Code: 1793459931
+* Benchbase runs the wikipedia benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'wikipedia'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.11.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:863066
+  * datadisk:508
+  * volume_size:1.8T
+  * volume_used:843G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793459931
+    * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793459931-7549d86897-w9sn7: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       11.00 |           3.00 |            0.00 |          6.00 |            2.00 |              1 |           1 |             |                |             0 | False         |              327.27 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |           4 |     1024 |        1 |               1 |       1 |           0 | 120.00 |            0 |                        1024.02 |                     1019.76 |         0.00 |                                                       3865.00 |                                               2022.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |           4 |     1024 |               1 |           1 |           0 | 120.00 |            0 |                        1024.02 |                     1019.76 |         0.00 |                                                       3865.00 |                                               2022.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>
 

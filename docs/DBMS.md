@@ -15,10 +15,12 @@ This document covers all DBMS currently supported by bexhoma.
 - [PostgreSQL + PGBouncer](#pgbouncer)
 - [MySQL](#mysql)
 - [MariaDB](#mariadb)
+- [MariaDB ColumnStore](#mariadb-columnstore)
 - [MonetDB](#monetdb)
 - [Citus](#citus)
 - [ClickHouse](#clickhouse)
 - [ClickHouseCluster](#clickhousecluster)
+- [CedarDB](#cedardb)
 
 **Distributed SQL / Cloud-Native**
 - [YugabyteDB](#yugabytedb)
@@ -29,6 +31,11 @@ This document covers all DBMS currently supported by bexhoma.
 - [Dragonfly](#dragonfly)
 - [DragonflyCluster](#dragonflycluster)
 - [Redis (Cluster)](#redis)
+- [Valkey (Cluster)](#valkey)
+- [Garnet](#garnet)
+
+**Wide-Column Stores (YCSB)**
+- [Cassandra](#cassandra)
 
 **External / Cloud Database Services**
 - [DatabaseService](#databaseservice)
@@ -64,7 +71,7 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 
 ¹ Only required for SQL DBMS queried via DBMSBenchmarker. Entries whose SUT is
 never queried through DBMSBenchmarker — [Dragonfly](#dragonfly),
-[DragonflyCluster](#dragonflycluster), [Redis](#redis), [Hardware](#hardware) —
+[DragonflyCluster](#dragonflycluster), [Redis](#redis), [Valkey](#valkey), [Garnet](#garnet), [Cassandra](#cassandra), [Hardware](#hardware) —
 omit `template.JDBC` entirely; `template` itself is still required (at minimum
 `version`, `alias`, `docker_alias`), and `template.auth` (a `[username,
 password]` pair) becomes required instead — `configurations/manifest.py`
@@ -296,6 +303,8 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | PostgreSQL, PGBouncer, PgDuckDB | `VACUUM VERBOSE ANALYZE` (whole database) | `CHECKPOINT` | `pg_stat_reset()`, `pg_stat_reset_shared()` for `bgwriter`, `checkpointer`, `io`, `wal` |
 | Citus | `VACUUM VERBOSE ANALYZE` on the distributed tables (passed on to the shards) | `CHECKPOINT` on the coordinator and with `run_command_on_workers` on every worker | as PostgreSQL, on the coordinator and every worker |
 | MySQL, MariaDB | `ANALYZE TABLE` (`reset-<benchmark>.sql`) | `reset-flush.sh`: `innodb_max_dirty_pages_pct = 0`, wait until no dirty pages are left (at most 600 s), restore the old value | `FLUSH STATUS` (in `reset-flush.sh`) |
+| MariaDBCS | `ANALYZE TABLE` | n/a (no dirty pages to flush) | n/a (the check scripts read no ColumnStore counter) |
+| CedarDB | `VACUUM VERBOSE ANALYZE` | n/a (no `CHECKPOINT`) | n/a (no `pg_stat_reset()`) |
 | MonetDB | `ANALYZE` | n/a (the write-ahead log is applied in the background; no call to force it) | n/a |
 | ClickHouse | n/a (no optimizer statistics unless declared per column) | `reset-flush.sh`: `sync` (an `INSERT` writes its parts without fsync) | n/a (`system.events` cannot be reset) |
 | ClickHouseCluster | n/a | `SYSTEM FLUSH DISTRIBUTED` on every Distributed table and `SYSTEM SYNC REPLICA ON CLUSTER` on every replicated table (`reset-<benchmark>.sql`, coordinator), then `reset-flush.sh` (`sync`) in every worker | n/a |
@@ -304,12 +313,15 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | TiDB | `ANALYZE TABLE` (cluster-wide) | n/a (no flush in SQL) | `FLUSH STATUS` on the TiDB server the connection reaches |
 | Dragonfly | n/a | `SAVE` on every data pod | `CONFIG RESETSTAT` |
 | Redis | n/a | `SAVE` (standalone: SUT pod; cluster: every worker) | `CONFIG RESETSTAT` |
+| Valkey | n/a | `SAVE` (standalone: SUT pod; cluster: every worker) | `CONFIG RESETSTAT` |
+| Garnet | n/a | `SAVE` (checkpoint; standalone: SUT pod; cluster: every worker) | n/a (no `CONFIG RESETSTAT`) |
+| Cassandra | n/a | `save-snapshot.sh`: `nodetool flush`, wait until no compactions are pending (at most 1800 s; single node: SUT pod; cluster: every worker) | n/a (the JMX metrics cannot be reset) |
 
-CedarDB and DatabaseService have no reset.
-Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL and PGBouncer only (the other DBMS have no scripts for them).
+DatabaseService has no reset.
+Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL, PGBouncer and CedarDB only (the other DBMS have no scripts for them).
 With `-ar` on a configuration without a reset, the experiment prints a warning at the start; a listed script missing in the experiment folder is skipped with a message.
 
-Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB, ClickHouse), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis).
+Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB, ClickHouse), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis, Cassandra).
 SQL files run through `loadData` (once per tenant for database tenancy; once for schema tenancy, as the PostgreSQL scripts cover the whole database), shell files in the SUT pod or, with script target `workers`, in every worker pod.
 With a TPC-H refresh stream (`-xrs`), the reset runs once per round, before both streams start.
 Each reset is logged per round (`bexhoma-reset_<run>_<client>_<entry>-...log`), and its duration is reported as `reset_seconds`.
@@ -626,9 +638,93 @@ The `init_SQL` statement is executed after each connection is established and en
 | Key | Benchmarks | Values | Default | Effect |
 |---|---|---|---|---|
 | `histograms` | TPC-H, TPC-DS, SSB | `off`, `on` | `off` | engine-independent statistics with histograms (ANALYZE TABLE ... PERSISTENT FOR ALL, JSON_HB, a full scan per table) in initstatistics (-xis); off: plain ANALYZE TABLE, which collects none (use_stat_tables = PREFERABLY_FOR_QUERIES, MariaDB 12.3) |
-| `engine` | TPC-H | `InnoDB`, `Aria`, `MyISAM` | `InnoDB` | storage engine of all tables (ColumnStore needs an image with the plugin, not listed) |
+| `engine` | TPC-H | `InnoDB`, `Aria`, `MyISAM` | `InnoDB` | storage engine of all tables (for ColumnStore use -dbms MariaDBCS) |
 | `row_format` | YCSB | `default`, `DYNAMIC`, `COMPRESSED` | `default` | InnoDB row format of usertable (default: innodb_default_row_format, DYNAMIC): COMPRESSED stores pages zlib-compressed: less I/O, more CPU |
 | `collation` | YCSB | `default`, `utf8mb4_bin`, `latin1` | `default` | character set and collation of usertable (default: the database default): cost of comparing the VARCHAR(255) key (binary vs. linguistic) and bytes per character |
+
+---
+
+## MariaDB ColumnStore
+
+MariaDB ColumnStore (`MariaDBCS`) is the columnar storage engine of MariaDB, GPL-2.0 (TPC-H, TPC-DS, SSB, single node).
+
+**Deployment template:** [`k8s/deploymenttemplate-MariaDBCS.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDBCS.yml)
+
+The template runs the official image `mariadb:12.3.3`, the same server as the template of MariaDB, without a derived image.
+The image `mariadb/columnstore` is stale (23.02.4).
+The container command does what the package script cannot do in a container, which has no systemd:
+
+| Point | Handling | Without it |
+|---|---|---|
+| Plugin | `apt-get install mariadb-plugin-columnstore` at every start (25.10.6, about 30 s), from the repository of the image, so the version follows the image tag | pods need access to `archive.mariadb.org` and the Ubuntu mirrors, else the SUT does not start |
+| Daemons | workernode, controllernode, PrimProc, WriteEngineServer, DMLProc and DDLProc start before the server | writes fail with `ERROR 1815 ... DBRM is read only!` |
+| Catalog | on the first start `dbbuilder 7`, `syscatalog_mysql.sql`, `install_mcs_mysql.sh` and `columnstore_info.sql`; a file on the volume marks them as done | no system catalog, no functions |
+| Memory | `SystemConfig CGroup` points to `/tmp/mcs-cgroup`, a copy of the cgroup of the container with the number of cores added, so `NumBlocksPct` (`MCS_NUM_BLOCKS_PCT`, 20) and `TotalUmMemory` (`MCS_TOTAL_UM_MEMORY`, `65%`) apply to the memory limit of the pod | ColumnStore sizes by the RAM of the node and the pod is killed. With the cgroup of the container itself, `cpuset.cpus` is empty and ColumnStore runs on one core |
+| Storage | `/var/lib/columnstore` and `/var/lib/mysql` are `subPath`s of one volume | the server's catalog is lost at a restart, while the data stays |
+| Shared memory | `/dev/shm` is an `emptyDir` in memory, 2 GiB | BRM is held there; Kubernetes gives 64 MiB by default |
+| Restart | `mcs-loadbrm.py` before the daemons, `mcs-savebrm.py` at `SIGTERM` | the extent map of the data is lost |
+| Probes | `SELECT COUNT(*) FROM calpontsys.systable` | a plain `SELECT` is answered without the daemons |
+| Logs | `rsyslogd` writes `/var/log/mariadb/columnstore/` | the daemons log via syslog only |
+| `PrimProc` | restarted when it dies, with `ColumnStore: PrimProc died, restarting it` in the log of the SUT | all later queries fail, and the container looks healthy |
+
+Set the shares per run with `--set deployment[bexhoma-deployment-mariadbcs].container[dbms].env.MCS_NUM_BLOCKS_PCT=30`.
+Server options work as for MariaDB, `--set deployment[bexhoma-deployment-mariadbcs].container[dbms].max_connections=2000`.
+
+**Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MariaDBCS), [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/MariaDBCS), [SSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ssb/MariaDBCS)):
+the columns of MariaDB with `ENGINE = ColumnStore`.
+ColumnStore has no primary keys, foreign keys or secondary indexes, so `-xii` and `-xic` run scripts without statements.
+`checkschema` reports the sizes with `columnstore_info`.
+There are no durability scripts, so `-xld` has no effect, and there is no TPC-H refresh stream.
+
+**Loading** uses the loader images of MariaDB: `LOAD DATA LOCAL` is passed to `cpimport`.
+It always runs with one loader pod, and `-nlp` is ignored.
+Concurrent `LOAD DATA` into one table fail with `ERROR 1030 ... from storage engine ColumnStore` before `cpimport` starts, and the loader script goes on, so rows would be missing without any test failing.
+`cpimport` itself works in parallel, and loads of one table run one after the other anyway.
+The limit of this path is `mariadbd`, which parses the file on one core: `lineitem` at SF 10 takes 495 s.
+
+**Note: `cpimport` is only possible as a pull, so bexhoma does not use it.**
+`cpimport` run in the SUT on the same file takes 55 s, but then the SUT reads the raw files itself, which is a different path than the sending loader pods of all other DBMS and not comparable.
+A sending `cpimport` does not work: in a separate container with the plugin and the configuration of the SUT, `cpimport -m 1` reaches `WriteEngineServer`, the BRM controller and ExeMgr, and then fails with `MCS-2006: 'tpch.push_t' does not exist in Columnstore`, also with data on stdin, while the same call in the SUT works.
+So loading times of MariaDBCS are not the best the DBMS can do.
+
+**Queries** run with dialect `MySQL`; the variants named `MariaDBCS` and `MariaDB` apply on top, as connection names start with them.
+TPC-H (22) and SSB (13) run completely.
+Compared with the result sets of MariaDB at SF 1 (`-xdt`, same run), all queries of TPC-H and SSB (normal and flat) are identical.
+The numbers are compared as bexhoma stores them, rounded to `precision` of the query: whole numbers in TPC-DS and SSB.
+All 99 queries of TPC-DS run, 28 of them with a `MariaDBCS` variant. Their results are the same. The test `SQL warnings` fails because of Q39: it has columns of the same name, so the comparison cannot sort its rows.
+
+Without 11 of the variants ColumnStore 25.10.6 gives wrong results or fails, some of them without an error:
+
+| Queries | Variant | Without it |
+|---|---|---|
+| Q47, Q57 | `lag()` and `lead()` in the CTE `v1` instead of two self joins of it, the final filter as `HAVING` of an outer `GROUP BY` | The instances of the CTE get mixed up, `nsum` equals `sum_sales`. A `WHERE` on a CTE also reaches its window functions: `with v as (select d_moy, d_dom, count(*) over (partition by d_moy) c from date_dim where d_year = 2000) select max(c) from v where d_dom <= 2` gives 2 instead of 31 |
+| Q72 | The days of a week as CTE `date_pairs` | The join with `d_date_sk + off.k` over the derived table of offsets of the MariaDB variant gives no rows and no error; the main text ends in `MCS-2001` (memory of the join) |
+| Q93 | Inner joins | `LEFT JOIN` with a filter on the outer table in `WHERE` keeps the rows without a match: 90,919 groups instead of 7,164 |
+| Q18, Q22, Q27, Q36, Q67, Q70, Q86 | Rollup emulated with `UNION ALL` | `GROUP BY ... WITH ROLLUP` directly on a table kills `PrimProc` with a segmentation fault in `funcexp::FuncExp::evaluate`, also on 1,305 rows; very small tables do not show it. On a derived table it runs, but gives wrong results |
+
+The other 17 variants are for queries that ColumnStore refuses as they are, see [TPC-DS queries](Queries-TPC-DS.html) for the rewrites:
+
+| Queries | Result |
+|---|---|
+| Q28, Q61, Q77, Q88, Q90 | `MCS-1000: 'sub-query' and 'sub-query' are not joined` |
+| Q10, Q35, Q45 | `MCS-3033: Correlated subquery within OR operator` |
+| Q6, Q23, Q44 | `MCS-3022: Scalar subquery within a function` |
+| Q8, Q14, Q38, Q87 | `INTERSECT`, `EXCEPT` are not supported |
+| Q9 | `MCS-3016: Function or Operator with sub query on the SELECT clause` |
+| Q21 | `MCS-1001: Function 'float_typecast' isn't supported` |
+
+
+Memory depends on the number of cores of the node, since ColumnStore starts threads per core.
+TPC-DS at SF 1 fits 16 Gi on nodes with 96 or 128 cores. On a node with 224 cores the SUT was killed at the limit of 16 Gi in Q18 (`OOMKilled`, `ExeMgr has allocated too much memory`), 32 Gi are enough there, with a peak of 14 GiB.
+When `PrimProc` dies, queries fail at once with `MCS-2033` until it is back after about 3 s, so many queries of a stream are lost.
+
+`-ma` is not available, ColumnStore has no Prometheus exporter in bexhoma.
+
+```bash
+bexhoma tpch -dbms MariaDBCS -sf 1 -xis -tr run
+```
+
+See [Example: MariaDB ColumnStore](Example-MariaDBCS.md) for a worked example.
 
 ---
 
@@ -859,6 +955,61 @@ See [Example: ClickHouse](Example-ClickHouse.md#clickhouse-as-a-cluster) for a w
 The dimension placement of TPC-H is `-xdim`, see above.
 
 ---
+
+## CedarDB
+
+CedarDB is an HTAP DBMS with a PostgreSQL wire protocol, the commercial successor of TUM's Umbra (TPC-H, SSB, YCSB, Benchbase).
+
+**Deployment template:** [`k8s/deploymenttemplate-CedarDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-CedarDB.yml)
+
+The template pins the Community Edition image `cedardb/cedardb:v2026-10-22`.
+It differs from a PostgreSQL template in these points:
+
+| Point | Handling | Without it |
+|---|---|---|
+| Password | `CEDAR_PASSWORD` has at least 20 characters, as the JDBC `auth` of `cluster.config`; letters and digits only, it goes through `sed` in the YCSB and Benchbase images | the image refuses a weak password and the server stops |
+| Authentication | no trust authentication: `client_env` of `cluster.config` gives every job `PGPASSWORD` | the `psql` of the loader images cannot connect |
+| Address | the entrypoint binds to `::`; the container command changes it to `0.0.0.0` before the start | no IPv6 in the pods, the server stops; `-address` as an argument is refused as given twice |
+| `psql` | the image has none; the initContainer `include-client` copies it from `postgres:18.6` to `/pgclient` for `loadData` | init scripts cannot run |
+
+Memory and threads follow the limits of the container: `buffersize` and `workmemsize` default to 45% of the memory limit each.
+CedarDB warns that the `memlock` limit is too low for its `io_uring` buffers (performance may degrade); this limit cannot be changed from a pod.
+
+**Community Edition:** free, at most 64 GiB of data; above that the database is read-only.
+TPC-H is about 1.3 GiB per scale factor including indexes, so SF30 fits and SF100 does not (there is no SF100 script).
+The [terms](https://cedardb.com/legal/agreements/community_tcs.pdf) allow no passing on of the software, so bexhoma does not build a derived image.
+
+**Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/CedarDB), [SSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ssb/CedarDB), [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/CedarDB)):
+the statements of PostgreSQL, in schema `public`.
+The loaders are those of PostgreSQL; `\COPY` accepts the trailing `|` of the TPC-H files.
+TPC-H uses dialect `CedarDB`: Q8, Q10 and Q15 have a variant with `date '...'`, as CedarDB has no function `date(text)`; the other queries are the main text.
+
+CedarDB does not share code with PostgreSQL. What the scripts cannot use:
+
+| Not available | Consequence |
+|---|---|
+| `CHECKPOINT` | no persist step in `checkschema` and the reset |
+| settable `synchronous_commit`, `fsync` | `-xld` has no effect, there are no durability scripts |
+| `pg_stat_reset()` | no counters step in the reset |
+| `query_to_xml`, `pg_stat_wal`, `pg_stat_bgwriter` | `checkschema` lists the tables itself |
+
+Isolation: every transaction runs as repeatable read. `READ COMMITTED` is accepted but stays repeatable read, `SERIALIZABLE` is refused, so Benchbase runs on repeatable read here.
+With concurrent writes to the same rows, transactions fail with `conflict with concurrent transaction` instead of waiting.
+YCSB does not retry them: workload A lost about 0.4% of its updates at 16 threads (`[UPDATE-FAILED]`), so the test `Execution Phase: contains FAILED column` fails.
+
+Benchbase `twitter` loads, but its benchmark stops when it connects: the PostgreSQL profile of the image fixes `TRANSACTION_SERIALIZABLE` for it and ignores `BENCHBASE_ISOLATION`.
+
+CH-benCHmark runs, but `num_errors` is not 0 and no bexhoma test reports it; the SQL comes from Benchbase:
+- Q22 always fails: `GROUP BY substring(c_state from 1 for 1)` and `ORDER BY substring(c_state,1,1)` are not the same expression for CedarDB.
+- Q15 fails when terminals overlap: all create the same view (`Catalog object was concurrently created`).
+
+CedarDB has no Prometheus endpoint in bexhoma (`-ma`).
+
+```bash
+bexhoma tpch -dbms CedarDB -sf 1 -nlp 8 -xii -xic -xis -tr run
+```
+
+See [Example: Other DBMS](Example-Other-DBMS.md#cedardb) for the workloads and the test script.
 
 ## YugabyteDB
 
@@ -1120,6 +1271,92 @@ Monitoring uses a `redis_exporter` sidecar scraping each worker pod on port 9121
 Redis does not have dedicated DDL scripts; YCSB manages table/key-space creation directly via the Redis wire protocol.
 
 See [Example: Redis](Example-Redis.md) for a worked example.
+
+---
+
+## Valkey
+
+`Valkey` is the Linux Foundation fork of Redis 7.2.4 (BSD-3-Clause license, which has no restriction on publishing benchmark results).
+Bexhoma uses the image `valkey/valkey:9.1.3`, protocol and cluster mode are compatible with Redis.
+It is used as the SUT for YCSB key-value workloads: `-dbms Valkey` runs a single node (template `deploymenttemplate-Valkey.yml`), `-nw N` a cluster of N shards (`deploymenttemplate-ValkeyCluster.yml`, with `-nwr` replicas).
+The configuration is the one of [Redis](#redis) with `valkey-cli` instead of `redis-cli`; monitoring uses the same `redis_exporter` sidecar (port 9121) and the `redis` metrics set.
+With `-ar`, `save-snapshot.sh` (`SAVE`, then `CONFIG RESETSTAT`) runs before each benchmarking round, on every worker in cluster mode.
+
+**DDL scripts:**
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Valkey)
+
+See [Example: Valkey](Example-Valkey.md) for a worked example.
+
+---
+
+## Garnet
+
+`Garnet` is Microsoft Research's RESP-compatible cache store (MIT license, which has no restriction on publishing benchmark results).
+Bexhoma uses the image `ghcr.io/microsoft/garnet:2.2.5`: a single node (template `deploymenttemplate-Garnet.yml`) or, with `-nw N`, a cluster of N shards (template `deploymenttemplate-GarnetCluster.yml`, Garnet started with `--cluster`); `-nwr R` adds R replicas per shard, so `-nw 3 -nwr 1` creates 6 worker pods (the cluster is created with `--cluster-replicas`). Redis's cluster flags (`--cluster-enabled` etc.) are unknown to Garnet, so the Redis cluster template cannot be reused by swapping the image.
+YCSB talks to it with the Redis binding (`BEXHOMA_DBMS_TYPE=redis`), so only the commands used by that binding must be supported by Garnet.
+See [Example: Garnet](Example-Garnet.md) for a worked example.
+The image contains no CLI, so an init container copies `valkey-cli` (also as `redis-cli`) from the Valkey image into the pod: it serves the `SAVE` of the `preStop` hook and of the reset script.
+Garnet is started with `--checkpointdir /data/checkpoints --aof --aof-commit-freq 1000 --recover` and as root (the volume is owned by root), so data on a persistent volume (`-rsr`) survives a restart and a repetition that reuses the volume finds its data.
+With `-ar`, `save-snapshot.sh` (`SAVE`, a checkpoint) runs before each benchmarking round; Garnet does not support `CONFIG RESETSTAT`.
+There is no `redis_exporter` sidecar, so only cAdvisor metrics are collected.
+
+**DDL scripts:**
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Garnet)
+
+---
+
+## Cassandra
+
+Apache Cassandra is a wide-column store. It is licensed under Apache 2.0, which has no restriction on publishing benchmark results.
+Bexhoma uses the image `cassandra:5.0.9`.
+
+There are two configuration keys, chosen by `-nw` with `-dbms Cassandra`:
+
+- `Cassandra` (`-nw 0`): a single node in the SUT pod, template `deploymenttemplate-Cassandra.yml`.
+- `CassandraCluster` (`-nw` > 0): a StatefulSet of nodes with a headless service, template `deploymenttemplate-CassandraCluster.yml`. The first worker is the seed. The nodes start one after the other, as Cassandra refuses to bootstrap them in parallel, and bexhoma starts loading when the last one has joined. The SUT pod is a placeholder that runs `cqlsh` for the scripts.
+
+**Configuration** (from `cluster.config`):
+
+```python
+'Cassandra': {
+    'abbreviation': 'ca',
+    'loadData': 'cqlsh {service_name} 9091 --request-timeout=600 -f {scriptname}',
+    'delay_prepare': 10,
+    'template': {
+        'version': '5.0.9',
+        'alias': 'Wide-Column-1',
+        'docker_alias': 'WC1',
+        'auth': ["cassandra", ""],
+    },
+    'logfile': '/var/log/cassandra/system.log',
+    'datadir': '/var/lib/cassandra',
+    'priceperhourdollar': 0.0,
+    'monitor': { ... },  # Prometheus discovery of the SUT pod on port 8080 (cassandra_exporter)
+},
+```
+
+There is no JDBC driver: YCSB runs its `cassandra-cql` binding, selected by `BEXHOMA_DBMS_TYPE = "cassandra"`. The binding uses the DataStax driver 3.0.0, which works with Cassandra 5. DBMSBenchmarker cannot connect, so only YCSB is offered.
+The driver connects to every node it discovers on the port of its contact points. So YCSB reaches a cluster through the workers on port 9042 and a single node through the SUT service on port 9091.
+
+Scripts are CQL with the suffix `.sql`, because bexhoma runs only that suffix through `loadData`: `initschema-ycsb.sql` creates the keyspace `ycsb` and the table `usertable`, `checkschema-ycsb.sql` shows keyspace, table and ring. It counts no rows, since `SELECT count(*)` scans the table and runs into the range timeout of the server. `save-snapshot.sh` flushes and waits for the compactions after the load, and logs `nodetool tablestats` with the estimated rows per node.
+
+The heap is a quarter of the memory limit of the container, at most 31 GiB, because `cassandra-env.sh` would size it from the RAM of the node. Change it per run with `--set deployment[bexhoma-deployment-cassandra].container[dbms].env.MAX_HEAP_SIZE=8G` (for the cluster workers: `statefulset[bexhoma-worker]`). Do not set `HEAP_NEWSIZE`, which must stay unset with G1.
+
+A loader thread of YCSB ends at its first failed insert, and a busy node answers with a write timeout after 2 s. So `generator.sh` retries a failed insert for Cassandra up to 10 times, 3 s apart; each retry is a line `Retrying insertion` in the log of the loader. The test `Loading Phase: all rows inserted` fails for every DBMS when rows are missing.
+
+Monitoring uses a [cassandra_exporter](https://github.com/criteo/cassandra_exporter) sidecar on port 8080 next to each node, which reads JMX on `127.0.0.1:7199`. See the metric set `cassandra` in [Monitoring](Monitoring.md). The request rates need a phase longer than the scrape interval of 30 s (at least `-xop 5` here); they show 0 for shorter ones.
+
+Reads and writes use consistency level `ONE`, the default of the binding, also with a replication factor above 1.
+`-xld` has no effect, since a keyspace does not exist yet when the durability scripts run: writes go to the commit log, which is synced every 10 s (`commitlog_sync: periodic`) unless set otherwise.
+`-xsbs` has no effect: the binding writes single statements.
+
+**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
+
+| Key | Workload | Values | Default | Meaning |
+|---|---|---|---|---|
+| `num_worker_replicas` | YCSB | integer | `1` | replication_factor of the keyspace ycsb, also set by `-nwr`; reads and writes use consistency level ONE |
+
+See [Example: Cassandra](Example-Cassandra.md) for a worked example.
 
 ---
 

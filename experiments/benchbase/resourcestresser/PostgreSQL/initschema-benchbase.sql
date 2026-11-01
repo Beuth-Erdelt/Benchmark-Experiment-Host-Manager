@@ -1,0 +1,7 @@
+-- Benchmark-Experiment-Host-Manager | experiments/benchbase/resourcestresser/PostgreSQL
+-- Authors: Patrick K. Erdelt
+-- Copyright (C) 2020 Patrick K. Erdelt
+-- SPDX-License-Identifier: AGPL-3.0-or-later
+-- See LICENSE for details.
+-- Purpose: Schema initialisation placeholder for the resourcestresser benchmark on PostgreSQL.
+--          Benchbase creates the resourcestresser tables automatically at runtime.

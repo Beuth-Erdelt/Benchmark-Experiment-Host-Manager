@@ -43,7 +43,7 @@ Shared helper functions live in `testfunctions.sh` and `testfunctions.ps1` and a
 They provide:
 
 - `wait_process` / `Wait-BexhomaProcess` — polls until no `python <name>.py` process remains; called after every `bexhoma` invocation.
-- `clean_logs` / `Invoke-CleanLogs` — strips kubectl token warnings and extracts `## Show Summary` sections from each `.log` file into `<basename>_summary.md` files.
+- `clean_logs` / `Invoke-CleanLogs` — strips kubectl token warnings and extracts `## Show Summary` sections from each `.log` file into `<basename>_summary.md` files. Both leave logs and summaries as UTF-8 without BOM with LF line endings; `Invoke-CleanLogs` does not touch a file that needs no change.
 
 ---
 
@@ -177,7 +177,7 @@ Rewrites `.md`, `.txt`, `.sh`, and `.py` files under `docs/`, `logs_tests/`, `im
 .\scripts\convert-to-lf.ps1
 ```
 
-The Python sync scripts (`_reorder_flags.py`, `_sync_docs.py`, `_sync_ps.py`, `_sync_cases_sh.py`, `replace-docs.py`) all write with explicit LF and do not need this script as a follow-up.
+The Python sync scripts (`_reorder_flags.py`, `_sync_docs.py`, `_sync_ps.py`, `_sync_cases_sh.py`, `replace-docs.py`) and `Invoke-CleanLogs` all write with explicit LF and do not need this script as a follow-up.
 `convert-to-lf.ps1` is useful for one-off corrections or after editing files directly in a Windows text editor.
 
 ### `validate_collector_*.py`

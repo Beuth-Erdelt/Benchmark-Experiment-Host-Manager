@@ -58,7 +58,7 @@ class StubCluster:
             },
         }
         self.dockers = {dbms: {} for dbms in (
-            'PostgreSQL', 'PgDuckDB', 'MonetDB', 'MariaDB', 'MySQL', 'CedarDB',
+            'PostgreSQL', 'PgDuckDB', 'MonetDB', 'MariaDB', 'MariaDBCS', 'MySQL', 'CedarDB',
         )}
 
     def set_code(self, code) -> None:

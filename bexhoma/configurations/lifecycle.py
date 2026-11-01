@@ -53,6 +53,20 @@ def pin_pods_to_nodes(pod_spec: dict, nodes: list, match_labels: dict) -> None:
 #: SUT connectivity rather than monitoring traffic.
 SERVICE_PORT_NAMES_ALWAYS_KEPT = ('port-dbms', 'port-bus', 'port-web')
 
+#: Init containers that have nothing to do with the storage volume: they stay
+#: in a SUT without one. ``include-client`` brings a client the DBMS image lacks.
+INIT_CONTAINERS_WITHOUT_STORAGE = ('include-client',)
+
+
+def init_containers_without_storage(init_containers: list) -> list:
+    """
+    Return the init containers a SUT without a storage volume keeps.
+
+    :param init_containers: ``initContainers`` of a pod spec.
+    :return: The entries named in :data:`INIT_CONTAINERS_WITHOUT_STORAGE`.
+    """
+    return [c for c in init_containers if c['name'] in INIT_CONTAINERS_WITHOUT_STORAGE]
+
 
 def sum_requested_resources(docs: list) -> dict:
     """Sum the requested CPU and RAM of the ``dbms`` containers of a SUT manifest.
@@ -1365,7 +1379,12 @@ scrape_configs:
                             del result[key]['spec']['template']['spec']['volumes'][i]
                 if 'initContainers' in result[key]['spec']['template']['spec']:
                     if not use_storage:
-                        del result[key]['spec']['template']['spec']['initContainers']
+                        kept = init_containers_without_storage(
+                            result[key]['spec']['template']['spec']['initContainers'])
+                        if kept:
+                            result[key]['spec']['template']['spec']['initContainers'] = kept
+                        else:
+                            del result[key]['spec']['template']['spec']['initContainers']
                     else:
                         for i_container, container in reversed(list(enumerate(
                                 dep['spec']['template']['spec']['initContainers']))):
