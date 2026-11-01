@@ -31,6 +31,8 @@ This document covers all DBMS currently supported by bexhoma.
 - [Dragonfly](#dragonfly)
 - [DragonflyCluster](#dragonflycluster)
 - [Redis (Cluster)](#redis)
+- [Valkey (Cluster)](#valkey)
+- [Garnet](#garnet)
 
 **Wide-Column Stores (YCSB)**
 - [Cassandra](#cassandra)
@@ -69,7 +71,7 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 
 ¹ Only required for SQL DBMS queried via DBMSBenchmarker. Entries whose SUT is
 never queried through DBMSBenchmarker — [Dragonfly](#dragonfly),
-[DragonflyCluster](#dragonflycluster), [Redis](#redis), [Cassandra](#cassandra), [Hardware](#hardware) —
+[DragonflyCluster](#dragonflycluster), [Redis](#redis), [Valkey](#valkey), [Garnet](#garnet), [Cassandra](#cassandra), [Hardware](#hardware) —
 omit `template.JDBC` entirely; `template` itself is still required (at minimum
 `version`, `alias`, `docker_alias`), and `template.auth` (a `[username,
 password]` pair) becomes required instead — `configurations/manifest.py`
@@ -311,6 +313,8 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | TiDB | `ANALYZE TABLE` (cluster-wide) | n/a (no flush in SQL) | `FLUSH STATUS` on the TiDB server the connection reaches |
 | Dragonfly | n/a | `SAVE` on every data pod | `CONFIG RESETSTAT` |
 | Redis | n/a | `SAVE` (standalone: SUT pod; cluster: every worker) | `CONFIG RESETSTAT` |
+| Valkey | n/a | `SAVE` (standalone: SUT pod; cluster: every worker) | `CONFIG RESETSTAT` |
+| Garnet | n/a | `SAVE` (checkpoint; standalone: SUT pod; cluster: every worker) | n/a (no `CONFIG RESETSTAT`) |
 | Cassandra | n/a | `save-snapshot.sh`: `nodetool flush`, wait until no compactions are pending (at most 1800 s; single node: SUT pod; cluster: every worker) | n/a (the JMX metrics cannot be reset) |
 
 DatabaseService has no reset.
@@ -1267,6 +1271,37 @@ Monitoring uses a `redis_exporter` sidecar scraping each worker pod on port 9121
 Redis does not have dedicated DDL scripts; YCSB manages table/key-space creation directly via the Redis wire protocol.
 
 See [Example: Redis](Example-Redis.md) for a worked example.
+
+---
+
+## Valkey
+
+`Valkey` is the Linux Foundation fork of Redis 7.2.4 (BSD-3-Clause license, which has no restriction on publishing benchmark results).
+Bexhoma uses the image `valkey/valkey:9.1.3`, protocol and cluster mode are compatible with Redis.
+It is used as the SUT for YCSB key-value workloads: `-dbms Valkey` runs a single node (template `deploymenttemplate-Valkey.yml`), `-nw N` a cluster of N shards (`deploymenttemplate-ValkeyCluster.yml`, with `-nwr` replicas).
+The configuration is the one of [Redis](#redis) with `valkey-cli` instead of `redis-cli`; monitoring uses the same `redis_exporter` sidecar (port 9121) and the `redis` metrics set.
+With `-ar`, `save-snapshot.sh` (`SAVE`, then `CONFIG RESETSTAT`) runs before each benchmarking round, on every worker in cluster mode.
+
+**DDL scripts:**
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Valkey)
+
+See [Example: Valkey](Example-Valkey.md) for a worked example.
+
+---
+
+## Garnet
+
+`Garnet` is Microsoft Research's RESP-compatible cache store (MIT license, which has no restriction on publishing benchmark results).
+Bexhoma uses the image `ghcr.io/microsoft/garnet:2.2.5`: a single node (template `deploymenttemplate-Garnet.yml`) or, with `-nw N`, a cluster of N shards (template `deploymenttemplate-GarnetCluster.yml`, Garnet started with `--cluster`); `-nwr R` adds R replicas per shard, so `-nw 3 -nwr 1` creates 6 worker pods (the cluster is created with `--cluster-replicas`). Redis's cluster flags (`--cluster-enabled` etc.) are unknown to Garnet, so the Redis cluster template cannot be reused by swapping the image.
+YCSB talks to it with the Redis binding (`BEXHOMA_DBMS_TYPE=redis`), so only the commands used by that binding must be supported by Garnet.
+See [Example: Garnet](Example-Garnet.md) for a worked example.
+The image contains no CLI, so an init container copies `valkey-cli` (also as `redis-cli`) from the Valkey image into the pod: it serves the `SAVE` of the `preStop` hook and of the reset script.
+Garnet is started with `--checkpointdir /data/checkpoints --aof --aof-commit-freq 1000 --recover` and as root (the volume is owned by root), so data on a persistent volume (`-rsr`) survives a restart and a repetition that reuses the volume finds its data.
+With `-ar`, `save-snapshot.sh` (`SAVE`, a checkpoint) runs before each benchmarking round; Garnet does not support `CONFIG RESETSTAT`.
+There is no `redis_exporter` sidecar, so only cAdvisor metrics are collected.
+
+**DDL scripts:**
+- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Garnet)
 
 ---
 

@@ -39,6 +39,8 @@
     ./Example-MariaDBCS.md
     ./Example-Redis.md
     ./Example-Dragonfly.md
+    ./Example-Valkey.md
+    ./Example-Garnet.md
     ./Example-Cassandra.md
     ./Example-PGBouncer.md
     ./Example-Other-DBMS.md
