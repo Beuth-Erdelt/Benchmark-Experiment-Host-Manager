@@ -2,7 +2,7 @@
 # Generates test logs for MariaDB ColumnStore, one run per workload that works on it.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
-# complete, writes logs to logs_tests/local (not in the repository), and
+# complete, writes logs, and
 # extracts summaries into separate files.
 #
 # Author: Patrick K. Erdelt
@@ -11,9 +11,6 @@
 # See LICENSE for details.
 
 . .\scripts\testfunctions.ps1
-
-$LOG_DIR = ".\logs_tests\local"
-New-Item -ItemType Directory -Force -Path $LOG_DIR | Out-Null
 
 
 #### TPC-H next to MariaDB, the result sets of both are stored per connection
@@ -36,12 +33,12 @@ bexhoma tpch `
   -nc 2                         <# two runs, the second restarts the SUT on the same data #> `
   -ar                           <# run the reset scripts before each round #> `
   -ks no                        <# remove the SUT at the end #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_mariadbcs_compare.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadbcs_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDB MariaDBCS  sf=1"
 
 
-#### TPC-DS next to MariaDB; the tests No SQL errors and SQL warnings fail on the 19 refused queries
+#### TPC-DS next to MariaDB; the test SQL warnings fails on Q33, see docs/DBMS.md
 bexhoma tpcds `
   -dbms MariaDB MariaDBCS       <# DBMS under test #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
@@ -60,7 +57,7 @@ bexhoma tpcds `
   -nc 2                         <# two runs, the second restarts the SUT on the same data #> `
   -ar                           <# run the reset scripts before each round #> `
   -ks no                        <# remove the SUT at the end #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_tpcds_testcase_mariadbcs_compare.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_mariadbcs_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MariaDBCS  sf=1"
 
@@ -81,7 +78,7 @@ bexhoma ssb `
   -nc 2                         <# two runs, the second restarts the SUT on the same data #> `
   -ar                           <# run the reset scripts before each round #> `
   -ks no                        <# remove the SUT at the end #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ssb_testcase_mariadbcs.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ssb_mariadbcs_1.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB MariaDBCS  sf=1"
 
@@ -103,7 +100,7 @@ bexhoma ssb `
   -nc 2                         <# two runs, the second restarts the SUT on the same data #> `
   -ar                           <# run the reset scripts before each round #> `
   -ks no                        <# remove the SUT at the end #> `
-  run 2>&1 | Out-File "$LOG_DIR\doc_ssb_testcase_mariadbcs_flat.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ssb_mariadbcs_2.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB MariaDBCS flat  sf=1"
 

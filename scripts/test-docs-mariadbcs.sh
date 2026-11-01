@@ -2,7 +2,7 @@
 # Generates test logs for MariaDB ColumnStore, one run per workload that works on it.
 #
 # Runs a parameterised sequence of bexhoma experiments, waits for each to
-# complete, writes logs to logs_tests/local (not in the repository), and
+# complete, writes logs, and
 # extracts summaries into separate files.
 #
 # Author: Patrick K. Erdelt
@@ -12,9 +12,6 @@
 
 
 source ./scripts/testfunctions.sh
-
-LOG_DIR="./logs_tests/local"
-prepare_logs
 
 
 #### TPC-H next to MariaDB, the result sets of both are stored per connection
@@ -55,12 +52,12 @@ bexhoma tpch \
   -nc 2 \
   -ar \
   -ks no \
-  run &>$LOG_DIR/doc_tpch_testcase_mariadbcs_compare.log
+  run &>$LOG_DIR/docs_tpch_mariadbcs_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB MariaDBCS  sf=1"
 
 
-#### TPC-DS next to MariaDB; the tests No SQL errors and SQL warnings fail on the 19 refused queries
+#### TPC-DS next to MariaDB; the test SQL warnings fails on Q33, see docs/DBMS.md
 bexhoma tpcds \
   -dbms MariaDB MariaDBCS \
   -sf 1 \
@@ -79,7 +76,7 @@ bexhoma tpcds \
   -nc 2 \
   -ar \
   -ks no \
-  run &>$LOG_DIR/doc_tpcds_testcase_mariadbcs_compare.log
+  run &>$LOG_DIR/docs_tpcds_mariadbcs_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDBCS  sf=1"
 
@@ -100,7 +97,7 @@ bexhoma ssb \
   -nc 2 \
   -ar \
   -ks no \
-  run &>$LOG_DIR/doc_ssb_testcase_mariadbcs.log
+  run &>$LOG_DIR/docs_ssb_mariadbcs_1.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDBCS  sf=1"
 
@@ -123,7 +120,7 @@ bexhoma ssb \
   -nc 2 \
   -ar \
   -ks no \
-  run &>$LOG_DIR/doc_ssb_testcase_mariadbcs_flat.log
+  run &>$LOG_DIR/docs_ssb_mariadbcs_2.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDBCS flat  sf=1"
 
