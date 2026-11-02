@@ -3,86 +3,121 @@
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 2383s 
-* Code: 1781948898
+* Duration: 1992s 
+* Code: 1793571888
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-  * Benchbase data is generated and loaded using several threads.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [20]. Benchmarking runs for 5 minutes.
-  * Experiment uses bexhoma version 0.9.16.
+  * Status is logged every 10ms.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
   * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 50Gi.
   * Loading is tested with [1] threads, split into [1] pods.
   * Benchmarking is tested with [160] threads, split into [4, 8] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* PostgreSQL-1-1-1-1 uses docker image postgres:18.3
-  * RAM:2164173246464
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1328470
+  * disk:688672
+  * datadisk:4307
+  * volume_size:1.8T
+  * volume_used:673G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1781948898
+    * code:1793571888
     * TENANT_VOL:False
-* PostgreSQL-1-1-2-1 uses docker image postgres:18.3
-  * RAM:2164173246464
+* postgresql-1-1-2-1 uses docker image postgres:18.6
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1338106
+  * disk:698324
+  * datadisk:13950
+  * volume_size:1.8T
+  * volume_used:682G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1781948898
+    * code:1793571888
     * TENANT_VOL:False
-* PostgreSQL-1-2-1-1 uses docker image postgres:18.3
-  * RAM:2164173246464
+* postgresql-1-2-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1327509
+  * disk:688684
+  * datadisk:4307
+  * volume_size:1.8T
+  * volume_used:673G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1781948898
+    * code:1793571888
     * TENANT_VOL:False
-* PostgreSQL-1-2-2-1 uses docker image postgres:18.3
-  * RAM:2164173246464
+* postgresql-1-2-2-1 uses docker image postgres:18.6
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-111-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1335263
+  * disk:706207
+  * datadisk:20874
+  * volume_size:1.8T
+  * volume_used:690G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1781948898
+    * code:1793571888
     * TENANT_VOL:False
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793571888-58864fcd4f-d62gq: 0
+* bexhoma-sut-postgresql-1-1793571888-68b5b4f494-c4n7k: 0
 
 ### Workflow
 
@@ -104,50 +139,50 @@ Benchbase Workload tpcc SF=16
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 |   16 |      204.00 |           1.00 |            0.00 |         84.00 |          119.00 |              1 |           1 |             |                |             0 | False         |              282.35 |
-| PostgreSQL-1-2 |                2 |   16 |      331.00 |           1.00 |            0.00 |        154.00 |          176.00 |              1 |           1 |             |                |             0 | False         |              174.02 |
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |   16 |       81.00 |           2.00 |            0.00 |         71.00 |            8.00 |              1 |           1 |             |                |             0 | False         |              711.11 | False               |
+| PostgreSQL-1-2 |                2 |   16 |       81.00 |           3.00 |            0.00 |         69.00 |            9.00 |              1 |           1 |             |                |             0 | False         |              711.11 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
 | DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1-1-1 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |          40 |     5120 |        1 |               1 |       1 |           0 | 300.00 |           10 |                        2394.66 |                     2360.52 |         0.00 |                                                      50271.00 |                                              16694.00 |
-| PostgreSQL-1-1-1-1-2 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |          40 |     5120 |        1 |               1 |       2 |           0 | 300.00 |            8 |                        2383.67 |                     2349.86 |         0.00 |                                                      50805.00 |                                              16770.00 |
-| PostgreSQL-1-1-1-1-3 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |          40 |     5120 |        1 |               1 |       3 |           0 | 300.00 |            9 |                        2423.09 |                     2388.39 |         0.00 |                                                      49498.00 |                                              16498.00 |
-| PostgreSQL-1-1-1-1-4 | PostgreSQL-1-1-1 | PostgreSQL-1-1-1-1 |                1 |          40 |     5120 |        1 |               1 |       4 |           0 | 300.00 |           12 |                        2396.24 |                     2361.57 |         0.00 |                                                      49901.00 |                                              16683.00 |
-| PostgreSQL-1-1-2-1-1 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       1 |           0 | 300.00 |           12 |                        1058.63 |                     1042.72 |         0.00 |                                                      50045.00 |                                              18882.00 |
-| PostgreSQL-1-1-2-1-2 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       2 |           0 | 300.00 |            1 |                        1063.77 |                     1047.46 |         0.00 |                                                      50120.00 |                                              18790.00 |
-| PostgreSQL-1-1-2-1-3 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       3 |           0 | 300.00 |            3 |                        1066.78 |                     1050.53 |         0.00 |                                                      49986.00 |                                              18738.00 |
-| PostgreSQL-1-1-2-1-4 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       4 |           0 | 300.00 |            7 |                        1056.03 |                     1040.10 |         0.00 |                                                      50438.00 |                                              18928.00 |
-| PostgreSQL-1-1-2-1-5 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       5 |           0 | 300.00 |            3 |                        1060.69 |                     1044.95 |         0.00 |                                                      50036.00 |                                              18842.00 |
-| PostgreSQL-1-1-2-1-6 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       6 |           0 | 300.00 |            9 |                        1077.56 |                     1061.02 |         0.00 |                                                      49590.00 |                                              18551.00 |
-| PostgreSQL-1-1-2-1-7 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       7 |           0 | 300.00 |            6 |                        1067.93 |                     1051.63 |         0.00 |                                                      49355.00 |                                              18717.00 |
-| PostgreSQL-1-1-2-1-8 | PostgreSQL-1-1-2 | PostgreSQL-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       8 |           0 | 300.00 |            7 |                        1070.23 |                     1053.41 |         0.00 |                                                      49850.00 |                                              18676.00 |
-| PostgreSQL-1-2-1-1-1 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |          40 |     5120 |        1 |               1 |       1 |           0 | 300.00 |            9 |                        2122.67 |                     2097.23 |         0.00 |                                                      69069.00 |                                              18835.00 |
-| PostgreSQL-1-2-1-1-2 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |          40 |     5120 |        1 |               1 |       2 |           0 | 300.00 |            4 |                        1299.00 |                     1284.53 |         0.00 |                                                      92628.00 |                                              30778.00 |
-| PostgreSQL-1-2-1-1-3 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |          40 |     5120 |        1 |               1 |       3 |           0 | 300.00 |            6 |                        2153.06 |                     2127.30 |         0.00 |                                                      68735.00 |                                              18570.00 |
-| PostgreSQL-1-2-1-1-4 | PostgreSQL-1-2-1 | PostgreSQL-1-2-1-1 |                2 |          40 |     5120 |        1 |               1 |       4 |           0 | 300.00 |            7 |                        2111.41 |                     2086.29 |         0.00 |                                                      69009.00 |                                              18937.00 |
-| PostgreSQL-1-2-2-1-1 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       1 |           0 | 300.00 |            4 |                        1134.60 |                     1116.74 |         0.00 |                                                      48578.00 |                                              17617.00 |
-| PostgreSQL-1-2-2-1-2 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       2 |           0 | 300.00 |            6 |                        1159.87 |                     1141.48 |         0.00 |                                                      47888.00 |                                              17234.00 |
-| PostgreSQL-1-2-2-1-3 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       3 |           0 | 300.00 |            3 |                        1139.74 |                     1121.85 |         0.00 |                                                      48580.00 |                                              17537.00 |
-| PostgreSQL-1-2-2-1-4 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       4 |           0 | 300.00 |            5 |                        1150.27 |                     1132.23 |         0.00 |                                                      47742.00 |                                              17378.00 |
-| PostgreSQL-1-2-2-1-5 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       5 |           0 | 300.00 |           10 |                        1157.31 |                     1139.23 |         0.00 |                                                      47671.00 |                                              17271.00 |
-| PostgreSQL-1-2-2-1-6 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       6 |           0 | 300.00 |            7 |                        1139.57 |                     1121.72 |         0.00 |                                                      49603.00 |                                              17540.00 |
-| PostgreSQL-1-2-2-1-7 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       7 |           0 | 300.00 |            3 |                        1154.21 |                     1136.75 |         0.00 |                                                      48064.00 |                                              17318.00 |
-| PostgreSQL-1-2-2-1-8 | PostgreSQL-1-2-2 | PostgreSQL-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       8 |           0 | 300.00 |            6 |                        1127.96 |                     1109.93 |         0.00 |                                                      49300.00 |                                              17721.00 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |          40 |     5120 |        1 |               1 |       1 |           0 | 300.00 |            7 |                        2515.59 |                     2488.51 |         0.00 |                                                      64766.00 |                                              15893.00 |
+| postgresql-1-1-1-1-2 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |          40 |     5120 |        1 |               1 |       2 |           0 | 300.00 |            6 |                        1349.42 |                     1336.62 |         0.00 |                                                      96944.00 |                                              29618.00 |
+| postgresql-1-1-1-1-3 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |          40 |     5120 |        1 |               1 |       3 |           0 | 300.00 |           12 |                        2528.65 |                     2501.41 |         0.00 |                                                      64251.00 |                                              15811.00 |
+| postgresql-1-1-1-1-4 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |          40 |     5120 |        1 |               1 |       4 |           0 | 300.00 |            6 |                        2515.39 |                     2488.45 |         0.00 |                                                      64840.00 |                                              15894.00 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       1 |           0 | 300.00 |            3 |                        1385.60 |                     1368.30 |         0.00 |                                                      36437.00 |                                              14423.00 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       2 |           0 | 300.00 |            3 |                        1383.52 |                     1366.43 |         0.00 |                                                      36424.00 |                                              14444.00 |
+| postgresql-1-1-2-1-3 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       3 |           0 | 300.00 |            7 |                        1387.62 |                     1370.57 |         0.00 |                                                      36398.00 |                                              14401.00 |
+| postgresql-1-1-2-1-4 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       4 |           0 | 300.00 |            2 |                        1379.10 |                     1361.50 |         0.00 |                                                      36632.00 |                                              14490.00 |
+| postgresql-1-1-2-1-5 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       5 |           0 | 300.00 |            3 |                        1393.69 |                     1376.28 |         0.00 |                                                      36312.00 |                                              14339.00 |
+| postgresql-1-1-2-1-6 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       6 |           0 | 300.00 |            7 |                        1392.73 |                     1375.19 |         0.00 |                                                      36334.00 |                                              14349.00 |
+| postgresql-1-1-2-1-7 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       7 |           0 | 300.00 |            0 |                        1388.05 |                     1370.91 |         0.00 |                                                      36454.00 |                                              14396.00 |
+| postgresql-1-1-2-1-8 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          20 |     2560 |        2 |               1 |       8 |           0 | 300.00 |            2 |                        1391.59 |                     1373.58 |         0.00 |                                                      36184.00 |                                              14361.00 |
+| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |          40 |     5120 |        1 |               1 |       1 |           0 | 300.00 |           15 |                        3930.25 |                     3882.03 |         0.00 |                                                      30327.00 |                                              10170.00 |
+| postgresql-1-2-1-1-2 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |          40 |     5120 |        1 |               1 |       2 |           0 | 300.00 |           21 |                        3902.64 |                     3854.40 |         0.00 |                                                      30707.00 |                                              10244.00 |
+| postgresql-1-2-1-1-3 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |          40 |     5120 |        1 |               1 |       3 |           0 | 300.00 |           28 |                        3902.49 |                     3854.92 |         0.00 |                                                      30629.00 |                                              10245.00 |
+| postgresql-1-2-1-1-4 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |          40 |     5120 |        1 |               1 |       4 |           0 | 300.00 |           12 |                        3922.52 |                     3873.36 |         0.00 |                                                      30472.00 |                                              10191.00 |
+| postgresql-1-2-2-1-1 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       1 |           0 | 300.00 |            2 |                        1035.77 |                     1024.55 |         0.00 |                                                      39784.00 |                                              19296.00 |
+| postgresql-1-2-2-1-2 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       2 |           0 | 300.00 |           11 |                        1043.82 |                     1032.72 |         0.00 |                                                      39713.00 |                                              19147.00 |
+| postgresql-1-2-2-1-3 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       3 |           0 | 300.00 |            4 |                        1041.54 |                     1030.10 |         0.00 |                                                      39773.00 |                                              19188.00 |
+| postgresql-1-2-2-1-4 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       4 |           0 | 300.00 |            5 |                        1043.23 |                     1031.74 |         0.00 |                                                      39758.00 |                                              19158.00 |
+| postgresql-1-2-2-1-5 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       5 |           0 | 300.00 |            4 |                        1039.68 |                     1028.63 |         0.00 |                                                      39801.00 |                                              19218.00 |
+| postgresql-1-2-2-1-6 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       6 |           0 | 300.00 |            3 |                        1042.23 |                     1030.95 |         0.00 |                                                      39723.00 |                                              19176.00 |
+| postgresql-1-2-2-1-7 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       7 |           0 | 300.00 |            6 |                        1042.16 |                     1030.90 |         0.00 |                                                      39633.00 |                                              19177.00 |
+| postgresql-1-2-2-1-8 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |          20 |     2560 |        2 |               1 |       8 |           0 | 300.00 |            4 |                        1036.67 |                     1025.27 |         0.00 |                                                      40050.00 |                                              19273.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| PostgreSQL-1-1-1 | PostgreSQL-1-1-1 |                1 |         160 |    20480 |               1 |           4 |           0 | 300.00 |           39 |                        9597.66 |                     9460.33 |         0.00 |                                                      50805.00 |                                              16661.25 |
-| PostgreSQL-1-1-2 | PostgreSQL-1-1-2 |                1 |         160 |    20480 |               1 |           8 |           0 | 300.00 |           48 |                        8521.60 |                     8391.82 |         0.00 |                                                      50438.00 |                                              18765.50 |
-| PostgreSQL-1-2-1 | PostgreSQL-1-2-1 |                2 |         160 |    20480 |               1 |           4 |           0 | 300.00 |           26 |                        7686.14 |                     7595.34 |         0.00 |                                                      92628.00 |                                              21780.00 |
-| PostgreSQL-1-2-2 | PostgreSQL-1-2-2 |                2 |         160 |    20480 |               1 |           8 |           0 | 300.00 |           44 |                        9163.53 |                     9019.92 |         0.00 |                                                      49603.00 |                                              17452.00 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |         160 |    20480 |               1 |           4 |           0 | 300.00 |           31 |                        8909.05 |                     8815.00 |         0.00 |                                                      96944.00 |                                              19304.00 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |         160 |    20480 |               1 |           8 |           0 | 300.00 |           27 |                       11101.89 |                    10962.77 |         0.00 |                                                      36632.00 |                                              14400.38 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |         160 |    20480 |               1 |           4 |           0 | 300.00 |           76 |                       15657.90 |                    15464.72 |         0.00 |                                                      30707.00 |                                              10212.50 |
+| postgresql-1-2-2 | postgresql-1-2-2 |                2 |         160 |    20480 |               1 |           8 |           0 | 300.00 |           39 |                        8325.09 |                     8234.85 |         0.00 |                                                      40050.00 |                                              19204.12 |
 
 ### Monitoring
 
@@ -155,62 +190,103 @@ Benchbase Workload tpcc SF=16
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       145.35 |      2.35 |           2.05 |                  3.69 |
-| PostgreSQL-1-1-2-1 |       145.35 |      2.35 |           2.05 |                  3.69 |
-| PostgreSQL-1-2-1-1 |      7980.67 |      3.57 |           7.52 |                 14.44 |
-| PostgreSQL-1-2-2-1 |      7980.67 |      3.57 |           7.52 |                 14.44 |
+| postgresql-1-1-1-1 |       129.99 |      2.73 |           2.05 |                  3.69 |
+| postgresql-1-1-2-1 |       129.99 |      2.73 |           2.05 |                  3.69 |
+| postgresql-1-2-1-1 |       138.84 |      5.27 |           2.06 |                  3.70 |
+| postgresql-1-2-2-1 |       138.84 |      5.27 |           2.06 |                  3.70 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       564.02 |     12.96 |           0.26 |                  0.26 |
-| PostgreSQL-1-1-2-1 |       564.02 |     12.96 |           0.26 |                  0.26 |
-| PostgreSQL-1-2-1-1 |      1919.37 |     15.53 |           0.27 |                  0.27 |
-| PostgreSQL-1-2-2-1 |      1919.37 |     15.53 |           0.27 |                  0.27 |
+| postgresql-1-1-1-1 |       781.39 |     15.20 |           0.26 |                  0.26 |
+| postgresql-1-1-2-1 |       781.39 |     15.20 |           0.26 |                  0.26 |
+| postgresql-1-2-1-1 |       477.63 |     14.69 |           0.24 |                  0.24 |
+| postgresql-1-2-2-1 |       477.63 |     14.69 |           0.24 |                  0.24 |
 
-### Execution phase: SUT deployment
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |      3256.32 |     12.68 |           6.65 |                 10.92 |
-| PostgreSQL-1-1-2-1 |      4144.77 |     14.95 |          10.17 |                 17.06 |
-| PostgreSQL-1-2-1-1 |      4667.84 |     17.80 |           6.16 |                 10.08 |
-| PostgreSQL-1-2-2-1 |      4050.91 |     14.89 |           9.69 |                 16.26 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |      5026.62 |     18.83 |           0.43 |                  0.43 |
-| PostgreSQL-1-1-2-1 |      4945.37 |     35.49 |           0.43 |                  0.43 |
-| PostgreSQL-1-2-1-1 |      3473.40 |     16.70 |           0.42 |                  0.42 |
-| PostgreSQL-1-2-2-1 |      2972.21 |     27.16 |           0.42 |                  0.42 |
+| postgresql-1-1-1-1 |      5238.72 |     22.33 |           6.98 |                 11.51 |
+| postgresql-1-1-2-1 |      5170.85 |     23.42 |          11.65 |                 19.66 |
+| postgresql-1-2-1-1 |      5919.25 |     23.78 |           9.21 |                 15.40 |
+| postgresql-1-2-2-1 |      3899.39 |     15.96 |          12.14 |                 20.61 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 |      2167.08 |      9.73 |           0.54 |                  0.54 |
+| postgresql-1-1-2-1 |      2719.85 |     14.72 |           0.39 |                  0.39 |
+| postgresql-1-2-1-1 |      2656.65 |     10.89 |           0.59 |                  0.59 |
+| postgresql-1-2-2-1 |      2411.96 |      9.42 |           0.40 |                  0.40 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on I/O [sessions] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on WAL [sessions] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (I/O Wait) [s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (WAL Wait) [s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
 #### Loading phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                     16.00 |                                     0.00 |                                             0.00 |                        9.00 |                                    8.00 |
-| PostgreSQL-1-1-2-1 |                     16.00 |                                     0.00 |                                             0.00 |                        9.00 |                                    8.00 |
-| PostgreSQL-1-2-1-1 |                     16.00 |                                     0.00 |                                             0.00 |                       13.00 |                                   13.00 |
-| PostgreSQL-1-2-2-1 |                     16.00 |                                     0.00 |                                             0.00 |                       13.00 |                                   13.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                17.00 |                                                0.00 |                                                        0.00 |                                   3.00 |                                               3.00 |
+| postgresql-1-1-2-1 |                                17.00 |                                                0.00 |                                                        0.00 |                                   3.00 |                                               3.00 |
+| postgresql-1-2-1-1 |                                17.00 |                                                0.00 |                                                        0.00 |                                   9.00 |                                               9.00 |
+| postgresql-1-2-2-1 |                                17.00 |                                                0.00 |                                                        0.00 |                                   9.00 |                                               9.00 |
 
-#### Execution phase: SUT deployment
+#### Benchmarking phase: SUT deployment
 
-| DBMS               |   Number of Idle Sessions |   Number of Idle-in-transaction Sessions |   Number of Idle-in-transaction Aborted Sessions |   Number of Active Sessions |   Number of Active Application Sessions |
-|:-------------------|--------------------------:|-----------------------------------------:|-------------------------------------------------:|----------------------------:|----------------------------------------:|
-| PostgreSQL-1-1-1-1 |                      9.00 |                                    54.00 |                                             0.00 |                      157.00 |                                  157.00 |
-| PostgreSQL-1-1-2-1 |                     16.00 |                                    55.00 |                                             0.00 |                      157.00 |                                  158.00 |
-| PostgreSQL-1-2-1-1 |                      7.00 |                                    47.00 |                                             0.00 |                      160.00 |                                  160.00 |
-| PostgreSQL-1-2-2-1 |                      7.00 |                                    54.00 |                                             0.00 |                      160.00 |                                  160.00 |
+| DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| postgresql-1-1-1-1 |                                 4.00 |                                               39.00 |                                                        0.00 |                                 150.00 |                                             150.00 |
+| postgresql-1-1-2-1 |                                 7.00 |                                               40.00 |                                                        0.00 |                                 160.00 |                                             160.00 |
+| postgresql-1-2-1-1 |                                 6.00 |                                               43.00 |                                                        0.00 |                                 160.00 |                                             160.00 |
+| postgresql-1-2-2-1 |                                10.00 |                                               27.00 |                                                        0.00 |                                 160.00 |                                             160.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
 * TEST passed: Workflow as planned

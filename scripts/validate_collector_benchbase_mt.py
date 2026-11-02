@@ -241,7 +241,7 @@ try:
         merged_df["Latency Distribution.Average Latency (microseconds)"]
         * merged_df["CPU Utilization Time [s]"] / 1e6)
     merged_df["E_RAM"] = (merged_df["Goodput (requests/second)"]
-                          / merged_df["Memory Usage [MiB]"])
+                          / merged_df["Memory Usage, Working Set [MiB]"])
     check_df(merged_df, "merged_perf_monitoring_mt",
              HEADER_COLS + ["E_Tpx", "E_Lat", "E_RAM"])
 except Exception:
