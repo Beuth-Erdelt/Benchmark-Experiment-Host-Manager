@@ -11081,65 +11081,123 @@ yields (after ca. 5 minutes) something like
 
 ### Workload
 YCSB SF=1
-    Type: ycsb
-    Duration: 1302s 
-    Code: 1749146590
-    YCSB tool runs the benchmark.
-    This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'E'.
-    Number of rows to insert is 1000000.
-    Ordering of inserts is hashed.
-    Number of operations is 1000000.
-    Batch size is ''.
-    Target is based on multiples of '1024'.
-    Factors for loading are [1].
-    Factors for benchmarking are [1].
-    Experiment uses bexhoma version 0.8.7.
-    Benchmark is limited to DBMS ['PostgreSQL'].
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 50Gi.
-    Loading is tested with [64] threads, split into [8] pods.
-    Benchmarking is tested with [64] threads, split into [8] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: ycsb
+* Duration: 2262s 
+* Code: 1793686799
+* YCSB driver runs the experiment.
+* This experiment compares run time and resource consumption of YCSB queries.
+  * Workload is 'E'.
+  * Number of rows to insert is 1000000.
+  * Ordering of inserts is hashed.
+  * Number of operations is 1000000.
+  * Batch size is ''.
+  * Target is based on multiples of '1024'.
+  * Factors for loading are [1].
+  * Factors for benchmarking are [1].
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi.
+  * Loading is tested with [64] threads, split into [8] pods.
+  * Benchmarking is tested with [64] threads, split into [8] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-PostgreSQL-64-8-1024-1 uses docker image postgres:16.1
-    RAM:541008568320
-    CPU:AMD Opteron(tm) Processor 6378
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:359248556
-    datadisk:3047
-    volume_size:50G
-    volume_used:3.0G
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    eval_parameters
-        code:1749146590
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:812866
+  * datadisk:2391
+  * volume_size:49G
+  * volume_used:2.4G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793686799
 
-### Execution
-                        experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)  [SCAN].Return=OK  [SCAN].99thPercentileLatency(us)  [INSERT-FAILED].Operations  [INSERT-FAILED].99thPercentileLatency(us)
-PostgreSQL-64-8-1024-1               1       64    1024          8           0                        1023.69               976884.0               49901                              1124.0            949867                            2323.0                         232                                    15863.0
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1793686799-54bf55db55-9m55b: 0
 
 ### Workflow
 
 #### Actual
-DBMS PostgreSQL-64-8-1024 - Pods [[8]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: ycsb (8 pods)
 
 #### Planned
-DBMS PostgreSQL-64-8-1024 - Pods [[8]]
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: ycsb (8 pods)
+
+### Loading
+
+#### Per Connection
+
+| connection           |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:---------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| postgresql-1-1-0-1-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976881.00 |            125000.00 |                              1231.00 | 1.00 |                3.69 |
+| postgresql-1-1-0-1-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.95 |               976911.00 |            125000.00 |                              1238.00 | 1.00 |                3.69 |
+| postgresql-1-1-0-1-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976899.00 |            125000.00 |                              1239.00 | 1.00 |                3.69 |
+| postgresql-1-1-0-1-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976881.00 |            125000.00 |                              1301.00 | 1.00 |                3.69 |
+| postgresql-1-1-0-1-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976854.00 |            125000.00 |                              1205.00 | 1.00 |                3.69 |
+| postgresql-1-1-0-1-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976876.00 |            125000.00 |                              1233.00 | 1.00 |                3.69 |
+| postgresql-1-1-0-1-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976890.00 |            125000.00 |                              1214.00 | 1.00 |                3.69 |
+| postgresql-1-1-0-1-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976889.00 |            125000.00 |                              1246.00 | 1.00 |                3.69 |
+
+#### Per Run
+
+| DBMS           |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:---------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| PostgreSQL-1-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 | 1.00 |                3.69 |                         1023.66 |               976911.00 |           1000000.00 |                              1238.38 |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |   [INSERT-FAILED].Operations |   [INSERT-FAILED].99thPercentileLatency(us) |
+|:---------------------|:-----------------|:-------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|-----------------------------:|--------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       1 |         8 |      128 |           8 |            0 |                          127.96 |               976893.00 |                 6250 |                              4395.00 |             118676 |                            1803.00 |                           74 |                                     1679.00 |
+| postgresql-1-1-1-1-2 | postgresql-1-1-1 | postgresql-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       2 |         8 |      128 |           8 |            0 |                          127.96 |               976885.00 |                 6250 |                              4147.00 |             118633 |                            1784.00 |                          117 |                                     1717.00 |
+| postgresql-1-1-1-1-3 | postgresql-1-1-1 | postgresql-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       3 |         8 |      128 |           8 |            0 |                          127.96 |               976892.00 |                 6231 |                              4199.00 |             118769 |                            1803.00 |                            0 |                                        0.00 |
+| postgresql-1-1-1-1-4 | postgresql-1-1-1 | postgresql-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       4 |         8 |      128 |           8 |            0 |                          127.96 |               976898.00 |                 6250 |                              4219.00 |             118685 |                            1787.00 |                           65 |                                     1668.00 |
+| postgresql-1-1-1-1-5 | postgresql-1-1-1 | postgresql-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       5 |         8 |      128 |           8 |            0 |                          127.96 |               976865.00 |                 6250 |                              4223.00 |             118702 |                            1828.00 |                           48 |                                    17247.00 |
+| postgresql-1-1-1-1-6 | postgresql-1-1-1 | postgresql-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       6 |         8 |      128 |           8 |            0 |                          127.96 |               976879.00 |                 6250 |                              4419.00 |             118719 |                            1805.00 |                           31 |                                    13527.00 |
+| postgresql-1-1-1-1-7 | postgresql-1-1-1 | postgresql-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       7 |         8 |      128 |           8 |            0 |                          127.96 |               976884.00 |                 6250 |                              4407.00 |             118737 |                            1822.00 |                           13 |                                    13823.00 |
+| postgresql-1-1-1-1-8 | postgresql-1-1-1 | postgresql-1-1-1-1 | PostgreSQL-1    |                1 |        1 |               1 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976865.00 |                 6455 |                              4123.00 |             118545 |                            1797.00 |                            0 |                                        0.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |   [INSERT-FAILED].Operations |   [INSERT-FAILED].99thPercentileLatency(us) |
+|:-----------------|:-----------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|-----------------------------:|--------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        64 |     1024 |               1 |           8 |            0 |                         1023.66 |               976898.00 |                50186 |                              4419.00 |             949466 |                            1828.00 |                          348 |                                    17247.00 |
 
 ### Tests
-TEST passed: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Workflow as planned
-TEST failed: Result contains FAILED column
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
+* TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST failed: Execution Phase: contains FAILED column
 ```
 
 </details>
@@ -11345,8 +11403,8 @@ yields (after ca. 165 minutes) something like
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 9694s 
-* Code: 1780391716
+* Duration: 2439s 
+* Code: 1793626129
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -11357,149 +11415,192 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 4 and 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 50Gi.
   * Loading is tested with [32, 64] threads, split into [4, 8] pods.
   * Benchmarking is tested with [64] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MySQL-1-1-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:94107
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+* mysql-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:838530
+  * datadisk:34754
+  * volume_size:1.8T
+  * volume_used:819G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780391716
-* MySQL-2-1-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:94075
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793626129
+* mysql-2-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:838530
+  * datadisk:34722
+  * volume_size:1.8T
+  * volume_used:819G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780391716
-* MySQL-3-1-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:94108
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793626129
+* mysql-3-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:838530
+  * datadisk:34750
+  * volume_size:1.8T
+  * volume_used:819G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780391716
-* MySQL-4-1-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:94080
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793626129
+* mysql-4-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:838530
+  * datadisk:34722
+  * volume_size:1.8T
+  * volume_used:819G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780391716
+    * code:1793626129
+
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1793626129-5bc9754b5-dxnqt: 0
+* bexhoma-sut-mysql-2-1793626129-6864d4dfdc-tghth: 0
+* bexhoma-sut-mysql-3-1793626129-7566786f9c-jdllp: 0
+* bexhoma-sut-mysql-4-1793626129-697866cbf9-jcgrk: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MySQL-1 - Pods [[1]]
-* DBMS MySQL-2 - Pods [[1]]
-* DBMS MySQL-3 - Pods [[1]]
-* DBMS MySQL-4 - Pods [[1]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-2 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-3 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-4 - Experiment 1 Client 1: ycsb (1 pods)
 
 #### Planned
 
-* DBMS MySQL-1 - Pods [[1]]
-* DBMS MySQL-2 - Pods [[1]]
-* DBMS MySQL-3 - Pods [[1]]
-* DBMS MySQL-4 - Pods [[1]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-2 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-3 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-4 - Experiment 1 Client 1: ycsb (1 pods)
 
 ### Loading
 
 #### Per Connection
 
-| connection    |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-0-1 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          254.24 |               983341.00 |            250000.00 |                             16495.00 |
-| MySQL-1-1-0-2 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          254.41 |               982675.00 |            250000.00 |                             16559.00 |
-| MySQL-1-1-0-3 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          254.31 |               983041.00 |            250000.00 |                             16335.00 |
-| MySQL-1-1-0-4 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          254.21 |               983433.00 |            250000.00 |                             16511.00 |
-| MySQL-2-1-0-1 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.90 |               977335.00 |            125000.00 |                             16127.00 |
-| MySQL-2-1-0-2 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.90 |               977360.00 |            125000.00 |                             16135.00 |
-| MySQL-2-1-0-3 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.89 |               977383.00 |            125000.00 |                             16119.00 |
-| MySQL-2-1-0-4 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.89 |               977431.00 |            125000.00 |                             16079.00 |
-| MySQL-2-1-0-5 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.89 |               977384.00 |            125000.00 |                             16383.00 |
-| MySQL-2-1-0-6 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.90 |               977356.00 |            125000.00 |                             16255.00 |
-| MySQL-2-1-0-7 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.90 |               977329.00 |            125000.00 |                             16231.00 |
-| MySQL-2-1-0-8 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.89 |               977377.00 |            125000.00 |                             15999.00 |
-| MySQL-3-1-0-1 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          254.10 |               983854.00 |            250000.00 |                             16447.00 |
-| MySQL-3-1-0-2 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          254.26 |               983244.00 |            250000.00 |                             16703.00 |
-| MySQL-3-1-0-3 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          254.17 |               983604.00 |            250000.00 |                             16575.00 |
-| MySQL-3-1-0-4 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          254.06 |               984030.00 |            250000.00 |                             16447.00 |
-| MySQL-4-1-0-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.87 |               977529.00 |            125000.00 |                             16575.00 |
-| MySQL-4-1-0-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.88 |               977501.00 |            125000.00 |                             16927.00 |
-| MySQL-4-1-0-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.88 |               977470.00 |            125000.00 |                             16303.00 |
-| MySQL-4-1-0-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.87 |               977549.00 |            125000.00 |                             16287.00 |
-| MySQL-4-1-0-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.87 |               977536.00 |            125000.00 |                             16327.00 |
-| MySQL-4-1-0-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.87 |               977566.00 |            125000.00 |                             16143.00 |
-| MySQL-4-1-0-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.88 |               977473.00 |            125000.00 |                             16623.00 |
-| MySQL-4-1-0-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.85 |               977696.00 |            125000.00 |                             16167.00 |
+| connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| mysql-1-1-0-1-1 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          255.77 |               977455.00 |            250000.00 |                              1275.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-2 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          255.77 |               977458.00 |            250000.00 |                              1269.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-3 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          255.77 |               977448.00 |            250000.00 |                              1260.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-4 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          255.77 |               977446.00 |            250000.00 |                              1248.00 | 1.00 |                3.68 |
+| mysql-2-1-0-1-1 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.89 |               977399.00 |            125000.00 |                              1284.00 | 1.00 |                3.68 |
+| mysql-2-1-0-1-2 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.89 |               977368.00 |            125000.00 |                              1271.00 | 1.00 |                3.68 |
+| mysql-2-1-0-1-3 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.90 |               977363.00 |            125000.00 |                              1263.00 | 1.00 |                3.68 |
+| mysql-2-1-0-1-4 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.90 |               977304.00 |            125000.00 |                              1306.00 | 1.00 |                3.68 |
+| mysql-2-1-0-1-5 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.90 |               977293.00 |            125000.00 |                              1284.00 | 1.00 |                3.68 |
+| mysql-2-1-0-1-6 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.91 |               977278.00 |            125000.00 |                              1302.00 | 1.00 |                3.68 |
+| mysql-2-1-0-1-7 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.90 |               977315.00 |            125000.00 |                              1295.00 | 1.00 |                3.68 |
+| mysql-2-1-0-1-8 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.90 |               977302.00 |            125000.00 |                              1225.00 | 1.00 |                3.68 |
+| mysql-3-1-0-1-1 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          255.68 |               977780.00 |            250000.00 |                              1398.00 | 1.00 |                3.68 |
+| mysql-3-1-0-1-2 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          255.72 |               977644.00 |            250000.00 |                              1372.00 | 1.00 |                3.68 |
+| mysql-3-1-0-1-3 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          255.70 |               977727.00 |            250000.00 |                              1395.00 | 1.00 |                3.68 |
+| mysql-3-1-0-1-4 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          255.67 |               977818.00 |            250000.00 |                              1372.00 | 1.00 |                3.68 |
+| mysql-4-1-0-1-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.87 |               977581.00 |            125000.00 |                              1423.00 | 1.00 |                3.68 |
+| mysql-4-1-0-1-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.88 |               977448.00 |            125000.00 |                              1361.00 | 1.00 |                3.68 |
+| mysql-4-1-0-1-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.88 |               977505.00 |            125000.00 |                              1388.00 | 1.00 |                3.68 |
+| mysql-4-1-0-1-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.87 |               977557.00 |            125000.00 |                              1336.00 | 1.00 |                3.68 |
+| mysql-4-1-0-1-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.89 |               977409.00 |            125000.00 |                              1411.00 | 1.00 |                3.68 |
+| mysql-4-1-0-1-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.87 |               977565.00 |            125000.00 |                              1425.00 | 1.00 |                3.68 |
+| mysql-4-1-0-1-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.88 |               977499.00 |            125000.00 |                              1377.00 | 1.00 |                3.68 |
+| mysql-4-1-0-1-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.87 |               977547.00 |            125000.00 |                              1403.00 | 1.00 |                3.68 |
 
 #### Per Run
 
-| DBMS      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:----------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1 |             1.00 |     32.00 |  1024.00 |        4.00 |         0.00 |                         1017.17 |               983433.00 |           1000000.00 |                             16475.00 |
-| MySQL-2-1 |             1.00 |     32.00 |  1024.00 |        8.00 |         0.00 |                         1023.15 |               977431.00 |           1000000.00 |                             16166.00 |
-| MySQL-3-1 |             1.00 |     64.00 |  1024.00 |        4.00 |         0.00 |                         1016.59 |               984030.00 |           1000000.00 |                             16543.00 |
-| MySQL-4-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                         1022.98 |               977696.00 |           1000000.00 |                             16419.00 |
+| DBMS      |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:----------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| MySQL-1-1 |             1.00 |     32.00 |  1024.00 |        4.00 |         0.00 | 1.00 |                3.68 |                         1023.07 |               977458.00 |           1000000.00 |                              1263.00 |
+| MySQL-2-1 |             1.00 |     32.00 |  1024.00 |        8.00 |         0.00 | 1.00 |                3.68 |                         1023.20 |               977399.00 |           1000000.00 |                              1278.75 |
+| MySQL-3-1 |             1.00 |     64.00 |  1024.00 |        4.00 |         0.00 | 1.00 |                3.68 |                         1022.76 |               977818.00 |           1000000.00 |                              1384.25 |
+| MySQL-4-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 | 1.00 |                3.68 |                         1023.00 |               977581.00 |           1000000.00 |                              1390.50 |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS          | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:--------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-1-1 | MySQL-1         |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1022.03 |               978441.00 |             499891 |                            1225.00 |               500109 |                             14967.00 |
-| MySQL-2-1-1-1 | MySQL-2         |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1022.07 |               978404.00 |             498987 |                            1218.00 |               501013 |                             15103.00 |
-| MySQL-3-1-1-1 | MySQL-3         |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1022.21 |               978274.00 |             499498 |                            1215.00 |               500502 |                             15111.00 |
-| MySQL-4-1-1-1 | MySQL-4         |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1021.89 |               978579.00 |             500273 |                            1174.00 |               499727 |                             15015.00 |
+| DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1021.58 |               978878.00 |             499524 |                            1321.00 |               500476 |                              3217.00 |
+| mysql-2-1-1-1-1 | mysql-2-1-1 | mysql-2-1-1-1 | MySQL-2         |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1021.88 |               978590.00 |             499825 |                            1317.00 |               500175 |                              3199.00 |
+| mysql-3-1-1-1-1 | mysql-3-1-1 | mysql-3-1-1-1 | MySQL-3         |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1021.63 |               978830.00 |             501045 |                            1325.00 |               498955 |                              3237.00 |
+| mysql-4-1-1-1-1 | mysql-4-1-1 | mysql-4-1-1-1 | MySQL-4         |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1021.37 |               979076.00 |             499813 |                            1320.00 |               500187 |                              3193.00 |
 
 #### Per Phase
 
-| DBMS        |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1022.03 |               978441.00 |          499891.00 |                            1225.00 |            500109.00 |                             14967.00 |
-| MySQL-2-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1022.07 |               978404.00 |          498987.00 |                            1218.00 |            501013.00 |                             15103.00 |
-| MySQL-3-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1022.21 |               978274.00 |          499498.00 |                            1215.00 |            500502.00 |                             15111.00 |
-| MySQL-4-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1021.89 |               978579.00 |          500273.00 |                            1174.00 |            499727.00 |                             15015.00 |
+| DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1021.58 |               978878.00 |             499524 |                            1321.00 |               500476 |                              3217.00 |
+| mysql-2-1-1 | mysql-2-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1021.88 |               978590.00 |             499825 |                            1317.00 |               500175 |                              3199.00 |
+| mysql-3-1-1 | mysql-3-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1021.63 |               978830.00 |             501045 |                            1325.00 |               498955 |                              3237.00 |
+| mysql-4-1-1 | mysql-4-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1021.37 |               979076.00 |             499813 |                            1320.00 |               500187 |                              3193.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
@@ -11544,8 +11645,8 @@ yields (after ca. 310 minutes) something like
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 18369s 
-* Code: 1780401423
+* Duration: 3719s 
+* Code: 1793628584
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -11556,99 +11657,131 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi. Persistent storage is removed at experiment start.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MySQL-1-1-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58111
-  * volume_size:50G
-  * volume_used:36G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+* mysql-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699336
+  * datadisk:34722
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780401423
-* MySQL-1-2-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58111
-  * volume_size:50G
-  * volume_used:37G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793628584
+* mysql-1-2-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699349
+  * datadisk:34723
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780401423
+    * code:1793628584
+
+### Inherited Loading
+* loading skipped, loading times copied from an earlier repetition: MySQL-1-2
+
+### Data Parameters of Reused Volumes
+* MySQL-1: DDL values of the volume: row_format=DYNAMIC, collation=utf8mb4_0900_ai_ci
+* MySQL-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
+
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1793628584-5b695b5b5d-cvt22: 0
+* bexhoma-sut-mysql-1-1793628584-67d6cc6486-xknsn: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MySQL-1 - Pods [[1], [1]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 2 Client 1: ycsb (1 pods)
 
 #### Planned
 
-* DBMS MySQL-1 - Pods [[1], [1]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 2 Client 1: ycsb (1 pods)
 
 ### Loading
 
 #### Per Connection
 
-| connection    |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-0-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13859599.00 |            125000.00 |                          15671295.00 |
-| MySQL-1-1-0-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13859976.00 |            125000.00 |                          15704063.00 |
-| MySQL-1-1-0-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13859372.00 |            125000.00 |                          15302655.00 |
-| MySQL-1-1-0-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13860975.00 |            125000.00 |                          15597567.00 |
-| MySQL-1-1-0-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.03 |             13838752.00 |            125000.00 |                          15359999.00 |
-| MySQL-1-1-0-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.03 |             13850251.00 |            125000.00 |                          15376383.00 |
-| MySQL-1-1-0-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13859977.00 |            125000.00 |                          15278079.00 |
-| MySQL-1-1-0-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13861550.00 |            125000.00 |                          15294463.00 |
+| connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| mysql-1-1-0-1-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.85 |               977720.00 |            125000.00 |                              1892.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.81 |               977985.00 |            125000.00 |                              1789.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.82 |               977975.00 |            125000.00 |                              1799.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.85 |               977731.00 |            125000.00 |                              1765.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.81 |               977995.00 |            125000.00 |                              1867.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.83 |               977878.00 |            125000.00 |                              1783.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.84 |               977762.00 |            125000.00 |                              1768.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.83 |               977876.00 |            125000.00 |                              1725.00 | 1.00 |                3.68 |
 
 #### Per Run
 
-| DBMS      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:----------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                           72.17 |             13861550.00 |           1000000.00 |                          15448063.00 |
+| DBMS      |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:----------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| MySQL-1-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 | 1.00 |                3.68 |                         1022.64 |               977995.00 |           1000000.00 |                              1798.50 |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS          | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:--------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-1-1 | MySQL-1         |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                          870.36 |              1148951.00 |             500404 |                            1849.00 |               499596 |                           2787327.00 |
-| MySQL-1-2-1-1 | MySQL-1         |                2 |        1 |       1 |        64 |     1024 |           1 |            0 |                          721.94 |              1385149.00 |             500619 |                            2027.00 |               499381 |                           3078143.00 |
+| DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1022.26 |               978226.00 |             500026 |                            1359.00 |               499974 |                              7171.00 |
+| mysql-1-2-1-1-1 | mysql-1-2-1 | mysql-1-2-1-1 | MySQL-1         |                2 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1022.23 |               978251.00 |             500504 |                            2095.00 |               499496 |                              7039.00 |
 
 #### Per Phase
 
-| DBMS        |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                          870.36 |              1148951.00 |          500404.00 |                            1849.00 |            499596.00 |                           2787327.00 |
-| MySQL-1-2-1 |             2.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                          721.94 |              1385149.00 |          500619.00 |                            2027.00 |            499381.00 |                           3078143.00 |
+| DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1022.26 |               978226.00 |             500026 |                            1359.00 |               499974 |                              7171.00 |
+| mysql-1-2-1 | mysql-1-2-1 |                2 |        64 |     1024 |               1 |           1 |            0 |                         1022.23 |               978251.00 |             500504 |                            2095.00 |               499496 |                              7039.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
@@ -11693,8 +11826,8 @@ yields (after ca. 240 minutes) something like
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 14280s 
-* Code: 1780419828
+* Duration: 6843s 
+* Code: 1793632316
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -11705,228 +11838,287 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 50Gi.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [1, 8] pods.
   * Benchmarking is run as [1, 2] times the number of benchmarking pods.
   * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MySQL-1-1-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58111
-  * volume_size:50G
-  * volume_used:38G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+* mysql-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699365
+  * datadisk:34723
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780419828
-* MySQL-1-1-2 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58111
-  * volume_size:50G
-  * volume_used:39G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793632316
+* mysql-1-1-2-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699371
+  * datadisk:34723
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780419828
-* MySQL-1-1-3 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58111
-  * volume_size:50G
-  * volume_used:40G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793632316
+* mysql-1-1-3-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699374
+  * datadisk:34723
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780419828
-* MySQL-1-1-4 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58112
-  * volume_size:50G
-  * volume_used:41G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793632316
+* mysql-1-1-4-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699381
+  * datadisk:34723
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780419828
-* MySQL-1-2-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58111
-  * volume_size:50G
-  * volume_used:42G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793632316
+* mysql-1-2-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699405
+  * datadisk:34723
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780419828
-* MySQL-1-2-2 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58112
-  * volume_size:50G
-  * volume_used:43G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793632316
+* mysql-1-2-2-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699432
+  * datadisk:34723
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780419828
-* MySQL-1-2-3 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58112
-  * volume_size:50G
-  * volume_used:45G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793632316
+* mysql-1-2-3-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699435
+  * datadisk:34723
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780419828
-* MySQL-1-2-4 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58112
-  * volume_size:50G
-  * volume_used:46G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793632316
+* mysql-1-2-4-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699443
+  * datadisk:34723
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780419828
+    * code:1793632316
+
+### Reused Storage
+* loading skipped, loading times inherited from an earlier experiment: MySQL-1
+
+### Data Parameters of Reused Volumes
+* MySQL-1: DDL values of the volume: row_format=DYNAMIC, collation=utf8mb4_0900_ai_ci
+* MySQL-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
+
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1793632316-bd7c65ccb-fjxlk: 0
+* bexhoma-sut-mysql-1-1793632316-649f7bc8cc-thjch: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MySQL-1 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 2: ycsb (2 pods)
+* DBMS MySQL-1 - Experiment 1 Client 3: ycsb (8 pods)
+* DBMS MySQL-1 - Experiment 1 Client 4: ycsb (16 pods)
+* DBMS MySQL-1 - Experiment 2 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 2 Client 2: ycsb (2 pods)
+* DBMS MySQL-1 - Experiment 2 Client 3: ycsb (8 pods)
+* DBMS MySQL-1 - Experiment 2 Client 4: ycsb (16 pods)
 
 #### Planned
 
-* DBMS MySQL-1 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 2: ycsb (2 pods)
+* DBMS MySQL-1 - Experiment 1 Client 3: ycsb (8 pods)
+* DBMS MySQL-1 - Experiment 1 Client 4: ycsb (16 pods)
+* DBMS MySQL-1 - Experiment 2 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 2 Client 2: ycsb (2 pods)
+* DBMS MySQL-1 - Experiment 2 Client 3: ycsb (8 pods)
+* DBMS MySQL-1 - Experiment 2 Client 4: ycsb (16 pods)
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS           | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |   [UPDATE-FAILED].Operations |   [UPDATE-FAILED].99thPercentileLatency(us) |
-|:---------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|-----------------------------:|--------------------------------------------:|
-| MySQL-1-1-1-1  | MySQL-1         |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                          799.12 |              1251370.00 |             499858 |                            3715.00 |               500142 |                           2648063.00 |                            0 |                                        0.00 |
-| MySQL-1-1-2-1  | MySQL-1         |                1 |        2 |       1 |        64 |     1024 |           2 |            0 |                          317.95 |              1572571.00 |             249489 |                            1995.00 |               250511 |                          10338303.00 |                            0 |                                        0.00 |
-| MySQL-1-1-2-2  | MySQL-1         |                1 |        2 |       2 |        64 |     1024 |           2 |            0 |                          317.75 |              1573578.00 |             249971 |                            2020.00 |               250029 |                          10264575.00 |                            0 |                                        0.00 |
-| MySQL-1-1-3-6  | MySQL-1         |                1 |        3 |       6 |         8 |      128 |           8 |            0 |                           86.87 |              1438964.00 |              62549 |                            2001.00 |                62451 |                           3461119.00 |                            0 |                                        0.00 |
-| MySQL-1-1-3-5  | MySQL-1         |                1 |        3 |       5 |         8 |      128 |           8 |            0 |                           86.65 |              1442551.00 |              62392 |                            2019.00 |                62608 |                           3383295.00 |                            0 |                                        0.00 |
-| MySQL-1-1-3-4  | MySQL-1         |                1 |        3 |       4 |         8 |      128 |           8 |            0 |                           86.71 |              1441583.00 |              62464 |                            1996.00 |                62536 |                           3477503.00 |                            0 |                                        0.00 |
-| MySQL-1-1-3-3  | MySQL-1         |                1 |        3 |       3 |         8 |      128 |           8 |            0 |                           86.71 |              1441629.00 |              62683 |                            2003.00 |                62317 |                           3522559.00 |                            0 |                                        0.00 |
-| MySQL-1-1-3-1  | MySQL-1         |                1 |        3 |       1 |         8 |      128 |           8 |            0 |                           87.12 |              1434739.00 |              62433 |                            1967.00 |                62567 |                           3463167.00 |                            0 |                                        0.00 |
-| MySQL-1-1-3-7  | MySQL-1         |                1 |        3 |       7 |         8 |      128 |           8 |            0 |                           86.74 |              1441125.00 |              62557 |                            2067.00 |                62443 |                           3471359.00 |                            0 |                                        0.00 |
-| MySQL-1-1-3-2  | MySQL-1         |                1 |        3 |       2 |         8 |      128 |           8 |            0 |                           86.83 |              1439515.00 |              62275 |                            2027.00 |                62725 |                           3309567.00 |                            0 |                                        0.00 |
-| MySQL-1-1-3-8  | MySQL-1         |                1 |        3 |       8 |         8 |      128 |           8 |            0 |                           86.64 |              1442721.00 |              62417 |                            1967.00 |                62583 |                           3383295.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-15 | MySQL-1         |                1 |        4 |      15 |         8 |      128 |          16 |            0 |                           44.02 |              1419810.00 |              31207 |                            1996.00 |                31293 |                           9428991.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-12 | MySQL-1         |                1 |        4 |      12 |         8 |      128 |          16 |            0 |                           44.06 |              1418399.00 |              31251 |                            1992.00 |                31249 |                           9297919.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-14 | MySQL-1         |                1 |        4 |      14 |         8 |      128 |          16 |            0 |                           44.01 |              1420260.00 |              31367 |                            2003.00 |                31133 |                           9150463.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-16 | MySQL-1         |                1 |        4 |      16 |         8 |      128 |          16 |            0 |                           43.91 |              1423264.00 |              31373 |                            2010.00 |                31127 |                           9191423.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-7  | MySQL-1         |                1 |        4 |       7 |         8 |      128 |          16 |            0 |                           43.87 |              1424547.00 |              31150 |                            1932.00 |                31350 |                           9576447.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-6  | MySQL-1         |                1 |        4 |       6 |         8 |      128 |          16 |            0 |                           43.94 |              1422349.00 |              31287 |                            1985.00 |                31213 |                           9093119.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-8  | MySQL-1         |                1 |        4 |       8 |         8 |      128 |          16 |            0 |                           43.87 |              1424554.00 |              31353 |                            1924.00 |                31147 |                           9347071.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-13 | MySQL-1         |                1 |        4 |      13 |         8 |      128 |          16 |            0 |                           43.81 |              1426530.00 |              31151 |                            1978.00 |                31349 |                           9682943.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-2  | MySQL-1         |                1 |        4 |       2 |         8 |      128 |          16 |            0 |                           43.92 |              1422925.00 |              31166 |                            2025.00 |                31334 |                           9510911.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-10 | MySQL-1         |                1 |        4 |      10 |         8 |      128 |          16 |            0 |                           43.91 |              1423479.00 |              31278 |                            2003.00 |                31222 |                           9650175.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-11 | MySQL-1         |                1 |        4 |      11 |         8 |      128 |          16 |            0 |                           43.95 |              1422210.00 |              31181 |                            1981.00 |                31319 |                           9428991.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-3  | MySQL-1         |                1 |        4 |       3 |         8 |      128 |          16 |            0 |                           43.92 |              1423130.00 |              31370 |                            1924.00 |                31130 |                           9437183.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-1  | MySQL-1         |                1 |        4 |       1 |         8 |      128 |          16 |            0 |                           43.97 |              1421566.00 |              31036 |                            1974.00 |                31464 |                           9535487.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-5  | MySQL-1         |                1 |        4 |       5 |         8 |      128 |          16 |            0 |                           43.82 |              1426251.00 |              31139 |                            1990.00 |                31361 |                           9347071.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-4  | MySQL-1         |                1 |        4 |       4 |         8 |      128 |          16 |            0 |                           44.14 |              1415857.00 |              31329 |                            1977.00 |                31171 |                           9355263.00 |                            0 |                                        0.00 |
-| MySQL-1-1-4-9  | MySQL-1         |                1 |        4 |       9 |         8 |      128 |          16 |            0 |                           43.97 |              1421577.00 |              31304 |                            1916.00 |                31196 |                           9347071.00 |                            0 |                                        0.00 |
-| MySQL-1-2-4-6  | MySQL-1         |                2 |        4 |       6 |         8 |      128 |          16 |            0 |                           47.23 |              1323341.00 |              31286 |                            1927.00 |                31214 |                           7749631.00 |                            0 |                                        0.00 |
-| MySQL-1-2-4-10 | MySQL-1         |                2 |        4 |      10 |         8 |      128 |          16 |            0 |                           47.09 |              1327367.00 |              30946 |                            2001.00 |                31553 |                           7737343.00 |                            1 |                                 50102271.00 |
-| MySQL-1-2-4-11 | MySQL-1         |                2 |        4 |      11 |         8 |      128 |          16 |            0 |                           47.12 |              1326408.00 |              31134 |                            1946.00 |                31365 |                           7688191.00 |                            1 |                                 50888703.00 |
-| MySQL-1-2-4-4  | MySQL-1         |                2 |        4 |       4 |         8 |      128 |          16 |            0 |                           47.31 |              1321003.00 |              31401 |                            1920.00 |                31098 |                           7692287.00 |                            1 |                                 50888703.00 |
-| MySQL-1-2-4-12 | MySQL-1         |                2 |        4 |      12 |         8 |      128 |          16 |            0 |                           47.33 |              1320481.00 |              31286 |                            1999.00 |                31214 |                           7647231.00 |                            0 |                                        0.00 |
-| MySQL-1-2-4-16 | MySQL-1         |                2 |        4 |      16 |         8 |      128 |          16 |            0 |                           47.15 |              1325516.00 |              31368 |                            2042.00 |                31132 |                           8011775.00 |                            0 |                                        0.00 |
-| MySQL-1-2-4-13 | MySQL-1         |                2 |        4 |      13 |         8 |      128 |          16 |            0 |                           47.14 |              1325750.00 |              31170 |                            1972.00 |                31330 |                           7647231.00 |                            0 |                                        0.00 |
-| MySQL-1-2-4-5  | MySQL-1         |                2 |        4 |       5 |         8 |      128 |          16 |            0 |                           47.18 |              1324636.00 |              31034 |                            1946.00 |                31466 |                           7827455.00 |                            0 |                                        0.00 |
-| MySQL-1-2-4-1  | MySQL-1         |                2 |        4 |       1 |         8 |      128 |          16 |            0 |                           47.14 |              1325850.00 |              31057 |                            1946.00 |                31443 |                           7622655.00 |                            0 |                                        0.00 |
-| MySQL-1-2-4-7  | MySQL-1         |                2 |        4 |       7 |         8 |      128 |          16 |            0 |                           47.18 |              1324723.00 |              31258 |                            1944.00 |                31241 |                           7651327.00 |                            1 |                                 50167807.00 |
-| MySQL-1-2-4-8  | MySQL-1         |                2 |        4 |       8 |         8 |      128 |          16 |            0 |                           47.20 |              1324175.00 |              31333 |                            2021.00 |                31167 |                           7778303.00 |                            0 |                                        0.00 |
-| MySQL-1-2-4-3  | MySQL-1         |                2 |        4 |       3 |         8 |      128 |          16 |            0 |                           47.22 |              1323649.00 |              30973 |                            1989.00 |                31526 |                           7770111.00 |                            1 |                                 50102271.00 |
-| MySQL-1-2-4-2  | MySQL-1         |                2 |        4 |       2 |         8 |      128 |          16 |            0 |                           47.24 |              1323105.00 |              31411 |                            1912.00 |                31089 |                           7757823.00 |                            0 |                                        0.00 |
-| MySQL-1-2-4-9  | MySQL-1         |                2 |        4 |       9 |         8 |      128 |          16 |            0 |                           47.11 |              1326685.00 |              31164 |                            1924.00 |                31333 |                           7704575.00 |                            3 |                                 50364415.00 |
-| MySQL-1-2-1-1  | MySQL-1         |                2 |        1 |       1 |        64 |     1024 |           1 |            0 |                          673.11 |              1485637.00 |             500509 |                            2063.00 |               499491 |                           3090431.00 |                            0 |                                        0.00 |
-| MySQL-1-2-2-1  | MySQL-1         |                2 |        2 |       1 |        64 |     1024 |           2 |            0 |                          351.74 |              1421499.00 |             249566 |                            1984.00 |               250434 |                           8437759.00 |                            0 |                                        0.00 |
-| MySQL-1-2-2-2  | MySQL-1         |                2 |        2 |       2 |        64 |     1024 |           2 |            0 |                          351.75 |              1421453.00 |             249874 |                            1988.00 |               250126 |                           8536063.00 |                            0 |                                        0.00 |
-| MySQL-1-2-3-1  | MySQL-1         |                2 |        3 |       1 |         8 |      128 |           8 |            0 |                           77.33 |              1616421.00 |              62630 |                            1859.00 |                62370 |                           3301375.00 |                            0 |                                        0.00 |
-| MySQL-1-2-3-6  | MySQL-1         |                2 |        3 |       6 |         8 |      128 |           8 |            0 |                           79.69 |              1568582.00 |              62561 |                            1917.00 |                62439 |                           3235839.00 |                            0 |                                        0.00 |
-| MySQL-1-2-3-7  | MySQL-1         |                2 |        3 |       7 |         8 |      128 |           8 |            0 |                           80.53 |              1552262.00 |              62129 |                            1912.00 |                62871 |                           3102719.00 |                            0 |                                        0.00 |
-| MySQL-1-2-3-2  | MySQL-1         |                2 |        3 |       2 |         8 |      128 |           8 |            0 |                           80.40 |              1554681.00 |              62478 |                            1911.00 |                62522 |                           3170303.00 |                            0 |                                        0.00 |
-| MySQL-1-2-3-5  | MySQL-1         |                2 |        3 |       5 |         8 |      128 |           8 |            0 |                           80.05 |              1561613.00 |              62351 |                            1923.00 |                62649 |                           3207167.00 |                            0 |                                        0.00 |
-| MySQL-1-2-3-4  | MySQL-1         |                2 |        3 |       4 |         8 |      128 |           8 |            0 |                           79.21 |              1578158.00 |              62447 |                            1878.00 |                62553 |                           3235839.00 |                            0 |                                        0.00 |
-| MySQL-1-2-3-3  | MySQL-1         |                2 |        3 |       3 |         8 |      128 |           8 |            0 |                           79.12 |              1579887.00 |              62739 |                            1873.00 |                62261 |                           3223551.00 |                            0 |                                        0.00 |
-| MySQL-1-2-3-8  | MySQL-1         |                2 |        3 |       8 |         8 |      128 |           8 |            0 |                           80.33 |              1556101.00 |              62439 |                            1948.00 |                62561 |                           3172351.00 |                            0 |                                        0.00 |
-| MySQL-1-2-4-14 | MySQL-1         |                2 |        4 |      14 |         8 |      128 |          16 |            0 |                           47.18 |              1324659.00 |              31349 |                            1887.00 |                31151 |                           7749631.00 |                            0 |                                        0.00 |
-| MySQL-1-2-4-15 | MySQL-1         |                2 |        4 |      15 |         8 |      128 |          16 |            0 |                           47.10 |              1326985.00 |              31303 |                            1909.00 |                31197 |                           7770111.00 |                            0 |                                        0.00 |
+| DBMS             | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1-1-1  | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1021.93 |               978544.00 |             499989 |                            1975.00 |               500011 |                              6611.00 |
+| mysql-1-1-2-1-1  | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       1 |        64 |     1024 |           2 |            0 |                         1019.90 |               490244.00 |             249863 |                            1310.00 |               250137 |                              8099.00 |
+| mysql-1-1-2-1-2  | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       2 |        64 |     1024 |           2 |            0 |                         1019.82 |               490284.00 |             250239 |                            1330.00 |               249761 |                              7487.00 |
+| mysql-1-1-3-1-1  | mysql-1-1-3 | mysql-1-1-3-1 | MySQL-1         |                1 |        3 |               1 |       1 |         8 |      128 |           8 |            0 |                          127.89 |               977431.00 |              62389 |                            1408.00 |                62611 |                              7347.00 |
+| mysql-1-1-3-1-2  | mysql-1-1-3 | mysql-1-1-3-1 | MySQL-1         |                1 |        3 |               1 |       2 |         8 |      128 |           8 |            0 |                          127.87 |               977521.00 |              62436 |                            1384.00 |                62564 |                              7047.00 |
+| mysql-1-1-3-1-3  | mysql-1-1-3 | mysql-1-1-3-1 | MySQL-1         |                1 |        3 |               1 |       3 |         8 |      128 |           8 |            0 |                          127.87 |               977557.00 |              62471 |                            1474.00 |                62529 |                              7327.00 |
+| mysql-1-1-3-1-4  | mysql-1-1-3 | mysql-1-1-3-1 | MySQL-1         |                1 |        3 |               1 |       4 |         8 |      128 |           8 |            0 |                          127.89 |               977423.00 |              62299 |                            1405.00 |                62701 |                              7327.00 |
+| mysql-1-1-3-1-5  | mysql-1-1-3 | mysql-1-1-3-1 | MySQL-1         |                1 |        3 |               1 |       5 |         8 |      128 |           8 |            0 |                          127.88 |               977475.00 |              62143 |                            1389.00 |                62857 |                              7283.00 |
+| mysql-1-1-3-1-6  | mysql-1-1-3 | mysql-1-1-3-1 | MySQL-1         |                1 |        3 |               1 |       6 |         8 |      128 |           8 |            0 |                          127.88 |               977457.00 |              62350 |                            1377.00 |                62650 |                              7083.00 |
+| mysql-1-1-3-1-7  | mysql-1-1-3 | mysql-1-1-3-1 | MySQL-1         |                1 |        3 |               1 |       7 |         8 |      128 |           8 |            0 |                          127.88 |               977491.00 |              62463 |                            1376.00 |                62537 |                              7379.00 |
+| mysql-1-1-3-1-8  | mysql-1-1-3 | mysql-1-1-3-1 | MySQL-1         |                1 |        3 |               1 |       8 |         8 |      128 |           8 |            0 |                          127.88 |               977471.00 |              62481 |                            1389.00 |                62519 |                              7543.00 |
+| mysql-1-1-4-1-1  | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       1 |         8 |      128 |          16 |            0 |                          127.65 |               489602.00 |              31124 |                            1681.00 |                31376 |                              6523.00 |
+| mysql-1-1-4-1-2  | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       2 |         8 |      128 |          16 |            0 |                          127.56 |               489955.00 |              31322 |                            1582.00 |                31178 |                              6471.00 |
+| mysql-1-1-4-1-3  | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       3 |         8 |      128 |          16 |            0 |                          127.59 |               489863.00 |              31317 |                            1791.00 |                31183 |                              6523.00 |
+| mysql-1-1-4-1-4  | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       4 |         8 |      128 |          16 |            0 |                          127.57 |               489915.00 |              31347 |                            1772.00 |                31153 |                              6515.00 |
+| mysql-1-1-4-1-5  | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       5 |         8 |      128 |          16 |            0 |                          127.62 |               489748.00 |              31293 |                            1782.00 |                31207 |                              6323.00 |
+| mysql-1-1-4-1-6  | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       6 |         8 |      128 |          16 |            0 |                          127.58 |               489903.00 |              31130 |                            1715.00 |                31370 |                              6499.00 |
+| mysql-1-1-4-1-7  | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       7 |         8 |      128 |          16 |            0 |                          127.60 |               489801.00 |              31346 |                            1726.00 |                31154 |                              6371.00 |
+| mysql-1-1-4-1-8  | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       8 |         8 |      128 |          16 |            0 |                          127.64 |               489660.00 |              31330 |                            1679.00 |                31170 |                              6411.00 |
+| mysql-1-1-4-1-9  | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |       9 |         8 |      128 |          16 |            0 |                          127.63 |               489702.00 |              31465 |                            1696.00 |                31035 |                              6335.00 |
+| mysql-1-1-4-1-10 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |      10 |         8 |      128 |          16 |            0 |                          127.58 |               489878.00 |              31376 |                            1711.00 |                31124 |                              6351.00 |
+| mysql-1-1-4-1-11 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |      11 |         8 |      128 |          16 |            0 |                          127.62 |               489720.00 |              31178 |                            1682.00 |                31322 |                              6527.00 |
+| mysql-1-1-4-1-12 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |      12 |         8 |      128 |          16 |            0 |                          127.62 |               489747.00 |              31178 |                            1657.00 |                31322 |                              6471.00 |
+| mysql-1-1-4-1-13 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |      13 |         8 |      128 |          16 |            0 |                          127.58 |               489906.00 |              31296 |                            1819.00 |                31204 |                              6443.00 |
+| mysql-1-1-4-1-14 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |      14 |         8 |      128 |          16 |            0 |                          127.60 |               489826.00 |              31228 |                            1812.00 |                31272 |                              6491.00 |
+| mysql-1-1-4-1-15 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |      15 |         8 |      128 |          16 |            0 |                          127.60 |               489819.00 |              31360 |                            1646.00 |                31140 |                              6343.00 |
+| mysql-1-1-4-1-16 | mysql-1-1-4 | mysql-1-1-4-1 | MySQL-1         |                1 |        4 |               1 |      16 |         8 |      128 |          16 |            0 |                          127.61 |               489767.00 |              30896 |                            1651.00 |                31604 |                              6455.00 |
+| mysql-1-2-1-1-1  | mysql-1-2-1 | mysql-1-2-1-1 | MySQL-1         |                2 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1022.16 |               978323.00 |             500218 |                            2101.00 |               499782 |                              7455.00 |
+| mysql-1-2-2-1-1  | mysql-1-2-2 | mysql-1-2-2-1 | MySQL-1         |                2 |        2 |               1 |       1 |        64 |     1024 |           2 |            0 |                         1019.35 |               490511.00 |             250095 |                            1401.00 |               249905 |                              6843.00 |
+| mysql-1-2-2-1-2  | mysql-1-2-2 | mysql-1-2-2-1 | MySQL-1         |                2 |        2 |               1 |       2 |        64 |     1024 |           2 |            0 |                         1019.94 |               490223.00 |             250373 |                            1404.00 |               249627 |                              6871.00 |
+| mysql-1-2-3-1-1  | mysql-1-2-3 | mysql-1-2-3-1 | MySQL-1         |                2 |        3 |               1 |       1 |         8 |      128 |           8 |            0 |                          127.80 |               978067.00 |              62508 |                            1468.00 |                62492 |                              6423.00 |
+| mysql-1-2-3-1-2  | mysql-1-2-3 | mysql-1-2-3-1 | MySQL-1         |                2 |        3 |               1 |       2 |         8 |      128 |           8 |            0 |                          127.84 |               977801.00 |              62361 |                            1550.00 |                62639 |                              6847.00 |
+| mysql-1-2-3-1-3  | mysql-1-2-3 | mysql-1-2-3-1 | MySQL-1         |                2 |        3 |               1 |       3 |         8 |      128 |           8 |            0 |                          127.83 |               977866.00 |              62491 |                            1465.00 |                62509 |                              6591.00 |
+| mysql-1-2-3-1-4  | mysql-1-2-3 | mysql-1-2-3-1 | MySQL-1         |                2 |        3 |               1 |       4 |         8 |      128 |           8 |            0 |                          127.85 |               977726.00 |              62727 |                            1434.00 |                62273 |                              6715.00 |
+| mysql-1-2-3-1-5  | mysql-1-2-3 | mysql-1-2-3-1 | MySQL-1         |                2 |        3 |               1 |       5 |         8 |      128 |           8 |            0 |                          127.81 |               978017.00 |              62491 |                            1491.00 |                62509 |                              6779.00 |
+| mysql-1-2-3-1-6  | mysql-1-2-3 | mysql-1-2-3-1 | MySQL-1         |                2 |        3 |               1 |       6 |         8 |      128 |           8 |            0 |                          127.84 |               977777.00 |              62711 |                            1440.00 |                62289 |                              6683.00 |
+| mysql-1-2-3-1-7  | mysql-1-2-3 | mysql-1-2-3-1 | MySQL-1         |                2 |        3 |               1 |       7 |         8 |      128 |           8 |            0 |                          127.81 |               978024.00 |              62383 |                            1475.00 |                62617 |                              6871.00 |
+| mysql-1-2-3-1-8  | mysql-1-2-3 | mysql-1-2-3-1 | MySQL-1         |                2 |        3 |               1 |       8 |         8 |      128 |           8 |            0 |                          127.84 |               977791.00 |              62578 |                            1452.00 |                62422 |                              6727.00 |
+| mysql-1-2-4-1-1  | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |       1 |         8 |      128 |          16 |            0 |                          127.71 |               489405.00 |              31317 |                            1693.00 |                31183 |                              7543.00 |
+| mysql-1-2-4-1-2  | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |       2 |         8 |      128 |          16 |            0 |                          127.67 |               489547.00 |              31227 |                            1647.00 |                31273 |                              7395.00 |
+| mysql-1-2-4-1-3  | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |       3 |         8 |      128 |          16 |            0 |                          127.64 |               489669.00 |              31444 |                            1655.00 |                31056 |                              7423.00 |
+| mysql-1-2-4-1-4  | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |       4 |         8 |      128 |          16 |            0 |                          127.71 |               489373.00 |              30956 |                            1743.00 |                31544 |                              7479.00 |
+| mysql-1-2-4-1-5  | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |       5 |         8 |      128 |          16 |            0 |                          127.68 |               489491.00 |              31402 |                            1650.00 |                31098 |                              7531.00 |
+| mysql-1-2-4-1-6  | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |       6 |         8 |      128 |          16 |            0 |                          127.68 |               489515.00 |              31291 |                            1675.00 |                31209 |                              7491.00 |
+| mysql-1-2-4-1-7  | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |       7 |         8 |      128 |          16 |            0 |                          127.72 |               489346.00 |              31262 |                            1657.00 |                31238 |                              7283.00 |
+| mysql-1-2-4-1-8  | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |       8 |         8 |      128 |          16 |            0 |                          127.70 |               489419.00 |              31247 |                            1682.00 |                31253 |                              7479.00 |
+| mysql-1-2-4-1-9  | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |       9 |         8 |      128 |          16 |            0 |                          127.67 |               489529.00 |              31223 |                            1583.00 |                31277 |                              7411.00 |
+| mysql-1-2-4-1-10 | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |      10 |         8 |      128 |          16 |            0 |                          127.71 |               489377.00 |              31099 |                            1755.00 |                31401 |                              7531.00 |
+| mysql-1-2-4-1-11 | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |      11 |         8 |      128 |          16 |            0 |                          127.71 |               489397.00 |              31093 |                            1718.00 |                31407 |                              7507.00 |
+| mysql-1-2-4-1-12 | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |      12 |         8 |      128 |          16 |            0 |                          127.68 |               489497.00 |              31342 |                            1701.00 |                31158 |                              7483.00 |
+| mysql-1-2-4-1-13 | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |      13 |         8 |      128 |          16 |            0 |                          127.73 |               489316.00 |              31228 |                            1717.00 |                31272 |                              7495.00 |
+| mysql-1-2-4-1-14 | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |      14 |         8 |      128 |          16 |            0 |                          127.72 |               489365.00 |              31309 |                            1751.00 |                31191 |                              7471.00 |
+| mysql-1-2-4-1-15 | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |      15 |         8 |      128 |          16 |            0 |                          127.69 |               489478.00 |              31426 |                            1678.00 |                31074 |                              7459.00 |
+| mysql-1-2-4-1-16 | mysql-1-2-4 | mysql-1-2-4-1 | MySQL-1         |                2 |        4 |               1 |      16 |         8 |      128 |          16 |            0 |                          127.68 |               489521.00 |              31263 |                            1661.00 |                31237 |                              7447.00 |
 
 #### Per Phase
 
-| DBMS        |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |   [UPDATE-FAILED].Operations |   [UPDATE-FAILED].99thPercentileLatency(us) |
-|:------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|-----------------------------:|--------------------------------------------:|
-| MySQL-1-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                          799.12 |              1251370.00 |          499858.00 |                            3715.00 |            500142.00 |                           2648063.00 |                         0.00 |                                        0.00 |
-| MySQL-1-1-2 |             1.00 |    128.00 |  2048.00 |        2.00 |         0.00 |                          635.70 |              1573578.00 |          499460.00 |                            2020.00 |            500540.00 |                          10338303.00 |                         0.00 |                                        0.00 |
-| MySQL-1-1-3 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                          694.28 |              1442721.00 |          499770.00 |                            2067.00 |            500230.00 |                           3522559.00 |                         0.00 |                                        0.00 |
-| MySQL-1-1-4 |             1.00 |    128.00 |  2048.00 |       16.00 |         0.00 |                          703.09 |              1426530.00 |          499942.00 |                            2025.00 |            500058.00 |                           9682943.00 |                         0.00 |                                        0.00 |
-| MySQL-1-2-1 |             2.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                          673.11 |              1485637.00 |          500509.00 |                            2063.00 |            499491.00 |                           3090431.00 |                         0.00 |                                        0.00 |
-| MySQL-1-2-2 |             2.00 |    128.00 |  2048.00 |        2.00 |         0.00 |                          703.49 |              1421499.00 |          499440.00 |                            1988.00 |            500560.00 |                           8536063.00 |                         0.00 |                                        0.00 |
-| MySQL-1-2-3 |             2.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                          636.65 |              1616421.00 |          499774.00 |                            1948.00 |            500226.00 |                           3301375.00 |                         0.00 |                                        0.00 |
-| MySQL-1-2-4 |             2.00 |    128.00 |  2048.00 |       16.00 |         0.00 |                          754.92 |              1327367.00 |          499473.00 |                            2042.00 |            500519.00 |                           8011775.00 |                         8.00 |                                 50888703.00 |
+| DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1021.93 |               978544.00 |             499989 |                            1975.00 |               500011 |                              6611.00 |
+| mysql-1-1-2 | mysql-1-1-2 |                1 |       128 |     2048 |               1 |           2 |            0 |                         2039.72 |               490284.00 |             500102 |                            1330.00 |               499898 |                              8099.00 |
+| mysql-1-1-3 | mysql-1-1-3 |                1 |        64 |     1024 |               1 |           8 |            0 |                         1023.04 |               977557.00 |             499032 |                            1474.00 |               500968 |                              7543.00 |
+| mysql-1-1-4 | mysql-1-1-4 |                1 |       128 |     2048 |               1 |          16 |            0 |                         2041.65 |               489955.00 |             500186 |                            1819.00 |               499814 |                              6527.00 |
+| mysql-1-2-1 | mysql-1-2-1 |                2 |        64 |     1024 |               1 |           1 |            0 |                         1022.16 |               978323.00 |             500218 |                            2101.00 |               499782 |                              7455.00 |
+| mysql-1-2-2 | mysql-1-2-2 |                2 |       128 |     2048 |               1 |           2 |            0 |                         2039.29 |               490511.00 |             500468 |                            1404.00 |               499532 |                              6871.00 |
+| mysql-1-2-3 | mysql-1-2-3 |                2 |        64 |     1024 |               1 |           8 |            0 |                         1022.62 |               978067.00 |             500250 |                            1550.00 |               499750 |                              6871.00 |
+| mysql-1-2-4 | mysql-1-2-4 |                2 |       128 |     2048 |               1 |          16 |            0 |                         2043.10 |               489669.00 |             500129 |                            1755.00 |               499871 |                              7543.00 |
 
 ### Tests
+* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MySQL-1)
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
-* TEST failed: Execution Phase: contains FAILED column
+* TEST passed: Execution Phase: contains no FAILED column
 ```
 
 </details>
@@ -11968,8 +12160,8 @@ yields (after ca. 35 minutes) something like
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 2060s 
-* Code: 1780434280
+* Duration: 1318s 
+* Code: 1793639198
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'E'.
@@ -11980,67 +12172,90 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 50Gi.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [8] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MySQL-1-1-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58112
-  * volume_size:50G
-  * volume_used:47G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+* mysql-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699450
+  * datadisk:34723
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780434280
+    * code:1793639198
+
+### Reused Storage
+* loading skipped, loading times inherited from an earlier experiment: MySQL-1
+
+### Data Parameters of Reused Volumes
+* MySQL-1: DDL values of the volume: row_format=DYNAMIC, collation=utf8mb4_0900_ai_ci
+* MySQL-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
+
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1793639198-558dfb6986-ph9g2: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MySQL-1 - Pods [[8]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (8 pods)
 
 #### Planned
 
-* DBMS MySQL-1 - Pods [[8]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (8 pods)
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS          | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |   [INSERT-FAILED].Operations |   [INSERT-FAILED].99thPercentileLatency(us) |
-|:--------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|-----------------------------:|--------------------------------------------:|
-| MySQL-1-1-1-6 | MySQL-1         |                1 |        1 |       6 |         8 |      128 |           8 |            0 |                          120.68 |              1035758.00 |                 6204 |                            500991.00 |             118796 |                            9911.00 |                            0 |                                        0.00 |
-| MySQL-1-1-1-8 | MySQL-1         |                1 |        1 |       8 |         8 |      128 |           8 |            0 |                          120.76 |              1035129.00 |                 6294 |                            499199.00 |             118706 |                           10063.00 |                            0 |                                        0.00 |
-| MySQL-1-1-1-2 | MySQL-1         |                1 |        1 |       2 |         8 |      128 |           8 |            0 |                          120.68 |              1035786.00 |                 6163 |                            520703.00 |             118837 |                            9663.00 |                            0 |                                        0.00 |
-| MySQL-1-1-1-1 | MySQL-1         |                1 |        1 |       1 |         8 |      128 |           8 |            0 |                          120.92 |              1033741.00 |                 6156 |                            499199.00 |             118844 |                            9575.00 |                            0 |                                        0.00 |
-| MySQL-1-1-1-4 | MySQL-1         |                1 |        1 |       4 |         8 |      128 |           8 |            0 |                          120.61 |              1036361.00 |                 6206 |                            506623.00 |             118794 |                           10783.00 |                            0 |                                        0.00 |
-| MySQL-1-1-1-5 | MySQL-1         |                1 |        1 |       5 |         8 |      128 |           8 |            0 |                          120.80 |              1034731.00 |                 6250 |                            503295.00 |             118666 |                           10231.00 |                           84 |                                     8019.00 |
-| MySQL-1-1-1-3 | MySQL-1         |                1 |        1 |       3 |         8 |      128 |           8 |            0 |                          120.77 |              1035015.00 |                 6185 |                            516607.00 |             118815 |                           10183.00 |                            0 |                                        0.00 |
-| MySQL-1-1-1-7 | MySQL-1         |                1 |        1 |       7 |         8 |      128 |           8 |            0 |                          120.68 |              1035769.00 |                 6250 |                            502527.00 |             118678 |                           10631.00 |                           72 |                                    17871.00 |
+| DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |   [INSERT-FAILED].Operations |   [INSERT-FAILED].99thPercentileLatency(us) |
+|:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|-----------------------------:|--------------------------------------------:|
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       1 |         8 |      128 |           8 |            0 |                          127.87 |               977542.00 |                 6241 |                              9143.00 |             118759 |                            5875.00 |                            0 |                                        0.00 |
+| mysql-1-1-1-1-2 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       2 |         8 |      128 |           8 |            0 |                          127.89 |               977406.00 |                 6228 |                              8655.00 |             118772 |                            6095.00 |                            0 |                                        0.00 |
+| mysql-1-1-1-1-3 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       3 |         8 |      128 |           8 |            0 |                          127.89 |               977437.00 |                 6250 |                              8615.00 |             118707 |                            5959.00 |                           43 |                                    23023.00 |
+| mysql-1-1-1-1-4 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       4 |         8 |      128 |           8 |            0 |                          127.88 |               977505.00 |                 6250 |                              8511.00 |             118717 |                            5847.00 |                           33 |                                    21695.00 |
+| mysql-1-1-1-1-5 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       5 |         8 |      128 |           8 |            0 |                          127.88 |               977484.00 |                 6203 |                              8559.00 |             118797 |                            5827.00 |                            0 |                                        0.00 |
+| mysql-1-1-1-1-6 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       6 |         8 |      128 |           8 |            0 |                          127.87 |               977585.00 |                 6038 |                              8975.00 |             118962 |                            6103.00 |                            0 |                                        0.00 |
+| mysql-1-1-1-1-7 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       7 |         8 |      128 |           8 |            0 |                          127.87 |               977577.00 |                 6250 |                              9007.00 |             118726 |                            6011.00 |                           24 |                                    22959.00 |
+| mysql-1-1-1-1-8 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       8 |         8 |      128 |           8 |            0 |                          127.89 |               977440.00 |                 6317 |                              8535.00 |             118683 |                            6067.00 |                            0 |                                        0.00 |
 
 #### Per Phase
 
-| DBMS        |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |   [INSERT-FAILED].Operations |   [INSERT-FAILED].99thPercentileLatency(us) |
-|:------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|-----------------------------:|--------------------------------------------:|
-| MySQL-1-1-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                          965.92 |              1036361.00 |             49708.00 |                            520703.00 |          950136.00 |                           10783.00 |                       156.00 |                                    17871.00 |
+| DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |   [INSERT-FAILED].Operations |   [INSERT-FAILED].99thPercentileLatency(us) |
+|:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|-----------------------------:|--------------------------------------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        64 |     1024 |               1 |           8 |            0 |                         1023.02 |               977585.00 |                49777 |                              9143.00 |             950123 |                            6103.00 |                          100 |                                    23023.00 |
 
 ### Tests
+* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MySQL-1)
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST failed: Execution Phase: contains FAILED column
@@ -12087,8 +12302,8 @@ yields (after ca. 70 minutes) something like
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 4009s 
-* Code: 1780436349
+* Duration: 2348s 
+* Code: 1793640530
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -12099,103 +12314,142 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 50Gi.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [1, 8] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MySQL-1-1-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58112
-  * volume_size:50G
-  * volume_used:47G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+* mysql-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699395
+  * datadisk:34815
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780436349
-* MySQL-1-1-2 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58112
-  * volume_size:50G
-  * volume_used:48G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793640530
+* mysql-1-1-2-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699406
+  * datadisk:34815
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780436349
+    * code:1793640530
+
+### Reused Storage
+* loading skipped, loading times inherited from an earlier experiment: MySQL-1
+
+### Data Parameters of Reused Volumes
+* MySQL-1: DDL values of the volume: row_format=DYNAMIC, collation=utf8mb4_0900_ai_ci
+* MySQL-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
+
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1793640530-84598d6777-x5pdr: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MySQL-1 - Pods [[1, 8]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 2: ycsb (8 pods)
 
 #### Planned
 
-* DBMS MySQL-1 - Pods [[1, 8]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 2: ycsb (8 pods)
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS          | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:--------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-1-1 | MySQL-1         |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                          652.25 |              1533148.00 |             500318 |                           46815.00 |               499682 |                           3174399.00 |
-| MySQL-1-1-2-8 | MySQL-1         |                1 |        2 |       8 |         8 |      128 |           8 |            0 |                           81.87 |              1526776.00 |              62363 |                            1977.00 |                62637 |                           3074047.00 |
-| MySQL-1-1-2-2 | MySQL-1         |                1 |        2 |       2 |         8 |      128 |           8 |            0 |                           81.80 |              1528065.00 |              62418 |                            1949.00 |                62582 |                           3078143.00 |
-| MySQL-1-1-2-4 | MySQL-1         |                1 |        2 |       4 |         8 |      128 |           8 |            0 |                           81.97 |              1524923.00 |              62545 |                            1914.00 |                62455 |                           3176447.00 |
-| MySQL-1-1-2-6 | MySQL-1         |                1 |        2 |       6 |         8 |      128 |           8 |            0 |                           82.01 |              1524218.00 |              62333 |                            1935.00 |                62667 |                           3194879.00 |
-| MySQL-1-1-2-1 | MySQL-1         |                1 |        2 |       1 |         8 |      128 |           8 |            0 |                           81.97 |              1525016.00 |              62588 |                            1965.00 |                62412 |                           3112959.00 |
-| MySQL-1-1-2-3 | MySQL-1         |                1 |        2 |       3 |         8 |      128 |           8 |            0 |                           81.88 |              1526538.00 |              62284 |                            1931.00 |                62716 |                           3258367.00 |
-| MySQL-1-1-2-5 | MySQL-1         |                1 |        2 |       5 |         8 |      128 |           8 |            0 |                           82.03 |              1523873.00 |              62546 |                            1947.00 |                62454 |                           3299327.00 |
-| MySQL-1-1-2-7 | MySQL-1         |                1 |        2 |       7 |         8 |      128 |           8 |            0 |                           81.85 |              1527182.00 |              62627 |                            1922.00 |                62373 |                           3217407.00 |
+| DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1021.64 |               978822.00 |             500455 |                            2105.00 |               499545 |                              7375.00 |
+| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       1 |         8 |      128 |           8 |            0 |                          127.86 |               977621.00 |              62477 |                            1576.00 |                62523 |                              6835.00 |
+| mysql-1-1-2-1-2 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       2 |         8 |      128 |           8 |            0 |                          127.88 |               977446.00 |              62276 |                            1532.00 |                62724 |                              6979.00 |
+| mysql-1-1-2-1-3 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       3 |         8 |      128 |           8 |            0 |                          127.82 |               977937.00 |              62452 |                            1543.00 |                62548 |                              7047.00 |
+| mysql-1-1-2-1-4 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       4 |         8 |      128 |           8 |            0 |                          127.83 |               977846.00 |              62495 |                            1559.00 |                62505 |                              6935.00 |
+| mysql-1-1-2-1-5 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       5 |         8 |      128 |           8 |            0 |                          127.87 |               977536.00 |              62549 |                            1532.00 |                62451 |                              6727.00 |
+| mysql-1-1-2-1-6 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       6 |         8 |      128 |           8 |            0 |                          127.83 |               977871.00 |              62348 |                            1560.00 |                62652 |                              6939.00 |
+| mysql-1-1-2-1-7 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       7 |         8 |      128 |           8 |            0 |                          127.84 |               977800.00 |              62326 |                            1586.00 |                62674 |                              6875.00 |
+| mysql-1-1-2-1-8 | mysql-1-1-2 | mysql-1-1-2-1 | MySQL-1         |                1 |        2 |               1 |       8 |         8 |      128 |           8 |            0 |                          127.88 |               977477.00 |              62475 |                            1553.00 |                62525 |                              6763.00 |
 
 #### Per Phase
 
-| DBMS        |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                          652.25 |              1533148.00 |          500318.00 |                           46815.00 |            499682.00 |                           3174399.00 |
-| MySQL-1-1-2 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                          655.38 |              1528065.00 |          499704.00 |                            1977.00 |            500296.00 |                           3299327.00 |
+| DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1021.64 |               978822.00 |             500455 |                            2105.00 |               499545 |                              7375.00 |
+| mysql-1-1-2 | mysql-1-1-2 |                1 |        64 |     1024 |               1 |           8 |            0 |                         1022.82 |               977937.00 |             499398 |                            1586.00 |               500602 |                              7047.00 |
 
 ### Monitoring
 
-### Execution phase: SUT deployment
+### Benchmarking phase: SUT deployment
 
-| DBMS        |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1 |       934.57 |      1.20 |           9.66 |                 42.24 |
-| MySQL-1-1-2 |       887.17 |      1.20 |           9.68 |                 43.42 |
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 |       253.26 |      0.37 |           4.70 |                  4.95 |
+| mysql-1-1-2-1 |       246.34 |      0.35 |           4.73 |                  5.23 |
 
-### Execution phase: component benchmarker
+### Benchmarking phase: component benchmarker
 
-| DBMS        |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:------------|-------------:|----------:|---------------:|----------------------:|
-| MySQL-1-1-1 |       213.59 |      0.21 |           0.17 |                  0.17 |
-| MySQL-1-1-2 |       213.59 |      0.79 |           0.16 |                  0.16 |
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 |       526.51 |      3.85 |           0.33 |                  0.33 |
+| mysql-1-1-2-1 |       545.91 |      2.96 |           0.13 |                  0.14 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Tests
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MySQL-1)
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
@@ -12242,129 +12496,212 @@ yields (after ca. 45 minutes) something like
 
 ### Workload
 YCSB SF=1
-    Type: ycsb
-    Duration: 2456s 
-    Code: 1767887403
-    Intro: YCSB driver runs the experiment.
-    This experiment compares run time and resource consumption of YCSB queries.
-    Workload is 'A'.
-    Number of rows to insert is 1000000.
-    Ordering of inserts is hashed.
-    Number of operations is 1000000.
-    Batch size is ''.
-    Target is based on multiples of '1024'.
-    Factors for loading are [1].
-    Factors for benchmarking are [1].
-    Experiment uses bexhoma version 0.8.20.
-    Experiment is limited to DBMS ['MariaDB'].
-    Import is handled by 4 and 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker21.
-    Loading is tested with [32, 64] threads, split into [4, 8] pods.
-    Benchmarking is tested with [64] threads, split into [1] pods.
-    Benchmarking is run as [1] times the number of benchmarking pods.
-    Experiment is run once.
+* Type: ycsb
+* Duration: 2348s 
+* Code: 1793642911
+* YCSB driver runs the experiment.
+* This experiment compares run time and resource consumption of YCSB queries.
+  * Workload is 'A'.
+  * Number of rows to insert is 1000000.
+  * Ordering of inserts is hashed.
+  * Number of operations is 1000000.
+  * Batch size is ''.
+  * Target is based on multiples of '1024'.
+  * Factors for loading are [1].
+  * Factors for benchmarking are [1].
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
+  * Experiment is limited to DBMS ['MariaDB'].
+  * Import is handled by 4 and 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 50Gi.
+  * Loading is tested with [32, 64] threads, split into [4, 8] pods.
+  * Benchmarking is tested with [64] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mariadb', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-MariaDB-32-4-1024-1 uses docker image mariadb:11.4.7
-    RAM:608117153792
-    CPU:AMD EPYC 7542 32-Core Processor
-    Cores:64
-    host:6.8.0-90-generic
-    node:cl-worker21
-    disk:137746
-    datadisk:1794
-    cpu_list:0-63
-    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    eval_parameters
-        code:1767887403
-MariaDB-32-8-1024-1 uses docker image mariadb:11.4.7
-    RAM:608117153792
-    CPU:AMD EPYC 7542 32-Core Processor
-    Cores:64
-    host:6.8.0-90-generic
-    node:cl-worker21
-    disk:137746
-    datadisk:1770
-    cpu_list:0-63
-    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    eval_parameters
-        code:1767887403
-MariaDB-64-4-1024-1 uses docker image mariadb:11.4.7
-    RAM:608117153792
-    CPU:AMD EPYC 7542 32-Core Processor
-    Cores:64
-    host:6.8.0-90-generic
-    node:cl-worker21
-    disk:137746
-    datadisk:1794
-    cpu_list:0-63
-    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    eval_parameters
-        code:1767887403
-MariaDB-64-8-1024-1 uses docker image mariadb:11.4.7
-    RAM:608117153792
-    CPU:AMD EPYC 7542 32-Core Processor
-    Cores:64
-    host:6.8.0-90-generic
-    node:cl-worker21
-    disk:137746
-    datadisk:1770
-    cpu_list:0-63
-    args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
-    requests_cpu:4
-    requests_memory:16Gi
-    client:1
-    numExperiment:1
-    eval_parameters
-        code:1767887403
+* mariadb-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:706546
+  * datadisk:1794
+  * volume_size:1.8T
+  * volume_used:690G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793642911
+* mariadb-2-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:706546
+  * datadisk:1770
+  * volume_size:1.8T
+  * volume_used:690G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793642911
+* mariadb-3-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:706546
+  * datadisk:1794
+  * volume_size:1.8T
+  * volume_used:690G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793642911
+* mariadb-4-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:706546
+  * datadisk:1770
+  * volume_size:1.8T
+  * volume_used:690G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793642911
 
-### Loading
-                   experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [INSERT].Return=OK  [INSERT].99thPercentileLatency(us)
-MariaDB-32-4-1024               1       32    1024          4           0                    1023.703077               976855.0             1000000                             2736.50
-MariaDB-64-4-1024               1       64    1024          4           0                    1023.675307               976880.0             1000000                             2816.50
-MariaDB-32-8-1024               1       32    1024          8           0                    1023.715915               976848.0             1000000                             3304.50
-MariaDB-64-8-1024               1       64    1024          8           0                    1023.679236               976881.0             1000000                             3643.75
-
-### Execution
-                     experiment_run  threads  target  pod_count  exceptions  [OVERALL].Throughput(ops/sec)  [OVERALL].RunTime(ms)  [READ].Return=OK  [READ].99thPercentileLatency(us)  [UPDATE].Return=OK  [UPDATE].99thPercentileLatency(us)
-MariaDB-32-4-1024-1               1       64    1024          1           0                        1023.59               976957.0            500781                             415.0              499219                               431.0
-MariaDB-32-8-1024-1               1       64    1024          1           0                        1023.55               976996.0            500435                             409.0              499565                               422.0
-MariaDB-64-4-1024-1               1       64    1024          1           0                        1023.58               976966.0            499977                             397.0              500023                               402.0
-MariaDB-64-8-1024-1               1       64    1024          1           0                        1023.57               976969.0            500456                             400.0              499544                               405.0
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1793642911-f9765f99f-x6kxz: 0
+* bexhoma-sut-mariadb-2-1793642911-66f867bcbf-mq2t5: 0
+* bexhoma-sut-mariadb-3-1793642911-5fbb6674dc-gssns: 0
+* bexhoma-sut-mariadb-4-1793642911-56456f74cc-r598l: 0
 
 ### Workflow
 
 #### Actual
-DBMS MariaDB-64-4-1024 - Pods [[1]]
-DBMS MariaDB-32-4-1024 - Pods [[1]]
-DBMS MariaDB-64-8-1024 - Pods [[1]]
-DBMS MariaDB-32-8-1024 - Pods [[1]]
+
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-2 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-3 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-4 - Experiment 1 Client 1: ycsb (1 pods)
 
 #### Planned
-DBMS MariaDB-32-4-1024 - Pods [[1]]
-DBMS MariaDB-32-8-1024 - Pods [[1]]
-DBMS MariaDB-64-4-1024 - Pods [[1]]
-DBMS MariaDB-64-8-1024 - Pods [[1]]
+
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-2 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-3 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-4 - Experiment 1 Client 1: ycsb (1 pods)
+
+### Loading
+
+#### Per Connection
+
+| connection        |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| mariadb-1-1-0-1-1 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          255.93 |               976820.00 |            250000.00 |                              2705.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-2 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          255.93 |               976812.00 |            250000.00 |                              2737.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-3 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          255.94 |               976808.00 |            250000.00 |                              2637.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-4 |             1.00 |      8.00 |   256.00 |        4.00 |         0.00 |                          255.94 |               976806.00 |            250000.00 |                              2731.00 | 1.00 |                3.69 |
+| mariadb-2-1-0-1-1 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976838.00 |            125000.00 |                              2709.00 | 1.00 |                3.69 |
+| mariadb-2-1-0-1-2 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.97 |               976790.00 |            125000.00 |                              2715.00 | 1.00 |                3.69 |
+| mariadb-2-1-0-1-3 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976858.00 |            125000.00 |                              2719.00 | 1.00 |                3.69 |
+| mariadb-2-1-0-1-4 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976837.00 |            125000.00 |                              2825.00 | 1.00 |                3.69 |
+| mariadb-2-1-0-1-5 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.97 |               976803.00 |            125000.00 |                              2631.00 | 1.00 |                3.69 |
+| mariadb-2-1-0-1-6 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976866.00 |            125000.00 |                              2579.00 | 1.00 |                3.69 |
+| mariadb-2-1-0-1-7 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976836.00 |            125000.00 |                              2861.00 | 1.00 |                3.69 |
+| mariadb-2-1-0-1-8 |             1.00 |      4.00 |   128.00 |        8.00 |         0.00 |                          127.97 |               976798.00 |            125000.00 |                              2697.00 | 1.00 |                3.69 |
+| mariadb-3-1-0-1-1 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          255.89 |               976968.00 |            250000.00 |                              2825.00 | 1.00 |                3.68 |
+| mariadb-3-1-0-1-2 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          255.90 |               976938.00 |            250000.00 |                              2765.00 | 1.00 |                3.68 |
+| mariadb-3-1-0-1-3 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          255.90 |               976933.00 |            250000.00 |                              2807.00 | 1.00 |                3.69 |
+| mariadb-3-1-0-1-4 |             1.00 |     16.00 |   256.00 |        4.00 |         0.00 |                          255.90 |               976940.00 |            250000.00 |                              2817.00 | 1.00 |                3.68 |
+| mariadb-4-1-0-1-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976887.00 |            125000.00 |                              2745.00 | 1.00 |                3.69 |
+| mariadb-4-1-0-1-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.95 |               976906.00 |            125000.00 |                              2829.00 | 1.00 |                3.69 |
+| mariadb-4-1-0-1-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976888.00 |            125000.00 |                              2751.00 | 1.00 |                3.69 |
+| mariadb-4-1-0-1-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.95 |               976917.00 |            125000.00 |                              2933.00 | 1.00 |                3.69 |
+| mariadb-4-1-0-1-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.95 |               976908.00 |            125000.00 |                              2815.00 | 1.00 |                3.69 |
+| mariadb-4-1-0-1-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976889.00 |            125000.00 |                              2847.00 | 1.00 |                3.69 |
+| mariadb-4-1-0-1-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.95 |               976922.00 |            125000.00 |                              2837.00 | 1.00 |                3.69 |
+| mariadb-4-1-0-1-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976890.00 |            125000.00 |                              2793.00 | 1.00 |                3.69 |
+
+#### Per Run
+
+| DBMS        |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| MariaDB-1-1 |             1.00 |     32.00 |  1024.00 |        4.00 |         0.00 | 1.00 |                3.69 |                         1023.74 |               976820.00 |           1000000.00 |                              2702.50 |
+| MariaDB-2-1 |             1.00 |     32.00 |  1024.00 |        8.00 |         0.00 | 1.00 |                3.69 |                         1023.72 |               976866.00 |           1000000.00 |                              2717.00 |
+| MariaDB-3-1 |             1.00 |     64.00 |  1024.00 |        4.00 |         0.00 | 1.00 |                3.68 |                         1023.60 |               976968.00 |           1000000.00 |                              2803.50 |
+| MariaDB-4-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 | 1.00 |                3.69 |                         1023.65 |               976922.00 |           1000000.00 |                              2818.75 |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS              | phase         | job             | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------------|:--------------|:----------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.50 |               977036.00 |             499765 |                            1157.00 |               500235 |                            196991.00 |
+| mariadb-2-1-1-1-1 | mariadb-2-1-1 | mariadb-2-1-1-1 | MariaDB-2       |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.54 |               976997.00 |             499792 |                            1143.00 |               500208 |                            183551.00 |
+| mariadb-3-1-1-1-1 | mariadb-3-1-1 | mariadb-3-1-1-1 | MariaDB-3       |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.53 |               977010.00 |             500423 |                            1133.00 |               499577 |                            215167.00 |
+| mariadb-4-1-1-1-1 | mariadb-4-1-1 | mariadb-4-1-1-1 | MariaDB-4       |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.55 |               976991.00 |             499979 |                            1159.00 |               500021 |                            189439.00 |
+
+#### Per Phase
+
+| DBMS          | phase         |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:--------------|:--------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1023.50 |               977036.00 |             499765 |                            1157.00 |               500235 |                            196991.00 |
+| mariadb-2-1-1 | mariadb-2-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1023.54 |               976997.00 |             499792 |                            1143.00 |               500208 |                            183551.00 |
+| mariadb-3-1-1 | mariadb-3-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1023.53 |               977010.00 |             500423 |                            1133.00 |               499577 |                            215167.00 |
+| mariadb-4-1-1 | mariadb-4-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1023.55 |               976991.00 |             499979 |                            1159.00 |               500021 |                            189439.00 |
 
 ### Tests
-TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
-TEST passed: Workflow as planned
-TEST passed: Execution Phase: contains no FAILED column
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
+* TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: contains no FAILED column
 ```
 
 </details>
@@ -12406,8 +12743,8 @@ yields (after ca. 70 minutes) something like
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 4065s 
-* Code: 1780345196
+* Duration: 3555s 
+* Code: 1793645275
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -12418,99 +12755,133 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 30Gi. Persistent storage is removed at experiment start.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi. Persistent storage is removed at experiment start.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mariadb', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MariaDB-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+* mariadb-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:753686
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780345196
-* MariaDB-1-2-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793645275
+* mariadb-1-2-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:807155
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780345196
+    * code:1793645275
+
+### Inherited Loading
+* loading skipped, loading times copied from an earlier repetition: MariaDB-1-2
+
+### Data Parameters of Reused Volumes
+* MariaDB-1: DDL values of the volume: row_format=default, collation=default
+* MariaDB-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1793645275-8fbc4d86b-h7rt8: 0
+* bexhoma-sut-mariadb-1-1793645275-64b8bd44d8-kc99n: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MariaDB-1 - Pods [[1], [1]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: ycsb (1 pods)
 
 #### Planned
 
-* DBMS MariaDB-1 - Pods [[1], [1]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: ycsb (1 pods)
 
 ### Loading
 
 #### Per Connection
 
-| connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-0-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.16 |              1177492.00 |            125000.00 |                           1288191.00 |
-| MariaDB-1-1-0-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.11 |              1177978.00 |            125000.00 |                           1309695.00 |
-| MariaDB-1-1-0-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.17 |              1177394.00 |            125000.00 |                           1287167.00 |
-| MariaDB-1-1-0-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.13 |              1177808.00 |            125000.00 |                           1286143.00 |
-| MariaDB-1-1-0-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.10 |              1178188.00 |            125000.00 |                           1304575.00 |
-| MariaDB-1-1-0-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.16 |              1177486.00 |            125000.00 |                           1298431.00 |
-| MariaDB-1-1-0-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.12 |              1177939.00 |            125000.00 |                           1311743.00 |
-| MariaDB-1-1-0-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.07 |              1178413.00 |            125000.00 |                           1309695.00 |
+| connection        |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| mariadb-1-1-0-1-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976891.00 |            125000.00 |                              4679.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976905.00 |            125000.00 |                              4931.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976895.00 |            125000.00 |                              4751.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976887.00 |            125000.00 |                              4859.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976884.00 |            125000.00 |                              4791.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.95 |               976920.00 |            125000.00 |                              4815.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976893.00 |            125000.00 |                              4687.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976894.00 |            125000.00 |                              4727.00 | 1.00 |                3.69 |
 
 #### Per Run
 
-| DBMS        |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                          849.01 |              1178413.00 |           1000000.00 |                           1299455.00 |
+| DBMS        |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| MariaDB-1-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 | 1.00 |                3.69 |                         1023.65 |               976920.00 |           1000000.00 |                              4780.00 |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS            | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:----------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-1-1 | MariaDB-1       |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1023.26 |               977266.00 |             499819 |                            1833.00 |               500181 |                            229759.00 |
-| MariaDB-1-2-1-1 | MariaDB-1       |                2 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1023.44 |               977094.00 |             499534 |                            1602.00 |               500466 |                            212863.00 |
+| DBMS              | phase         | job             | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------------|:--------------|:----------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.52 |               977021.00 |             500169 |                            1168.00 |               499831 |                              3567.00 |
+| mariadb-1-2-1-1-1 | mariadb-1-2-1 | mariadb-1-2-1-1 | MariaDB-1       |                2 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.52 |               977025.00 |             499892 |                            1183.00 |               500108 |                              3797.00 |
 
 #### Per Phase
 
-| DBMS          |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1023.26 |               977266.00 |          499819.00 |                            1833.00 |            500181.00 |                            229759.00 |
-| MariaDB-1-2-1 |             2.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1023.44 |               977094.00 |          499534.00 |                            1602.00 |            500466.00 |                            212863.00 |
+| DBMS          | phase         |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:--------------|:--------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1023.52 |               977021.00 |             500169 |                            1168.00 |               499831 |                              3567.00 |
+| mariadb-1-2-1 | mariadb-1-2-1 |                2 |        64 |     1024 |               1 |           1 |            0 |                         1023.52 |               977025.00 |             499892 |                            1183.00 |               500108 |                              3797.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
@@ -12555,8 +12926,8 @@ yields (after ca. 120 minutes) something like
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 7175s 
-* Code: 1780349271
+* Duration: 6706s 
+* Code: 1793648842
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -12567,236 +12938,292 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 30Gi.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [1, 8] pods.
   * Benchmarking is run as [1, 2] times the number of benchmarking pods.
   * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mariadb', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MariaDB-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+* mariadb-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808746
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-1-2 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-1-2-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808759
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-1-3 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-1-3-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808752
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-1-4 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-1-4-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808758
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-2-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-2-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808771
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-2-2 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-2-2-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808777
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-2-3 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-2-3-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808780
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-2-4 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-2-4-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808777
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
+    * code:1793648842
+
+### Reused Storage
+* loading skipped, loading times inherited from an earlier experiment: MariaDB-1
+
+### Data Parameters of Reused Volumes
+* MariaDB-1: DDL values of the volume: row_format=default, collation=default
+* MariaDB-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1793648842-7f599f687b-hwmz2: 0
+* bexhoma-sut-mariadb-1-1793648842-dffdd7c7c-64bfc: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MariaDB-1 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: ycsb (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 3: ycsb (8 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 4: ycsb (16 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 2: ycsb (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 3: ycsb (8 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 4: ycsb (16 pods)
 
 #### Planned
 
-* DBMS MariaDB-1 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: ycsb (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 3: ycsb (8 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 4: ycsb (16 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 2: ycsb (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 3: ycsb (8 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 4: ycsb (16 pods)
 
-### Loading
-
-#### Per Connection
-
-
-
-#### Per Run
-
-
-
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS             | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:-----------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-1-1  | MariaDB-1       |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1002.46 |               997550.00 |             500951 |                            1455.00 |               499049 |                            143871.00 |
-| MariaDB-1-1-2-1  | MariaDB-1       |                1 |        2 |       1 |        64 |     1024 |           2 |            0 |                         1023.09 |               488715.00 |             249284 |                            3319.00 |               250716 |                            299007.00 |
-| MariaDB-1-1-2-2  | MariaDB-1       |                1 |        2 |       2 |        64 |     1024 |           2 |            0 |                         1023.08 |               488719.00 |             250286 |                            3287.00 |               249714 |                            299007.00 |
-| MariaDB-1-1-3-2  | MariaDB-1       |                1 |        3 |       2 |         8 |      128 |           8 |            0 |                          127.95 |               976954.00 |              62348 |                            2089.00 |                62652 |                            304639.00 |
-| MariaDB-1-1-3-7  | MariaDB-1       |                1 |        3 |       7 |         8 |      128 |           8 |            0 |                          127.95 |               976942.00 |              62564 |                            2325.00 |                62436 |                            305663.00 |
-| MariaDB-1-1-3-6  | MariaDB-1       |                1 |        3 |       6 |         8 |      128 |           8 |            0 |                          127.96 |               976864.00 |              62447 |                            2407.00 |                62553 |                            304383.00 |
-| MariaDB-1-1-3-5  | MariaDB-1       |                1 |        3 |       5 |         8 |      128 |           8 |            0 |                          127.92 |               977171.00 |              62548 |                            2335.00 |                62452 |                            303615.00 |
-| MariaDB-1-1-3-4  | MariaDB-1       |                1 |        3 |       4 |         8 |      128 |           8 |            0 |                          127.96 |               976864.00 |              62396 |                            2413.00 |                62604 |                            305919.00 |
-| MariaDB-1-1-3-1  | MariaDB-1       |                1 |        3 |       1 |         8 |      128 |           8 |            0 |                          127.96 |               976886.00 |              62623 |                            2353.00 |                62377 |                            310015.00 |
-| MariaDB-1-1-3-3  | MariaDB-1       |                1 |        3 |       3 |         8 |      128 |           8 |            0 |                          127.96 |               976870.00 |              62348 |                            2393.00 |                62652 |                            305151.00 |
-| MariaDB-1-1-3-8  | MariaDB-1       |                1 |        3 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976863.00 |              62610 |                            2303.00 |                62390 |                            306431.00 |
-| MariaDB-1-1-4-15 | MariaDB-1       |                1 |        4 |      15 |         8 |      128 |          16 |            0 |                          127.88 |               488737.00 |              31204 |                            3049.00 |                31296 |                            406015.00 |
-| MariaDB-1-1-4-16 | MariaDB-1       |                1 |        4 |      16 |         8 |      128 |          16 |            0 |                          127.87 |               488794.00 |              31355 |                            3041.00 |                31145 |                            413951.00 |
-| MariaDB-1-1-4-14 | MariaDB-1       |                1 |        4 |      14 |         8 |      128 |          16 |            0 |                          127.91 |               488638.00 |              31159 |                            3261.00 |                31341 |                            416511.00 |
-| MariaDB-1-1-4-4  | MariaDB-1       |                1 |        4 |       4 |         8 |      128 |          16 |            0 |                          127.91 |               488627.00 |              31470 |                            2983.00 |                31030 |                            424191.00 |
-| MariaDB-1-1-4-2  | MariaDB-1       |                1 |        4 |       2 |         8 |      128 |          16 |            0 |                          127.91 |               488626.00 |              31261 |                            3121.00 |                31239 |                            431615.00 |
-| MariaDB-1-1-4-8  | MariaDB-1       |                1 |        4 |       8 |         8 |      128 |          16 |            0 |                          127.91 |               488631.00 |              31232 |                            3163.00 |                31268 |                            403967.00 |
-| MariaDB-1-1-4-5  | MariaDB-1       |                1 |        4 |       5 |         8 |      128 |          16 |            0 |                          127.89 |               488707.00 |              31283 |                            3075.00 |                31217 |                            404991.00 |
-| MariaDB-1-1-4-13 | MariaDB-1       |                1 |        4 |      13 |         8 |      128 |          16 |            0 |                          127.91 |               488617.00 |              31291 |                            3079.00 |                31209 |                            406527.00 |
-| MariaDB-1-1-4-11 | MariaDB-1       |                1 |        4 |      11 |         8 |      128 |          16 |            0 |                          127.91 |               488622.00 |              31249 |                            3075.00 |                31251 |                            412415.00 |
-| MariaDB-1-1-4-1  | MariaDB-1       |                1 |        4 |       1 |         8 |      128 |          16 |            0 |                          127.91 |               488610.00 |              31250 |                            3179.00 |                31250 |                            415231.00 |
-| MariaDB-1-1-4-3  | MariaDB-1       |                1 |        4 |       3 |         8 |      128 |          16 |            0 |                          127.91 |               488632.00 |              31171 |                            3411.00 |                31329 |                            418303.00 |
-| MariaDB-1-1-4-6  | MariaDB-1       |                1 |        4 |       6 |         8 |      128 |          16 |            0 |                          127.87 |               488793.00 |              31242 |                            3169.00 |                31258 |                            417023.00 |
-| MariaDB-1-1-4-10 | MariaDB-1       |                1 |        4 |      10 |         8 |      128 |          16 |            0 |                          127.89 |               488720.00 |              31154 |                            3255.00 |                31346 |                            406015.00 |
-| MariaDB-1-1-4-12 | MariaDB-1       |                1 |        4 |      12 |         8 |      128 |          16 |            0 |                          127.91 |               488635.00 |              31241 |                            3187.00 |                31259 |                            400127.00 |
-| MariaDB-1-1-4-9  | MariaDB-1       |                1 |        4 |       9 |         8 |      128 |          16 |            0 |                          127.91 |               488634.00 |              31322 |                            3125.00 |                31178 |                            397823.00 |
-| MariaDB-1-1-4-7  | MariaDB-1       |                1 |        4 |       7 |         8 |      128 |          16 |            0 |                          127.91 |               488631.00 |              31173 |                            3031.00 |                31327 |                            398335.00 |
-| MariaDB-1-2-4-8  | MariaDB-1       |                2 |        4 |       8 |         8 |      128 |          16 |            0 |                          127.91 |               488641.00 |              31555 |                            2179.00 |                30945 |                            276991.00 |
-| MariaDB-1-2-4-14 | MariaDB-1       |                2 |        4 |      14 |         8 |      128 |          16 |            0 |                          127.79 |               489093.00 |              31258 |                            2339.00 |                31242 |                            289023.00 |
-| MariaDB-1-2-4-2  | MariaDB-1       |                2 |        4 |       2 |         8 |      128 |          16 |            0 |                          127.78 |               489121.00 |              31369 |                            2251.00 |                31131 |                            278015.00 |
-| MariaDB-1-2-4-13 | MariaDB-1       |                2 |        4 |      13 |         8 |      128 |          16 |            0 |                          127.91 |               488619.00 |              31472 |                            2311.00 |                31028 |                            274687.00 |
-| MariaDB-1-2-4-6  | MariaDB-1       |                2 |        4 |       6 |         8 |      128 |          16 |            0 |                          127.91 |               488609.00 |              31370 |                            2107.00 |                31130 |                            271615.00 |
-| MariaDB-1-2-4-7  | MariaDB-1       |                2 |        4 |       7 |         8 |      128 |          16 |            0 |                          127.91 |               488627.00 |              31332 |                            2243.00 |                31168 |                            277759.00 |
-| MariaDB-1-2-4-11 | MariaDB-1       |                2 |        4 |      11 |         8 |      128 |          16 |            0 |                          127.91 |               488635.00 |              31340 |                            2271.00 |                31160 |                            276223.00 |
-| MariaDB-1-2-4-3  | MariaDB-1       |                2 |        4 |       3 |         8 |      128 |          16 |            0 |                          127.91 |               488614.00 |              31296 |                            2323.00 |                31204 |                            273407.00 |
-| MariaDB-1-2-4-5  | MariaDB-1       |                2 |        4 |       5 |         8 |      128 |          16 |            0 |                          127.91 |               488615.00 |              31224 |                            2247.00 |                31276 |                            275455.00 |
-| MariaDB-1-2-4-10 | MariaDB-1       |                2 |        4 |      10 |         8 |      128 |          16 |            0 |                          127.92 |               488603.00 |              31133 |                            2235.00 |                31367 |                            277503.00 |
-| MariaDB-1-2-4-16 | MariaDB-1       |                2 |        4 |      16 |         8 |      128 |          16 |            0 |                          127.91 |               488610.00 |              31219 |                            2261.00 |                31281 |                            282879.00 |
-| MariaDB-1-2-4-12 | MariaDB-1       |                2 |        4 |      12 |         8 |      128 |          16 |            0 |                          127.91 |               488629.00 |              31060 |                            2203.00 |                31440 |                            288511.00 |
-| MariaDB-1-2-4-15 | MariaDB-1       |                2 |        4 |      15 |         8 |      128 |          16 |            0 |                          127.91 |               488634.00 |              31091 |                            2049.00 |                31409 |                            260735.00 |
-| MariaDB-1-2-4-1  | MariaDB-1       |                2 |        4 |       1 |         8 |      128 |          16 |            0 |                          127.91 |               488610.00 |              31096 |                            2295.00 |                31404 |                            269055.00 |
-| MariaDB-1-2-1-1  | MariaDB-1       |                2 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1023.58 |               976960.00 |             499579 |                            1637.00 |               500421 |                            242303.00 |
-| MariaDB-1-2-2-2  | MariaDB-1       |                2 |        2 |       2 |        64 |     1024 |           2 |            0 |                         1023.11 |               488708.00 |             249669 |                            2597.00 |               250331 |                            297727.00 |
-| MariaDB-1-2-2-1  | MariaDB-1       |                2 |        2 |       1 |        64 |     1024 |           2 |            0 |                         1023.10 |               488713.00 |             249729 |                            2765.00 |               250271 |                            297215.00 |
-| MariaDB-1-2-3-5  | MariaDB-1       |                2 |        3 |       5 |         8 |      128 |           8 |            0 |                          127.96 |               976858.00 |              62480 |                            1990.00 |                62520 |                            285439.00 |
-| MariaDB-1-2-3-7  | MariaDB-1       |                2 |        3 |       7 |         8 |      128 |           8 |            0 |                          127.96 |               976874.00 |              62805 |                            1902.00 |                62195 |                            286207.00 |
-| MariaDB-1-2-3-4  | MariaDB-1       |                2 |        3 |       4 |         8 |      128 |           8 |            0 |                          127.96 |               976866.00 |              62311 |                            1836.00 |                62689 |                            283135.00 |
-| MariaDB-1-2-3-3  | MariaDB-1       |                2 |        3 |       3 |         8 |      128 |           8 |            0 |                          127.96 |               976866.00 |              62568 |                            1918.00 |                62432 |                            286975.00 |
-| MariaDB-1-2-3-1  | MariaDB-1       |                2 |        3 |       1 |         8 |      128 |           8 |            0 |                          127.96 |               976881.00 |              62561 |                            1886.00 |                62439 |                            287743.00 |
-| MariaDB-1-2-3-2  | MariaDB-1       |                2 |        3 |       2 |         8 |      128 |           8 |            0 |                          127.96 |               976860.00 |              62406 |                            1962.00 |                62594 |                            290047.00 |
-| MariaDB-1-2-3-6  | MariaDB-1       |                2 |        3 |       6 |         8 |      128 |           8 |            0 |                          127.96 |               976867.00 |              62272 |                            1985.00 |                62728 |                            283391.00 |
-| MariaDB-1-2-3-8  | MariaDB-1       |                2 |        3 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976843.00 |              62658 |                            1892.00 |                62342 |                            283135.00 |
-| MariaDB-1-2-4-4  | MariaDB-1       |                2 |        4 |       4 |         8 |      128 |          16 |            0 |                          127.82 |               488982.00 |              31224 |                            2263.00 |                31276 |                            281343.00 |
-| MariaDB-1-2-4-9  | MariaDB-1       |                2 |        4 |       9 |         8 |      128 |          16 |            0 |                          127.80 |               489064.00 |              31164 |                            2137.00 |                31336 |                            261759.00 |
+| DBMS               | phase         | job             | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-------------------|:--------------|:----------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1-1-1  | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.41 |               977130.00 |             499755 |                            1177.00 |               500245 |                              3623.00 |
+| mariadb-1-1-2-1-1  | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       1 |        64 |     1024 |           2 |            0 |                         1023.04 |               488741.00 |             249147 |                            1219.00 |               250853 |                              4179.00 |
+| mariadb-1-1-2-1-2  | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       2 |        64 |     1024 |           2 |            0 |                         1022.97 |               488775.00 |             249843 |                            1216.00 |               250157 |                              4139.00 |
+| mariadb-1-1-3-1-1  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       1 |         8 |      128 |           8 |            0 |                          127.97 |               976810.00 |              62611 |                            1182.00 |                62389 |                              3741.00 |
+| mariadb-1-1-3-1-2  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       2 |         8 |      128 |           8 |            0 |                          127.97 |               976825.00 |              62424 |                            1200.00 |                62576 |                              3879.00 |
+| mariadb-1-1-3-1-3  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       3 |         8 |      128 |           8 |            0 |                          127.96 |               976850.00 |              62430 |                            1247.00 |                62570 |                              3879.00 |
+| mariadb-1-1-3-1-4  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       4 |         8 |      128 |           8 |            0 |                          127.96 |               976833.00 |              62687 |                            1205.00 |                62313 |                              3677.00 |
+| mariadb-1-1-3-1-5  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       5 |         8 |      128 |           8 |            0 |                          127.97 |               976822.00 |              62336 |                            1197.00 |                62664 |                              3929.00 |
+| mariadb-1-1-3-1-6  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       6 |         8 |      128 |           8 |            0 |                          127.97 |               976826.00 |              62584 |                            1189.00 |                62416 |                              3819.00 |
+| mariadb-1-1-3-1-7  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       7 |         8 |      128 |           8 |            0 |                          127.97 |               976827.00 |              62635 |                            1197.00 |                62365 |                              3827.00 |
+| mariadb-1-1-3-1-8  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976842.00 |              62714 |                            1217.00 |                62286 |                              3921.00 |
+| mariadb-1-1-4-1-1  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       1 |         8 |      128 |          16 |            0 |                          127.92 |               488599.00 |              31331 |                            1240.00 |                31169 |                              4063.00 |
+| mariadb-1-1-4-1-2  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       2 |         8 |      128 |          16 |            0 |                          127.92 |               488604.00 |              30974 |                            1184.00 |                31526 |                              3739.00 |
+| mariadb-1-1-4-1-3  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       3 |         8 |      128 |          16 |            0 |                          127.92 |               488571.00 |              31190 |                            1225.00 |                31310 |                              3969.00 |
+| mariadb-1-1-4-1-4  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       4 |         8 |      128 |          16 |            0 |                          127.92 |               488577.00 |              30981 |                            1224.00 |                31519 |                              3797.00 |
+| mariadb-1-1-4-1-5  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       5 |         8 |      128 |          16 |            0 |                          127.92 |               488598.00 |              31153 |                            1185.00 |                31347 |                              3741.00 |
+| mariadb-1-1-4-1-6  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       6 |         8 |      128 |          16 |            0 |                          127.92 |               488605.00 |              31158 |                            1263.00 |                31342 |                              3905.00 |
+| mariadb-1-1-4-1-7  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       7 |         8 |      128 |          16 |            0 |                          127.92 |               488581.00 |              31100 |                            1187.00 |                31400 |                              3945.00 |
+| mariadb-1-1-4-1-8  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       8 |         8 |      128 |          16 |            0 |                          127.92 |               488603.00 |              31141 |                            1203.00 |                31359 |                              3879.00 |
+| mariadb-1-1-4-1-9  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       9 |         8 |      128 |          16 |            0 |                          127.91 |               488608.00 |              31406 |                            1183.00 |                31094 |                              3833.00 |
+| mariadb-1-1-4-1-10 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      10 |         8 |      128 |          16 |            0 |                          127.92 |               488584.00 |              31170 |                            1175.00 |                31330 |                              3893.00 |
+| mariadb-1-1-4-1-11 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      11 |         8 |      128 |          16 |            0 |                          127.92 |               488582.00 |              31253 |                            1196.00 |                31247 |                              3743.00 |
+| mariadb-1-1-4-1-12 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      12 |         8 |      128 |          16 |            0 |                          127.91 |               488615.00 |              31132 |                            1231.00 |                31368 |                              3799.00 |
+| mariadb-1-1-4-1-13 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      13 |         8 |      128 |          16 |            0 |                          127.92 |               488592.00 |              31202 |                            1210.00 |                31298 |                              3905.00 |
+| mariadb-1-1-4-1-14 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      14 |         8 |      128 |          16 |            0 |                          127.93 |               488551.00 |              31144 |                            1219.00 |                31356 |                              3915.00 |
+| mariadb-1-1-4-1-15 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      15 |         8 |      128 |          16 |            0 |                          127.92 |               488583.00 |              31316 |                            1193.00 |                31184 |                              3997.00 |
+| mariadb-1-1-4-1-16 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      16 |         8 |      128 |          16 |            0 |                          127.92 |               488589.00 |              31204 |                            1232.00 |                31296 |                              4009.00 |
+| mariadb-1-2-1-1-1  | mariadb-1-2-1 | mariadb-1-2-1-1 | MariaDB-1       |                2 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.30 |               977231.00 |             500238 |                            1202.00 |               499762 |                              3963.00 |
+| mariadb-1-2-2-1-1  | mariadb-1-2-2 | mariadb-1-2-2-1 | MariaDB-1       |                2 |        2 |               1 |       1 |        64 |     1024 |           2 |            0 |                         1022.92 |               488797.00 |             250286 |                            1212.00 |               249714 |                              4001.00 |
+| mariadb-1-2-2-1-2  | mariadb-1-2-2 | mariadb-1-2-2-1 | MariaDB-1       |                2 |        2 |               1 |       2 |        64 |     1024 |           2 |            0 |                         1023.01 |               488754.00 |             250199 |                            1199.00 |               249801 |                              3965.00 |
+| mariadb-1-2-3-1-1  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       1 |         8 |      128 |           8 |            0 |                          127.96 |               976881.00 |              62484 |                            1240.00 |                62516 |                              3875.00 |
+| mariadb-1-2-3-1-2  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       2 |         8 |      128 |           8 |            0 |                          127.95 |               976919.00 |              62796 |                            1231.00 |                62204 |                              3665.00 |
+| mariadb-1-2-3-1-3  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       3 |         8 |      128 |           8 |            0 |                          127.95 |               976910.00 |              62474 |                            1231.00 |                62526 |                              3647.00 |
+| mariadb-1-2-3-1-4  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       4 |         8 |      128 |           8 |            0 |                          127.95 |               976910.00 |              62464 |                            1310.00 |                62536 |                              3625.00 |
+| mariadb-1-2-3-1-5  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       5 |         8 |      128 |           8 |            0 |                          127.95 |               976913.00 |              62425 |                            1306.00 |                62575 |                              3681.00 |
+| mariadb-1-2-3-1-6  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       6 |         8 |      128 |           8 |            0 |                          127.96 |               976904.00 |              62445 |                            1221.00 |                62555 |                              3417.00 |
+| mariadb-1-2-3-1-7  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       7 |         8 |      128 |           8 |            0 |                          127.95 |               976907.00 |              62759 |                            1246.00 |                62241 |                              3811.00 |
+| mariadb-1-2-3-1-8  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976894.00 |              62310 |                            1221.00 |                62690 |                              3739.00 |
+| mariadb-1-2-4-1-1  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       1 |         8 |      128 |          16 |            0 |                          127.90 |               488669.00 |              30967 |                            1240.00 |                31533 |                              4089.00 |
+| mariadb-1-2-4-1-2  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       2 |         8 |      128 |          16 |            0 |                          127.90 |               488678.00 |              31309 |                            1235.00 |                31191 |                              3947.00 |
+| mariadb-1-2-4-1-3  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       3 |         8 |      128 |          16 |            0 |                          127.91 |               488632.00 |              31105 |                            1241.00 |                31395 |                              4119.00 |
+| mariadb-1-2-4-1-4  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       4 |         8 |      128 |          16 |            0 |                          127.90 |               488645.00 |              31340 |                            1233.00 |                31160 |                              4259.00 |
+| mariadb-1-2-4-1-5  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       5 |         8 |      128 |          16 |            0 |                          127.90 |               488647.00 |              31463 |                            1255.00 |                31037 |                              4191.00 |
+| mariadb-1-2-4-1-6  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       6 |         8 |      128 |          16 |            0 |                          127.90 |               488648.00 |              31280 |                            1229.00 |                31220 |                              4215.00 |
+| mariadb-1-2-4-1-7  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       7 |         8 |      128 |          16 |            0 |                          127.91 |               488630.00 |              31105 |                            1245.00 |                31395 |                              4223.00 |
+| mariadb-1-2-4-1-8  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       8 |         8 |      128 |          16 |            0 |                          127.90 |               488662.00 |              31054 |                            1192.00 |                31446 |                              4073.00 |
+| mariadb-1-2-4-1-9  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       9 |         8 |      128 |          16 |            0 |                          127.91 |               488643.00 |              31329 |                            1224.00 |                31171 |                              4167.00 |
+| mariadb-1-2-4-1-10 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      10 |         8 |      128 |          16 |            0 |                          127.90 |               488672.00 |              31103 |                            1258.00 |                31397 |                              4107.00 |
+| mariadb-1-2-4-1-11 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      11 |         8 |      128 |          16 |            0 |                          127.90 |               488649.00 |              31438 |                            1248.00 |                31062 |                              4199.00 |
+| mariadb-1-2-4-1-12 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      12 |         8 |      128 |          16 |            0 |                          127.90 |               488648.00 |              31218 |                            1238.00 |                31282 |                              4065.00 |
+| mariadb-1-2-4-1-13 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      13 |         8 |      128 |          16 |            0 |                          127.90 |               488653.00 |              31438 |                            1213.00 |                31062 |                              4203.00 |
+| mariadb-1-2-4-1-14 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      14 |         8 |      128 |          16 |            0 |                          127.90 |               488649.00 |              31324 |                            1241.00 |                31176 |                              4187.00 |
+| mariadb-1-2-4-1-15 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      15 |         8 |      128 |          16 |            0 |                          127.91 |               488641.00 |              31268 |                            1256.00 |                31232 |                              4187.00 |
+| mariadb-1-2-4-1-16 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      16 |         8 |      128 |          16 |            0 |                          127.90 |               488662.00 |              31582 |                            1234.00 |                30918 |                              4295.00 |
 
 #### Per Phase
 
-| DBMS          |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1002.46 |               997550.00 |          500951.00 |                            1455.00 |            499049.00 |                            143871.00 |
-| MariaDB-1-1-2 |             1.00 |    128.00 |  2048.00 |        2.00 |         0.00 |                         2046.17 |               488719.00 |          499570.00 |                            3319.00 |            500430.00 |                            299007.00 |
-| MariaDB-1-1-3 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                         1023.62 |               977171.00 |          499884.00 |                            2413.00 |            500116.00 |                            310015.00 |
-| MariaDB-1-1-4 |             1.00 |    128.00 |  2048.00 |       16.00 |         0.00 |                         2046.39 |               488794.00 |          500057.00 |                            3411.00 |            499943.00 |                            431615.00 |
-| MariaDB-1-2-1 |             2.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1023.58 |               976960.00 |          499579.00 |                            1637.00 |            500421.00 |                            242303.00 |
-| MariaDB-1-2-2 |             2.00 |    128.00 |  2048.00 |        2.00 |         0.00 |                         2046.20 |               488713.00 |          499398.00 |                            2765.00 |            500602.00 |                            297727.00 |
-| MariaDB-1-2-3 |             2.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                         1023.68 |               976881.00 |          500061.00 |                            1990.00 |            499939.00 |                            290047.00 |
-| MariaDB-1-2-4 |             2.00 |    128.00 |  2048.00 |       16.00 |         0.00 |                         2046.11 |               489121.00 |          500203.00 |                            2339.00 |            499797.00 |                            289023.00 |
+| DBMS          | phase         |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:--------------|:--------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1023.41 |               977130.00 |             499755 |                            1177.00 |               500245 |                              3623.00 |
+| mariadb-1-1-2 | mariadb-1-1-2 |                1 |       128 |     2048 |               1 |           2 |            0 |                         2046.00 |               488775.00 |             498990 |                            1219.00 |               501010 |                              4179.00 |
+| mariadb-1-1-3 | mariadb-1-1-3 |                1 |        64 |     1024 |               1 |           8 |            0 |                         1023.72 |               976850.00 |             500421 |                            1247.00 |               499579 |                              3929.00 |
+| mariadb-1-1-4 | mariadb-1-1-4 |                1 |       128 |     2048 |               1 |          16 |            0 |                         2046.71 |               488615.00 |             498855 |                            1263.00 |               501145 |                              4063.00 |
+| mariadb-1-2-1 | mariadb-1-2-1 |                2 |        64 |     1024 |               1 |           1 |            0 |                         1023.30 |               977231.00 |             500238 |                            1202.00 |               499762 |                              3963.00 |
+| mariadb-1-2-2 | mariadb-1-2-2 |                2 |       128 |     2048 |               1 |           2 |            0 |                         2045.93 |               488797.00 |             500485 |                            1212.00 |               499515 |                              4001.00 |
+| mariadb-1-2-3 | mariadb-1-2-3 |                2 |        64 |     1024 |               1 |           8 |            0 |                         1023.64 |               976919.00 |             500157 |                            1310.00 |               499843 |                              3875.00 |
+| mariadb-1-2-4 | mariadb-1-2-4 |                2 |       128 |     2048 |               1 |          16 |            0 |                         2046.45 |               488678.00 |             500323 |                            1258.00 |               499677 |                              4295.00 |
 
 ### Tests
-* TEST failed: Loading Phase: [OVERALL].Throughput(ops/sec) contains 0 or NaN
+* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MariaDB-1)
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
@@ -12841,8 +13268,8 @@ yields (after ca. 25 minutes) something like
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 1317s 
-* Code: 1780356598
+* Duration: 1262s 
+* Code: 1793655586
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'E'.
@@ -12853,78 +13280,91 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 30Gi.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [8] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mariadb', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MariaDB-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+* mariadb-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808782
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780356598
+    * code:1793655586
+
+### Reused Storage
+* loading skipped, loading times inherited from an earlier experiment: MariaDB-1
+
+### Data Parameters of Reused Volumes
+* MariaDB-1: DDL values of the volume: row_format=default, collation=default
+* MariaDB-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1793655586-7fb9968978-2fczb: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MariaDB-1 - Pods [[8]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (8 pods)
 
 #### Planned
 
-* DBMS MariaDB-1 - Pods [[8]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (8 pods)
 
-### Loading
-
-#### Per Connection
-
-
-
-#### Per Run
-
-
-
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS            | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |   [INSERT-FAILED].Operations |   [INSERT-FAILED].99thPercentileLatency(us) |
-|:----------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|-----------------------------:|--------------------------------------------:|
-| MariaDB-1-1-1-7 | MariaDB-1       |                1 |        1 |       7 |         8 |      128 |           8 |            0 |                          127.96 |               976885.00 |                 6177 |                            182399.00 |             118823 |                            2427.00 |                            0 |                                        0.00 |
-| MariaDB-1-1-1-8 | MariaDB-1       |                1 |        1 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976879.00 |                 6352 |                            159743.00 |             118648 |                            2379.00 |                            0 |                                        0.00 |
-| MariaDB-1-1-1-6 | MariaDB-1       |                1 |        1 |       6 |         8 |      128 |           8 |            0 |                          127.96 |               976871.00 |                 6143 |                            172927.00 |             118857 |                            2359.00 |                            0 |                                        0.00 |
-| MariaDB-1-1-1-3 | MariaDB-1       |                1 |        1 |       3 |         8 |      128 |           8 |            0 |                          127.96 |               976861.00 |                 6250 |                            154367.00 |             118695 |                            2339.00 |                           55 |                                     1623.00 |
-| MariaDB-1-1-1-4 | MariaDB-1       |                1 |        1 |       4 |         8 |      128 |           8 |            0 |                          127.96 |               976863.00 |                 6250 |                            174463.00 |             118559 |                            2399.00 |                          191 |                                     1504.00 |
-| MariaDB-1-1-1-1 | MariaDB-1       |                1 |        1 |       1 |         8 |      128 |           8 |            0 |                          127.96 |               976859.00 |                 6250 |                            155135.00 |             118605 |                            2363.00 |                          145 |                                     1684.00 |
-| MariaDB-1-1-1-5 | MariaDB-1       |                1 |        1 |       5 |         8 |      128 |           8 |            0 |                          127.96 |               976869.00 |                 6250 |                            168703.00 |             118748 |                            2437.00 |                            2 |                                     7987.00 |
-| MariaDB-1-1-1-2 | MariaDB-1       |                1 |        1 |       2 |         8 |      128 |           8 |            0 |                          127.96 |               976866.00 |                 6232 |                            171647.00 |             118768 |                            2281.00 |                            0 |                                        0.00 |
+| DBMS              | phase         | job             | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |   [INSERT-FAILED].Operations |   [INSERT-FAILED].99thPercentileLatency(us) |
+|:------------------|:--------------|:----------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|-----------------------------:|--------------------------------------------:|
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       1 |         8 |      128 |           8 |            0 |                          127.96 |               976867.00 |                 6250 |                              3991.00 |             118743 |                            1539.00 |                            7 |                                    12575.00 |
+| mariadb-1-1-1-1-2 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       2 |         8 |      128 |           8 |            0 |                          127.96 |               976882.00 |                 6076 |                              3857.00 |             118924 |                            1589.00 |                            0 |                                        0.00 |
+| mariadb-1-1-1-1-3 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       3 |         8 |      128 |           8 |            0 |                          127.95 |               976908.00 |                 6206 |                              3919.00 |             118794 |                            1494.00 |                            0 |                                        0.00 |
+| mariadb-1-1-1-1-4 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       4 |         8 |      128 |           8 |            0 |                          127.95 |               976922.00 |                 6216 |                              3857.00 |             118784 |                            1586.00 |                            0 |                                        0.00 |
+| mariadb-1-1-1-1-5 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       5 |         8 |      128 |           8 |            0 |                          127.96 |               976879.00 |                 6113 |                              3993.00 |             118887 |                            1551.00 |                            0 |                                        0.00 |
+| mariadb-1-1-1-1-6 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       6 |         8 |      128 |           8 |            0 |                          127.96 |               976902.00 |                 6250 |                              3699.00 |             118697 |                            1515.00 |                           53 |                                     2209.00 |
+| mariadb-1-1-1-1-7 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       7 |         8 |      128 |           8 |            0 |                          127.96 |               976905.00 |                 6250 |                              3933.00 |             118748 |                            1522.00 |                            2 |                                     9879.00 |
+| mariadb-1-1-1-1-8 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976872.00 |                 6390 |                              3801.00 |             118610 |                            1551.00 |                            0 |                                        0.00 |
 
 #### Per Phase
 
-| DBMS          |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |   [INSERT-FAILED].Operations |   [INSERT-FAILED].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|-----------------------------:|--------------------------------------------:|
-| MariaDB-1-1-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                         1023.68 |               976885.00 |             49904.00 |                            182399.00 |          949703.00 |                            2437.00 |                       393.00 |                                     7987.00 |
+| DBMS          | phase         |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |   [INSERT-FAILED].Operations |   [INSERT-FAILED].99thPercentileLatency(us) |
+|:--------------|:--------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|-----------------------------:|--------------------------------------------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        64 |     1024 |               1 |           8 |            0 |                         1023.65 |               976922.00 |                49751 |                              3993.00 |             950187 |                            1589.00 |                           62 |                                    12575.00 |
 
 ### Tests
-* TEST failed: Loading Phase: [OVERALL].Throughput(ops/sec) contains 0 or NaN
+* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MariaDB-1)
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST failed: Execution Phase: contains FAILED column
@@ -12971,8 +13411,8 @@ yields (after ca. 45 minutes) something like
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 2404s 
-* Code: 1780357927
+* Duration: 2277s 
+* Code: 1793656861
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -12983,114 +13423,144 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 30Gi.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [1, 8] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mariadb', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MariaDB-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+* mariadb-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808788
+  * datadisk:1851
+  * volume_size:49G
   * volume_used:1.9G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780357927
-* MariaDB-1-1-2 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793656861
+* mariadb-1-1-2-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808793
+  * datadisk:1851
+  * volume_size:49G
   * volume_used:1.9G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780357927
+    * code:1793656861
+
+### Reused Storage
+* loading skipped, loading times inherited from an earlier experiment: MariaDB-1
+
+### Data Parameters of Reused Volumes
+* MariaDB-1: DDL values of the volume: row_format=default, collation=default
+* MariaDB-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1793656861-8554c84df5-rbtnk: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MariaDB-1 - Pods [[1, 8]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: ycsb (8 pods)
 
 #### Planned
 
-* DBMS MariaDB-1 - Pods [[1, 8]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: ycsb (8 pods)
 
-### Loading
-
-#### Per Connection
-
-
-
-#### Per Run
-
-
-
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS            | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:----------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-1-1 | MariaDB-1       |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1023.41 |               977124.00 |             499187 |                            1738.00 |               500813 |                            271103.00 |
-| MariaDB-1-1-2-6 | MariaDB-1       |                1 |        2 |       6 |         8 |      128 |           8 |            0 |                          127.96 |               976875.00 |              62590 |                            2109.00 |                62410 |                            342783.00 |
-| MariaDB-1-1-2-2 | MariaDB-1       |                1 |        2 |       2 |         8 |      128 |           8 |            0 |                          127.96 |               976849.00 |              62447 |                            2097.00 |                62553 |                            340479.00 |
-| MariaDB-1-1-2-8 | MariaDB-1       |                1 |        2 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976868.00 |              62478 |                            2187.00 |                62522 |                            343807.00 |
-| MariaDB-1-1-2-1 | MariaDB-1       |                1 |        2 |       1 |         8 |      128 |           8 |            0 |                          127.96 |               976861.00 |              62654 |                            2149.00 |                62346 |                            343039.00 |
-| MariaDB-1-1-2-4 | MariaDB-1       |                1 |        2 |       4 |         8 |      128 |           8 |            0 |                          127.96 |               976854.00 |              62596 |                            2063.00 |                62404 |                            345087.00 |
-| MariaDB-1-1-2-3 | MariaDB-1       |                1 |        2 |       3 |         8 |      128 |           8 |            0 |                          127.96 |               976867.00 |              62520 |                            2129.00 |                62480 |                            337407.00 |
-| MariaDB-1-1-2-5 | MariaDB-1       |                1 |        2 |       5 |         8 |      128 |           8 |            0 |                          127.96 |               976862.00 |              62215 |                            2243.00 |                62785 |                            346111.00 |
-| MariaDB-1-1-2-7 | MariaDB-1       |                1 |        2 |       7 |         8 |      128 |           8 |            0 |                          127.96 |               976856.00 |              62386 |                            2161.00 |                62614 |                            346111.00 |
+| DBMS              | phase         | job             | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------------|:--------------|:----------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.52 |               977017.00 |             499582 |                            1186.00 |               500418 |                              3867.00 |
+| mariadb-1-1-2-1-1 | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       1 |         8 |      128 |           8 |            0 |                          127.96 |               976892.00 |              62376 |                            1194.00 |                62624 |                              3967.00 |
+| mariadb-1-1-2-1-2 | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       2 |         8 |      128 |           8 |            0 |                          127.96 |               976904.00 |              62565 |                            1216.00 |                62435 |                              3977.00 |
+| mariadb-1-1-2-1-3 | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       3 |         8 |      128 |           8 |            0 |                          127.95 |               976909.00 |              62597 |                            1206.00 |                62403 |                              3793.00 |
+| mariadb-1-1-2-1-4 | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       4 |         8 |      128 |           8 |            0 |                          127.96 |               976882.00 |              62301 |                            1220.00 |                62699 |                              3927.00 |
+| mariadb-1-1-2-1-5 | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       5 |         8 |      128 |           8 |            0 |                          127.95 |               976911.00 |              62172 |                            1195.00 |                62828 |                              3743.00 |
+| mariadb-1-1-2-1-6 | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       6 |         8 |      128 |           8 |            0 |                          127.96 |               976899.00 |              62628 |                            1216.00 |                62372 |                              3951.00 |
+| mariadb-1-1-2-1-7 | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       7 |         8 |      128 |           8 |            0 |                          127.95 |               976912.00 |              62395 |                            1205.00 |                62605 |                              3999.00 |
+| mariadb-1-1-2-1-8 | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       8 |         8 |      128 |           8 |            0 |                          127.95 |               976922.00 |              62639 |                            1243.00 |                62361 |                              3857.00 |
 
 #### Per Phase
 
-| DBMS          |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1023.41 |               977124.00 |          499187.00 |                            1738.00 |            500813.00 |                            271103.00 |
-| MariaDB-1-1-2 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                         1023.69 |               976875.00 |          499886.00 |                            2243.00 |            500114.00 |                            346111.00 |
+| DBMS          | phase         |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:--------------|:--------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1023.52 |               977017.00 |             499582 |                            1186.00 |               500418 |                              3867.00 |
+| mariadb-1-1-2 | mariadb-1-1-2 |                1 |        64 |     1024 |               1 |           8 |            0 |                         1023.64 |               976922.00 |             499673 |                            1243.00 |               500327 |                              3999.00 |
 
 ### Monitoring
 
-### Execution phase: SUT deployment
+### Benchmarking phase: SUT deployment
 
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1 |       607.29 |      2.85 |           6.86 |                  6.96 |
-| MariaDB-1-1-2 |       545.60 |      0.72 |           6.86 |                  6.96 |
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 |       185.27 |      0.24 |           2.45 |                  2.45 |
+| mariadb-1-1-2-1 |       190.56 |      0.31 |           2.45 |                  2.45 |
 
-### Execution phase: component benchmarker
+### Benchmarking phase: component benchmarker
 
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1 |       143.19 |      0.37 |           0.13 |                  0.13 |
-| MariaDB-1-1-2 |       143.19 |      0.63 |           0.13 |                  0.13 |
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 |       325.04 |      0.73 |           0.19 |                  0.19 |
+| mariadb-1-1-2-1 |       392.62 |      1.11 |           0.10 |                  0.10 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-2-1 (bexhoma-metrics-mariadb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-2-1 (bexhoma-metrics-mariadb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-2-1 (bexhoma-metrics-mariadb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-2-1 (bexhoma-metrics-mariadb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Tests
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
-* TEST failed: Loading Phase: [OVERALL].Throughput(ops/sec) contains 0 or NaN
+* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MariaDB-1)
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column

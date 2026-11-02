@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 7175s 
-* Code: 1780349271
+* Duration: 6706s 
+* Code: 1793648842
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -15,236 +15,292 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 30Gi.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [1, 8] pods.
   * Benchmarking is run as [1, 2] times the number of benchmarking pods.
   * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mariadb', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MariaDB-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+* mariadb-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808746
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-1-2 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-1-2-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808759
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-1-3 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-1-3-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808752
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-1-4 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-1-4-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808758
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-2-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-2-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808771
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-2-2 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-2-2-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808777
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-2-3 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-2-3-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808780
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
-* MariaDB-1-2-4 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793648842
+* mariadb-1-2-4-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:808777
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780349271
+    * code:1793648842
+
+### Reused Storage
+* loading skipped, loading times inherited from an earlier experiment: MariaDB-1
+
+### Data Parameters of Reused Volumes
+* MariaDB-1: DDL values of the volume: row_format=default, collation=default
+* MariaDB-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1793648842-7f599f687b-hwmz2: 0
+* bexhoma-sut-mariadb-1-1793648842-dffdd7c7c-64bfc: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MariaDB-1 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: ycsb (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 3: ycsb (8 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 4: ycsb (16 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 2: ycsb (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 3: ycsb (8 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 4: ycsb (16 pods)
 
 #### Planned
 
-* DBMS MariaDB-1 - Pods [[1, 2, 8, 16], [1, 2, 8, 16]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: ycsb (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 3: ycsb (8 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 4: ycsb (16 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 2: ycsb (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 3: ycsb (8 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 4: ycsb (16 pods)
 
-### Loading
-
-#### Per Connection
-
-
-
-#### Per Run
-
-
-
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS             | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:-----------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-1-1  | MariaDB-1       |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1002.46 |               997550.00 |             500951 |                            1455.00 |               499049 |                            143871.00 |
-| MariaDB-1-1-2-1  | MariaDB-1       |                1 |        2 |       1 |        64 |     1024 |           2 |            0 |                         1023.09 |               488715.00 |             249284 |                            3319.00 |               250716 |                            299007.00 |
-| MariaDB-1-1-2-2  | MariaDB-1       |                1 |        2 |       2 |        64 |     1024 |           2 |            0 |                         1023.08 |               488719.00 |             250286 |                            3287.00 |               249714 |                            299007.00 |
-| MariaDB-1-1-3-2  | MariaDB-1       |                1 |        3 |       2 |         8 |      128 |           8 |            0 |                          127.95 |               976954.00 |              62348 |                            2089.00 |                62652 |                            304639.00 |
-| MariaDB-1-1-3-7  | MariaDB-1       |                1 |        3 |       7 |         8 |      128 |           8 |            0 |                          127.95 |               976942.00 |              62564 |                            2325.00 |                62436 |                            305663.00 |
-| MariaDB-1-1-3-6  | MariaDB-1       |                1 |        3 |       6 |         8 |      128 |           8 |            0 |                          127.96 |               976864.00 |              62447 |                            2407.00 |                62553 |                            304383.00 |
-| MariaDB-1-1-3-5  | MariaDB-1       |                1 |        3 |       5 |         8 |      128 |           8 |            0 |                          127.92 |               977171.00 |              62548 |                            2335.00 |                62452 |                            303615.00 |
-| MariaDB-1-1-3-4  | MariaDB-1       |                1 |        3 |       4 |         8 |      128 |           8 |            0 |                          127.96 |               976864.00 |              62396 |                            2413.00 |                62604 |                            305919.00 |
-| MariaDB-1-1-3-1  | MariaDB-1       |                1 |        3 |       1 |         8 |      128 |           8 |            0 |                          127.96 |               976886.00 |              62623 |                            2353.00 |                62377 |                            310015.00 |
-| MariaDB-1-1-3-3  | MariaDB-1       |                1 |        3 |       3 |         8 |      128 |           8 |            0 |                          127.96 |               976870.00 |              62348 |                            2393.00 |                62652 |                            305151.00 |
-| MariaDB-1-1-3-8  | MariaDB-1       |                1 |        3 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976863.00 |              62610 |                            2303.00 |                62390 |                            306431.00 |
-| MariaDB-1-1-4-15 | MariaDB-1       |                1 |        4 |      15 |         8 |      128 |          16 |            0 |                          127.88 |               488737.00 |              31204 |                            3049.00 |                31296 |                            406015.00 |
-| MariaDB-1-1-4-16 | MariaDB-1       |                1 |        4 |      16 |         8 |      128 |          16 |            0 |                          127.87 |               488794.00 |              31355 |                            3041.00 |                31145 |                            413951.00 |
-| MariaDB-1-1-4-14 | MariaDB-1       |                1 |        4 |      14 |         8 |      128 |          16 |            0 |                          127.91 |               488638.00 |              31159 |                            3261.00 |                31341 |                            416511.00 |
-| MariaDB-1-1-4-4  | MariaDB-1       |                1 |        4 |       4 |         8 |      128 |          16 |            0 |                          127.91 |               488627.00 |              31470 |                            2983.00 |                31030 |                            424191.00 |
-| MariaDB-1-1-4-2  | MariaDB-1       |                1 |        4 |       2 |         8 |      128 |          16 |            0 |                          127.91 |               488626.00 |              31261 |                            3121.00 |                31239 |                            431615.00 |
-| MariaDB-1-1-4-8  | MariaDB-1       |                1 |        4 |       8 |         8 |      128 |          16 |            0 |                          127.91 |               488631.00 |              31232 |                            3163.00 |                31268 |                            403967.00 |
-| MariaDB-1-1-4-5  | MariaDB-1       |                1 |        4 |       5 |         8 |      128 |          16 |            0 |                          127.89 |               488707.00 |              31283 |                            3075.00 |                31217 |                            404991.00 |
-| MariaDB-1-1-4-13 | MariaDB-1       |                1 |        4 |      13 |         8 |      128 |          16 |            0 |                          127.91 |               488617.00 |              31291 |                            3079.00 |                31209 |                            406527.00 |
-| MariaDB-1-1-4-11 | MariaDB-1       |                1 |        4 |      11 |         8 |      128 |          16 |            0 |                          127.91 |               488622.00 |              31249 |                            3075.00 |                31251 |                            412415.00 |
-| MariaDB-1-1-4-1  | MariaDB-1       |                1 |        4 |       1 |         8 |      128 |          16 |            0 |                          127.91 |               488610.00 |              31250 |                            3179.00 |                31250 |                            415231.00 |
-| MariaDB-1-1-4-3  | MariaDB-1       |                1 |        4 |       3 |         8 |      128 |          16 |            0 |                          127.91 |               488632.00 |              31171 |                            3411.00 |                31329 |                            418303.00 |
-| MariaDB-1-1-4-6  | MariaDB-1       |                1 |        4 |       6 |         8 |      128 |          16 |            0 |                          127.87 |               488793.00 |              31242 |                            3169.00 |                31258 |                            417023.00 |
-| MariaDB-1-1-4-10 | MariaDB-1       |                1 |        4 |      10 |         8 |      128 |          16 |            0 |                          127.89 |               488720.00 |              31154 |                            3255.00 |                31346 |                            406015.00 |
-| MariaDB-1-1-4-12 | MariaDB-1       |                1 |        4 |      12 |         8 |      128 |          16 |            0 |                          127.91 |               488635.00 |              31241 |                            3187.00 |                31259 |                            400127.00 |
-| MariaDB-1-1-4-9  | MariaDB-1       |                1 |        4 |       9 |         8 |      128 |          16 |            0 |                          127.91 |               488634.00 |              31322 |                            3125.00 |                31178 |                            397823.00 |
-| MariaDB-1-1-4-7  | MariaDB-1       |                1 |        4 |       7 |         8 |      128 |          16 |            0 |                          127.91 |               488631.00 |              31173 |                            3031.00 |                31327 |                            398335.00 |
-| MariaDB-1-2-4-8  | MariaDB-1       |                2 |        4 |       8 |         8 |      128 |          16 |            0 |                          127.91 |               488641.00 |              31555 |                            2179.00 |                30945 |                            276991.00 |
-| MariaDB-1-2-4-14 | MariaDB-1       |                2 |        4 |      14 |         8 |      128 |          16 |            0 |                          127.79 |               489093.00 |              31258 |                            2339.00 |                31242 |                            289023.00 |
-| MariaDB-1-2-4-2  | MariaDB-1       |                2 |        4 |       2 |         8 |      128 |          16 |            0 |                          127.78 |               489121.00 |              31369 |                            2251.00 |                31131 |                            278015.00 |
-| MariaDB-1-2-4-13 | MariaDB-1       |                2 |        4 |      13 |         8 |      128 |          16 |            0 |                          127.91 |               488619.00 |              31472 |                            2311.00 |                31028 |                            274687.00 |
-| MariaDB-1-2-4-6  | MariaDB-1       |                2 |        4 |       6 |         8 |      128 |          16 |            0 |                          127.91 |               488609.00 |              31370 |                            2107.00 |                31130 |                            271615.00 |
-| MariaDB-1-2-4-7  | MariaDB-1       |                2 |        4 |       7 |         8 |      128 |          16 |            0 |                          127.91 |               488627.00 |              31332 |                            2243.00 |                31168 |                            277759.00 |
-| MariaDB-1-2-4-11 | MariaDB-1       |                2 |        4 |      11 |         8 |      128 |          16 |            0 |                          127.91 |               488635.00 |              31340 |                            2271.00 |                31160 |                            276223.00 |
-| MariaDB-1-2-4-3  | MariaDB-1       |                2 |        4 |       3 |         8 |      128 |          16 |            0 |                          127.91 |               488614.00 |              31296 |                            2323.00 |                31204 |                            273407.00 |
-| MariaDB-1-2-4-5  | MariaDB-1       |                2 |        4 |       5 |         8 |      128 |          16 |            0 |                          127.91 |               488615.00 |              31224 |                            2247.00 |                31276 |                            275455.00 |
-| MariaDB-1-2-4-10 | MariaDB-1       |                2 |        4 |      10 |         8 |      128 |          16 |            0 |                          127.92 |               488603.00 |              31133 |                            2235.00 |                31367 |                            277503.00 |
-| MariaDB-1-2-4-16 | MariaDB-1       |                2 |        4 |      16 |         8 |      128 |          16 |            0 |                          127.91 |               488610.00 |              31219 |                            2261.00 |                31281 |                            282879.00 |
-| MariaDB-1-2-4-12 | MariaDB-1       |                2 |        4 |      12 |         8 |      128 |          16 |            0 |                          127.91 |               488629.00 |              31060 |                            2203.00 |                31440 |                            288511.00 |
-| MariaDB-1-2-4-15 | MariaDB-1       |                2 |        4 |      15 |         8 |      128 |          16 |            0 |                          127.91 |               488634.00 |              31091 |                            2049.00 |                31409 |                            260735.00 |
-| MariaDB-1-2-4-1  | MariaDB-1       |                2 |        4 |       1 |         8 |      128 |          16 |            0 |                          127.91 |               488610.00 |              31096 |                            2295.00 |                31404 |                            269055.00 |
-| MariaDB-1-2-1-1  | MariaDB-1       |                2 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1023.58 |               976960.00 |             499579 |                            1637.00 |               500421 |                            242303.00 |
-| MariaDB-1-2-2-2  | MariaDB-1       |                2 |        2 |       2 |        64 |     1024 |           2 |            0 |                         1023.11 |               488708.00 |             249669 |                            2597.00 |               250331 |                            297727.00 |
-| MariaDB-1-2-2-1  | MariaDB-1       |                2 |        2 |       1 |        64 |     1024 |           2 |            0 |                         1023.10 |               488713.00 |             249729 |                            2765.00 |               250271 |                            297215.00 |
-| MariaDB-1-2-3-5  | MariaDB-1       |                2 |        3 |       5 |         8 |      128 |           8 |            0 |                          127.96 |               976858.00 |              62480 |                            1990.00 |                62520 |                            285439.00 |
-| MariaDB-1-2-3-7  | MariaDB-1       |                2 |        3 |       7 |         8 |      128 |           8 |            0 |                          127.96 |               976874.00 |              62805 |                            1902.00 |                62195 |                            286207.00 |
-| MariaDB-1-2-3-4  | MariaDB-1       |                2 |        3 |       4 |         8 |      128 |           8 |            0 |                          127.96 |               976866.00 |              62311 |                            1836.00 |                62689 |                            283135.00 |
-| MariaDB-1-2-3-3  | MariaDB-1       |                2 |        3 |       3 |         8 |      128 |           8 |            0 |                          127.96 |               976866.00 |              62568 |                            1918.00 |                62432 |                            286975.00 |
-| MariaDB-1-2-3-1  | MariaDB-1       |                2 |        3 |       1 |         8 |      128 |           8 |            0 |                          127.96 |               976881.00 |              62561 |                            1886.00 |                62439 |                            287743.00 |
-| MariaDB-1-2-3-2  | MariaDB-1       |                2 |        3 |       2 |         8 |      128 |           8 |            0 |                          127.96 |               976860.00 |              62406 |                            1962.00 |                62594 |                            290047.00 |
-| MariaDB-1-2-3-6  | MariaDB-1       |                2 |        3 |       6 |         8 |      128 |           8 |            0 |                          127.96 |               976867.00 |              62272 |                            1985.00 |                62728 |                            283391.00 |
-| MariaDB-1-2-3-8  | MariaDB-1       |                2 |        3 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976843.00 |              62658 |                            1892.00 |                62342 |                            283135.00 |
-| MariaDB-1-2-4-4  | MariaDB-1       |                2 |        4 |       4 |         8 |      128 |          16 |            0 |                          127.82 |               488982.00 |              31224 |                            2263.00 |                31276 |                            281343.00 |
-| MariaDB-1-2-4-9  | MariaDB-1       |                2 |        4 |       9 |         8 |      128 |          16 |            0 |                          127.80 |               489064.00 |              31164 |                            2137.00 |                31336 |                            261759.00 |
+| DBMS               | phase         | job             | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-------------------|:--------------|:----------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1-1-1  | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.41 |               977130.00 |             499755 |                            1177.00 |               500245 |                              3623.00 |
+| mariadb-1-1-2-1-1  | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       1 |        64 |     1024 |           2 |            0 |                         1023.04 |               488741.00 |             249147 |                            1219.00 |               250853 |                              4179.00 |
+| mariadb-1-1-2-1-2  | mariadb-1-1-2 | mariadb-1-1-2-1 | MariaDB-1       |                1 |        2 |               1 |       2 |        64 |     1024 |           2 |            0 |                         1022.97 |               488775.00 |             249843 |                            1216.00 |               250157 |                              4139.00 |
+| mariadb-1-1-3-1-1  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       1 |         8 |      128 |           8 |            0 |                          127.97 |               976810.00 |              62611 |                            1182.00 |                62389 |                              3741.00 |
+| mariadb-1-1-3-1-2  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       2 |         8 |      128 |           8 |            0 |                          127.97 |               976825.00 |              62424 |                            1200.00 |                62576 |                              3879.00 |
+| mariadb-1-1-3-1-3  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       3 |         8 |      128 |           8 |            0 |                          127.96 |               976850.00 |              62430 |                            1247.00 |                62570 |                              3879.00 |
+| mariadb-1-1-3-1-4  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       4 |         8 |      128 |           8 |            0 |                          127.96 |               976833.00 |              62687 |                            1205.00 |                62313 |                              3677.00 |
+| mariadb-1-1-3-1-5  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       5 |         8 |      128 |           8 |            0 |                          127.97 |               976822.00 |              62336 |                            1197.00 |                62664 |                              3929.00 |
+| mariadb-1-1-3-1-6  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       6 |         8 |      128 |           8 |            0 |                          127.97 |               976826.00 |              62584 |                            1189.00 |                62416 |                              3819.00 |
+| mariadb-1-1-3-1-7  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       7 |         8 |      128 |           8 |            0 |                          127.97 |               976827.00 |              62635 |                            1197.00 |                62365 |                              3827.00 |
+| mariadb-1-1-3-1-8  | mariadb-1-1-3 | mariadb-1-1-3-1 | MariaDB-1       |                1 |        3 |               1 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976842.00 |              62714 |                            1217.00 |                62286 |                              3921.00 |
+| mariadb-1-1-4-1-1  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       1 |         8 |      128 |          16 |            0 |                          127.92 |               488599.00 |              31331 |                            1240.00 |                31169 |                              4063.00 |
+| mariadb-1-1-4-1-2  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       2 |         8 |      128 |          16 |            0 |                          127.92 |               488604.00 |              30974 |                            1184.00 |                31526 |                              3739.00 |
+| mariadb-1-1-4-1-3  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       3 |         8 |      128 |          16 |            0 |                          127.92 |               488571.00 |              31190 |                            1225.00 |                31310 |                              3969.00 |
+| mariadb-1-1-4-1-4  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       4 |         8 |      128 |          16 |            0 |                          127.92 |               488577.00 |              30981 |                            1224.00 |                31519 |                              3797.00 |
+| mariadb-1-1-4-1-5  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       5 |         8 |      128 |          16 |            0 |                          127.92 |               488598.00 |              31153 |                            1185.00 |                31347 |                              3741.00 |
+| mariadb-1-1-4-1-6  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       6 |         8 |      128 |          16 |            0 |                          127.92 |               488605.00 |              31158 |                            1263.00 |                31342 |                              3905.00 |
+| mariadb-1-1-4-1-7  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       7 |         8 |      128 |          16 |            0 |                          127.92 |               488581.00 |              31100 |                            1187.00 |                31400 |                              3945.00 |
+| mariadb-1-1-4-1-8  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       8 |         8 |      128 |          16 |            0 |                          127.92 |               488603.00 |              31141 |                            1203.00 |                31359 |                              3879.00 |
+| mariadb-1-1-4-1-9  | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |       9 |         8 |      128 |          16 |            0 |                          127.91 |               488608.00 |              31406 |                            1183.00 |                31094 |                              3833.00 |
+| mariadb-1-1-4-1-10 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      10 |         8 |      128 |          16 |            0 |                          127.92 |               488584.00 |              31170 |                            1175.00 |                31330 |                              3893.00 |
+| mariadb-1-1-4-1-11 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      11 |         8 |      128 |          16 |            0 |                          127.92 |               488582.00 |              31253 |                            1196.00 |                31247 |                              3743.00 |
+| mariadb-1-1-4-1-12 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      12 |         8 |      128 |          16 |            0 |                          127.91 |               488615.00 |              31132 |                            1231.00 |                31368 |                              3799.00 |
+| mariadb-1-1-4-1-13 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      13 |         8 |      128 |          16 |            0 |                          127.92 |               488592.00 |              31202 |                            1210.00 |                31298 |                              3905.00 |
+| mariadb-1-1-4-1-14 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      14 |         8 |      128 |          16 |            0 |                          127.93 |               488551.00 |              31144 |                            1219.00 |                31356 |                              3915.00 |
+| mariadb-1-1-4-1-15 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      15 |         8 |      128 |          16 |            0 |                          127.92 |               488583.00 |              31316 |                            1193.00 |                31184 |                              3997.00 |
+| mariadb-1-1-4-1-16 | mariadb-1-1-4 | mariadb-1-1-4-1 | MariaDB-1       |                1 |        4 |               1 |      16 |         8 |      128 |          16 |            0 |                          127.92 |               488589.00 |              31204 |                            1232.00 |                31296 |                              4009.00 |
+| mariadb-1-2-1-1-1  | mariadb-1-2-1 | mariadb-1-2-1-1 | MariaDB-1       |                2 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.30 |               977231.00 |             500238 |                            1202.00 |               499762 |                              3963.00 |
+| mariadb-1-2-2-1-1  | mariadb-1-2-2 | mariadb-1-2-2-1 | MariaDB-1       |                2 |        2 |               1 |       1 |        64 |     1024 |           2 |            0 |                         1022.92 |               488797.00 |             250286 |                            1212.00 |               249714 |                              4001.00 |
+| mariadb-1-2-2-1-2  | mariadb-1-2-2 | mariadb-1-2-2-1 | MariaDB-1       |                2 |        2 |               1 |       2 |        64 |     1024 |           2 |            0 |                         1023.01 |               488754.00 |             250199 |                            1199.00 |               249801 |                              3965.00 |
+| mariadb-1-2-3-1-1  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       1 |         8 |      128 |           8 |            0 |                          127.96 |               976881.00 |              62484 |                            1240.00 |                62516 |                              3875.00 |
+| mariadb-1-2-3-1-2  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       2 |         8 |      128 |           8 |            0 |                          127.95 |               976919.00 |              62796 |                            1231.00 |                62204 |                              3665.00 |
+| mariadb-1-2-3-1-3  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       3 |         8 |      128 |           8 |            0 |                          127.95 |               976910.00 |              62474 |                            1231.00 |                62526 |                              3647.00 |
+| mariadb-1-2-3-1-4  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       4 |         8 |      128 |           8 |            0 |                          127.95 |               976910.00 |              62464 |                            1310.00 |                62536 |                              3625.00 |
+| mariadb-1-2-3-1-5  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       5 |         8 |      128 |           8 |            0 |                          127.95 |               976913.00 |              62425 |                            1306.00 |                62575 |                              3681.00 |
+| mariadb-1-2-3-1-6  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       6 |         8 |      128 |           8 |            0 |                          127.96 |               976904.00 |              62445 |                            1221.00 |                62555 |                              3417.00 |
+| mariadb-1-2-3-1-7  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       7 |         8 |      128 |           8 |            0 |                          127.95 |               976907.00 |              62759 |                            1246.00 |                62241 |                              3811.00 |
+| mariadb-1-2-3-1-8  | mariadb-1-2-3 | mariadb-1-2-3-1 | MariaDB-1       |                2 |        3 |               1 |       8 |         8 |      128 |           8 |            0 |                          127.96 |               976894.00 |              62310 |                            1221.00 |                62690 |                              3739.00 |
+| mariadb-1-2-4-1-1  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       1 |         8 |      128 |          16 |            0 |                          127.90 |               488669.00 |              30967 |                            1240.00 |                31533 |                              4089.00 |
+| mariadb-1-2-4-1-2  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       2 |         8 |      128 |          16 |            0 |                          127.90 |               488678.00 |              31309 |                            1235.00 |                31191 |                              3947.00 |
+| mariadb-1-2-4-1-3  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       3 |         8 |      128 |          16 |            0 |                          127.91 |               488632.00 |              31105 |                            1241.00 |                31395 |                              4119.00 |
+| mariadb-1-2-4-1-4  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       4 |         8 |      128 |          16 |            0 |                          127.90 |               488645.00 |              31340 |                            1233.00 |                31160 |                              4259.00 |
+| mariadb-1-2-4-1-5  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       5 |         8 |      128 |          16 |            0 |                          127.90 |               488647.00 |              31463 |                            1255.00 |                31037 |                              4191.00 |
+| mariadb-1-2-4-1-6  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       6 |         8 |      128 |          16 |            0 |                          127.90 |               488648.00 |              31280 |                            1229.00 |                31220 |                              4215.00 |
+| mariadb-1-2-4-1-7  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       7 |         8 |      128 |          16 |            0 |                          127.91 |               488630.00 |              31105 |                            1245.00 |                31395 |                              4223.00 |
+| mariadb-1-2-4-1-8  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       8 |         8 |      128 |          16 |            0 |                          127.90 |               488662.00 |              31054 |                            1192.00 |                31446 |                              4073.00 |
+| mariadb-1-2-4-1-9  | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |       9 |         8 |      128 |          16 |            0 |                          127.91 |               488643.00 |              31329 |                            1224.00 |                31171 |                              4167.00 |
+| mariadb-1-2-4-1-10 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      10 |         8 |      128 |          16 |            0 |                          127.90 |               488672.00 |              31103 |                            1258.00 |                31397 |                              4107.00 |
+| mariadb-1-2-4-1-11 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      11 |         8 |      128 |          16 |            0 |                          127.90 |               488649.00 |              31438 |                            1248.00 |                31062 |                              4199.00 |
+| mariadb-1-2-4-1-12 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      12 |         8 |      128 |          16 |            0 |                          127.90 |               488648.00 |              31218 |                            1238.00 |                31282 |                              4065.00 |
+| mariadb-1-2-4-1-13 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      13 |         8 |      128 |          16 |            0 |                          127.90 |               488653.00 |              31438 |                            1213.00 |                31062 |                              4203.00 |
+| mariadb-1-2-4-1-14 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      14 |         8 |      128 |          16 |            0 |                          127.90 |               488649.00 |              31324 |                            1241.00 |                31176 |                              4187.00 |
+| mariadb-1-2-4-1-15 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      15 |         8 |      128 |          16 |            0 |                          127.91 |               488641.00 |              31268 |                            1256.00 |                31232 |                              4187.00 |
+| mariadb-1-2-4-1-16 | mariadb-1-2-4 | mariadb-1-2-4-1 | MariaDB-1       |                2 |        4 |               1 |      16 |         8 |      128 |          16 |            0 |                          127.90 |               488662.00 |              31582 |                            1234.00 |                30918 |                              4295.00 |
 
 #### Per Phase
 
-| DBMS          |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1002.46 |               997550.00 |          500951.00 |                            1455.00 |            499049.00 |                            143871.00 |
-| MariaDB-1-1-2 |             1.00 |    128.00 |  2048.00 |        2.00 |         0.00 |                         2046.17 |               488719.00 |          499570.00 |                            3319.00 |            500430.00 |                            299007.00 |
-| MariaDB-1-1-3 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                         1023.62 |               977171.00 |          499884.00 |                            2413.00 |            500116.00 |                            310015.00 |
-| MariaDB-1-1-4 |             1.00 |    128.00 |  2048.00 |       16.00 |         0.00 |                         2046.39 |               488794.00 |          500057.00 |                            3411.00 |            499943.00 |                            431615.00 |
-| MariaDB-1-2-1 |             2.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1023.58 |               976960.00 |          499579.00 |                            1637.00 |            500421.00 |                            242303.00 |
-| MariaDB-1-2-2 |             2.00 |    128.00 |  2048.00 |        2.00 |         0.00 |                         2046.20 |               488713.00 |          499398.00 |                            2765.00 |            500602.00 |                            297727.00 |
-| MariaDB-1-2-3 |             2.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                         1023.68 |               976881.00 |          500061.00 |                            1990.00 |            499939.00 |                            290047.00 |
-| MariaDB-1-2-4 |             2.00 |    128.00 |  2048.00 |       16.00 |         0.00 |                         2046.11 |               489121.00 |          500203.00 |                            2339.00 |            499797.00 |                            289023.00 |
+| DBMS          | phase         |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:--------------|:--------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1023.41 |               977130.00 |             499755 |                            1177.00 |               500245 |                              3623.00 |
+| mariadb-1-1-2 | mariadb-1-1-2 |                1 |       128 |     2048 |               1 |           2 |            0 |                         2046.00 |               488775.00 |             498990 |                            1219.00 |               501010 |                              4179.00 |
+| mariadb-1-1-3 | mariadb-1-1-3 |                1 |        64 |     1024 |               1 |           8 |            0 |                         1023.72 |               976850.00 |             500421 |                            1247.00 |               499579 |                              3929.00 |
+| mariadb-1-1-4 | mariadb-1-1-4 |                1 |       128 |     2048 |               1 |          16 |            0 |                         2046.71 |               488615.00 |             498855 |                            1263.00 |               501145 |                              4063.00 |
+| mariadb-1-2-1 | mariadb-1-2-1 |                2 |        64 |     1024 |               1 |           1 |            0 |                         1023.30 |               977231.00 |             500238 |                            1202.00 |               499762 |                              3963.00 |
+| mariadb-1-2-2 | mariadb-1-2-2 |                2 |       128 |     2048 |               1 |           2 |            0 |                         2045.93 |               488797.00 |             500485 |                            1212.00 |               499515 |                              4001.00 |
+| mariadb-1-2-3 | mariadb-1-2-3 |                2 |        64 |     1024 |               1 |           8 |            0 |                         1023.64 |               976919.00 |             500157 |                            1310.00 |               499843 |                              3875.00 |
+| mariadb-1-2-4 | mariadb-1-2-4 |                2 |       128 |     2048 |               1 |          16 |            0 |                         2046.45 |               488678.00 |             500323 |                            1258.00 |               499677 |                              4295.00 |
 
 ### Tests
-* TEST failed: Loading Phase: [OVERALL].Throughput(ops/sec) contains 0 or NaN
+* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MariaDB-1)
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column

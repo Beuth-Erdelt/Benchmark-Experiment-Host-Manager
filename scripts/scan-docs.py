@@ -20,17 +20,19 @@ from pathlib import Path
 DOCS_DIR = Path("docs")
 LOGS_DIR = Path("logs_tests")
 
-# Captures a bare log filename followed by an optional ```markdown block.
+# Captures the log filename from a <details><summary>Show <a ...>NAME.log</a></summary>
+# line, followed by an optional ```markdown block.
 # The embedded block content is available as group "embedded" when present.
 LOG_REF_PATTERN = re.compile(
-    r'^(?P<logfile>[\w\-.\/]+\.log)[ \t]*\n(?:```markdown\n(?P<embedded>.*?)\n```)?',
-    re.MULTILINE | re.DOTALL,
+    r'<summary>[^\n]*?<a [^>\n]*>(?P<logfile>[\w\-.\/]+\.log)</a>[^\n]*</summary>[ \t]*\n'
+    r'(?:\s*```markdown\n(?P<embedded>.*?)\n```)?',
+    re.DOTALL,
 )
 
 # Both "* Code: 123" (summary/log format) and "    Code: 123" (doc embedded format).
 _RE_CODE = re.compile(r'(?:^\s*\*\s+|^\s{2,})Code:\s+(\d+)', re.MULTILINE)
 _RE_DURATION = re.compile(r'(?:^\s*\*\s+|^\s{2,})Duration:\s+([\d]+s)', re.MULTILINE)
-_RE_VERSION = re.compile(r'bexhoma version ([\d.]+)')
+_RE_VERSION = re.compile(r'bexhoma version (\d+(?:\.\d+)*)')
 _RE_TEST = re.compile(r'\*\s+(TEST (?:passed|failed):[^\n]+)')
 
 
@@ -164,6 +166,7 @@ def print_report(all_records: list[dict]) -> None:
 
 
 if __name__ == "__main__":
+    sys.stdout.reconfigure(encoding="utf-8")  # table uses "—" and "✗"; Windows consoles default to cp1252
     if not DOCS_DIR.exists():
         print(f"ERROR: docs directory not found at {DOCS_DIR.resolve()}", file=sys.stderr)
         sys.exit(1)

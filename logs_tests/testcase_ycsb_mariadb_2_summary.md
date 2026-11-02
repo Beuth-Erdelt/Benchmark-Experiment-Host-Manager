@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 4065s 
-* Code: 1780345196
+* Duration: 3555s 
+* Code: 1793645275
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -15,99 +15,133 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 30Gi. Persistent storage is removed at experiment start.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi. Persistent storage is removed at experiment start.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mariadb', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MariaDB-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+* mariadb-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:753686
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780345196
-* MariaDB-1-2-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58107
-  * volume_size:30G
+    * code:1793645275
+* mariadb-1-2-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:807155
+  * datadisk:1770
+  * volume_size:49G
   * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780345196
+    * code:1793645275
+
+### Inherited Loading
+* loading skipped, loading times copied from an earlier repetition: MariaDB-1-2
+
+### Data Parameters of Reused Volumes
+* MariaDB-1: DDL values of the volume: row_format=default, collation=default
+* MariaDB-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1793645275-8fbc4d86b-h7rt8: 0
+* bexhoma-sut-mariadb-1-1793645275-64b8bd44d8-kc99n: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MariaDB-1 - Pods [[1], [1]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: ycsb (1 pods)
 
 #### Planned
 
-* DBMS MariaDB-1 - Pods [[1], [1]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: ycsb (1 pods)
 
 ### Loading
 
 #### Per Connection
 
-| connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-0-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.16 |              1177492.00 |            125000.00 |                           1288191.00 |
-| MariaDB-1-1-0-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.11 |              1177978.00 |            125000.00 |                           1309695.00 |
-| MariaDB-1-1-0-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.17 |              1177394.00 |            125000.00 |                           1287167.00 |
-| MariaDB-1-1-0-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.13 |              1177808.00 |            125000.00 |                           1286143.00 |
-| MariaDB-1-1-0-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.10 |              1178188.00 |            125000.00 |                           1304575.00 |
-| MariaDB-1-1-0-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.16 |              1177486.00 |            125000.00 |                           1298431.00 |
-| MariaDB-1-1-0-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.12 |              1177939.00 |            125000.00 |                           1311743.00 |
-| MariaDB-1-1-0-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          106.07 |              1178413.00 |            125000.00 |                           1309695.00 |
+| connection        |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| mariadb-1-1-0-1-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976891.00 |            125000.00 |                              4679.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976905.00 |            125000.00 |                              4931.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976895.00 |            125000.00 |                              4751.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976887.00 |            125000.00 |                              4859.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976884.00 |            125000.00 |                              4791.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.95 |               976920.00 |            125000.00 |                              4815.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976893.00 |            125000.00 |                              4687.00 | 1.00 |                3.69 |
+| mariadb-1-1-0-1-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.96 |               976894.00 |            125000.00 |                              4727.00 | 1.00 |                3.69 |
 
 #### Per Run
 
-| DBMS        |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                          849.01 |              1178413.00 |           1000000.00 |                           1299455.00 |
+| DBMS        |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| MariaDB-1-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 | 1.00 |                3.69 |                         1023.65 |               976920.00 |           1000000.00 |                              4780.00 |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS            | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:----------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-1-1 | MariaDB-1       |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1023.26 |               977266.00 |             499819 |                            1833.00 |               500181 |                            229759.00 |
-| MariaDB-1-2-1-1 | MariaDB-1       |                2 |        1 |       1 |        64 |     1024 |           1 |            0 |                         1023.44 |               977094.00 |             499534 |                            1602.00 |               500466 |                            212863.00 |
+| DBMS              | phase         | job             | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------------|:--------------|:----------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 | MariaDB-1       |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.52 |               977021.00 |             500169 |                            1168.00 |               499831 |                              3567.00 |
+| mariadb-1-2-1-1-1 | mariadb-1-2-1 | mariadb-1-2-1-1 | MariaDB-1       |                2 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1023.52 |               977025.00 |             499892 |                            1183.00 |               500108 |                              3797.00 |
 
 #### Per Phase
 
-| DBMS          |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MariaDB-1-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1023.26 |               977266.00 |          499819.00 |                            1833.00 |            500181.00 |                            229759.00 |
-| MariaDB-1-2-1 |             2.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                         1023.44 |               977094.00 |          499534.00 |                            1602.00 |            500466.00 |                            212863.00 |
+| DBMS          | phase         |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:--------------|:--------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1023.52 |               977021.00 |             500169 |                            1168.00 |               499831 |                              3567.00 |
+| mariadb-1-2-1 | mariadb-1-2-1 |                2 |        64 |     1024 |               1 |           1 |            0 |                         1023.52 |               977025.00 |             499892 |                            1183.00 |               500108 |                              3797.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column

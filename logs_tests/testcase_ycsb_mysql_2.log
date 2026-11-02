@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1780401423
-Experiment                    : starts at 2026-06-02 13:57:03.243724 (1772510.3217782)
+Experiment                    : has code 1793628584
+Experiment                    : starts at 2026-11-02 15:09:44.201094 (175507.7700525)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -13,1209 +13,479 @@ Batch size is ''.
 Target is based on multiples of '1024'.
 Factors for loading are [1].
 Factors for benchmarking are [1].
-Experiment uses bexhoma version 0.9.9.
+Status is logged every 10s.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.12.
 Experiment is limited to DBMS ['MySQL'].
 Import is handled by 8 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker3.
-Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Database is persisted to disk of type nvme and size 50Gi. Persistent storage is removed at experiment start.
 Loading is tested with [64] threads, split into [8] pods.
 Benchmarking is tested with [64] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run 2 times.
+Maximum DBMS across the whole cluster is 10.
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 Cluster monitoring            : is running
 MySQL-1                       : will start now
 MySQL-1                       : deployments ['sut']
 MySQL-1                       : stateful sets []
 MySQL-1                       : pvcs ['sut']
 MySQL-1                       : found labels on pvc = []
-MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1780401423
-MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1780401423
-MySQL-1                       : name of SUT PVC name = bexhoma-storage-mysql-ycsb-1
-MySQL-1                       : storage bexhoma-storage-mysql-ycsb-1 should be removed
-- waiting 10s -               : done
-MySQL-1                       : storage bexhoma-storage-mysql-ycsb-1 is gone
+MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1793628584
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1793628584
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1793628584
+MySQL-1                       : name of SUT PVC name = bexhoma-storage-mysql-nvme-ycsb-1
+MySQL-1                       : updated deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size = 32G
+Loop pass                     : took 1.8s (1 kubectl calls 0.7s, 11 API requests 0.4s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-02 12:11:06 (that is in 120 secs)
+MySQL-1                       : will start loading but not before 2026-11-02 14:14:22 (that is in 120 secs)
+Loop pass                     : took 3.6s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-02 12:11:06
+MySQL-1                       : will start loading but not before 2026-11-02 14:14:22
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 13 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-02 12:11:06
+MySQL-1                       : will start loading but not before 2026-11-02 14:14:22
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 13 API requests 0.4s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-06-02 12:11:06
+MySQL-1                       : will start loading but not before 2026-11-02 14:14:22
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 13 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1780401423-895774565-vh4cm to load scripts
-MySQL-1                       : list of pvcs ['bexhoma-storage-mysql-ycsb-1']
-MySQL-1                       : will be labeling bexhoma-storage-mysql-ycsb-1
-MySQL-1                       : start asynch loading scripts of type loaded
+MySQL-1                       : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1793628584-5b695b5b5d-cvt22 to load scripts
+MySQL-1                       : list of pvcs ['bexhoma-storage-mysql-nvme-ycsb-1']
+MySQL-1                       : will be labeling bexhoma-storage-mysql-nvme-ycsb-1
+MySQL-1                       : start asynch loading scripts of type schema
+MySQL-1                       : waits for the Schema scripts (schema=True) before starting the loading jobs
+MySQL-1                       : Schema scripts done after 4s
 MySQL-1                       : is loading
+Loop pass                     : took 11.9s (8 kubectl calls 5.5s, 34 API requests 2.3s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 34 API requests 1.1s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 34 API requests 1.1s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 4.5s (0 kubectl calls 0.0s, 34 API requests 1.0s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 34 API requests 2.2s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 34 API requests 1.1s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 7.9s (0 kubectl calls 0.0s, 34 API requests 1.1s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 34 API requests 1.4s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 34 API requests 1.1s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 34 API requests 1.1s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 5.6s (0 kubectl calls 0.0s, 34 API requests 1.1s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 34 API requests 1.1s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 34 API requests 1.1s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 34 API requests 1.1s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 11.5s (16 kubectl calls 9.3s, 42 API requests 1.6s)
 - waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-- waiting 2s -                : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-- waiting 2s -                : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-- waiting 2s -                : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : showing loader times
+MySQL-1                       : showing loader times (ycsb-loader)
 MySQL-1                       : generator times (start/end per pod and container) []
-MySQL-1                       : loader times (start/end per pod and container) [(1780402291, 1780416152), (1780402291, 1780416151), (1780402292, 1780416131), (1780402291, 1780416142), (1780402291, 1780416151), (1780402291, 1780416151), (1780402291, 1780416153), (1780402291, 1780416151)]
-MySQL-1                       : total times (start/end per pod and container) [(1780402291, 1780416152), (1780402291, 1780416151), (1780402292, 1780416131), (1780402291, 1780416142), (1780402291, 1780416151), (1780402291, 1780416151), (1780402291, 1780416153), (1780402291, 1780416151)]
-MySQL-1                       : loader timespan (first to last [s]) = 13862
-MySQL-1                       : list of pvcs ['bexhoma-storage-mysql-ycsb-1']
-MySQL-1                       : will be labeling bexhoma-storage-mysql-ycsb-1
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1780401423-895774565-vh4cm to load scripts
-MySQL-1                       : list of pvcs ['bexhoma-storage-mysql-ycsb-1']
-MySQL-1                       : will be labeling bexhoma-storage-mysql-ycsb-1
-MySQL-1                       : start asynch loading scripts of type indexed
+MySQL-1                       : loader times (start/end per pod and container) [(1793628885, 1793629863), (1793628886, 1793629864), (1793628886, 1793629864), (1793628885, 1793629863), (1793628886, 1793629864), (1793628886, 1793629864), (1793628885, 1793629864), (1793628886, 1793629864)]
+MySQL-1                       : total times (start/end per pod and container) [(1793628885, 1793629863), (1793628886, 1793629864), (1793628886, 1793629864), (1793628885, 1793629863), (1793628886, 1793629864), (1793628886, 1793629864), (1793628885, 1793629864), (1793628886, 1793629864)]
+MySQL-1                       : loader timespan (first to last [s]) = 979
+MySQL-1                       : list of pvcs ['bexhoma-storage-mysql-nvme-ycsb-1']
+MySQL-1                       : will be labeling bexhoma-storage-mysql-nvme-ycsb-1
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1793628584-5b695b5b5d-cvt22 to load scripts
+MySQL-1                       : list of pvcs ['bexhoma-storage-mysql-nvme-ycsb-1']
+MySQL-1                       : will be labeling bexhoma-storage-mysql-nvme-ycsb-1
+MySQL-1                       : start asynch loading scripts of type index
 MySQL-1                       : is loading
+Loop pass                     : took 8.2s (9 kubectl calls 6.4s, 46 API requests 1.6s)
 - waiting 30s -               : done
+MySQL-1                       : list of pvcs ['bexhoma-storage-mysql-nvme-ycsb-1']
+MySQL-1                       : will be labeling bexhoma-storage-mysql-nvme-ycsb-1
 Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1793628584 initialized to 1.
 MySQL-1                       : benchmarks done 0 of 2. This will be client 1
-MySQL-1                       : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS_TYPE': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
-MySQL-1-1-1                   : start benchmarking
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1780401423
-- waiting 10s -               : done
-MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1780401423-1-1-schgl: found
+mysql-1-1-1-1                 : start benchmarking (benchmark_run=1)
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1793628584-5b695b5b5d-cvt22 and write to pvc bexhoma-storage-mysql-nvme-ycsb-1
+MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1793628584
+MySQL-1                       : submitted benchmarker job in 10.2s (5 kubectl calls 3.0s, 25 API requests 5.2s)
+Loop pass                     : took 14.9s (7 kubectl calls 4.0s, 45 API requests 6.4s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 20 API requests 1.1s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 18 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 18 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 18 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 4.0s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 18 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 18 API requests 0.9s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 4.1s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 18 API requests 1.0s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 18 API requests 0.9s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 18 API requests 3.0s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 18 API requests 0.9s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 4.0s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-MySQL-1-1-1                   : showing benchmarker times
-MySQL-1-1-1                   : benchmarker timespan job from 1780416237 to 1780417414
-MySQL-1-1-1                   : benchmarker timespan pods from 1780416241 to 1780417390
-MySQL-1-1-1                   : benchmarker timespan (start to end single container [s]) = 1149
-MySQL-1-1-1                   : benchmarker times (start/end per pod and container) = [(1780416241, 1780417390)]
-MySQL-1-1-1                   : found and updated times {'benchmarker': [(1780416241, 1780417390)]}
-- waiting 30s -               : done
+mysql-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1793628584/mysql-1-1-1-1.config
+mysql-1-1-1-1                 : showing benchmarker times
+mysql-1-1-1-1                 : benchmarker timespan job from 1793629961 to 1793630972
+mysql-1-1-1-1                 : benchmarker timespan pods from 1793629963 to 1793630941
+mysql-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 978
+mysql-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1793629963, 1793630941)]
+mysql-1-1-1-1                 : found and updated times {'benchmarker': [(1793629963, 1793630941)]}
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1793628584-5b695b5b5d-cvt22 and write to pvc bexhoma-storage-mysql-nvme-ycsb-1
+Loop pass                     : took 4.5s (4 kubectl calls 2.4s, 26 API requests 1.7s)
 MySQL-1                       : can be stopped
-MySQL-1                       : had 0 0 restarts at worker bexhoma-sut-mysql-1-1780401423-895774565-vh4cm
-MySQL-1                       : still being removed
-- waiting 30s -               : done
-MySQL-1                       : still being removed
-- waiting 30s -               : done
-MySQL-1                       : still being removed
-- waiting 30s -               : done
-MySQL-1                       : still being removed
-- waiting 30s -               : done
-MySQL-1                       : still being removed
-- waiting 30s -               : done
-MySQL-1                       : still being removed
-- waiting 30s -               : done
-MySQL-1                       : still being removed
+MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1793628584-5b695b5b5d-cvt22
+Loop pass                     : took 4.1s (4 kubectl calls 2.7s, 30 API requests 1.2s)
 - waiting 30s -               : done
 MySQL-1                       : starts again
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 7 API requests 0.5s)
+MySQL-1                       : will start now
 MySQL-1                       : deployments ['sut']
 MySQL-1                       : stateful sets []
 MySQL-1                       : pvcs ['sut']
-MySQL-1                       : list of pvcs ['bexhoma-storage-mysql-ycsb-1']
-MySQL-1                       : storage bexhoma-storage-mysql-ycsb-1 exists
-MySQL-1                       : found labels on pvc = {'indexed': 'True', 'loaded': 'True', 'timeLoading': '27792', 'timeLoadingEnd': '1780416191', 'timeLoadingStart': '1780402276', 'time_generated': '0', 'time_indexed': '13915', 'time_ingested': '13862', 'time_initschema': '15', 'time_loaded': '15'}
-MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1780401423
-MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1780401423
-MySQL-1                       : name of SUT PVC name = bexhoma-storage-mysql-ycsb-1
-MySQL-1                       : copied label indexed = True
+MySQL-1                       : list of pvcs ['bexhoma-storage-mysql-nvme-ycsb-1']
+MySQL-1                       : storage bexhoma-storage-mysql-nvme-ycsb-1 exists
+MySQL-1                       : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '3', 'time_ingested': '979', 'time_initschema': '1', 'time_loading': '985', 'time_loading_end': '1793629920', 'time_loading_start': '1793628871', 'time_schema': '3'}
+MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1793628584
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1793628584
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1793628584
+MySQL-1                       : name of SUT PVC name = bexhoma-storage-mysql-nvme-ycsb-1
+MySQL-1                       : updated deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size = 32G
+MySQL-1                       : DDL values taken from the volume: row_format=DYNAMIC, collation=utf8mb4_0900_ai_ci
+MySQL-1                       : loading values taken from the volume: script=Schema, indexing=Checks, insert_order=hashed
+MySQL-1                       : copied label data = True
+MySQL-1                       : copied label index = True
 MySQL-1                       : copied label loaded = True
-MySQL-1                       : copied label timeLoading = 27792
-MySQL-1                       : copied label timeLoadingEnd = 1780416191
-MySQL-1                       : copied label timeLoadingStart = 1780402276
+MySQL-1                       : copied label schema = True
 MySQL-1                       : copied label time_generated = 0
-MySQL-1                       : copied label time_indexed = 13915
-MySQL-1                       : copied label time_ingested = 13862
-MySQL-1                       : copied label time_initschema = 15
-MySQL-1                       : copied label time_loaded = 15
+MySQL-1                       : copied label time_index = 3
+MySQL-1                       : copied label time_ingested = 979
+MySQL-1                       : copied label time_initschema = 1
+MySQL-1                       : copied label time_loading = 985
+MySQL-1                       : copied label time_loading_end = 1793629920
+MySQL-1                       : copied label time_loading_start = 1793628871
+MySQL-1                       : copied label time_schema = 3
 MySQL-1                       : loading is set to finished
-- waiting 10s -               : done
+Loop pass                     : took 1.8s (1 kubectl calls 0.6s, 13 API requests 0.9s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 15 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 15 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.7s)
 - waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
+MySQL-1                       : will start benchmarking but not before 2026-11-02 14:54:44 (that is in 120 secs)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 15 API requests 0.6s)
 - waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
+MySQL-1                       : will start benchmarking but not before 2026-11-02 14:54:44
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 12 API requests 0.7s)
 - waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
+MySQL-1                       : will start benchmarking but not before 2026-11-02 14:54:44
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 12 API requests 0.7s)
 - waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-06-02 16:39:01 (that is in 120 secs)
-- waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-06-02 16:39:01
-- waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-06-02 16:39:01
-- waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-06-02 16:39:01
+MySQL-1                       : will start benchmarking but not before 2026-11-02 14:54:44
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 12 API requests 0.5s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MySQL-1-1793628584 initialized to 1.
 MySQL-1                       : benchmarks done 1 of 2. This will be client 1
-MySQL-1                       : we will change parameters of benchmark as {'PARALLEL': '1', 'SF': '1', 'BEXHOMA_SYNCH_LOAD': 1, 'YCSB_THREADCOUNT': 64, 'YCSB_TARGET': 1024, 'YCSB_STATUS': 1, 'YCSB_WORKLOAD': 'a', 'YCSB_ROWS': 1000000, 'YCSB_OPERATIONS': 1000000, 'YCSB_BATCHSIZE': '', 'YCSB_STATUS_INTERVAL': 10, 'BEXHOMA_DBMS_TYPE': 'jdbc', 'YCSB_INSERTORDER': 'hashed'}
-MySQL-1-2-1                   : start benchmarking
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1780401423
-- waiting 10s -               : done
-MySQL-1                       : benchmarking is waiting for job bexhoma-benchmarker-mysql-1-1780401423-2-1-lng26: found
+mysql-1-2-1-1                 : start benchmarking (benchmark_run=1)
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1793628584-67d6cc6486-xknsn and write to pvc bexhoma-storage-mysql-nvme-ycsb-1
+MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1793628584
+MySQL-1                       : submitted benchmarker job in 5.2s (3 kubectl calls 2.0s, 24 API requests 3.1s)
+Loop pass                     : took 7.1s (3 kubectl calls 2.0s, 42 API requests 4.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 16 API requests 0.9s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 16 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 16 API requests 1.0s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 16 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 16 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 16 API requests 1.0s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.9s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-- waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-MySQL-1-2-1                   : showing benchmarker times
-MySQL-1-2-1                   : benchmarker timespan job from 1780418363 to 1780419758
-MySQL-1-2-1                   : benchmarker timespan pods from 1780418365 to 1780419750
-MySQL-1-2-1                   : benchmarker timespan (start to end single container [s]) = 1385
-MySQL-1-2-1                   : benchmarker times (start/end per pod and container) = [(1780418365, 1780419750)]
-MySQL-1-2-1                   : found and updated times {'benchmarker': [(1780418365, 1780419750)]}
-- waiting 30s -               : done
+mysql-1-2-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1793628584/mysql-1-2-1-1.config
+mysql-1-2-1-1                 : showing benchmarker times
+mysql-1-2-1-1                 : benchmarker timespan job from 1793631296 to 1793632297
+mysql-1-2-1-1                 : benchmarker timespan pods from 1793631297 to 1793632276
+mysql-1-2-1-1                 : benchmarker timespan (start to end single container [s]) = 979
+mysql-1-2-1-1                 : benchmarker times (start/end per pod and container) = [(1793631297, 1793632276)]
+mysql-1-2-1-1                 : found and updated times {'benchmarker': [(1793631297, 1793632276)]}
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1793628584-67d6cc6486-xknsn and write to pvc bexhoma-storage-mysql-nvme-ycsb-1
+Loop pass                     : took 4.1s (4 kubectl calls 2.6s, 24 API requests 1.3s)
 MySQL-1                       : can be stopped
-MySQL-1                       : had 0 0 restarts at worker bexhoma-sut-mysql-1-1780401423-5bbc4b85dd-gctjt
-Experiment                    : ends at 2026-06-02 19:03:14.291630 (1790879.0244499) - 18368.70s total
+MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1793628584-67d6cc6486-xknsn
+Loop pass                     : took 3.3s (4 kubectl calls 2.0s, 28 API requests 1.0s)
+Experiment                    : ends at 2026-11-02 16:11:42.915677 (179226.3731992) - 3718.60s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow complete
 
 ## Show Summary
 
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 18369s 
-* Code: 1780401423
+* Duration: 3719s 
+* Code: 1793628584
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -1226,99 +496,131 @@ YCSB SF=1
   * Target is based on multiples of '1024'.
   * Factors for loading are [1].
   * Factors for benchmarking are [1].
-  * Experiment uses bexhoma version 0.9.9.
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 50Gi. Persistent storage is removed at experiment start.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi. Persistent storage is removed at experiment start.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MySQL-1-1-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58111
-  * volume_size:50G
-  * volume_used:36G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+* mysql-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699336
+  * datadisk:34722
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780401423
-* MySQL-1-2-1 uses docker image mysql:8.4.0
-  * RAM:541006622720
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58111
-  * volume_size:50G
-  * volume_used:37G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--local-infile=1', '--mysql-native-password=ON', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp']
+    * code:1793628584
+* mysql-1-2-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:699349
+  * datadisk:34723
+  * volume_size:49G
+  * volume_used:34G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780401423
+    * code:1793628584
+
+### Inherited Loading
+* loading skipped, loading times copied from an earlier repetition: MySQL-1-2
+
+### Data Parameters of Reused Volumes
+* MySQL-1: DDL values of the volume: row_format=DYNAMIC, collation=utf8mb4_0900_ai_ci
+* MySQL-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
+
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1793628584-5b695b5b5d-cvt22: 0
+* bexhoma-sut-mysql-1-1793628584-67d6cc6486-xknsn: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MySQL-1 - Pods [[1], [1]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 2 Client 1: ycsb (1 pods)
 
 #### Planned
 
-* DBMS MySQL-1 - Pods [[1], [1]]
+* DBMS MySQL-1 - Experiment 1 Client 1: ycsb (1 pods)
+* DBMS MySQL-1 - Experiment 2 Client 1: ycsb (1 pods)
 
 ### Loading
 
 #### Per Connection
 
-| connection    |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-0-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13859599.00 |            125000.00 |                          15671295.00 |
-| MySQL-1-1-0-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13859976.00 |            125000.00 |                          15704063.00 |
-| MySQL-1-1-0-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13859372.00 |            125000.00 |                          15302655.00 |
-| MySQL-1-1-0-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13860975.00 |            125000.00 |                          15597567.00 |
-| MySQL-1-1-0-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.03 |             13838752.00 |            125000.00 |                          15359999.00 |
-| MySQL-1-1-0-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.03 |             13850251.00 |            125000.00 |                          15376383.00 |
-| MySQL-1-1-0-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13859977.00 |            125000.00 |                          15278079.00 |
-| MySQL-1-1-0-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                            9.02 |             13861550.00 |            125000.00 |                          15294463.00 |
+| connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| mysql-1-1-0-1-1 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.85 |               977720.00 |            125000.00 |                              1892.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-2 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.81 |               977985.00 |            125000.00 |                              1789.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-3 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.82 |               977975.00 |            125000.00 |                              1799.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-4 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.85 |               977731.00 |            125000.00 |                              1765.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-5 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.81 |               977995.00 |            125000.00 |                              1867.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-6 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.83 |               977878.00 |            125000.00 |                              1783.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-7 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.84 |               977762.00 |            125000.00 |                              1768.00 | 1.00 |                3.68 |
+| mysql-1-1-0-1-8 |             1.00 |      8.00 |   128.00 |        8.00 |         0.00 |                          127.83 |               977876.00 |            125000.00 |                              1725.00 | 1.00 |                3.68 |
 
 #### Per Run
 
-| DBMS      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:----------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 |                           72.17 |             13861550.00 |           1000000.00 |                          15448063.00 |
+| DBMS      |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:----------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| MySQL-1-1 |             1.00 |     64.00 |  1024.00 |        8.00 |         0.00 | 1.00 |                3.68 |                         1022.64 |               977995.00 |           1000000.00 |                              1798.50 |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS          | configuration   |   experiment_run |   client |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:--------------|:----------------|-----------------:|---------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-1-1 | MySQL-1         |                1 |        1 |       1 |        64 |     1024 |           1 |            0 |                          870.36 |              1148951.00 |             500404 |                            1849.00 |               499596 |                           2787327.00 |
-| MySQL-1-2-1-1 | MySQL-1         |                2 |        1 |       1 |        64 |     1024 |           1 |            0 |                          721.94 |              1385149.00 |             500619 |                            2027.00 |               499381 |                           3078143.00 |
+| DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1022.26 |               978226.00 |             500026 |                            1359.00 |               499974 |                              7171.00 |
+| mysql-1-2-1-1-1 | mysql-1-2-1 | mysql-1-2-1-1 | MySQL-1         |                2 |        1 |               1 |       1 |        64 |     1024 |           1 |            0 |                         1022.23 |               978251.00 |             500504 |                            2095.00 |               499496 |                              7039.00 |
 
 #### Per Phase
 
-| DBMS        |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1-1 |             1.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                          870.36 |              1148951.00 |          500404.00 |                            1849.00 |            499596.00 |                           2787327.00 |
-| MySQL-1-2-1 |             2.00 |     64.00 |  1024.00 |        1.00 |         0.00 |                          721.94 |              1385149.00 |          500619.00 |                            2027.00 |            499381.00 |                           3078143.00 |
+| DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        64 |     1024 |               1 |           1 |            0 |                         1022.26 |               978226.00 |             500026 |                            1359.00 |               499974 |                              7171.00 |
+| mysql-1-2-1 | mysql-1-2-1 |                2 |        64 |     1024 |               1 |           1 |            0 |                         1022.23 |               978251.00 |             500504 |                            2095.00 |               499496 |                              7039.00 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
