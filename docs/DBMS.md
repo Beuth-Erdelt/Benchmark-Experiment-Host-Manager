@@ -250,6 +250,26 @@ Examples:
 --set statefulset[bexhoma-worker].container[dbms].env.DFLY_snapshot_cron="*/5 * * * *"
 ```
 
+#### Volumes of the SUT
+
+`--set KIND[NAME](@CONFIG).volume[V].FIELD=VALUE` changes an `emptyDir` volume of a Deployment or StatefulSet of the SUT template:
+
+| `FIELD` | Value | Effect |
+|---|---|---|
+| `sizeLimit` | a quantity, e.g. `64Gi` | maximum size of the volume |
+| `medium` | `Memory` | the volume is a tmpfs in RAM |
+| `medium` | empty | the volume lives on the node's disk |
+
+Examples are the tmpdir of MySQL (`mysqltmp`, a 32Gi tmpfs in the template) and the shared memory of PostgreSQL and others (`dshm`):
+```bash
+--set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=64Gi
+--set deployment[bexhoma-deployment-mysql].volume[mysqltmp].medium=
+```
+Files in a volume of `medium: Memory` count against the memory limit of the container (`-lr`).
+Bexhoma warns when `sizeLimit` is larger than that limit.
+Only `emptyDir` volumes can be changed this way; the persistent volume of the SUT is sized by `-rss`.
+The volumes of loading and benchmarking jobs are not reachable by `--set`.
+
 ### Cluster SUTs: placement, sizing and scripts
 
 **Placement.** `-rnn` pins the SUT pod (Deployment). `-rnw` pins the workers, i.e. every StatefulSet of the SUT (e.g. TiDB's PD and TiKV, CockroachDB's nodes), to a set of nodes joined by `+`, and spreads each StatefulSet evenly over them (`maxSkew: 1`).

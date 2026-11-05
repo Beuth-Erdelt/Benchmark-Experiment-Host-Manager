@@ -198,6 +198,7 @@ bexhoma tpcds `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
+  --set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=64Gi <# tmpdir of MySQL in RAM, larger than the template (32Gi) #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 150Gi                    <# size of the persistent volume claim #> `

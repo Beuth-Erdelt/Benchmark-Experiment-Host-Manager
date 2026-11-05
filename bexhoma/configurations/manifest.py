@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, List, Optional, Tuple
 import hiyapyco
 import yaml
 
+from ..spec import SpecError, parse_memory_quantity
 from ..tls import TLS_ENV, TLS_VOLUME, apply_tls_volume
 
 if TYPE_CHECKING:
@@ -16,7 +17,8 @@ if TYPE_CHECKING:
 
 __all__ = [
     'ManifestBuilder', 'find_workloads', 'ensure_arg_pairs', 'ensure_arg_flags', 'ensure_env',
-    'detect_arg_style', 'patch_container', 'ARG_STYLE_ANNOTATION', 'ARG_STYLE_PG', 'ARG_STYLE_FLAG',
+    'detect_arg_style', 'patch_container', 'find_volume', 'patch_volume', 'memory_volume_exceeds_limit',
+    'ARG_STYLE_ANNOTATION', 'ARG_STYLE_PG', 'ARG_STYLE_FLAG',
     'ENV_PARAM_PREFIX',
 ]
 
@@ -230,6 +232,70 @@ def patch_container(doc: dict, container_name: str, param: str, value: str) -> b
     return changed
 
 
+def find_volume(doc: dict, volume_name: str) -> Optional[dict]:
+    """Return the volume ``volume_name`` of a Deployment/StatefulSet YAML doc, or None.
+
+    :param doc: Parsed YAML document dict.
+    :param volume_name: ``name`` of the volume in ``spec.template.spec.volumes``.
+    :return: The volume dict (patched in place by :func:`patch_volume`), or None.
+    :rtype: dict or None
+    """
+    spec = doc.get("spec", {}) or {}
+    tpl = spec.get("template", {}) or {}
+    pspec = tpl.get("spec", {}) or {}
+    for vol in pspec.get("volumes", []) or []:
+        if vol.get("name") == volume_name:
+            return vol
+    return None
+
+
+def patch_volume(volume: dict, field: str, value: str) -> bool:
+    """Set one field of an ``emptyDir`` volume.
+
+    ``sizeLimit`` is set to ``value``; ``medium`` is set to ``value``, and an
+    empty ``value`` removes it, so the volume lives on the node's disk.
+
+    :param volume: The volume dict, see :func:`find_volume`.
+    :param field: ``sizeLimit`` or ``medium``.
+    :param value: The new value.
+    :return: True iff the volume changed.
+    :rtype: bool
+    :raises ValueError: When the volume is not an ``emptyDir``.
+    """
+    if "emptyDir" not in volume:
+        raise ValueError("volume[{}] is not an emptyDir".format(volume.get("name")))
+    empty_dir = volume["emptyDir"] or {}
+    old = dict(empty_dir)
+    if field == "medium" and value == "":
+        empty_dir.pop("medium", None)
+    else:
+        empty_dir[field] = value
+    volume["emptyDir"] = empty_dir
+    return empty_dir != old
+
+
+def memory_volume_exceeds_limit(volume: dict, memory_limit: Optional[str]) -> bool:
+    """Tell whether a RAM-backed ``emptyDir`` may grow beyond the container's memory limit.
+
+    Files in an ``emptyDir`` of ``medium: Memory`` count against the memory
+    limit of the container that writes them.
+
+    :param volume: The volume dict.
+    :param memory_limit: Memory limit of the container (``-lr``), e.g. ``128Gi``; None or ``0`` for none.
+    :return: True iff the volume is RAM-backed and its ``sizeLimit`` is larger than the limit.
+    :rtype: bool
+    """
+    empty_dir = volume.get("emptyDir") or {}
+    if empty_dir.get("medium") != "Memory" or not empty_dir.get("sizeLimit"):
+        return False
+    if not memory_limit or str(memory_limit) == "0":
+        return False
+    try:
+        return parse_memory_quantity(empty_dir["sizeLimit"]) > parse_memory_quantity(memory_limit)
+    except SpecError:
+        return False
+
+
 class ManifestBuilder:
     """Builds and writes Kubernetes job/deployment YAML manifests.
 
@@ -292,6 +358,9 @@ class ManifestBuilder:
             config_scope = sel.get("config")
             if config_scope and config_scope != self._config.configuration:
                 continue
+            if sel.get("target") == "volume":
+                self.patch_volume_op(yaml_docs, sel, val)
+                continue
             kind = sel["kind"]
             workload = sel["workload"]
             container = sel["container"]
@@ -326,6 +395,53 @@ class ManifestBuilder:
                 print("{:30s}: {}[{}].container[{}].{} already set to desired value".format(
                     self._config.configuration, kind, workload, container, param))
         return yaml_docs
+
+    def patch_volume_op(self, yaml_docs: List[dict], sel: dict, val: str) -> None:
+        """Apply one ``--set ...volume[V].FIELD=VALUE`` operation to a manifest.
+
+        Prints what happened in the style of :meth:`patch_dbms_args`, and warns
+        when a RAM-backed volume may grow beyond the memory limit (``-lr``).
+
+        :param yaml_docs: List of parsed YAML document dicts, patched in place.
+        :param sel: Selector dict with ``kind``, ``workload``, ``volume`` and ``field``.
+        :param val: The new value.
+        """
+        kind = sel["kind"]
+        workload = sel["workload"]
+        volume_name = sel["volume"]
+        field = sel["field"]
+        selector = "{}[{}].volume[{}].{}".format(kind, workload, volume_name, field)
+        found_doc = False
+        volumes = []
+        for doc in yaml_docs:
+            if not isinstance(doc, dict) or not find_workloads(doc, kind, workload):
+                continue
+            found_doc = True
+            volume = find_volume(doc, volume_name)
+            if volume is not None:
+                volumes.append(volume)
+        if not found_doc:
+            print("{:30s}: {}[{}] not found in file".format(self._config.configuration, kind, workload))
+            return
+        if not volumes:
+            print("{:30s}: volume[{}] not found in {}[{}]".format(
+                self._config.configuration, volume_name, kind, workload))
+            return
+        changed = False
+        for volume in volumes:
+            try:
+                changed = patch_volume(volume, field, val) or changed
+            except ValueError as e:
+                print("{:30s}: {}[{}]: {}, not changed".format(self._config.configuration, kind, workload, e))
+                return
+        if changed:
+            print("{:30s}: updated {} = {}".format(self._config.configuration, selector, val))
+        else:
+            print("{:30s}: {} already set to desired value".format(self._config.configuration, selector))
+        memory_limit = ((getattr(self._config, "resources", None) or {}).get("limits") or {}).get("memory")
+        if any(memory_volume_exceeds_limit(volume, memory_limit) for volume in volumes):
+            print("{:30s}: warning: volume[{}] is in RAM and may grow beyond the memory limit {} (-lr)".format(
+                self._config.configuration, volume_name, memory_limit))
 
     def create_manifest_job(
         self,

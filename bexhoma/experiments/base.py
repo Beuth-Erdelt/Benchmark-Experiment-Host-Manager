@@ -88,6 +88,23 @@ SELECTOR_RE = re.compile(
     re.IGNORECASE
 )
 
+#: ``--set`` selector of an ``emptyDir`` volume of a workload (see :func:`parse_set_arg`).
+VOLUME_SELECTOR_RE = re.compile(
+    r'^(?P<kind>deployment|statefulset)\[(?P<workload>[^\]]+)\]'
+    r'(@(?P<config>[^.\[\]]+))?'
+    r'\.volume\[(?P<volume>[^\]]+)\]\.(?P<field>[A-Za-z]+)$',
+    re.IGNORECASE
+)
+
+#: ``emptyDir`` fields ``--set ...volume[V].FIELD`` may change, by lower-case name.
+VOLUME_FIELDS = {'sizelimit': 'sizeLimit', 'medium': 'medium'}
+
+#: Values of ``emptyDir.medium``: ``Memory`` (tmpfs) or empty (the node's disk).
+VOLUME_MEDIUMS = ('Memory', '')
+
+#: A Kubernetes quantity, e.g. ``64Gi``, ``500M`` or a plain number of bytes.
+QUANTITY_RE = re.compile(r'^[0-9]+(\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$')
+
 
 #: Divisor to convert the ``--experiment-timeout`` CLI value (minutes) to seconds.
 SECONDS_PER_MINUTE = 60
@@ -121,8 +138,14 @@ def parse_set_arg(s: str) -> Tuple[dict, str]:
     * ``statefulset[NAME].container[CONTAINER].PARAM``
     * ``deployment[NAME]@CONFIG.container[CONTAINER].PARAM``
     * ``statefulset[NAME]@CONFIG.container[CONTAINER].PARAM``
+    * ``deployment[NAME](@CONFIG).volume[VOLUME].FIELD``
+    * ``statefulset[NAME](@CONFIG).volume[VOLUME].FIELD``
 
     ``PARAM`` may carry one extension prefix, e.g. ``duckdb.max_memory``.
+
+    The ``volume`` form changes an ``emptyDir`` volume of the workload:
+    ``FIELD`` is ``sizeLimit`` (a Kubernetes quantity such as ``64Gi``) or
+    ``medium`` (``Memory``, or empty for the node's disk).
 
     The optional ``@CONFIG`` scope restricts the operation to the one
     configuration whose :attr:`~bexhoma.configurations.base.SutConfiguration.configuration`
@@ -135,25 +158,46 @@ def parse_set_arg(s: str) -> Tuple[dict, str]:
 
     :param s: Raw ``--set`` string from the CLI.
     :return: A tuple of (selector_dict, value_str) where selector_dict
-             contains keys ``kind``, ``workload``, ``config``, ``container``, and ``param``.
+             contains keys ``target`` (``container`` or ``volume``), ``kind``,
+             ``workload`` and ``config``, plus ``container`` and ``param`` for a
+             container or ``volume`` and ``field`` for a volume.
              ``config`` is ``""`` when the selector carries no ``@CONFIG`` scope.
     :rtype: tuple[dict, str]
-    :raises ValueError: When the string has no ``=`` or the selector does not match.
+    :raises ValueError: When the string has no ``=``, the selector does not match,
+        or a volume field or value is not allowed.
     """
     if "=" not in s:
         raise ValueError(f"--set expects selector=value (got: {s})")
     selector, value = s.split("=", 1)
+    value = value.strip()
     m = SELECTOR_RE.match(selector.strip())
-    if not m:
-        raise ValueError(
-            "Invalid selector. Expected e.g. "
-            "deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes "
-            "or deployment[bexhoma-deployment-postgres]@PostgreSQL-2.container[dbms].shared_buffers"
-        )
-    d = m.groupdict()
+    if m:
+        d = m.groupdict()
+        d["target"] = "container"
+    else:
+        m = VOLUME_SELECTOR_RE.match(selector.strip())
+        if not m:
+            raise ValueError(
+                "Invalid selector. Expected e.g. "
+                "deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes, "
+                "deployment[bexhoma-deployment-postgres]@PostgreSQL-2.container[dbms].shared_buffers "
+                "or deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit"
+            )
+        d = m.groupdict()
+        d["target"] = "volume"
+        field = VOLUME_FIELDS.get(d["field"].lower())
+        if field is None:
+            raise ValueError(
+                f"--set {selector}: a volume field must be one of {', '.join(VOLUME_FIELDS.values())}")
+        d["field"] = field
+        if field == 'sizeLimit' and not QUANTITY_RE.match(value):
+            raise ValueError(f"--set {selector}: sizeLimit must be a quantity such as 64Gi (got: {value!r})")
+        if field == 'medium' and value not in VOLUME_MEDIUMS:
+            raise ValueError(
+                f"--set {selector}: medium must be Memory or empty for the node's disk (got: {value!r})")
     d["kind"] = d["kind"].lower()
     d["config"] = d["config"] or ""
-    return d, value.strip()
+    return d, value
 
 
 class ExperimentBase():
