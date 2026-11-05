@@ -108,7 +108,7 @@ See [Deployments](Deployments.md) for details.
 
 This section describes the rules that every `k8s/deploymenttemplate-<Key>.yml` file must follow.
 `start_sut()` in `configurations/lifecycle.py` reads these files and applies the conventions at runtime to generate the actual Kubernetes resource names and inject environment variables.
-The full reference (including job templates and non-SUT manifests) is in [`k8s/README.md`](../k8s/README.md).
+The full reference (including job templates and non-SUT manifests) is in the [Kubernetes manifests README](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/README.md).
 
 ### File naming
 
@@ -202,7 +202,7 @@ These names must be used exactly:
 | `pool` | Connection-pool Deployment | PGBouncer or equivalent. |
 
 For **job templates** (loading and benchmarking) the reserved names are `datagenerator` (initContainer), `sensor` (loader), and `dbmsbenchmarker` (benchmarker).
-See [`k8s/README.md`](../k8s/README.md) for details.
+See the [Kubernetes manifests README](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/README.md) for details.
 
 ### Reserved volume names
 

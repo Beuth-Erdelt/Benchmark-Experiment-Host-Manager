@@ -44,7 +44,7 @@ Each predicate keeps the filter factor of the specification: a member of a unifo
 level is drawn from the whole level, a range over a measure keeps its width and moves, and
 correlated values (a nation and its region, two cities of one nation, the first and last day of
 a week) come from one `dict` parameter. Parameters are drawn once per experiment; with `-xrcp`
-each stream draws its own. See [experiments/ssb/README.md](../experiments/ssb/README.md) for the
+each stream draws its own. See the [SSB experiment README](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/ssb/README.md) for the
 rules per query.
 
 ---

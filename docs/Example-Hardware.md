@@ -3369,7 +3369,7 @@ queue: mixed random read/write with fsync on the write side. This is **not** the
 concurrent checkpoint+WAL+OLTP contention — that needs several parallel benchmarker jobs with
 different fio profiles running in the same round, which bexhoma does not yet support for Hardware
 (the closest existing precedent is the TPC-H refresh-stream mechanism, see
-`bexhoma/experiments/README.md` §8, which could be adapted for this in the future). This proxy is
+section 8 of the [experiments README](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/bexhoma/experiments/README.md), which could be adapted for this in the future). This proxy is
 what is achievable today with the single-profile-per-round model used throughout this page.
 
 ```bash

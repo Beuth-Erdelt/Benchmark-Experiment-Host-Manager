@@ -89,7 +89,7 @@ bexhoma ycsb run -ms 1 -tr -sf 1 -xwl a -dbms PostgreSQL \
 
 Loads 1 million rows, then runs workload A (50% reads / 50% updates, 1 million operations) targeting 32,768 ops/s (16,384 × 2) and 49,152 ops/s (16,384 × 3). Each target is tested with 64 driver threads as a single pod and again split across 8 pods.
 
-See more details at https://bexhoma.readthedocs.io/en/latest/Example-YCSB.html
+See more details in the [YCSB example](https://bexhoma.readthedocs.io/en/latest/Example-YCSB.html).
 
 ### TPC-C (HammerDB)
 
@@ -100,7 +100,7 @@ bexhoma hammerdb run -ms 1 -tr -sf 16 -xsd 5 -dbms PostgreSQL \
 
 Loads a TPC-C schema with 16 warehouses using 16 loader threads, then benchmarks for 5 minutes with 16 virtual users — first in a single pod, then split across 2 pods.
 
-See more details at https://bexhoma.readthedocs.io/en/latest/Example-HammerDB.html
+See more details in the [HammerDB example](https://bexhoma.readthedocs.io/en/latest/Example-HammerDB.html).
 
 ### TPC-C (Benchbase)
 
@@ -111,7 +111,7 @@ bexhoma benchbase run -ms 1 -tr -sf 16 -xsd 5 -dbms PostgreSQL \
 
 Loads a TPC-C schema with 16 warehouses, then benchmarks for 5 minutes targeting 16,384 ops/s (1,024 × 16) with 16 threads — first in a single pod, then split across 2 pods.
 
-See more details at https://bexhoma.readthedocs.io/en/latest/Example-Benchbase.html
+See more details in the [Benchbase example](https://bexhoma.readthedocs.io/en/latest/Example-Benchbase.html).
 
 ### TPC-H
 
@@ -121,7 +121,7 @@ bexhoma tpch run -ms 1 -dbms PostgreSQL
 
 Loads 1 GB of TPC-H data (scale factor 1) and runs all 22 decision-support queries with a single client.
 
-See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-H.html
+See more details in the [TPC-H example](https://bexhoma.readthedocs.io/en/latest/Example-TPC-H.html).
 
 ### TPC-DS
 
@@ -131,7 +131,7 @@ bexhoma tpcds run -ms 1 -dbms PostgreSQL
 
 Loads 1 GB of TPC-DS data (scale factor 1) and runs all 99 decision-support queries with a single client.
 
-See more details at https://bexhoma.readthedocs.io/en/latest/Example-TPC-DS.html
+See more details in the [TPC-DS example](https://bexhoma.readthedocs.io/en/latest/Example-TPC-DS.html).
 
 ### SSB
 
@@ -141,7 +141,7 @@ bexhoma ssb run -ms 1 -dbms PostgreSQL
 
 Generates Star Schema Benchmark data (scale factor 1) and runs its 13 queries with a single client. `-xsv flat` uses one denormalized table instead of the star schema, `-xqv random` draws random query parameters.
 
-See more details at https://bexhoma.readthedocs.io/en/latest/Example-SSB.html
+See more details in the [SSB example](https://bexhoma.readthedocs.io/en/latest/Example-SSB.html).
 
 ### Hardware (fio)
 
@@ -151,7 +151,7 @@ bexhoma hardware run -ms 1 -dbms Hardware -xht fio -xts 1G -xtd 30 -xfrw randrea
 
 Runs a single 30-second fio random-read test at 4k block size and queue depth 16 directly against a dedicated SUT container over SSH, bypassing any DBMS.
 
-See more details at https://bexhoma.readthedocs.io/en/latest/Example-Hardware.html#fio-disk-benchmarks
+See more details in the [fio disk benchmark example](https://bexhoma.readthedocs.io/en/latest/Example-Hardware.html#fio-disk-benchmarks).
 
 ### Hardware (sysbench)
 
@@ -161,7 +161,7 @@ bexhoma hardware run -ms 1 -dbms Hardware -xht sysbench -xtd 30 -nbp 1 -nbt 4 -n
 
 Runs a single 30-second sysbench CPU/memory test with 4 threads directly against a dedicated SUT container over SSH, bypassing any DBMS.
 
-See more details at https://bexhoma.readthedocs.io/en/latest/Example-Hardware.html#sysbench-cpu-noisy-neighbor-benchmarks
+See more details in the [sysbench CPU benchmark example](https://bexhoma.readthedocs.io/en/latest/Example-Hardware.html#sysbench-cpu-noisy-neighbor-benchmarks).
 
 ### Hardware (sockperf)
 
@@ -171,7 +171,7 @@ bexhoma hardware run -ms 1 -dbms Hardware -xht sockperf -xtd 300 -xspm ul -xspr 
 
 Runs a single 5-minute sockperf under-load test over TCP at message size 8192 bytes (PostgreSQL's page size, `BLCKSZ`) directly against a dedicated SUT container, bypassing any DBMS.
 
-See more details at https://bexhoma.readthedocs.io/en/latest/Example-Hardware.html#sockperf-network-benchmarks
+See more details in the [sockperf network benchmark example](https://bexhoma.readthedocs.io/en/latest/Example-Hardware.html#sockperf-network-benchmarks).
 
 ## Architecture
 
@@ -219,4 +219,4 @@ https://doi.org/10.48786/edbt.2026.46
 ## License
 
 Bexhoma's code is licensed under the [GNU Affero General Public License v3](LICENSE).
-The logo and other brand assets in [`docs/logo/`](docs/logo/) are licensed separately under [CC BY 4.0](docs/logo/README.md).
+The logo and other brand assets in [docs/logo](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/docs/logo) are licensed separately under [CC BY 4.0](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/logo/README.md).
