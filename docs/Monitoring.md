@@ -363,3 +363,7 @@ This means:
 - Every benchmark job produces one row in the loading phase table, even though the data was loaded only once.
 - Rows that share the same loading window (e.g. all clients in the same experiment run) will show **identical values** — the SUT experienced the same load regardless of how many client sequences followed.
 - The second experiment run re-deploys and re-loads the SUT, so its rows cover a different time window and may differ.
+
+## Example Runs
+
+[Example: Testing Collectors](Example-Collectors.md) runs Benchbase, TPC-H, YCSB and HammerDB with `-m`, `-ma` and `-mc` together and shows the monitoring tables, the missing-metric report and the application metrics of each run.

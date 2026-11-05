@@ -1,7 +1,8 @@
 # Example: Benchmark a Cloud Database
 
-<img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
+This example shows how to benchmark a database service outside of Kubernetes, that is compatible with PostgreSQL, with YCSB, Benchbase's TPC-C and TPC-H (configuration key `DatabaseService`).
 
+<img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 The following example treats **a cloud database that is compatible to PostgreSQL**.
 
@@ -25,51 +26,18 @@ You may get different results.
 These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
 
 References:
-1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
-1. Benchbase Repository: https://github.com/cmu-db/benchbase/wiki/TPC-C
-1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
-1. Orchestrating DBMS Benchmarking in the Cloud with Kubernetes: https://doi.org/10.1007/978-3-030-94437-7_6
-1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
+1. [YCSB Repository](https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload)
+1. [Benchmarking cloud serving systems with YCSB](https://dl.acm.org/doi/10.1145/1807128.1807152)
+1. [Benchbase Repository](https://github.com/cmu-db/benchbase/wiki/TPC-C)
+1. [OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases](http://www.vldb.org/pvldb/vol7/p277-difallah.pdf)
+1. [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://doi.org/10.1007/978-3-030-94437-7_6)
+1. [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](https://doi.org/10.1007/978-3-031-68031-1_9)
+1. Test script of this page: [test-docs-databaseservice.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-databaseservice.sh), [test-docs-databaseservice.ps1](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-databaseservice.ps1)
 
 
-## Types of DBMS
+## Perform YCSB Benchmark
 
-### Managed by Bexhoma
-
-We included [CockroachDB](Example-CockroachDB) as an example for a distributed DBMS, that is managed by bexhoma.
-
-Advantages
-* Bexhoma can monitor all components
-* Bexhoma knows about loaded databases, their status and timings
-
-Disadvantages
-* This is only implemented for some examples
-* This cannot be applied to Cloud services (or any other database outside of the Kubernetes cluster)
-
-### Not Managed by Bexhoma
-
-We included [YugaByteDB](Example-YugaByteDB) as an example for a distributed DBMS, that is not managed by bexhoma, but runs in the same Kubernetes cluster.
-
-Advantages
-* Can be applied to all systems running in Kubernetes
-* Bexhoma can monitor all components
-
-Disadvantages
-* Bexhoma not necessarily knows about loaded databases, their status and timings - they might be affected by outside services
-* This cannot be applied to Cloud services (or any other database outside of the Kubernetes cluster)
-
-### Outside of Kubernetes
-
-Here we present an example for a DBMS, that is not managed by bexhoma and might be running outside of the Kubernetes cluster.
-
-Advantages
-* This can be applied to all Cloud services (or any other database outside of the Kubernetes cluster) with a JDBC interface
-
-Disadvantages
-* The SUT cannot be monitored by Bexhoma
-* Bexhoma not necessarily knows about loaded databases, their status and timings - they might be affected by outside services
-
-#### PostgreSQL-compatible Cloud Service - Test Environment Placeholder
+### Prerequisites: Placeholder of a Cloud Service
 
 In order to have a test environment, we install a placeholder instance PostgreSQL and treat it like an external service.
 
@@ -90,12 +58,7 @@ kubectl delete svc bexhoma-service
 
 All demonstration and test runs in the following are run against this placeholder.
 
-
-
-
-
-
-## Perform YCSB Benchmark - Ingestion of Data Included
+### Run the Benchmark
 
 You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
 ```bash
@@ -130,7 +93,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_databaseservice_1.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice.log
 ```
 
 This
@@ -179,12 +142,12 @@ You can find the number also in the output of `ycsb.py`.
 The script is supposed to clean up and remove everything from the cluster that is related to the experiment after finishing.
 If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1730133803` (removes everything that is related to experiment `1730133803`).
 
-## Evaluate Results
+### Evaluate Results
 
 At the end of a benchmark you will see a summary like
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_databaseservice_1_summary.md" target="_blank" rel="noopener">docs_ycsb_databaseservice_1.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_databaseservice_summary.md" target="_blank" rel="noopener">docs_ycsb_databaseservice.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -309,22 +272,25 @@ YCSB SF=1
 
 To see the summary again you can simply call `bexhoma summary -e 1730133803` with the experiment code.
 
-### Detailed Evaluation
-
 Results are transformed into pandas DataFrames and can be inspected in detail.
 See for example
-* [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
+* [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/notebooks/)
 
 You can connect to an evaluation server locally by `bexhoma jupyter`.
 This forwards ports, so you have
 * a Jupyter notebook server at http://localhost:8888
 
 
-## Perform YCSB Benchmark - Execution only
+## Monitoring
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 
-Example: 
+The `-mc` option is mandatory here: The sidecar container approach is not working (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
+Moreover the SUT itself cannot be monitored, since it is outside of the cluster.
+For further explanation see the monitoring section of this documentation.
+
+The following run skips loading (`-sl`), as the data of the run above is still present in the database, and monitors the components (`-m -mc`):
+
 ```bash
 bexhoma ycsb \
   -dbms DatabaseService \
@@ -346,13 +312,13 @@ bexhoma ycsb \
   -sl \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_databaseservice_2.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice_monitoring.log
 ```
 
 This skips loading (`-sl`), as data is already present in the database.
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_databaseservice_2_summary.md" target="_blank" rel="noopener">docs_ycsb_databaseservice_2.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_databaseservice_monitoring_summary.md" target="_blank" rel="noopener">docs_ycsb_databaseservice_monitoring.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -464,18 +430,7 @@ YCSB SF=1
 </details>
 
 
-## Monitoring
-
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
-
-The `-mc` option is mandatory here: The sidecar container approach is not working (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
-Moreover the SUT itself cannot be monitored, since it is outside of the cluster.
-For further explanation see the monitoring section of this documentation.
-
-
-## Use Persistent Storage
-
-### Bexhoma Status Volume
+## Persistent Storage
 
 Persistent Storage is not managed by bexhoma, but by the Cloud service.
 We can add the request for a PVC to the experiment setup:
@@ -503,7 +458,7 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_databaseservice_3.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice_storage.log
 ```
 
 This will add a PVC to the Dummy DBMS.
@@ -513,11 +468,11 @@ Nothing will be stored there, but it maintains status information about previous
 +----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 | Volumes                                | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms            | storage_class_name   | storage   | status   | size   | used   |
 +========================================+=================+==============+==============+===================+=================+======================+===========+==========+========+========+
-| bexhoma-storage-databaseservice-ycsb-1 | databaseservice | ycsb-1       | True         |                65 | DatabaseService | shared               | 1Gi       | Bound    | 1.0G   | 36M    |
+| bexhoma-storage-databaseservice-ycsb-5 | databaseservice | ycsb-5       | True         |                98 | DatabaseService | shared               | 50Gi      | Bound    | 50G    | 36M    |
 +----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 ```
 
-The above means there has been a YCSB loading process (managed by bexhoma) of size SF=1, that has been completed.
+The above means there has been a YCSB loading process (managed by bexhoma) of size SF=5, that has been completed.
 All following calls of such an experiment will skip loading, since the PVC tells it has been finished.
 This thus helps to spare the `-sl` parameter.
 
@@ -527,7 +482,7 @@ If data is delete somehow, this PVC information will be outdated and wrong.
 This approach helps bexhoma to persist status information, but it does not persist data inside the Cloud database.
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_databaseservice_3_summary.md" target="_blank" rel="noopener">docs_ycsb_databaseservice_3.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_databaseservice_storage_summary.md" target="_blank" rel="noopener">docs_ycsb_databaseservice_storage.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -675,25 +630,65 @@ YCSB SF=5
 
 </details>
 
-## YCSB Example Explained
 
+## Technical Details
+
+### Types of DBMS
+
+#### Managed by Bexhoma
+
+We included [CockroachDB](Example-CockroachDB.md) as an example for a distributed DBMS, that is managed by bexhoma.
+
+Advantages
+* Bexhoma can monitor all components
+* Bexhoma knows about loaded databases, their status and timings
+
+Disadvantages
+* This is only implemented for some examples
+* This cannot be applied to Cloud services (or any other database outside of the Kubernetes cluster)
+
+#### Not Managed by Bexhoma
+
+We included [YugaByteDB](Example-YugaByteDB.md) as an example for a distributed DBMS, that is not managed by bexhoma, but runs in the same Kubernetes cluster.
+
+Advantages
+* Can be applied to all systems running in Kubernetes
+* Bexhoma can monitor all components
+
+Disadvantages
+* Bexhoma not necessarily knows about loaded databases, their status and timings - they might be affected by outside services
+* This cannot be applied to Cloud services (or any other database outside of the Kubernetes cluster)
+
+#### Outside of Kubernetes
+
+Here we present an example for a DBMS, that is not managed by bexhoma and might be running outside of the Kubernetes cluster.
+
+Advantages
+* This can be applied to all Cloud services (or any other database outside of the Kubernetes cluster) with a JDBC interface
+
+Disadvantages
+* The SUT cannot be monitored by Bexhoma
+* Bexhoma not necessarily knows about loaded databases, their status and timings - they might be affected by outside services
 
 ### Configuration of Bexhoma
 
+`DatabaseService` is a generic configuration for external database services — cloud-managed databases or any PostgreSQL-compatible endpoint that is not deployed by bexhoma.
 In `cluster.config` there is a section:
 
 ```python
 'DatabaseService': {
-    'loadData': 'psql -U postgres --host mydatabase.example.com --port 5432 < {scriptname}',
+    'loadData': 'psql -U postgres --host bexhoma-service.{namespace}.svc.cluster.local --port 9091 < {scriptname}',
     'template': {
-        'version': 'v1234',
-        'alias': 'Cloud-A',
-        'docker_alias': 'CL-A',
-         'JDBC': {
+        'version': 'v11.4',
+        'alias': 'General-B',
+        'docker_alias': 'GP-B',
+        'JDBC': {
             'driver': "org.postgresql.Driver",
             'auth': ["postgres", ""],
-            'url': 'jdbc:postgresql://mydatabase.example.com:5432/postgres?reWriteBatchedInserts=true',
-            'jar': 'postgresql-42.5.0.jar'
+            'url': 'jdbc:postgresql://bexhoma-service.{namespace}.svc.cluster.local:9091/postgres?reWriteBatchedInserts=true',
+            'jar': 'postgresql-42.5.0.jar',
+            'database': 'postgres',
+            'explain': ['EXPLAIN (VERBOSE, FORMAT JSON) {query}'],
         }
     },
     'logfile': '/usr/local/data/logfile',
@@ -703,11 +698,10 @@ In `cluster.config` there is a section:
 ```
 
 where
-* `loadData`: This command is used to create the schema
-* `JDBC`: These infos are used to configure YCSB
+* `loadData`: command to create the schema, here against the placeholder service `bexhoma-service`
+* `JDBC`: used to configure YCSB and DBMSBenchmarker
 
-Please make sure to adjust this to the cloud service you want to benchmark.
-
+Please make sure to adjust host, port and credentials to the cloud service you want to benchmark.
 
 ### Preparation of YCSB
 
@@ -723,7 +717,7 @@ RUN cp postgresql-42.5.0.jar jars/postgresql-42.5.0.jar
 ```
 
 
-### Dummy SUT
+### Placeholder SUT
 
 Bexhoma deploys a pod to carry status informations.
 Here it is an instance of PostgreSQL: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-DatabaseService.yml
@@ -741,19 +735,13 @@ In `ycsb.py` there is a section about DatabaseService.
 Watch for
 * `config.monitoring_sut = False`: SUT cannot be monitored since it is outside of K8s
 
+### Load Durability
 
+`-xld` has no effect: there are no durability scripts for DatabaseService.
 
+### Reset Scripts
 
-
-
-
-
-
-
-
-
-
-
+DatabaseService has no reset scripts; with `-ar` the experiment prints a warning at the start.
 
 
 ## Benchbase's TPC-C
@@ -770,13 +758,13 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_benchbase_databaseservice_1.log
+  run &>$LOG_DIR/docs_benchbase_databaseservice.log
 ```
 
 yields
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_databaseservice_1_summary.md" target="_blank" rel="noopener">docs_benchbase_databaseservice_1.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_databaseservice_summary.md" target="_blank" rel="noopener">docs_benchbase_databaseservice.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -930,13 +918,13 @@ bexhoma benchbase \
   -sl \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_benchbase_databaseservice_2.log
+  run &>$LOG_DIR/docs_benchbase_databaseservice_execution.log
 ```
 
 yields
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_databaseservice_2_summary.md" target="_blank" rel="noopener">docs_benchbase_databaseservice_2.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_databaseservice_execution_summary.md" target="_blank" rel="noopener">docs_benchbase_databaseservice_execution.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1084,13 +1072,13 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_tpch_databaseservice_1.log
+  run &>$LOG_DIR/docs_tpch_databaseservice.log
 ```
 
 yields
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_1_summary.md" target="_blank" rel="noopener">docs_tpch_databaseservice_1.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_summary.md" target="_blank" rel="noopener">docs_tpch_databaseservice.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1098,8 +1086,8 @@ yields
 ### Workload
 TPC-H Queries SF=3
 * Type: tpch
-* Duration: 367s 
-* Code: 1793621332
+* Duration: 657s 
+* Code: 1793862917
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -1120,7 +1108,7 @@ TPC-H Queries SF=3
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
-  * Maximum DBMS across the whole cluster is 2.
+  * Maximum DBMS across the whole cluster is 10.
   * Results are validated against basic correctness requirements.
   * SUT requests 4 CPU and 16Gi RAM.
 
@@ -1131,10 +1119,10 @@ TPC-H Queries SF=3
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741613
+  * disk:777077
   * datadisk:39
   * volume_size:1.8T
-  * volume_used:725G
+  * volume_used:759G
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
@@ -1143,13 +1131,13 @@ TPC-H Queries SF=3
     * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793621332
+    * code:1793862917
 
 ### Init Scripts Not in Folder
 * DatabaseService-1: skipped checkschema-tpch.sql
 
 ### SUT Container Restarts
-* bexhoma-sut-databaseservice-1-1793621332-5b55dbf5fd-265pv: 0
+* bexhoma-sut-databaseservice-1-1793862917-578f4c4598-bbrfl: 0
 
 ### Workflow
 
@@ -1167,7 +1155,7 @@ TPC-H Queries SF=3
 
 |                     |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:--------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| DatabaseService-1-1 |                1 |    3 |       31.00 |           1.00 |           13.00 |          8.00 |            3.00 |              8 |           0 |             | None           |             0 | False         |              348.39 | False               |
+| DatabaseService-1-1 |                1 |    3 |      262.00 |           2.00 |           15.00 |        100.00 |          137.00 |              8 |           0 |             | None           |             0 | False         |               41.22 | False               |
 
 ### Benchmarking
 
@@ -1175,13 +1163,13 @@ TPC-H Queries SF=3
 
 | DBMS                      | configuration     | phase                 | job                     |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                       |
 |:--------------------------|:------------------|:----------------------|:------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:--------------------------|
-| databaseservice-1-1-1-1-1 | DatabaseService-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |          3 |            0.00 |          4950694.74 |          79200.00 |          -1 | databaseservice-1-1-1-1-1 |
+| databaseservice-1-1-1-1-1 | DatabaseService-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |         51 |            1.50 |             7446.73 |           4658.82 |          -1 | databaseservice-1-1-1-1-1 |
 
 #### Per Phase
 
 |                       | phase                 |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:----------------------|:----------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |          3 |            0.00 |          4950694.74 |          79200.00 |          -1 |
+| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |         51 |            1.50 |             7446.73 |           4658.82 |          -1 |
 
 #### Query Completion per Phase
 
@@ -1194,28 +1182,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   databaseservice-1-1-1-1-1 |
 |:----------------------------------------------------|----------------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |                       41.94 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |                        4.20 |
-| Shipping Priority (TPC-H Q3)                        |                        1.73 |
-| Order Priority Checking Query (TPC-H Q4)            |                        1.58 |
-| Local Supplier Volume (TPC-H Q5)                    |                        2.36 |
-| Forecasting Revenue Change (TPC-H Q6)               |                        1.79 |
-| Volume Shipping Query (TPC-H Q7)                    |                        2.32 |
-| National Market Share (TPC-H Q8)                    |                        2.84 |
-| Product Type Profit Measure (TPC-H Q9)              |                        2.11 |
-| Returned Item Reporting Query (TPC-H Q10)           |                        1.79 |
-| Important Stock Identification (TPC-H Q11)          |                        1.59 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |                        1.64 |
-| Customer Distribution (TPC-H Q13)                   |                        1.67 |
-| Promotion Effect Query (TPC-H Q14)                  |                        1.54 |
-| Top Supplier Query (TPC-H Q15)                      |                        1.35 |
-| Parts/Supplier Relationship (TPC-H Q16)             |                        1.54 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |                        1.52 |
-| Large Volume Customer (TPC-H Q18)                   |                        1.79 |
-| Discounted Revenue (TPC-H Q19)                      |                        1.94 |
-| Potential Part Promotion (TPC-H Q20)                |                        1.50 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                        2.32 |
-| Global Sales Opportunity Query (TPC-H Q22)          |                        2.20 |
+| Pricing Summary Report (TPC-H Q1)                   |                     3493.13 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                     1057.29 |
+| Shipping Priority (TPC-H Q3)                        |                     1649.79 |
+| Order Priority Checking Query (TPC-H Q4)            |                     2236.57 |
+| Local Supplier Volume (TPC-H Q5)                    |                     1515.99 |
+| Forecasting Revenue Change (TPC-H Q6)               |                      821.37 |
+| Volume Shipping Query (TPC-H Q7)                    |                     1453.37 |
+| National Market Share (TPC-H Q8)                    |                      998.75 |
+| Product Type Profit Measure (TPC-H Q9)              |                     2344.28 |
+| Returned Item Reporting Query (TPC-H Q10)           |                     1848.46 |
+| Important Stock Identification (TPC-H Q11)          |                      366.59 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                     1634.69 |
+| Customer Distribution (TPC-H Q13)                   |                     4296.38 |
+| Promotion Effect Query (TPC-H Q14)                  |                      891.22 |
+| Top Supplier Query (TPC-H Q15)                      |                      943.40 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                      761.56 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                     3941.77 |
+| Large Volume Customer (TPC-H Q18)                   |                    11370.54 |
+| Discounted Revenue (TPC-H Q19)                      |                     1257.21 |
+| Potential Part Promotion (TPC-H Q20)                |                      698.23 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                     1706.32 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                      301.80 |
 
 ### Errors (failed queries)
 
@@ -1235,49 +1223,29 @@ No warnings
 
 ### Loading phase: component loader
 
-| DBMS                    | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:------------------------|:-------------|----------:|---------------:|----------------------:|
-| databaseservice-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
+| DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------------|-------------:|----------:|---------------:|----------------------:|
+| databaseservice-1-1-1-1 |        45.06 |      0.94 |           0.00 |                  0.38 |
 
 ### Benchmarking phase: component benchmarker
 
-| DBMS                    | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:------------------------|:-------------|----------:|---------------:|----------------------:|
-| databaseservice-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
+| DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------------|-------------:|----------:|---------------:|----------------------:|
+| databaseservice-1-1-1-1 |        12.92 |      0.54 |           0.26 |                  0.26 |
 
 ### Missing Monitoring Metrics
-* CPU Throttling Rate [s/s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Utilization [CPUs] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Memory Usage, Working Set [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU User Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU System Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU Utilization Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Network Rx Total [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU Throttled Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* Memory Usage incl. Page Cache [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Network Tx Total [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Memory Usage, Working Set [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Utilization [CPUs] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Memory Usage incl. Page Cache [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttled Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU System Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU User Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttling Rate [s/s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU Utilization [CPUs] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
-* Memory Usage incl. Page Cache [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
-* Memory Usage, Working Set [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
-* CPU Utilization Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
-* CPU User Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
 * CPU Throttled Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU System Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: series exists only while non-zero)
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -1286,10 +1254,10 @@ No warnings
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
-* TEST skipped: Loading phase: component loader contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
-* TEST skipped: Benchmarking phase: component benchmarker contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
-* TEST skipped: Monitoring metrics missing (data pre-existing; job pods ran shorter than scrape interval; phase shorter than scrape interval; series exists only while non-zero)
-* TEST failed: Geo Times [s] contains 0 or NaN
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (data pre-existing; series exists only while non-zero)
+* TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
@@ -1320,13 +1288,13 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_tpch_databaseservice_2.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_execution.log
 ```
 
 yields
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_2_summary.md" target="_blank" rel="noopener">docs_tpch_databaseservice_2.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_execution_summary.md" target="_blank" rel="noopener">docs_tpch_databaseservice_execution.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1334,8 +1302,8 @@ yields
 ### Workload
 TPC-H Queries SF=3
 * Type: tpch
-* Duration: 270s 
-* Code: 1793621753
+* Duration: 301s 
+* Code: 1793863632
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -1357,7 +1325,7 @@ TPC-H Queries SF=3
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
-  * Maximum DBMS across the whole cluster is 2.
+  * Maximum DBMS across the whole cluster is 10.
   * Results are validated against basic correctness requirements.
   * SUT requests 4 CPU and 16Gi RAM.
 
@@ -1368,10 +1336,10 @@ TPC-H Queries SF=3
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741617
+  * disk:777081
   * datadisk:39
   * volume_size:1.8T
-  * volume_used:725G
+  * volume_used:759G
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
@@ -1379,67 +1347,108 @@ TPC-H Queries SF=3
   * resources_total: 1.0 CPU, 1.0 GiB RAM requested in 1 pods
     * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
   * eval_parameters
-    * code:1793621753
+    * code:1793863632
 
 ### SUT Container Restarts
-* bexhoma-sut-databaseservice-1-1793621753-5d5bd95576-9xx2t: 0
-bexhoma : Traceback (most recent call last):
-In C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\scripts\test-docs-databaseservice.ps1:230 Zeichen:1
-+ bexhoma tpch `
-+ ~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
-    + FullyQualifiedErrorId : NativeCommandError
- 
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\tpch.py", line 611, in <module>
-    run(args)
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\tpch.py", line 602, in run
-    experiment.process()
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\experiments\base.py", line 384, in process
-    self.show_summary(write_report=getattr(self.args, 'write_report', False))
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\experiments\tpch.py", line 224, in show_summary
-    super().show_summary(write_report=write_report)
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\experiments\dbmsbenchmarker.py", line 154, in show_summary
-    primary.show_summary(self, write_report=write_report)
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\benchmarks\base.py", line 502, in show_summary
-    loading_section, df_loading = self._show_loading_sections(experiment, is_multitenant)
-                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\benchmarks\base.py", line 279, in _show_loading_sections
-    df = self.evaluator.get_summary_loading_per_run()
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators\dbmsbenchmarker.py", line 708, in get_summary_loading_per_run
-    df = self.get_loading_per_run()
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators\base.py", line 815, in get_loading_per_run
-    df = self.get_loading_per_connection()
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators\base.py", line 791, in get_loading_per_connection
-    df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
-             ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\ops\common.py", line 76, in new_method
-    return method(self, other)
-           ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\arraylike.py", line 210, in __truediv__
-    return self._arith_method(other, operator.truediv)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\series.py", line 6154, in _arith_method
-    return base.IndexOpsMixin._arith_method(self, other, op)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\base.py", line 1391, in _arith_method
-    result = ops.arithmetic_op(lvalues, rvalues, op)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\ops\array_ops.py", line 283, in arithmetic_op
-    res_values = _na_arithmetic_op(left, right, op)  # type: ignore[arg-type]
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\ops\array_ops.py", line 218, in _na_arithmetic_op
-    result = func(left, right)
-             ^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\computation\expressions.py", line 242, in evaluate
-    return _evaluate(op, op_str, a, b)  # type: ignore[misc]
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\computation\expressions.py", line 73, in _evaluate_standard
-    return op(a, b)
-           ^^^^^^^^
-ZeroDivisionError: float division by zero
+* bexhoma-sut-databaseservice-1-1793863632-8b9c74856-zk7ft: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS DatabaseService-1 - Experiment 1 Client 1: tpch (1 pods)
+
+#### Planned
+
+* DBMS DatabaseService-1 - Experiment 1 Client 1: tpch (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                     |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:--------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| DatabaseService-1-1 |                1 |    3 |        0.00 |           0.00 |            0.00 |          0.00 |            0.00 |              0 |           0 |             | None           |             0 | False         |                 nan | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                      | configuration     | phase                 | job                     |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                       |
+|:--------------------------|:------------------|:----------------------|:------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:--------------------------|
+| databaseservice-1-1-1-1-1 | DatabaseService-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |         50 |            1.49 |             7468.29 |           4752.00 |          -1 | databaseservice-1-1-1-1-1 |
+
+#### Per Phase
+
+|                       | phase                 |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:----------------------|:----------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |         50 |            1.49 |             7468.29 |           4752.00 |          -1 |
+
+#### Query Completion per Phase
+
+| phase                 |   pods | Pricing Summary Report (TPC-H Q1)   | Minimum Cost Supplier Query (TPC-H Q2)   | Shipping Priority (TPC-H Q3)   | Order Priority Checking Query (TPC-H Q4)   | Local Supplier Volume (TPC-H Q5)   | Forecasting Revenue Change (TPC-H Q6)   | Volume Shipping Query (TPC-H Q7)   | National Market Share (TPC-H Q8)   | Product Type Profit Measure (TPC-H Q9)   | Returned Item Reporting Query (TPC-H Q10)   | Important Stock Identification (TPC-H Q11)   | Shipping Modes and Order Priority (TPC-H Q12)   | Customer Distribution (TPC-H Q13)   | Promotion Effect Query (TPC-H Q14)   | Top Supplier Query (TPC-H Q15)   | Parts/Supplier Relationship (TPC-H Q16)   | Small-Quantity-Order Revenue (TPC-H Q17)   | Large Volume Customer (TPC-H Q18)   | Discounted Revenue (TPC-H Q19)   | Potential Part Promotion (TPC-H Q20)   | Suppliers Who Kept Orders Waiting Query (TPC-H Q21)   | Global Sales Opportunity Query (TPC-H Q22)   | complete   |
+|:----------------------|-------:|:------------------------------------|:-----------------------------------------|:-------------------------------|:-------------------------------------------|:-----------------------------------|:----------------------------------------|:-----------------------------------|:-----------------------------------|:-----------------------------------------|:--------------------------------------------|:---------------------------------------------|:------------------------------------------------|:------------------------------------|:-------------------------------------|:---------------------------------|:------------------------------------------|:-------------------------------------------|:------------------------------------|:---------------------------------|:---------------------------------------|:------------------------------------------------------|:---------------------------------------------|:-----------|
+| databaseservice-1-1-1 |      1 | 1/1                                 | 1/1                                      | 1/1                            | 1/1                                        | 1/1                                | 1/1                                     | 1/1                                | 1/1                                | 1/1                                      | 1/1                                         | 1/1                                          | 1/1                                             | 1/1                                 | 1/1                                  | 1/1                              | 1/1                                       | 1/1                                        | 1/1                                 | 1/1                              | 1/1                                    | 1/1                                                   | 1/1                                          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   databaseservice-1-1-1-1-1 |
+|:----------------------------------------------------|----------------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |                     3472.78 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                     1064.00 |
+| Shipping Priority (TPC-H Q3)                        |                     1626.15 |
+| Order Priority Checking Query (TPC-H Q4)            |                     2197.31 |
+| Local Supplier Volume (TPC-H Q5)                    |                     1529.18 |
+| Forecasting Revenue Change (TPC-H Q6)               |                      843.57 |
+| Volume Shipping Query (TPC-H Q7)                    |                     1457.15 |
+| National Market Share (TPC-H Q8)                    |                     1015.46 |
+| Product Type Profit Measure (TPC-H Q9)              |                     2314.50 |
+| Returned Item Reporting Query (TPC-H Q10)           |                     1831.77 |
+| Important Stock Identification (TPC-H Q11)          |                      360.59 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                     1655.30 |
+| Customer Distribution (TPC-H Q13)                   |                     4105.53 |
+| Promotion Effect Query (TPC-H Q14)                  |                      885.73 |
+| Top Supplier Query (TPC-H Q15)                      |                      941.04 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                      864.05 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                     3817.14 |
+| Large Volume Customer (TPC-H Q18)                   |                    10865.46 |
+| Discounted Revenue (TPC-H Q19)                      |                     1233.65 |
+| Potential Part Promotion (TPC-H Q20)                |                      684.33 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                     1692.12 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                      299.46 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Monitoring
+
+### Benchmarking phase: component benchmarker
+
+| DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------------|-------------:|----------:|---------------:|----------------------:|
+| databaseservice-1-1-1-1 |        12.53 |      0.50 |           0.27 |                  0.28 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: No monitoring metrics missing
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
+* TEST passed: Workflow as planned
 ```
 
 </details>
@@ -1482,13 +1491,13 @@ bexhoma tpch \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_tpch_databaseservice_3.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_storage.log
 ```
 
 yields
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_3_summary.md" target="_blank" rel="noopener">docs_tpch_databaseservice_3.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_storage_summary.md" target="_blank" rel="noopener">docs_tpch_databaseservice_storage.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1496,8 +1505,8 @@ yields
 ### Workload
 TPC-H Queries SF=3
 * Type: tpch
-* Duration: 403s 
-* Code: 1793622096
+* Duration: 565s 
+* Code: 1793822962
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -1519,7 +1528,7 @@ TPC-H Queries SF=3
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
-  * Maximum DBMS across the whole cluster is 2.
+  * Maximum DBMS across the whole cluster is 10.
   * Results are validated against basic correctness requirements.
   * SUT requests 4 CPU and 16Gi RAM.
 
@@ -1530,7 +1539,7 @@ TPC-H Queries SF=3
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741669
+  * disk:850944
   * datadisk:39
   * volume_size:49G
   * volume_used:39M
@@ -1542,13 +1551,13 @@ TPC-H Queries SF=3
     * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793622096
+    * code:1793822962
 
 ### Init Scripts Not in Folder
 * DatabaseService-1: skipped checkschema-tpch.sql
 
 ### SUT Container Restarts
-* bexhoma-sut-databaseservice-1-1793622096-985d45644-s7zv2: 0
+* bexhoma-sut-databaseservice-1-1793822962-799cb5f644-qphft: 0
 
 ### Workflow
 
@@ -1566,7 +1575,7 @@ TPC-H Queries SF=3
 
 |                     |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:--------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| DatabaseService-1-1 |                1 |    3 |       41.00 |           2.00 |           24.00 |          7.00 |            3.00 |              8 |           0 |             | None           |             0 | False         |              263.41 | False               |
+| DatabaseService-1-1 |                1 |    3 |      120.00 |           1.00 |           24.00 |         20.00 |           71.00 |              8 |           0 |             | None           |             0 | False         |               90.00 | False               |
 
 ### Benchmarking
 
@@ -1574,13 +1583,13 @@ TPC-H Queries SF=3
 
 | DBMS                      | configuration     | phase                 | job                     |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                       |
 |:--------------------------|:------------------|:----------------------|:------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:--------------------------|
-| databaseservice-1-1-1-1-1 | DatabaseService-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |          3 |            0.00 |          4111667.19 |          79200.00 |          -1 | databaseservice-1-1-1-1-1 |
+| databaseservice-1-1-1-1-1 | DatabaseService-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |         37 |            1.01 |            11112.81 |           6421.62 |          -1 | databaseservice-1-1-1-1-1 |
 
 #### Per Phase
 
 |                       | phase                 |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:----------------------|:----------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |          3 |            0.00 |          4111667.19 |          79200.00 |          -1 |
+| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |         37 |            1.01 |            11112.81 |           6421.62 |          -1 |
 
 #### Query Completion per Phase
 
@@ -1593,28 +1602,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   databaseservice-1-1-1-1-1 |
 |:----------------------------------------------------|----------------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |                      247.40 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |                        4.17 |
-| Shipping Priority (TPC-H Q3)                        |                        3.22 |
-| Order Priority Checking Query (TPC-H Q4)            |                        2.20 |
-| Local Supplier Volume (TPC-H Q5)                    |                        2.91 |
-| Forecasting Revenue Change (TPC-H Q6)               |                        2.17 |
-| Volume Shipping Query (TPC-H Q7)                    |                        2.74 |
-| National Market Share (TPC-H Q8)                    |                        3.07 |
-| Product Type Profit Measure (TPC-H Q9)              |                        2.26 |
-| Returned Item Reporting Query (TPC-H Q10)           |                        2.49 |
-| Important Stock Identification (TPC-H Q11)          |                        1.44 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |                        1.49 |
-| Customer Distribution (TPC-H Q13)                   |                        1.68 |
-| Promotion Effect Query (TPC-H Q14)                  |                        1.69 |
-| Top Supplier Query (TPC-H Q15)                      |                        2.08 |
-| Parts/Supplier Relationship (TPC-H Q16)             |                        2.01 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |                        1.66 |
-| Large Volume Customer (TPC-H Q18)                   |                        1.98 |
-| Discounted Revenue (TPC-H Q19)                      |                        1.66 |
-| Potential Part Promotion (TPC-H Q20)                |                        1.71 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                        1.87 |
-| Global Sales Opportunity Query (TPC-H Q22)          |                        1.74 |
+| Pricing Summary Report (TPC-H Q1)                   |                     2855.81 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                      870.18 |
+| Shipping Priority (TPC-H Q3)                        |                     1203.62 |
+| Order Priority Checking Query (TPC-H Q4)            |                     1463.89 |
+| Local Supplier Volume (TPC-H Q5)                    |                     1019.33 |
+| Forecasting Revenue Change (TPC-H Q6)               |                      476.52 |
+| Volume Shipping Query (TPC-H Q7)                    |                     1169.37 |
+| National Market Share (TPC-H Q8)                    |                      585.58 |
+| Product Type Profit Measure (TPC-H Q9)              |                     1365.09 |
+| Returned Item Reporting Query (TPC-H Q10)           |                     1200.16 |
+| Important Stock Identification (TPC-H Q11)          |                      280.45 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                     1031.31 |
+| Customer Distribution (TPC-H Q13)                   |                     2214.30 |
+| Promotion Effect Query (TPC-H Q14)                  |                      630.25 |
+| Top Supplier Query (TPC-H Q15)                      |                      574.81 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                      745.19 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                     1692.54 |
+| Large Volume Customer (TPC-H Q18)                   |                     8138.31 |
+| Discounted Revenue (TPC-H Q19)                      |                      899.67 |
+| Potential Part Promotion (TPC-H Q20)                |                      452.99 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                     1092.49 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                      210.90 |
 
 ### Errors (failed queries)
 
@@ -1636,37 +1645,30 @@ No warnings
 
 | DBMS                    | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------------|:-------------|----------:|---------------:|----------------------:|
-| databaseservice-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
+| databaseservice-1-1-1-1 | n/a          |         0 |           0.00 |                  0.13 |
 
 ### Benchmarking phase: component benchmarker
 
-| DBMS                    | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:------------------------|:-------------|----------:|---------------:|----------------------:|
-| databaseservice-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
+| DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------------|-------------:|----------:|---------------:|----------------------:|
+| databaseservice-1-1-1-1 |        16.02 |      0.53 |           0.32 |                  0.33 |
 
 ### Missing Monitoring Metrics
-* Memory Usage, Working Set [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Memory Usage incl. Page Cache [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU Utilization [CPUs] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU Throttling Rate [s/s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Utilization Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU System Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU User Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Network Rx Total [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* Network Tx Total [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage, Working Set [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization [CPUs] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttled Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization [CPUs] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
 * CPU Throttling Rate [s/s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-loader.log, expected: series exists only while non-zero)
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -1676,9 +1678,9 @@ No warnings
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST skipped: Loading phase: component loader contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
-* TEST skipped: Benchmarking phase: component benchmarker contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
-* TEST skipped: Monitoring metrics missing (data pre-existing; job pods ran shorter than scrape interval; phase shorter than scrape interval; series exists only while non-zero)
-* TEST failed: Geo Times [s] contains 0 or NaN
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (data pre-existing; job pods ran shorter than scrape interval; series exists only while non-zero)
+* TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
@@ -1712,13 +1714,13 @@ bexhoma tpch \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_tpch_databaseservice_4.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_storage_execution.log
 ```
 
 yields
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_4_summary.md" target="_blank" rel="noopener">docs_tpch_databaseservice_4.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_storage_execution_summary.md" target="_blank" rel="noopener">docs_tpch_databaseservice_storage_execution.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1726,8 +1728,8 @@ yields
 ### Workload
 TPC-H Queries SF=3
 * Type: tpch
-* Duration: 270s 
-* Code: 1793622540
+* Duration: 303s 
+* Code: 1793823612
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=3) data is loaded and benchmark is executed.
@@ -1749,7 +1751,7 @@ TPC-H Queries SF=3
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
-  * Maximum DBMS across the whole cluster is 2.
+  * Maximum DBMS across the whole cluster is 10.
   * Results are validated against basic correctness requirements.
   * SUT requests 4 CPU and 16Gi RAM.
 
@@ -1760,7 +1762,7 @@ TPC-H Queries SF=3
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741664
+  * disk:850928
   * datadisk:39
   * volume_size:49G
   * volume_used:39M
@@ -1771,7 +1773,7 @@ TPC-H Queries SF=3
   * resources_total: 1.0 CPU, 1.0 GiB RAM requested in 1 pods
     * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
   * eval_parameters
-    * code:1793622540
+    * code:1793823612
 
 ### Reused Storage
 * loading skipped, loading times inherited from an earlier experiment: DatabaseService-1
@@ -1780,7 +1782,7 @@ TPC-H Queries SF=3
 * DatabaseService-1: loading values of the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
 
 ### SUT Container Restarts
-* bexhoma-sut-databaseservice-1-1793622540-558b9f99d5-fljn9: 0
+* bexhoma-sut-databaseservice-1-1793823612-c58bd6668-b9946: 0
 
 ### Workflow
 
@@ -1798,7 +1800,7 @@ TPC-H Queries SF=3
 
 |                     |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:--------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| DatabaseService-1-1 |                1 |    3 |       41.00 |           2.00 |           24.00 |          7.00 |            3.00 |              0 |           0 |             | None           |             0 | False         |              263.41 | True                |
+| DatabaseService-1-1 |                1 |    3 |      120.00 |           1.00 |           24.00 |         20.00 |           71.00 |              0 |           0 |             | None           |             0 | False         |               90.00 | True                |
 
 ### Benchmarking
 
@@ -1806,13 +1808,13 @@ TPC-H Queries SF=3
 
 | DBMS                      | configuration     | phase                 | job                     |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                       |
 |:--------------------------|:------------------|:----------------------|:------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:--------------------------|
-| databaseservice-1-1-1-1-1 | DatabaseService-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |          4 |            0.00 |          6109156.06 |          59400.00 |          -1 | databaseservice-1-1-1-1-1 |
+| databaseservice-1-1-1-1-1 | DatabaseService-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |         39 |            0.99 |            11369.80 |           6092.31 |          -1 | databaseservice-1-1-1-1-1 |
 
 #### Per Phase
 
 |                       | phase                 |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:----------------------|:----------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |          4 |            0.00 |          6109156.06 |          59400.00 |          -1 |
+| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               22 |                  22 |         39 |            0.99 |            11369.80 |           6092.31 |          -1 |
 
 #### Query Completion per Phase
 
@@ -1825,28 +1827,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   databaseservice-1-1-1-1-1 |
 |:----------------------------------------------------|----------------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |                       35.21 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |                        3.25 |
-| Shipping Priority (TPC-H Q3)                        |                        1.65 |
-| Order Priority Checking Query (TPC-H Q4)            |                        1.26 |
-| Local Supplier Volume (TPC-H Q5)                    |                        1.94 |
-| Forecasting Revenue Change (TPC-H Q6)               |                        1.16 |
-| Volume Shipping Query (TPC-H Q7)                    |                        1.78 |
-| National Market Share (TPC-H Q8)                    |                        2.31 |
-| Product Type Profit Measure (TPC-H Q9)              |                        1.67 |
-| Returned Item Reporting Query (TPC-H Q10)           |                        1.82 |
-| Important Stock Identification (TPC-H Q11)          |                        1.85 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |                        1.17 |
-| Customer Distribution (TPC-H Q13)                   |                        1.51 |
-| Promotion Effect Query (TPC-H Q14)                  |                        1.29 |
-| Top Supplier Query (TPC-H Q15)                      |                        1.09 |
-| Parts/Supplier Relationship (TPC-H Q16)             |                        1.06 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |                        1.23 |
-| Large Volume Customer (TPC-H Q18)                   |                        1.27 |
-| Discounted Revenue (TPC-H Q19)                      |                        1.50 |
-| Potential Part Promotion (TPC-H Q20)                |                        1.53 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                        1.59 |
-| Global Sales Opportunity Query (TPC-H Q22)          |                        1.49 |
+| Pricing Summary Report (TPC-H Q1)                   |                     2883.42 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                      841.24 |
+| Shipping Priority (TPC-H Q3)                        |                     1119.86 |
+| Order Priority Checking Query (TPC-H Q4)            |                     1277.09 |
+| Local Supplier Volume (TPC-H Q5)                    |                      872.84 |
+| Forecasting Revenue Change (TPC-H Q6)               |                      484.43 |
+| Volume Shipping Query (TPC-H Q7)                    |                     1073.97 |
+| National Market Share (TPC-H Q8)                    |                      565.58 |
+| Product Type Profit Measure (TPC-H Q9)              |                     1462.15 |
+| Returned Item Reporting Query (TPC-H Q10)           |                     1226.52 |
+| Important Stock Identification (TPC-H Q11)          |                      274.60 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                      971.60 |
+| Customer Distribution (TPC-H Q13)                   |                     2288.64 |
+| Promotion Effect Query (TPC-H Q14)                  |                      530.62 |
+| Top Supplier Query (TPC-H Q15)                      |                      605.64 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                      528.01 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                     1830.66 |
+| Large Volume Customer (TPC-H Q18)                   |                     9958.40 |
+| Discounted Revenue (TPC-H Q19)                      |                      929.11 |
+| Potential Part Promotion (TPC-H Q20)                |                      476.76 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                     1228.42 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                      196.47 |
 
 ### Errors (failed queries)
 
@@ -1860,23 +1862,9 @@ No warnings
 
 ### Benchmarking phase: component benchmarker
 
-| DBMS                    | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:------------------------|:-------------|----------:|---------------:|----------------------:|
-| databaseservice-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
-
-### Missing Monitoring Metrics
-* Memory Usage, Working Set [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Memory Usage incl. Page Cache [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU Utilization [CPUs] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU Throttling Rate [s/s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Utilization Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU Throttled Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU User Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU System Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Network Rx Total [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Network Tx Total [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+| DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------------|-------------:|----------:|---------------:|----------------------:|
+| databaseservice-1-1-1-1 |        16.37 |      0.58 |           0.37 |                  0.37 |
 
 ### Tests
 * TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: DatabaseService-1)
@@ -1884,9 +1872,9 @@ No warnings
 * TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
-* TEST skipped: Benchmarking phase: component benchmarker contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
-* TEST skipped: Monitoring metrics missing (phase shorter than scrape interval; series exists only while non-zero)
-* TEST failed: Geo Times [s] contains 0 or NaN
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: No monitoring metrics missing
+* TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
@@ -1897,5 +1885,3 @@ No warnings
 ```
 
 </details>
-
-

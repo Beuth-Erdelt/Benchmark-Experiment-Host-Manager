@@ -28,6 +28,9 @@ extensions = [
     #'m2r2',
 ]
 
+# Anchors for headings up to level 4, as GitHub creates them, so that links like Page.md#heading resolve
+myst_heading_anchors = 4
+
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'sphinx': ('https://www.sphinx-doc.org/en/master/', None),

@@ -25,7 +25,7 @@ prepare_logs
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -xdt                          disable result type checking
+# -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations

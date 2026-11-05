@@ -44,6 +44,7 @@ DBMS_DEFAULTS: dict[str, dict[str, str]] = {
         'docker': 'PgDuckDB', 'dialect': 'PostgreSQL',
         'jobtemplate_loading': 'jobtemplate-loading-tpch-PostgreSQL.yml',
         'storage_prefix': 'PgDuckDB', 'path_experiment_docker': 'PostgreSQL',
+        'refresh_template': 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml',
     },
     'MonetDB': {
         'docker': 'MonetDB', 'dialect': 'MonetDB',
@@ -61,6 +62,7 @@ DBMS_DEFAULTS: dict[str, dict[str, str]] = {
         'docker': 'MariaDBCS', 'dialect': 'MySQL',
         'jobtemplate_loading': 'jobtemplate-loading-tpch-MariaDB.yml',
         'storage_prefix': 'mariadbcs',
+        'refresh_template': 'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
     },
     'MySQL': {
         'docker': 'MySQL', 'dialect': 'MySQL',

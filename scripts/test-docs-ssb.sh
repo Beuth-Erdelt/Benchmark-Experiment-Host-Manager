@@ -759,6 +759,46 @@ bexhoma ssb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDB  sf=1"
 
 
+#### SSB Monitoring (Example-SSB.md)
+# SSB with monitoring: a scaling factor large enough that loading and benchmarking last more than a minute
+# -dbms PostgreSQL MonetDB ClickHouse DBMS under test
+# -sf 10                        scaling factor (lineorder has about 6 million rows per SF)
+# -xii                          create indexes after data load
+# -xic                          add primary and foreign keys after data load
+# -xis                          run statistics after data load
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms 1                         one DBMS at a time, so the metrics of one SUT are not disturbed by another
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 100Gi                    size of the persistent volume claim
+# -ks no                        remove the SUT at the end
+# -rnn/-rnl/-rnb $BEXHOMA_NODE_*      schedule SUT, loader and benchmarker pods on these nodes
+bexhoma ssb \
+  -dbms PostgreSQL MonetDB ClickHouse \
+  -sf 10 \
+  -xii \
+  -xic \
+  -xis \
+  -nlp 8 \
+  -m \
+  -mc \
+  -ms 1 \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 100Gi \
+  -ks no \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ssb_monitoring.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB monitoring  sf=10"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################

@@ -11,11 +11,10 @@
 --          elapsed time per statement on stdout; VERBOSE reports page/tuple
 --          counts as NOTICEs, which psql sends to stderr.
 --          bexhoma runs this script against the default database (postgres),
---          but HammerDB loads TPC-C into database tpcc (pg_dbase in
---          images/hammerdb/benchmarker/benchmarker.sh), so switch there first.
+--          which is also where HammerDB loads TPC-C (pg_dbase is
+--          $BEXHOMA_DATABASE in images/hammerdb/benchmarker/benchmarker.sh).
 --          No curly braces in this file: bexhoma may fill it with str.format().
 
-\connect tpcc
 \timing on
 
 -- step 1 (statistics)

@@ -155,6 +155,10 @@ def print_report(all_records: list[dict]) -> None:
             print(f"  {name}")
 
     referenced = {rec["logfile"] for rec in all_records}
+    # Pages also link logs outside <summary> blocks, e.g. "Result: <a ...>NAME.log</a>"
+    for md_file in DOCS_DIR.glob("*.md"):
+        referenced.update(re.findall(
+            r'<a [^>\n]*>([\w\-.\/]+\.log)</a>', md_file.read_text(encoding="utf-8")))
     unreferenced = sorted(
         p.name for p in LOGS_DIR.glob("*.log") if p.name not in referenced
     )

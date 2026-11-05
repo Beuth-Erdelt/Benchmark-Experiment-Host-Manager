@@ -81,7 +81,7 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -107,7 +107,7 @@ bexhoma tpcds `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -214,7 +214,7 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -241,7 +241,7 @@ bexhoma tpcds `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
@@ -354,7 +354,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Cockroach
 
 bexhoma ycsb `
   -dbms Redis                   <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records in millions) #> `
+  -sf 3                         <# scaling factor (number of records in millions) #> `
   -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
@@ -378,7 +378,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_redis_appmetrics.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Redis appmetrics  sf=1  nbp=1"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Redis appmetrics  sf=3  nbp=1"
 
 
 ####################################################

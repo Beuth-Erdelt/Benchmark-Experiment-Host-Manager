@@ -55,7 +55,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB scale  sf=16  nbp=1,2"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
 # -dbms PostgreSQL              DBMS under test
-# -sf 16                        scaling factor (number of warehouses)
+# -sf 48                        scaling factor (number of warehouses)
 # -xsd 5                        benchmark duration in minutes
 # -nlt 16                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
@@ -73,7 +73,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB scale  sf=16  nbp=1,2"
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma hammerdb \
   -dbms PostgreSQL \
-  -sf 16 \
+  -sf 48 \
   -xsd 5 \
   -nlt 16 \
   -nbp 1,2 \
@@ -89,7 +89,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB monitoring  sf=16  nbp=1,2"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB monitoring  sf=48  nbp=1,2"
 
 
 #### HammerDB Transaction Counter (Example-HammerDB.md)
@@ -180,7 +180,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB storage  sf=16  nbp=1  nc=2"
 
 #### HammerDB Keying and Thinking Time (Example-HammerDB.md)
 # -dbms PostgreSQL              DBMS under test
-# -sf 16                        scaling factor (number of warehouses)
+# -sf 32                        scaling factor (number of warehouses)
 # -xsd 20                       benchmark duration in minutes
 # -nc 2                         number of repeated runs per configuration
 # -ne 1                         parallel client counts to sweep (comma-separated)
@@ -203,7 +203,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB storage  sf=16  nbp=1  nc=2"
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma hammerdb \
   -dbms PostgreSQL \
-  -sf 16 \
+  -sf 32 \
   -xsd 20 \
   -nc 2 \
   -ne 1 \
@@ -224,7 +224,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_keytime.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB keytime  sf=16  nbp=1,2  nc=2"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB keytime  sf=32  nbp=1,2  nc=2"
 
 
 ###########################################

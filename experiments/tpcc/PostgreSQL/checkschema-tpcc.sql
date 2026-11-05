@@ -8,10 +8,8 @@
 --          TPC-C tables, and reports settings, vacuum/table statistics,
 --          table sizes and database session metadata.
 --          bexhoma runs this script against the default database (postgres),
---          but HammerDB loads TPC-C into database tpcc (pg_dbase in
---          images/hammerdb/generator/generator.sh), so switch there first.
-
-\connect tpcc
+--          which is also where HammerDB loads TPC-C (pg_dbase is
+--          $BEXHOMA_DATABASE in images/hammerdb/generator/generator.sh).
 
 CHECKPOINT;
 

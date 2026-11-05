@@ -6,7 +6,6 @@
 -- Purpose: Post-load statistics collection and InnoDB configuration reporting
 --          for the benchbase TPC-C schema on MySQL.
 
-USE benchbase;
 
 -- ANALYZE: Update table statistics for the optimizer
 ANALYZE TABLE customer;

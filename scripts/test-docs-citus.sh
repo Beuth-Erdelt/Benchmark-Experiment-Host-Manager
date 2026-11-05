@@ -16,12 +16,72 @@ source ./scripts/testfunctions.sh
 
 
 ####################################################
-#################### YCSB Citus ####################
+#### Main Example ##################################
 ####################################################
 
 
+# Main example: YCSB on Citus with 3 workers, quick, without monitoring
 # -dbms Citus                   DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 4                       throughput target as a multiple of the base ops/s
+# -xnlf 4                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -nw 3                         number of worker nodes in the cluster
+# -nwr 1                        number of worker node replicas
+# -nws 48                       number of shards per worker node
+# -xop 1                        number of operations for the benchmark phase (in millions)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 50Gi                     size of the persistent volume claim
+# -lr 64Gi                      RAM limit for the SUT and worker containers
+# -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
+bexhoma ycsb \
+  -dbms Citus \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -nw 3 \
+  -nwr 1 \
+  -nws 48 \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 50Gi \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  run &>$LOG_DIR/docs_ycsb_citus.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=1  nw=3"
+
+
+####################################################
+#### Monitoring ####################################
+####################################################
+
+
+# Monitoring: YCSB on Citus with 3 workers
+# -dbms Citus                   DBMS under test
+# -sf 5                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -46,9 +106,10 @@ source ./scripts/testfunctions.sh
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
 bexhoma ycsb \
   -dbms Citus \
-  -sf 1 \
+  -sf 5 \
   -xwl a \
   -xtb 16384 \
   -xnbf 4 \
@@ -70,11 +131,18 @@ bexhoma ycsb \
   -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_citus_1.log
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  run &>$LOG_DIR/docs_ycsb_citus_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=1  nbp=1"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=5  nbp=1"
 
+
+####################################################
+#### Persistent Storage ############################
+####################################################
+
+
+# Persistent storage: YCSB on Citus with 3 workers
 sleep 30
 
 
@@ -106,6 +174,7 @@ sleep 30
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
 bexhoma ycsb \
   -dbms Citus \
   -sf 1 \
@@ -132,17 +201,18 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_citus_2.log
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  run &>$LOG_DIR/docs_ycsb_citus_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
 
 
 ####################################################
-################## Benchbase Citus #################
+#### Benchbase TPC-C ###############################
 ####################################################
 
 
+# Benchbase TPC-C: simple
 # -dbms Citus                   DBMS under test
 # -sf 16                        scaling factor (controls database size)
 # -xsd 5                        benchmark duration in minutes
@@ -161,6 +231,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
 bexhoma benchbase \
   -dbms Citus \
   -sf 16 \
@@ -177,11 +248,13 @@ bexhoma benchbase \
   -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_benchbase_citus_1.log
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  run &>$LOG_DIR/docs_benchbase_citus.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus  sf=16  nbp=1,2"
 
+
+# Benchbase TPC-C: scaling the clients, on persistent storage
 sleep 30
 
 
@@ -207,6 +280,7 @@ sleep 30
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER_4  schedule worker pods on these nodes (joined by '+')
 bexhoma benchbase \
   -dbms Citus \
   -sf 128 \
@@ -227,12 +301,13 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_benchbase_citus_2.log
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  run &>$LOG_DIR/docs_benchbase_citus_scale.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2,4,8"
 
 
+# Benchbase TPC-C: realistic, with keying and thinking time
 # -dbms Citus                   DBMS under test
 # -sf 128                       scaling factor (controls database size)
 # -xsd 20                       benchmark duration in minutes
@@ -257,6 +332,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER_4  schedule worker pods on these nodes (joined by '+')
 # --set deployment[bexhoma-deployment-citus].container[dbms].max_connections=2000 raise coordinator connection limit above -nbt terminals
 # --set statefulset[bexhoma-worker].container[dbms].max_connections=2000 workers too: the coordinator's pool to each worker follows its max_connections
 bexhoma benchbase \
@@ -281,19 +357,20 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
   --set deployment[bexhoma-deployment-citus].container[dbms].max_connections=2000 \
   --set statefulset[bexhoma-worker].container[dbms].max_connections=2000 \
-  run &>$LOG_DIR/docs_benchbase_citus_3.log
+  run &>$LOG_DIR/docs_benchbase_citus_keytime.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus keytime  sf=128  nbp=1,2,5,10  nc=2"
 
 
 ####################################################
-################## HammerDB Citus ##################
+#### HammerDB TPC-C ################################
 ####################################################
 
 
+# HammerDB TPC-C: simple
 # -dbms Citus                   DBMS under test
 # -sf 16                        scaling factor (number of warehouses)
 # -nc 1                         number of repeated runs per configuration
@@ -313,6 +390,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus keytime  sf=128  nbp=1
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
 bexhoma hammerdb \
   -dbms Citus \
   -sf 16 \
@@ -330,11 +408,13 @@ bexhoma hammerdb \
   -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_hammerdb_citus_1.log
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  run &>$LOG_DIR/docs_hammerdb_citus.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus  sf=16  nbp=1"
 
+
+# HammerDB TPC-C: scaling the clients, on persistent storage
 sleep 30
 
 
@@ -363,6 +443,7 @@ sleep 30
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER_4  schedule worker pods on these nodes (joined by '+')
 bexhoma hammerdb \
   -dbms Citus \
   -sf 128 \
@@ -386,11 +467,13 @@ bexhoma hammerdb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_hammerdb_citus_2.log
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  run &>$LOG_DIR/docs_hammerdb_citus_scale.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus scale  sf=128  nbp=1,2,4,8"
 
+
+# HammerDB TPC-C: setup of the referenced paper
 sleep 30
 
 
@@ -419,6 +502,7 @@ sleep 30
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER_4  schedule worker pods on these nodes (joined by '+')
 bexhoma hammerdb \
   -dbms Citus \
   -sf 500 \
@@ -442,16 +526,18 @@ bexhoma hammerdb \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_hammerdb_citus_3.log
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  run &>$LOG_DIR/docs_hammerdb_citus_paper.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,5,10  nc=2"
 
 
 ####################################################
-#################### TPC-H Citus ###################
+#### TPC-H #########################################
 ####################################################
 
+
+# TPC-H: simple
 # -dbms Citus                   DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
 # -nc 1                         number of repeated runs per configuration
@@ -464,7 +550,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -xdt                          disable result type checking
+# -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
@@ -474,6 +560,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER_4  schedule worker pods on these nodes (joined by '+')
 bexhoma tpch \
   -dbms Citus \
   -sf 1 \
@@ -492,11 +579,13 @@ bexhoma tpch \
   -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_tpch_citus_1.log
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  run &>$LOG_DIR/docs_tpch_citus.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus  sf=1  nbp=1"
 
+
+# TPC-H: on persistent storage, with monitoring
 sleep 30
 
 
@@ -512,7 +601,7 @@ sleep 30
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -xdt                          disable result type checking
+# -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -526,6 +615,7 @@ sleep 30
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER_4  schedule worker pods on these nodes (joined by '+')
 bexhoma tpch \
   -dbms Citus \
   -sf 10 \
@@ -548,11 +638,13 @@ bexhoma tpch \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_tpch_citus_2.log
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  run &>$LOG_DIR/docs_tpch_citus_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus storage  sf=10  ne=1,1  nc=2"
 
+
+# TPC-H: columnar storage
 sleep 30
 
 
@@ -566,7 +658,7 @@ sleep 30
 # -nwr 1                        number of worker node replicas
 # -nws 48                       number of shards per worker node
 # -xcol                         use columnar storage for tables
-# -xdt                          disable result type checking
+# -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -580,6 +672,7 @@ sleep 30
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -rnw $BEXHOMA_NODES_WORKER_4  schedule worker pods on these nodes (joined by '+')
 bexhoma tpch \
   -dbms Citus \
   -sf 10 \
@@ -602,8 +695,8 @@ bexhoma tpch \
   -lr 64Gi \
   -rr 64Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_tpch_citus_3.log
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  run &>$LOG_DIR/docs_tpch_citus_columnar.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus columnar  sf=10  ne=1,1  nc=2"
 

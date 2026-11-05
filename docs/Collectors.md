@@ -425,6 +425,13 @@ collect.add_metadata(df)
 
 ---
 
+## Example Runs
+
+The runs of [Example: Testing Collectors](Example-Collectors.md) (Benchbase, TPC-H, YCSB and HammerDB on PostgreSQL, single tenant and multi-tenant) are the experiments these collectors evaluate.
+The page shows the summary of each run.
+
+---
+
 ## References
 
 [1] [Benchmarking Multi-Tenant Architectures in PostgreSQL](https://doi.org/10.48786/edbt.2026.46)  

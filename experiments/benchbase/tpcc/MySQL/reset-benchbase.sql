@@ -8,7 +8,6 @@
 --          -ar. ANALYZE TABLE refreshes optimizer statistics on every TPC-C
 --          table. Steps 2 (persist) and 3 (counters) follow in reset-flush.sh.
 
-USE benchbase;
 
 ANALYZE TABLE customer;
 ANALYZE TABLE district;

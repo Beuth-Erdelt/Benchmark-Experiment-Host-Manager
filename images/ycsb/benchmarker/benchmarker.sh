@@ -93,7 +93,12 @@ ROW_START=$(($YCSB_ROWS/$BEXHOMA_NUM_PODS*($BEXHOMA_CHILD-1)))
 # for benchmarking phase - workload D and E, we again insert 5% new rows
 ROWS_TO_INSERT=$(awk "BEGIN {print 0.05*$OPERATIONS_TOTAL}")
 ROW_PART_AFTER_LOADING=$(($ROWS_TO_INSERT/$BEXHOMA_NUM_PODS))
-ROW_START_AFTER_LOADING=$(($ROWS_TO_INSERT/$BEXHOMA_NUM_PODS*($BEXHOMA_CHILD-1)+$YCSB_ROWS))
+# The number of inserts of a pod is random (5% of the operations, binomially distributed), so a
+# pod may insert more than ROW_PART_AFTER_LOADING keys. The key ranges of neighbouring pods are
+# therefore spaced 25% wider than that, otherwise a pod running over its range collides with
+# the keys of the next pod (duplicate key errors).
+ROW_STRIDE_AFTER_LOADING=$(($ROW_PART_AFTER_LOADING+$ROW_PART_AFTER_LOADING/4+100))
+ROW_START_AFTER_LOADING=$(($ROW_STRIDE_AFTER_LOADING*($BEXHOMA_CHILD-1)+$YCSB_ROWS))
 # if new rows are to be inserted in benchmark, too
 ROWS_AFTER_BENCHMARK=$((ROW_START_AFTER_LOADING+ROW_PART_AFTER_LOADING))
 

@@ -5,7 +5,7 @@ import re
 md_directory = 'docs'
 logs_directory = 'logs_tests'
 
-"""
+r"""
 # Regular expression to match: <filename>.log\n```bash\n...``` blocks
 pattern = re.compile(r'(?P<logfile>[\w\-.\/]+\.log)\n```bash\n(.*?)\n```', re.DOTALL)
 

@@ -273,7 +273,7 @@ diset tpcc pg_superuserpass postgres
 diset tpcc pg_defaultdbase postgres
 diset tpcc pg_user $BEXHOMA_USER
 diset tpcc pg_pass $BEXHOMA_PASSWORD
-diset tpcc pg_dbase tpcc
+diset tpcc pg_dbase $BEXHOMA_DATABASE
 diset tpcc pg_driver timed
 diset tpcc pg_rampup $HAMMERDB_RAMPUP
 diset tpcc pg_duration $HAMMERDB_DURATION
@@ -366,6 +366,9 @@ echo "Start $SECONDS_START seconds"
 bexhoma_start_epoch=$(date -u +%s)
 
 ######################## Execute workload ###################
+# libpq (PostgreSQL, Citus) takes this as application_name, so the sessions show up
+# in the "Number of Active Application Sessions" metric; other DBMS ignore it
+export PGAPPNAME=hammerdb
 ./hammerdbcli auto benchmark.tcl
 
 ######################## End time measurement ###################

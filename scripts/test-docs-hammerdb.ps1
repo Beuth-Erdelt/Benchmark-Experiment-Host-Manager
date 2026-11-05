@@ -45,7 +45,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB scale  sf=
 #### HammerDB Monitoring (Example-HammerDB.md)
 bexhoma hammerdb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 16                        <# scaling factor (number of warehouses) #> `
+  -sf 48                        <# scaling factor (number of warehouses) #> `
   -xsd 5                        <# benchmark duration in minutes #> `
   -nlt 16                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
@@ -63,7 +63,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB monitoring  sf=16  nbp=1,2"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB monitoring  sf=48  nbp=1,2"
 
 
 #### HammerDB Transaction Counter (Example-HammerDB.md)
@@ -121,7 +121,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB storage  s
 #### HammerDB Keying and Thinking Time (Example-HammerDB.md)
 bexhoma hammerdb `
   -dbms PostgreSQL              <# DBMS under test #> `
-  -sf 16                        <# scaling factor (number of warehouses) #> `
+  -sf 32                        <# scaling factor (number of warehouses) #> `
   -xsd 20                       <# benchmark duration in minutes #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
@@ -144,7 +144,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_keytime.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB keytime  sf=16  nbp=1,2  nc=2"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB keytime  sf=32  nbp=1,2  nc=2"
 
 
 ###########################################

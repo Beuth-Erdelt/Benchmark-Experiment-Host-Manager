@@ -3,8 +3,8 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 2606s 
-* Code: 1793597333
+* Duration: 2438s 
+* Code: 1793799059
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
@@ -34,8 +34,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:685532
-  * datadisk:3304
+  * disk:795264
+  * datadisk:3281
   * volume_size:49G
   * volume_used:3.3G
   * cpu_list:0-223
@@ -46,15 +46,15 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793597333
+    * code:1793799059
 * postgresql-1-1-2-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:685336
-  * datadisk:12294
+  * disk:848775
+  * datadisk:13278
   * volume_size:49G
   * volume_used:13G
   * cpu_list:0-223
@@ -65,15 +65,15 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793597333
+    * code:1793799059
 * postgresql-1-2-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:685338
-  * datadisk:17437
+  * disk:856111
+  * datadisk:18135
   * volume_size:49G
   * volume_used:18G
   * cpu_list:0-223
@@ -84,15 +84,15 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793597333
+    * code:1793799059
 * postgresql-1-2-2-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:685340
-  * datadisk:18586
+  * disk:866690
+  * datadisk:19087
   * volume_size:49G
   * volume_used:19G
   * cpu_list:0-223
@@ -103,7 +103,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793597333
+    * code:1793799059
 
 ### Inherited Loading
 * loading skipped, loading times copied from an earlier repetition: PostgreSQL-1-2
@@ -112,8 +112,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * PostgreSQL-1: loading values of the volume: script=Schema, indexing=Checks
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1793597333-685f8df4b5-p5sfm: 0
-* bexhoma-sut-postgresql-1-1793597333-7c685844b7-slm6n: 0
+* bexhoma-sut-postgresql-1-1793799059-6dd44f589d-z2cc6: 0
+* bexhoma-sut-postgresql-1-1793799059-7949996b4f-ds5v2: 0
 
 ### Workflow
 
@@ -137,8 +137,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 |                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |   16 |       54.00 |           4.00 |            0.00 |         40.00 |           10.00 |              1 |          16 |             | None           |             0 | False         |             1066.67 | False               |
-| PostgreSQL-1-2 |                2 |   16 |       54.00 |           4.00 |            0.00 |         40.00 |           10.00 |              1 |          16 |             | None           |             0 | False         |             1066.67 | True                |
+| PostgreSQL-1-1 |                1 |   16 |       53.00 |           3.00 |            0.00 |         40.00 |           10.00 |              1 |          16 |             | None           |             0 | False         |             1086.79 | False               |
+| PostgreSQL-1-2 |                2 |   16 |       53.00 |           3.00 |            0.00 |         40.00 |           10.00 |              1 |          16 |             | None           |             0 | False         |             1086.79 | True                |
 
 ### Benchmarking
 
@@ -146,21 +146,21 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS                 | phase            | job                |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|-----------:|-----------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |       32 |        1 |               1 |       1 | 151852 | 348934 |         0.00 |          5 |        0 |       5.00 |       7.09 |
-| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |       16 |        2 |               1 |       1 |  91682 | 210893 |         0.00 |          5 |        0 |       2.98 |       3.70 |
-| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |       16 |        2 |               1 |       2 |  91650 | 210815 |         0.00 |          5 |        0 |       2.97 |       3.83 |
-| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |       32 |        1 |               1 |       1 |  85125 | 196144 |         0.00 |          5 |        0 |       3.29 |       4.50 |
-| postgresql-1-2-2-1-1 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |       16 |        2 |               1 |       1 |  59404 | 136887 |         0.00 |          5 |        0 |       3.04 |       3.99 |
-| postgresql-1-2-2-1-2 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |       16 |        2 |               1 |       2 |  59337 | 136770 |         0.00 |          5 |        0 |       2.97 |       3.81 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |       32 |        1 |               1 |       1 | 166968 | 384628 |         0.00 |          5 |        0 |       5.17 |       7.23 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |       16 |        2 |               1 |       1 |  86583 | 199199 |         0.00 |          5 |        0 |       2.96 |       3.81 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |       16 |        2 |               1 |       2 |  86542 | 199205 |         0.00 |          5 |        0 |       3.00 |       4.04 |
+| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |       32 |        1 |               1 |       1 |  70299 | 161824 |         0.00 |          5 |        0 |       2.88 |       3.82 |
+| postgresql-1-2-2-1-1 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |       16 |        2 |               1 |       1 |  58586 | 134678 |         0.00 |          5 |        0 |       2.89 |       3.67 |
+| postgresql-1-2-2-1-2 | postgresql-1-2-2 | postgresql-1-2-2-1 |                2 |       16 |        2 |               1 |       2 |  58534 | 134840 |         0.00 |          5 |        0 |       2.92 |       3.77 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
 |:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |       32 |        1 |               1 |           1 |       5.00 |       7.09 |         0.00 | 151852.00 | 348934.00 |          5 |        0 |
-| postgresql-1-1-2 | postgresql-1-1-2 |                1 |       32 |        2 |               1 |           2 |       2.98 |       3.83 |         0.00 |  91666.00 | 210854.00 |          5 |        0 |
-| postgresql-1-2-1 | postgresql-1-2-1 |                2 |       32 |        1 |               1 |           1 |       3.29 |       4.50 |         0.00 |  85125.00 | 196144.00 |          5 |        0 |
-| postgresql-1-2-2 | postgresql-1-2-2 |                2 |       32 |        2 |               1 |           2 |       3.04 |       3.99 |         0.00 |  59370.50 | 136828.50 |          5 |        0 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |       32 |        1 |               1 |           1 |       5.17 |       7.23 |         0.00 | 166968.00 | 384628.00 |          5 |        0 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |       32 |        2 |               1 |           2 |       3.00 |       4.04 |         0.00 |  86562.50 | 199202.00 |          5 |        0 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |       32 |        1 |               1 |           1 |       2.88 |       3.82 |         0.00 |  70299.00 | 161824.00 |          5 |        0 |
+| postgresql-1-2-2 | postgresql-1-2-2 |                2 |       32 |        2 |               1 |           2 |       2.92 |       3.77 |         0.00 |  58560.00 | 134759.00 |          5 |        0 |
 
 ### Monitoring
 
@@ -168,116 +168,61 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |        32.02 |      0.95 |           1.73 |                  2.45 |
-| postgresql-1-1-2-1 |        32.02 |      0.95 |           1.73 |                  2.45 |
+| postgresql-1-1-1-1 |        39.74 |      1.18 |           1.72 |                  2.43 |
+| postgresql-1-1-2-1 |        39.74 |      1.18 |           1.72 |                  2.43 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |       159.00 |      0.00 |           0.14 |                  0.14 |
-| postgresql-1-1-2-1 |       159.00 |      0.00 |           0.14 |                  0.14 |
+| postgresql-1-1-1-1 |       193.04 |      6.12 |           0.14 |                  0.14 |
+| postgresql-1-1-2-1 |       193.04 |      6.12 |           0.14 |                  0.14 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |      8197.05 |     21.81 |           4.88 |                  8.72 |
-| postgresql-1-1-2-1 |     10721.98 |     26.58 |           7.05 |                 12.22 |
-| postgresql-1-2-1-1 |     10528.49 |     26.53 |           4.32 |                  7.04 |
-| postgresql-1-2-2-1 |     11474.23 |     28.95 |           7.44 |                 13.10 |
+| postgresql-1-1-1-1 |      7363.63 |     20.99 |           5.14 |                  9.25 |
+| postgresql-1-1-2-1 |     11141.99 |     26.98 |           7.24 |                 12.56 |
+| postgresql-1-2-1-1 |     11593.31 |     28.57 |           4.20 |                  6.74 |
+| postgresql-1-2-2-1 |     11941.30 |     29.20 |           6.27 |                 10.85 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |       759.99 |      2.19 |           0.43 |                  0.43 |
-| postgresql-1-1-2-1 |       450.04 |      1.12 |           0.23 |                  0.23 |
-| postgresql-1-2-1-1 |       423.13 |      1.10 |           0.42 |                  0.42 |
-| postgresql-1-2-2-1 |       341.26 |      1.02 |           0.20 |                  0.21 |
+| postgresql-1-1-1-1 |       731.04 |      2.16 |           0.49 |                  0.49 |
+| postgresql-1-1-2-1 |       400.59 |      1.05 |           0.20 |                  0.21 |
+| postgresql-1-2-1-1 |       262.16 |      0.73 |           0.40 |                  0.40 |
+| postgresql-1-2-2-1 |       281.62 |      0.74 |           0.20 |                  0.20 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* Number of Active Application Sessions [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
-* Index Scan Count [scans] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
-* Index Tuple Fetch Count [rows] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
-* Index Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
-* Table Buffer Hits [blocks] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
-* Table Blocks Read outside Shared Buffers [blocks] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
-* Table Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
-* Total Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
-* Autoanalyze Run Count for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
-* Autovacuum Run Count for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
-* Dead Tuples, Estimated [rows] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
 * CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * Active Backends Waiting on I/O [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * Active Backends Waiting on WAL [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * Active Backends Waiting on Locks [sessions] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * Max Transaction Duration (I/O Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * Max Transaction Duration (WAL Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * Max Transaction Duration (Lock Wait) [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
-* Index Scan Count [scans] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
-* Index Tuple Fetch Count [rows] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
-* Index Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
-* Table Buffer Hits [blocks] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
-* Table Blocks Read outside Shared Buffers [blocks] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
-* Table Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
-* Total Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
-* Autoanalyze Run Count for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
-* Autovacuum Run Count for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
-* Dead Tuples, Estimated [rows] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log)
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
-* Number of Active Application Sessions [sessions] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
-* Index Scan Count [scans] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
-* Index Tuple Fetch Count [rows] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
-* Index Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
-* Table Buffer Hits [blocks] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
-* Table Blocks Read outside Shared Buffers [blocks] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
-* Table Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
-* Total Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
-* Autoanalyze Run Count for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
-* Autovacuum Run Count for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
-* Dead Tuples, Estimated [rows] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log)
 * CPU Throttling Rate [s/s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
-* Number of Active Application Sessions [sessions] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log)
-* Index Scan Count [scans] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log)
-* Index Tuple Fetch Count [rows] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log)
-* Index Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log)
-* Table Buffer Hits [blocks] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log)
-* Table Blocks Read outside Shared Buffers [blocks] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log)
-* Table Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log)
-* Total Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log)
-* Autoanalyze Run Count for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log)
-* Dead Tuples, Estimated [rows] for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log)
-* Autovacuum Run Count for connection postgresql-1-2-1-1 (bexhoma-metrics-postgresql-1-2-1-1-benchmarking.log)
 * CPU Throttling Rate [s/s] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
-* Number of Active Application Sessions [sessions] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log)
-* Index Scan Count [scans] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log)
-* Index Tuple Fetch Count [rows] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log)
-* Index Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log)
-* Table Buffer Hits [blocks] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log)
-* Table Blocks Read outside Shared Buffers [blocks] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log)
-* Table Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log)
-* Total Cache Hit Ratio since Stats Reset [0..1] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log)
-* Autoanalyze Run Count for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log)
-* Autovacuum Run Count for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log)
-* Dead Tuples, Estimated [rows] for connection postgresql-1-2-2-1 (bexhoma-metrics-postgresql-1-2-2-1-benchmarking.log)
 
 ### Application Metrics
 
@@ -285,17 +230,17 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
 |:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
-| postgresql-1-1-1-1 |                                18.00 |                                                0.00 |                                                        0.00 |                                  10.00 |                                               1.00 |
-| postgresql-1-1-2-1 |                                18.00 |                                                0.00 |                                                        0.00 |                                  10.00 |                                               1.00 |
+| postgresql-1-1-1-1 |                                18.00 |                                                0.00 |                                                        0.00 |                                   8.00 |                                               8.00 |
+| postgresql-1-1-2-1 |                                18.00 |                                                0.00 |                                                        0.00 |                                   8.00 |                                               8.00 |
 
 #### Benchmarking phase: SUT deployment
 
 | DBMS               |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
 |:-------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
-| postgresql-1-1-1-1 |                                11.00 |                                                0.00 |                                                        0.00 |                                  32.00 |                                               0.00 |
-| postgresql-1-1-2-1 |                                12.00 |                                                0.00 |                                                        0.00 |                                  32.00 |                                               0.00 |
-| postgresql-1-2-1-1 |                                 9.00 |                                                0.00 |                                                        0.00 |                                  32.00 |                                               0.00 |
-| postgresql-1-2-2-1 |                                15.00 |                                                0.00 |                                                        0.00 |                                  32.00 |                                               0.00 |
+| postgresql-1-1-1-1 |                                11.00 |                                                0.00 |                                                        0.00 |                                  32.00 |                                              32.00 |
+| postgresql-1-1-2-1 |                                11.00 |                                                0.00 |                                                        0.00 |                                  32.00 |                                              32.00 |
+| postgresql-1-2-1-1 |                                10.00 |                                                0.00 |                                                        0.00 |                                  32.00 |                                              32.00 |
+| postgresql-1-2-2-1 |                                 9.00 |                                                0.00 |                                                        0.00 |                                  32.00 |                                              32.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -307,7 +252,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
-* TEST failed: Monitoring metrics missing
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: NOPM contains no 0 or NaN
 * TEST skipped: efficiency (not computed: needs key-and-think time (-xkey))
 * TEST passed: Workflow as planned

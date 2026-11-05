@@ -74,15 +74,54 @@ Wait-BexhomaProcess "ycsb"
 
 
 
-################################################
-################## YugaByteDB ##################
-################################################
+####################################################
+#### Main Example ##################################
+####################################################
 
 
 # install YugabyteDB
 Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
+Start-Sleep -Seconds 30
 
-#### YCSB Ingestion (Example-YugaByteDB.md)
+# Main example: YCSB on YugabyteDB, quick, without monitoring
+bexhoma ycsb `
+  -dbms YugabyteDB              <# DBMS under test #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
+  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
+  -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
+  -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB  sf=1  nbp=1"
+
+# remove YugabyteDB installation
+Remove-YugabyteDB -RemovePVC "no"
+Start-Sleep -Seconds 30
+
+
+####################################################
+#### Monitoring ####################################
+####################################################
+
+
+# install YugabyteDB
+Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
+Start-Sleep -Seconds 30
+
+# Monitoring: YCSB on YugabyteDB
 bexhoma ycsb `
   -dbms YugabyteDB              <# DBMS under test #> `
   -sf 1                         <# scaling factor (number of records in millions) #> `
@@ -104,11 +143,11 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_monitoring.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB ingestion  sf=1  nbp=1"
 
-#### YCSB Execution (Example-YugaByteDB.md)
+# Execution only (-sl): on the data loaded by the monitoring run before (same installation)
 bexhoma ycsb `
   -dbms YugabyteDB              <# DBMS under test #> `
   -sf 1                         <# scaling factor (number of records in millions) #> `
@@ -131,20 +170,58 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_execution.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
-
 
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
 Start-Sleep -Seconds 30
 
+
 # install YugabyteDB
 Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
 Start-Sleep -Seconds 30
 
-#### YCSB Dummy Persistent Storage (Example-YugaByteDB.md)
+# Application metrics: YCSB on YugabyteDB
+bexhoma ycsb `
+  -dbms YugabyteDB              <# DBMS under test #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
+  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
+  -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
+  -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod #> `
+  -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ma                           <# collect application-level metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_appmetrics.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
+
+# remove YugabyteDB installation
+Remove-YugabyteDB -RemovePVC "no"
+Start-Sleep -Seconds 30
+
+
+####################################################
+#### Persistent Storage ############################
+####################################################
+
+
+# install YugabyteDB
+Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
+Start-Sleep -Seconds 30
+
+# Persistent storage: status volume of bexhoma (YugabyteDB itself is ephemeral)
 bexhoma ycsb `
   -dbms YugabyteDB              <# DBMS under test #> `
   -sf 1                         <# scaling factor (number of records in millions) #> `
@@ -169,21 +246,25 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_storage.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
-
 
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
 Start-Sleep -Seconds 30
 
+
+####################################################
+#### Benchbase TPC-C ###############################
+####################################################
+
+
 # install YugabyteDB
 Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
 Start-Sleep -Seconds 30
 
-
-#### Benchbase Simple (Example-YugaByteDB.md)
+# Benchbase TPC-C: simple
 bexhoma benchbase `
   -dbms YugabyteDB              <# DBMS under test #> `
   -sf 16                        <# scaling factor (controls database size) #> `
@@ -199,21 +280,20 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_yugabytedb_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_yugabytedb.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB simple  sf=16  nbp=1,2"
-
 
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
 Start-Sleep -Seconds 30
 
+
 # install YugabyteDB
 Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
 Start-Sleep -Seconds 30
 
-
-#### Benchbase More Complex (Example-YugaByteDB.md)
+# Benchbase TPC-C: realistic, with keying and thinking time
 bexhoma benchbase `
   -dbms YugabyteDB              <# DBMS under test #> `
   -sf 128                       <# scaling factor (controls database size) #> `
@@ -231,58 +311,20 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_yugabytedb_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_yugabytedb_keytime.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
 
-
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
-
-
-################################################
-######## YugaByteDB Application Metrics ########
-################################################
+Start-Sleep -Seconds 30
 
 
 # install YugabyteDB
 Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
 Start-Sleep -Seconds 30
 
-bexhoma ycsb `
-  -dbms YugabyteDB              <# DBMS under test #> `
-  -sf 1                         <# scaling factor (number of records in millions) #> `
-  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
-  -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
-  -xnbf 4                       <# benchmarking throughput target as a multiple of the base ops/s #> `
-  -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `
-  -nc 1                         <# number of repeated runs per configuration #> `
-  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-  -nlp 8                        <# number of data loader pods #> `
-  -nlt 64                       <# threads per loader pod #> `
-  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
-  -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
-  -m                            <# collect SUT resource metrics #> `
-  -ma                           <# collect application-level metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_appmetrics.log" -Encoding utf8
-
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
-
-
-# remove YugabyteDB installation
-Remove-YugabyteDB -RemovePVC "no"
-
-
-# install YugabyteDB
-Install-YugabyteDB -Persistent "no" -Nodes $BEXHOMA_NODES_WORKER
-Start-Sleep -Seconds 30
-
-
-#### Benchbase Application Metrics (Example-YugaByteDB.md)
+# Benchbase TPC-C: application metrics
 bexhoma benchbase `
   -dbms YugabyteDB              <# DBMS under test #> `
   -sf 16                        <# scaling factor (controls database size) #> `
@@ -300,9 +342,10 @@ bexhoma benchbase `
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
 
-
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
+Start-Sleep -Seconds 30
+
 
 
 ###########################################

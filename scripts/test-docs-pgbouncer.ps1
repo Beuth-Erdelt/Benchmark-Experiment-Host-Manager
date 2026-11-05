@@ -15,12 +15,48 @@
 
 
 ####################################################
-################## YCSB PGBouncer ##################
+#### Main Example ##################################
 ####################################################
 
 
+# Main example: YCSB on PostgreSQL with PGBouncer, quick, without monitoring
+bexhoma ycsb `
+  -dbms PGBouncer               <# DBMS under test #> `
+  -sf 1                         <# scaling factor (number of records in millions) #> `
+  -xwl c                        <# YCSB workload template (c = 100% read) #> `
+  -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
+  -xnbf 11                      <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnlf 11                      <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlp 16                       <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp 16                       <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 128                      <# threads per benchmarking pod #> `
+  -xnpp 4                       <# number of PGBouncer pool instances #> `
+  -xnpi 128                     <# pool size (incoming connections) #> `
+  -xnpo 64                      <# pool size (outgoing connections) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 80Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnp $BEXHOMA_NODE_LOAD       <# schedule pooling pods on this node (same as loaders) #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=1"
 
 
+####################################################
+#### Monitoring ####################################
+####################################################
+
+
+# Monitoring: YCSB on PostgreSQL with PGBouncer
 bexhoma ycsb `
   -dbms PGBouncer               <# DBMS under test #> `
   -sf 32                        <# scaling factor (number of records in millions) #> `
@@ -49,11 +85,20 @@ bexhoma ycsb `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnp $BEXHOMA_NODE_LOAD       <# schedule pooling pods on this node (same as loaders) #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_monitoring.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=32  nbp=16"
 
 
+# Application metrics (-ma): run in scripts/test-docs-appmetrics.ps1, logs docs_ycsb_pgbouncer_appmetrics.log and docs_benchbase_pgbouncer_appmetrics.log
+
+
+####################################################
+#### Persistent Storage ############################
+####################################################
+
+
+# Persistent storage: YCSB on PostgreSQL with PGBouncer
 bexhoma ycsb `
   -dbms PGBouncer               <# DBMS under test #> `
   -sf 16                        <# scaling factor (number of records in millions) #> `
@@ -83,16 +128,17 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_storage.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer storage  sf=16  nbp=16  nc=2"
 
 
 ####################################################
-############### Benchbase PGBouncer ################
+#### Benchbase TPC-C ###############################
 ####################################################
 
 
+# Benchbase TPC-C: new connection per transaction
 bexhoma benchbase `
   -dbms PostgreSQL              <# DBMS under test #> `
   -sf 16                        <# scaling factor (controls database size) #> `
@@ -113,7 +159,7 @@ bexhoma benchbase `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase new-connection PostgreSQL  sf=16  nbp=1,2"
 
 
-#### Benchbase PGBouncer (Example-PGBouncer.md)
+# Benchbase TPC-C: new connection per transaction, via the pool
 bexhoma benchbase `
   -dbms PGBouncer               <# DBMS under test #> `
   -sf 16                        <# scaling factor (controls database size) #> `

@@ -1,0 +1,313 @@
+#!/bin/bash
+# Generates documentation summaries for TiDB experiments.
+#
+# Runs a parameterised sequence of bexhoma experiments, waits for each to
+# complete, writes logs, and extracts summaries into separate files.
+#
+# Author: Patrick K. Erdelt
+# Copyright (C) 2020 Patrick K. Erdelt
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# See LICENSE for details.
+
+
+source ./scripts/testfunctions.sh
+
+
+
+
+####################################################
+#### Main Example ##################################
+####################################################
+
+
+# Main example: YCSB on TiDB, quick, without monitoring
+# -dbms TiDB                    DBMS under test
+# -sf 1                         scaling factor (number of records in millions)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -xnlf 1                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -xnsr 3                       number of TiDB server (SQL frontend) replicas
+# -nw 3                         number of worker nodes in the cluster
+# -xnpd 3                       number of PD (Placement Driver) nodes
+# -nwr 3                        number of worker node replicas
+# -xop 1                        number of operations for the benchmark phase (in millions)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
+bexhoma ycsb \
+  -dbms TiDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 1 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xnsr 3 \
+  -nw 3 \
+  -xnpd 3 \
+  -nwr 3 \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
+  run &>$LOG_DIR/docs_ycsb_tidb.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
+
+
+####################################################
+#### Monitoring ####################################
+####################################################
+
+
+# Monitoring: YCSB on TiDB
+# -dbms TiDB                    DBMS under test
+# -sf 1                         scaling factor (number of records in millions)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -xnlf 1                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -xnsr 3                       number of TiDB server (SQL frontend) replicas
+# -nw 3                         number of worker nodes in the cluster
+# -xnpd 3                       number of PD (Placement Driver) nodes
+# -nwr 3                        number of worker node replicas
+# -xop 1                        number of operations for the benchmark phase (in millions)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
+bexhoma ycsb \
+  -dbms TiDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 1 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xnsr 3 \
+  -nw 3 \
+  -xnpd 3 \
+  -nwr 3 \
+  -xop 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
+  run &>$LOG_DIR/docs_ycsb_tidb_monitoring.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
+
+
+# Application metrics (-ma): run in scripts/test-docs-appmetrics.sh, logs docs_ycsb_tidb_appmetrics.log and docs_benchbase_tidb_appmetrics.log
+
+
+####################################################
+#### Persistent Storage ############################
+####################################################
+
+
+# Persistent storage: YCSB on TiDB
+# -dbms TiDB                    DBMS under test
+# -sf 1                         scaling factor (number of records in millions)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 1                       throughput target as a multiple of the base ops/s
+# -xnlf 1                       loading throughput target as a multiple of the base ops/s
+# -nc 2                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -xnsr 3                       number of TiDB server (SQL frontend) replicas
+# -nw 3                         number of worker nodes in the cluster
+# -xnpd 3                       number of PD (Placement Driver) nodes
+# -nwr 3                        number of worker node replicas
+# -xop 1                        number of operations for the benchmark phase (in millions)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete and recreate the PVC at experiment start
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes (PD and TiKV)
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
+bexhoma ycsb \
+  -dbms TiDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 1 \
+  -nc 2 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xnsr 3 \
+  -nw 3 \
+  -xnpd 3 \
+  -nwr 3 \
+  -xop 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnw $BEXHOMA_NODES_WORKER \
+  run &>$LOG_DIR/docs_ycsb_tidb_storage.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB storage  sf=1  nbp=1  nc=2"
+
+
+####################################################
+#### Benchbase TPC-C ###############################
+####################################################
+
+
+# Benchbase TPC-C: simple
+# -dbms TiDB                    DBMS under test
+# -sf 16                        scaling factor (controls database size)
+# -xsd 5                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 16                      throughput target as a multiple of the base ops/s
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod
+# -xnsr 3                       number of TiDB server (SQL frontend) replicas
+# -nw 3                         number of worker nodes in the cluster
+# -xnpd 3                       number of PD (Placement Driver) nodes
+# -nwr 3                        number of worker node replicas
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
+bexhoma benchbase \
+  -dbms TiDB \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -xnsr 3 \
+  -nw 3 \
+  -xnpd 3 \
+  -nwr 3 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
+  run &>$LOG_DIR/docs_benchbase_tidb.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
+
+
+# Benchbase TPC-C: on persistent storage
+# -dbms TiDB                    DBMS under test
+# -sf 16                        scaling factor (controls database size)
+# -xsd 5                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 16                      throughput target as a multiple of the base ops/s
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod
+# -nc 2                         number of repeated runs per configuration (2nd reuses the volumes)
+# -xnsr 3                       number of TiDB server (SQL frontend) replicas
+# -nw 3                         number of worker nodes in the cluster
+# -xnpd 3                       number of PD (Placement Driver) nodes
+# -nwr 3                        number of worker node replicas
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rsr                        delete any existing PVC for the SUT before starting
+# -rst nvme                     storage class for persistent volumes (PD and TiKV)
+# -rss 50Gi                     size of the persistent volume claim
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
+bexhoma benchbase \
+  -dbms TiDB \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -nc 2 \
+  -xnsr 3 \
+  -nw 3 \
+  -xnpd 3 \
+  -nwr 3 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
+  run &>$LOG_DIR/docs_benchbase_tidb_storage.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2  nc=2  nvme"
+
+
+###########################################
+############## Clean Folder ###############
+###########################################
+
+
+clean_logs

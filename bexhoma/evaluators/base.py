@@ -787,7 +787,9 @@ class EvaluatorBase:
             df['SF'] = pd.to_numeric(df['loading_parameters_SF'], errors='coerce').fillna(default_sf)
         else:
             df['SF'] = default_sf
-        df_load = df['time_load'].copy()
+        # a run that skipped loading (-sl) has no load time: no throughput, not a division by zero
+        df_load = pd.to_numeric(df['time_load'], errors='coerce').astype(float)
+        df_load = df_load.where(df_load > 0)
         df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
         df['Throughput [SF/h]'] = df_tpx
         selected_cols = [
@@ -816,7 +818,8 @@ class EvaluatorBase:
         df = df.groupby(['code', 'configuration', 'experiment_run']).max()
         df = df.reset_index()
         df.index = df['configuration'].astype(str) + "-" + df['experiment_run'].astype(str)
-        df_load = df['time_load'].copy()
+        df_load = pd.to_numeric(df['time_load'], errors='coerce').astype(float)
+        df_load = df_load.where(df_load > 0)
         df_tpx = (df['SF'] * 3600.0) / df_load.sort_index()
         df['Throughput [SF/h]'] = df_tpx
         df.drop('connection', axis=1, inplace=True, errors='ignore')
@@ -904,7 +907,8 @@ class EvaluatorBase:
                     df['configuration'].astype(str) + "-" +
                     df['experiment_run'].astype(str) + "-" +
                     df['tenant_id'].astype(str))
-        df_load = df['time_load'].copy()
+        df_load = pd.to_numeric(df['time_load'], errors='coerce').astype(float)
+        df_load = df_load.where(df_load > 0)
         df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
         df['Throughput [SF/h]'] = df_tpx
         df.drop('connection', axis=1, inplace=True, errors='ignore')

@@ -69,7 +69,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_databaseservice_1.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService ingestion  sf=1  nbp=1"
 
@@ -116,7 +116,7 @@ bexhoma ycsb \
   -sl \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_databaseservice_2.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice_monitoring.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService execution skip-load  sf=1  nbp=1"
 
@@ -179,7 +179,7 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_databaseservice_3.log
+  run &>$LOG_DIR/docs_ycsb_databaseservice_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService storage  sf=5  nbp=1"
 
@@ -227,7 +227,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_benchbase_databaseservice_1.log
+  run &>$LOG_DIR/docs_benchbase_databaseservice.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DatabaseService  sf=16  nbp=1,2"
 
@@ -257,7 +257,7 @@ bexhoma benchbase \
   -sl \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_benchbase_databaseservice_2.log
+  run &>$LOG_DIR/docs_benchbase_databaseservice_execution.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
 
@@ -281,7 +281,7 @@ kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 sleep 10
 
 
-#### TCP-H Monitoring (Example-CloudDatabase.md) — no PVC
+#### TPC-H Monitoring (Example-CloudDatabase.md) — no PVC
 # -dbms DatabaseService         DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
@@ -289,7 +289,7 @@ sleep 10
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -xdt                          disable result type checking
+# -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -311,12 +311,12 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_tpch_databaseservice_1.log
+  run &>$LOG_DIR/docs_tpch_databaseservice.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService  sf=3"
 
 
-#### TCP-H Monitoring (Example-TPC-H.md) — no PVC, skip loading
+#### TPC-H Monitoring (Example-CloudDatabase.md) — no PVC, skip loading
 # -dbms DatabaseService         DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
@@ -324,7 +324,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService  sf=3"
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -xdt                          disable result type checking
+# -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -348,7 +348,7 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_tpch_databaseservice_2.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_execution.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService skip-load  sf=3"
 
@@ -365,7 +365,7 @@ kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 sleep 10
 
 
-#### TCP-H Monitoring (Example-TPC-H.md) — with PVC, ingestion
+#### TPC-H Monitoring (Example-CloudDatabase.md) — with PVC, ingestion
 # -dbms DatabaseService         DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
@@ -373,7 +373,7 @@ sleep 10
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -xdt                          disable result type checking
+# -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -401,12 +401,12 @@ bexhoma tpch \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_tpch_databaseservice_3.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC ingestion  sf=3"
 
 
-#### TCP-H Monitoring (Example-TPC-H.md) — with PVC, execution only
+#### TPC-H Monitoring (Example-CloudDatabase.md) — with PVC, execution only
 # -dbms DatabaseService         DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods
@@ -414,7 +414,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC ingestion  s
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -xdt                          disable result type checking
+# -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -440,7 +440,7 @@ bexhoma tpch \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_tpch_databaseservice_4.log
+  run &>$LOG_DIR/docs_tpch_databaseservice_storage_execution.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC execution  sf=3"
 

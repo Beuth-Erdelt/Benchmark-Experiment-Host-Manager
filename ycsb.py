@@ -767,9 +767,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     config = configurations.default(experiment=experiment, docker='Redis', alias='DBMS KV', worker=num_worker_inc_replicas)
                     # With -ar: SAVE snapshot and CONFIG RESETSTAT before each round
                     config.set_benchmark_resetscript(['save-snapshot.sh'])
-                    config.monitoring_sut = False # should not be monitored since only dummy
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-RedisCluster.yml"
+                        config.monitoring_sut = False # should not be monitored since only dummy
                         BEXHOMA_DBMS_TYPE = "redis-cluster"
                         config.set_sut_role('placeholder') # data lives in the worker StatefulSet
                         config.set_script_target('workers') # shell scripts run on every cluster node
@@ -827,9 +827,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     config = configurations.default(experiment=experiment, docker='Valkey', alias='DBMS KV', worker=num_worker_inc_replicas)
                     # With -ar: SAVE snapshot and CONFIG RESETSTAT before each round
                     config.set_benchmark_resetscript(['save-snapshot.sh'])
-                    config.monitoring_sut = False # should not be monitored since only dummy
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-ValkeyCluster.yml"
+                        config.monitoring_sut = False # should not be monitored since only dummy
                         BEXHOMA_DBMS_TYPE = "redis-cluster"
                         config.set_sut_role('placeholder') # data lives in the worker StatefulSet
                         config.set_script_target('workers') # shell scripts run on every cluster node
@@ -887,9 +887,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     config = configurations.default(experiment=experiment, docker='Garnet', alias='DBMS KV', worker=num_worker_inc_replicas)
                     # With -ar: SAVE (checkpoint) before each round; Garnet has no resettable counters
                     config.set_benchmark_resetscript(['save-snapshot.sh'])
-                    config.monitoring_sut = False # should not be monitored since only dummy
                     if num_worker > 0:
                         config.sut_template = "deploymenttemplate-GarnetCluster.yml"
+                        config.monitoring_sut = False # should not be monitored since only dummy
                         BEXHOMA_DBMS_TYPE = "redis-cluster"
                         config.set_sut_role('placeholder') # data lives in the worker StatefulSet
                         config.set_script_target('workers') # shell scripts run on every cluster node

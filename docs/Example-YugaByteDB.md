@@ -1,21 +1,19 @@
 # Example: Benchmark YugabyteDB
 
+This example shows how to benchmark YugabyteDB with YCSB and Benchbase's TPC-C.
 This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that is not managed by bexhoma, but exists in the Kubernetes cluster in the same namespace**.
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
+[YugabyteDB](https://www.yugabyte.com/) is a distributed, PostgreSQL-compatible DBMS.
+It consists of master and tablet-server (tserver) components, both deployed as stateful sets by its own Helm chart.
 Important implications of this:
 * Bexhoma does neither start nor stop the DBMS.
 * There can only be one DBMS in the cluster at the same time.
 * Bexhoma does not know what resides inside of the database.
 * Bexhoma still can monitor all components of the experiment, including the DBMS itself.
 
-In order to be fully functional, bexhoma installs an instance of PostgreSQL, that does nothing (a container with psql would be enough).
-Bexhoma writes infos about the status of the experiment to this "SUT" pod to mimick it has access to the DBMS.
-Moreover the container is used to install a schema to YugabyteDB via psql.
-
-All metrics in monitoring are summed across all matching components.
-In this example, this means that used memory, CPU time, etc. are summed across all 3 nodes of the YugabyteDB cluster.
+Bexhoma deploys a placeholder pod as the "SUT", which carries the status of the experiment and installs the schema to YugabyteDB via `psql`.
 
 **The results are not official benchmark results.
 Exact performance depends on a number of parameters.
@@ -23,58 +21,64 @@ You may get different results.
 These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
 
 References:
-1. YugabyteDB YCSB: https://docs.yugabyte.com/preview/benchmark/ycsb-jdbc/
-1. YCSB Repository: https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload
-1. Benchmarking cloud serving systems with YCSB: https://dl.acm.org/doi/10.1145/1807128.1807152
-1. Benchbase Repository: https://github.com/cmu-db/benchbase/wiki/TPC-C
-1. OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases: http://www.vldb.org/pvldb/vol7/p277-difallah.pdf
-1. Orchestrating DBMS Benchmarking in the Cloud with Kubernetes: https://doi.org/10.1007/978-3-030-94437-7_6
-1. A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools: https://doi.org/10.1007/978-3-031-68031-1_9
+1. [YugabyteDB](https://www.yugabyte.com/)
+1. [YugabyteDB YCSB](https://docs.yugabyte.com/preview/benchmark/ycsb-jdbc/)
+1. [YugabyteDB Helm chart](https://docs.yugabyte.com/stable/deploy/kubernetes/single-zone/oss/helm-chart/)
+1. [YCSB Repository](https://github.com/brianfrankcooper/YCSB/wiki/Running-a-Workload)
+1. [Benchmarking cloud serving systems with YCSB](https://dl.acm.org/doi/10.1145/1807128.1807152)
+1. [Orchestrating DBMS Benchmarking in the Cloud with Kubernetes](https://doi.org/10.1007/978-3-030-94437-7_6)
+1. [A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools](https://doi.org/10.1007/978-3-031-68031-1_9)
+1. [Benchbase Repository](https://github.com/cmu-db/benchbase/wiki/TPC-C)
+1. [OLTP-Bench: An Extensible Testbed for Benchmarking Relational Databases](http://www.vldb.org/pvldb/vol7/p277-difallah.pdf)
+1. Test script of this page: [test-docs-yugabytedb.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-yugabytedb.sh), [test-docs-yugabytedb.ps1](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-yugabytedb.ps1)
 
-## Install YugabyteDB
 
-Get the helm chart and follow the instructions: https://docs.yugabyte.com/stable/deploy/kubernetes/single-zone/oss/helm-chart/
+## Perform YCSB Benchmark
 
-This will deploy master and tserver worker.
+### Prerequisites: Install YugabyteDB
+
+Get the Helm chart and follow the [instructions](https://docs.yugabyte.com/stable/deploy/kubernetes/single-zone/oss/helm-chart/).
+
+This will deploy master and tserver pods.
 The master pods manage table metadata and keep track of which nodes store which data.
 They handle automatic sharding and tablet distribution and manage Raft-based leader election for tablets (shards).
 The number of master pods is 3 or 5 typically.
-The tserver worker store the actual data (tablets) and execute SQL queries via the YSQL or YCQL API.
-The number of tserver depends on the size of the data and the cluster.
+The tserver pods store the actual data (tablets) and execute SQL queries via the YSQL or YCQL API.
+The number of tservers depends on the size of the data and the cluster.
+
+The test script installs YugabyteDB before each experiment and removes it afterwards (`install_yugabytedb` / `remove_yugabytedb`, `Install-YugabyteDB` / `Remove-YugabyteDB`), with these values:
 
 ```bash
 helm install bexhoma yugabytedb/yugabyte \
---version 2025.2.1 \
+--version 2025.2.7 \
 --set \
 gflags.tserver.ysql_enable_packed_row=true,\
+gflags.tserver.ysql_max_connections=1280,\
 resource.master.limits.cpu=2,\
-resource.master.limits.memory=8Gi,\
+resource.master.limits.memory=16Gi,\
 resource.master.requests.cpu=2,\
-resource.master.requests.memory=8Gi,\
+resource.master.requests.memory=16Gi,\
 resource.tserver.limits.cpu=8,\
-resource.tserver.limits.memory=8Gi,\
+resource.tserver.limits.memory=16Gi,\
 resource.tserver.requests.cpu=8,\
-resource.tserver.requests.memory=8Gi,\
+resource.tserver.requests.memory=16Gi,\
 storage.master.size=100Gi,\
+storage.master.storageClass=shared,\
 storage.tserver.size=100Gi,\
+storage.tserver.storageClass=shared,\
+storage.tserver.count=2,\
 storage.ephemeral=true,\
-tserver.tolerations[0].effect=NoSchedule,\
-tserver.tolerations[0].key=nvidia.com/gpu,\
-tserver.ysql_max_connections=1280,\
-replicas.master=3,\
-replicas.tserver=3,\
-enableLoadBalancer=True
+livenessProbe.timeoutSeconds=10,\
+preflight.skipUlimit=true,\
+enableLoadBalancer=true
 ```
 
-Optionally pin master and tserver pods to nodes with a values file (`-f nodes.yaml`) holding a node affinity for `master` and `tserver` (`kubernetes.io/hostname In [...]`).
-The test script does this with `Install-YugabyteDB -Nodes $BEXHOMA_NODES_WORKER`: without persistent storage the data sits on the nodes' local disks, so the nodes decide the results.
-
+The script pins master and tserver pods to the nodes `$BEXHOMA_NODES_WORKER` with a values file (`-f nodes.yaml`) holding a node affinity for `master` and `tserver` (`kubernetes.io/hostname In [...]`): without persistent storage the data sits on the nodes' local disks, so the nodes decide the results.
 
 Test the installation
 ```bash
 helm status bexhoma
 ```
-
 
 After the experiment: Remove the installation
 ```bash
@@ -87,20 +91,20 @@ Optionally: Connect to the installation
 * to DBMS: `kubectl port-forward service/yb-tserver-service 5433:5433`
 * to GUI: `kubectl port-forward service/yb-master-ui 8080:7000`
 
-
 Optionally: Use [YugabyteDB connection manager](https://docs.yugabyte.com/preview/explore/going-beyond-sql/connection-mgr-ysql/) by adding
 ```bash
 gflags.tserver.enable_ysql_conn_mgr=true,\
 gflags.tserver.allowed_preview_flags_csv=enable_ysql_conn_mgr,\
 ```
 
-## Perform YCSB Benchmark - Ingestion of Data Included
+### Run the Benchmark
 
 You will have to change the node selectors there (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
 ```bash
 BEXHOMA_NODE_SUT="cl-worker11"
 BEXHOMA_NODE_LOAD="cl-worker19"
 BEXHOMA_NODE_BENCHMARK="cl-worker19"
+BEXHOMA_NODES_WORKER="cl-worker36+cl-worker37+cl-worker29"
 LOG_DIR="./logs_tests"
 BEXHOMA_MS=1
 BEXHOMA_STORAGE_CLASS="shared"
@@ -110,7 +114,7 @@ mkdir -p $LOG_DIR
 
 For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
-Example: 
+Example:
 ```bash
 bexhoma ycsb \
   -dbms YugabyteDB \
@@ -125,35 +129,27 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 10 \
-  -m \
-  -mc \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_yugabytedb_1.log
+  run &>$LOG_DIR/docs_ycsb_yugabytedb.log
 ```
 
 This
-* loops over `n` in [8] and `t` in [4]
-  * starts a clean instance of a dummy container as a placeholder for YugabyteDB (`-dbms`)
-    * data directory inside a Docker container
-  * creates YCSB schema in each database
-  * starts `n` loader pods per DBMS
-    * with a loading container each
-      * threads = 64/`n` (`-nlt`)
-      * target throughput is `t` * 16384
-      * generates YCSB data = 1.000.000 rows (i.e., SF=10, `-sf`)
-      * imports it into the DBMS
-  * loops over `m` in [1] and `s` in [4]
-    * runs `m` parallel streams of YCSB queries per DBMS
-      * 10.000.000 operations (`-xop`)
-      * workload A = 50% read / 50% write (`--workload`)
-      * target throughput is `s` * 16384
-      * threads = 64/`m` (`-nbt`)
-    * with a maximum of 1 DBMS per time (`-ms`)
+* starts a placeholder pod for YugabyteDB (`-dbms`)
+* creates the YCSB schema in YugabyteDB
+* starts 8 loader pods (`-nlp`)
+  * threads = 64/8 per pod (`-nlt`)
+  * target throughput is 4 * 16384 (`-xnlf`, `-xtb`)
+  * generates YCSB data = 1.000.000 rows (i.e., SF=1, `-sf`)
+  * imports it into the DBMS
+* runs 1 stream of YCSB queries (`-nbp`)
+  * 1.000.000 operations (`-xop`)
+  * workload A = 50% read / 50% update (`-xwl`)
+  * target throughput is 4 * 16384 (`-xnbf`, `-xtb`)
+  * threads = 64 (`-nbt`)
 * tests if results match workflow (`-tr`)
-* monitors (`-m`) all components (`-mc`)
 * shows a summary
 
 ### Status
@@ -174,19 +170,240 @@ Result directory: Running
 ```
 
 The code `1730133803` is the unique identifier of the experiment.
-You can find the number also in the output of `ycsb.py`.
+You can find the number also in the output of the benchmark script.
 
 ### Cleanup
 
 The script is supposed to clean up and remove everything from the cluster that is related to the experiment after finishing.
 If something goes wrong, you can also clean up manually with `bexperiment stop` (removes everything) or `bexperiment stop -e 1730133803` (removes everything that is related to experiment `1730133803`).
 
-## Evaluate Results
+### Evaluate Results
 
 At the end of a benchmark you will see a summary like
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_1_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb_1.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+YCSB SF=1
+* Type: ycsb
+* Duration: 305s 
+* Code: 1793710976
+* YCSB driver runs the experiment.
+* This experiment compares run time and resource consumption of YCSB queries.
+  * Workload is 'A'.
+  * Number of rows to insert is 1000000.
+  * Ordering of inserts is hashed.
+  * Number of operations is 1000000.
+  * Batch size is ''.
+  * Target is based on multiples of '16384'.
+  * Factors for loading are [4].
+  * Factors for benchmarking are [4].
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
+  * Experiment is limited to DBMS ['YugabyteDB'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Loading is tested with [64] threads, split into [8] pods.
+  * Benchmarking is tested with [64] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* yugabytedb-1-1-1-1 uses docker image postgres:15.0
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:797930
+  * datadisk:39
+  * volume_size:1.8T
+  * volume_used:780G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * yb-tserver 0
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:797957
+    * cpu_list:0-223
+  * yb-tserver 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:616851
+    * cpu_list:0-127
+  * yb-tserver 2
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:629329
+    * cpu_list:0-127
+  * yb-master 0
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:797220
+    * cpu_list:0-223
+  * yb-master 1
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:629432
+    * cpu_list:0-127
+  * yb-master 2
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:616438
+    * cpu_list:0-127
+  * resources_total: 0.25 CPU, 0.5 GiB RAM requested in 1 pods
+    * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793710976
+
+### SUT Container Restarts
+* bexhoma-sut-yugabytedb-1-1793710976-99df487fc-s4nhm: 0
+* yb-tserver-0: 0
+* yb-tserver-1: 0
+* yb-tserver-2: 0
+* yb-master-0: 0
+* yb-master-1: 0
+* yb-master-2: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS YugabyteDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+
+#### Planned
+
+* DBMS YugabyteDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+
+### Loading
+
+#### Per Connection
+
+| connection           |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:---------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| yugabytedb-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2533.60 |                49337.00 |            125000.00 |                              5619.00 | 1.00 |               72.97 |
+| yugabytedb-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2488.90 |                50223.00 |            125000.00 |                              5635.00 | 1.00 |               71.68 |
+| yugabytedb-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2528.98 |                49427.00 |            125000.00 |                              5623.00 | 1.00 |               72.83 |
+| yugabytedb-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2527.04 |                49465.00 |            125000.00 |                              5703.00 | 1.00 |               72.78 |
+| yugabytedb-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2516.51 |                49672.00 |            125000.00 |                              5567.00 | 1.00 |               72.48 |
+| yugabytedb-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2558.38 |                48859.00 |            125000.00 |                              5715.00 | 1.00 |               73.68 |
+| yugabytedb-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2499.90 |                50002.00 |            125000.00 |                              5611.00 | 1.00 |               72.00 |
+| yugabytedb-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2527.09 |                49464.00 |            125000.00 |                              5699.00 | 1.00 |               72.78 |
+
+#### Per Run
+
+| DBMS           |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:---------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| YugabyteDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 1.00 |               71.68 |                        20180.40 |                50223.00 |           1000000.00 |                              5646.50 |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:---------------------|:-----------------|:-------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| yugabytedb-1-1-1-1-1 | yugabytedb-1-1-1 | yugabytedb-1-1-1-1 | YugabyteDB-1    |                1 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                        24597.83 |                40654.00 |             500206 |                           33951.00 |               499794 |                             41855.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-----------------|:-----------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| yugabytedb-1-1-1 | yugabytedb-1-1-1 |                1 |        64 |    65536 |               1 |           1 |            0 |                        24597.83 |                40654.00 |             500206 |                           33951.00 |               499794 |                             41855.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
+* TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: contains no FAILED column
+```
+
+</details>
+
+To see the summary again you can simply call `bexhoma summary -e 1730133803` with the experiment code.
+
+Results are transformed into pandas DataFrames and can be inspected in detail.
+See for example the [Jupyter notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/notebooks/), in particular [Collector-YCSB.ipynb](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/notebooks/Collector-YCSB.ipynb).
+
+You can connect to an evaluation server locally by `bexhoma jupyter`.
+This forwards ports, so you have
+* a Jupyter notebook server at http://localhost:8888
+
+
+## Monitoring
+
+[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
+This run uses 10.000.000 operations (`-xop`).
+
+All metrics in monitoring are summed across all matching components.
+In this example, this means that used memory, CPU time, etc. are summed across all 3 tservers of the YugabyteDB cluster.
+
+The `-mc` option is mandatory here: the sidecar container approach does not work (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
+See [Monitoring](Monitoring.html) for further explanation.
+
+```bash
+bexhoma ycsb \
+  -dbms YugabyteDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xop 10 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ycsb_yugabytedb_monitoring.log
+```
+
+### Example Result
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_monitoring_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb_monitoring.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -408,24 +625,296 @@ YCSB SF=1
 
 </details>
 
-To see the summary again you can simply call `bexhoma summary -e 1730133803` with the experiment code.
+### Application Metrics
 
-### Detailed Evaluation
+Collecting application metrics for YugabyteDB is supported.
+It can be activated by `-m -mc -ma`.
+Prometheus discovers the master pods (port 7000) and the tserver pods (port 9000) and scrapes the native endpoint `/prometheus-metrics` of YugabyteDB, with the metric sets `yb-master` and `yb-tserver`.
+See [Metrics](Example-Metrics.html) for application metrics of all DBMS.
 
-Results are transformed into pandas DataFrames and can be inspected in detail.
-See for example
-* [Jupyter Notebooks](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/evaluator_dbmsbenchmarker/notebooks/)
+```bash
+bexhoma ycsb \
+  -dbms YugabyteDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xop 10 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  run &>$LOG_DIR/docs_ycsb_yugabytedb_appmetrics.log
+```
 
-You can connect to an evaluation server locally by `bexhoma jupyter`.
-This forwards ports, so you have
-* a Jupyter notebook server at http://localhost:8888
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_appmetrics_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb_appmetrics.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+YCSB SF=1
+* Type: ycsb
+* Duration: 944s 
+* Code: 1793234190
+* YCSB driver runs the experiment.
+* This experiment compares run time and resource consumption of YCSB queries.
+  * Workload is 'A'.
+  * Number of rows to insert is 1000000.
+  * Ordering of inserts is hashed.
+  * Number of operations is 10000000.
+  * Batch size is ''.
+  * Target is based on multiples of '16384'.
+  * Factors for loading are [4].
+  * Factors for benchmarking are [4].
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.10.
+  * System metrics are monitored by a cluster-wide installation.
+  * Application metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['YugabyteDB'].
+  * Import is handled by 8 processes (pods).
+  * Loading is tested with [64] threads, split into [8] pods.
+  * Benchmarking is tested with [64] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* yugabytedb-1-1-1-1 uses docker image postgres:15.0
+  * RAM:540590809088
+  * CPU:AMD EPYC 7352 24-Core Processor
+  * Cores:96
+  * host:6.8.0-137-generic
+  * node:cl-worker23
+  * disk:1225130
+  * datadisk:39
+  * volume_size:1.8T
+  * volume_used:1.2T
+  * cpu_list:0-95
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * yb-tserver 0
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:418584
+    * cpu_list:0-223
+  * yb-tserver 1
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:514878
+    * cpu_list:0-127
+  * yb-tserver 2
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:492025
+    * cpu_list:0-127
+  * yb-master 0
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:418584
+    * cpu_list:0-223
+  * yb-master 1
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:514878
+    * cpu_list:0-127
+  * yb-master 2
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:492025
+    * cpu_list:0-127
+  * resources_total: 0.25 CPU, 0.5 GiB RAM requested in 1 pods
+    * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793234190
+
+### SUT Container Restarts
+* bexhoma-sut-yugabytedb-1-1793234190-68c9c6667c-gj678: 0
+* yb-tserver-0: 0
+* yb-tserver-1: 0
+* yb-tserver-2: 0
+* yb-master-0: 0
+* yb-master-1: 0
+* yb-master-2: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS YugabyteDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+
+#### Planned
+
+* DBMS YugabyteDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+
+### Loading
+
+#### Per Connection
+
+| connection           |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:---------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| yugabytedb-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2705.57 |                46201.00 |            125000.00 |                             12063.00 | 1.00 |               77.92 |
+| yugabytedb-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2732.54 |                45745.00 |            125000.00 |                             12319.00 | 1.00 |               78.70 |
+| yugabytedb-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2741.95 |                45588.00 |            125000.00 |                             12375.00 | 1.00 |               78.97 |
+| yugabytedb-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2675.97 |                46712.00 |            125000.00 |                             11503.00 | 1.00 |               77.07 |
+| yugabytedb-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2752.58 |                45412.00 |            125000.00 |                             12023.00 | 1.00 |               79.27 |
+| yugabytedb-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2695.36 |                46376.00 |            125000.00 |                             11975.00 | 1.00 |               77.63 |
+| yugabytedb-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2710.85 |                46111.00 |            125000.00 |                             11975.00 | 1.00 |               78.07 |
+| yugabytedb-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         2694.95 |                46383.00 |            125000.00 |                             11799.00 | 1.00 |               77.61 |
+
+#### Per Run
+
+| DBMS           |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:---------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| YugabyteDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 1.00 |               77.07 |                        21709.77 |                46712.00 |           1000000.00 |                             12004.00 |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:---------------------|:-----------------|:-------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| yugabytedb-1-1-1-1-1 | yugabytedb-1-1-1 | yugabytedb-1-1-1-1 | YugabyteDB-1    |                1 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                        22875.91 |               437141.00 |            5001815 |                           38751.00 |              4998185 |                             44927.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-----------------|:-----------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| yugabytedb-1-1-1 | yugabytedb-1-1-1 |                1 |        64 |    65536 |               1 |           1 |            0 |                        22875.91 |               437141.00 |            5001815 |                           38751.00 |              4998185 |                             44927.00 |
+
+### Monitoring
+
+### Loading phase: component yb-tserver
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |      1471.84 |     29.24 |           5.81 |                 12.64 |
+
+### Loading phase: component yb-master
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |         7.06 |      0.06 |           0.25 |                  0.27 |
+
+### Loading phase: component loader
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |        47.29 |      1.32 |           0.20 |                  0.21 |
+
+### Benchmarking phase: component yb-tserver
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |     16400.40 |     41.01 |          10.88 |                 22.45 |
+
+### Benchmarking phase: component yb-master
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |        18.63 |      0.10 |           0.29 |                  0.32 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |       390.09 |      1.33 |           0.54 |                  0.54 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Active YSQL Connections for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-yb-tserverbenchmarking.log)
+* Active YSQL Connections for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-yb-tserverloading.log)
+
+### Application Metrics
+
+#### Loading phase: component yb-tserver
+
+| DBMS               |   Tablet Read+Write RPC Throughput [ops/s] |   Tablet Read Latency, Avg since Start [ms] |   Tablet Write Latency, Avg since Start [ms] |   Active YSQL Connections |   TServer Follower Lag [ms] |
+|:-------------------|-------------------------------------------:|--------------------------------------------:|---------------------------------------------:|--------------------------:|----------------------------:|
+| yugabytedb-1-1-1-1 |                                    3753.28 |                                        0.42 |                                         2.30 |                      0.00 |                      572.00 |
+
+#### Loading phase: component yb-master
+
+| DBMS               |   YB-Master RPC Throughput [ops/s] |   YB-Master Avg RPC Latency since Start [ms] |   Table Metadata Operations [ops/s] |   YB-Master Clock Error [ms] |   Tablet Location Requests [ops/s] |
+|:-------------------|-----------------------------------:|---------------------------------------------:|------------------------------------:|-----------------------------:|-----------------------------------:|
+| yugabytedb-1-1-1-1 |                               0.05 |                                         0.48 |                                0.00 |                       500.20 |                               0.05 |
+
+#### Benchmarking phase: component yb-tserver
+
+| DBMS               |   Tablet Read+Write RPC Throughput [ops/s] |   Tablet Read Latency, Avg since Start [ms] |   Tablet Write Latency, Avg since Start [ms] |   Active YSQL Connections |   TServer Follower Lag [ms] |
+|:-------------------|-------------------------------------------:|--------------------------------------------:|---------------------------------------------:|--------------------------:|----------------------------:|
+| yugabytedb-1-1-1-1 |                                   24114.72 |                                        0.62 |                                         1.95 |                      0.00 |                      641.00 |
+
+#### Benchmarking phase: component yb-master
+
+| DBMS               |   YB-Master RPC Throughput [ops/s] |   YB-Master Avg RPC Latency since Start [ms] |   Table Metadata Operations [ops/s] |   YB-Master Clock Error [ms] |   Tablet Location Requests [ops/s] |
+|:-------------------|-----------------------------------:|---------------------------------------------:|------------------------------------:|-----------------------------:|-----------------------------------:|
+| yugabytedb-1-1-1-1 |                               0.03 |                                         0.23 |                                0.00 |                       500.40 |                               0.03 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Loading phase: component yb-tserver contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component yb-master contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component yb-tserver contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component yb-master contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST failed: Monitoring metrics missing
+* TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: contains no FAILED column
+```
+
+</details>
 
 
-## Perform YCSB Benchmark - Execution only
+## Persistent Storage
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+Persistent storage is not managed by bexhoma, but by YugabyteDB.
+If you want YugabyteDB to have real persistent storage, install it with `storage.ephemeral=false` (`install_yugabytedb yes <storage class>`).
 
-Example: 
+### Execution Only
+
+As YugabyteDB lives outside of bexhoma, its data survives an experiment as long as the installation is kept.
+The test script runs this right after the monitoring example, on the same installation:
+
 ```bash
 bexhoma ycsb \
   -dbms YugabyteDB \
@@ -447,13 +936,13 @@ bexhoma ycsb \
   -sl \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_yugabytedb_2.log
+  run &>$LOG_DIR/docs_ycsb_yugabytedb_execution.log
 ```
 
 This skips loading (`-sl`), as data is already present in the database.
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_2_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb_2.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_execution_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb_execution.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -630,25 +1119,11 @@ YCSB SF=1
 
 </details>
 
-
-## Monitoring
-
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
-
-All metrics in monitoring are summed across all matching components.
-In this example, this means that used memory, CPU time, etc. are summed across all 3 nodes of the YugabyteDB cluster.
-
-The `-mc` option is mandatory here: The sidecar container approach is not working (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
-For further explanation see the monitoring section of this documentation.
-
-
-## Use Persistent Storage
-
 ### Bexhoma Status Volume
 
-Persistent Storage is not managed by bexhoma, but by YugabyteDB.
 We can add the request for a PVC to the experiment setup.
 Make sure to reset the database before this test as it should not contain data from previous test runs.
+
 ```bash
 bexhoma ycsb \
   -dbms YugabyteDB \
@@ -672,9 +1147,10 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_yugabytedb_3.log
+  run &>$LOG_DIR/docs_ycsb_yugabytedb_storage.log
 ```
-This will add a PVC to the Dummy DBMS.
+
+This will add a PVC to the placeholder pod.
 Nothing will be stored there, but it maintains status information about previous loading processes.
 
 ```bash
@@ -690,12 +1166,13 @@ All following calls of such an experiment will skip loading, since the PVC tells
 This thus helps to spare the `-sl` parameter.
 
 However bexhoma cannot verify such information.
-If YugabyteDB is restarted or data is delete somehow, this PVC information will be outdated and wrong.
-
+If YugabyteDB is restarted or data is deleted somehow, this PVC information will be outdated and wrong.
 This approach helps bexhoma to persist status information, but it does not persist data inside YugabyteDB.
 
+#### Example Result
+
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_3_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb_3.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_yugabytedb_storage_summary.md" target="_blank" rel="noopener">docs_ycsb_yugabytedb_storage.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -918,13 +1395,8 @@ YCSB SF=1
 
 </details>
 
-### Persist YugabyteDB
 
-If you want YugabyteDB to have real persistent storage, remove the line `storage.ephemeral=true,\` from the installation.
-
-
-## YCSB Example Explained
-
+## Technical Details
 
 ### Configuration of Bexhoma
 
@@ -932,75 +1404,95 @@ In `cluster.config` there is a section:
 
 ```python
 'YugabyteDB': {
+    'abbreviation': 'yb',
     'loadData': 'psql -U yugabyte --host yb-tserver-service.{namespace}.svc.cluster.local --port 5433 < {scriptname}',
     'template': {
-        'version': '2.17.1',
+        'version': 'v2.17.1',
         'alias': 'Cloud-Native-1',
         'docker_alias': 'CN1',
-         'JDBC': {
+        'JDBC': {
             'driver': "com.yugabyte.Driver",
             'auth': ["yugabyte", ""],
             'url': 'jdbc:yugabytedb://yb-tserver-service.{namespace}.svc.cluster.local:5433/yugabyte?load-balance=true',
-            'jar': 'jdbc-yugabytedb-42.3.5-yb-2.jar'
+            'jar': 'jdbc-yugabytedb-42.3.5-yb-2.jar',
+            'database': 'yugabyte',
+            'schema': 'public',
+            'explain': ['EXPLAIN (VERBOSE, FORMAT JSON) {query}'],
         }
     },
     'logfile': '/usr/local/data/logfile',
     'datadir': '/var/lib/postgresql/data/',
     'priceperhourdollar': 0.0,
+    'monitor': { ... },  # Prometheus discovery for yb-master (port 7000) and yb-tserver (port 9000) pods
 },
 ```
 
 where
-* `loadData`: This command is used to create the schema
-* `JDBC`: These infos are used to configure YCSB
+* `abbreviation`: short name in the names of volumes
+* `loadData`: command to create the schema, via `psql` of the placeholder pod against the tserver service
+* `JDBC`: used to configure YCSB; the connection targets the tserver service
+* `monitor`: Prometheus discovery of the master and tserver pods, scraping the native endpoint `/prometheus-metrics`
 
+Benchbase does not read the connection from `cluster.config`, but from parameters that are set explicitly in `benchbase.py`:
 
-### Preparation of YCSB
+```bash
+BENCHBASE_PROFILE = 'postgres',
+BEXHOMA_DATABASE = 'yugabyte',
+BEXHOMA_USER = "yugabyte",
+BEXHOMA_PASSWORD = "",
+BEXHOMA_PORT = 5433,
+```
 
-In the Docker files for YCSB
-* https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/generator/Dockerfile
-* https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/benchmarker/Dockerfile
+### Deployment
 
-there is a section about including the needed JDBC driver:
+* YugabyteDB itself is installed by Helm, see [Prerequisites](#prerequisites-install-yugabytedb).
+  With persistent storage the chart adds a liveness probe (a disk check); its timeout is the chart's root key `livenessProbe.timeoutSeconds` (per-component keys are ignored).
+* The placeholder pod is an instance of PostgreSQL, that does nothing but carry status information and run `psql`: [deploymenttemplate-YugabyteDB.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-YugabyteDB.yml).
+* The storage metrics include the tserver volumes (`config.set_pvc_selector('app=yb-tserver')`); `volume_used`/`volume_size` still come from the placeholder pod.
+* In `ycsb.py` there is a section about YugabyteDB. Watch for
+  * `config.sut_service_name`: fixed name for the service of the SUT (`yb-tserver-service`)
+  * `config.sut_container_name`: fixed name for the container of the SUT (empty)
+  * `config.get_worker_pods()`: finds the pods of the worker nodes (`yb-tserver-0`, `yb-tserver-1`, `yb-tserver-2`), for host infos like CPU, RAM, node name
+  * `config.create_monitoring()`: creates names for monitored components (for the SUT `yb-tserver-`), so the placeholder does not contribute to the monitoring
+  * `config.get_worker_endpoints()`: finds the sidecar containers of the workers of a distributed DBMS for monitoring
+  * `config.set_metric_of_config()`: creates PromQL queries from templates (pod like `yb-tserver`, no container name)
+* The YCSB images include the YugabyteDB JDBC driver ([generator](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/generator/Dockerfile), [benchmarker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/benchmarker/Dockerfile)):
+
 ```bash
 ######### Specific version of YugabyteDB JDBC #########
 RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar
 RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
 ```
 
+### Schema and Scripts
 
-### Dummy SUT
+If data should be loaded, bexhoma at first creates a schema according to [experiments/ycsb/YugabyteDB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/YugabyteDB).
 
-Bexhoma deploys a pod to carry status informations.
-Here it is an instance of PostgreSQL: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-YugabyteDB.yml
+DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)):
 
+| Key | Benchmarks | Values | Default | Effect |
+|---|---|---|---|---|
+| `pk_sharding` | YCSB | `hash`, `asc` | `hash` | sharding of the primary key: hash spreads load evenly and suits point reads, asc keeps key order for range scans (workload e) but concentrates ordered inserts |
+| `num_tablets` | YCSB | `auto`, `4`, `8`, `16`, `32`, `64`, `128` | `auto` | tablets of usertable from the start (auto: ysql_num_shards_per_tserver and automatic splitting); only with pk_sharding=hash (asc needs SPLIT AT VALUES). Requires `pk_sharding` = `hash` |
 
-### Schema SQL File
+### Load Durability
 
-If data should be loaded, bexhoma at first creates a schema according to: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/YugabyteDB
+`-xld` has no effect on YugabyteDB: there are no durability scripts for it.
 
+### Reset Scripts
 
-### Workflow of YCSB
+With `-ar`, the reset scripts run before each benchmarking round:
 
-In `ycsb.py` there is a section about YugabyteDB.
+1. Statistics: `ANALYZE VERBOSE` (cluster-wide)
+2. Persist: n/a (no `CHECKPOINT` in YSQL, no `yb-admin` in the placeholder pod)
+3. Counters: `reset-counters.sh`: `pg_stat_reset()` on every tserver (`yb-tserver-N.yb-tservers`), not once through the service, which picks one tserver per connection
 
-Watch for
-* `config.sut_service_name`: Fixed name for the service of the SUT (="yb-tserver-service")
-* `config.sut_container_name`: Fixed name for the container of the SUT (="")
-* `config.get_worker_pods()`: Method to find the pods of worker nodes (['yb-tserver-0', 'yb-tserver-1', 'yb-tserver-2']). This allows getting host infos like CPU, RAM, node name, ...
-* `config.create_monitoring()`: Method to create names for monitored components (for SUT = "yb-tserver-"). This avoids the SUT dummy contributing to the monitoring.
-* `config.get_worker_endpoints()`: This is neccessary, when we have sidecar containers attached to workers of a distributed dbms. Monitoring needs to find these containers.
-* `config.set_metric_of_config()`: Method to create promql queries from templates (pod like "yb-tserver", no container name, for our SUT)
-
-
-
-
-
-
-
+See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract and [Test: Reset Scripts](Test-Reset.md) for the test runs, with results for [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_yugabytedb_summary.md), [Benchbase](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_benchbase_yugabytedb_summary.md).
 
 
 ## Benchbase's TPC-C
+
+### Simple Example
 
 TPC-C is performed at 16 warehouses. The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
 
@@ -1018,13 +1510,13 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_benchbase_yugabytedb_1.log
+  run &>$LOG_DIR/docs_benchbase_yugabytedb.log
 ```
 
 yields
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_1_summary.md" target="_blank" rel="noopener">docs_benchbase_yugabytedb_1.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_summary.md" target="_blank" rel="noopener">docs_benchbase_yugabytedb.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1305,25 +1797,10 @@ Benchbase Workload tpcc SF=16
 
 </details>
 
-### Benchbase Example Explained
+### More Complex Example
 
-The setup is the same as for YCSB (see above).
-
-However the connection string this time is not read from `cluster.config`, but instead constructed from parameters that are set explicitly in the workflow file `benchbase.py`:
-
-```bash
-BENCHBASE_PROFILE = 'postgres',
-BEXHOMA_DATABASE = 'yugabyte',
-BEXHOMA_USER = "yugabyte",
-BEXHOMA_PASSWORD = "",
-BEXHOMA_PORT = 5433,
-```
-
-### More Complex Example 
-
-We now run Benchbase's TPC-C variant with more data, for a longer period of time and with a varying number of pods for execution.
+We now run Benchbase's TPC-C variant with more data, for a longer period of time, with keying and thinking time (`-xkey`) and with a varying number of pods for execution.
 Make sure to reset the database before this test as it should not contain data from previous test runs.
-
 
 ```bash
 bexhoma benchbase \
@@ -1341,13 +1818,13 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_benchbase_yugabytedb_2.log
+  run &>$LOG_DIR/docs_benchbase_yugabytedb_keytime.log
 ```
 
 yields
 
 <details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_2_summary.md" target="_blank" rel="noopener">docs_benchbase_yugabytedb_2.log</a></summary>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_keytime_summary.md" target="_blank" rel="noopener">docs_benchbase_yugabytedb_keytime.log</a></summary>
 
 ```markdown
 ## Show Summary
@@ -1798,5 +2275,334 @@ Benchbase Workload tpcc SF=128
 
 </details>
 
+### Application Metrics
 
+```bash
+bexhoma benchbase \
+  -dbms YugabyteDB \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
+  -nbp 1,2 \
+  -nbt 16 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  run &>$LOG_DIR/docs_benchbase_yugabytedb_appmetrics.log
+```
 
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_yugabytedb_appmetrics_summary.md" target="_blank" rel="noopener">docs_benchbase_yugabytedb_appmetrics.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+Benchbase Workload tpcc SF=16
+* Type: benchbase
+* Duration: 1507s 
+* Code: 1793235355
+* Benchbase runs a TPC-C experiment.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.10.
+  * System metrics are monitored by a cluster-wide installation.
+  * Application metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['YugabyteDB'].
+  * Import is handled by 1 processes (pods).
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [16] threads, split into [1, 2] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* yugabytedb-1-1-1-1 uses docker image postgres:15.0
+  * RAM:540590809088
+  * CPU:AMD EPYC 7352 24-Core Processor
+  * Cores:96
+  * host:6.8.0-137-generic
+  * node:cl-worker23
+  * disk:1226303
+  * datadisk:39
+  * volume_size:1.8T
+  * volume_used:1.2T
+  * cpu_list:0-95
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * yb-tserver 0
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:365790
+    * cpu_list:0-223
+  * yb-tserver 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:492578
+    * cpu_list:0-127
+  * yb-tserver 2
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:515504
+    * cpu_list:0-127
+  * yb-master 0
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:365790
+    * cpu_list:0-223
+  * yb-master 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:492578
+    * cpu_list:0-127
+  * yb-master 2
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:515504
+    * cpu_list:0-127
+  * resources_total: 0.25 CPU, 0.5 GiB RAM requested in 1 pods
+    * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793235355
+* yugabytedb-1-1-2-1 uses docker image postgres:15.0
+  * RAM:540590809088
+  * CPU:AMD EPYC 7352 24-Core Processor
+  * Cores:96
+  * host:6.8.0-137-generic
+  * node:cl-worker23
+  * disk:1226326
+  * datadisk:39
+  * volume_size:1.8T
+  * volume_used:1.2T
+  * cpu_list:0-95
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * yb-tserver 0
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:366717
+    * cpu_list:0-223
+  * yb-tserver 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:493602
+    * cpu_list:0-127
+  * yb-tserver 2
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:516403
+    * cpu_list:0-127
+  * yb-master 0
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:366717
+    * cpu_list:0-223
+  * yb-master 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:493602
+    * cpu_list:0-127
+  * yb-master 2
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:516403
+    * cpu_list:0-127
+  * resources_total: 0.25 CPU, 0.5 GiB RAM requested in 1 pods
+    * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793235355
+
+### SUT Container Restarts
+* bexhoma-sut-yugabytedb-1-1793235355-57ff8f75b9-4jnqz: 0
+* yb-tserver-0: 0
+* yb-tserver-1: 0
+* yb-tserver-2: 0
+* yb-master-0: 0
+* yb-master-1: 0
+* yb-master-2: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS YugabyteDB-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS YugabyteDB-1 - Experiment 1 Client 2: benchbase (2 pods)
+
+#### Planned
+
+* DBMS YugabyteDB-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS YugabyteDB-1 - Experiment 1 Client 2: benchbase (2 pods)
+
+### Loading
+
+#### Per Run
+
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| YugabyteDB-1-1 |                1 |   16 |      415.00 |         305.00 |            0.00 |        107.00 |            3.00 |              1 |           1 |             | None           |             0 | False         |              138.80 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| yugabytedb-1-1-1-1-1 | yugabytedb-1-1-1 | yugabytedb-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                         332.47 |                      330.97 |         0.00 |                                                     123369.00 |                                              48112.00 |
+| yugabytedb-1-1-2-1-1 | yugabytedb-1-1-2 | yugabytedb-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                         147.94 |                      147.23 |         0.00 |                                                     134383.00 |                                              54061.00 |
+| yugabytedb-1-1-2-1-2 | yugabytedb-1-1-2 | yugabytedb-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            1 |                         141.30 |                      140.63 |         0.00 |                                                     138880.00 |                                              56600.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| yugabytedb-1-1-1 | yugabytedb-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                         332.47 |                      330.97 |         0.00 |                                                     123369.00 |                                              48112.00 |
+| yugabytedb-1-1-2 | yugabytedb-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            1 |                         289.25 |                      287.85 |         0.00 |                                                     138880.00 |                                              55330.50 |
+
+### Monitoring
+
+### Loading phase: component yb-tserver
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |      3055.70 |     35.08 |           8.63 |                 17.22 |
+| yugabytedb-1-1-2-1 |      3055.70 |     35.08 |           8.63 |                 17.22 |
+
+### Loading phase: component yb-master
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |        29.27 |      0.10 |           0.31 |                  0.34 |
+| yugabytedb-1-1-2-1 |        29.27 |      0.10 |           0.31 |                  0.34 |
+
+### Loading phase: component loader
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |        37.54 |      0.82 |           0.28 |                  0.28 |
+| yugabytedb-1-1-2-1 |        37.54 |      0.82 |           0.28 |                  0.28 |
+
+### Benchmarking phase: component yb-tserver
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |     10423.52 |     39.36 |          10.29 |                 19.67 |
+| yugabytedb-1-1-2-1 |     10342.54 |     37.25 |          11.89 |                 21.70 |
+
+### Benchmarking phase: component yb-master
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |        19.46 |      0.18 |           0.37 |                  0.40 |
+| yugabytedb-1-1-2-1 |        22.67 |      0.17 |           0.41 |                  0.43 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| yugabytedb-1-1-1-1 |       105.23 |      0.38 |           0.31 |                  0.31 |
+| yugabytedb-1-1-2-1 |        99.24 |      0.64 |           0.26 |                  0.26 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Active YSQL Connections for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-yb-tserverbenchmarking.log)
+* Active YSQL Connections for connection yugabytedb-1-1-1-1 (bexhoma-metrics-yugabytedb-1-1-1-1-yb-tserverloading.log)
+* CPU Throttling Rate [s/s] for connection yugabytedb-1-1-2-1 (bexhoma-metrics-yugabytedb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection yugabytedb-1-1-2-1 (bexhoma-metrics-yugabytedb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Active YSQL Connections for connection yugabytedb-1-1-2-1 (bexhoma-metrics-yugabytedb-1-1-2-1-yb-tserverbenchmarking.log)
+
+### Application Metrics
+
+#### Loading phase: component yb-tserver
+
+| DBMS               |   Tablet Read+Write RPC Throughput [ops/s] |   Tablet Read Latency, Avg since Start [ms] |   Tablet Write Latency, Avg since Start [ms] |   Active YSQL Connections |   TServer Follower Lag [ms] |
+|:-------------------|-------------------------------------------:|--------------------------------------------:|---------------------------------------------:|--------------------------:|----------------------------:|
+| yugabytedb-1-1-1-1 |                                     240.06 |                                        0.97 |                                        14.18 |                      0.00 |                      619.00 |
+| yugabytedb-1-1-2-1 |                                     240.06 |                                        0.97 |                                        14.18 |                      0.00 |                      619.00 |
+
+#### Loading phase: component yb-master
+
+| DBMS               |   YB-Master RPC Throughput [ops/s] |   YB-Master Avg RPC Latency since Start [ms] |   Table Metadata Operations [ops/s] |   YB-Master Clock Error [ms] |   Tablet Location Requests [ops/s] |
+|:-------------------|-----------------------------------:|---------------------------------------------:|------------------------------------:|-----------------------------:|-----------------------------------:|
+| yugabytedb-1-1-1-1 |                               1.97 |                                         1.22 |                                0.04 |                       500.47 |                               1.97 |
+| yugabytedb-1-1-2-1 |                               1.97 |                                         1.22 |                                0.04 |                       500.47 |                               1.97 |
+
+#### Benchmarking phase: component yb-tserver
+
+| DBMS               |   Tablet Read+Write RPC Throughput [ops/s] |   Tablet Read Latency, Avg since Start [ms] |   Tablet Write Latency, Avg since Start [ms] |   Active YSQL Connections |   TServer Follower Lag [ms] |
+|:-------------------|-------------------------------------------:|--------------------------------------------:|---------------------------------------------:|--------------------------:|----------------------------:|
+| yugabytedb-1-1-1-1 |                                   11732.49 |                                        0.41 |                                        12.75 |                      0.00 |                      611.00 |
+| yugabytedb-1-1-2-1 |                                   10444.97 |                                        0.45 |                                         1.79 |                      0.00 |                      597.00 |
+
+#### Benchmarking phase: component yb-master
+
+| DBMS               |   YB-Master RPC Throughput [ops/s] |   YB-Master Avg RPC Latency since Start [ms] |   Table Metadata Operations [ops/s] |   YB-Master Clock Error [ms] |   Tablet Location Requests [ops/s] |
+|:-------------------|-----------------------------------:|---------------------------------------------:|------------------------------------:|-----------------------------:|-----------------------------------:|
+| yugabytedb-1-1-1-1 |                               1.89 |                                         0.05 |                                0.00 |                       500.49 |                               1.89 |
+| yugabytedb-1-1-2-1 |                               0.00 |                                         0.05 |                                0.00 |                       500.39 |                               0.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Loading phase: component yb-tserver contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component yb-master contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component yb-tserver contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component yb-master contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST failed: Monitoring metrics missing
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+```
+
+</details>

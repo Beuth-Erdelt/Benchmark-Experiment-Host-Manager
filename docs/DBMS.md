@@ -8,40 +8,31 @@ To include a DBMS in a Kubernetes-based experiment you need:
 - a configuration entry in `cluster.config` (the `dockers` section)
 - DDL scripts for schema creation, data loading, and index building
 
-This document covers all DBMS currently supported by bexhoma.
+This document covers the concepts that all DBMS share: the configuration entry, the deployment templates, reset scripts, load durability and DDL parameters.
+Each supported DBMS has a short section below; configuration, deployment, scripts and examples are on its example page.
 
-**Relational / SQL**
-- [PostgreSQL](#postgresql)
-- [PostgreSQL + PGBouncer](#pgbouncer)
-- [MySQL](#mysql)
-- [MariaDB](#mariadb)
-- [MariaDB ColumnStore](#mariadb-columnstore)
-- [MonetDB](#monetdb)
-- [Citus](#citus)
-- [ClickHouse](#clickhouse)
-- [ClickHouseCluster](#clickhousecluster)
-- [CedarDB](#cedardb)
-
-**Distributed SQL / Cloud-Native**
-- [YugabyteDB](#yugabytedb)
-- [CockroachDB](#cockroachdb)
-- [TiDB](#tidb)
-
-**Key-Value Stores (YCSB)**
-- [Dragonfly](#dragonfly)
-- [DragonflyCluster](#dragonflycluster)
-- [Redis (Cluster)](#redis)
-- [Valkey (Cluster)](#valkey)
-- [Garnet](#garnet)
-
-**Wide-Column Stores (YCSB)**
-- [Cassandra](#cassandra)
-
-**External / Cloud Database Services**
-- [DatabaseService](#databaseservice)
-
-**Raw Hardware Benchmarks (no DBMS)**
-- [Hardware](#hardware)
+| Group | DBMS | `-dbms` | Benchmarks | Example |
+|---|---|---|---|---|
+| Relational / SQL | [PostgreSQL](#postgresql) | `PostgreSQL` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-PostgreSQL](Example-PostgreSQL.md) |
+| Relational / SQL | [PostgreSQL + PGBouncer](#pgbouncer) | `PGBouncer` | YCSB, Benchbase | [Example-PGBouncer](Example-PGBouncer.md) |
+| Relational / SQL | [PgDuckDB](#pgduckdb) | `PgDuckDB` | TPC-H, SSB | [Example-PgDuckDB](Example-PgDuckDB.md) |
+| Relational / SQL | [MySQL](#mysql) | `MySQL` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-MySQL](Example-MySQL.md) |
+| Relational / SQL | [MariaDB](#mariadb) | `MariaDB` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-MariaDB](Example-MariaDB.md) |
+| Relational / SQL | [MariaDB ColumnStore](#mariadb-columnstore) | `MariaDBCS` | TPC-H, TPC-DS, SSB | [Example-MariaDBCS](Example-MariaDBCS.md) |
+| Relational / SQL | [MonetDB](#monetdb) | `MonetDB` | TPC-H, TPC-DS, SSB | [Example-MonetDB](Example-MonetDB.md) |
+| Relational / SQL | [ClickHouse](#clickhouse) | `ClickHouse`, `ClickHouseCluster` | TPC-H, TPC-DS, SSB | [Example-ClickHouse](Example-ClickHouse.md) |
+| Relational / SQL | [CedarDB](#cedardb) | `CedarDB` | TPC-H, SSB, YCSB, Benchbase | [Example-Other-DBMS](Example-Other-DBMS.md#cedardb) |
+| Distributed SQL | [Citus](#citus) | `Citus` | TPC-H, SSB, YCSB, Benchbase, HammerDB | [Example-Citus](Example-Citus.md) |
+| Distributed SQL | [YugabyteDB](#yugabytedb) | `YugabyteDB` | YCSB, Benchbase | [Example-YugaByteDB](Example-YugaByteDB.md) |
+| Distributed SQL | [CockroachDB](#cockroachdb) | `CockroachDB` | YCSB, Benchbase | [Example-CockroachDB](Example-CockroachDB.md) |
+| Distributed SQL | [TiDB](#tidb) | `TiDB` | YCSB, Benchbase | [Example-TiDB](Example-TiDB.md) |
+| Key-Value | [Redis](#redis) | `Redis` | YCSB | [Example-Redis](Example-Redis.md) |
+| Key-Value | [Dragonfly](#dragonfly) | `Dragonfly` | YCSB | [Example-Dragonfly](Example-Dragonfly.md) |
+| Key-Value | [Valkey](#valkey) | `Valkey` | YCSB | [Example-Valkey](Example-Valkey.md) |
+| Key-Value | [Garnet](#garnet) | `Garnet` | YCSB | [Example-Garnet](Example-Garnet.md) |
+| Wide-Column | [Cassandra](#cassandra) | `Cassandra` | YCSB | [Example-Cassandra](Example-Cassandra.md) |
+| External service | [DatabaseService](#databaseservice) | `DatabaseService` | TPC-H, YCSB, Benchbase | [Example-CloudDatabase](Example-CloudDatabase.md) |
+| No DBMS | [Hardware](#hardware) | `Hardware` | fio, sysbench, netperf, sockperf | [Example-Hardware](Example-Hardware.md) |
 
 ---
 
@@ -417,542 +408,83 @@ Copy [`k8s/deploymenttemplate-Dummy.yml`](../k8s/deploymenttemplate-Dummy.yml) a
 
 ## PostgreSQL
 
-PostgreSQL is the primary test target for analytical benchmarks (TPC-H, TPC-DS) and transactional benchmarks (Benchbase TPC-C, YCSB).
+`PostgreSQL` is the configuration key for PostgreSQL, the primary test target of bexhoma for analytical (TPC-H, TPC-DS, SSB) and transactional benchmarks (Benchbase, HammerDB, YCSB).
 
-**Deployment template:** [`k8s/deploymenttemplate-PostgreSQL.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml)
-
-The default deployment uses a minimal, near-standard PostgreSQL configuration.
-The only active startup argument is `max_connections=640`; all other parameters use PostgreSQL defaults.
-The template includes an extensive set of **commented-out** tuning knobs (memory, parallelism, WAL, autovacuum, planner cost constants) as a reference — uncomment or override individual parameters at experiment time using `--set`.
-
-**Configuration** (from `cluster.config`):
-
-```python
-'PostgreSQL': {
-    'loadData': 'psql -U postgres -d {database} < {scriptname}',
-    'delay_prepare': 0,
-    'template': {
-        'version': 'v11.4',
-        'alias': 'General-B',
-        'docker_alias': 'GP-B',
-        'JDBC': {
-            'driver': "org.postgresql.Driver",
-            'auth': ["postgres", ""],
-            'url': 'jdbc:postgresql://{serverip}:9091/{database}?reWriteBatchedInserts=true&currentSchema={schema}',
-            'jar': 'postgresql-42.5.0.jar',
-            'database': 'postgres',
-            'schema': 'public',
-        }
-    },
-    'logfile': '/usr/local/data/logfile',
-    'datadir': '/var/lib/postgresql/data/',
-    'priceperhourdollar': 0.0,
-    'monitor': {
-        'sut': {
-            'metrics': 'postgresql',
-            'blackbox': True,
-            'blackbox_target': 'postgres@localhost:5432/{database}?sslmode=disable',
-        },
-    },
-},
-```
-
-The `database` and `schema` fields support multi-tenant mode: bexhoma substitutes the tenant-specific database or schema name when running schema-per-tenant or database-per-tenant experiments.
-
-**DDL scripts:**
-- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/PostgreSQL)
-- [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/PostgreSQL)
-- [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/PostgreSQL)
-- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/PostgreSQL)
-
-**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
-
-| Key | Benchmarks | Values | Default | Effect |
-|---|---|---|---|---|
-| `index_method` | TPC-H | `btree`, `hash`, `brin` | `btree` | access method of the foreign key indexes (-xii) except the multicolumn index on lineitem, which stays a B-tree: hash indexes answer equality only, brin indexes are tiny but need physically ordered keys |
-| `btree_dedup` | TPC-H | `on`, `off` | `on` | deduplication of B-tree index entries (-xii; PostgreSQL default on): shrinks non-unique foreign key indexes. Requires `index_method` = `btree` |
-| `statistics_target` | TPC-H | integer | `100` | default_statistics_target of the database (-xis; PostgreSQL default 100): rows sampled and histogram size per column; plan quality vs. ANALYZE time |
-| `extended_statistics` | TPC-H | `off`, `on` | `off` | multi-column statistics (-xis) on correlated columns of lineitem and part: the planner otherwise multiplies their selectivities |
-| `fillfactor` | YCSB | integer | `100` | fillfactor of usertable (PostgreSQL default 100, allowed 10-100): free space per page lets updates stay on the page (HOT updates, see n_tup_hot_upd in pg_stat_user_tables) |
-| `autovacuum_scale` | YCSB | `0.2`, `0.1`, `0.05`, `0.01` | `0.2` | autovacuum_vacuum_scale_factor of usertable (PostgreSQL default 0.2): share of dead rows that starts an autovacuum; lower values vacuum earlier in update-heavy runs (see autovacuum_count in pg_stat_user_tables) |
-
-PgDuckDB uses the TPC-H keys (it runs these scripts), PGBouncer the YCSB keys.
+See [Example: Benchmark PostgreSQL](Example-PostgreSQL.md) for configuration, deployment, scripts, DDL parameters, durability, reset and examples.
 
 ---
 
 ## PGBouncer
 
-`PGBouncer` is the configuration key for a PostgreSQL deployment fronted by a **PgBouncer connection pool**.
-The SUT component runs PostgreSQL; the pool component runs PgBouncer.
-Benchmarker pods connect to PgBouncer, which multiplexes connections to PostgreSQL.
+`PGBouncer` is the configuration key for a PostgreSQL deployment fronted by a PgBouncer connection pool: the SUT component runs PostgreSQL, the pool component runs PgBouncer, and benchmarker pods connect to PgBouncer.
+It uses the DDL, durability and reset scripts of [PostgreSQL](#postgresql).
 
-This configuration is used to benchmark the overhead and benefit of connection pooling compared to direct PostgreSQL access.
-See [Example: PGBouncer](Example-PGBouncer.md) for a worked example.
+See [Example: Benchmark PGBouncer](Example-PGBouncer.md) for configuration, deployment and examples.
 
-**Deployment template:** [`k8s/deploymenttemplate-PGBouncer.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PGBouncer.yml)
+---
 
-**Configuration** (from `cluster.config`):
+## PgDuckDB
 
-```python
-'PGBouncer': {
-    'loadData': 'psql -U postgres -d {database} < {scriptname}',
-    'delay_prepare': 0,
-    'template': {
-        'version': 'v11.4',
-        'alias': 'General-B',
-        'docker_alias': 'GP-B',
-        'JDBC': {
-            'driver': "org.postgresql.Driver",
-            'auth': ["postgres", ""],
-            'url': 'jdbc:postgresql://{serverip}:9091/{database}?reWriteBatchedInserts=true',
-            'jar': 'postgresql-42.5.0.jar',
-            'database': 'postgres',
-            'schema': 'public',
-        }
-    },
-    'logfile': '/usr/local/data/logfile',
-    'datadir': '/var/lib/postgresql/data/',
-    'priceperhourdollar': 0.0,
-    'monitor': { ... },  # Prometheus discovery for both the sut (postgres_exporter) and pool (pgbouncer_exporter) components
-},
-```
+`PgDuckDB` is the configuration key for PostgreSQL with the extension `pg_duckdb`, used for TPC-H and SSB; with `-xdfe` the queries run in DuckDB's engine.
+It uses the DDL, durability and reset scripts of [PostgreSQL](#postgresql).
 
-The `monitor` section uses Kubernetes pod discovery to scrape both the PostgreSQL exporter (port 9187 on the SUT pods) and the PgBouncer exporter (port 9127 on the pool pods).
-
-PGBouncer uses the same DDL scripts as PostgreSQL — see the PostgreSQL section above.
+See [Example: Benchmark PgDuckDB](Example-PgDuckDB.md) for configuration, deployment and examples.
 
 ---
 
 ## MySQL
 
-MySQL is supported for TPC-H and YCSB experiments.
-The default image runs MySQL 9.7 (LTS).
-MySQL 9 has no `mysql_native_password`; `root@'%'` uses `caching_sha2_password`, whose first login needs TLS or the server's RSA key.
-bexhoma therefore creates a TLS Secret per SUT (see `'tls'` in the configuration) and mounts it into MySQL and the HammerDB jobs.
+`MySQL` is the configuration key for MySQL 9.7 (LTS), used for TPC-H, TPC-DS, Benchbase, HammerDB and YCSB.
+MySQL 9 needs TLS for the first login of `root`, so bexhoma creates a TLS Secret per SUT.
 
-**Deployment template:** [`k8s/deploymenttemplate-MySQL.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MySQL.yml)
-
-The template sets the server options as `--key=value` arguments (e.g. `--innodb-buffer-pool-size=8G`); change them per run with `--set ...container[dbms].innodb_buffer_pool_size=32G`.
-The buffer pool of 8G fits the default pod size (`-rr 16Gi`; the namespace sets the memory limit equal to the request when `-lr` is not given). bexhoma does not adapt it to `-rr`/`-lr`: give larger pods a larger pool with `--set`. Until 2026-10-22 the template had 96G, which was OOM-killed in a 16Gi pod as soon as the data filled it (TPC-H SF 10).
-The template sets no durability options: MySQL runs crash-safe by default (`innodb_flush_log_at_trx_commit=1`, doublewrite on); relax the benchmark per run with `--set ...container[dbms].innodb_flush_log_at_trx_commit=2`.
-Load durability (`-xld`): see [Load durability](#load-durability--xld). Doublewrite cannot be switched between on and off at runtime in MySQL, so with `--set ...innodb_doublewrite=OFF` it stays off during an `-xld durable` load.
-The `initconstraints` scripts (TPC-H, TPC-DS) add the foreign keys with `SET SESSION foreign_key_checks = 0`, as for MariaDB: with checks on, MySQL validates every row and its memory grew past 16 GB while adding lineitem->orders at TPC-H SF 1 (OOM-killed, 2026-10-21).
-See the [MySQL 9.7 documentation](https://dev.mysql.com/doc/refman/9.7/en/) for parameter explanations.
-
-**Configuration** (from `cluster.config`):
-
-```python
-'MySQL': {
-    'loadData': 'mysql --local-infile {database} < {scriptname}',
-    'delay_prepare': 120,
-    'template': {
-        'version': 'CE 8.0.36',
-        'alias': 'General-C',
-        'docker_alias': 'GP-C',
-        'dialect': 'MySQL',
-        'JDBC': {
-            'driver': "com.mysql.cj.jdbc.Driver",
-            'auth': ["root", "root"],
-            'url': 'jdbc:mysql://{serverip}:9091/{dbname}?rewriteBatchedStatements=true',
-            'jar': ['mysql-connector-j-8.0.31.jar', 'slf4j-simple-1.7.21.jar'],
-            'database': 'mysql',  # placeholder — must be overwritten per experiment
-        }
-    },
-    'logfile': '/var/log/mysqld.log',
-    'datadir': '/var/lib/mysql/',
-    'priceperhourdollar': 0.0,
-    'monitor': {
-        'sut': {
-            'metrics': 'mysql',
-            'blackbox': False,
-        },
-    },
-},
-```
-
-`delay_prepare: 120` makes bexhoma wait 2 minutes before querying the DBMS.
-This accounts for InnoDB's buffer pool initialisation, which can cause a brief restart.
-
-**DDL scripts:**
-- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MySQL)
-- [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/MySQL)
-- [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/MySQL)
-- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MySQL)
-
-**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
-
-| Key | Benchmarks | Values | Default | Effect |
-|---|---|---|---|---|
-| `histograms` | TPC-H | `off`, `on` | `off` | column histograms (ANALYZE TABLE ... UPDATE HISTOGRAM, 100 buckets) on all columns except primary keys and comments, in initstatistics (-xis): selectivity of filters on columns without an index; off: plain ANALYZE TABLE (index statistics only) |
-| `stats_sample_pages` | TPC-H | `default`, `100`, `1000` | `default` | pages sampled per index by ANALYZE TABLE on each table (default: innodb_stats_persistent_sample_pages, 20): plan quality vs. ANALYZE time |
-| `row_format` | YCSB | `DYNAMIC`, `COMPRESSED` | `DYNAMIC` | InnoDB row format of usertable (MySQL default DYNAMIC): COMPRESSED stores pages zlib-compressed (KEY_BLOCK_SIZE 8): less I/O, more CPU, the buffer pool may hold both copies of a page |
-| `collation` | YCSB | `utf8mb4_0900_ai_ci`, `utf8mb4_bin`, `latin1` | `utf8mb4_0900_ai_ci` | character set and collation of usertable: cost of comparing the VARCHAR(255) key (binary vs. linguistic) and bytes per character |
+See [Example: Benchmark MySQL](Example-MySQL.md) for configuration, deployment, scripts, DDL parameters, durability, reset and examples.
 
 ---
 
 ## MariaDB
 
-MariaDB is supported for TPC-H, Benchbase TPC-C, HammerDB TPC-C, and YCSB experiments.
+`MariaDB` is the configuration key for MariaDB, used for TPC-H, TPC-DS, Benchbase, HammerDB and YCSB.
 It uses a dedicated `bexhoma` database user rather than `root`.
 
-**Deployment template:** [`k8s/deploymenttemplate-MariaDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDB.yml)
-
-The default deployment sets the I/O threads, `innodb-log-buffer-size=1G`, temporary table sizes and `innodb-buffer-pool-size=8G`.
-As for MySQL, the 8G pool fits the default pod size (`-rr 16Gi`); give larger pods a larger pool with `--set ...container[dbms].innodb_buffer_pool_size=32G`.
-
-**Configuration** (from `cluster.config`):
-
-```python
-'MariaDB': {
-    'loadData': 'mariadb --user=bexhoma --password=password < {scriptname}',
-    'template': {
-        'version': 'v10.4.6',
-        'alias': 'General-A',
-        'docker_alias': 'GP-A',
-        'dialect': 'MySQL',
-        'JDBC': {
-            'driver': "org.mariadb.jdbc.Driver",
-            'auth': ["bexhoma", "password"],
-            'url': 'jdbc:mariadb://{serverip}:9091/{dbname}?rewriteBatchedStatements=true',
-            'jar': 'mariadb-java-client-3.1.0.jar',
-            'database': 'mariadb',  # placeholder — must be overwritten per experiment
-        },
-        'init_SQL': "SET optimizer_switch = 'mrr=on,mrr_cost_based=off'",
-    },
-    'logfile': '/usr/local/data/logfile',
-    'datadir': '/var/lib/mysql/',
-    'priceperhourdollar': 0.0,
-},
-```
-
-The `init_SQL` statement is executed after each connection is established and enables multi-range read optimisation.
-
-**DDL scripts:**
-- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MariaDB)
-- [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/MariaDB)
-- [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/MariaDB)
-- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MariaDB)
-
-**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
-
-| Key | Benchmarks | Values | Default | Effect |
-|---|---|---|---|---|
-| `histograms` | TPC-H, TPC-DS, SSB | `off`, `on` | `off` | engine-independent statistics with histograms (ANALYZE TABLE ... PERSISTENT FOR ALL, JSON_HB, a full scan per table) in initstatistics (-xis); off: plain ANALYZE TABLE, which collects none (use_stat_tables = PREFERABLY_FOR_QUERIES, MariaDB 12.3) |
-| `engine` | TPC-H | `InnoDB`, `Aria`, `MyISAM` | `InnoDB` | storage engine of all tables (for ColumnStore use -dbms MariaDBCS) |
-| `row_format` | YCSB | `default`, `DYNAMIC`, `COMPRESSED` | `default` | InnoDB row format of usertable (default: innodb_default_row_format, DYNAMIC): COMPRESSED stores pages zlib-compressed: less I/O, more CPU |
-| `collation` | YCSB | `default`, `utf8mb4_bin`, `latin1` | `default` | character set and collation of usertable (default: the database default): cost of comparing the VARCHAR(255) key (binary vs. linguistic) and bytes per character |
+See [Example: Benchmark MariaDB](Example-MariaDB.md) for configuration, deployment, scripts, DDL parameters, durability, reset and examples.
 
 ---
 
 ## MariaDB ColumnStore
 
-MariaDB ColumnStore (`MariaDBCS`) is the columnar storage engine of MariaDB, GPL-2.0 (TPC-H, TPC-DS, SSB, single node).
-
-**Deployment template:** [`k8s/deploymenttemplate-MariaDBCS.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDBCS.yml)
-
-The template runs the official image `mariadb:12.3.3`, the same server as the template of MariaDB, without a derived image.
-The image `mariadb/columnstore` is stale (23.02.4).
-The container command does what the package script cannot do in a container, which has no systemd:
-
-| Point | Handling | Without it |
-|---|---|---|
-| Plugin | `apt-get install mariadb-plugin-columnstore` at every start (25.10.6, about 30 s), from the repository of the image, so the version follows the image tag | pods need access to `archive.mariadb.org` and the Ubuntu mirrors, else the SUT does not start |
-| Daemons | workernode, controllernode, PrimProc, WriteEngineServer, DMLProc and DDLProc start before the server | writes fail with `ERROR 1815 ... DBRM is read only!` |
-| Catalog | on the first start `dbbuilder 7`, `syscatalog_mysql.sql`, `install_mcs_mysql.sh` and `columnstore_info.sql`; a file on the volume marks them as done | no system catalog, no functions |
-| Memory | `SystemConfig CGroup` points to `/tmp/mcs-cgroup`, a copy of the cgroup of the container with the number of cores added, so `NumBlocksPct` (`MCS_NUM_BLOCKS_PCT`, 20) and `TotalUmMemory` (`MCS_TOTAL_UM_MEMORY`, `65%`) apply to the memory limit of the pod | ColumnStore sizes by the RAM of the node and the pod is killed. With the cgroup of the container itself, `cpuset.cpus` is empty and ColumnStore runs on one core |
-| Storage | `/var/lib/columnstore` and `/var/lib/mysql` are `subPath`s of one volume | the server's catalog is lost at a restart, while the data stays |
-| Shared memory | `/dev/shm` is an `emptyDir` in memory, 2 GiB | BRM is held there; Kubernetes gives 64 MiB by default |
-| Restart | `mcs-loadbrm.py` before the daemons, `mcs-savebrm.py` at `SIGTERM` | the extent map of the data is lost |
-| Probes | `SELECT COUNT(*) FROM calpontsys.systable` | a plain `SELECT` is answered without the daemons |
-| Logs | `rsyslogd` writes `/var/log/mariadb/columnstore/` | the daemons log via syslog only |
-| `PrimProc` | restarted when it dies, with `ColumnStore: PrimProc died, restarting it` in the log of the SUT | all later queries fail, and the container looks healthy |
-
-Set the shares per run with `--set deployment[bexhoma-deployment-mariadbcs].container[dbms].env.MCS_NUM_BLOCKS_PCT=30`.
-Server options work as for MariaDB, `--set deployment[bexhoma-deployment-mariadbcs].container[dbms].max_connections=2000`.
-
-**Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MariaDBCS), [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/MariaDBCS), [SSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ssb/MariaDBCS)):
-the columns of MariaDB with `ENGINE = ColumnStore`.
-ColumnStore has no primary keys, foreign keys or secondary indexes, so `-xii` and `-xic` run scripts without statements.
-`checkschema` reports the sizes with `columnstore_info`.
-There are no durability scripts, so `-xld` has no effect, and there is no TPC-H refresh stream.
-
-**Loading** uses the loader images of MariaDB: `LOAD DATA LOCAL` is passed to `cpimport`.
-It always runs with one loader pod, and `-nlp` is ignored.
-Concurrent `LOAD DATA` into one table fail with `ERROR 1030 ... from storage engine ColumnStore` before `cpimport` starts, and the loader script goes on, so rows would be missing without any test failing.
-`cpimport` itself works in parallel, and loads of one table run one after the other anyway.
-The limit of this path is `mariadbd`, which parses the file on one core: `lineitem` at SF 10 takes 495 s.
-
-**Note: `cpimport` is only possible as a pull, so bexhoma does not use it.**
-`cpimport` run in the SUT on the same file takes 55 s, but then the SUT reads the raw files itself, which is a different path than the sending loader pods of all other DBMS and not comparable.
-A sending `cpimport` does not work: in a separate container with the plugin and the configuration of the SUT, `cpimport -m 1` reaches `WriteEngineServer`, the BRM controller and ExeMgr, and then fails with `MCS-2006: 'tpch.push_t' does not exist in Columnstore`, also with data on stdin, while the same call in the SUT works.
-So loading times of MariaDBCS are not the best the DBMS can do.
-
-**Queries** run with dialect `MySQL`; the variants named `MariaDBCS` and `MariaDB` apply on top, as connection names start with them.
-TPC-H (22) and SSB (13) run completely.
-Compared with the result sets of MariaDB at SF 1 (`-xdt`, same run), all queries of TPC-H and SSB (normal and flat) are identical.
-The numbers are compared as bexhoma stores them, rounded to `precision` of the query: whole numbers in TPC-DS and SSB.
-All 99 queries of TPC-DS run, 28 of them with a `MariaDBCS` variant. Their results are the same. The test `SQL warnings` fails because of Q39: it has columns of the same name, so the comparison cannot sort its rows.
-
-Without 11 of the variants ColumnStore 25.10.6 gives wrong results or fails, some of them without an error:
-
-| Queries | Variant | Without it |
-|---|---|---|
-| Q47, Q57 | `lag()` and `lead()` in the CTE `v1` instead of two self joins of it, the final filter as `HAVING` of an outer `GROUP BY` | The instances of the CTE get mixed up, `nsum` equals `sum_sales`. A `WHERE` on a CTE also reaches its window functions: `with v as (select d_moy, d_dom, count(*) over (partition by d_moy) c from date_dim where d_year = 2000) select max(c) from v where d_dom <= 2` gives 2 instead of 31 |
-| Q72 | The days of a week as CTE `date_pairs` | The join with `d_date_sk + off.k` over the derived table of offsets of the MariaDB variant gives no rows and no error; the main text ends in `MCS-2001` (memory of the join) |
-| Q93 | Inner joins | `LEFT JOIN` with a filter on the outer table in `WHERE` keeps the rows without a match: 90,919 groups instead of 7,164 |
-| Q18, Q22, Q27, Q36, Q67, Q70, Q86 | Rollup emulated with `UNION ALL` | `GROUP BY ... WITH ROLLUP` directly on a table kills `PrimProc` with a segmentation fault in `funcexp::FuncExp::evaluate`, also on 1,305 rows; very small tables do not show it. On a derived table it runs, but gives wrong results |
-
-The other 17 variants are for queries that ColumnStore refuses as they are, see [TPC-DS queries](Queries-TPC-DS.html) for the rewrites:
-
-| Queries | Result |
-|---|---|
-| Q28, Q61, Q77, Q88, Q90 | `MCS-1000: 'sub-query' and 'sub-query' are not joined` |
-| Q10, Q35, Q45 | `MCS-3033: Correlated subquery within OR operator` |
-| Q6, Q23, Q44 | `MCS-3022: Scalar subquery within a function` |
-| Q8, Q14, Q38, Q87 | `INTERSECT`, `EXCEPT` are not supported |
-| Q9 | `MCS-3016: Function or Operator with sub query on the SELECT clause` |
-| Q21 | `MCS-1001: Function 'float_typecast' isn't supported` |
-
-
-Memory depends on the number of cores of the node, since ColumnStore starts threads per core.
-TPC-DS at SF 1 fits 16 Gi on nodes with 96 or 128 cores. On a node with 224 cores the SUT was killed at the limit of 16 Gi in Q18 (`OOMKilled`, `ExeMgr has allocated too much memory`), 32 Gi are enough there, with a peak of 14 GiB.
-When `PrimProc` dies, queries fail at once with `MCS-2033` until it is back after about 3 s, so many queries of a stream are lost.
-
-`-ma` is not available, ColumnStore has no Prometheus exporter in bexhoma.
+MariaDB ColumnStore (`MariaDBCS`) is the columnar storage engine of MariaDB, GPL-2.0, for TPC-H, TPC-DS and SSB on a single node.
+The template runs the official image of MariaDB and installs the plugin at every start; loading always uses one loader pod.
 
 ```bash
 bexhoma tpch -dbms MariaDBCS -sf 1 -xis -tr run
 ```
 
-See [Example: MariaDB ColumnStore](Example-MariaDBCS.md) for a worked example.
+See [Example: Benchmark MariaDB ColumnStore](Example-MariaDBCS.md) for deployment, loading, schema, query variants and examples.
 
 ---
 
 ## MonetDB
 
-MonetDB is a column-store DBMS well-suited for TPC-H analytical workloads.
+`MonetDB` is the configuration key for MonetDB, a column-store DBMS for TPC-H, TPC-DS and SSB on a single node.
 
-**Deployment template:** [`k8s/deploymenttemplate-MonetDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MonetDB.yml)
-
-**Configuration** (from `cluster.config`):
-
-```python
-'MonetDB': {
-    'loadData': "cd /home/monetdb;printf 'user=monetdb\npassword=monetdb\n' > .monetdb;mclient demo < {scriptname}",
-    'template': {
-        'version': '11.37.11',
-        'alias': 'Columnwise',
-        'docker_alias': 'Columnwise',
-        'JDBC': {
-            'auth': ['monetdb', 'monetdb'],
-            'driver': 'org.monetdb.jdbc.MonetDriver',
-            'jar': 'monetdb-jdbc-12.2.jre8.jar',
-            'url': 'jdbc:monetdb://{serverip}:9091/demo?so_timeout={timeout_ms}',
-            'database': 'demo',
-        }
-    },
-    'logfile': '/var/monetdb5/dbfarm/merovingian.log',
-    'datadir': '/var/monetdb5/',
-    'priceperhourdollar': 0.0,
-},
-```
-
-The `loadData` command first writes a `.monetdb` credentials file into the container home directory before piping the script to `mclient`.
-
-**DDL scripts:**
-- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/MonetDB)
-- [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/MonetDB)
-
----
-
-## Citus
-
-Citus is a distributed extension for PostgreSQL that shards tables across worker nodes.
-The coordinator node is deployed as the SUT; worker nodes are deployed as a StatefulSet.
-After each worker pod starts, bexhoma runs the `attachWorker` command on the coordinator to register it.
-
-**Deployment template:** [`k8s/deploymenttemplate-Citus.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Citus.yml)
-
-The template uses the Debian image `citusdata/citus:14.2.0` (PostgreSQL 18), not `-alpine`: `14.2.0-alpine` fails about 5 % of TPC-C New Order transactions with `could not append to file: Not supported`.
-Coordinator and workers set `PGDATA=/var/lib/postgresql/data/pgdata`; PostgreSQL 18 images otherwise use `/var/lib/postgresql/18/docker` and refuse a volume mounted at `/var/lib/postgresql/data`.
-
-**Configuration** (from `cluster.config`):
-
-```python
-'Citus': {
-    'loadData': 'psql -U postgres < {scriptname}',
-    'attachWorker': "psql -U postgres --command=\"SELECT * from master_add_node('{worker}.{service_sut}', 5432);\"",
-    'template': {
-        'version': '10.0.2',
-        'alias': 'General-B',
-        'docker_alias': 'GP-B',
-        'JDBC': {
-            'driver': "org.postgresql.Driver",
-            'auth': ["postgres", "postgres"],
-            'url': 'jdbc:postgresql://{serverip}:9091/postgres?loadBalanceHosts=true',
-            'jar': 'postgresql-42.5.0.jar',
-            'database': 'postgres',
-            'schema': 'public',
-        }
-    },
-    'logfile': '/usr/local/data/logfile',
-    'datadir': '/var/lib/postgresql/data/',
-    'priceperhourdollar': 0.0,
-},
-```
-
-**DDL scripts:**
-- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/Citus)
-- [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/Citus)
-- [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/Citus)
-- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Citus)
-
-TPC-H and SSB distribute the fact tables (`orders`/`lineitem`, `lineorder`) by the order key; the dimensions are reference tables, a full copy on every worker.
-SSB can distribute the dimensions by their own key instead (`-xdim distributed`, scripts in `Citus/distributed`); then a join with `lineorder` is a repartition join.
-TPC-H refuses `-xdim distributed` for Citus: with distributed dimensions Citus could not plan 12 of the 22 queries (joins that are not co-located, subqueries, a cartesian product; check 2026-10-30).
-
-See [Example: Citus](Example-Citus.md) for a worked example.
-
-**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
-
-| Key | Benchmarks | Values | Default | Effect |
-|---|---|---|---|---|
-| `num_worker_shards` | TPC-H, SSB, YCSB, BenchBase TPC-C | integer | `32` | citus.shard_count of the tables distributed by warehouse (Citus default 32) |
-| `tpcc_item` | BenchBase TPC-C | `reference`, `distributed` | `reference` | placement of the read-only item table: a copy on every worker, or spread by i_id, so that New-Order reads items remotely |
-| `columnar_compression` | TPC-H | `default`, `none`, `lz4`, `zstd`, `pglz` | `default` | compression of the columnar orders and lineitem (-xcol only; default: columnar.compression of the server, zstd): bytes read vs. CPU per scan |
-| `num_worker_replicas` | YCSB | integer | `1` | citus.shard_replication_factor of usertable (Citus default 1) |
-| `fillfactor` | YCSB | integer | `100` | fillfactor of usertable and its shards (PostgreSQL default 100, allowed 10-100): free space per page lets updates stay on the page (HOT updates) |
-
-`columnar_compression` applies only with `-xcol`.
+See [Example: Benchmark MonetDB](Example-MonetDB.md) for configuration, deployment, scripts and examples.
 
 ---
 
 ## ClickHouse
 
-ClickHouse is a column-store DBMS for analytical workloads (TPC-H, TPC-DS).
+`ClickHouse` is the configuration key for ClickHouse, a column-store DBMS for analytical workloads (TPC-H, TPC-DS, SSB), as a single server.
+Queries run over JDBC (HTTP interface), loaders and init scripts use `clickhouse-client`; application metrics come from ClickHouse's own Prometheus endpoint (port 9363).
 
-**Deployment template:** [`k8s/deploymenttemplate-ClickHouse.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-ClickHouse.yml)
-
-The template uses the official image `clickhouse/clickhouse-server:26.8.34.13` (LTS).
-Clients use the HTTP interface (JDBC, service port 9091 → 8123); loaders and init scripts use the native protocol (`clickhouse-client`, port 9000, service port `port-sut-native`).
-`CLICKHOUSE_SKIP_USER_SETUP=1` keeps user `default` without password and with network access; without it the image restricts `default` to localhost.
-Instead of `privileged`, the container gets the capabilities `SYS_NICE`, `IPC_LOCK` and `NET_ADMIN` (thread priorities, mlock, per-query OS metrics).
-
-At start, the container writes two files:
-- `config.d/bexhoma.xml`: ClickHouse's own Prometheus endpoint on port 9363 (application metrics, `-ma`).
-- `users.d/bexhoma.xml`: settings of profile `default` for SQL-standard results, which the queries of TPC-H and TPC-DS rely on.
-
-| Setting | Value | Without it |
-|---|---|---|
-| `join_use_nulls` | 1 | an outer join fills unmatched columns with 0 or `''` instead of NULL (wrong counts in TPC-H Q13) |
-| `union_default_mode` | `DISTINCT` | a plain `UNION` is a syntax error |
-| `cast_keep_nullable` | 1 | `CAST` of a NULL fails |
-| `allow_lossy_numeric_supertype` | 1 | `CASE`/`COALESCE` over Decimal and Float has no common type |
-
-`prefer_column_name_to_alias` is not set: it would also apply to `ORDER BY`, where standard SQL resolves the alias of the select list first.
-
-**Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/ClickHouse), [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/ClickHouse)):
-tables are MergeTree in database `default`; the sorting key is the primary key of the benchmark, which also is ClickHouse's sparse primary index.
-There are no secondary indexes, constraints or statistics, so `-xii`, `-xic` and `-xis` have no scripts.
-CHAR/VARCHAR are `String` (`FixedString` pads with `\0`, not blanks).
-TPC-DS columns without `NOT NULL` are `Nullable` (empty fields load as NULL), dates are `Date32` (TPC-DS dates start in 1900).
-The loaders (`bexhoma/loader_tpch_clickhouse`, `bexhoma/loader_tpcds_clickhouse`) send each flat file with `INSERT INTO <table> FORMAT CSV` (delimiter `|`, double quotes are data).
-
-**Queries:** the variants for ClickHouse have the key `Clickhouse` in the query files (selected by `dialect` and by the connection name).
-They are needed where ClickHouse differs from standard SQL (identifier case, the name of a selected `t.col` is `t.col`, `ORDER BY` after a parenthesized `UNION`, an alias visible in its own select list) and for correlated subqueries, which ClickHouseCluster cannot run.
-Every variant returns the same result as the original query on ClickHouse.
-
-**Configuration** (from `cluster.config`):
-
-```python
-'ClickHouse': {
-    'loadData': 'clickhouse-client --multiquery < {scriptname}',
-    'template': {
-        'version': '26.8',
-        'alias': 'Columnwise-B',
-        'docker_alias': 'Columnwise-B',
-        'dialect': 'Clickhouse',
-        'JDBC': {
-            'auth': ['default', ''],
-            'driver': 'com.clickhouse.jdbc.Driver',
-            'jar': 'clickhouse-jdbc-0.11.0-all-dependencies.jar',
-            'url': 'jdbc:clickhouse://{serverip}:9091/default',
-            'database': 'default',
-            'explain': ['EXPLAIN {query}'],
-        }
-    },
-    'logfile': '/var/log/clickhouse-server/clickhouse-server.log',
-    'datadir': '/var/lib/clickhouse/',
-    'priceperhourdollar': 0.0,
-    'monitor': {'sut': {'metrics': 'clickhouse', 'discovery': True, ...}},
-},
-```
-
-```bash
-bexhoma tpch -dbms ClickHouse -sf 1 -nlp 8 -tr run
-```
-
-See [Example: ClickHouse](Example-ClickHouse.md) for a worked example.
-
-**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
-
-| Key | Benchmarks | Values | Default | Effect |
-|---|---|---|---|---|
-| `order_orders` | TPC-H | `key`, `date` | `key` | sort key (= primary index) of orders: by key, or by date first so date ranges (Q3-Q5, Q7-Q10, Q12) skip granules |
-| `order_lineitem` | TPC-H | `key`, `date` | `key` | sort key (= primary index) of lineitem: by key, or by ship date first so date ranges (Q1, Q6, Q7, Q14, Q15, Q20) skip granules |
-| `partition_orders` | TPC-H | `none`, `year`, `month` | `none` | partitions of orders by order date: queries with a date range skip whole partitions; more partitions mean more parts per insert block |
-| `partition_lineitem` | TPC-H | `none`, `year`, `month` | `none` | partitions of lineitem by ship date: queries with a ship date range (Q1, Q6, Q14, Q15, Q20) skip whole partitions; more partitions mean more parts per insert block |
-| `index_granularity` | TPC-H | integer | `8192` | rows per granule (= entry of the sparse primary index) of orders and lineitem (ClickHouse default 8192): smaller granules skip more precisely, the index grows |
-| `wide_parts` | TPC-H | `default`, `wide`, `compact` | `default` | part format of orders and lineitem by min_bytes_for_wide_part: default (10 MiB: small parts compact, one file; larger parts wide, a file per column), wide (every part), compact (every part up to 1 TiB); parallel loaders write many small parts |
-| `low_cardinality` | TPC-H | `off`, `on` | `off` | dictionary encoding of the string columns with few distinct values (flags, modes, priorities, segments, brands, types, containers, nation and region names): faster filters and GROUP BY |
-| `codec` | TPC-H | `default`, `zstd1`, `zstd3` | `default` | compression of all columns of orders and lineitem (default: the server setting, LZ4): bytes read vs. CPU per scan |
+See [Example: Benchmark ClickHouse](Example-ClickHouse.md) for configuration, deployment, SQL settings, schema, DDL parameters, query variants and examples.
 
 ---
 
 ## ClickHouseCluster
 
-A ClickHouse cluster of one coordinator (the SUT) and `-nw` shards (worker StatefulSet, one replica per shard), for TPC-H and TPC-DS.
+`ClickHouseCluster` is the configuration key for a ClickHouse cluster of one coordinator (the SUT, with a single-node ClickHouse Keeper) and `-nw` shards (worker StatefulSet, one replica per shard).
 
-**Deployment template:** [`k8s/deploymenttemplate-ClickHouseCluster.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-ClickHouseCluster.yml)
-
-Image, ports, capabilities and settings as [ClickHouse](#clickhouse); in addition:
-- At start, every pod writes the cluster `bexhoma` (`remote_servers`, one shard per worker, from `BEXHOMA_WORKER_LIST_SPACE`).
-- The coordinator is not a shard. It is the entry point of clients and loaders and runs a single-node ClickHouse Keeper (port 9181, service port `port-sut-keeper`), which `ON CLUSTER` statements need; the workers reach it through the SUT service.
-- The coordinator sets `distributed_product_mode = global`: a Distributed table inside a join or `IN` is read once and sent to all shards, which is correct whatever the sharding keys are.
-- A worker is ready when it has a session with the Keeper (readiness probe on `system.zookeeper`); bexhoma runs the init scripts only after all workers are ready. Workers start before the Keeper and retry every 5 s, so with `/ping` as probe the first `ON CLUSTER` statement would time out.
-- Workers set the macros `{shard}` (pod ordinal) and `{replica}` (pod name) for later `ReplicatedMergeTree` setups.
-
-**Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/ClickHouseCluster), [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/ClickHouseCluster)):
-a distributed table is a MergeTree table `<name>_local` on every shard (`ON CLUSTER bexhoma`, columns and sorting key as ClickHouse) and a Distributed table `<name>` on the coordinator and on every shard (the parts of a distributed query that name a table resolve it there); rows are spread by the first column of the sorting key.
-A replicated table is a `ReplicatedMergeTree` on every shard and on the coordinator, all replicas of one table; Keeper copies the parts the loader writes on the coordinator to the shards.
-TPC-DS: every table is distributed.
-TPC-H: `orders` and `lineitem` are distributed; `part`, `partsupp`, `supplier` and `customer` are replicated (`-xdim replicated`, default, so joins with `orders`/`lineitem` run on each shard against its local copy) or distributed (`-xdim distributed`, scripts in `ClickHouseCluster/distributed`, volume `tpch-distributed-<SF>`); `nation` and `region` are replicated in both.
-The loader writes into the tables on the coordinator; a Distributed table uses `distributed_foreground_insert=1`, so the load time includes sending the rows to the shards.
-The check script waits for the replicas, fails if a node holds other rows of a replicated table than the coordinator, and reports rows, parts and sizes per table and node.
-
-The configuration equals ClickHouse plus `'attachWorker': ''` (the shards are in `remote_servers`, nothing to register) and the monitor component `worker`, which scrapes coordinator and shards (the metrics are totals of the cluster).
-In `tpch.py` and `tpcds.py` the configuration sets `set_script_target('workers')`, so the reset's `reset-flush.sh` runs in every worker.
-
-```bash
-bexhoma tpch -dbms ClickHouseCluster -nw 3 -sf 1 -nlp 8 -tr run
-```
-
-See [Example: ClickHouse](Example-ClickHouse.md#clickhouse-as-a-cluster) for a worked example.
-
-**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
-
-| Key | Benchmarks | Values | Default | Effect |
-|---|---|---|---|---|
-| `order_orders` | TPC-H | `key`, `date` | `key` | sort key (= primary index) of orders: by key, or by date first so date ranges (Q3-Q5, Q7-Q10, Q12) skip granules |
-| `order_lineitem` | TPC-H | `key`, `date` | `key` | sort key (= primary index) of lineitem: by key, or by ship date first so date ranges (Q1, Q6, Q7, Q14, Q15, Q20) skip granules |
-| `partition_orders` | TPC-H | `none`, `year`, `month` | `none` | partitions of orders by order date: queries with a date range skip whole partitions; more partitions mean more parts per insert block |
-| `partition_lineitem` | TPC-H | `none`, `year`, `month` | `none` | partitions of lineitem by ship date: queries with a ship date range (Q1, Q6, Q14, Q15, Q20) skip whole partitions; more partitions mean more parts per insert block |
-| `index_granularity` | TPC-H | integer | `8192` | rows per granule (= entry of the sparse primary index) of orders and lineitem (ClickHouse default 8192): smaller granules skip more precisely, the index grows |
-| `wide_parts` | TPC-H | `default`, `wide`, `compact` | `default` | part format of orders and lineitem by min_bytes_for_wide_part: default (10 MiB: small parts compact, one file; larger parts wide, a file per column), wide (every part), compact (every part up to 1 TiB); parallel loaders write many small parts |
-| `low_cardinality` | TPC-H | `off`, `on` | `off` | dictionary encoding of the string columns with few distinct values (flags, modes, priorities, segments, brands, types, containers, nation and region names): faster filters and GROUP BY |
-| `codec` | TPC-H | `default`, `zstd1`, `zstd3` | `default` | compression of all columns of orders and lineitem (default: the server setting, LZ4): bytes read vs. CPU per scan |
-
-The dimension placement of TPC-H is `-xdim`, see above.
+See [Example: Benchmark ClickHouse](Example-ClickHouse.md#cluster) for deployment, schema and examples.
 
 ---
 
@@ -1011,446 +543,111 @@ bexhoma tpch -dbms CedarDB -sf 1 -nlp 8 -xii -xic -xis -tr run
 
 See [Example: Other DBMS](Example-Other-DBMS.md#cedardb) for the workloads and the test script.
 
+---
+
+## Citus
+
+`Citus` is the configuration key for Citus, a PostgreSQL extension that shards tables across worker nodes.
+The coordinator is deployed as the SUT, the workers as a stateful set; after each worker pod starts, bexhoma registers it at the coordinator (`attachWorker`).
+
+See [Example: Benchmark Citus](Example-Citus.md) for configuration, deployment, scripts, DDL parameters and examples.
+
+---
+
 ## YugabyteDB
 
-YugabyteDB is a distributed, PostgreSQL-compatible DBMS.
-It consists of master and tablet-server (TServer) components, both deployed as StatefulSets.
-The JDBC connection targets the TServer service.
+`YugabyteDB` is the configuration key for YugabyteDB, a distributed, PostgreSQL-compatible DBMS, used as the SUT for YCSB and Benchbase.
+YugabyteDB itself is installed by Helm, not by bexhoma; the bexhoma SUT pod is a placeholder helper.
+Monitoring scrapes the native endpoints of the master (port 7000) and tserver (port 9000) pods.
 
-**Configuration** (from `cluster.config`):
-
-```python
-'YugabyteDB': {
-    'loadData': 'psql -U yugabyte --host yb-tserver-service.{namespace}.svc.cluster.local --port 5433 < {scriptname}',
-    'template': {
-        'version': 'v2.17.1',
-        'alias': 'Cloud-Native-1',
-        'docker_alias': 'CN1',
-        'JDBC': {
-            'driver': "com.yugabyte.Driver",
-            'auth': ["yugabyte", ""],
-            'url': 'jdbc:yugabytedb://yb-tserver-service.{namespace}.svc.cluster.local:5433/yugabyte?load-balance=true',
-            'jar': 'jdbc-yugabytedb-42.3.5-yb-2.jar',
-            'database': 'yugabyte',
-            'schema': 'public',
-        }
-    },
-    'logfile': '/usr/local/data/logfile',
-    'datadir': '/var/lib/postgresql/data/',
-    'priceperhourdollar': 0.0,
-    'monitor': { ... },  # Prometheus discovery for yb-master (port 7000) and yb-tserver (port 9000) pods
-},
-```
-
-The monitoring section configures Kubernetes pod discovery for both the master component (port 7000) and the TServer component (port 9000), scraping YugabyteDB's native Prometheus endpoint at `/prometheus-metrics`.
-
-YugabyteDB itself is installed by Helm (chart `2025.2.7`, see `Install-YugabyteDB` / `install_yugabytedb` in `scripts/test-docs-yugabytedb.*`, with parameters for persistence, storage class, volumes per tserver and nodes); the bexhoma SUT pod is a placeholder helper.
-With persistent storage the chart adds a liveness probe (a disk check); its timeout is the chart's root key `livenessProbe.timeoutSeconds` (per-component keys are ignored).
-The storage metrics include the tserver volumes (`config.set_pvc_selector('app=yb-tserver')`); `volume_used`/`volume_size` still come from the helper pod.
-
-**DDL scripts:**
-- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/YugabyteDB)
-
-See [Example: YugabyteDB](Example-YugaByteDB.md) for a worked example.
-
-**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
-
-| Key | Benchmarks | Values | Default | Effect |
-|---|---|---|---|---|
-| `pk_sharding` | YCSB | `hash`, `asc` | `hash` | sharding of the primary key: hash spreads load evenly and suits point reads, asc keeps key order for range scans (workload e) but concentrates ordered inserts |
-| `num_tablets` | YCSB | `auto`, `4`, `8`, `16`, `32`, `64`, `128` | `auto` | tablets of usertable from the start (auto: ysql_num_shards_per_tserver and automatic splitting); only with pk_sharding=hash (asc needs SPLIT AT VALUES). Requires `pk_sharding` = `hash` |
+See [Example: Benchmark YugabyteDB](Example-YugaByteDB.md) for installation, configuration, deployment, scripts, DDL parameters and examples.
 
 ---
 
 ## CockroachDB
 
-CockroachDB is a distributed, PostgreSQL wire-compatible DBMS.
-Worker nodes form the CockroachDB cluster; bexhoma registers each worker via the `attachWorker` command.
-The PostgreSQL JDBC driver is used for connectivity.
+`CockroachDB` is the configuration key for CockroachDB, a distributed, PostgreSQL wire-compatible DBMS, used as the SUT for YCSB and Benchbase.
+The workers form the CockroachDB cluster, the SUT pod is a placeholder; monitoring scrapes the built-in endpoint `/_status/vars` (port 8080) of all worker pods.
 
-**Configuration** (from `cluster.config`):
-
-```python
-'CockroachDB': {
-    'loadData': 'cockroach sql --host {service_name} --port 9091 --insecure --file {scriptname}',
-    'delay_prepare': 120,
-    'attachWorker': "",  # CockroachDB auto-discovers cluster members
-    'template': {
-        'version': 'v24.2.4',
-        'alias': 'Cloud-Native-2',
-        'docker_alias': 'CN2',
-        'JDBC': {
-            'driver': "org.postgresql.Driver",
-            'auth': ["root", ""],
-            'url': 'jdbc:postgresql://{serverip}:9091/defaultdb?reWriteBatchedInserts=true&sslmode=disable',
-            'jar': 'postgresql-42.5.0.jar',
-            'database': 'defaultdb',
-        }
-    },
-    'logfile': '/usr/local/data/logfile',
-    'datadir': '/cockroach/cockroach-data',
-    'priceperhourdollar': 0.0,
-    'monitor': { ... },  # Prometheus discovery for worker pods at /_status/vars on port 8080
-},
-```
-
-The monitoring section scrapes CockroachDB's built-in Prometheus endpoint (`/_status/vars`, port 8080) from all worker pods.
-
-**DDL scripts:**
-- [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/CockroachDB)
-- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/CockroachDB)
-
-See [Example: CockroachDB](Example-CockroachDB.md) for a worked example.
-
-**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
-
-| Key | Benchmarks | Values | Default | Effect |
-|---|---|---|---|---|
-| `num_worker_replicas` | YCSB | integer | `3` | zone num_replicas of usertable (CockroachDB default 3) |
-| `pk_hash` | YCSB | `hash`, `none` | `hash` | hash-sharded primary key: spreads sequential inserts (-xio ordered) over ranges, costs range scans (workload e) |
-| `bucket_count` | YCSB | `default`, `4`, `8`, `16`, `32`, `64` | `default` | buckets of the hash-sharded primary key (default: cluster setting sql.defaults.default_hash_sharded_index_bucket_count, 16 in v24.2): write spread vs. scan fan-out. Requires `pk_hash` = `hash` |
-| `range_max_bytes` | YCSB | `default`, `64MiB`, `128MiB`, `256MiB` | `default` | zone range_max_bytes of usertable (default 512 MiB, range_min_bytes 128 MiB; a smaller value sets range_min_bytes to a quarter): more, smaller ranges spread leaseholders at small data sizes |
-| `column_families` | YCSB | `one`, `per_field` | `one` | column families of usertable: one family per row, or one per field, so updating one field writes one KV pair instead of the whole row (workloads a, b, f); costs reads of whole rows |
-| `pre_split` | YCSB | `none`, `9`, `90` | `none` | ranges of usertable before the load, split at the first digits of the YCSB keys (hashed insert order): avoids splitting and rebalancing during the load; a hash-sharded key has its buckets instead. Requires `pk_hash` = `none` |
+See [Example: Benchmark CockroachDB](Example-CockroachDB.md) for configuration, deployment, scripts, DDL parameters and examples.
 
 ---
 
 ## TiDB
 
-TiDB is a distributed, MySQL-compatible DBMS.
-It consists of three components: the TiDB SQL layer (SUT), TiKV storage nodes (worker), and the Placement Driver (PD) coordinator.
-All three are deployed and monitored separately.
+`TiDB` is the configuration key for TiDB, a distributed, MySQL-compatible DBMS, used as the SUT for YCSB and Benchbase.
+It consists of the TiDB SQL layer (SUT), TiKV storage nodes (worker) and the Placement Driver (PD); all three are deployed and monitored separately.
 
-**Configuration** (from `cluster.config`):
-
-```python
-'TiDB': {
-    'loadData': 'mysql -P 4000 -h 127.0.0.1 -D {database} --local-infile < {scriptname}',
-    'delay_prepare': 60,
-    'template': {
-        'version': 'CE 8.0.22',
-        'alias': 'General-C',
-        'docker_alias': 'GP-C',
-        'dialect': 'MySQL',
-        'JDBC': {
-            'driver': "com.mysql.cj.jdbc.Driver",
-            'auth': ["root", "root"],
-            'url': 'jdbc:mysql://{serverip}:9091/{dbname}?rewriteBatchedStatements=true',
-            'jar': ['mysql-connector-j-8.0.31.jar', 'slf4j-simple-1.7.21.jar'],
-            'database': 'test',
-        }
-    },
-    'logfile': '/var/log/mysqld.log',
-    'datadir': '/var/lib/mysql/',
-    'priceperhourdollar': 0.0,
-    'worker_port': 2379,
-    'store_args': False,
-    'monitor': { ... },  # Prometheus discovery for tidb (port 9500), pd (port 2379), and tikv (port 20180) pods
-},
-```
-
-`store_args: False` suppresses capturing TiDB's verbose startup arguments in the summary.
-Only TiKV is a data component (`config.set_data_components(['tikv'])`): `-rc/-rr/-lc/-lr` and `-rss` size TiKV and the SQL pod, while PD keeps the template's resources (0.25-1 CPU, 0.5-2 GiB) and volume size (10Gi).
-`worker_port: 2379` is the PD headless service port used internally for cluster coordination.
-The monitoring section scrapes all three components via Kubernetes pod discovery.
-
-**DDL scripts:**
-- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/TiDB)
-
-See [Example: TiDB](Example-TiDB.md) for a worked example.
-
-**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
-
-| Key | Benchmarks | Values | Default | Effect |
-|---|---|---|---|---|
-| `num_worker_replicas` | YCSB, BenchBase TPC-C | integer | `3` | PD max-replicas (TiDB default 3) |
-| `clustered` | YCSB | `default`, `clustered`, `nonclustered` | `default` | clustered index of usertable (default: tidb_enable_clustered_index of the server); clustered saves a lookup, nonclustered stores rows by a hidden _tidb_rowid |
-| `split_regions` | YCSB | `none`, `4`, `8`, `16`, `32`, `64`, `128` | `none` | regions of usertable on all TiKV nodes before the load, over the YCSB key range user0..user9; needs a clustered key (nonclustered rows are stored by the integer _tidb_rowid, which SHARD_ROW_ID_BITS spreads instead). PRE_SPLIT_REGIONS needs SHARD_ROW_ID_BITS or AUTO_RANDOM, not a VARCHAR key. Requires `clustered` = `default` or `clustered` |
-| `shard_row_id_bits` | YCSB | `none`, `2`, `4`, `6` | `none` | shard bits of the hidden _tidb_rowid of a nonclustered usertable (2^n ranges): spreads the insert hot spot of increasing row ids; too many cost RPCs in scans. Requires `clustered` = `nonclustered` |
-| `pre_split_regions` | YCSB | `none`, `1`, `2`, `3`, `4` | `none` | 2^n regions of the sharded row ids when the table is created, instead of splitting during the load; needs shard_row_id_bits at least n. Requires `shard_row_id_bits` = `4` or `6` |
-
----
-
-## Dragonfly
-
-Dragonfly is a Redis-compatible, high-performance in-memory data store.
-It is used as the SUT for YCSB key-value workloads as a single-instance deployment.
-
-**Configuration** (from `cluster.config`):
-
-```python
-'Dragonfly': {
-    'loadData': 'redis-cli < {scriptname}',
-    'delay_prepare': 0,
-    'attachWorker': '',
-    'template': {
-        'version': 'xxx',
-        'alias': 'Key-Value-1',
-        'docker_alias': 'KV1',
-        'auth': ["root", ""],
-    },
-    'logfile': '/var/log/redis/redis-server.log',
-    'datadir': '/data',
-    'priceperhourdollar': 0.0,
-    'monitor': { ... },  # Prometheus discovery for sut pods on port 6379 at /metrics
-},
-```
-
-No JDBC driver is needed — YCSB communicates via the Redis wire protocol.
-The monitoring section scrapes Dragonfly's native Prometheus endpoint at `/metrics` on port 6379.
-
-Dragonfly settings are environment variables `DFLY_<flag>` in the templates (e.g. `DFLY_maxmemory`), not command-line flags, because a flag on the command line would win over the variable.
-Change them per run with `--set`, e.g. `--set deployment[bexhoma-deployment-dragonfly].container[dbms].env.DFLY_snapshot_cron="*/5 * * * *"` (for the cluster workers: `statefulset[bexhoma-worker]`).
-With `-ar`, `save-snapshot.sh` (`SAVE`) runs before each benchmarking round. In a Dragonfly or Redis cluster it runs on every worker, with replicas (DragonflyReplica) too: `SAVE` is not replicated, so each replica writes its own snapshot.
-The data pods save under the fixed name `dump` (`DFLY_dbfilename`), so each `SAVE` overwrites the previous snapshot and a restart loads it.
-
-**DDL scripts:**
-- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Dragonfly)
-
-See [Example: Dragonfly](Example-Dragonfly.md) for a worked example.
-
----
-
-## DragonflyCluster
-
-`DragonflyCluster` is the configuration key for Dragonfly deployed as a **cluster** (multiple worker nodes).
-The loader and benchmarker connect via the cluster's headless service name.
-
-**Configuration** (from `cluster.config`):
-
-```python
-'DragonflyCluster': {
-    'loadData': 'redis-cli --host bexhoma-service.{namespace}.svc.cluster.local < {scriptname}',
-    'delay_prepare': 0,
-    'attachWorker': '',
-    'template': {
-        'version': 'xxx',
-        'alias': 'Key-Value-1',
-        'docker_alias': 'KV1',
-        'auth': ["root", ""],
-    },
-    'logfile': '/var/log/redis/redis-server.log',
-    'datadir': '/data',
-    'priceperhourdollar': 0.0,
-    'monitor': { ... },  # Prometheus discovery for worker pods on port 6379 at /metrics
-},
-```
-
-The key difference from single-node Dragonfly is that `loadData` targets the cluster service DNS name rather than `localhost`.
-DragonflyCluster uses the same YCSB DDL scripts as single-node [Dragonfly](#dragonfly).
+See [Example: Benchmark TiDB](Example-TiDB.md) for configuration, deployment, scaling of the components, scripts, DDL parameters and examples.
 
 ---
 
 ## Redis
 
-`Redis` is the configuration key for a Redis cluster deployment (multiple shards as workers).
-It is used as the SUT for YCSB key-value workloads in a distributed setting.
+`Redis` is the configuration key for Redis, as a single host or as a cluster (`-nw`), used as the SUT for YCSB.
+Monitoring uses a `redis_exporter` sidecar on port 9121.
 
-**Configuration** (from `cluster.config`):
+See [Example: Benchmark Redis](Example-Redis.md) for configuration, deployment, scripts and examples.
 
-```python
-'Redis': {
-    'loadData': 'redis-cli --host bexhoma-service.{namespace}.svc.cluster.local < {scriptname}',
-    'delay_prepare': 0,
-    'attachWorker': '',
-    'template': {
-        'version': 'xxx',
-        'alias': 'Key-Value-1',
-        'docker_alias': 'KV1',
-        'auth': ["root", ""],
-    },
-    'logfile': '/var/log/redis/redis-server.log',
-    'datadir': '/data',
-    'priceperhourdollar': 0.0,
-    'monitor': { ... },  # Prometheus discovery for worker pods on port 9121 (redis_exporter)
-},
-```
+---
 
-Monitoring uses a `redis_exporter` sidecar scraping each worker pod on port 9121.
+## Dragonfly
 
-Redis does not have dedicated DDL scripts; YCSB manages table/key-space creation directly via the Redis wire protocol.
+`Dragonfly` is the configuration key for Dragonfly as a single host, `DragonflyCluster` for a cluster or master with replicas (`-nw`), used as the SUT for YCSB.
+Monitoring scrapes the native Prometheus endpoint of Dragonfly at `/metrics` on port 6379.
 
-See [Example: Redis](Example-Redis.md) for a worked example.
+See [Example: Benchmark Dragonfly](Example-Dragonfly.md) for configuration, deployment, settings, scripts and examples.
+
+---
+
+## DragonflyCluster
+
+See [Dragonfly](#dragonfly).
 
 ---
 
 ## Valkey
 
-`Valkey` is the Linux Foundation fork of Redis 7.2.4 (BSD-3-Clause license, which has no restriction on publishing benchmark results).
-Bexhoma uses the image `valkey/valkey:9.1.3`, protocol and cluster mode are compatible with Redis.
-It is used as the SUT for YCSB key-value workloads: `-dbms Valkey` runs a single node (template `deploymenttemplate-Valkey.yml`), `-nw N` a cluster of N shards (`deploymenttemplate-ValkeyCluster.yml`, with `-nwr` replicas).
-The configuration is the one of [Redis](#redis) with `valkey-cli` instead of `redis-cli`; monitoring uses the same `redis_exporter` sidecar (port 9121) and the `redis` metrics set.
-With `-ar`, `save-snapshot.sh` (`SAVE`, then `CONFIG RESETSTAT`) runs before each benchmarking round, on every worker in cluster mode.
+`Valkey` is the configuration key for Valkey, as a single host or as a cluster (`-nw`), used as the SUT for YCSB.
+It is the configuration of [Redis](#redis) with `valkey-cli` instead of `redis-cli`; monitoring uses the same `redis_exporter` sidecar (port 9121) and the `redis` metric set.
 
-**DDL scripts:**
-- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Valkey)
-
-See [Example: Valkey](Example-Valkey.md) for a worked example.
+See [Example: Benchmark Valkey](Example-Valkey.md) for configuration, deployment, scripts and examples.
 
 ---
 
 ## Garnet
 
-`Garnet` is Microsoft Research's RESP-compatible cache store (MIT license, which has no restriction on publishing benchmark results).
-Bexhoma uses the image `ghcr.io/microsoft/garnet:2.2.5`: a single node (template `deploymenttemplate-Garnet.yml`) or, with `-nw N`, a cluster of N shards (template `deploymenttemplate-GarnetCluster.yml`, Garnet started with `--cluster`); `-nwr R` adds R replicas per shard, so `-nw 3 -nwr 1` creates 6 worker pods (the cluster is created with `--cluster-replicas`). Redis's cluster flags (`--cluster-enabled` etc.) are unknown to Garnet, so the Redis cluster template cannot be reused by swapping the image.
-YCSB talks to it with the Redis binding (`BEXHOMA_DBMS_TYPE=redis`), so only the commands used by that binding must be supported by Garnet.
-See [Example: Garnet](Example-Garnet.md) for a worked example.
-The image contains no CLI, so an init container copies `valkey-cli` (also as `redis-cli`) from the Valkey image into the pod: it serves the `SAVE` of the `preStop` hook and of the reset script.
-Garnet is started with `--checkpointdir /data/checkpoints --aof --aof-commit-freq 1000 --recover` and as root (the volume is owned by root), so data on a persistent volume (`-rsr`) survives a restart and a repetition that reuses the volume finds its data.
-With `-ar`, `save-snapshot.sh` (`SAVE`, a checkpoint) runs before each benchmarking round; Garnet does not support `CONFIG RESETSTAT`.
-There is no `redis_exporter` sidecar, so only cAdvisor metrics are collected.
+`Garnet` is the configuration key for Garnet, Microsoft Research's RESP-compatible cache store, as a single host or as a cluster (`-nw`), used as the SUT for YCSB with the Redis binding.
+There is no exporter, so only cAdvisor metrics are collected.
 
-**DDL scripts:**
-- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/Garnet)
+See [Example: Benchmark Garnet](Example-Garnet.md) for configuration, deployment, scripts and examples.
 
 ---
 
 ## Cassandra
 
-Apache Cassandra is a wide-column store. It is licensed under Apache 2.0, which has no restriction on publishing benchmark results.
-Bexhoma uses the image `cassandra:5.0.9`.
+`Cassandra` is the configuration key for Apache Cassandra as a single node, `CassandraCluster` for a cluster (`-nw`), used as the SUT for YCSB with its `cassandra-cql` binding.
+Monitoring uses a `cassandra_exporter` sidecar on port 8080.
 
-There are two configuration keys, chosen by `-nw` with `-dbms Cassandra`:
-
-- `Cassandra` (`-nw 0`): a single node in the SUT pod, template `deploymenttemplate-Cassandra.yml`.
-- `CassandraCluster` (`-nw` > 0): a StatefulSet of nodes with a headless service, template `deploymenttemplate-CassandraCluster.yml`. The first worker is the seed. The nodes start one after the other, as Cassandra refuses to bootstrap them in parallel, and bexhoma starts loading when the last one has joined. The SUT pod is a placeholder that runs `cqlsh` for the scripts.
-
-**Configuration** (from `cluster.config`):
-
-```python
-'Cassandra': {
-    'abbreviation': 'ca',
-    'loadData': 'cqlsh {service_name} 9091 --request-timeout=600 -f {scriptname}',
-    'delay_prepare': 10,
-    'template': {
-        'version': '5.0.9',
-        'alias': 'Wide-Column-1',
-        'docker_alias': 'WC1',
-        'auth': ["cassandra", ""],
-    },
-    'logfile': '/var/log/cassandra/system.log',
-    'datadir': '/var/lib/cassandra',
-    'priceperhourdollar': 0.0,
-    'monitor': { ... },  # Prometheus discovery of the SUT pod on port 8080 (cassandra_exporter)
-},
-```
-
-There is no JDBC driver: YCSB runs its `cassandra-cql` binding, selected by `BEXHOMA_DBMS_TYPE = "cassandra"`. The binding uses the DataStax driver 3.0.0, which works with Cassandra 5. DBMSBenchmarker cannot connect, so only YCSB is offered.
-The driver connects to every node it discovers on the port of its contact points. So YCSB reaches a cluster through the workers on port 9042 and a single node through the SUT service on port 9091.
-
-Scripts are CQL with the suffix `.sql`, because bexhoma runs only that suffix through `loadData`: `initschema-ycsb.sql` creates the keyspace `ycsb` and the table `usertable`, `checkschema-ycsb.sql` shows keyspace, table and ring. It counts no rows, since `SELECT count(*)` scans the table and runs into the range timeout of the server. `save-snapshot.sh` flushes and waits for the compactions after the load, and logs `nodetool tablestats` with the estimated rows per node.
-
-The heap is a quarter of the memory limit of the container, at most 31 GiB, because `cassandra-env.sh` would size it from the RAM of the node. Change it per run with `--set deployment[bexhoma-deployment-cassandra].container[dbms].env.MAX_HEAP_SIZE=8G` (for the cluster workers: `statefulset[bexhoma-worker]`). Do not set `HEAP_NEWSIZE`, which must stay unset with G1.
-
-A loader thread of YCSB ends at its first failed insert, and a busy node answers with a write timeout after 2 s. So `generator.sh` retries a failed insert for Cassandra up to 10 times, 3 s apart; each retry is a line `Retrying insertion` in the log of the loader. The test `Loading Phase: all rows inserted` fails for every DBMS when rows are missing.
-
-Monitoring uses a [cassandra_exporter](https://github.com/criteo/cassandra_exporter) sidecar on port 8080 next to each node, which reads JMX on `127.0.0.1:7199`. See the metric set `cassandra` in [Monitoring](Monitoring.md). The request rates need a phase longer than the scrape interval of 30 s (at least `-xop 5` here); they show 0 for shorter ones.
-
-Reads and writes use consistency level `ONE`, the default of the binding, also with a replication factor above 1.
-`-xld` has no effect, since a keyspace does not exist yet when the durability scripts run: writes go to the commit log, which is synced every 10 s (`commitlog_sync: periodic`) unless set otherwise.
-`-xsbs` has no effect: the binding writes single statements.
-
-**DDL parameters** (`-xddl`, see [DDL parameters](#ddl-parameters-xddl)):
-
-| Key | Workload | Values | Default | Meaning |
-|---|---|---|---|---|
-| `num_worker_replicas` | YCSB | integer | `1` | replication_factor of the keyspace ycsb, also set by `-nwr`; reads and writes use consistency level ONE |
-
-See [Example: Cassandra](Example-Cassandra.md) for a worked example.
+See [Example: Benchmark Cassandra](Example-Cassandra.md) for configuration, deployment, scripts, DDL parameters and examples.
 
 ---
 
 ## DatabaseService
 
-`DatabaseService` is a generic configuration for **external database services** — cloud-managed databases or any PostgreSQL-compatible endpoint that is not itself deployed inside the Kubernetes cluster.
-The JDBC connection and `loadData` command reference the service by its in-cluster DNS name via `{namespace}`.
+`DatabaseService` is a generic configuration for external database services — cloud-managed databases or any PostgreSQL-compatible endpoint that is not deployed inside the Kubernetes cluster.
+The bexhoma SUT pod is a placeholder, and the SUT itself is not monitored.
 
-**Configuration** (from `cluster.config`):
-
-```python
-'DatabaseService': {
-    'loadData': 'psql -U postgres --host bexhoma-service.{namespace}.svc.cluster.local --port 9091 < {scriptname}',
-    'template': {
-        'version': 'v11.4',
-        'alias': 'General-B',
-        'docker_alias': 'GP-B',
-        'JDBC': {
-            'driver': "org.postgresql.Driver",
-            'auth': ["postgres", ""],
-            'url': 'jdbc:postgresql://bexhoma-service.{namespace}.svc.cluster.local:9091/postgres?reWriteBatchedInserts=true',
-            'jar': 'postgresql-42.5.0.jar',
-            'database': 'postgres',
-        }
-    },
-    'logfile': '/usr/local/data/logfile',
-    'datadir': '/var/lib/postgresql/data/',
-    'priceperhourdollar': 0.0,
-},
-```
-
-**DDL scripts:**
-- [TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/DatabaseService)
-- [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/DatabaseService)
-
-See [Example: Cloud Database](Example-CloudDatabase.md) for a worked example.
+See [Example: Benchmark a Cloud Database](Example-CloudDatabase.md) for configuration, the placeholder of a cloud service and examples.
 
 ---
 
 ## Hardware
 
-`Hardware` is not a DBMS — it benchmarks raw disk I/O (fio), CPU/memory
-(sysbench), or network latency/throughput (sockperf) on a dedicated SUT
-container, bypassing any database engine entirely. The fio/sysbench
-benchmarker connects to the SUT over SSH; sockperf connects directly to one
-of a fixed pool of persistent `sockperf server` instances running on the SUT
-(see below). There is no `loadData` command and no DDL scripts. Run it with
-`python hardware.py run -dbms Hardware -xht fio ...` (see `hardware.py -h`
-for the full set of fio/sysbench/sockperf-specific flags).
+`Hardware` is not a DBMS: it benchmarks raw disk I/O (fio), CPU/memory (sysbench) or network latency and throughput (netperf, sockperf) on a dedicated SUT container.
+There is no `loadData` command and there are no DDL scripts.
 
-**Deployment template:** [`k8s/deploymenttemplate-Hardware.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Hardware.yml)
-— mounts a PVC at `/database` on the SUT; the benchmarker's
-`HARDWARE_TEST_DIR` targets a subdirectory of this mount so fio measures the
-PVC-backed storage instead of the SUT container's ephemeral filesystem. The
-same manifest also declares a static pool of `SOCKPERF_NUM_SERVERS` (default
-16) container/Service ports starting at `SOCKPERF_BASE_PORT` (default 20000),
-each running one UDP and one TCP `sockperf server` (started by
-`images/hardware/sut/entrypoint.sh`); a benchmarker pod picks its dedicated
-server via `BEXHOMA_CHILD` (see `images/hardware/benchmarker/run_sockperf.sh`),
-so several benchmarker pods can each reach a separate server instead of
-contending on one socket.
-
-**Configuration** (from `cluster.config`):
-
-```python
-'Hardware': {
-    'loadData': '',
-    'delay_prepare': 0,
-    'template': {
-        'version': 'v1.0',
-        'alias': 'Hardware',
-        'docker_alias': 'HW',
-        'auth': ['bench', ''],
-    },
-    'logfile': '',
-    'datadir': '/database',
-    'priceperhourdollar': 0.0,
-},
-```
-
-`template.auth` is required for every non-JDBC `dockers` entry — it's used to
-populate `BEXHOMA_USER`/`BEXHOMA_PASSWORD` env vars injected into every job
-pod (`configurations/manifest.py`). Hardware's benchmarker scripts don't
-actually use these two vars (SSH auth goes through `BEXHOMA_SUT_USER`/
-`BEXHOMA_SUT_KEY` instead), but the manifest builder still requires the key
-to be present.
-
-No `template.JDBC` block (see footnote¹ above) — results are parsed from the
-benchmarker pod's own log output, not queried through DBMSBenchmarker.
-
-**DDL scripts:** none — Hardware has no loading phase; `experiment_dict_template["loader"]`
-is always empty and `cluster.config['volumes']['hardware']['initscripts']['Schema']`
-is an empty placeholder required only so `configurations.default(...)` can resolve
-its (unused) init-script lookup.
+See [Example: Hardware](Example-Hardware.md#technical-details) for the deployment, the configuration and examples.
 
 ---
 
@@ -1487,3 +684,17 @@ To add a DBMS called `NewDBMS`:
    ```
 
 If you need a JDBC driver that is not yet included, please raise an issue at https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues.
+
+6. **Add an example page** `docs/Example-NewDBMS.md` with a test script `scripts/test-docs-newdbms.sh` and `.ps1`, whose runs are in the order of the page.
+   All example pages of a DBMS have the same structure:
+
+   * a short introduction and references (as links), including the test script
+   * the main use case (`Perform <Benchmark> Benchmark`): a quick run without monitoring, with subsections Status, Cleanup and Evaluate Results
+   * Monitoring: a run of at least one minute of benchmarking with `-m -mc`, and Application Metrics (`-ma`) where the DBMS has an exporter
+   * Persistent Storage: a run with `-rst` and `-nc 2`, so the second repetition uses the loaded volume
+   * Variants, where the DBMS has them (cluster, replication, components, ...), one subsection with an example result each
+   * Technical Details: configuration of bexhoma, deployment, schema and scripts, DDL parameters, load durability and reset scripts
+   * one section per further use case (benchmark)
+
+   Logs are named `docs_<benchmark>_<dbms>[_<role>].log`, e.g. `_monitoring`, `_appmetrics`, `_storage`, `_cluster`; [TestCases](TestCases.md) lists all test scripts.
+   Add the page to `docs/index.rst` and a short section with a link to this document.

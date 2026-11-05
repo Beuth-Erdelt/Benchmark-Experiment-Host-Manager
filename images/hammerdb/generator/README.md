@@ -33,7 +33,7 @@ warehouse set without pod coordination.
 * `BEXHOMA_PORT`: Port of the target DBMS.
 * `BEXHOMA_USER`: Database user.
 * `BEXHOMA_PASSWORD`: Database password.
-* `BEXHOMA_DATABASE`: Database name (used for Citus only; PostgreSQL uses `tpcc`).
+* `BEXHOMA_DATABASE`: Database name (used for PostgreSQL and Citus; the JDBC database of the DBMS, `postgres`).
 
 ### Bexhoma experiment identity
 
