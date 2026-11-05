@@ -1249,46 +1249,56 @@ bexhoma tpcds \
 ### Workload
 TPC-DS Queries SF=1
 * Type: tpcds
-* Duration: 4037s 
-* Code: 1782833902
+* Duration: 816s 
+* Code: 1793874430
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=1) data is loaded and benchmark is executed.
   * Query ordering is Q1 - Q99.
   * All instances use the same query parameters.
   * Timeout per query is 1200.
+  * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.10.2.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker38.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
   * Database uses ephemeral storage of size 50Gi.
   * Loading is tested with [8] threads, split into [8] pods.
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 128Gi RAM. RAM limit is 128Gi.
 
 ### Connections
-* MariaDB-1-1-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:540492877824
-  * CPU:Intel(R) Xeon(R) Gold 6430
-  * Cores:128
-  * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:268035
-  * datadisk:4543
-  * cpu_list:0-127
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+* mariadb-1-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:954350
+  * datadisk:4470
+  * volume_size:1.8T
+  * volume_used:932G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
   * requests_memory:128Gi
   * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1782833902
+    * code:1793874430
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1782833902-fdb6f66d8-5zpn7: 0
+* bexhoma-sut-mariadb-1-1793874430-7776c84f57-ms7bf: 0
 
 ### Workflow
 
@@ -1304,146 +1314,156 @@ TPC-DS Queries SF=1
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MariaDB-1-1 |                1 |    1 |      585.00 |           0.00 |            0.00 |         66.00 |          512.00 |              8 |           0 |             | None           |             0 | False         |                6.15 |
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MariaDB-1-1 |                1 |    1 |      159.00 |           1.00 |            1.00 |         63.00 |           86.00 |              8 |           0 |             | None           |             0 | False         |               22.64 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-|                   | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
-|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| MariaDB-1-1-1-1-1 | MariaDB-1       | MariaDB-1-1-1 | MariaDB-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               97 |       3204 |            0.99 |             3680.65 |            108.99 |          -1 | MariaDB-1-1-1-1-1 |
+| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
+|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
+| mariadb-1-1-1-1-1 | MariaDB-1       | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        354 |            0.73 |             4974.76 |           1006.78 |          -1 | mariadb-1-1-1-1-1 |
 
 #### Per Phase
 
-|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| MariaDB-1-1-1 | MariaDB-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               97 |       3204 |            0.99 |             3680.65 |            108.99 |          -1 |
+|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        354 |            0.73 |             4974.76 |           1006.78 |          -1 |
+
+#### Query Completion per Phase
+
+| phase         |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
+|:--------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
+| mariadb-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
 
 ### Latency of Timer Execution [ms]
-| Queries       |   MariaDB-1-1-1-1-1 |
+| Queries       |   mariadb-1-1-1-1-1 |
 |:--------------|--------------------:|
-| TPC-DS Q1     |               21.54 |
-| TPC-DS Q2     |             4688.76 |
-| TPC-DS Q3     |               19.31 |
-| TPC-DS Q4     |            12070.81 |
-| TPC-DS Q5     |             8657.12 |
-| TPC-DS Q6     |              741.86 |
-| TPC-DS Q7     |             4017.22 |
-| TPC-DS Q8     |              381.48 |
-| TPC-DS Q9     |             3799.48 |
-| TPC-DS Q10    |               60.42 |
-| TPC-DS Q11    |             8152.01 |
-| TPC-DS Q12    |              258.03 |
-| TPC-DS Q13    |             1067.62 |
-| TPC-DS Q14a+b |            49638.93 |
-| TPC-DS Q15    |              175.56 |
-| TPC-DS Q16    |            11121.39 |
-| TPC-DS Q17    |              707.26 |
-| TPC-DS Q18    |             1952.32 |
-| TPC-DS Q19    |              309.52 |
-| TPC-DS Q20    |              433.49 |
-| TPC-DS Q21    |            21572.00 |
-| TPC-DS Q22    |            19869.36 |
-| TPC-DS Q23a+b |            57465.28 |
-| TPC-DS Q24a+b |               32.58 |
-| TPC-DS Q25    |              153.86 |
-| TPC-DS Q26    |              868.66 |
-| TPC-DS Q27    |             1665.35 |
-| TPC-DS Q28    |             2837.08 |
-| TPC-DS Q29    |               94.89 |
-| TPC-DS Q30    |              106.37 |
-| TPC-DS Q31    |             1408.80 |
-| TPC-DS Q32    |               12.06 |
-| TPC-DS Q33    |              158.76 |
-| TPC-DS Q34    |             3045.86 |
-| TPC-DS Q35    |             1288.52 |
-| TPC-DS Q36    |             1771.70 |
-| TPC-DS Q37    |             3663.48 |
-| TPC-DS Q38    |             7218.75 |
-| TPC-DS Q39a+b |             1314.93 |
-| TPC-DS Q40    |              179.28 |
-| TPC-DS Q41    |              408.73 |
-| TPC-DS Q42    |              281.63 |
-| TPC-DS Q43    |             1109.11 |
-| TPC-DS Q44    |             1198.02 |
-| TPC-DS Q45    |              134.35 |
-| TPC-DS Q46    |             3230.52 |
-| TPC-DS Q47    |            15022.31 |
-| TPC-DS Q48    |             1248.50 |
-| TPC-DS Q49    |              109.78 |
-| TPC-DS Q50    |               35.45 |
-| TPC-DS Q51    |             7916.88 |
-| TPC-DS Q52    |              314.14 |
-| TPC-DS Q53    |              153.86 |
-| TPC-DS Q54    |             1086.61 |
-| TPC-DS Q55    |              247.21 |
-| TPC-DS Q56    |              160.67 |
-| TPC-DS Q57    |             6159.56 |
-| TPC-DS Q58    |             5881.91 |
-| TPC-DS Q59    |             9180.81 |
-| TPC-DS Q60    |              663.17 |
-| TPC-DS Q61    |              402.53 |
-| TPC-DS Q62    |             1681.06 |
-| TPC-DS Q63    |              136.88 |
-| TPC-DS Q64    |              548.86 |
-| TPC-DS Q65    |             5857.24 |
-| TPC-DS Q66    |             1228.97 |
-| TPC-DS Q67    |             7050.47 |
-| TPC-DS Q68    |             3057.05 |
-| TPC-DS Q69    |                3.60 |
-| TPC-DS Q70    |             8193.80 |
-| TPC-DS Q71    |              529.04 |
-| TPC-DS Q72    |           403601.33 |
-| TPC-DS Q73    |             3509.42 |
-| TPC-DS Q74    |             6182.05 |
-| TPC-DS Q75    |             5714.65 |
-| TPC-DS Q76    |              465.15 |
-| TPC-DS Q77    |             6261.85 |
-| TPC-DS Q78    |             5726.20 |
-| TPC-DS Q79    |             3437.41 |
-| TPC-DS Q80    |              548.97 |
-| TPC-DS Q81    |              220.27 |
-| TPC-DS Q82    |             3659.84 |
-| TPC-DS Q83    |              935.74 |
-| TPC-DS Q84    |               59.40 |
-| TPC-DS Q85    |              146.99 |
-| TPC-DS Q86    |              919.30 |
-| TPC-DS Q87    |             7199.08 |
-| TPC-DS Q88    |            16154.30 |
-| TPC-DS Q89    |             1615.79 |
-| TPC-DS Q90    |              119.56 |
-| TPC-DS Q91    |               24.38 |
-| TPC-DS Q92    |                9.40 |
-| TPC-DS Q93    |               45.70 |
-| TPC-DS Q96    |              807.61 |
-| TPC-DS Q97    |             5338.46 |
-| TPC-DS Q98    |              875.80 |
-| TPC-DS Q99    |             4938.86 |
+| TPC-DS Q1     |               11.58 |
+| TPC-DS Q2     |             3709.16 |
+| TPC-DS Q3     |                5.59 |
+| TPC-DS Q4     |             9379.15 |
+| TPC-DS Q5     |             6725.26 |
+| TPC-DS Q6     |              573.45 |
+| TPC-DS Q7     |             2637.68 |
+| TPC-DS Q8     |              261.40 |
+| TPC-DS Q9     |             3327.16 |
+| TPC-DS Q10    |               25.53 |
+| TPC-DS Q11    |             6133.76 |
+| TPC-DS Q12    |              191.17 |
+| TPC-DS Q13    |              693.27 |
+| TPC-DS Q14a+b |            41420.36 |
+| TPC-DS Q15    |              123.08 |
+| TPC-DS Q16    |            22251.08 |
+| TPC-DS Q17    |             4505.01 |
+| TPC-DS Q18    |             8763.95 |
+| TPC-DS Q19    |              358.88 |
+| TPC-DS Q20    |              380.64 |
+| TPC-DS Q21    |             1126.57 |
+| TPC-DS Q22    |            15236.61 |
+| TPC-DS Q23a+b |            49381.41 |
+| TPC-DS Q24a+b |             1751.53 |
+| TPC-DS Q25    |              108.55 |
+| TPC-DS Q26    |              612.19 |
+| TPC-DS Q27    |             2567.69 |
+| TPC-DS Q28    |             2565.46 |
+| TPC-DS Q29    |               69.91 |
+| TPC-DS Q30    |               76.55 |
+| TPC-DS Q31    |              971.96 |
+| TPC-DS Q32    |                7.44 |
+| TPC-DS Q33    |              111.53 |
+| TPC-DS Q34    |             2236.11 |
+| TPC-DS Q35    |              871.70 |
+| TPC-DS Q36    |             2256.78 |
+| TPC-DS Q37    |             4042.19 |
+| TPC-DS Q38    |             6462.52 |
+| TPC-DS Q39a+b |              920.13 |
+| TPC-DS Q40    |              132.50 |
+| TPC-DS Q41    |              349.36 |
+| TPC-DS Q42    |              163.03 |
+| TPC-DS Q43    |              839.91 |
+| TPC-DS Q44    |             1379.55 |
+| TPC-DS Q45    |               99.77 |
+| TPC-DS Q46    |             2928.77 |
+| TPC-DS Q47    |            12727.05 |
+| TPC-DS Q48    |              847.45 |
+| TPC-DS Q49    |               84.68 |
+| TPC-DS Q50    |               17.11 |
+| TPC-DS Q51    |             7444.91 |
+| TPC-DS Q52    |              160.45 |
+| TPC-DS Q53    |              116.14 |
+| TPC-DS Q54    |              859.98 |
+| TPC-DS Q55    |              160.14 |
+| TPC-DS Q56    |              152.72 |
+| TPC-DS Q57    |             4669.23 |
+| TPC-DS Q58    |             4278.91 |
+| TPC-DS Q59    |             6749.45 |
+| TPC-DS Q60    |              231.81 |
+| TPC-DS Q61    |              268.26 |
+| TPC-DS Q62    |             1284.56 |
+| TPC-DS Q63    |              117.88 |
+| TPC-DS Q64    |              469.43 |
+| TPC-DS Q65    |             4360.88 |
+| TPC-DS Q66    |              852.29 |
+| TPC-DS Q67    |             5177.95 |
+| TPC-DS Q68    |             2447.89 |
+| TPC-DS Q69    |                2.10 |
+| TPC-DS Q70    |             6720.23 |
+| TPC-DS Q71    |              328.43 |
+| TPC-DS Q72    |              596.06 |
+| TPC-DS Q73    |             2105.05 |
+| TPC-DS Q74    |             4422.77 |
+| TPC-DS Q75    |             4014.99 |
+| TPC-DS Q76    |              337.99 |
+| TPC-DS Q77    |             5752.21 |
+| TPC-DS Q78    |             4156.30 |
+| TPC-DS Q79    |             2415.13 |
+| TPC-DS Q80    |              384.07 |
+| TPC-DS Q81    |              274.82 |
+| TPC-DS Q82    |             3664.04 |
+| TPC-DS Q83    |              699.66 |
+| TPC-DS Q84    |               39.11 |
+| TPC-DS Q85    |               96.69 |
+| TPC-DS Q86    |              627.14 |
+| TPC-DS Q87    |             5272.10 |
+| TPC-DS Q88    |            17476.92 |
+| TPC-DS Q89    |             1032.78 |
+| TPC-DS Q90    |               83.92 |
+| TPC-DS Q91    |               11.03 |
+| TPC-DS Q92    |                4.42 |
+| TPC-DS Q93    |               25.60 |
+| TPC-DS Q94    |              353.83 |
+| TPC-DS Q95    |              583.47 |
+| TPC-DS Q96    |             2281.34 |
+| TPC-DS Q97    |             4000.74 |
+| TPC-DS Q98    |              699.30 |
+| TPC-DS Q99    |             2981.45 |
 
 ### Errors (failed queries)
 
-|                   |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
-|:------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
-| MariaDB-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-* TPC-DS Q94
-  * MariaDB-1-1-1-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=59) Query execution was interrupted (max_statement_time exceeded)
-* TPC-DS Q95
-  * MariaDB-1-1-1-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=59) Query execution was interrupted (max_statement_time exceeded)
+No errors
 
 ### Warnings (result mismatch)
 
 No warnings
 
 ### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
-* TEST failed: SQL errors
+* TEST passed: No SQL errors
 * TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
 ```
 
@@ -1483,41 +1503,57 @@ bexhoma tpcds \
 ### Workload
 TPC-DS Queries SF=1
 * Type: tpcds
-* Duration: 4175s 
-* Code: 1782408033
+* Duration: 757s 
+* Code: 1793875294
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=1) data is loaded and benchmark is executed.
   * Query ordering is Q1 - Q99.
   * All instances use the same query parameters.
   * Timeout per query is 1200.
+  * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.10.0.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker38.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 50Gi.
   * Loading is tested with [8] threads, split into [8] pods.
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 128Gi RAM. RAM limit is 128Gi.
 
 ### Connections
-* MariaDB-1-1-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:540492877824
-  * CPU:Intel(R) Xeon(R) Gold 6430
-  * Cores:128
-  * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:225003
-  * cpu_list:0-127
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+* mariadb-1-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:954351
+  * datadisk:4478
+  * volume_size:1.8T
+  * volume_used:932G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1782408033
+    * code:1793875294
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1793875294-595d8fcb6d-tsgdl: 0
 
 ### Workflow
 
@@ -1533,134 +1569,138 @@ TPC-DS Queries SF=1
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MariaDB-1-1 |                1 |    1 |      659.00 |           2.00 |            1.00 |         63.00 |          586.00 |              8 |           0 |             | None           |             0 | False         |                5.46 |
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MariaDB-1-1 |                1 |    1 |      161.00 |           1.00 |            1.00 |         68.00 |           83.00 |              8 |           0 |             | None           |             0 | False         |               22.36 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-|                   | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
-|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| MariaDB-1-1-1-1-1 | MariaDB-1       | MariaDB-1-1-1 | MariaDB-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               97 |       3222 |            1.00 |             3615.10 |            108.38 |          -1 | MariaDB-1-1-1-1-1 |
+| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
+|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
+| mariadb-1-1-1-1-1 | MariaDB-1       | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        296 |            0.68 |             5416.26 |           1204.05 |          -1 | mariadb-1-1-1-1-1 |
 
 #### Per Phase
 
-|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| MariaDB-1-1-1 | MariaDB-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               97 |       3222 |            1.00 |             3615.10 |            108.38 |          -1 |
+|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        296 |            0.68 |             5416.26 |           1204.05 |          -1 |
+
+#### Query Completion per Phase
+
+| phase         |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
+|:--------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
+| mariadb-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
 
 ### Latency of Timer Execution [ms]
-| Queries       |   MariaDB-1-1-1-1-1 |
+| Queries       |   mariadb-1-1-1-1-1 |
 |:--------------|--------------------:|
-| TPC-DS Q1     |               20.58 |
-| TPC-DS Q2     |             5155.74 |
-| TPC-DS Q3     |               17.24 |
-| TPC-DS Q4     |            12760.85 |
-| TPC-DS Q5     |             8530.52 |
-| TPC-DS Q6     |              788.63 |
-| TPC-DS Q7     |             3533.69 |
-| TPC-DS Q8     |              364.70 |
-| TPC-DS Q9     |             3826.11 |
-| TPC-DS Q10    |               47.09 |
-| TPC-DS Q11    |             8029.01 |
-| TPC-DS Q12    |              249.82 |
-| TPC-DS Q13    |             1138.95 |
-| TPC-DS Q14a+b |            49164.50 |
-| TPC-DS Q15    |              173.35 |
-| TPC-DS Q16    |            11244.66 |
-| TPC-DS Q17    |              803.62 |
-| TPC-DS Q18    |             1934.76 |
-| TPC-DS Q19    |              255.67 |
-| TPC-DS Q20    |              437.01 |
-| TPC-DS Q21    |            21254.04 |
-| TPC-DS Q22    |            19635.03 |
-| TPC-DS Q23a+b |            58108.26 |
-| TPC-DS Q24a+b |             2072.30 |
-| TPC-DS Q25    |              158.64 |
-| TPC-DS Q26    |              898.32 |
-| TPC-DS Q27    |             1680.10 |
-| TPC-DS Q28    |             2833.70 |
-| TPC-DS Q29    |               97.75 |
-| TPC-DS Q30    |              103.69 |
-| TPC-DS Q31    |             1445.23 |
-| TPC-DS Q32    |               10.71 |
-| TPC-DS Q33    |              204.18 |
-| TPC-DS Q34    |             3192.23 |
-| TPC-DS Q35    |             1189.62 |
-| TPC-DS Q36    |             1688.02 |
-| TPC-DS Q37    |             3737.26 |
-| TPC-DS Q38    |             7163.57 |
-| TPC-DS Q39a+b |             1324.60 |
-| TPC-DS Q40    |              186.38 |
-| TPC-DS Q41    |              413.10 |
-| TPC-DS Q42    |              239.73 |
-| TPC-DS Q43    |             1148.65 |
-| TPC-DS Q44    |                2.52 |
-| TPC-DS Q45    |              128.51 |
-| TPC-DS Q46    |             3546.82 |
-| TPC-DS Q47    |            13981.45 |
-| TPC-DS Q48    |             1259.37 |
-| TPC-DS Q49    |              114.33 |
-| TPC-DS Q50    |               30.74 |
-| TPC-DS Q51    |             7630.46 |
-| TPC-DS Q52    |              224.42 |
-| TPC-DS Q53    |              161.65 |
-| TPC-DS Q54    |             1039.59 |
-| TPC-DS Q55    |              218.12 |
-| TPC-DS Q56    |              133.75 |
-| TPC-DS Q57    |             6727.82 |
-| TPC-DS Q58    |             5732.05 |
-| TPC-DS Q59    |             9403.49 |
-| TPC-DS Q60    |              663.03 |
-| TPC-DS Q61    |              370.34 |
-| TPC-DS Q62    |             1684.59 |
-| TPC-DS Q63    |              152.48 |
-| TPC-DS Q64    |              566.63 |
-| TPC-DS Q65    |             5794.88 |
-| TPC-DS Q66    |             1281.28 |
-| TPC-DS Q67    |             7257.30 |
-| TPC-DS Q68    |             3197.45 |
-| TPC-DS Q69    |                3.45 |
-| TPC-DS Q70    |             8595.11 |
-| TPC-DS Q71    |              522.66 |
-| TPC-DS Q72    |           406943.14 |
-| TPC-DS Q73    |             2959.08 |
-| TPC-DS Q74    |             6295.58 |
-| TPC-DS Q75    |             5770.01 |
-| TPC-DS Q76    |              845.91 |
-| TPC-DS Q77    |             6337.57 |
-| TPC-DS Q78    |             5962.35 |
-| TPC-DS Q79    |             3277.33 |
-| TPC-DS Q80    |              842.18 |
-| TPC-DS Q81    |              316.31 |
-| TPC-DS Q82    |             4404.48 |
-| TPC-DS Q83    |              948.80 |
-| TPC-DS Q84    |               59.16 |
-| TPC-DS Q85    |              148.73 |
-| TPC-DS Q86    |              980.04 |
-| TPC-DS Q87    |             7542.86 |
-| TPC-DS Q88    |            25828.87 |
-| TPC-DS Q89    |             1677.75 |
-| TPC-DS Q90    |              395.91 |
-| TPC-DS Q91    |               28.21 |
-| TPC-DS Q92    |               10.74 |
-| TPC-DS Q93    |               44.28 |
-| TPC-DS Q96    |             2678.46 |
-| TPC-DS Q97    |             5174.98 |
-| TPC-DS Q98    |              857.55 |
-| TPC-DS Q99    |             4862.09 |
+| TPC-DS Q1     |               12.18 |
+| TPC-DS Q2     |             4249.46 |
+| TPC-DS Q3     |                7.50 |
+| TPC-DS Q4     |             9135.26 |
+| TPC-DS Q5     |             6778.28 |
+| TPC-DS Q6     |              636.44 |
+| TPC-DS Q7     |             2873.28 |
+| TPC-DS Q8     |              273.67 |
+| TPC-DS Q9     |             3388.60 |
+| TPC-DS Q10    |               81.18 |
+| TPC-DS Q11    |             6685.15 |
+| TPC-DS Q12    |              190.16 |
+| TPC-DS Q13    |              773.09 |
+| TPC-DS Q14a+b |            40570.61 |
+| TPC-DS Q15    |              120.48 |
+| TPC-DS Q16    |             7688.05 |
+| TPC-DS Q17    |              511.27 |
+| TPC-DS Q18    |             1483.22 |
+| TPC-DS Q19    |              195.72 |
+| TPC-DS Q20    |              334.14 |
+| TPC-DS Q21    |              873.92 |
+| TPC-DS Q22    |            12948.33 |
+| TPC-DS Q23a+b |            44384.67 |
+| TPC-DS Q24a+b |               53.00 |
+| TPC-DS Q25    |              196.34 |
+| TPC-DS Q26    |              917.16 |
+| TPC-DS Q27    |             2455.46 |
+| TPC-DS Q28    |             2525.72 |
+| TPC-DS Q29    |               39.70 |
+| TPC-DS Q30    |               76.65 |
+| TPC-DS Q31    |              976.14 |
+| TPC-DS Q32    |                5.08 |
+| TPC-DS Q33    |              117.52 |
+| TPC-DS Q34    |             2381.20 |
+| TPC-DS Q35    |              888.71 |
+| TPC-DS Q36    |             2251.92 |
+| TPC-DS Q37    |             2947.03 |
+| TPC-DS Q38    |             5264.09 |
+| TPC-DS Q39a+b |              939.38 |
+| TPC-DS Q40    |              135.17 |
+| TPC-DS Q41    |              362.07 |
+| TPC-DS Q42    |              168.54 |
+| TPC-DS Q43    |              763.88 |
+| TPC-DS Q44    |                1.99 |
+| TPC-DS Q45    |              689.95 |
+| TPC-DS Q46    |             2698.33 |
+| TPC-DS Q47    |            12453.07 |
+| TPC-DS Q48    |              816.72 |
+| TPC-DS Q49    |               92.23 |
+| TPC-DS Q50    |               20.68 |
+| TPC-DS Q51    |             6425.26 |
+| TPC-DS Q52    |              176.90 |
+| TPC-DS Q53    |               96.20 |
+| TPC-DS Q54    |              907.19 |
+| TPC-DS Q55    |              168.09 |
+| TPC-DS Q56    |              226.17 |
+| TPC-DS Q57    |             5079.23 |
+| TPC-DS Q58    |             4407.07 |
+| TPC-DS Q59    |             7050.59 |
+| TPC-DS Q60    |              481.12 |
+| TPC-DS Q61    |              267.94 |
+| TPC-DS Q62    |             1309.76 |
+| TPC-DS Q63    |              123.28 |
+| TPC-DS Q64    |              443.49 |
+| TPC-DS Q65    |             4498.91 |
+| TPC-DS Q66    |              822.01 |
+| TPC-DS Q67    |             5393.33 |
+| TPC-DS Q68    |             2388.29 |
+| TPC-DS Q69    |              282.33 |
+| TPC-DS Q70    |             5948.41 |
+| TPC-DS Q71    |              333.46 |
+| TPC-DS Q72    |              589.23 |
+| TPC-DS Q73    |             2287.34 |
+| TPC-DS Q74    |             4417.39 |
+| TPC-DS Q75    |             4046.70 |
+| TPC-DS Q76    |              333.94 |
+| TPC-DS Q77    |             4650.57 |
+| TPC-DS Q78    |             4950.69 |
+| TPC-DS Q79    |             2586.96 |
+| TPC-DS Q80    |              459.12 |
+| TPC-DS Q81    |              173.96 |
+| TPC-DS Q82    |             3743.50 |
+| TPC-DS Q83    |              726.57 |
+| TPC-DS Q84    |               42.31 |
+| TPC-DS Q85    |              129.85 |
+| TPC-DS Q86    |              635.63 |
+| TPC-DS Q87    |             5368.60 |
+| TPC-DS Q88    |             6640.94 |
+| TPC-DS Q89    |             1034.51 |
+| TPC-DS Q90    |              240.23 |
+| TPC-DS Q91    |                9.57 |
+| TPC-DS Q92    |                3.95 |
+| TPC-DS Q93    |               25.41 |
+| TPC-DS Q94    |              340.30 |
+| TPC-DS Q95    |              559.21 |
+| TPC-DS Q96    |              478.16 |
+| TPC-DS Q97    |             3988.28 |
+| TPC-DS Q98    |              657.23 |
+| TPC-DS Q99    |             2523.03 |
 
 ### Errors (failed queries)
 
-|                   |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
-|:------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
-| MariaDB-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-* TPC-DS Q94
-  * MariaDB-1-1-1-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=61) Query execution was interrupted (max_statement_time exceeded)
-* TPC-DS Q95
-  * MariaDB-1-1-1-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=61) Query execution was interrupted (max_statement_time exceeded)
+No errors
 
 ### Warnings (result mismatch)
 
@@ -1672,43 +1712,66 @@ No warnings
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1-1 |       752.71 |      4.40 |           8.68 |                  8.79 |
+| mariadb-1-1-1-1 |       269.76 |      3.13 |           4.10 |                  4.19 |
 
 ### Loading phase: component data generator
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| DBMS            | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|:-------------|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1-1 |         2.14 |      0.04 |           0.01 |                  0.76 |
+| mariadb-1-1-1-1 |         2.85 |      0.06 |           0.01 |                  0.76 |
 
-### Execution phase: SUT deployment
-
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1-1 |      3193.56 |      1.00 |           8.93 |                  9.04 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1-1 |        20.80 |      0.02 |           0.30 |                  0.31 |
+| mariadb-1-1-1-1 |       272.64 |      1.16 |           4.37 |                  4.39 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 |        17.89 |      0.35 |           0.29 |                  0.30 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loading.log, expected: series exists only while non-zero)
 
 ### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (data pre-existing; series exists only while non-zero)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
-* TEST failed: SQL errors
+* TEST passed: No SQL errors
 * TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
 ```
 
@@ -1750,119 +1813,165 @@ bexhoma tpcds \
 ### Workload
 TPC-DS Queries SF=1
 * Type: tpcds
-* Duration: 16025s 
-* Code: 1782408084
+* Duration: 2307s 
+* Code: 1793873688
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=1) data is loaded and benchmark is executed.
   * Query ordering is Q1 - Q99.
   * All instances use the same query parameters.
   * Timeout per query is 1200.
+  * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.10.0.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker38.
-  * Database is persisted to disk of type shared and size 10Gi.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi. Persistent storage is removed at experiment start.
   * Loading is tested with [8] threads, split into [8] pods.
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1, 2] times the number of benchmarking pods.
   * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 128Gi RAM. RAM limit is 128Gi.
 
 ### Connections
-* MariaDB-1-1-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:540492877824
-  * CPU:Intel(R) Xeon(R) Gold 6430
-  * Cores:128
-  * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:225003
-  * volume_size:10G
-  * volume_used:4.5G
-  * cpu_list:0-127
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+* mariadb-1-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:944580
+  * datadisk:4502
+  * volume_size:49G
+  * volume_used:4.4G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1782408084
-* MariaDB-1-1-2-1-1 uses docker image mariadb:11.4.7
-  * RAM:540492877824
-  * CPU:Intel(R) Xeon(R) Gold 6430
-  * Cores:128
-  * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:220477
-  * volume_size:10G
-  * volume_used:4.5G
-  * cpu_list:0-127
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1793873688
+* mariadb-1-1-2-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:947579
+  * datadisk:4502
+  * volume_size:49G
+  * volume_used:4.4G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1782408084
-* MariaDB-1-1-2-1-2 uses docker image mariadb:11.4.7
-  * RAM:540492877824
-  * CPU:Intel(R) Xeon(R) Gold 6430
-  * Cores:128
-  * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:220477
-  * volume_size:10G
-  * volume_used:4.5G
-  * cpu_list:0-127
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1793873688
+* mariadb-1-1-2-1-2 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:947579
+  * datadisk:4502
+  * volume_size:49G
+  * volume_used:4.4G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1782408084
-* MariaDB-1-2-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:540492877824
-  * CPU:Intel(R) Xeon(R) Gold 6430
-  * Cores:128
-  * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:220478
-  * volume_size:10G
-  * volume_used:4.5G
-  * cpu_list:0-127
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1793873688
+* mariadb-1-2-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:954341
+  * datadisk:4503
+  * volume_size:49G
+  * volume_used:4.4G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1782408084
-* MariaDB-1-2-2-1-1 uses docker image mariadb:11.4.7
-  * RAM:540492877824
-  * CPU:Intel(R) Xeon(R) Gold 6430
-  * Cores:128
-  * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:220478
-  * volume_size:10G
-  * volume_used:4.5G
-  * cpu_list:0-127
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1793873688
+* mariadb-1-2-2-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:951737
+  * datadisk:4503
+  * volume_size:49G
+  * volume_used:4.4G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1782408084
-* MariaDB-1-2-2-1-2 uses docker image mariadb:11.4.7
-  * RAM:540492877824
-  * CPU:Intel(R) Xeon(R) Gold 6430
-  * Cores:128
-  * host:6.8.0-111-generic
-  * node:cl-worker38
-  * disk:220478
-  * volume_size:10G
-  * volume_used:4.5G
-  * cpu_list:0-127
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1793873688
+* mariadb-1-2-2-1-2 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:951737
+  * datadisk:4503
+  * volume_size:49G
+  * volume_used:4.4G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1782408084
+    * code:1793873688
+
+### Inherited Loading
+* loading skipped, loading times copied from an earlier repetition: MariaDB-1-2
+
+### Data Parameters of Reused Volumes
+* MariaDB-1: DDL values of the volume: histograms=off
+* MariaDB-1: loading values of the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1793873688-6d44cbbd48-fb8n5: 0
+* bexhoma-sut-mariadb-1-1793873688-7d8fd78447-bw82v: 0
 
 ### Workflow
 
@@ -1884,168 +1993,154 @@ TPC-DS Queries SF=1
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| MariaDB-1-1 |                1 |    1 |     2391.00 |           5.00 |            1.00 |        464.00 |         1913.00 |              8 |           0 |             | None           |             0 | False         |                1.51 |
-| MariaDB-1-2 |                2 |    1 |     2391.00 |           5.00 |            1.00 |        464.00 |         1913.00 |              8 |           0 |             | None           |             0 | False         |                1.51 |
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MariaDB-1-1 |                1 |    1 |      198.00 |           1.00 |            1.00 |         82.00 |          105.00 |              8 |           0 |             | None           |             0 | False         |               18.18 | False               |
+| MariaDB-1-2 |                2 |    1 |      198.00 |           1.00 |            1.00 |         82.00 |          105.00 |              8 |           0 |             | None           |             0 | False         |               18.18 | True                |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-|                   | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
-|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| MariaDB-1-1-1-1-1 | MariaDB-1       | MariaDB-1-1-1 | MariaDB-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               97 |       3190 |            1.03 |             3534.75 |            109.47 |          -1 | MariaDB-1-1-1-1-1 |
-| MariaDB-1-1-2-1-1 | MariaDB-1       | MariaDB-1-1-2 | MariaDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               97 |       3269 |            1.10 |             3286.12 |            106.82 |          -1 | MariaDB-1-1-2-1-1 |
-| MariaDB-1-1-2-1-2 | MariaDB-1       | MariaDB-1-1-2 | MariaDB-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               97 |       3265 |            1.09 |             3332.89 |            106.95 |          -1 | MariaDB-1-1-2-1-2 |
-| MariaDB-1-2-1-1-1 | MariaDB-1       | MariaDB-1-2-1 | MariaDB-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               97 |       3176 |            1.03 |             3536.56 |            109.95 |          -1 | MariaDB-1-2-1-1-1 |
-| MariaDB-1-2-2-1-1 | MariaDB-1       | MariaDB-1-2-2 | MariaDB-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               97 |       3309 |            1.16 |             3112.08 |            105.53 |          -1 | MariaDB-1-2-2-1-1 |
-| MariaDB-1-2-2-1-2 | MariaDB-1       | MariaDB-1-2-2 | MariaDB-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               97 |       3310 |            1.13 |             3204.20 |            105.50 |          -1 | MariaDB-1-2-2-1-2 |
+| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
+|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
+| mariadb-1-1-1-1-1 | MariaDB-1       | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        360 |            0.69 |             5293.02 |            990.00 |          -1 | mariadb-1-1-1-1-1 |
+| mariadb-1-1-2-1-1 | MariaDB-1       | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |                  99 |        381 |            0.72 |             5062.63 |            935.43 |          -1 | mariadb-1-1-2-1-1 |
+| mariadb-1-1-2-1-2 | MariaDB-1       | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |                  99 |        383 |            0.71 |             5153.04 |            930.55 |          -1 | mariadb-1-1-2-1-2 |
+| mariadb-1-2-1-1-1 | MariaDB-1       | mariadb-1-2-1 | mariadb-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        342 |            0.73 |             5032.36 |           1042.11 |          -1 | mariadb-1-2-1-1-1 |
+| mariadb-1-2-2-1-1 | MariaDB-1       | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               99 |                  99 |        365 |            0.71 |             5170.21 |            976.44 |          -1 | mariadb-1-2-2-1-1 |
+| mariadb-1-2-2-1-2 | MariaDB-1       | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |        2 |               1 |           1 | 1.00 |               99 |                  99 |        365 |            0.71 |             5141.68 |            976.44 |          -1 | mariadb-1-2-2-1-2 |
 
 #### Per Phase
 
-|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| MariaDB-1-1-1 | MariaDB-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               97 |       3190 |            1.03 |             3534.75 |            109.47 |          -1 |
-| MariaDB-1-1-2 | MariaDB-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |              194 |       3269 |            1.10 |             3309.42 |            213.64 |          -1 |
-| MariaDB-1-2-1 | MariaDB-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               97 |       3176 |            1.03 |             3536.56 |            109.95 |          -1 |
-| MariaDB-1-2-2 | MariaDB-1-2-2 |                2 |        2 |               1 |           2 | 1.00 |              194 |       3310 |            1.15 |             3157.80 |            211.00 |          -1 |
+|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        360 |            0.69 |             5293.02 |            990.00 |          -1 |
+| mariadb-1-1-2 | mariadb-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |              198 |                 198 |        383 |            0.71 |             5107.63 |           1861.10 |          -1 |
+| mariadb-1-2-1 | mariadb-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        342 |            0.73 |             5032.36 |           1042.11 |          -1 |
+| mariadb-1-2-2 | mariadb-1-2-2 |                2 |        2 |               1 |           2 | 1.00 |              198 |                 198 |        365 |            0.71 |             5155.93 |           1952.88 |          -1 |
+
+#### Query Completion per Phase
+
+| phase         |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
+|:--------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
+| mariadb-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+| mariadb-1-1-2 |      2 | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2          | 2/2          | 2/2          | 2/2          | 2/2             | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2             | 2/2             | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2             | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | yes        |
+| mariadb-1-2-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+| mariadb-1-2-2 |      2 | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2         | 2/2          | 2/2          | 2/2          | 2/2          | 2/2             | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2             | 2/2             | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2             | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | 2/2          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
 
 ### Latency of Timer Execution [ms]
-| Queries       |   MariaDB-1-1-1-1-1 |   MariaDB-1-1-2-1-1 |   MariaDB-1-1-2-1-2 |   MariaDB-1-2-1-1-1 |   MariaDB-1-2-2-1-1 |   MariaDB-1-2-2-1-2 |
+| Queries       |   mariadb-1-1-1-1-1 |   mariadb-1-1-2-1-1 |   mariadb-1-1-2-1-2 |   mariadb-1-2-1-1-1 |   mariadb-1-2-2-1-1 |   mariadb-1-2-2-1-2 |
 |:--------------|--------------------:|--------------------:|--------------------:|--------------------:|--------------------:|--------------------:|
-| TPC-DS Q1     |               21.25 |               21.99 |               20.65 |              156.55 |               19.74 |               19.42 |
-| TPC-DS Q2     |             4572.82 |             4580.97 |             4652.58 |             4663.55 |             4672.21 |             4425.77 |
-| TPC-DS Q3     |               12.23 |               10.62 |               10.31 |               29.80 |                9.75 |               10.38 |
-| TPC-DS Q4     |            11814.81 |            12501.07 |            12437.42 |            12102.38 |            12928.04 |            12800.08 |
-| TPC-DS Q5     |             8366.21 |             9842.79 |             9910.66 |             9389.33 |            10867.63 |            10874.60 |
-| TPC-DS Q6     |              739.85 |             1265.71 |              849.79 |              748.56 |             1320.35 |             1188.27 |
-| TPC-DS Q7     |             3376.76 |             4458.41 |             4393.45 |             3429.95 |             5104.82 |             5209.71 |
-| TPC-DS Q8     |              343.92 |              367.82 |              338.62 |              363.22 |              492.11 |              486.03 |
-| TPC-DS Q9     |             3799.43 |             3882.50 |             3799.12 |             3794.98 |             3878.79 |             3896.92 |
-| TPC-DS Q10    |               35.46 |               54.46 |               29.46 |               37.15 |               57.30 |               30.34 |
-| TPC-DS Q11    |             8050.92 |             9397.69 |             9382.76 |             8350.30 |             9387.13 |             9359.84 |
-| TPC-DS Q12    |              248.72 |              362.98 |              362.63 |              249.00 |              348.20 |              349.12 |
-| TPC-DS Q13    |             1054.74 |             1461.56 |             1461.12 |             1191.68 |             1474.66 |             1474.37 |
-| TPC-DS Q14a+b |            48552.25 |            62756.87 |            62759.34 |            48582.69 |            63169.03 |            62933.92 |
-| TPC-DS Q15    |              163.26 |              196.61 |              181.96 |              177.04 |              166.73 |              180.11 |
-| TPC-DS Q16    |            10847.69 |            14153.72 |            14151.81 |            10820.47 |            12814.62 |            13007.66 |
-| TPC-DS Q17    |              728.31 |             1050.29 |             1050.16 |              767.33 |             1008.07 |              940.85 |
-| TPC-DS Q18    |             1844.73 |             2495.47 |             2494.17 |             1850.02 |             2570.09 |             2592.19 |
-| TPC-DS Q19    |              238.02 |              255.75 |              275.81 |              231.32 |              244.95 |              263.61 |
-| TPC-DS Q20    |              458.56 |              591.78 |              601.10 |              442.84 |              568.52 |              571.26 |
-| TPC-DS Q21    |            21074.79 |            33681.57 |            32755.89 |            21235.75 |            34368.12 |            34372.27 |
-| TPC-DS Q22    |            19298.32 |            23518.30 |            22760.57 |            19338.94 |            24807.46 |            25263.17 |
-| TPC-DS Q23a+b |            48300.77 |            60779.03 |            58433.79 |            47628.03 |            60414.22 |            60098.87 |
-| TPC-DS Q24a+b |             2055.66 |             2286.62 |             2203.90 |             2019.86 |             2589.10 |             2494.32 |
-| TPC-DS Q25    |              141.25 |              148.99 |              158.71 |              149.85 |              174.74 |              151.71 |
-| TPC-DS Q26    |              831.80 |              833.36 |              875.27 |              873.59 |             1117.71 |             1120.46 |
-| TPC-DS Q27    |             1652.02 |             1693.30 |             2310.39 |             1698.96 |             2212.60 |             2216.17 |
-| TPC-DS Q28    |             2802.26 |             2788.12 |             2818.67 |             2791.98 |             2903.12 |             2926.11 |
-| TPC-DS Q29    |               88.25 |               93.80 |               96.65 |               88.78 |              126.71 |              127.19 |
-| TPC-DS Q30    |              102.43 |              139.73 |              108.13 |              105.74 |              127.20 |              129.53 |
-| TPC-DS Q31    |             1396.46 |             1451.24 |             1466.10 |             1386.77 |             1709.62 |             1711.92 |
-| TPC-DS Q32    |               10.50 |               10.73 |                9.95 |                9.58 |               10.85 |               10.44 |
-| TPC-DS Q33    |              164.08 |              183.65 |              178.22 |              170.11 |              229.13 |              219.65 |
-| TPC-DS Q34    |             2912.74 |             3104.45 |             2968.59 |             2874.04 |             3912.62 |             3927.87 |
-| TPC-DS Q35    |             1133.96 |             1218.13 |             1243.14 |             1140.08 |             1648.53 |             1643.21 |
-| TPC-DS Q36    |             1620.78 |             1799.61 |             1786.51 |             1645.18 |             2414.60 |             3016.97 |
-| TPC-DS Q37    |             3538.03 |             3763.53 |             3979.29 |             3637.88 |             4191.12 |             5101.84 |
-| TPC-DS Q38    |             7006.01 |             8248.53 |             8141.00 |             7148.33 |             8886.38 |             8664.93 |
-| TPC-DS Q39a+b |             1168.31 |             1189.52 |             1202.60 |             1223.29 |             1203.41 |             1191.13 |
-| TPC-DS Q40    |              175.99 |              180.18 |              237.27 |              180.80 |              183.92 |              203.87 |
-| TPC-DS Q41    |              397.18 |              400.24 |              402.33 |              391.30 |              390.42 |              394.80 |
-| TPC-DS Q42    |              223.24 |              233.10 |              246.26 |              216.27 |              232.34 |              263.56 |
-| TPC-DS Q43    |             1152.75 |             1409.22 |             1312.66 |             1126.98 |             1276.68 |             1215.07 |
-| TPC-DS Q44    |             1165.07 |             1181.96 |             1174.86 |             1154.83 |             1181.82 |             1146.20 |
-| TPC-DS Q45    |              217.63 |              143.93 |              140.66 |              135.37 |              168.65 |              138.83 |
-| TPC-DS Q46    |             5502.38 |             3800.02 |             4170.88 |             3534.17 |             4205.41 |             4251.95 |
-| TPC-DS Q47    |            14345.68 |            13441.87 |            13457.65 |            12648.00 |            13383.53 |            13805.53 |
-| TPC-DS Q48    |             1272.92 |             1339.87 |             1379.83 |             1206.61 |             1347.37 |             1324.44 |
-| TPC-DS Q49    |              111.87 |               96.78 |              111.16 |              113.47 |              110.14 |               89.87 |
-| TPC-DS Q50    |               34.56 |               37.21 |               35.83 |               34.25 |               51.22 |               34.18 |
-| TPC-DS Q51    |             7653.39 |             8029.37 |             8192.90 |             7680.66 |             9296.93 |             8714.28 |
-| TPC-DS Q52    |              246.52 |              264.49 |              249.46 |              239.00 |              238.53 |              279.04 |
-| TPC-DS Q53    |              143.85 |              155.63 |              143.53 |              143.00 |              142.95 |              155.68 |
-| TPC-DS Q54    |             1048.88 |             1048.92 |             1034.33 |             1034.47 |             1101.29 |             1060.13 |
-| TPC-DS Q55    |              229.28 |              247.48 |              227.60 |              224.44 |              255.68 |              246.92 |
-| TPC-DS Q56    |              187.73 |              195.42 |              186.39 |              183.33 |              204.72 |              195.20 |
-| TPC-DS Q57    |             6036.70 |             6392.01 |             6499.07 |             6089.04 |             6472.27 |             6442.59 |
-| TPC-DS Q58    |             5944.94 |             7312.86 |             6721.07 |             5767.65 |             7401.82 |             7508.00 |
-| TPC-DS Q59    |            11047.43 |            10566.60 |            10791.14 |             9049.94 |            10927.35 |            10747.04 |
-| TPC-DS Q60    |              832.57 |              622.17 |              609.61 |              586.81 |              605.42 |              626.48 |
-| TPC-DS Q61    |              390.04 |              386.09 |              385.62 |              363.84 |              413.20 |              377.21 |
-| TPC-DS Q62    |             2319.48 |             2007.23 |             1930.39 |             1674.97 |             1926.94 |             1942.67 |
-| TPC-DS Q63    |              262.15 |              207.31 |              164.45 |              162.91 |              200.26 |              171.74 |
-| TPC-DS Q64    |              992.38 |              572.70 |              573.98 |              581.89 |              617.66 |              577.34 |
-| TPC-DS Q65    |             6354.56 |             7478.49 |             7259.60 |             5843.99 |             7971.14 |             7874.61 |
-| TPC-DS Q66    |             1235.07 |             1197.58 |             1205.87 |             1191.99 |             1378.54 |             1305.24 |
-| TPC-DS Q67    |             7011.01 |             7170.33 |             7799.37 |             7045.88 |             8046.68 |             7982.74 |
-| TPC-DS Q68    |             3061.65 |             3885.38 |             3029.25 |             3057.08 |             4063.73 |             4067.12 |
-| TPC-DS Q69    |                3.57 |                2.98 |                2.98 |                3.60 |                3.69 |                2.96 |
-| TPC-DS Q70    |             9522.08 |             9712.56 |            10397.34 |             8257.08 |            10838.14 |            10661.19 |
-| TPC-DS Q71    |              597.96 |              477.95 |              475.43 |              485.90 |              582.93 |              495.58 |
-| TPC-DS Q72    |           395212.23 |           409650.17 |           409844.91 |           391651.39 |           433132.47 |           435601.07 |
-| TPC-DS Q73    |             2878.01 |             3006.95 |             3124.16 |             2908.24 |             3292.84 |             3213.67 |
-| TPC-DS Q74    |             6129.58 |             6673.63 |             6618.97 |             5944.10 |             6730.25 |             6691.07 |
-| TPC-DS Q75    |             5740.42 |             6206.04 |             6408.75 |             5536.32 |             6355.60 |             6155.40 |
-| TPC-DS Q76    |              477.30 |              483.95 |              464.51 |              436.51 |              476.69 |              482.97 |
-| TPC-DS Q77    |             6169.36 |             7420.22 |             7319.68 |             6029.10 |             7686.24 |             7760.36 |
-| TPC-DS Q78    |             5676.84 |             6071.62 |             6103.93 |             5591.84 |             6073.52 |             5978.85 |
-| TPC-DS Q79    |             3413.31 |             3822.91 |             3841.43 |             3421.33 |             3922.41 |             3980.36 |
-| TPC-DS Q80    |              523.73 |              562.09 |              652.70 |              534.16 |              662.63 |              563.60 |
-| TPC-DS Q81    |              220.88 |              220.16 |              221.36 |              212.61 |              219.78 |              212.44 |
-| TPC-DS Q82    |             3862.53 |             4060.44 |             4096.51 |             3763.48 |             4172.12 |             4060.20 |
-| TPC-DS Q83    |              913.73 |             1526.93 |              943.23 |              886.67 |              934.27 |             1058.47 |
-| TPC-DS Q84    |               56.86 |               58.31 |               58.37 |               56.50 |               60.29 |               57.42 |
-| TPC-DS Q85    |              121.47 |              130.24 |              136.11 |              121.23 |              130.96 |              128.22 |
-| TPC-DS Q86    |              903.70 |             1164.70 |              964.87 |              906.07 |             1017.96 |             1163.04 |
-| TPC-DS Q87    |             6966.96 |             8403.44 |             8802.19 |             7092.20 |             8822.29 |             8679.90 |
-| TPC-DS Q88    |            15895.84 |            18404.17 |            18551.36 |            15518.00 |            21083.81 |            21158.54 |
-| TPC-DS Q89    |             1555.02 |             1577.60 |             1782.64 |             1584.78 |             1755.49 |             1539.85 |
-| TPC-DS Q90    |              341.08 |              331.89 |              389.58 |              358.96 |              396.67 |              328.63 |
-| TPC-DS Q91    |               16.67 |               16.61 |               17.02 |               19.73 |               21.68 |               16.29 |
-| TPC-DS Q92    |               10.02 |                9.39 |                9.23 |                9.23 |                9.79 |                9.45 |
-| TPC-DS Q93    |               38.31 |               38.44 |               40.50 |               44.05 |               44.03 |               37.44 |
-| TPC-DS Q96    |              779.19 |              749.65 |              800.53 |              782.43 |              763.98 |              735.48 |
-| TPC-DS Q97    |             5163.54 |             5996.10 |             5872.14 |             5179.33 |             6084.32 |             6250.16 |
-| TPC-DS Q98    |              879.55 |             1046.87 |             1113.54 |              883.05 |             1178.87 |             1030.93 |
-| TPC-DS Q99    |             4918.81 |             5354.58 |             5563.41 |             4911.81 |             5592.88 |             5456.76 |
+| TPC-DS Q1     |               12.21 |               13.93 |               15.35 |               28.48 |               13.03 |               13.96 |
+| TPC-DS Q2     |             3845.20 |             3625.71 |             3637.00 |            12590.57 |             3936.34 |             4050.29 |
+| TPC-DS Q3     |                5.52 |                7.76 |                7.74 |              237.05 |                5.23 |                4.88 |
+| TPC-DS Q4     |             8917.70 |             9625.30 |             9904.03 |            10105.94 |            10190.22 |            10233.54 |
+| TPC-DS Q5     |             7563.07 |             8673.96 |             9288.37 |             7911.35 |             8478.16 |             8543.11 |
+| TPC-DS Q6     |              620.38 |              800.55 |              568.90 |              943.30 |              662.92 |              656.32 |
+| TPC-DS Q7     |             2738.51 |             3698.66 |             3697.41 |             2752.12 |             3934.59 |             3936.18 |
+| TPC-DS Q8     |              262.85 |              412.36 |              306.65 |              264.40 |              304.79 |              305.69 |
+| TPC-DS Q9     |             3645.74 |             3418.79 |             3359.48 |             3316.98 |             3882.09 |             3746.26 |
+| TPC-DS Q10    |               48.73 |               41.59 |               21.99 |               32.45 |               19.01 |               24.08 |
+| TPC-DS Q11    |             7093.05 |             6245.17 |             6145.63 |             6298.79 |             7121.65 |             6632.17 |
+| TPC-DS Q12    |              187.68 |              185.89 |              182.42 |              195.04 |              186.54 |              183.76 |
+| TPC-DS Q13    |              722.66 |              766.98 |              727.36 |              728.44 |              669.78 |              709.52 |
+| TPC-DS Q14a+b |            71653.43 |            51736.16 |            52411.30 |            39988.65 |            47186.16 |            44716.88 |
+| TPC-DS Q15    |              125.92 |              130.06 |              116.89 |              118.63 |              121.80 |              125.92 |
+| TPC-DS Q16    |             8345.55 |             8329.56 |             8469.42 |             7375.62 |             7739.87 |             8705.27 |
+| TPC-DS Q17    |              517.23 |              573.35 |              466.56 |              497.90 |              484.55 |              576.28 |
+| TPC-DS Q18    |             1458.24 |             1589.44 |             1583.52 |             1399.15 |             1399.00 |             1402.88 |
+| TPC-DS Q19    |              177.55 |              175.26 |              169.41 |              172.41 |              173.84 |              193.01 |
+| TPC-DS Q20    |              350.94 |              347.23 |              362.70 |              394.35 |              362.11 |              342.29 |
+| TPC-DS Q21    |              905.72 |              853.36 |              867.42 |             2752.85 |              836.90 |              842.13 |
+| TPC-DS Q22    |            14746.57 |            16233.80 |            15832.48 |            20567.11 |            14996.99 |            15516.90 |
+| TPC-DS Q23a+b |            50089.00 |            58697.62 |            59547.36 |            48641.30 |            55678.43 |            57458.38 |
+| TPC-DS Q24a+b |               48.78 |               51.53 |               45.22 |               48.87 |               58.04 |               45.40 |
+| TPC-DS Q25    |              115.13 |              116.71 |              101.17 |              114.43 |              117.77 |               91.91 |
+| TPC-DS Q26    |              606.26 |              605.70 |              593.75 |              720.62 |              676.91 |              606.47 |
+| TPC-DS Q27    |             2571.62 |             3030.53 |             3002.22 |             2566.80 |             3524.91 |             3473.49 |
+| TPC-DS Q28    |             2592.61 |             2561.38 |             2561.38 |             2556.16 |             2581.97 |             2788.73 |
+| TPC-DS Q29    |               69.11 |               67.06 |               65.70 |               65.96 |               70.16 |              181.93 |
+| TPC-DS Q30    |               28.17 |               27.98 |               25.11 |               28.16 |               42.82 |               74.92 |
+| TPC-DS Q31    |             1366.32 |              991.73 |              986.72 |              988.53 |             1751.05 |             1424.63 |
+| TPC-DS Q32    |               15.36 |                5.53 |                5.33 |                5.04 |                5.52 |                5.27 |
+| TPC-DS Q33    |              435.47 |              137.31 |              134.08 |              136.14 |              136.08 |              118.14 |
+| TPC-DS Q34    |             2313.34 |             2678.74 |             2670.45 |             2587.84 |             2920.50 |             3471.56 |
+| TPC-DS Q35    |              935.74 |              832.86 |             1013.85 |              846.93 |             1017.31 |              765.09 |
+| TPC-DS Q36    |             3215.90 |             3861.34 |             4206.33 |             2210.71 |             3076.15 |             3060.59 |
+| TPC-DS Q37    |             4192.74 |             4635.31 |             3661.16 |             3005.04 |             3465.21 |             3362.12 |
+| TPC-DS Q38    |             5490.15 |             7746.44 |             8372.97 |             5639.19 |             6674.92 |             6548.99 |
+| TPC-DS Q39a+b |             2092.76 |              969.98 |              967.85 |              984.94 |             1407.91 |             1944.29 |
+| TPC-DS Q40    |              133.20 |              158.05 |              126.82 |              133.24 |              133.29 |              177.38 |
+| TPC-DS Q41    |              363.63 |              363.16 |              359.44 |              353.46 |              369.49 |              349.87 |
+| TPC-DS Q42    |              166.70 |              164.65 |              146.44 |              164.50 |              194.37 |              159.71 |
+| TPC-DS Q43    |              792.57 |              763.46 |              758.03 |              764.19 |              824.30 |              768.43 |
+| TPC-DS Q44    |                1.53 |                1.36 |                1.02 |                1.24 |                1.11 |                1.23 |
+| TPC-DS Q45    |              100.06 |               97.27 |               95.92 |               95.87 |               96.98 |               92.83 |
+| TPC-DS Q46    |             2730.53 |             2933.51 |             4345.33 |             3560.20 |             3064.61 |             3235.59 |
+| TPC-DS Q47    |            15179.13 |            16436.18 |            15688.84 |            15787.83 |            15265.81 |            15408.96 |
+| TPC-DS Q48    |              873.67 |              947.36 |              836.57 |             1240.74 |              812.00 |              769.64 |
+| TPC-DS Q49    |               94.86 |               84.63 |               81.10 |              284.79 |               84.60 |               79.39 |
+| TPC-DS Q50    |               20.87 |               17.82 |               18.96 |               17.48 |               16.63 |               16.35 |
+| TPC-DS Q51    |             7335.35 |             7875.41 |             7866.13 |             7083.63 |             7144.51 |             6687.01 |
+| TPC-DS Q52    |              187.01 |              160.86 |              165.18 |              155.51 |              156.62 |              145.87 |
+| TPC-DS Q53    |              105.95 |              103.66 |              105.28 |              103.95 |              103.57 |              125.55 |
+| TPC-DS Q54    |              912.94 |              863.27 |              853.31 |              842.21 |              863.04 |              839.61 |
+| TPC-DS Q55    |              170.03 |              157.74 |              170.91 |              158.79 |              150.69 |              155.22 |
+| TPC-DS Q56    |              116.79 |              115.79 |              200.65 |              107.02 |              109.36 |              105.23 |
+| TPC-DS Q57    |             4783.85 |             5660.04 |             6005.47 |             5175.57 |             4638.28 |             4628.28 |
+| TPC-DS Q58    |             4412.76 |             6949.13 |             6907.75 |             4790.29 |             5126.47 |             5291.17 |
+| TPC-DS Q59    |             8181.77 |             9098.57 |             8887.92 |             7304.29 |             8422.86 |             8304.75 |
+| TPC-DS Q60    |              354.75 |              240.40 |              610.55 |              316.73 |              227.34 |              213.60 |
+| TPC-DS Q61    |              299.37 |              288.67 |              275.47 |              287.86 |              262.85 |              260.21 |
+| TPC-DS Q62    |             1293.05 |             2147.83 |             1458.06 |             1301.97 |             1349.24 |             1408.31 |
+| TPC-DS Q63    |              108.32 |              222.99 |              175.25 |              108.41 |              123.69 |              180.75 |
+| TPC-DS Q64    |              441.04 |              518.38 |              487.06 |              450.57 |              429.27 |              593.01 |
+| TPC-DS Q65    |             5238.87 |             6880.98 |             6851.30 |             5118.62 |             6141.12 |             6127.95 |
+| TPC-DS Q66    |              908.88 |              941.43 |              942.20 |             1289.45 |             1611.90 |             1317.58 |
+| TPC-DS Q67    |             6951.27 |             5967.06 |             5977.07 |             6458.09 |             6658.62 |             6289.58 |
+| TPC-DS Q68    |             2399.37 |             3154.95 |             3154.41 |             3410.14 |             2929.10 |             2963.04 |
+| TPC-DS Q69    |              269.81 |              322.42 |              254.98 |              285.14 |              343.85 |              256.68 |
+| TPC-DS Q70    |             6314.31 |             8253.03 |             8329.92 |             6464.80 |             8075.36 |             8551.48 |
+| TPC-DS Q71    |              334.87 |              401.90 |              331.79 |              348.76 |              625.60 |              355.93 |
+| TPC-DS Q72    |              586.38 |              619.61 |              583.30 |              601.12 |              741.10 |              580.98 |
+| TPC-DS Q73    |             2116.92 |             2656.20 |             2643.01 |             2144.91 |             2630.59 |             2610.99 |
+| TPC-DS Q74    |             4757.09 |             4717.66 |             4811.81 |             4761.45 |             5645.58 |             5460.05 |
+| TPC-DS Q75    |             4243.01 |             4175.79 |             4232.64 |             4341.33 |             4273.95 |             4114.48 |
+| TPC-DS Q76    |              341.47 |              380.91 |              781.79 |              342.97 |              333.07 |              337.89 |
+| TPC-DS Q77    |             4557.05 |             5990.54 |             5830.71 |             4766.43 |             5829.28 |             5821.83 |
+| TPC-DS Q78    |             4073.36 |             4306.94 |             4371.22 |             4612.22 |             4477.99 |             4426.91 |
+| TPC-DS Q79    |             2459.34 |             2783.96 |             2794.56 |             2414.28 |             3079.32 |             3089.98 |
+| TPC-DS Q80    |              383.81 |              512.44 |              383.13 |              382.31 |              471.87 |              471.72 |
+| TPC-DS Q81    |              154.07 |              156.23 |              157.85 |              149.27 |              164.21 |              158.28 |
+| TPC-DS Q82    |             3008.29 |             3684.59 |             3402.26 |             3299.82 |             3782.24 |             3780.48 |
+| TPC-DS Q83    |              782.40 |              696.20 |              865.63 |              687.23 |              900.00 |              901.15 |
+| TPC-DS Q84    |               39.21 |               39.40 |               41.40 |               38.48 |               56.40 |               55.01 |
+| TPC-DS Q85    |               97.70 |              102.95 |               98.11 |              105.46 |               96.35 |               94.06 |
+| TPC-DS Q86    |              638.32 |              815.79 |              851.90 |              628.68 |              791.35 |              785.88 |
+| TPC-DS Q87    |             6170.63 |             6580.98 |             6334.77 |             5631.45 |             6482.95 |             6469.96 |
+| TPC-DS Q88    |            19712.38 |            25596.42 |            25800.47 |            18723.99 |            23413.98 |            24051.24 |
+| TPC-DS Q89    |             1117.10 |             1151.08 |             1143.40 |             1099.60 |             1110.53 |             1072.92 |
+| TPC-DS Q90    |              243.23 |              287.01 |              249.82 |              243.69 |              245.41 |              234.47 |
+| TPC-DS Q91    |               10.40 |               12.59 |               10.41 |               14.91 |               13.45 |                9.36 |
+| TPC-DS Q92    |                4.78 |                4.81 |                4.67 |                4.45 |                4.40 |                5.22 |
+| TPC-DS Q93    |               27.18 |               32.68 |               27.54 |               34.16 |               25.49 |               27.17 |
+| TPC-DS Q94    |              141.81 |              154.12 |              150.68 |              140.10 |              136.92 |              143.07 |
+| TPC-DS Q95    |              573.19 |              606.40 |              585.38 |              590.78 |              591.77 |              797.17 |
+| TPC-DS Q96    |             1910.17 |             1907.76 |             1981.28 |             2279.50 |             2495.68 |             2171.15 |
+| TPC-DS Q97    |             3994.38 |             4374.46 |             4685.65 |             4146.24 |             4734.05 |             4680.97 |
+| TPC-DS Q98    |              673.06 |              858.55 |              974.54 |              741.38 |              661.72 |              667.72 |
+| TPC-DS Q99    |             2643.62 |             2940.90 |             2523.05 |             3067.95 |             2836.92 |             2809.68 |
 
 ### Errors (failed queries)
 
-|                   |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
-|:------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
-| MariaDB-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| MariaDB-1-1-2-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| MariaDB-1-1-2-1-2 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| MariaDB-1-2-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| MariaDB-1-2-2-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| MariaDB-1-2-2-1-2 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         1.00 |         1.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-* TPC-DS Q94
-  * MariaDB-1-1-2-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=140) Query execution was interrupted (max_statement_time exceeded)
-  * MariaDB-1-1-2-1-2: numRun 1: : java.sql.SQLTimeoutException: (conn=141) Query execution was interrupted (max_statement_time exceeded)
-  * MariaDB-1-2-1-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=8) Query execution was interrupted (max_statement_time exceeded)
-  * MariaDB-1-1-1-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=83) Query execution was interrupted (max_statement_time exceeded)
-  * MariaDB-1-2-2-1-2: numRun 1: : java.sql.SQLTimeoutException: (conn=65) Query execution was interrupted (max_statement_time exceeded)
-  * MariaDB-1-2-2-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=64) Query execution was interrupted (max_statement_time exceeded)
-* TPC-DS Q95
-  * MariaDB-1-1-2-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=140) Query execution was interrupted (max_statement_time exceeded)
-  * MariaDB-1-1-2-1-2: numRun 1: : java.sql.SQLTimeoutException: (conn=141) Query execution was interrupted (max_statement_time exceeded)
-  * MariaDB-1-2-1-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=8) Query execution was interrupted (max_statement_time exceeded)
-  * MariaDB-1-1-1-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=83) Query execution was interrupted (max_statement_time exceeded)
-  * MariaDB-1-2-2-1-2: numRun 1: : java.sql.SQLTimeoutException: (conn=65) Query execution was interrupted (max_statement_time exceeded)
-  * MariaDB-1-2-2-1-1: numRun 1: : java.sql.SQLTimeoutException: (conn=64) Query execution was interrupted (max_statement_time exceeded)
+No errors
 
 ### Warnings (result mismatch)
 
-|                   |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
-|:------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
-| MariaDB-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| MariaDB-1-1-2-1-2 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| MariaDB-1-2-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| MariaDB-1-2-2-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| MariaDB-1-2-2-1-2 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+No warnings
 
 ### Monitoring
 
@@ -2053,52 +2148,86 @@ TPC-DS Queries SF=1
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1-1 |      2090.86 |      2.86 |           8.74 |                  8.85 |
-| MariaDB-1-1-2-1 |      2090.86 |      2.86 |           8.74 |                  8.85 |
+| mariadb-1-1-1-1 |       256.39 |      3.71 |           3.91 |                  4.04 |
+| mariadb-1-1-2-1 |       256.39 |      3.71 |           3.91 |                  4.04 |
 
 ### Loading phase: component data generator
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
-| MariaDB-1-1-2-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| DBMS            | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|:-------------|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
+| mariadb-1-1-2-1 | n/a          |         0 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1-1 |         3.46 |      0.04 |           0.00 |                  0.00 |
-| MariaDB-1-1-2-1 |         3.46 |      0.04 |           0.00 |                  0.00 |
+| mariadb-1-1-1-1 |         2.40 |      0.05 |           0.01 |                  0.76 |
+| mariadb-1-1-2-1 |         2.40 |      0.05 |           0.01 |                  0.76 |
 
-### Execution phase: SUT deployment
-
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1-1 |      3178.46 |      1.00 |           8.84 |                  8.94 |
-| MariaDB-1-1-2-1 |      6509.84 |      2.00 |           9.32 |                  9.45 |
-| MariaDB-1-2-1-1 |      3150.31 |      1.00 |           5.85 |                  5.89 |
-| MariaDB-1-2-2-1 |      6573.27 |      2.00 |           6.18 |                  6.23 |
-
-### Execution phase: component benchmarker
+### Benchmarking phase: SUT deployment
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1-1 |        21.13 |      0.41 |           0.32 |                  0.32 |
-| MariaDB-1-1-2-1 |        27.56 |      0.07 |           0.33 |                  0.33 |
-| MariaDB-1-2-1-1 |        20.90 |      0.38 |           0.31 |                  0.31 |
-| MariaDB-1-2-2-1 |        26.77 |      0.06 |           0.33 |                  0.33 |
+| mariadb-1-1-1-1 |       332.42 |      1.00 |           4.88 |                  4.90 |
+| mariadb-1-1-2-1 |       730.47 |      2.00 |           4.35 |                  4.36 |
+| mariadb-1-2-1-1 |       295.34 |      1.75 |           2.73 |                  2.74 |
+| mariadb-1-2-2-1 |       637.79 |      2.00 |           3.04 |                  3.05 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 |        19.17 |      0.44 |           0.30 |                  0.31 |
+| mariadb-1-1-2-1 |        41.83 |      0.51 |           0.32 |                  0.32 |
+| mariadb-1-2-1-1 |        20.09 |      0.04 |           0.30 |                  0.31 |
+| mariadb-1-2-2-1 |        41.35 |      1.66 |           0.33 |                  0.34 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage, Working Set [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-2-1 (bexhoma-metrics-mariadb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-2-1 (bexhoma-metrics-mariadb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-2-1-1 (bexhoma-metrics-mariadb-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-2-1-1 (bexhoma-metrics-mariadb-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-2-2-1 (bexhoma-metrics-mariadb-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-2-2-1 (bexhoma-metrics-mariadb-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (data pre-existing; series exists only while non-zero)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
-* TEST failed: SQL errors
-* TEST failed: SQL warnings (result mismatch)
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
 ```
 
