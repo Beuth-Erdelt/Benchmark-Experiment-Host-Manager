@@ -21,6 +21,11 @@ the entry script of that benchmark needs to configure the DBMS:
     scripts in the subfolder ``distributed`` of the script folder (absent: ``False``).
 ``unsupported_dimensions``
     ``{variant: reason}`` of the ``-xdim`` variants the DBMS refuses for this benchmark.
+``notes``
+    Lines for the workload info of the experiment: ``[{'text': ..., 'when': ...}]``. ``text`` is
+    formatted with the command line arguments (``{num_pd_nodes}``). ``when`` is ``selected``
+    (the DBMS is in ``-dbms``, or ``-dbms`` is not given) or the name of a boolean argument
+    that has to be set; without ``when`` the line is always shown.
 
 A DBMS may also declare ``base_system``: the DBMS whose script folder
 (``experiments/<benchmark>/<base_system>``) it reuses when that is not its own.
@@ -37,7 +42,7 @@ import ast
 import os
 
 __all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "load_dockers", "benchmark_entry", "compatible_dockers",
-           "default_dockers", "dimension_dockers", "unsupported_dimension", "base_system",
+           "default_dockers", "dimension_dockers", "unsupported_dimension", "notes", "base_system",
            "validate_descriptors"]
 
 #: Keys a benchmark entry may carry, with the type of their value.
@@ -48,6 +53,7 @@ ENTRY_KEYS = {
     'loading_template': str,
     'dimensions': bool,
     'unsupported_dimensions': dict,
+    'notes': list,
 }
 
 
@@ -107,6 +113,31 @@ def unsupported_dimension(dockers: dict, docker: str, benchmark: str, variant: s
     return (entry.get('unsupported_dimensions') or {}).get(variant, '')
 
 
+def notes(dockers: dict, benchmark: str, args) -> str:
+    """The workload info lines the DBMS entries of ``benchmark`` declare, for the given arguments.
+
+    :param dockers: The ``dockers`` section of the cluster configuration.
+    :param benchmark: Benchmark key.
+    :param args: The parsed command line (``-dbms`` as ``args.dbms``).
+    :return: Each line with a leading newline, ``''`` when none applies.
+    :rtype: str
+    """
+    selected = getattr(args, 'dbms', None) or []
+    text = ''
+    for name in compatible_dockers(dockers, benchmark):
+        for note in dockers[name]['benchmarks'][benchmark].get('notes') or []:
+            when = note.get('when')
+            if when is None:
+                applies = True
+            elif when == 'selected':
+                applies = not selected or name in selected
+            else:
+                applies = bool(getattr(args, when, False))
+            if applies:
+                text += '\n' + note['text'].format(**vars(args))
+    return text
+
+
 def benchmark_entry(dockers: dict, docker: str, benchmark: str) -> dict:
     """The entry of a DBMS for a benchmark.
 
@@ -161,6 +192,11 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
                     problems.append(f"{where}.{key}: must be {ENTRY_KEYS[key].__name__}, got {value!r}")
                 elif ENTRY_KEYS[key] is str and not value:
                     problems.append(f"{where}.{key}: must not be empty (leave the key out)")
+            for note in entry.get('notes') or []:
+                if not isinstance(note, dict) or not isinstance(note.get('text'), str) or not note['text']:
+                    problems.append(f"{where}.notes: every note needs a non-empty 'text'")
+                elif not isinstance(note.get('when', ''), str):
+                    problems.append(f"{where}.notes: 'when' must be a string")
             template = entry.get('loading_template')
             if template_folder and isinstance(template, str) and template \
                     and not os.path.isfile(os.path.join(template_folder, template)):

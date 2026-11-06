@@ -12,20 +12,6 @@
   "mysql": 17,
   "postgres": 20
  },
- "bexhoma/benchmarks/benchbase.py": {
-  "TiDB": 2
- },
- "bexhoma/benchmarks/ssb.py": {
-  "PgDuckDB": 1,
-  "duckdb": 1
- },
- "bexhoma/benchmarks/tpch.py": {
-  "PgDuckDB": 1,
-  "duckdb": 3
- },
- "bexhoma/benchmarks/ycsb.py": {
-  "TiDB": 2
- },
  "bexhoma/cli_args.py": {
   "PostgreSQL": 4,
   "mariadb": 1,

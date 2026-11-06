@@ -8,7 +8,7 @@ See LICENSE for details.
 """
 from types import SimpleNamespace
 
-from ..system_descriptors import dimension_dockers
+from ..system_descriptors import dimension_dockers, notes
 from .base import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, dimension_info
 
 __all__ = ["TPCH", "resolve_indexing_key"]
@@ -93,7 +93,6 @@ class TPCH(DBMSBenchmarkerBenchmark):
         num_loading_split = args.num_loading_split
         num_refresh_streams = int(args.num_refresh_streams)
         num_refresh_stream_offset = int(args.num_refresh_stream_offset)
-        duckdb_force_execution = args.duckdb_force_execution
         verbose_explain = args.verbose_explain
         store_explain = args.store_explain
         timeout = int(args.timeout)
@@ -171,8 +170,7 @@ class TPCH(DBMSBenchmarkerBenchmark):
                 experiment.workload['info'] += f"\nA TPC-H refresh stream (RF1+RF2) runs in parallel, with {num_refresh_streams} pair(s) applied per round."
                 if num_refresh_stream_offset > 0:
                     experiment.workload['info'] += f" Refresh sets up to {num_refresh_stream_offset} are skipped."
-            if duckdb_force_execution:
-                experiment.workload['info'] += "\nPgDuckDB queries are forced through the DuckDB execution engine."
+            experiment.workload['info'] += notes(experiment.cluster.dockers, 'tpch', args)
             if verbose_explain:
                 experiment.workload['info'] += "\nEXPLAIN statements are run and printed after each query."
             if store_explain:

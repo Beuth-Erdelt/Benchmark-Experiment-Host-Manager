@@ -18,6 +18,7 @@ See LICENSE for details.
 import ast
 import json
 import os
+import types
 import unittest
 
 from bexhoma import system_descriptors as sd
@@ -80,6 +81,24 @@ class AccessorsTest(unittest.TestCase):
         dockers = sd.load_dockers(os.path.join(_REPO, 'no-such-cluster.config'))
         self.assertEqual(dockers, _load('k8s-cluster.config')['dockers'])
 
+    def test_notes_selected_flag_and_always(self) -> None:
+        dockers = {
+            'A': {'benchmarks': {'x': {'notes': [{'text': 'A runs {n} pods.', 'when': 'selected'}]}}},
+            'B': {'benchmarks': {'x': {'notes': [{'text': 'B is forced.', 'when': 'force'},
+                                                 {'text': 'B always.'}]}}},
+        }
+        args = types.SimpleNamespace(dbms=[], n=3, force=False)
+        # -dbms not given: the 'selected' note shows, the flag note does not
+        self.assertEqual(sd.notes(dockers, 'x', args), '\nA runs 3 pods.\nB always.')
+        args = types.SimpleNamespace(dbms=['B'], n=3, force=True)
+        self.assertEqual(sd.notes(dockers, 'x', args), '\nB is forced.\nB always.')
+        self.assertEqual(sd.notes(dockers, 'other', args), '')
+
+    def test_notes_flag_does_not_need_the_dbms_selected(self) -> None:
+        dockers = {'A': {'benchmarks': {'x': {'notes': [{'text': 'forced', 'when': 'force'}]}}}}
+        self.assertEqual(sd.notes(dockers, 'x', types.SimpleNamespace(dbms=['Z'], force=True)), '\nforced')
+        self.assertEqual(sd.notes(dockers, 'x', types.SimpleNamespace(dbms=['Z'])), '')
+
     def test_base_system(self) -> None:
         self.assertEqual(sd.base_system(_small(), 'B'), 'A')
         self.assertEqual(sd.base_system(_small(), 'A'), 'A')
@@ -101,10 +120,12 @@ class ValidationTest(unittest.TestCase):
         dockers['A']['benchmarks']['y']['default'] = 'yes'
         dockers['C'] = {'benchmarks': {'x': {'alias': ''}, 'y': 'not a dict'}}
         dockers['D']['benchmarks']['x']['unsupported_dimensions'] = ['wide']
+        dockers['D']['benchmarks']['y']['notes'] = [{'when': 'f'}]
         problems = '\n'.join(self.check(dockers))
         for expected in ("B: base_system 'Q'", 'A.benchmarks.z: unknown benchmark', "A.benchmarks.x: unknown key 'colour'",
                          'A.benchmarks.y.default: must be bool', 'C.benchmarks.x.alias: must not be empty',
-                         'C.benchmarks.y: must be a dict', 'D.benchmarks.x.unsupported_dimensions: must be dict'):
+                         'C.benchmarks.y: must be a dict', 'D.benchmarks.x.unsupported_dimensions: must be dict',
+                         "D.benchmarks.y.notes: every note needs a non-empty 'text'"):
             self.assertIn(expected, problems)
 
     def test_template_must_exist(self) -> None:

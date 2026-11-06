@@ -8,7 +8,7 @@ See LICENSE for details.
 """
 from types import SimpleNamespace
 
-from ..system_descriptors import dimension_dockers
+from ..system_descriptors import dimension_dockers, notes
 from .base import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, dimension_folder, dimension_info
 
 __all__ = ["SSB", "SCHEMA_VARIANTS", "QUERY_VARIANTS", "DIMENSION_VARIANTS",
@@ -210,8 +210,7 @@ class SSB(DBMSBenchmarkerBenchmark):
             experiment.workload['info'] += f"\nTimeout per query is {timeout}."
             if getattr(args, 'activate_reset', False):
                 experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
-            if getattr(args, 'duckdb_force_execution', False):
-                experiment.workload['info'] += "\nPgDuckDB queries are forced through the DuckDB execution engine."
+            experiment.workload['info'] += notes(experiment.cluster.dockers, 'ssb', args)
             if datatransfer:
                 experiment.workload['info'] += "\nData transfer volume per query is also measured."
             if verbose_explain:
