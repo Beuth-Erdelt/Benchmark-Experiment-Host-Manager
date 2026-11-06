@@ -66,17 +66,22 @@ VARIANTS = {
     'factors': ['-xnbf', '1,2', '-xtb', '100', '-nbp', '2'],
     'pooling': ['-xnpp', '1,2', '-xnpi', '100,200', '-xnpo', '10'],
     'replicas': ['-xnsr', '2', '-xnpd', '5', '-nw', '3', '-nwr', '2', '-nws', '3'],
+    # YCSB: workers without replicas (cluster mode of the key-value systems), the workload and its sizes
+    'cluster': ['-nw', '2'],
+    'workload': ['-xwl', 'b', '-xop', '2', '-xio', 'ordered', '-xsbs', '100', '-xmet', '60'],
     'distributed': ['-xdim', 'distributed', '-nw', '2', '-dbms', 'PostgreSQL', 'ClickHouse', 'ClickHouseCluster'],
 }
 
 #: Variants only some scripts have the flags for.
 ONLY_FOR = {'flat': {'ssb.py'}, 'distributed': {'tpch.py', 'ssb.py'},
             'tenants-schema': {'tpch.py', 'benchbase.py'}, 'tenants-container': {'tpch.py', 'benchbase.py'},
-            'type-ycsb': {'benchbase.py'}, 'type-twitter': {'benchbase.py'}, 'factors': {'benchbase.py'},
-            'pooling': {'benchbase.py'}, 'replicas': {'benchbase.py'}}
+            'type-ycsb': {'benchbase.py'}, 'type-twitter': {'benchbase.py'}, 'factors': {'benchbase.py', 'ycsb.py'},
+            'pooling': {'benchbase.py', 'ycsb.py'}, 'replicas': {'benchbase.py', 'ycsb.py'},
+            'cluster': {'ycsb.py'}, 'workload': {'ycsb.py'}}
 
 #: Variant argv of a script that differs from the common one.
-SCRIPT_ARGV = {('benchbase.py', 'tenants'): ['-mtn', '2', '-mtb', 'database', '-dbms', 'PostgreSQL', 'MySQL'],
+SCRIPT_ARGV = {('ycsb.py', 'factors'): ['-xnlf', '1,2', '-xnbf', '1,2', '-xtb', '100', '-nbp', '2', '-nlp', '2'],
+               ('benchbase.py', 'tenants'): ['-mtn', '2', '-mtb', 'database', '-dbms', 'PostgreSQL', 'MySQL'],
                ('benchbase.py', 'tenants-schema'): ['-mtn', '2', '-mtb', 'schema', '-dbms', 'PostgreSQL'],
                ('benchbase.py', 'tenants-container'): ['-mtn', '2', '-mtb', 'container', '-dbms', 'PostgreSQL', 'MySQL'],
                ('tpch.py', 'tenants'): ['-mtn', '2', '-mtb', 'database', '-nlp', '2', '-dbms', 'PostgreSQL'],
