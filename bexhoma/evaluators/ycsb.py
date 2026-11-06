@@ -451,8 +451,7 @@ class YcsbEvaluator(LogEvaluator):
         :return: DataFrame with columns cast to correct types.
         :rtype: pandas.DataFrame
         """
-        df.fillna(0, inplace=True)
-        df_typed = df.astype({
+        dtypes = {
             'code':'str',
             'connection':'str',
             'configuration':'str',
@@ -481,7 +480,13 @@ class YcsbEvaluator(LogEvaluator):
             '[INSERT].95thPercentileLatency(us)':'float',
             '[INSERT].99thPercentileLatency(us)':'float',
             '[INSERT].Return=OK':'int',
-        })
+        }
+        # a loader that reports no such operation (e.g. TiDB prints no [CLEANUP] block) leaves the column out
+        for column in dtypes:
+            if column not in df.columns:
+                df[column] = 0
+        df.fillna(0, inplace=True)
+        df_typed = df.astype(dtypes)
         return df_typed
     def loading_aggregate_by_parallel_pods(self, df, columns=["phase"]):
         """

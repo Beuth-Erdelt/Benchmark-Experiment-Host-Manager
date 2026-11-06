@@ -369,68 +369,6 @@ bexhoma tpcds `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
 
 
-####################################################
-#### TPC-DS at SF 100 ##############################
-####################################################
-
-
-# TPC-DS power test at SF 100, loads the volume
-bexhoma tpcds `
-  -dbms MonetDB                 <# DBMS under test #> `
-  -sf 100                       <# scaling factor (controls database size in GB) #> `
-  -nlp 8                        <# number of data loader pods #> `
-  -nlt 8                        <# threads per loader pod #> `
-  -xii                          <# create indexes after data load #> `
-  -xic                          <# enforce constraints after data load #> `
-  -xis                          <# run ANALYZE after data load #> `
-  -nc 1                         <# number of repeated runs per configuration #> `
-  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-  -nbp 1                        <# number of benchmarking pods #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  -lr 128Gi                     <# RAM limit for the SUT container #> `
-  -rr 128Gi                     <# RAM requested for the SUT container #> `
-  -rsr                          <# delete any existing PVC for the SUT before starting #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  -rss 1000Gi                   <# size of the persistent volume claim #> `
-  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_sf100.log" -Encoding utf8
-
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB power large  sf=100"
-
-
-# TPC-DS throughput test at SF 100, on the loaded volume
-bexhoma tpcds `
-  -dbms MonetDB                 <# DBMS under test #> `
-  -sf 100                       <# scaling factor (controls database size in GB) #> `
-  -nlp 8                        <# number of data loader pods #> `
-  -nlt 8                        <# threads per loader pod #> `
-  -xii                          <# create indexes after data load #> `
-  -xic                          <# enforce constraints after data load #> `
-  -xis                          <# run ANALYZE after data load #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
-  -ne 1,5                       <# parallel client counts to sweep (comma-separated) #> `
-  -nbp 1                        <# number of benchmarking pods #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
-  -lr 128Gi                     <# RAM limit for the SUT container #> `
-  -rr 128Gi                     <# RAM requested for the SUT container #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  -rss 1000Gi                   <# size of the persistent volume claim #> `
-  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_sf100_throughput.log" -Encoding utf8
-
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB throughput large  sf=100  ne=1,5"
-
-
 #### TPC-H Refresh Stream (Example-TPC-H.md)
 # TPC-H with a refresh stream on MonetDB: 3 query streams and one RF1/RF2 stream in parallel
 bexhoma tpch `

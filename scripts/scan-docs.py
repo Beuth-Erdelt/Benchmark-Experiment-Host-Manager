@@ -33,7 +33,8 @@ LOG_REF_PATTERN = re.compile(
 _RE_CODE = re.compile(r'(?:^\s*\*\s+|^\s{2,})Code:\s+(\d+)', re.MULTILINE)
 _RE_DURATION = re.compile(r'(?:^\s*\*\s+|^\s{2,})Duration:\s+([\d]+s)', re.MULTILINE)
 _RE_VERSION = re.compile(r'bexhoma version (\d+(?:\.\d+)*)')
-_RE_TEST = re.compile(r'\*\s+(TEST (?:passed|failed):[^\n]+)')
+# Newer logs prefix the line with "* ", older summaries do not.
+_RE_TEST = re.compile(r'^(?:\*\s+)?(TEST (?:passed|failed):[^\n]+)', re.MULTILINE)
 
 
 def extract_metadata(text: str) -> dict:
@@ -80,7 +81,10 @@ def scan_doc(md_path: Path) -> list[dict]:
             meta = extract_metadata(content)
         else:
             meta = {"code": None, "duration": None, "version": None, "tests": []}
+        log_path = LOGS_DIR / logfile_name
+        crashed = log_path.exists() and "Traceback (most recent call last)" in log_path.read_text(encoding="utf-8", errors="replace")
         records.append({
+            "crashed": crashed,
             "doc": md_path.name,
             "logfile": logfile_name,
             "source": source,
@@ -126,9 +130,11 @@ def print_report(all_records: list[dict]) -> None:
             rec["duration"] or "—",
             rec["version"] or "—",
             str(len(passed)) if passed else "—",
-            str(len(failed)) if failed else "",
+            str(len(failed) + (1 if rec.get("crashed") else 0)) if (failed or rec.get("crashed")) else "",
             _status_flags(rec),
         ))
+        if rec.get("crashed"):
+            failed = failed + ["log contains a Python traceback (evaluation crashed)"]
         if failed:
             failures.append({"logfile": rec["logfile"], "doc": rec["doc"], "failed": failed})
 

@@ -182,7 +182,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL simple
 # TPC-DS monitoring on MySQL
 bexhoma tpcds `
   -dbms MySQL                   <# DBMS under test #> `
-  -sf 10                        <# scaling factor (controls database size in GB) #> `
+  -sf 3                         <# scaling factor (controls database size in GB) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -xii                          <# create indexes after data load #> `
@@ -199,6 +199,9 @@ bexhoma tpcds `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=64Gi <# tmpdir of MySQL in RAM, larger than the template (32Gi) #> `
+  --set deployment[bexhoma-deployment-mysql].container[dbms].temptable_max_ram=32G <# internal temp tables stay in RAM instead of spilling to disk (default 1G) #> `
+  --set deployment[bexhoma-deployment-mysql].container[dbms].tmp_table_size=32G <# size limit of one in-memory internal temp table (default 16M) #> `
+  --set deployment[bexhoma-deployment-mysql].container[dbms].max_heap_table_size=32G <# size limit of MEMORY tables (default 16M) #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 150Gi                    <# size of the persistent volume claim #> `
@@ -207,7 +210,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_mysql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL monitoring  sf=10"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL monitoring  sf=3"
 
 
 # TPC-DS throughput test on MySQL, on persistent storage
