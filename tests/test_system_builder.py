@@ -14,6 +14,7 @@ import io
 import types
 import unittest
 
+import benchbase
 import tpch
 
 from bexhoma import system_descriptors as sd
@@ -125,12 +126,12 @@ class TenantTest(unittest.TestCase):
 
     def test_a_dbms_without_the_flag_has_no_tenants(self) -> None:
         experiment = self.experiment('container')
-        self.assertEqual(tpch.tenant_ids(experiment, {}), [None])
+        self.assertEqual(builder.tenant_ids(experiment, {}), [None])
         self.assertEqual(tpch.tenant_parameters(experiment, {}, None, 'p'), {})
 
     def test_container_tenancy_is_one_configuration_per_tenant(self) -> None:
         experiment = self.experiment('container', 3)
-        self.assertEqual(tpch.tenant_ids(experiment, self.entry), [0, 1, 2])
+        self.assertEqual(builder.tenant_ids(experiment, self.entry), [0, 1, 2])
         result = tpch.tenant_parameters(experiment, self.entry, 1, 'p')
         self.assertEqual(result['storage'], 'p-1-3')
         self.assertEqual(result['loading'], {'BEXHOMA_TENANT_BY': 'container', 'BEXHOMA_TENANT_NUM': 3, 'BEXHOMA_TENANT_ID': 1})
@@ -139,7 +140,7 @@ class TenantTest(unittest.TestCase):
 
     def test_schema_tenancy_switches_scripts(self) -> None:
         experiment = self.experiment('schema')
-        self.assertEqual(tpch.tenant_ids(experiment, self.entry), [None])
+        self.assertEqual(builder.tenant_ids(experiment, self.entry), [None])
         result = tpch.tenant_parameters(experiment, self.entry, None, 'p')
         self.assertEqual(result['storage'], 'p-schema-2')
         self.assertEqual(result['experiment']['script'], 'Schema_tenant')
@@ -150,6 +151,152 @@ class TenantTest(unittest.TestCase):
         self.assertNotIn('storage', result)
         self.assertEqual(result['loading']['BEXHOMA_TENANT_BY'], '')
         self.assertEqual(result['eval'], {'TENANT_BY': '', 'TENANT_NUM': 0})
+
+
+class SelectorTest(unittest.TestCase):
+    """``{'$by': name, value: A, '*': B}`` picks by a command line value."""
+
+    selector = {'$by': 'benchmark', 'tpcc': 'false', '*': 'true'}
+
+    def test_a_matching_key_wins(self) -> None:
+        self.assertEqual(sd.expand(self.selector, {'benchmark': 'tpcc'}), 'false')
+
+    def test_the_default_applies_otherwise(self) -> None:
+        self.assertEqual(sd.expand(self.selector, {'benchmark': 'ycsb'}), 'true')
+
+    def test_without_default_the_value_is_left_out(self) -> None:
+        only = {'$by': 'benchmark', 'tpcc': ['reset.sql']}
+        self.assertEqual(sd.expand(only, {'benchmark': 'tpcc'}), ['reset.sql'])
+        self.assertIsNone(sd.expand(only, {'benchmark': 'ycsb'}))
+
+    def test_selectors_work_inside_parameters(self) -> None:
+        params = {'A': 1, 'B': self.selector, 'C': {'$by': 'benchmark', 'tpcc': 'x'}}
+        self.assertEqual(sd.expand(params, {'benchmark': 'ycsb'}), {'A': 1, 'B': 'true', 'C': None})
+
+    def test_none_is_dropped_from_parameters(self) -> None:
+        self.assertEqual(builder._without_none({'A': 1, 'B': None, 'C': 0}), {'A': 1, 'C': 0})
+
+    def test_the_value_is_validated_as_a_selector_for_list_keys(self) -> None:
+        dockers = {'A': {'storage_prefix': 'a', 'template': {'alias': 'a'},
+                         'benchmarks': {'x': {'reset_scripts': {'$by': 'benchmark', 'tpcc': ['r.sql']}}}}}
+        self.assertEqual(sd.validate_descriptors(dockers, {'x'}), [])
+
+
+class _Config:
+    """Records what ``apply_sut_attributes`` does to a configuration."""
+
+    def __init__(self) -> None:
+        self.calls = []
+        self.deployment_infos = {}
+
+    def __getattr__(self, name):
+        if name.startswith('set_'):
+            return lambda *a, **kw: self.calls.append((name, a, kw))
+        raise AttributeError(name)
+
+
+class SutAttributesTest(unittest.TestCase):
+
+    def apply(self, attributes, context=None) -> _Config:
+        config = _Config()
+        builder.apply_sut_attributes(config, attributes, context or {})
+        return config
+
+    def test_setters_and_attributes(self) -> None:
+        config = self.apply({'sut_role': 'placeholder', 'pvc_selector': 'app=x', 'monitoring_sut': False,
+                             'sut_pod_name': 'pod-', 'data_components': ['tikv']})
+        self.assertEqual(config.calls, [('set_sut_role', ('placeholder',), {}), ('set_pvc_selector', ('app=x',), {}),
+                                        ('set_data_components', (['tikv'],), {})])
+        self.assertIs(config.monitoring_sut, False)
+        self.assertEqual(config.sut_pod_name, 'pod-')
+
+    def test_a_dict_is_passed_as_keyword_arguments_and_expanded(self) -> None:
+        config = self.apply({'resources': {'replicas_sut': '{n}', 'replicas_pd': 3}}, {'n': 2})
+        self.assertEqual(config.calls, [('set_resources', (), {'replicas_sut': 2, 'replicas_pd': 3})])
+
+    def test_stateful_sets_that_helm_manages(self) -> None:
+        config = self.apply({'statefulsets': {'tserver': 2, 'master': 1}})
+        self.assertEqual(config.deployment_infos['statefulset'], {
+            'tserver': {'name': 'tserver', 'pods': ['tserver-0', 'tserver-1'], 'containers': []},
+            'master': {'name': 'master', 'pods': ['master-0'], 'containers': []}})
+
+
+class PoolingTest(unittest.TestCase):
+
+    entry = {'pooling': {'sut_parameters': {'POOL': '{pool_out}', 'MAX': '{pool_in}'},
+                         'resources': {'replicas_pooling': '{pool_pods}'}}}
+
+    def test_no_pooler_is_one_variant_without_settings(self) -> None:
+        self.assertEqual(builder.pooling_variants({}, [1, 2], [10], [5]), [{}])
+
+    def test_one_variant_per_combination(self) -> None:
+        variants = builder.pooling_variants(self.entry, [1, 2], ['100', 200], [10])
+        self.assertEqual(len(variants), 4)
+        self.assertEqual(variants[0], {'sut_parameters': {'POOL': 10, 'MAX': 100}, 'resources': {'replicas_pooling': 1}})
+        self.assertEqual(variants[-1]['sut_parameters'], {'POOL': 10, 'MAX': 200})
+        self.assertEqual(variants[-1]['resources'], {'replicas_pooling': 2})
+
+
+class TenancyErrorTest(unittest.TestCase):
+    """The early check of the entry scripts, from the cluster configuration file."""
+
+    def args(self, dbms, number, mode):
+        return types.SimpleNamespace(dbms=dbms, multi_tenant_num=number, multi_tenant_by=mode)
+
+    def test_without_tenancy(self) -> None:
+        self.assertEqual(builder.tenancy_error('benchbase', self.args([], 0, '')), '')
+
+    def test_supported(self) -> None:
+        self.assertEqual(builder.tenancy_error('benchbase', self.args(['PostgreSQL', 'MySQL'], 2, 'database')), '')
+
+    def test_refused_names_the_dbms_and_who_supports_it(self) -> None:
+        message = builder.tenancy_error('benchbase', self.args(['PostgreSQL', 'MySQL'], 2, 'schema'))
+        self.assertIn('MySQL does not support this tenancy in benchbase', message)
+        self.assertIn('PostgreSQL: container, schema, database; MySQL: container, database', message)
+
+    def test_the_default_set_counts(self) -> None:
+        self.assertIn('do not support', builder.tenancy_error('benchbase', self.args([], 2, 'database')))
+
+
+class BenchbaseTenantTest(unittest.TestCase):
+    """Benchbase passes the tenant parameters its DBMS declare."""
+
+    postgresql = {'multi_tenancy': ['container', 'schema', 'database'],
+                  'tenant_parameters': {'loading': {'T_BY': '{tenant_by}', 'T_NUM': '{num_tenants}', 'T_ID': '{tenant_id}'},
+                                        'benchmarking': {'T_BY': '{tenant_by}', 'T_ID': '{tenant_id}'}}}
+    mysql = {'multi_tenancy': ['container', 'database'],
+             'tenant_parameters': {'loading': {'T_BY': '{tenant_by}'}, 'benchmarking': {'T_BY': '{tenant_by}'}}}
+
+    def experiment(self, by, number=2):
+        return types.SimpleNamespace(tenant_per=by, num_tenants=number, multi_tenant_volume=True)
+
+    def test_no_support_no_parameters(self) -> None:
+        self.assertEqual(benchbase.tenant_parameters(self.experiment('container'), {}, None, 'p'), {})
+
+    def test_container_tenancy_per_tenant(self) -> None:
+        result = benchbase.tenant_parameters(self.experiment('container', 3), self.postgresql, 1, 'p')
+        self.assertEqual(result['storage'], 'p-1-3')
+        self.assertEqual(result['loading'], {'T_BY': 'container', 'T_NUM': 3, 'T_ID': 1})
+        self.assertEqual(result['eval'], {'TENANT_BY': 'container', 'TENANT_NUM': 3, 'TENANT_VOL': True, 'TENANT': 1})
+        self.assertNotIn('tenants_per_job', result)
+
+    def test_schema_tenancy_loads_all_tenants_and_switches_scripts(self) -> None:
+        result = benchbase.tenant_parameters(self.experiment('schema'), self.postgresql, None, 'p')
+        self.assertEqual(result['storage'], 'p-schema-2')
+        self.assertEqual(result['tenants_per_job'], 2)
+        self.assertEqual(result['experiment'], {'script': 'Schema_tenant', 'indexing': 'Checks_tenant'})
+        self.assertEqual(result['benchmarking'], {'T_BY': 'schema', 'T_ID': 0})
+
+    def test_a_dbms_declares_which_parameters_it_gets(self) -> None:
+        result = benchbase.tenant_parameters(self.experiment('database'), self.mysql, None, 'm')
+        self.assertEqual(result['loading'], {'T_BY': 'database'})
+        self.assertNotIn('experiment', result)
+
+    def test_without_tenancy_the_parameters_are_empty_and_the_storage_is_the_prefix(self) -> None:
+        result = benchbase.tenant_parameters(self.experiment('', 0), self.postgresql, None, 'p')
+        self.assertNotIn('storage', result)
+        self.assertNotIn('tenants_per_job', result)
+        self.assertEqual(result['loading'], {'T_BY': '', 'T_NUM': 0, 'T_ID': 0})
 
 
 if __name__ == '__main__':

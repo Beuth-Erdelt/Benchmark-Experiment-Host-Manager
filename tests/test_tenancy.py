@@ -12,15 +12,23 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 import ast
+import contextlib
+import io
 import os
+import runpy
+import sys
+import tempfile
 import types
 import unittest
+from unittest import mock
 
+import benchbase
 import tpch
 from bexhoma import system_descriptors as sd
 from bexhoma.experiments import system_builder as builder
 
-from .test_reset_scripts import _run_script
+from .test_reset_scripts import _AnyVolumes, _run_script
+from .test_resource_sweep import _SweepStubCluster
 
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #: Placeholders the loader replaces by the durability scripts of the DBMS folder.
@@ -93,8 +101,23 @@ class SelectionTest(unittest.TestCase):
         self.assertEqual(builder.selected_dockers(_dockers(), 'x', ['C'], self.args(0, '')), ['C'])
 
 
+def _refused(script: str, *argv: str) -> tuple:
+    """Run the script's ``__main__`` and return the exit code and what it printed to stderr."""
+    stderr = io.StringIO()
+    with (
+        mock.patch.object(sys, 'argv', [script, 'run', *argv]),
+        contextlib.redirect_stdout(io.StringIO()),
+        contextlib.redirect_stderr(stderr),
+    ):
+        try:
+            runpy.run_path(os.path.join(_REPO, script), run_name='__main__')
+        except SystemExit as exit_:
+            return exit_.code, stderr.getvalue()
+    return None, stderr.getvalue()
+
+
 class EntryScriptsTest(unittest.TestCase):
-    """The real scripts, up to ``process()``."""
+    """The real scripts. A refusal is a usage error right after parsing: no cluster is needed."""
 
     def test_postgresql_runs_every_mode_of_tpch(self) -> None:
         for mode in sd.TENANCY_MODES:
@@ -106,18 +129,42 @@ class EntryScriptsTest(unittest.TestCase):
     def test_other_dbms_are_refused_by_tpch(self) -> None:
         for docker in ('MySQL', 'MariaDB', 'MonetDB', 'ClickHouse', 'CedarDB', 'Citus'):
             with self.subTest(docker=docker):
-                with self.assertRaisesRegex(sd.IncompatibleBenchmark, f'{docker} does not support this tenancy in tpch'):
-                    _run_script('tpch.py', '-dbms', docker, '-mtn', '2', '-mtb', 'database', '-nlp', '2')
+                code, stderr = _refused('tpch.py', '-dbms', docker, '-mtn', '2', '-mtb', 'database', '-nlp', '2')
+                self.assertEqual(code, 2)
+                self.assertIn(f'{docker} does not support this tenancy in tpch', stderr)
 
     def test_a_mixed_selection_is_refused_as_a_whole(self) -> None:
-        with self.assertRaisesRegex(sd.IncompatibleBenchmark, 'MySQL does not support'):
-            _run_script('tpch.py', '-dbms', 'PostgreSQL', 'MySQL', '-mtn', '2', '-mtb', 'schema', '-nlp', '2')
+        code, stderr = _refused('tpch.py', '-dbms', 'PostgreSQL', 'MySQL', '-mtn', '2', '-mtb', 'schema', '-nlp', '2')
+        self.assertEqual(code, 2)
+        self.assertIn('MySQL does not support', stderr)
+        self.assertNotIn('PostgreSQL does not support', stderr)
 
     def test_benchmarks_without_tenancy_refuse_it(self) -> None:
         for script in ('tpcds.py', 'hammerdb.py'):
             with self.subTest(script=script):
-                with self.assertRaisesRegex(sd.IncompatibleBenchmark, 'do not support this tenancy|does not support this tenancy'):
-                    _run_script(script, '-dbms', 'PostgreSQL', '-mtn', '2', '-mtb', 'schema', '-nlp', '2')
+                code, stderr = _refused(script, '-dbms', 'PostgreSQL', '-mtn', '2', '-mtb', 'schema')
+                self.assertEqual(code, 2)
+                self.assertIn('no DBMS supports multi-tenancy', stderr)
+
+    def test_the_in_process_run_refuses_too(self) -> None:
+        """``experiment.py`` calls ``tpch.run`` without the command line parser."""
+        args = tpch.build_parser().parse_args(['run', '-dbms', 'MySQL', '-mtn', '2', '-mtb', 'database', '-nlp', '2'])
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            cluster = _SweepStubCluster(resultfolder=tmp_dir)
+            cluster.volumes = _AnyVolumes(cluster.volumes)
+            with (
+                mock.patch('bexhoma.clusters.Kubernetes', return_value=cluster),
+                contextlib.redirect_stdout(io.StringIO()),
+                self.assertRaisesRegex(sd.IncompatibleBenchmark, 'MySQL does not support this tenancy in tpch'),
+            ):
+                tpch.run(args)
+
+    def test_benchbase_supports_the_modes_it_declares(self) -> None:
+        for mode, dbms in (('database', ['PostgreSQL', 'MySQL']), ('container', ['PostgreSQL', 'MySQL']),
+                           ('schema', ['PostgreSQL'])):
+            with self.subTest(mode=mode):
+                _, configurations = _run_script('benchbase.py', '-dbms', *dbms, '-mtn', '2', '-mtb', mode)
+                self.assertEqual({c.docker for c in configurations}, set(dbms))
 
     def test_no_tenancy_is_unaffected(self) -> None:
         _, configurations = _run_script('tpch.py', '-dbms', 'MySQL')
@@ -145,23 +192,30 @@ class DeclaredModesTest(unittest.TestCase):
     def test_the_schema_mode_has_its_tenant_scripts(self) -> None:
         """Schema tenancy switches to the tenant script collections of the benchmark's volume; the
         DBMS's script folder has to hold every file of them."""
-        checked = 0
+        helpers = {'tpch': lambda modes: tpch.tenant_parameters(
+                       types.SimpleNamespace(tenant_per='schema', num_tenants=2), {'multi_tenancy': modes}, None, 'p'),
+                   'benchbase': lambda modes: benchbase.tenant_parameters(
+                       types.SimpleNamespace(tenant_per='schema', num_tenants=2, multi_tenant_volume=False),
+                       {'multi_tenancy': modes}, None, 'p')}
+        checked = set()
         for docker, benchmark, modes in self.declared():
             if 'schema' not in modes:
                 continue
             with self.subTest(docker=docker, benchmark=benchmark):
-                self.assertEqual(benchmark, 'tpch', 'add the script collections of this benchmark to this test')
-                experiment = types.SimpleNamespace(tenant_per='schema', num_tenants=2)
-                scripts = tpch.tenant_parameters(experiment, {'multi_tenancy': modes}, None, 'p')['experiment']
+                self.assertIn(benchmark, helpers, 'add the script collections of this benchmark to this test')
+                scripts = helpers[benchmark](modes)['experiment']
                 initscripts = self.config['volumes'][benchmark]['initscripts']
-                folder = os.path.join(_REPO, 'experiments', benchmark, sd.base_system(self.config['dockers'], docker))
+                # Benchbase keeps its scripts per benchmark type (tpcc is the default of -xbt)
+                path = ('experiments', benchmark, *(('tpcc',) if benchmark == 'benchbase' else ()),
+                        sd.base_system(self.config['dockers'], docker))
+                folder = os.path.join(_REPO, *path)
                 for collection in scripts.values():
                     self.assertIn(collection, initscripts)
                     for name in initscripts[collection]:
                         if name not in _PLACEHOLDERS:
                             self.assertTrue(os.path.isfile(os.path.join(folder, name)), f'{name} missing in {folder}')
-                checked += 1
-        self.assertGreater(checked, 0)
+                checked.add(benchmark)
+        self.assertEqual(checked, {'tpch', 'benchbase'})
 
     def test_postgresql_supports_all_modes_in_tpch(self) -> None:
         entry = self.config['dockers']['PostgreSQL']['benchmarks']['tpch']

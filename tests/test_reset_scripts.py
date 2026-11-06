@@ -400,7 +400,8 @@ class SchemaTenancyScriptsTest(unittest.TestCase):
         self.assertEqual(positions, sorted(positions))
 
     def test_benchbase_mysql_refused(self):
-        """Only the PostgreSQL folder has -schema scripts; no -dbms includes MySQL."""
+        """Only PostgreSQL lists schema tenancy in Benchbase (only its folder has -schema scripts); no -dbms
+        names MySQL, but the default set includes it."""
         for dbms in (['-dbms', 'MySQL'], ['-dbms', 'PostgreSQL', 'MySQL'], []):
             stderr = io.StringIO()
             with (
@@ -412,7 +413,9 @@ class SchemaTenancyScriptsTest(unittest.TestCase):
             ):
                 runpy.run_path(os.path.join(_REPO, 'benchbase.py'), run_name='__main__')
             self.assertEqual(exit_.exception.code, 2)
-            self.assertIn('-mtb schema is not supported for MySQL', stderr.getvalue())
+            self.assertIn('MySQL', stderr.getvalue())
+            self.assertIn('not support this tenancy in benchbase', stderr.getvalue())
+            self.assertIn('supported: PostgreSQL: container, schema, database', stderr.getvalue())
 
 
 class ScriptFailedTest(unittest.TestCase):

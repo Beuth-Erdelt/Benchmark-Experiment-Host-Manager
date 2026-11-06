@@ -1,17 +1,4 @@
 {
- "benchbase.py": {
-  "CedarDB": 5,
-  "Citus": 5,
-  "CockroachDB": 7,
-  "DatabaseService": 3,
-  "PGBouncer": 3,
-  "PostgreSQL": 11,
-  "TiDB": 5,
-  "YugabyteDB": 5,
-  "mariadb": 7,
-  "mysql": 17,
-  "postgres": 20
- },
  "bexhoma/experiments/base.py": {
   "PostgreSQL": 1,
   "mysql": 1,

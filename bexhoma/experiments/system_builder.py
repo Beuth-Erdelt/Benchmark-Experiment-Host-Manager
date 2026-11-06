@@ -17,10 +17,19 @@ from bexhoma import configurations
 from bexhoma import system_descriptors as descriptors
 
 __all__ = ["context_of", "selected_dockers", "entry_parameters", "limit_loading_pods", "loading_variants",
-           "build_configuration"]
+           "pooling_variants", "apply_sut_attributes", "tenant_ids", "tenancy_error", "build_configuration"]
 
 #: Command line options that are numbers in the descriptors' placeholders.
-_INTEGER_OPTIONS = ("num_worker", "num_worker_replicas", "num_worker_shards")
+_INTEGER_OPTIONS = ("num_worker", "num_worker_replicas", "num_worker_shards", "num_sut_replicas", "num_pd_nodes")
+
+#: Keys of ``sut_attributes`` that call a setter of the configuration (a dict is passed as keyword arguments).
+_SUT_SETTERS = {
+    "sut_role": "set_sut_role",
+    "pvc_selector": "set_pvc_selector",
+    "script_target": "set_script_target",
+    "data_components": "set_data_components",
+    "resources": "set_resources",
+}
 
 
 def context_of(args) -> dict:
@@ -35,6 +44,32 @@ def context_of(args) -> dict:
         if name in context:
             context[name] = int(context[name])
     return context
+
+
+def _selection(dockers: dict, benchmark: str, dbms: list) -> list:
+    """The ``-dbms`` list in the order of the cluster configuration, or the default set without one."""
+    if dbms:
+        return [name for name in descriptors.compatible_dockers(dockers, benchmark) if name in dbms]
+    return descriptors.default_dockers(dockers, benchmark)
+
+
+def tenancy_error(benchmark: str, args, clusterconfig: str = 'cluster.config') -> str:
+    """Why the command line asks for a tenancy that its DBMS do not support, or ``''``.
+
+    For the entry scripts to refuse right after parsing, before a cluster object exists: it reads
+    the cluster configuration file, as the parsers do for ``-dbms`` (see
+    :func:`~bexhoma.system_descriptors.load_dockers`).
+
+    :param benchmark: Benchmark key.
+    :param args: The parsed command line.
+    :param clusterconfig: Path of the cluster configuration.
+    :return: The message for ``parser.error``, ``''`` when the run is fine.
+    :rtype: str
+    """
+    dockers = descriptors.load_dockers(clusterconfig)
+    return descriptors.unsupported_tenancy(
+        dockers, benchmark, _selection(dockers, benchmark, list(getattr(args, 'dbms', None) or [])),
+        getattr(args, 'multi_tenant_num', 0) or 0, getattr(args, 'multi_tenant_by', '') or '')
 
 
 def selected_dockers(dockers: dict, benchmark: str, dbms: list, args=None) -> list:
@@ -55,10 +90,7 @@ def selected_dockers(dockers: dict, benchmark: str, dbms: list, args=None) -> li
     """
     for name in dbms or []:
         descriptors.benchmark_entry(dockers, name, benchmark)
-    if dbms:
-        selected = [name for name in descriptors.compatible_dockers(dockers, benchmark) if name in dbms]
-    else:
-        selected = descriptors.default_dockers(dockers, benchmark)
+    selected = _selection(dockers, benchmark, dbms)
     if args is not None:
         reason = descriptors.unsupported_tenancy(
             dockers, benchmark, selected, getattr(args, 'multi_tenant_num', 0) or 0, getattr(args, 'multi_tenant_by', '') or '')
@@ -67,15 +99,78 @@ def selected_dockers(dockers: dict, benchmark: str, dbms: list, args=None) -> li
     return selected
 
 
-def entry_parameters(dockers: dict, docker: str, benchmark: str, key: str, args) -> dict:
+def entry_parameters(dockers: dict, docker: str, benchmark: str, key: str, args, context: dict = None) -> dict:
     """A parameter dict of the DBMS's entry for the benchmark, expanded with the command line.
 
     :param key: ``loading_parameters``, ``benchmarking_parameters``, ``sut_parameters`` or ``eval_parameters``.
+    :param context: Values the benchmark adds to the command line for the ``{placeholders}``.
     :return: The parameters, empty when the entry declares none.
     :rtype: dict
     """
     entry = descriptors.benchmark_entry(dockers, docker, benchmark)
-    return descriptors.expand(entry.get(key) or {}, context_of(args))
+    return _without_none(descriptors.expand(entry.get(key) or {}, {**context_of(args), **(context or {})}))
+
+
+def _without_none(parameters: dict) -> dict:
+    """``parameters`` without the values a selector left out (``None``)."""
+    return {key: value for key, value in parameters.items() if value is not None}
+
+
+def apply_sut_attributes(config, attributes: dict, context: dict) -> None:
+    """Set up the SUT of ``config`` as the ``sut_attributes`` of its DBMS say.
+
+    :param config: The configuration.
+    :param attributes: ``sut_attributes`` of the DBMS in the cluster configuration.
+    :param context: Values for the ``{placeholders}``.
+    """
+    for key, value in descriptors.expand(attributes, context).items():
+        if key == 'statefulsets':
+            # stateful sets that something else manages (e.g. Helm): record their pods
+            config.deployment_infos['statefulset'] = {
+                name: {'name': name, 'pods': [f"{name}-{i}" for i in range(pods)], 'containers': []}
+                for name, pods in value.items()}
+        elif key in _SUT_SETTERS:
+            setter = getattr(config, _SUT_SETTERS[key])
+            setter(**value) if isinstance(value, dict) else setter(value)
+        else:
+            setattr(config, key, value)
+
+
+def tenant_ids(experiment, entry: dict) -> list:
+    """The tenants a DBMS gets a configuration for.
+
+    A DBMS that supports multi-tenancy (``multi_tenancy`` in its entry) gets one configuration per
+    tenant for container-tenancy; every other DBMS, and every other kind of tenancy, one
+    configuration without a tenant id.
+
+    :param experiment: The experiment (``tenant_per``, ``num_tenants``).
+    :param entry: The DBMS's entry for the benchmark.
+    :return: The tenant ids, or ``[None]``.
+    :rtype: list
+    """
+    if entry.get('multi_tenancy') and experiment.tenant_per == 'container':
+        return list(range(experiment.num_tenants))
+    return [None]
+
+
+def pooling_variants(entry: dict, pods: list, connections_in: list, connections_out: list) -> list:
+    """The settings of the configurations to build for a DBMS behind a connection pooler.
+
+    A DBMS whose entry declares ``pooling`` gets one configuration per combination of pooler pods,
+    inbound and outbound connections; every other DBMS one without extra settings.
+
+    :param entry: The DBMS's entry for the benchmark.
+    :param pods: Numbers of pooler pods (``-xnpp``).
+    :param connections_in: Max inbound connections per pooler pod (``-xnpi``).
+    :param connections_out: Max outbound connections per pooler pod (``-xnpo``).
+    :return: A list of dicts with ``sut_parameters`` and ``resources`` (or ``[{}]``).
+    :rtype: list
+    """
+    declared = entry.get('pooling')
+    if not declared:
+        return [{}]
+    return [descriptors.expand(declared, {'pool_pods': count_pods, 'pool_in': int(count_in), 'pool_out': int(count_out)})
+            for count_pods in pods for count_in in connections_in for count_out in connections_out]
 
 
 def limit_loading_pods(entry: dict, docker: str, total: int, parallel: int) -> tuple:
@@ -115,7 +210,7 @@ def loading_variants(entry: dict, threads: list) -> list:
 
 def build_configuration(experiment, docker: str, benchmark: str, args,
                         reset_name: str = None, loading_parameters: dict = None,
-                        storage_configuration: str = None, context: dict = None):
+                        storage_configuration: str = None, context: dict = None, pooling: dict = None):
     """Create and set up the configuration of ``docker`` for ``benchmark``.
 
     Takes script folder, reset scripts, storage, SUT/loading/evaluation parameters,
@@ -132,6 +227,7 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
     :param storage_configuration: Name of the storage if it is not the DBMS's ``storage_prefix``.
     :param context: Values the benchmark adds to the command line for the descriptors' ``{placeholders}``
         (e.g. the suffix of the reset script of the schema variant).
+    :param pooling: One of :func:`pooling_variants`: SUT parameters and resources of the connection pooler.
     :return: The configuration, already attached to the experiment.
     :raises bexhoma.system_descriptors.IncompatibleBenchmark: When the DBMS cannot run the benchmark.
     """
@@ -145,22 +241,22 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
         experiment=experiment, docker=docker, **options)
     if descriptors.base_system(dockers, docker) != docker:
         config.path_experiment_docker = descriptors.base_system(dockers, docker)
-    if dockers[docker].get('external', False):
-        config.monitoring_sut = False   # cannot be monitored since outside of K8s
-        config.set_sut_role('placeholder')   # the pod is only a client; the DBMS is outside of K8s
-        config.resource_sweep = False   # resources and storage are not set by bexhoma
-    if dockers[docker].get('script_target'):
-        config.set_script_target(dockers[docker]['script_target'])
-    if entry.get('reset_scripts'):
-        config.set_benchmark_resetscript(descriptors.expand(list(entry['reset_scripts']), context), name=reset_name)
+    if dockers[docker].get('sut_attributes'):
+        apply_sut_attributes(config, dockers[docker]['sut_attributes'], context)
+    if pooling:
+        config.set_sut_parameters(**pooling['sut_parameters'])
+        config.set_resources(**pooling['resources'])
+    reset_scripts = descriptors.expand(entry.get('reset_scripts'), context)
+    if reset_scripts:
+        config.set_benchmark_resetscript(list(reset_scripts), name=reset_name)
     config.set_storage(storageConfiguration=storage_configuration or descriptors.storage_prefix(dockers, docker))
     sut_parameters = {env_name: str(context.get(option, False)).lower()
                       for env_name, option in (entry.get('option_parameters') or {}).items()}
-    sut_parameters.update(descriptors.expand(entry.get('sut_parameters') or {}, context))
+    sut_parameters.update(_without_none(descriptors.expand(entry.get('sut_parameters') or {}, context)))
     if sut_parameters:
         config.set_sut_parameters(**sut_parameters)
     if entry.get('eval_parameters'):
-        config.set_eval_parameters(**descriptors.expand(entry['eval_parameters'], context))
+        config.set_eval_parameters(**_without_none(descriptors.expand(entry['eval_parameters'], context)))
     for option, scripts in (entry.get('option_experiment') or {}).items():
         if context.get(option, False):
             config.set_experiment(**scripts)
@@ -168,7 +264,7 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
         config.loading_deactivated = True
     if entry.get('loading_template'):
         config.jobtemplate_loading = entry['loading_template']
-    loading ={**descriptors.expand(entry.get('loading_parameters') or {}, context), **(loading_parameters or {})}
+    loading = {**_without_none(descriptors.expand(entry.get('loading_parameters') or {}, context)), **(loading_parameters or {})}
     if loading:
         config.set_loading_parameters(**loading)
     if entry.get('max_sut_dbms') is not None:

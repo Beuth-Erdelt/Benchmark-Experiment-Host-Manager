@@ -164,7 +164,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -407,7 +407,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -644,7 +644,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -893,7 +893,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -1129,7 +1129,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -1700,6 +1700,245 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
+   "alias": "General-B",
+   "appname": "bexhoma",
+   "are_pool_ready": false,
+   "are_worker_ready": false,
+   "benchmark": null,
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "tpcc",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "tpcc",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "postgres",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "BEXHOMA_REPLICAS": 0,
+     "SF": "1"
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "tpcc",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "postgres",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "BEXHOMA_REPLICAS": 0,
+     "SF": "1"
+    }
+   ],
+   "benchmarking_patch": "",
+   "benchmarking_timespans": {},
+   "client": 1,
+   "configuration": "Citus-1",
+   "connection": "",
+   "connection_management": {
+    "numProcesses": 1,
+    "runsPerConnection": 0,
+    "singleConnection": true,
+    "timeout": 1800
+   },
+   "connection_parameter": {},
+   "data_components": null,
+   "ddl_given": [],
+   "ddl_parameters": {},
+   "dialect": "PostgreSQL",
+   "docker": "Citus",
+   "dockerimage": "",
+   "eval_parameters": {
+    "BEXHOMA_REPLICAS": 0,
+    "BEXHOMA_SHARDS": 0,
+    "BEXHOMA_WORKERS": 1,
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "benchbase",
+       "fixed_parallelism": false,
+       "name": "benchbase",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BENCHBASE_BATCHSIZE": 128,
+        "BENCHBASE_BENCH": "tpcc",
+        "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+        "BENCHBASE_KEY_AND_THINK": "false",
+        "BENCHBASE_PROFILE": "postgres",
+        "BENCHBASE_STATUS_INTERVAL": 0,
+        "BENCHBASE_TARGET": 1024,
+        "BENCHBASE_TERMINALS": 1,
+        "BENCHBASE_TIME": 300,
+        "BENCHBASE_WARMUP": 0,
+        "BEXHOMA_REPLICAS": 0,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-benchbase.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-benchbase.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "benchbase",
+      "name": "benchbase-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BENCHBASE_BATCHSIZE": 128,
+       "BENCHBASE_BENCH": "tpcc",
+       "BENCHBASE_CREATE_SCHEMA": "false",
+       "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+       "BENCHBASE_KEY_AND_THINK": "false",
+       "BENCHBASE_PROFILE": "postgres",
+       "BENCHBASE_STATUS_INTERVAL": 0,
+       "BENCHBASE_TERMINALS": 1,
+       "BENCHBASE_TIME": 300,
+       "BENCHBASE_WARMUP": 0,
+       "BEXHOMA_REPLICAS": 0,
+       "SF": "1"
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-benchbase.yml"
+     }
+    ]
+   },
+   "experiment_done": false,
+   "indexing": "Checks",
+   "indexscript": [],
+   "initscript": [],
+   "is_sut_ready": false,
+   "load_durability": "relaxed",
+   "load_durability_scripts": null,
+   "loading_active": true,
+   "loading_after_time": null,
+   "loading_deactivated": true,
+   "loading_inherited": false,
+   "loading_metrics_fetched": {},
+   "loading_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "tpcc",
+    "BENCHBASE_CREATE_SCHEMA": "false",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_PROFILE": "postgres",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TERMINALS": 1,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "BEXHOMA_REPLICAS": 0,
+    "SF": "1"
+   },
+   "loading_patch": "",
+   "loading_timespans": {},
+   "max_sut_dbms": 1,
+   "monitor_app_active": false,
+   "monitor_loading": true,
+   "monitoring_active": false,
+   "monitoring_sut": true,
+   "nodes": {},
+   "num_experiment_to_apply": 1,
+   "num_experiment_to_apply_done": 0,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 1,
+   "path_experiment_docker": "Citus",
+   "prometheus_interval": "10s",
+   "prometheus_timeout": "10s",
+   "pvc_selector": "",
+   "resetscript": [],
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "service": "",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "citus",
+    "storageSize": ""
+   },
+   "storage_label": "benchbase-tpcc-1",
+   "storage_monitoring": null,
+   "storage_reused": false,
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {
+    "BEXHOMA_REPLICAS": 0,
+    "BEXHOMA_SHARDS": 0
+   },
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_startup_args": [],
+   "sut_template": "deploymenttemplate-Citus.yml",
+   "tenant_per": "",
+   "tenant_ready_to_index": false,
+   "tenant_ready_to_load": false,
+   "tenant_started_to_index": false,
+   "tenant_started_to_load": false,
+   "times_scripts": {},
+   "tls_secret": "",
+   "use_distributed_datasource": false,
+   "volume": "benchbase",
+   "volume_check": {},
+   "volume_per_tenant": false,
+   "volumeid": "",
+   "worker_metric_strip_container": false,
+   "worker_startup_args": []
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "usecase": "benchbase_tpcc",
+    "warehouses": "1"
+   },
    "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
@@ -2154,245 +2393,6 @@
    "sut_service_name": "",
    "sut_startup_args": [],
    "sut_template": "deploymenttemplate-DatabaseService.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "benchbase",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "",
-   "additional_labels": {
-    "usecase": "benchbase_tpcc",
-    "warehouses": "1"
-   },
-   "alias": "General-B",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "BENCHBASE_BATCHSIZE": 128,
-    "BENCHBASE_BENCH": "tpcc",
-    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
-    "BENCHBASE_KEY_AND_THINK": "false",
-    "BENCHBASE_STATUS_INTERVAL": 0,
-    "BENCHBASE_TIME": 300,
-    "BENCHBASE_WARMUP": 0,
-    "SF": "1"
-   },
-   "benchmarking_parameters_list": [
-    {
-     "BENCHBASE_BATCHSIZE": 128,
-     "BENCHBASE_BENCH": "tpcc",
-     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
-     "BENCHBASE_KEY_AND_THINK": "false",
-     "BENCHBASE_PROFILE": "postgres",
-     "BENCHBASE_STATUS_INTERVAL": 0,
-     "BENCHBASE_TARGET": 1024,
-     "BENCHBASE_TERMINALS": 1,
-     "BENCHBASE_TIME": 300,
-     "BENCHBASE_WARMUP": 0,
-     "BEXHOMA_REPLICAS": 0,
-     "SF": "1"
-    }
-   ],
-   "benchmarking_parameters_list_template": [
-    {
-     "BENCHBASE_BATCHSIZE": 128,
-     "BENCHBASE_BENCH": "tpcc",
-     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
-     "BENCHBASE_KEY_AND_THINK": "false",
-     "BENCHBASE_PROFILE": "postgres",
-     "BENCHBASE_STATUS_INTERVAL": 0,
-     "BENCHBASE_TARGET": 1024,
-     "BENCHBASE_TERMINALS": 1,
-     "BENCHBASE_TIME": 300,
-     "BENCHBASE_WARMUP": 0,
-     "BEXHOMA_REPLICAS": 0,
-     "SF": "1"
-    }
-   ],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "Citus-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "PostgreSQL",
-   "docker": "Citus",
-   "dockerimage": "",
-   "eval_parameters": {
-    "BEXHOMA_REPLICAS": 0,
-    "BEXHOMA_SHARDS": 0,
-    "BEXHOMA_WORKERS": 1,
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "benchbase",
-       "fixed_parallelism": false,
-       "name": "benchbase",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "BENCHBASE_BATCHSIZE": 128,
-        "BENCHBASE_BENCH": "tpcc",
-        "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
-        "BENCHBASE_KEY_AND_THINK": "false",
-        "BENCHBASE_PROFILE": "postgres",
-        "BENCHBASE_STATUS_INTERVAL": 0,
-        "BENCHBASE_TARGET": 1024,
-        "BENCHBASE_TERMINALS": 1,
-        "BENCHBASE_TIME": 300,
-        "BENCHBASE_WARMUP": 0,
-        "BEXHOMA_REPLICAS": 0,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-benchbase.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-benchbase.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "benchbase",
-      "name": "benchbase-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BENCHBASE_BATCHSIZE": 128,
-       "BENCHBASE_BENCH": "tpcc",
-       "BENCHBASE_CREATE_SCHEMA": "false",
-       "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
-       "BENCHBASE_KEY_AND_THINK": "false",
-       "BENCHBASE_PROFILE": "postgres",
-       "BENCHBASE_STATUS_INTERVAL": 0,
-       "BENCHBASE_TERMINALS": 1,
-       "BENCHBASE_TIME": 300,
-       "BENCHBASE_WARMUP": 0,
-       "BEXHOMA_REPLICAS": 0,
-       "SF": "1"
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-benchbase.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": true,
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BENCHBASE_BATCHSIZE": 128,
-    "BENCHBASE_BENCH": "tpcc",
-    "BENCHBASE_CREATE_SCHEMA": "false",
-    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
-    "BENCHBASE_KEY_AND_THINK": "false",
-    "BENCHBASE_PROFILE": "postgres",
-    "BENCHBASE_STATUS_INTERVAL": 0,
-    "BENCHBASE_TERMINALS": 1,
-    "BENCHBASE_TIME": 300,
-    "BENCHBASE_WARMUP": 0,
-    "BEXHOMA_REPLICAS": 0,
-    "SF": "1"
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": 1,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 1,
-   "path_experiment_docker": "Citus",
-   "prometheus_interval": "10s",
-   "prometheus_timeout": "10s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": true,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "sut",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "citus",
-    "storageSize": ""
-   },
-   "storage_label": "benchbase-tpcc-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {
-    "BEXHOMA_REPLICAS": 0,
-    "BEXHOMA_SHARDS": 0
-   },
-   "sut_pod_name": "",
-   "sut_role": "data",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-Citus.yml",
    "tenant_per": "",
    "tenant_ready_to_index": false,
    "tenant_ready_to_load": false,

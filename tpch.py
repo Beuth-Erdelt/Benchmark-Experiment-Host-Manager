@@ -17,7 +17,7 @@ from bexhoma.benchmarks.base import DIMENSION_VARIANTS, dimension_folder
 from bexhoma.system_descriptors import (benchmark_entry, dbms_choices, default_dockers, dimension_dockers, load_dockers,
                                         refresh_template, storage_prefix, unsupported_dimension)
 from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, limit_loading_pods,
-                                                loading_variants, selected_dockers)
+                                                loading_variants, selected_dockers, tenancy_error, tenant_ids)
 from bexhoma.cli_args import storage_suffix as _storage_suffix, set_cell_storage as _set_cell_storage
 # resource sweeps (-rc/-lc/-rr/-lr/-rst lists) are expanded for every DBMS by
 # ExperimentBase.expand_resource_cells(); kept here under its old name
@@ -75,24 +75,6 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('-xve',   '--xverbose-explain', help='run and print configured EXPLAIN statements after each benchmark query (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='verbose_explain')
     parser.add_argument('-xse',   '--xstore-explain', help='run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='store_explain')
     return parser
-
-
-def tenant_ids(experiment, entry: dict) -> list:
-    """
-    The tenants a DBMS gets a configuration for.
-
-    A DBMS that takes part in the multi-tenant variants (``multi_tenancy`` in its ``tpch``
-    entry) gets one configuration per tenant for container-tenancy; every other DBMS, and
-    every other kind of tenancy, one configuration without a tenant id.
-
-    :param experiment: The experiment (``tenant_per``, ``num_tenants``).
-    :param entry: The DBMS's entry for the benchmark.
-    :return: The tenant ids, or ``[None]``.
-    :rtype: list
-    """
-    if entry.get('multi_tenancy') and experiment.tenant_per == 'container':
-        return list(range(experiment.num_tenants))
-    return [None]
 
 
 def tenant_parameters(experiment, entry: dict, tenant, storage_prefix: str) -> dict:
@@ -363,6 +345,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
 if __name__ == '__main__':
     parser = build_parser()
     args = parser.parse_args()
+    reason = tenancy_error('tpch', args)
+    if reason:
+        parser.error(reason)
     dockers = load_dockers()
     for docker in args.dbms:
         reason = unsupported_dimension(dockers, docker, 'tpch', args.dimensions)

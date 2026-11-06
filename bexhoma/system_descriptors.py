@@ -40,6 +40,12 @@ the entry script of that benchmark needs to configure the DBMS:
     command line (:func:`expand`).
 ``max_sut_dbms``
     Number of SUT of this DBMS that may run at the same time.
+``tenant_parameters``
+    ``{'loading': {...}, 'benchmarking': {...}}``: parameters a multi-tenant run adds to the jobs;
+    ``{tenant_by}``, ``{num_tenants}`` and ``{tenant_id}`` are filled in.
+``pooling``
+    For a DBMS behind a connection pooler: ``{'sut_parameters': ..., 'resources': ...}`` applied to one configuration
+    per combination of ``-xnpp``, ``-xnpi`` and ``-xnpo``; ``{pool_pods}``, ``{pool_in}`` and ``{pool_out}`` are filled in.
 ``multi_tenancy``
     The tenancy modes (``-mtb``: ``container``, ``schema``, ``database``) the DBMS supports in the benchmark.
     A run with ``-mtn`` is refused for a DBMS that does not list the requested mode (:func:`unsupported_tenancy`).
@@ -56,8 +62,11 @@ A DBMS may also declare ``base_system``: the DBMS whose script folder
 (``experiments/<benchmark>/<base_system>``) it reuses when that is not its own, and
 ``storage_prefix``: the name of its storage (volume), the same for every benchmark, and
 ``workers``: ``True`` when the SUT takes ``-nw`` workers (shards) next to its coordinator,
-``script_target``: the component (``workers``) the reset and schema scripts run on, and
-``external``: ``True`` when the DBMS runs outside of Kubernetes (no SUT monitoring, no resources or storage).
+``sut_attributes``: how the SUT of the DBMS is set up, a dict of ``key: value`` applied to the configuration:
+``sut_role``, ``pvc_selector``, ``script_target``, ``data_components`` and ``resources`` call the setter of that
+name, ``statefulsets`` (``{name: pods}``) records stateful sets that something else manages (Helm), every other
+key is an attribute of the configuration (``monitoring_sut``, ``resource_sweep``, ``sut_has_pool``,
+``sut_service_name``, ...). Values are expanded with the command line (:func:`expand`).
 Its alias in the reports (:func:`alias`) and its SQL dialect, the key of the query variants
 in the query files (:func:`dialect`), are one per DBMS, ``template.alias`` and ``template.dialect``
 of its entry, whatever the benchmark.
@@ -98,6 +107,8 @@ ENTRY_KEYS = {
     'multi_tenancy': list,
     'per_loading_threads': dict,
     'option_experiment': dict,
+    'tenant_parameters': dict,
+    'pooling': dict,
 }
 
 
@@ -280,6 +291,10 @@ def expand(value, context: dict):
     so numbers stay numbers; other strings are formatted; dicts and lists are expanded
     recursively; everything else is returned unchanged.
 
+    A dict with the key ``'$by'`` is a selector: ``{'$by': 'benchmark', 'tpcc': A, '*': B}`` becomes
+    ``A`` if ``context['benchmark']`` is ``'tpcc'``, else ``B``; without a matching key and without
+    ``'*'`` it becomes ``None`` (the caller leaves the value out).
+
     :param value: A value of a descriptor.
     :param context: Name -> value, usually ``vars(args)``.
     :raises KeyError: When a placeholder names nothing in the context.
@@ -289,6 +304,9 @@ def expand(value, context: dict):
             return context[value[1:-1]]
         return value.format(**context) if '{' in value else value
     if isinstance(value, dict):
+        if '$by' in value:
+            chosen = value.get(str(context[value['$by']]), value.get('*'))
+            return None if chosen is None else expand(chosen, context)
         return {key: expand(item, context) for key, item in value.items()}
     if isinstance(value, list):
         return [expand(item, context) for item in value]
@@ -346,11 +364,10 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
         prefix = docker.get('storage_prefix')
         if prefix is not None and (not isinstance(prefix, str) or not prefix):
             problems.append(f"{name}: storage_prefix must be a non-empty string, got {prefix!r}")
-        for flag in ('workers', 'external'):
-            if not isinstance(docker.get(flag, False), bool):
-                problems.append(f"{name}: {flag} must be bool, got {docker[flag]!r}")
-        if not isinstance(docker.get('script_target', ''), str):
-            problems.append(f"{name}: script_target must be a string, got {docker['script_target']!r}")
+        if not isinstance(docker.get('workers', False), bool):
+            problems.append(f"{name}: workers must be bool, got {docker['workers']!r}")
+        if not isinstance(docker.get('sut_attributes', {}), dict):
+            problems.append(f"{name}: sut_attributes must be a dict, got {docker['sut_attributes']!r}")
         if docker.get('benchmarks') and prefix is None:
             problems.append(f"{name}: has benchmarks but no storage_prefix")
         if docker.get('benchmarks') and not alias(dockers, name):
@@ -365,7 +382,7 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
             for key, value in entry.items():
                 if key not in ENTRY_KEYS:
                     problems.append(f"{where}: unknown key {key!r} (allowed: {', '.join(ENTRY_KEYS)})")
-                elif not isinstance(value, ENTRY_KEYS[key]):
+                elif not (isinstance(value, ENTRY_KEYS[key]) or (isinstance(value, dict) and '$by' in value)):
                     problems.append(f"{where}.{key}: must be {ENTRY_KEYS[key].__name__}, got {value!r}")
                 elif ENTRY_KEYS[key] is str and not value:
                     problems.append(f"{where}.{key}: must not be empty (leave the key out)")

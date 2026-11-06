@@ -11,7 +11,7 @@ See LICENSE for details.
 """
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
-from bexhoma.experiments.system_builder import build_configuration, entry_parameters, selected_dockers
+from bexhoma.experiments.system_builder import build_configuration, entry_parameters, selected_dockers, tenancy_error
 from bexhoma.system_descriptors import dbms_choices
 from dbmsbenchmarker import *
 import logging
@@ -42,6 +42,9 @@ if __name__ == '__main__':
     parser.add_argument('-xkey',  '--extra-keying', help='simulate TPC-C keying and think times between transactions', action='store_true', default=False)
     # evaluate args
     args = parser.parse_args()
+    reason = tenancy_error('tpcc', args)
+    if reason:
+        parser.error(reason)
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
     if args.debug:

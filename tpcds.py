@@ -14,7 +14,7 @@ See LICENSE for details.
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, limit_loading_pods,
-                                                loading_variants, selected_dockers)
+                                                loading_variants, selected_dockers, tenancy_error)
 from bexhoma.system_descriptors import benchmark_entry, dbms_choices
 from dbmsbenchmarker import *
 import logging
@@ -51,6 +51,9 @@ if __name__ == '__main__':
     parser.add_argument('-xse',   '--xstore-explain', help='run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='store_explain')
     # evaluate args
     args = parser.parse_args()
+    reason = tenancy_error('tpcds', args)
+    if reason:
+        parser.error(reason)
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
     debugging = int(args.debug)
