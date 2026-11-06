@@ -1,0 +1,172 @@
+{
+ "benchbase.py": {
+  "CedarDB": 5,
+  "Citus": 5,
+  "CockroachDB": 7,
+  "DatabaseService": 4,
+  "PGBouncer": 3,
+  "PostgreSQL": 11,
+  "TiDB": 6,
+  "YugabyteDB": 5,
+  "mariadb": 7,
+  "mysql": 17,
+  "postgres": 20
+ },
+ "bexhoma/benchmarks/base.py": {
+  "Citus": 1,
+  "ClickHouseCluster": 1
+ },
+ "bexhoma/benchmarks/benchbase.py": {
+  "TiDB": 2
+ },
+ "bexhoma/benchmarks/ssb.py": {
+  "PgDuckDB": 1,
+  "duckdb": 1
+ },
+ "bexhoma/benchmarks/tpch.py": {
+  "ClickHouseCluster": 1,
+  "PgDuckDB": 1,
+  "duckdb": 3
+ },
+ "bexhoma/benchmarks/ycsb.py": {
+  "TiDB": 2
+ },
+ "bexhoma/cli_args.py": {
+  "PostgreSQL": 4,
+  "mariadb": 1,
+  "mysql": 4,
+  "postgres": 1
+ },
+ "bexhoma/clusters.py": {
+  "Redis": 14,
+  "redis-cli": 9
+ },
+ "bexhoma/configurations/base.py": {
+  "Redis": 1
+ },
+ "bexhoma/configurations/benchmarking.py": {
+  "Redis": 8
+ },
+ "bexhoma/configurations/lifecycle.py": {
+  "TiDB": 1,
+  "postgres": 1
+ },
+ "bexhoma/configurations/loading.py": {
+  "Redis": 3
+ },
+ "bexhoma/experiments/base.py": {
+  "PostgreSQL": 1,
+  "mysql": 1,
+  "postgres": 2
+ },
+ "bexhoma/experiments/ssb.py": {
+  "PostgreSQL": 1
+ },
+ "bexhoma/experiments/tpcds.py": {
+  "PostgreSQL": 1
+ },
+ "bexhoma/experiments/tpch.py": {
+  "CedarDB": 4,
+  "ClickHouse": 4,
+  "MariaDBCS": 3,
+  "MonetDB": 6,
+  "PgDuckDB": 3,
+  "PostgreSQL": 14,
+  "mariadb": 7,
+  "mysql": 8
+ },
+ "bexhoma/experiments/tpch_builder.py": {
+  "MariaDBCS": 3,
+  "PgDuckDB": 1,
+  "duckdb": 7,
+  "mariadb": 1
+ },
+ "bexhoma/experiments/tpch_catalog.py": {
+  "postgres": 3
+ },
+ "bexhoma/report_writer.py": {
+  "PostgreSQL": 7
+ },
+ "bexhoma/scripts/cli.py": {
+  "PgDuckDB": 1
+ },
+ "bexhoma/spec.py": {
+  "mysql": 1
+ },
+ "example.py": {
+  "PostgreSQL": 1
+ },
+ "hammerdb.py": {
+  "Citus": 8,
+  "PostgreSQL": 8,
+  "mariadb": 8,
+  "mysql": 8,
+  "postgres": 4
+ },
+ "hardware.py": {
+  "PostgreSQL": 1
+ },
+ "ssb.py": {
+  "CedarDB": 4,
+  "Citus": 8,
+  "ClickHouse": 7,
+  "ClickHouseCluster": 7,
+  "MariaDBCS": 5,
+  "MonetDB": 7,
+  "PgDuckDB": 5,
+  "PostgreSQL": 16,
+  "duckdb": 3,
+  "mariadb": 6,
+  "mysql": 8
+ },
+ "test_parallel_tpch_ycsb.py": {
+  "Citus": 1,
+  "PgDuckDB": 1,
+  "PostgreSQL": 9,
+  "TiDB": 1,
+  "duckdb": 2
+ },
+ "tpcds.py": {
+  "Citus": 1,
+  "ClickHouse": 6,
+  "ClickHouseCluster": 4,
+  "MariaDBCS": 5,
+  "MonetDB": 7,
+  "PostgreSQL": 7,
+  "mariadb": 7,
+  "mysql": 9
+ },
+ "tpch.py": {
+  "CedarDB": 6,
+  "Citus": 9,
+  "ClickHouse": 6,
+  "ClickHouseCluster": 7,
+  "DatabaseService": 3,
+  "MariaDBCS": 6,
+  "MonetDB": 9,
+  "PgDuckDB": 7,
+  "PostgreSQL": 28,
+  "duckdb": 3,
+  "mariadb": 10,
+  "mysql": 11
+ },
+ "ycsb.py": {
+  "Cassandra": 8,
+  "CassandraCluster": 1,
+  "CedarDB": 5,
+  "Citus": 5,
+  "CockroachDB": 5,
+  "DatabaseService": 4,
+  "Dragonfly": 7,
+  "DragonflyCluster": 1,
+  "Garnet": 6,
+  "PGBouncer": 3,
+  "PostgreSQL": 7,
+  "Redis": 14,
+  "TiDB": 6,
+  "Valkey": 6,
+  "YugabyteDB": 5,
+  "mariadb": 5,
+  "mysql": 5
+ }
+}
