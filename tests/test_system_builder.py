@@ -10,15 +10,21 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 import contextlib
+import copy
 import io
+import tempfile
 import types
 import unittest
+from unittest import mock
 
 import benchbase
 import tpch
 
 from bexhoma import system_descriptors as sd
 from bexhoma.experiments import system_builder as builder
+
+from .test_reset_scripts import _AnyVolumes
+from .test_resource_sweep import _SweepStubCluster
 
 
 def _dockers() -> dict:
@@ -297,6 +303,81 @@ class BenchbaseTenantTest(unittest.TestCase):
         self.assertNotIn('storage', result)
         self.assertNotIn('tenants_per_job', result)
         self.assertEqual(result['loading'], {'T_BY': '', 'T_NUM': 0, 'T_ID': 0})
+
+
+class _Experiment:
+    def __init__(self, template='', loading=True):
+        self.jobtemplate_loading = template
+        self._loading = loading
+
+    def loading_is_active(self):
+        return self._loading
+
+
+class _LoadingConfig:
+    def __init__(self, experiment, deactivated=False):
+        self.experiment = experiment
+        self.loading_deactivated = deactivated
+        self.jobtemplate_loading = ''
+
+
+class LoadingTemplateTest(unittest.TestCase):
+    """A DBMS has the loading job of its entry, there is no default job of another DBMS."""
+
+    def test_the_template_of_the_entry_is_used(self) -> None:
+        config = _LoadingConfig(_Experiment())
+        builder.set_loading_template(config, {'loading_template': 'job.yml'}, 'A', 'x')
+        self.assertEqual(config.jobtemplate_loading, 'job.yml')
+
+    def test_a_dbms_without_one_is_refused_when_loading(self) -> None:
+        config = _LoadingConfig(_Experiment())
+        with self.assertRaisesRegex(sd.IncompatibleBenchmark,
+                                    r"A declares no loading_template for benchmark 'x'.*dockers\.A\.benchmarks\.x"):
+            builder.set_loading_template(config, {}, 'A', 'x')
+
+    def test_nothing_is_needed_when_no_loading_happens(self) -> None:
+        for config in (_LoadingConfig(_Experiment(), deactivated=True),      # -sl
+                       _LoadingConfig(_Experiment(loading=False))):          # a mode without loading
+            builder.set_loading_template(config, {}, 'A', 'x')
+            self.assertEqual(config.jobtemplate_loading, '')
+
+    def test_a_benchmark_with_a_loading_job_of_its_own_needs_no_entry(self) -> None:
+        config = _LoadingConfig(_Experiment(template='jobtemplate-loading-own.yml'))
+        builder.set_loading_template(config, {}, 'A', 'x')
+        self.assertEqual(config.jobtemplate_loading, '')
+
+
+class LoadingTemplateInTheScriptsTest(unittest.TestCase):
+    """The scripts, with a PostgreSQL that lost its loading_template."""
+
+    def run_tpch(self, *argv):
+        import tpch
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            cluster = _SweepStubCluster(resultfolder=tmp_dir)
+            cluster.volumes = _AnyVolumes(cluster.volumes)
+            cluster.dockers = copy.deepcopy(cluster.dockers)
+            del cluster.dockers['PostgreSQL']['benchmarks']['tpch']['loading_template']
+            args = tpch.build_parser().parse_args(['run', '-dbms', 'PostgreSQL', *argv])
+            with (
+                mock.patch('bexhoma.clusters.Kubernetes', return_value=cluster),
+                mock.patch('bexhoma.experiments.base.ExperimentBase.process', lambda self: None),
+                contextlib.redirect_stdout(io.StringIO()),
+            ):
+                tpch.run(args)
+
+    def test_loading_is_refused(self) -> None:
+        with self.assertRaisesRegex(sd.IncompatibleBenchmark, 'PostgreSQL declares no loading_template'):
+            self.run_tpch()
+
+    def test_skipping_the_loading_needs_no_template(self) -> None:
+        self.run_tpch('-sl')
+
+    def test_the_experiment_names_no_default_job(self) -> None:
+        for module, name in (('tpch', 'TpchExperiment'), ('tpcds', 'TpcdsExperiment'), ('ssb', 'SsbExperiment')):
+            with self.subTest(benchmark=module):
+                import importlib
+                source = open(importlib.import_module(f'bexhoma.experiments.{module}').__file__, encoding='utf-8').read()
+                self.assertNotIn('jobtemplate-loading-' + module + '-PostgreSQL.yml', source)
 
 
 if __name__ == '__main__':

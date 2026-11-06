@@ -25,6 +25,7 @@ from pathlib import Path
 from bexhoma import clusters, configurations, experiments
 from bexhoma.cli_args import resolve_scaling_factor
 from bexhoma.experiments.tpch import TpchExperiment
+from bexhoma.experiments.system_builder import set_loading_template
 from bexhoma.system_descriptors import base_system, benchmark_entry, refresh_template, storage_prefix
 
 __all__ = ["build_experiment"]
@@ -189,7 +190,7 @@ def _configure_system(experiment: TpchExperiment, system: dict, tpch_cfg: dict) 
         loading_pods_split = min(loading_pods_split, max_pods)
     split_portion = loading_pods_total // loading_pods_split
 
-    config.jobtemplate_loading = entry['loading_template']
+    set_loading_template(config, entry, dbms, 'tpch')
     config.set_loading_parameters(
         PODS_TOTAL=str(loading_pods_total),
         PODS_PARALLEL=str(split_portion),

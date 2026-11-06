@@ -16,7 +16,7 @@ See LICENSE for details.
 from bexhoma import configurations
 from bexhoma import system_descriptors as descriptors
 
-__all__ = ["context_of", "selected_dockers", "entry_of", "entry_parameters", "limit_loading_pods", "loading_variants",
+__all__ = ["context_of", "selected_dockers", "entry_of", "set_loading_template", "entry_parameters", "limit_loading_pods", "loading_variants",
            "pooling_variants", "apply_sut_attributes", "tenant_ids", "tenancy_error", "build_configuration"]
 
 #: Command line options that are numbers in the descriptors' placeholders.
@@ -121,6 +121,28 @@ def entry_parameters(dockers: dict, docker: str, benchmark: str, key: str, args,
     """
     entry = entry_of(dockers, docker, benchmark, args, context)
     return _without_none(descriptors.expand(entry.get(key) or {}, {**context_of(args), **(context or {})}))
+
+
+def set_loading_template(config, entry: dict, docker: str, benchmark: str) -> None:
+    """Give the configuration the loading job of its DBMS, and refuse a DBMS that has none.
+
+    The job is the ``loading_template`` of the DBMS's entry. There is no default: a benchmark whose
+    experiment brings a loading job of its own (HammerDB, Benchbase, YCSB) needs no entry, every
+    other needs one for each DBMS that loads. Nothing is needed when loading is off (``-sl``, ``start``).
+
+    :param config: The configuration.
+    :param entry: The DBMS's entry for the benchmark.
+    :param docker: Name of the DBMS.
+    :param benchmark: Benchmark key.
+    :raises bexhoma.system_descriptors.IncompatibleBenchmark: When loading is on and no job can be found.
+    """
+    if entry.get('loading_template'):
+        config.jobtemplate_loading = entry['loading_template']
+    elif (config.experiment.loading_is_active() and not config.loading_deactivated
+            and not config.experiment.jobtemplate_loading):
+        raise descriptors.IncompatibleBenchmark(
+            f"{docker} declares no loading_template for benchmark {benchmark!r}, and the benchmark has no loading job "
+            f"of its own (add loading_template to dockers.{docker}.benchmarks.{benchmark} in cluster.config)")
 
 
 def _without_none(parameters: dict) -> dict:
@@ -282,8 +304,7 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
             config.set_experiment(**scripts)
     if context.get('skip_loading', False):
         config.loading_deactivated = True
-    if entry.get('loading_template'):
-        config.jobtemplate_loading = entry['loading_template']
+    set_loading_template(config, entry, docker, benchmark)
     loading = {**_without_none(descriptors.expand(entry.get('loading_parameters') or {}, context)), **(loading_parameters or {})}
     if loading:
         config.set_loading_parameters(**loading)

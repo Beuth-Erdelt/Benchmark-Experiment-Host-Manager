@@ -4,15 +4,6 @@
   "mysql": 1,
   "postgres": 2
  },
- "bexhoma/experiments/ssb.py": {
-  "PostgreSQL": 1
- },
- "bexhoma/experiments/tpcds.py": {
-  "PostgreSQL": 1
- },
- "bexhoma/experiments/tpch.py": {
-  "PostgreSQL": 1
- },
  "bexhoma/experiments/tpch_builder.py": {
   "duckdb": 2
  },

@@ -81,7 +81,7 @@ class TpcdsExperiment(DbmsBenchmarkerExperiment):
                 {
                     "name":        "tpcds-loader",
                     "benchmarker": "dbmsbenchmarker",
-                    "template":    "jobtemplate-loading-tpcds-PostgreSQL.yml",
+                    "template":    "",   # every configuration sets its DBMS's loading_template from cluster.config
                     "parallelism": 1,
                     "num_pods":    1,
                     "target":      "sut",

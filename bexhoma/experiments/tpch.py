@@ -81,7 +81,7 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
                 {
                     "name":        "tpch-loader",
                     "benchmarker": "dbmsbenchmarker",
-                    "template":    "jobtemplate-loading-tpch-PostgreSQL.yml",
+                    "template":    "",   # every configuration sets its DBMS's loading_template from cluster.config
                     "parallelism": 1,
                     "num_pods":    1,
                     "target":      "sut",
