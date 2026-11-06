@@ -43,14 +43,16 @@ def _small() -> dict:
         'A': {'benchmarks': {'x': {'default': True, 'alias': 'A1'}, 'y': {'alias': 'A2', 'dialect': 'd'}}},
         'B': {'base_system': 'A', 'benchmarks': {'x': {'alias': 'B1'}}},
         'C': {},
+        'D': {'benchmarks': {'x': {'dimensions': True, 'unsupported_dimensions': {'wide': 'too slow'}},
+                             'y': {'dimensions': False}}},
     }
 
 
 class AccessorsTest(unittest.TestCase):
 
     def test_compatible_is_the_set_of_entries(self) -> None:
-        self.assertEqual(sd.compatible_dockers(_small(), 'x'), ['A', 'B'])
-        self.assertEqual(sd.compatible_dockers(_small(), 'y'), ['A'])
+        self.assertEqual(sd.compatible_dockers(_small(), 'x'), ['A', 'B', 'D'])
+        self.assertEqual(sd.compatible_dockers(_small(), 'y'), ['A', 'D'])
         self.assertEqual(sd.compatible_dockers(_small(), 'z'), [])
 
     def test_default_needs_the_flag(self) -> None:
@@ -59,10 +61,24 @@ class AccessorsTest(unittest.TestCase):
 
     def test_entry_and_missing_entry(self) -> None:
         self.assertEqual(sd.benchmark_entry(_small(), 'A', 'y')['dialect'], 'd')
-        with self.assertRaisesRegex(sd.IncompatibleBenchmark, r"B is not compatible with benchmark 'y' \(compatible: A\)"):
+        with self.assertRaisesRegex(sd.IncompatibleBenchmark, r"B is not compatible with benchmark 'y' \(compatible: A, D\)"):
             sd.benchmark_entry(_small(), 'B', 'y')
         with self.assertRaisesRegex(sd.IncompatibleBenchmark, 'unknown DBMS'):
             sd.benchmark_entry(_small(), 'Q', 'x')
+
+    def test_dimensions(self) -> None:
+        self.assertEqual(sd.dimension_dockers(_small(), 'x'), ['D'])
+        self.assertEqual(sd.dimension_dockers(_small(), 'y'), [])
+
+    def test_unsupported_dimension(self) -> None:
+        self.assertEqual(sd.unsupported_dimension(_small(), 'D', 'x', 'wide'), 'too slow')
+        self.assertEqual(sd.unsupported_dimension(_small(), 'D', 'x', 'narrow'), '')
+        self.assertEqual(sd.unsupported_dimension(_small(), 'A', 'x', 'wide'), '')
+        self.assertEqual(sd.unsupported_dimension(_small(), 'Q', 'x', 'wide'), '')
+
+    def test_load_dockers_falls_back_to_the_main_config(self) -> None:
+        dockers = sd.load_dockers(os.path.join(_REPO, 'no-such-cluster.config'))
+        self.assertEqual(dockers, _load('k8s-cluster.config')['dockers'])
 
     def test_base_system(self) -> None:
         self.assertEqual(sd.base_system(_small(), 'B'), 'A')
@@ -84,10 +100,11 @@ class ValidationTest(unittest.TestCase):
         dockers['A']['benchmarks']['x']['colour'] = 'red'
         dockers['A']['benchmarks']['y']['default'] = 'yes'
         dockers['C'] = {'benchmarks': {'x': {'alias': ''}, 'y': 'not a dict'}}
+        dockers['D']['benchmarks']['x']['unsupported_dimensions'] = ['wide']
         problems = '\n'.join(self.check(dockers))
         for expected in ("B: base_system 'Q'", 'A.benchmarks.z: unknown benchmark', "A.benchmarks.x: unknown key 'colour'",
                          'A.benchmarks.y.default: must be bool', 'C.benchmarks.x.alias: must not be empty',
-                         'C.benchmarks.y: must be a dict'):
+                         'C.benchmarks.y: must be a dict', 'D.benchmarks.x.unsupported_dimensions: must be dict'):
             self.assertIn(expected, problems)
 
     def test_template_must_exist(self) -> None:

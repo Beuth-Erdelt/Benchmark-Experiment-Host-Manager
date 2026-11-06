@@ -15,6 +15,7 @@ See LICENSE for details.
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.benchmarks.ssb import SCHEMA_VARIANTS, QUERY_VARIANTS, DIMENSION_VARIANTS, resolve_dimension_folder
+from bexhoma.system_descriptors import dimension_dockers
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -316,7 +317,7 @@ if __name__ == '__main__':
                 # ClickHouse cluster: coordinator (SUT) and num_worker shards
                 config = configurations.default(experiment=experiment, docker='ClickHouseCluster', dialect='Clickhouse', alias='DBMS C1', worker=num_worker)
                 # -xdim distributed: scripts in ClickHouseCluster/distributed, and a volume of its own
-                config.path_experiment_docker = resolve_dimension_folder('ClickHouseCluster', schema_variant, dimensions)
+                config.path_experiment_docker = resolve_dimension_folder('ClickHouseCluster', schema_variant, dimensions, dimension_dockers(cluster.dockers, 'ssb'))
                 if config.path_experiment_docker != 'ClickHouseCluster':
                     config.storage_label = f'ssb-distributed-{SF}'
                 # With -ar: rows held by the Distributed tables are sent to the shards and the
@@ -342,7 +343,7 @@ if __name__ == '__main__':
                 # Citus: coordinator (SUT) and num_worker workers
                 config = configurations.default(experiment=experiment, docker='Citus', dialect='PostgreSQL', alias='DBMS C2', worker=num_worker)
                 # -xdim distributed: scripts in Citus/distributed, and a volume of its own
-                config.path_experiment_docker = resolve_dimension_folder('Citus', schema_variant, dimensions)
+                config.path_experiment_docker = resolve_dimension_folder('Citus', schema_variant, dimensions, dimension_dockers(cluster.dockers, 'ssb'))
                 if config.path_experiment_docker != 'Citus':
                     config.storage_label = f'ssb-distributed-{SF}'
                 # With -ar: VACUUM ANALYZE, then CHECKPOINT and a stats reset on the

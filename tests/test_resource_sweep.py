@@ -41,7 +41,7 @@ class _SweepStubCluster(StubCluster):
         self.storage_classes = ['cephcsi', 'shared']
         self.volumes['ycsb'] = {'id': 'ycsb', 'initscripts': {'Schema': [], 'SchemaTenant': [], 'Checks': []}}
         for dbms in ('DatabaseService', 'PGBouncer', 'Dragonfly', 'Redis'):
-            self.dockers[dbms] = {}
+            self.dockers.setdefault(dbms, {})
 
 
 class _SweepTestBase(unittest.TestCase):

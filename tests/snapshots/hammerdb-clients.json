@@ -95,7 +95,6 @@
    "dialect": "PostgreSQL",
    "docker": "PostgreSQL",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -364,7 +363,6 @@
    "dialect": "MySQL",
    "docker": "MySQL",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -639,7 +637,6 @@
    "dialect": "MariaDB",
    "docker": "MariaDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -924,7 +921,6 @@
    "dialect": "Citus",
    "docker": "Citus",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,

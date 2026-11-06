@@ -8,14 +8,10 @@ See LICENSE for details.
 """
 from types import SimpleNamespace
 
+from ..system_descriptors import dimension_dockers
 from .base import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, dimension_info
 
-__all__ = ["TPCH", "DIMENSION_DBMS", "resolve_indexing_key"]
-
-#: DBMS that ``-xdim`` applies to in TPC-H. Not Citus: with distributed dimensions it
-#: plans 12 of the 22 queries only as co-located joins (cluster check 2026-10-30),
-#: so tpch.py refuses Citus with ``-xdim distributed``.
-DIMENSION_DBMS = ('ClickHouseCluster',)
+__all__ = ["TPCH", "resolve_indexing_key"]
 
 #: Maps every (indexes, constraints, statistics) combination to the tpch
 #: volume's ``initscripts`` key that applies exactly that combination (see
@@ -145,7 +141,8 @@ class TPCH(DBMSBenchmarkerBenchmark):
         experiment.use_distributed_datasource = True
         experiment.workload['info'] += dimension_info(getattr(args, 'dbms', None),
                                                       getattr(args, 'dimensions', DIMENSION_VARIANTS[0]),
-                                                      'orders and lineitem', DIMENSION_DBMS)
+                                                      'orders and lineitem',
+                                                      dimension_dockers(experiment.cluster.dockers, 'tpch'))
         if experiment.loading_is_active():
             if experiment.benchmarking_is_active():
                 experiment.workload['info'] += f"\nTPC-H (SF={SF}) data is loaded and benchmark is executed."

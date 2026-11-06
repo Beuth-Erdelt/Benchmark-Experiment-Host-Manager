@@ -16,7 +16,14 @@ See LICENSE for details.
 """
 from __future__ import annotations
 
+import copy
+import os
+
+from bexhoma.system_descriptors import load_dockers
+
 __all__ = ["StubCluster"]
+
+_MAIN_CONFIG = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'k8s-cluster.config')
 
 
 class StubCluster:
@@ -57,9 +64,10 @@ class StubCluster:
                 },
             },
         }
-        self.dockers = {dbms: {} for dbms in (
-            'PostgreSQL', 'PgDuckDB', 'MonetDB', 'MariaDB', 'MariaDBCS', 'MySQL', 'CedarDB',
-        )}
+        # the real per-benchmark descriptors, nothing else of the DBMS entries
+        self.dockers = {name: {key: copy.deepcopy(value) for key, value in docker.items()
+                               if key in ('benchmarks', 'base_system')}
+                        for name, docker in load_dockers(_MAIN_CONFIG).items()}
 
     def set_code(self, code) -> None:
         """Mirror ``Kubernetes.set_code`` without the ``experiments.config`` file check."""

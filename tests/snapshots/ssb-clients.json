@@ -49,7 +49,6 @@
    "dialect": "PostgreSQL",
    "docker": "PostgreSQL",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -264,7 +263,6 @@
    "dialect": "PostgreSQL",
    "docker": "PgDuckDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -481,7 +479,6 @@
    "dialect": "PostgreSQL",
    "docker": "CedarDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -696,7 +693,6 @@
    "dialect": "MonetDB",
    "docker": "MonetDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -911,7 +907,6 @@
    "dialect": "Clickhouse",
    "docker": "ClickHouse",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -1126,7 +1121,6 @@
    "dialect": "MySQL",
    "docker": "MySQL",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -1343,7 +1337,6 @@
    "dialect": "MySQL",
    "docker": "MariaDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -1562,7 +1555,6 @@
    "dialect": "MySQL",
    "docker": "MariaDBCS",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -1779,7 +1771,6 @@
    "dialect": "Clickhouse",
    "docker": "ClickHouseCluster",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_WORKERS": 0,
     "code": "<CODE>"
@@ -1997,7 +1988,6 @@
    "dialect": "PostgreSQL",
    "docker": "Citus",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,

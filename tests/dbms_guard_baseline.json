@@ -12,10 +12,6 @@
   "mysql": 17,
   "postgres": 20
  },
- "bexhoma/benchmarks/base.py": {
-  "Citus": 1,
-  "ClickHouseCluster": 1
- },
  "bexhoma/benchmarks/benchbase.py": {
   "TiDB": 2
  },
@@ -24,7 +20,6 @@
   "duckdb": 1
  },
  "bexhoma/benchmarks/tpch.py": {
-  "ClickHouseCluster": 1,
   "PgDuckDB": 1,
   "duckdb": 3
  },
@@ -134,7 +129,7 @@
  },
  "tpch.py": {
   "CedarDB": 6,
-  "Citus": 9,
+  "Citus": 7,
   "ClickHouse": 6,
   "ClickHouseCluster": 7,
   "DatabaseService": 3,

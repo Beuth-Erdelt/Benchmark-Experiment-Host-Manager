@@ -88,7 +88,6 @@
    "dialect": "",
    "docker": "PostgreSQL",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -342,7 +341,6 @@
    "dialect": "",
    "docker": "PostgreSQL",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -596,7 +594,6 @@
    "dialect": "",
    "docker": "CedarDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -850,7 +847,6 @@
    "dialect": "",
    "docker": "CedarDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -1102,7 +1098,6 @@
    "dialect": "",
    "docker": "PGBouncer",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -1356,7 +1351,6 @@
    "dialect": "",
    "docker": "PGBouncer",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -1610,7 +1604,6 @@
    "dialect": "",
    "docker": "MySQL",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -1860,7 +1853,6 @@
    "dialect": "",
    "docker": "MySQL",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -2110,7 +2102,6 @@
    "dialect": "",
    "docker": "MariaDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -2362,7 +2353,6 @@
    "dialect": "",
    "docker": "MariaDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -2614,7 +2604,6 @@
    "dialect": "",
    "docker": "YugabyteDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -2865,7 +2854,6 @@
    "dialect": "",
    "docker": "CockroachDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -3125,7 +3113,6 @@
    "dialect": "",
    "docker": "CockroachDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -3387,7 +3374,6 @@
    "dialect": "",
    "docker": "TiDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -3651,7 +3637,6 @@
    "dialect": "",
    "docker": "TiDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -3911,7 +3896,6 @@
    "dialect": "",
    "docker": "DatabaseService",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -4159,7 +4143,6 @@
    "dialect": "",
    "docker": "Dragonfly",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -4419,7 +4402,6 @@
    "dialect": "",
    "docker": "Dragonfly",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -4679,7 +4661,6 @@
    "dialect": "",
    "docker": "Redis",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -4939,7 +4920,6 @@
    "dialect": "",
    "docker": "Redis",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -5199,7 +5179,6 @@
    "dialect": "",
    "docker": "Valkey",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -5459,7 +5438,6 @@
    "dialect": "",
    "docker": "Valkey",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -5719,7 +5697,6 @@
    "dialect": "",
    "docker": "Garnet",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -5979,7 +5956,6 @@
    "dialect": "",
    "docker": "Garnet",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -6239,7 +6215,6 @@
    "dialect": "",
    "docker": "Cassandra",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -6499,7 +6474,6 @@
    "dialect": "",
    "docker": "Cassandra",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -6761,7 +6735,6 @@
    "dialect": "",
    "docker": "Citus",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -7026,7 +6999,6 @@
    "dialect": "",
    "docker": "Citus",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,

@@ -86,7 +86,6 @@
    "dialect": "",
    "docker": "PostgreSQL",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "TENANT_BY": "",
     "TENANT_NUM": 0,
@@ -337,7 +336,6 @@
    "dialect": "",
    "docker": "CedarDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -577,7 +575,6 @@
    "dialect": "",
    "docker": "PGBouncer",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -821,7 +818,6 @@
    "dialect": "",
    "docker": "MySQL",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "TENANT_BY": "",
     "TENANT_NUM": 0,
@@ -1065,7 +1061,6 @@
    "dialect": "",
    "docker": "MariaDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -1302,7 +1297,6 @@
    "dialect": "",
    "docker": "YugabyteDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -1540,7 +1534,6 @@
    "dialect": "",
    "docker": "CockroachDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -1780,7 +1773,6 @@
    "dialect": "",
    "docker": "TiDB",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -2022,7 +2014,6 @@
    "dialect": "",
    "docker": "DatabaseService",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -2255,7 +2246,6 @@
    "dialect": "",
    "docker": "Citus",
    "dockerimage": "",
-   "dockertemplate": {},
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,

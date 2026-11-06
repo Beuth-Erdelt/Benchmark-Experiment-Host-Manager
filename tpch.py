@@ -14,6 +14,7 @@ See LICENSE for details.
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.benchmarks.base import DIMENSION_VARIANTS, dimension_folder
+from bexhoma.system_descriptors import dimension_dockers, load_dockers, unsupported_dimension
 from bexhoma.cli_args import storage_suffix as _storage_suffix, set_cell_storage as _set_cell_storage
 # resource sweeps (-rc/-lc/-rr/-lr/-rst lists) are expanded for every DBMS by
 # ExperimentBase.expand_resource_cells(); kept here under its old name
@@ -558,7 +559,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 # ClickHouse cluster: coordinator (SUT) and num_worker shards
                 config = configurations.default(experiment=experiment, docker='ClickHouseCluster', dialect='Clickhouse', alias='DBMS C1', worker=num_worker)
                 # -xdim distributed: scripts in ClickHouseCluster/distributed, and a volume of its own
-                config.path_experiment_docker = dimension_folder('ClickHouseCluster', dimensions)
+                config.path_experiment_docker = dimension_folder('ClickHouseCluster', dimensions, dimension_dockers(cluster.dockers, 'tpch'))
                 if config.path_experiment_docker != 'ClickHouseCluster':
                     config.storage_label = f'tpch-distributed-{SF}'
                 # With -ar: rows held by the Distributed tables are sent to the shards and the
@@ -607,8 +608,10 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
 if __name__ == '__main__':
     parser = build_parser()
     args = parser.parse_args()
-    if args.dimensions == 'distributed' and 'Citus' in args.dbms:
-        # Citus plans 12 of the 22 queries only with co-located joins (cluster check 2026-10-30)
-        parser.error('-xdim distributed is not supported for Citus in TPC-H (its dimensions are reference tables)')
+    dockers = load_dockers()
+    for docker in args.dbms:
+        reason = unsupported_dimension(dockers, docker, 'tpch', args.dimensions)
+        if reason:
+            parser.error(f'-xdim {args.dimensions} is not supported for {docker} in TPC-H: {reason}')
     run(args)
     exit()

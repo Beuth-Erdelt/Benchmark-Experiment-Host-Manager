@@ -55,7 +55,9 @@ VARIANTS = {
 
 #: Attributes whose value changes from run to run (clock, temp folders, progress state).
 _VOLATILE = {'path', 'code', 'experiment_name', 'deployment_infos', 'current_benchmark_start',
-             'current_benchmark_connection', 'pod_sut', 'logger'}
+             'current_benchmark_connection', 'pod_sut', 'logger',
+             # the DBMS's cluster.config entry: data, covered by test_system_descriptors
+             'dockertemplate'}
 _VOLATILE_PREFIXES = ('time_', 'loading_started', 'loading_finished')
 
 
