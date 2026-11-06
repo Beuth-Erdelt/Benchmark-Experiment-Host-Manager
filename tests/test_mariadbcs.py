@@ -132,8 +132,8 @@ class MariaDBCSScriptsTest(unittest.TestCase):
                             self.assertTrue(os.path.isfile(os.path.join(_REPO, 'experiments', benchmark, 'MariaDBCS', script)))
 
     def test_query_variants_come_on_top_of_the_mysql_dialect(self):
-        from bexhoma.experiments.tpch import DBMS_DEFAULTS
-        self.assertEqual(DBMS_DEFAULTS['MariaDBCS']['dialect'], 'MySQL')
+        from bexhoma.system_descriptors import benchmark_entry, load_dockers
+        self.assertEqual(benchmark_entry(load_dockers('k8s-cluster.config'), 'MariaDBCS', 'tpch')['dialect'], 'MySQL')
         with open(os.path.join(_REPO, 'experiments', 'tpch', 'queries-tpch.config'), encoding='utf-8') as f:
             queries = ast.literal_eval(f.read())['queries']
         self.assertEqual(len([q for q in queries if 'MariaDBCS' in q.get('DBMS', {})]), 4)

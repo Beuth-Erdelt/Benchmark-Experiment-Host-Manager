@@ -30,20 +30,10 @@
   "PostgreSQL": 1
  },
  "bexhoma/experiments/tpch.py": {
-  "CedarDB": 4,
-  "ClickHouse": 4,
-  "MariaDBCS": 3,
-  "MonetDB": 6,
-  "PgDuckDB": 3,
-  "PostgreSQL": 14,
-  "mariadb": 7,
-  "mysql": 8
+  "PostgreSQL": 1
  },
  "bexhoma/experiments/tpch_builder.py": {
-  "MariaDBCS": 3,
-  "PgDuckDB": 1,
-  "duckdb": 7,
-  "mariadb": 1
+  "duckdb": 2
  },
  "bexhoma/experiments/tpch_catalog.py": {
   "postgres": 3
@@ -106,13 +96,13 @@
   "ClickHouse": 6,
   "ClickHouseCluster": 7,
   "DatabaseService": 3,
-  "MariaDBCS": 6,
-  "MonetDB": 9,
-  "PgDuckDB": 7,
-  "PostgreSQL": 28,
+  "MariaDBCS": 5,
+  "MonetDB": 7,
+  "PgDuckDB": 6,
+  "PostgreSQL": 23,
   "duckdb": 3,
-  "mariadb": 10,
-  "mysql": 11
+  "mariadb": 7,
+  "mysql": 9
  },
  "ycsb.py": {
   "Cassandra": 8,

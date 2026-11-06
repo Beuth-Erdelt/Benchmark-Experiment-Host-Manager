@@ -71,7 +71,7 @@ class ValidateExperimentYamlTest(unittest.TestCase):
             validate_experiment_yaml(spec)
 
     def test_rejects_unknown_dbms(self) -> None:
-        """A DBMS name absent from DBMS_DEFAULTS is rejected."""
+        """A DBMS name that is no experiment_yaml DBMS of the tpch benchmark is rejected."""
         spec = copy.deepcopy(_VALID_SPEC)
         spec['systems'].append({'dbms': 'Oracle'})
         with self.assertRaises(ExperimentYamlError):

@@ -26,9 +26,23 @@ the entry script of that benchmark needs to configure the DBMS:
     formatted with the command line arguments (``{num_pd_nodes}``). ``when`` is ``selected``
     (the DBMS is in ``-dbms``, or ``-dbms`` is not given) or the name of a boolean argument
     that has to be set; without ``when`` the line is always shown.
+``refresh_template``
+    Name of the job template in ``k8s/`` that runs the TPC-H refresh stream against this DBMS.
+``max_loading_pods``
+    Number of loading pods the DBMS tolerates (e.g. ``1`` when parallel loads lose rows).
+``sut_parameters``
+    Environment of the SUT container that the benchmark needs by default; a value the
+    experiment sets itself wins.
+``option_parameters``
+    ``{ENV_NAME: option}``: environment of the SUT container taken from an option of the
+    experiment (a boolean becomes ``true``/``false``); an explicit value wins.
+``experiment_yaml``
+    ``True`` when a declarative ``experiment.yaml`` may name this DBMS for the benchmark:
+    the builder makes one configuration of it, without workers or tenants.
 
 A DBMS may also declare ``base_system``: the DBMS whose script folder
-(``experiments/<benchmark>/<base_system>``) it reuses when that is not its own.
+(``experiments/<benchmark>/<base_system>``) it reuses when that is not its own, and
+``storage_prefix``: the name of its storage (volume), the same for every benchmark.
 
 The functions take the ``dockers`` dict (``cluster.dockers``), so they work
 without a live cluster.
@@ -43,7 +57,7 @@ import os
 
 __all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "load_dockers", "benchmark_entry", "compatible_dockers",
            "default_dockers", "dimension_dockers", "unsupported_dimension", "notes", "base_system",
-           "validate_descriptors"]
+           "storage_prefix", "experiment_yaml_dockers", "validate_descriptors"]
 
 #: Keys a benchmark entry may carry, with the type of their value.
 ENTRY_KEYS = {
@@ -54,6 +68,11 @@ ENTRY_KEYS = {
     'dimensions': bool,
     'unsupported_dimensions': dict,
     'notes': list,
+    'refresh_template': str,
+    'max_loading_pods': int,
+    'sut_parameters': dict,
+    'option_parameters': dict,
+    'experiment_yaml': bool,
 }
 
 
@@ -163,6 +182,24 @@ def base_system(dockers: dict, docker: str) -> str:
     return dockers[docker].get('base_system', docker)
 
 
+def storage_prefix(dockers: dict, docker: str) -> str:
+    """The name of the storage (volume) of ``docker``.
+
+    :raises IncompatibleBenchmark: When the DBMS is unknown or declares no ``storage_prefix``.
+    """
+    if docker not in dockers:
+        raise IncompatibleBenchmark(f"unknown DBMS {docker!r}")
+    if not dockers[docker].get('storage_prefix'):
+        raise IncompatibleBenchmark(f"{docker} declares no storage_prefix")
+    return dockers[docker]['storage_prefix']
+
+
+def experiment_yaml_dockers(dockers: dict, benchmark: str) -> list:
+    """The DBMS a declarative ``experiment.yaml`` may name for ``benchmark`` (``experiment_yaml: True``)."""
+    return [name for name in compatible_dockers(dockers, benchmark)
+            if dockers[name]['benchmarks'][benchmark].get('experiment_yaml', False)]
+
+
 def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = '') -> list:
     """Check the ``benchmarks`` and ``base_system`` declarations of all DBMS.
 
@@ -178,6 +215,11 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
         base = docker.get('base_system')
         if base is not None and base not in dockers:
             problems.append(f"{name}: base_system {base!r} is not a DBMS of dockers")
+        prefix = docker.get('storage_prefix')
+        if prefix is not None and (not isinstance(prefix, str) or not prefix):
+            problems.append(f"{name}: storage_prefix must be a non-empty string, got {prefix!r}")
+        if docker.get('benchmarks') and prefix is None:
+            problems.append(f"{name}: has benchmarks but no storage_prefix")
         for benchmark, entry in (docker.get('benchmarks') or {}).items():
             where = f"{name}.benchmarks.{benchmark}"
             if benchmark not in benchmarks:
@@ -197,8 +239,9 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
                     problems.append(f"{where}.notes: every note needs a non-empty 'text'")
                 elif not isinstance(note.get('when', ''), str):
                     problems.append(f"{where}.notes: 'when' must be a string")
-            template = entry.get('loading_template')
-            if template_folder and isinstance(template, str) and template \
-                    and not os.path.isfile(os.path.join(template_folder, template)):
-                problems.append(f"{where}.loading_template: {template} not found in {template_folder}")
+            for key in ('loading_template', 'refresh_template'):
+                template = entry.get(key)
+                if template_folder and isinstance(template, str) and template \
+                        and not os.path.isfile(os.path.join(template_folder, template)):
+                    problems.append(f"{where}.{key}: {template} not found in {template_folder}")
     return problems

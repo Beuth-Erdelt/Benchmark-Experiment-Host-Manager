@@ -41,10 +41,10 @@ def _load(name: str) -> dict:
 
 def _small() -> dict:
     return {
-        'A': {'benchmarks': {'x': {'default': True, 'alias': 'A1'}, 'y': {'alias': 'A2', 'dialect': 'd'}}},
-        'B': {'base_system': 'A', 'benchmarks': {'x': {'alias': 'B1'}}},
+        'A': {'storage_prefix': 'a', 'benchmarks': {'x': {'default': True, 'alias': 'A1'}, 'y': {'alias': 'A2', 'dialect': 'd'}}},
+        'B': {'base_system': 'A', 'storage_prefix': 'b', 'benchmarks': {'x': {'alias': 'B1'}}},
         'C': {},
-        'D': {'benchmarks': {'x': {'dimensions': True, 'unsupported_dimensions': {'wide': 'too slow'}},
+        'D': {'storage_prefix': 'd', 'benchmarks': {'x': {'dimensions': True, 'unsupported_dimensions': {'wide': 'too slow'}},
                              'y': {'dimensions': False}}},
     }
 
@@ -129,7 +129,7 @@ class ValidationTest(unittest.TestCase):
             self.assertIn(expected, problems)
 
     def test_template_must_exist(self) -> None:
-        dockers = {'A': {'benchmarks': {'x': {'loading_template': 'no-such-template.yml'}}}}
+        dockers = {'A': {'storage_prefix': 'a', 'benchmarks': {'x': {'loading_template': 'no-such-template.yml'}}}}
         problems = sd.validate_descriptors(dockers, {'x'}, template_folder=os.path.join(_REPO, 'k8s'))
         self.assertEqual(len(problems), 1)
         self.assertIn('no-such-template.yml not found', problems[0])
@@ -169,6 +169,42 @@ class DescriptorsMatchScriptsTest(unittest.TestCase):
                 snapshot = build_snapshot(script, [], dbms=[])
                 ran = {c['docker'] for c in snapshot['configurations']}
                 self.assertEqual(set(sd.default_dockers(self.dockers, benchmark)), ran)
+
+    def test_storage_prefix_is_what_the_scripts_set(self) -> None:
+        for script in SCRIPTS:
+            with open(os.path.join(_SNAPSHOT_DIR, f'{script[:-3]}-default.json'), encoding='utf-8') as file:
+                snapshot = json.load(file)
+            for config in snapshot['configurations']:
+                with self.subTest(script=script, docker=config['docker']):
+                    self.assertEqual(sd.storage_prefix(self.dockers, config['docker']),
+                                     config['storage']['storageConfiguration'])
+
+    def test_experiment_yaml_dockers_are_the_former_defaults_table(self) -> None:
+        """The declarative builder handled exactly these DBMS when they were a table in Python."""
+        self.assertEqual(set(sd.experiment_yaml_dockers(self.dockers, 'tpch')),
+                         {'PostgreSQL', 'PgDuckDB', 'MonetDB', 'MariaDB', 'MariaDBCS', 'MySQL', 'CedarDB', 'ClickHouse'})
+
+    def test_refresh_templates_are_the_former_table(self) -> None:
+        pg = 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml'
+        former = {'PostgreSQL': pg, 'PgDuckDB': pg,
+                  'MySQL': 'jobtemplate-benchmarking-tpch-refresh-MySQL.yml',
+                  'MariaDB': 'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
+                  'MariaDBCS': 'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
+                  'MonetDB': 'jobtemplate-benchmarking-tpch-refresh-MonetDB.yml'}
+        for docker in sd.compatible_dockers(self.dockers, 'tpch'):
+            with self.subTest(docker=docker):
+                # the DBMS the table did not list reused the PostgreSQL job
+                self.assertEqual(sd.benchmark_entry(self.dockers, docker, 'tpch')['refresh_template'],
+                                 former.get(docker, pg))
+
+    def test_builder_defaults_are_the_former_special_cases(self) -> None:
+        entry = lambda docker: sd.benchmark_entry(self.dockers, docker, 'tpch')
+        self.assertEqual(entry('MariaDBCS')['max_loading_pods'], 1)
+        self.assertNotIn('max_loading_pods', entry('MariaDB'))
+        for docker in ('MariaDB', 'MariaDBCS'):
+            self.assertEqual(entry(docker)['sut_parameters'], {'MARIADB_DATABASE': 'tpch'})
+        self.assertEqual(entry('PgDuckDB')['option_parameters'], {'DUCKDB_FORCE_EXECUTION': 'duckdb_force_execution'})
+        self.assertNotIn('option_parameters', entry('PostgreSQL'))
 
     def test_entries_equal_the_configurations_the_scripts_build(self) -> None:
         for script in SCRIPTS:
