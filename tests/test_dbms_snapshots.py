@@ -91,7 +91,7 @@ SCRIPT_ARGV = {('ycsb.py', 'factors'): ['-xnlf', '1,2', '-xnbf', '1,2', '-xtb', 
                                            'ClickHouseCluster', 'Citus']}
 
 #: (script, variant) pairs the script refuses by design (it exits with a usage error).
-UNSUPPORTED = {('ssb.py', 'tenants'), ('tpcds.py', 'tenants'), ('hammerdb.py', 'tenants')}
+UNSUPPORTED = {('ssb.py', 'tenants'), ('tpcds.py', 'tenants'), ('hammerdb.py', 'tenants'), ('ycsb.py', 'tenants')}
 
 #: Attributes whose value changes from run to run (clock, temp folders, progress state).
 _VOLATILE = {'path', 'code', 'experiment_name', 'deployment_infos', 'current_benchmark_start',

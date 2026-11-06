@@ -16,7 +16,7 @@ See LICENSE for details.
 from bexhoma import configurations
 from bexhoma import system_descriptors as descriptors
 
-__all__ = ["context_of", "selected_dockers", "entry_parameters", "limit_loading_pods", "loading_variants",
+__all__ = ["context_of", "selected_dockers", "entry_of", "entry_parameters", "limit_loading_pods", "loading_variants",
            "pooling_variants", "apply_sut_attributes", "tenant_ids", "tenancy_error", "build_configuration"]
 
 #: Command line options that are numbers in the descriptors' placeholders.
@@ -99,6 +99,18 @@ def selected_dockers(dockers: dict, benchmark: str, dbms: list, args=None) -> li
     return selected
 
 
+def entry_of(dockers: dict, docker: str, benchmark: str, args, context: dict = None) -> dict:
+    """The entry of the DBMS for the benchmark with the ``variants`` applied that the command line selects.
+
+    :param context: Values the benchmark adds to the command line.
+    :return: The entry (see :func:`~bexhoma.system_descriptors.effective_entry`).
+    :rtype: dict
+    :raises bexhoma.system_descriptors.IncompatibleBenchmark: When the DBMS cannot run the benchmark.
+    """
+    return descriptors.effective_entry(descriptors.benchmark_entry(dockers, docker, benchmark),
+                                       {**context_of(args), **(context or {})})
+
+
 def entry_parameters(dockers: dict, docker: str, benchmark: str, key: str, args, context: dict = None) -> dict:
     """A parameter dict of the DBMS's entry for the benchmark, expanded with the command line.
 
@@ -107,7 +119,7 @@ def entry_parameters(dockers: dict, docker: str, benchmark: str, key: str, args,
     :return: The parameters, empty when the entry declares none.
     :rtype: dict
     """
-    entry = descriptors.benchmark_entry(dockers, docker, benchmark)
+    entry = entry_of(dockers, docker, benchmark, args, context)
     return _without_none(descriptors.expand(entry.get(key) or {}, {**context_of(args), **(context or {})}))
 
 
@@ -232,24 +244,32 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
     :raises bexhoma.system_descriptors.IncompatibleBenchmark: When the DBMS cannot run the benchmark.
     """
     dockers = experiment.cluster.dockers
-    entry = descriptors.benchmark_entry(dockers, docker, benchmark)
     context = {**context_of(args), **(context or {})}
+    entry = descriptors.effective_entry(descriptors.benchmark_entry(dockers, docker, benchmark), context)
+    # a variant may build the configuration from another docker entry (a cluster mode), keeping the DBMS's scripts
+    config_docker = entry.get('docker', docker)
     options = {}
-    if dockers[docker].get('workers', False):
+    if entry.get('worker_count'):
+        options['worker'] = descriptors.evaluate(entry['worker_count'], context)
+    elif dockers[docker].get('workers', False):
         options['worker'] = context['num_worker']
     config = configurations.default(
-        experiment=experiment, docker=docker, **options)
-    if descriptors.base_system(dockers, docker) != docker:
+        experiment=experiment, docker=config_docker, **options)
+    if descriptors.base_system(dockers, docker) != config_docker:
         config.path_experiment_docker = descriptors.base_system(dockers, docker)
-    if dockers[docker].get('sut_attributes'):
-        apply_sut_attributes(config, dockers[docker]['sut_attributes'], context)
+    if entry.get('sut_template'):
+        config.sut_template = entry['sut_template']
+    attributes = {**(dockers[docker].get('sut_attributes') or {}), **(entry.get('sut_attributes') or {})}
+    if attributes:
+        apply_sut_attributes(config, attributes, context)
     if pooling:
         config.set_sut_parameters(**pooling['sut_parameters'])
         config.set_resources(**pooling['resources'])
     reset_scripts = descriptors.expand(entry.get('reset_scripts'), context)
     if reset_scripts:
         config.set_benchmark_resetscript(list(reset_scripts), name=reset_name)
-    config.set_storage(storageConfiguration=storage_configuration or descriptors.storage_prefix(dockers, docker))
+    config.set_storage(storageConfiguration=storage_configuration or entry.get('storage_prefix')
+                       or descriptors.storage_prefix(dockers, docker))
     sut_parameters = {env_name: str(context.get(option, False)).lower()
                       for env_name, option in (entry.get('option_parameters') or {}).items()}
     sut_parameters.update(_without_none(descriptors.expand(entry.get('sut_parameters') or {}, context)))

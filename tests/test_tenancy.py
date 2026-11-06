@@ -140,7 +140,7 @@ class EntryScriptsTest(unittest.TestCase):
         self.assertNotIn('PostgreSQL does not support', stderr)
 
     def test_benchmarks_without_tenancy_refuse_it(self) -> None:
-        for script in ('tpcds.py', 'hammerdb.py'):
+        for script in ('tpcds.py', 'hammerdb.py', 'ycsb.py'):
             with self.subTest(script=script):
                 code, stderr = _refused(script, '-dbms', 'PostgreSQL', '-mtn', '2', '-mtb', 'schema')
                 self.assertEqual(code, 2)

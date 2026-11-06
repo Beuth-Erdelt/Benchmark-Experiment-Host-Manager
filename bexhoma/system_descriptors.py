@@ -80,9 +80,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 import ast
+import operator
 import os
 
-__all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "TENANCY_MODES", "unsupported_tenancy", "load_dockers", "dbms_choices", "benchmark_entry", "compatible_dockers",
+__all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "evaluate", "effective_entry", "TENANCY_MODES", "unsupported_tenancy", "load_dockers", "dbms_choices", "benchmark_entry", "compatible_dockers",
            "default_dockers", "dimension_dockers", "unsupported_dimension", "notes", "base_system",
            "storage_prefix", "alias", "dialect", "experiment_yaml_dockers", "refresh_template", "expand",
            "validate_descriptors"]
@@ -109,7 +110,21 @@ ENTRY_KEYS = {
     'option_experiment': dict,
     'tenant_parameters': dict,
     'pooling': dict,
+    'variants': list,
+    'docker': str,
+    'sut_template': str,
+    'storage_prefix': str,
+    'worker_count': str,
+    'sut_attributes': dict,
 }
+
+#: Dict-valued entry keys whose values a variant merges into the entry's (any other key is replaced).
+MERGED_KEYS = ('loading_parameters', 'benchmarking_parameters', 'sut_parameters', 'eval_parameters',
+               'sut_attributes', 'tenant_parameters', 'pooling')
+
+_ARITHMETIC = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul, ast.FloorDiv: operator.floordiv}
+_COMPARISON = {ast.Eq: operator.eq, ast.NotEq: operator.ne, ast.Lt: operator.lt, ast.LtE: operator.le,
+               ast.Gt: operator.gt, ast.GtE: operator.ge}
 
 
 #: Values of ``-mtb``.
@@ -284,6 +299,72 @@ def refresh_template(dockers: dict, dbms: list, benchmark: str) -> str:
     return next(iter(templates.values()))
 
 
+def evaluate(expression: str, context: dict):
+    """Evaluate a small expression of the cluster configuration with the command line.
+
+    Only numbers, strings, names of the context, ``+ - * //``, comparisons, ``and``, ``or`` and
+    ``not`` are allowed (``'num_worker > 0 and num_worker_replicas > 0'``,
+    ``'num_worker * (1 + num_worker_replicas)'``); anything else is refused.
+
+    :param expression: The expression.
+    :param context: Name -> value, usually :func:`~bexhoma.experiments.system_builder.context_of`.
+    :raises ValueError: On a construct that is not allowed.
+    :raises KeyError: When a name is not in the context.
+    """
+    def visit(node):
+        if isinstance(node, ast.Expression):
+            return visit(node.body)
+        if isinstance(node, ast.Constant) and isinstance(node.value, (int, float, str, bool)):
+            return node.value
+        if isinstance(node, ast.Name):
+            return context[node.id]
+        if isinstance(node, ast.BoolOp):
+            values = (visit(value) for value in node.values)
+            return all(values) if isinstance(node.op, ast.And) else any(values)
+        if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.Not, ast.USub)):
+            operand = visit(node.operand)
+            return (not operand) if isinstance(node.op, ast.Not) else -operand
+        if isinstance(node, ast.BinOp) and type(node.op) in _ARITHMETIC:
+            return _ARITHMETIC[type(node.op)](visit(node.left), visit(node.right))
+        if isinstance(node, ast.Compare) and all(type(op) in _COMPARISON for op in node.ops):
+            left = visit(node.left)
+            for op, comparator in zip(node.ops, node.comparators):
+                right = visit(comparator)
+                if not _COMPARISON[type(op)](left, right):
+                    return False
+                left = right
+            return True
+        raise ValueError(f"not allowed in an expression: {ast.dump(node)[:60]}")
+    return visit(ast.parse(expression, mode='eval'))
+
+
+def effective_entry(entry: dict, context: dict) -> dict:
+    """The entry of a DBMS for the benchmark with the variants applied that the command line selects.
+
+    ``variants`` is a list of ``{'when': <expression>, <entry keys>}``. Every variant whose
+    ``when`` holds (see :func:`evaluate`) is applied in order: dict-valued keys
+    (:data:`MERGED_KEYS`) are merged into the entry's, any other key replaces it. The key
+    ``variants`` itself is not in the result.
+
+    :param entry: The entry (see :func:`benchmark_entry`).
+    :param context: Name -> value, usually :func:`~bexhoma.experiments.system_builder.context_of`.
+    :return: A new dict.
+    :rtype: dict
+    """
+    result = {key: value for key, value in entry.items() if key != 'variants'}
+    for variant in entry.get('variants') or []:
+        if not evaluate(variant['when'], context):
+            continue
+        for key, value in variant.items():
+            if key == 'when':
+                continue
+            if key in MERGED_KEYS and isinstance(value, dict) and isinstance(result.get(key), dict):
+                result[key] = {**result[key], **value}
+            else:
+                result[key] = value
+    return result
+
+
 def expand(value, context: dict):
     """Expand ``{name}`` placeholders of a descriptor value with the command line.
 
@@ -311,6 +392,11 @@ def expand(value, context: dict):
     if isinstance(value, list):
         return [expand(item, context) for item in value]
     return value
+
+
+def _names_of(expression: str) -> dict:
+    """Every name of the expression, as 1 (to check the expression without a command line)."""
+    return {node.id: 1 for node in ast.walk(ast.parse(expression, mode='eval')) if isinstance(node, ast.Name)}
 
 
 def base_system(dockers: dict, docker: str) -> str:
@@ -391,6 +477,18 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
                     problems.append(f"{where}.notes: every note needs a non-empty 'text'")
                 elif not isinstance(note.get('when', ''), str):
                     problems.append(f"{where}.notes: 'when' must be a string")
+            for number, variant in enumerate(entry.get('variants') or [], start=1):
+                label = f"{where}.variants[{number}]"
+                if not isinstance(variant, dict) or not isinstance(variant.get('when'), str):
+                    problems.append(f"{label}: needs a 'when' expression")
+                    continue
+                try:
+                    evaluate(variant['when'], _names_of(variant['when']))
+                except (ValueError, SyntaxError) as error:
+                    problems.append(f"{label}.when: {error}")
+                unknown = [key for key in variant if key != 'when' and (key not in ENTRY_KEYS or key == 'variants')]
+                if unknown:
+                    problems.append(f"{label}: unknown key {', '.join(map(repr, unknown))}")
             modes = entry.get('multi_tenancy')
             if isinstance(modes, list):
                 unknown = [mode for mode in modes if mode not in TENANCY_MODES]

@@ -40,24 +40,5 @@
  },
  "tpch.py": {
   "duckdb": 1
- },
- "ycsb.py": {
-  "Cassandra": 8,
-  "CassandraCluster": 1,
-  "CedarDB": 5,
-  "Citus": 5,
-  "CockroachDB": 5,
-  "DatabaseService": 3,
-  "Dragonfly": 7,
-  "DragonflyCluster": 1,
-  "Garnet": 6,
-  "PGBouncer": 3,
-  "PostgreSQL": 7,
-  "Redis": 14,
-  "TiDB": 5,
-  "Valkey": 6,
-  "YugabyteDB": 5,
-  "mariadb": 5,
-  "mysql": 5
  }
 }
