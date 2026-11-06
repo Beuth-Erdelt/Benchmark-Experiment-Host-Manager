@@ -14,7 +14,7 @@ dash>=2.15.0 # not directly required, pinned by Snyk to avoid a vulnerability
 pyarrow>=14.0.2
 requests==2.32.3
 prettytable
-cryptography>=42.0.0 # TLS Secret for SUTs that need one (bexhoma/tls.py)
+cryptography>=49.0.0 # TLS Secret for SUTs that need one (bexhoma/tls.py)
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
 seaborn>=0.13.2
 idna>=3.15 # not directly required, pinned by Snyk to avoid a vulnerability
