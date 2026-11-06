@@ -66,7 +66,7 @@ class StubCluster:
         }
         # the real per-benchmark descriptors, nothing else of the DBMS entries
         self.dockers = {name: {key: copy.deepcopy(value) for key, value in docker.items()
-                               if key in ('benchmarks', 'base_system', 'storage_prefix')}
+                               if key in ('benchmarks', 'base_system', 'storage_prefix', 'workers')}
                         for name, docker in load_dockers(_MAIN_CONFIG).items()}
         for name, docker in load_dockers(_MAIN_CONFIG).items():
             if (docker.get('template') or {}).get('alias'):

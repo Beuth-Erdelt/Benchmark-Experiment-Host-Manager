@@ -132,7 +132,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -352,7 +352,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -573,7 +573,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {

@@ -34,13 +34,22 @@ the entry script of that benchmark needs to configure the DBMS:
 ``option_parameters``
     ``{ENV_NAME: option}``: environment of the SUT container taken from an option of the
     experiment (a boolean becomes ``true``/``false``); an explicit value wins.
+``reset_scripts``
+    Scripts run on the SUT before each benchmarking round (with ``-ar``), in this order.
+``loading_parameters`` / ``benchmarking_parameters`` / ``eval_parameters``
+    Environment of the loading and benchmarking jobs, and evaluation parameters, that the
+    benchmark needs for this DBMS (e.g. the driver type). Values are expanded with the
+    command line (:func:`expand`).
+``max_sut_dbms``
+    Number of SUT of this DBMS that may run at the same time.
 ``experiment_yaml``
     ``True`` when a declarative ``experiment.yaml`` may name this DBMS for the benchmark:
     the builder makes one configuration of it, without workers or tenants.
 
 A DBMS may also declare ``base_system``: the DBMS whose script folder
 (``experiments/<benchmark>/<base_system>``) it reuses when that is not its own, and
-``storage_prefix``: the name of its storage (volume), the same for every benchmark.
+``storage_prefix``: the name of its storage (volume), the same for every benchmark, and
+``workers``: ``True`` when the SUT takes ``-nw`` workers (shards) next to its coordinator.
 Its alias in the reports is one per DBMS, ``template.alias`` of its entry, whatever the
 benchmark (:func:`alias`).
 
@@ -55,9 +64,10 @@ See LICENSE for details.
 import ast
 import os
 
-__all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "load_dockers", "benchmark_entry", "compatible_dockers",
+__all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "load_dockers", "dbms_choices", "benchmark_entry", "compatible_dockers",
            "default_dockers", "dimension_dockers", "unsupported_dimension", "notes", "base_system",
-           "storage_prefix", "alias", "experiment_yaml_dockers", "refresh_template", "validate_descriptors"]
+           "storage_prefix", "alias", "experiment_yaml_dockers", "refresh_template", "expand",
+           "validate_descriptors"]
 
 #: Keys a benchmark entry may carry, with the type of their value.
 ENTRY_KEYS = {
@@ -72,6 +82,11 @@ ENTRY_KEYS = {
     'sut_parameters': dict,
     'option_parameters': dict,
     'experiment_yaml': bool,
+    'reset_scripts': list,
+    'loading_parameters': dict,
+    'benchmarking_parameters': dict,
+    'eval_parameters': dict,
+    'max_sut_dbms': int,
 }
 
 
@@ -94,6 +109,15 @@ def load_dockers(clusterconfig: str = 'cluster.config') -> dict:
         clusterconfig = os.path.join(os.path.dirname(clusterconfig), 'k8s-cluster.config')
     with open(clusterconfig, encoding='utf-8') as file:
         return ast.literal_eval(file.read())['dockers']
+
+
+def dbms_choices(benchmark: str, clusterconfig: str = 'cluster.config') -> list:
+    """The values of ``-dbms`` for ``benchmark``: the DBMS that declare an entry for it.
+
+    For the command line parsers of the entry scripts, which are built before a cluster
+    object exists (see :func:`load_dockers`).
+    """
+    return compatible_dockers(load_dockers(clusterconfig), benchmark)
 
 
 def compatible_dockers(dockers: dict, benchmark: str) -> list:
@@ -205,6 +229,28 @@ def refresh_template(dockers: dict, dbms: list, benchmark: str) -> str:
     return next(iter(templates.values()))
 
 
+def expand(value, context: dict):
+    """Expand ``{name}`` placeholders of a descriptor value with the command line.
+
+    A string that is exactly one placeholder (``'{num_worker}'``) becomes the value itself,
+    so numbers stay numbers; other strings are formatted; dicts and lists are expanded
+    recursively; everything else is returned unchanged.
+
+    :param value: A value of a descriptor.
+    :param context: Name -> value, usually ``vars(args)``.
+    :raises KeyError: When a placeholder names nothing in the context.
+    """
+    if isinstance(value, str):
+        if value.startswith('{') and value.endswith('}') and value[1:-1].isidentifier():
+            return context[value[1:-1]]
+        return value.format(**context) if '{' in value else value
+    if isinstance(value, dict):
+        return {key: expand(item, context) for key, item in value.items()}
+    if isinstance(value, list):
+        return [expand(item, context) for item in value]
+    return value
+
+
 def base_system(dockers: dict, docker: str) -> str:
     """The DBMS whose script folder ``docker`` uses: its ``base_system``, else itself."""
     return dockers[docker].get('base_system', docker)
@@ -251,6 +297,8 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
         prefix = docker.get('storage_prefix')
         if prefix is not None and (not isinstance(prefix, str) or not prefix):
             problems.append(f"{name}: storage_prefix must be a non-empty string, got {prefix!r}")
+        if not isinstance(docker.get('workers', False), bool):
+            problems.append(f"{name}: workers must be bool, got {docker['workers']!r}")
         if docker.get('benchmarks') and prefix is None:
             problems.append(f"{name}: has benchmarks but no storage_prefix")
         if docker.get('benchmarks') and not alias(dockers, name):

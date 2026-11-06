@@ -158,14 +158,15 @@ class DbmsSnapshotTest(unittest.TestCase):
         self.assertTrue(os.path.exists(path), f'no snapshot {path}; run with BEXHOMA_UPDATE_SNAPSHOTS=1')
         with open(path, encoding='utf-8') as file:
             expected = json.load(file)
-        # per configuration, so that a failure names the DBMS that changed
-        self.assertEqual([c['configuration'] for c in expected['configurations']],
-                         [c['configuration'] for c in actual['configurations']])
+        # per configuration (matched by name, the order of the DBMS follows cluster.config),
+        # so that a failure names the DBMS that changed
+        before = {c['configuration']: c for c in expected['configurations']}
+        after = {c['configuration']: c for c in actual['configurations']}
+        self.assertEqual(sorted(before), sorted(after))
         self.assertEqual(expected['configfolder'], actual['configfolder'])
-        for old, new in zip(expected['configurations'], actual['configurations']):
-            with self.subTest(script=script, variant=variant, docker=new.get('docker'),
-                              configuration=new['configuration']):
-                self.assertEqual(old, new)
+        for name in sorted(after):
+            with self.subTest(script=script, variant=variant, docker=after[name].get('docker'), configuration=name):
+                self.assertEqual(before[name], after[name])
 
 
 def _add_tests():

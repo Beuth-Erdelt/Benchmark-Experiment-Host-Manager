@@ -50,13 +50,6 @@
  "example.py": {
   "PostgreSQL": 1
  },
- "hammerdb.py": {
-  "Citus": 8,
-  "PostgreSQL": 8,
-  "mariadb": 8,
-  "mysql": 8,
-  "postgres": 4
- },
  "hardware.py": {
   "PostgreSQL": 1
  },

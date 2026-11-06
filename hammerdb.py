@@ -11,6 +11,8 @@ See LICENSE for details.
 """
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
+from bexhoma.experiments.system_builder import build_configuration, entry_parameters, selected_dockers
+from bexhoma.system_descriptors import dbms_choices
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -31,7 +33,7 @@ if __name__ == '__main__':
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: start SUT only, load data, run the full benchmark, or summarize results', choices=['run', 'start', 'load', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'Citus'], default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=dbms_choices('tpcc'), default=[], nargs='*')
     parser.add_argument('-xdt',   '--xdata-transfer', help='also measure data transfer volume per query (not just execution time)', action='store_true', default=False, dest='datatransfer')
     parser.add_argument('-xqr',   '--xnum-query-runs', help='number of times to repeat each query', default=1, dest='num_run')
     parser.add_argument('-xrt',   '--xrampup-time', help='ramp-up period in minutes before measurements begin', default=2, dest='num_rampup_time')
@@ -72,12 +74,6 @@ if __name__ == '__main__':
         list_clients = [int(x) for x in list_clients if len(x) > 0]
     else:
         list_clients = []
-    # do not ingest, start benchmarking immediately
-    skip_loading = args.skip_loading
-    # how many workers (for distributed dbms)
-    num_worker = int(args.num_worker)
-    num_worker_replicas = int(args.num_worker_replicas)
-    num_worker_shards = int(args.num_worker_shards)
     ##############
     ### specific to: Benchbase
     ##############
@@ -108,7 +104,6 @@ if __name__ == '__main__':
         #cluster.scale_nodegroups(node_sizes)
     else:
         cluster = clusters.Kubernetes(context=args.context)
-    cluster_name = cluster.contextdata['clustername']
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
     # set experiment
@@ -170,204 +165,29 @@ if __name__ == '__main__':
     ##############
     ### add configs of dbms to be tested
     ##############
-    for loading_threads in num_loading_threads:#[8]:#[64]:
-        for loading_pods in [1]:#num_loading_pods:#[1,2]:#[1,8]:#range(2,5):
+    for loading_threads in num_loading_threads:
+        for loading_pods in [1]:
             loading_threads_per_pod = int(loading_threads/loading_pods)
-            if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
-                # PostgreSQL
-                name_format = 'PostgreSQL-{cluster}-{users}-{pods}'
-                config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
-                #, configuration=config_name
-                config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL')
-                # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before
-                # each benchmarking round (caches stay warm).
-                config.set_benchmark_resetscript(['reset-tpcc.sql'])
-                config.set_storage(
-                    storageConfiguration = 'postgresql'
-                )
-                config.set_loading_parameters(
-                    HAMMERDB_TYPE = "postgresql",
-                    HAMMERDB_VUSERS = loading_threads_per_pod,
-                )
+            # every DBMS that can run TPC-C (or the ones named by -dbms), as declared in cluster.config
+            for docker in selected_dockers(cluster.dockers, 'tpcc', args.dbms):
+                config = build_configuration(
+                    experiment, docker, 'tpcc', args,
+                    loading_parameters={'HAMMERDB_VUSERS': loading_threads_per_pod})
                 config.set_loading(parallel=1, num_pods=1)
+                benchmarking_parameters = entry_parameters(cluster.dockers, docker, 'tpcc', 'benchmarking_parameters', args)
                 executor_list = []
-                for factor_benchmarking in [1]:#num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                    benchmarking_target = 1#target_base*factor_benchmarking#4*4096*t
-                    for benchmarking_threads in num_benchmarking_threads:
-                        for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                            for num_executor in list_clients:
-                                benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                """
-                                print("benchmarking_target", benchmarking_target)
-                                print("benchmarking_pods", benchmarking_pods)
-                                print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                print("benchmarking_threads", benchmarking_threads)
-                                print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                """
-                                executor_list.append(benchmarking_pods_scaled)
-                                config.add_benchmarking_parameters(
-                                    HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
-                                    HAMMERDB_TYPE = "postgresql",
-                                    HAMMERDB_VUSERS = benchmarking_threads_per_pod,
-                                    )
-                #print(executor_list)
+                for benchmarking_threads in num_benchmarking_threads:
+                    for benchmarking_pods in num_benchmarking_pods:
+                        for num_executor in list_clients:
+                            benchmarking_pods_scaled = num_executor*benchmarking_pods
+                            benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
+                            executor_list.append(benchmarking_pods_scaled)
+                            config.add_benchmarking_parameters(
+                                **benchmarking_parameters,
+                                HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
+                                HAMMERDB_VUSERS = benchmarking_threads_per_pod,
+                                )
                 config.add_benchmark_list(executor_list)
-            if ("MySQL" in args.dbms or len(args.dbms) == 0):
-                # MySQL
-                name_format = 'MySQL-{cluster}-{users}-{pods}'
-                config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
-                #, configuration=config_name
-                config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL')
-                # With -ar: ANALYZE TABLE, then flush of the dirty pages and
-                # FLUSH STATUS before each benchmarking round.
-                config.set_benchmark_resetscript(['reset-tpcc.sql', 'reset-flush.sh'])
-                config.set_storage(
-                    storageConfiguration = 'mysql'
-                )
-                #config.num_loading = 1
-                config.set_loading_parameters(
-                    HAMMERDB_TYPE = "mysql",
-                    HAMMERDB_VUSERS = loading_threads_per_pod,
-                    HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                )
-                config.set_loading(parallel=1, num_pods=1)
-                executor_list = []
-                for factor_benchmarking in [1]:#num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                    benchmarking_target = 1#target_base*factor_benchmarking#4*4096*t
-                    for benchmarking_threads in num_benchmarking_threads:
-                        for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                            for num_executor in list_clients:
-                                benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                """
-                                print("benchmarking_target", benchmarking_target)
-                                print("benchmarking_pods", benchmarking_pods)
-                                print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                print("benchmarking_threads", benchmarking_threads)
-                                print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                """
-                                executor_list.append(benchmarking_pods_scaled)
-                                config.add_benchmarking_parameters(
-                                    HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
-                                    HAMMERDB_TYPE = "mysql",
-                                    HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                                    HAMMERDB_VUSERS = benchmarking_threads_per_pod,
-                                    )
-                #print(executor_list)
-                config.add_benchmark_list(executor_list)
-            if ("MariaDB" in args.dbms or len(args.dbms) == 0):
-                # MariaDB
-                name_format = 'MariaDB-{cluster}-{users}-{pods}'
-                config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
-                #, configuration=config_name
-                config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MariaDB')
-                # With -ar: ANALYZE TABLE, then flush of the dirty pages and
-                # FLUSH STATUS before each benchmarking round.
-                config.set_benchmark_resetscript(['reset-tpcc.sql', 'reset-flush.sh'])
-                config.set_storage(
-                    storageConfiguration = 'mariadb'
-                )
-                #config.num_loading = 1
-                config.set_loading_parameters(
-                    HAMMERDB_TYPE = "mariadb",
-                    HAMMERDB_VUSERS = loading_threads_per_pod,
-                    HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                )
-                config.set_sut_parameters(
-                    MARIADB_DATABASE = "tpcc",
-                    )
-                config.set_loading(parallel=1, num_pods=1)
-                executor_list = []
-                for factor_benchmarking in [1]:#num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                    benchmarking_target = 1#target_base*factor_benchmarking#4*4096*t
-                    for benchmarking_threads in num_benchmarking_threads:
-                        for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                            for num_executor in list_clients:
-                                benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                """
-                                print("benchmarking_target", benchmarking_target)
-                                print("benchmarking_pods", benchmarking_pods)
-                                print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                print("benchmarking_threads", benchmarking_threads)
-                                print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                """
-                                executor_list.append(benchmarking_pods_scaled)
-                                config.add_benchmarking_parameters(
-                                    HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
-                                    HAMMERDB_TYPE = "mariadb",
-                                    HAMMERDB_MYSQL_ENGINE = 'innodb',#'BLACKHOLE',#'memory',
-                                    HAMMERDB_VUSERS = benchmarking_threads_per_pod,
-                                    )
-                #print(executor_list)
-                config.add_benchmark_list(executor_list)
-            if ("Citus" in args.dbms or len(args.dbms) == 0):
-                # PostgreSQL
-                name_format = 'Citus-{cluster}-{users}-{pods}'
-                config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
-                #, configuration=config_name
-                config = configurations.default(experiment=experiment, docker='Citus', dialect='Citus', worker=num_worker)
-                # With -ar: VACUUM ANALYZE, then CHECKPOINT and a stats reset
-                # on the coordinator and every worker before each round.
-                config.set_benchmark_resetscript(['reset-tpcc.sql'])
-                config.set_storage(
-                    storageConfiguration = 'citus'
-                    )
-                config.set_sut_parameters(
-                    BEXHOMA_REPLICAS = num_worker_replicas,
-                    BEXHOMA_SHARDS = num_worker_shards,
-                    )
-                config.set_eval_parameters(
-                    BEXHOMA_REPLICAS = num_worker_replicas,
-                    BEXHOMA_SHARDS = num_worker_shards,
-                    BEXHOMA_WORKERS = num_worker
-                    )
-                if skip_loading:
-                    config.loading_deactivated = True
-                config.set_loading_parameters(
-                    HAMMERDB_TYPE = "citus",
-                    HAMMERDB_VUSERS = loading_threads_per_pod,
-                    BEXHOMA_USER = "postgres",
-                    BEXHOMA_PASSWORD = "password1234",
-                    BEXHOMA_DATABASE = "postgres",
-                )
-                config.set_loading(parallel=1, num_pods=1)
-                executor_list = []
-                for factor_benchmarking in [1]:#num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                    benchmarking_target = 1#target_base*factor_benchmarking#4*4096*t
-                    for benchmarking_threads in num_benchmarking_threads:
-                        for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                            for num_executor in list_clients:
-                                benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                benchmarking_target_per_pod = int(benchmarking_target/benchmarking_pods)
-                                """
-                                print("benchmarking_target", benchmarking_target)
-                                print("benchmarking_pods", benchmarking_pods)
-                                print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                print("benchmarking_threads", benchmarking_threads)
-                                print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                """
-                                executor_list.append(benchmarking_pods_scaled)
-                                config.add_benchmarking_parameters(
-                                    HAMMERDB_NUM_VU = str(benchmarking_pods_scaled),
-                                    HAMMERDB_TYPE = "citus",
-                                    HAMMERDB_VUSERS = benchmarking_threads_per_pod,
-                                    BEXHOMA_USER = "postgres",
-                                    BEXHOMA_PASSWORD = "password1234",
-                                    BEXHOMA_DATABASE = "postgres",
-                                    )
-                #print(executor_list)
-                config.add_benchmark_list(executor_list)
-                config.max_sut_dbms = 1
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############
