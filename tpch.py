@@ -14,7 +14,7 @@ See LICENSE for details.
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.benchmarks.base import DIMENSION_VARIANTS, dimension_folder
-from bexhoma.system_descriptors import (benchmark_entry, default_dockers, dimension_dockers, load_dockers,
+from bexhoma.system_descriptors import (default_dockers, dimension_dockers, load_dockers, refresh_template,
                                         unsupported_dimension)
 from bexhoma.cli_args import storage_suffix as _storage_suffix, set_cell_storage as _set_cell_storage
 # resource sweeps (-rc/-lc/-rr/-lr/-rst lists) are expanded for every DBMS by
@@ -245,10 +245,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
             TRANSFORM_RAW_DATA = 1,
             STORE_RAW_DATA = 1,
         )
-        # the refresh job of the first DBMS (of the default set without -dbms)
+        # one refresh job for all DBMS of the run (the default set without -dbms)
         dbms_list = args.dbms if args.dbms else default_dockers(cluster.dockers, 'tpch')
-        refresh_template = benchmark_entry(cluster.dockers, dbms_list[0], 'tpch')['refresh_template']
-        experiment.enable_refresh_stream(template=refresh_template)
+        experiment.enable_refresh_stream(template=refresh_template(cluster.dockers, dbms_list, 'tpch'))
     ##############
     ### add configs of dbms to be tested
     ##############

@@ -57,7 +57,7 @@ import os
 
 __all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "load_dockers", "benchmark_entry", "compatible_dockers",
            "default_dockers", "dimension_dockers", "unsupported_dimension", "notes", "base_system",
-           "storage_prefix", "alias", "experiment_yaml_dockers", "validate_descriptors"]
+           "storage_prefix", "alias", "experiment_yaml_dockers", "refresh_template", "validate_descriptors"]
 
 #: Keys a benchmark entry may carry, with the type of their value.
 ENTRY_KEYS = {
@@ -174,6 +174,35 @@ def benchmark_entry(dockers: dict, docker: str, benchmark: str) -> dict:
             f"{docker} is not compatible with benchmark {benchmark!r} "
             f"(compatible: {', '.join(compatible_dockers(dockers, benchmark)) or 'none'})")
     return entry
+
+
+def refresh_template(dockers: dict, dbms: list, benchmark: str) -> str:
+    """The job template of the refresh stream for the experiment's DBMS.
+
+    An experiment has one refresh job for all its DBMS, so every DBMS must declare a
+    ``refresh_template`` and they must agree. There is no fallback to another DBMS's job.
+
+    :param dockers: The ``dockers`` section of the cluster configuration.
+    :param dbms: The DBMS of the experiment.
+    :param benchmark: Benchmark key.
+    :return: The common ``refresh_template``.
+    :rtype: str
+    :raises IncompatibleBenchmark: When a DBMS declares none, or they declare different ones.
+    """
+    templates = {}
+    for name in dbms:
+        template = benchmark_entry(dockers, name, benchmark).get('refresh_template')
+        if not template:
+            have = [d for d in compatible_dockers(dockers, benchmark)
+                    if dockers[d]['benchmarks'][benchmark].get('refresh_template')]
+            raise IncompatibleBenchmark(
+                f"{name} has no refresh job for benchmark {benchmark!r} (DBMS with one: {', '.join(have) or 'none'})")
+        templates[name] = template
+    if len(set(templates.values())) > 1:
+        raise IncompatibleBenchmark(
+            f"one refresh job serves all DBMS of an experiment, but they need different ones: "
+            + ", ".join(f"{name}: {template}" for name, template in templates.items()))
+    return next(iter(templates.values()))
 
 
 def base_system(dockers: dict, docker: str) -> str:

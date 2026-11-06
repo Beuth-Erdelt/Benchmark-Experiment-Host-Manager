@@ -25,7 +25,7 @@ from pathlib import Path
 from bexhoma import clusters, configurations, experiments
 from bexhoma.cli_args import resolve_scaling_factor
 from bexhoma.experiments.tpch import TpchExperiment
-from bexhoma.system_descriptors import base_system, benchmark_entry, storage_prefix
+from bexhoma.system_descriptors import base_system, benchmark_entry, refresh_template, storage_prefix
 
 __all__ = ["build_experiment"]
 
@@ -294,9 +294,8 @@ def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
             TPCH_REFRESH_STREAM_OFFSET=tpch_cfg.get('refresh_stream_offset', 0),
             TRANSFORM_RAW_DATA=1, STORE_RAW_DATA=1,
         )
-        first_dbms = spec['systems'][0]['dbms']
         experiment.enable_refresh_stream(
-            template=benchmark_entry(cluster.dockers, first_dbms, 'tpch')['refresh_template']
+            template=refresh_template(cluster.dockers, [system['dbms'] for system in spec['systems']], 'tpch')
         )
 
     parameter = _build_prepare_testbed_parameter(spec, tpch_module)

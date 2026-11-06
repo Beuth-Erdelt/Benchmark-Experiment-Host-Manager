@@ -191,6 +191,19 @@ class DescriptorsMatchScriptsTest(unittest.TestCase):
         self.assertEqual(set(sd.experiment_yaml_dockers(self.dockers, 'tpch')),
                          {'PostgreSQL', 'PgDuckDB', 'MonetDB', 'MariaDB', 'MariaDBCS', 'MySQL', 'CedarDB', 'ClickHouse'})
 
+    def test_refresh_template_resolution(self) -> None:
+        dockers = {
+            'A': {'benchmarks': {'x': {'refresh_template': 'r1.yml'}}},
+            'B': {'benchmarks': {'x': {'refresh_template': 'r1.yml'}}},
+            'C': {'benchmarks': {'x': {'refresh_template': 'r2.yml'}}},
+            'D': {'benchmarks': {'x': {}}},
+        }
+        self.assertEqual(sd.refresh_template(dockers, ['A', 'B'], 'x'), 'r1.yml')
+        with self.assertRaisesRegex(sd.IncompatibleBenchmark, r'D has no refresh job .*\(DBMS with one: A, B, C\)'):
+            sd.refresh_template(dockers, ['A', 'D'], 'x')
+        with self.assertRaisesRegex(sd.IncompatibleBenchmark, 'need different ones: A: r1.yml, C: r2.yml'):
+            sd.refresh_template(dockers, ['A', 'C'], 'x')
+
     def test_refresh_templates_are_the_former_table(self) -> None:
         pg = 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml'
         former = {'PostgreSQL': pg, 'PgDuckDB': pg,
@@ -200,9 +213,9 @@ class DescriptorsMatchScriptsTest(unittest.TestCase):
                   'MonetDB': 'jobtemplate-benchmarking-tpch-refresh-MonetDB.yml'}
         for docker in sd.compatible_dockers(self.dockers, 'tpch'):
             with self.subTest(docker=docker):
-                # the DBMS the table did not list reused the PostgreSQL job
-                self.assertEqual(sd.benchmark_entry(self.dockers, docker, 'tpch')['refresh_template'],
-                                 former.get(docker, pg))
+                # the DBMS the table did not list have no job: there is no fallback to another one
+                self.assertEqual(sd.benchmark_entry(self.dockers, docker, 'tpch').get('refresh_template'),
+                                 former.get(docker))
 
     def test_builder_defaults_are_the_former_special_cases(self) -> None:
         entry = lambda docker: sd.benchmark_entry(self.dockers, docker, 'tpch')

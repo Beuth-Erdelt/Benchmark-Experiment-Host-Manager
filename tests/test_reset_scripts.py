@@ -209,11 +209,21 @@ class ResetCompletenessTest(unittest.TestCase):
 
     def test_tpch_refresh_stream_gets_no_second_reset(self):
         """The reset runs once per round, before the query stream, not again before the refresh stream."""
-        _, configurations = _run_script('tpch.py', '-xrs', '1')
-        for config in configurations:
-            resets = _resets(config)
-            self.assertIn('tpch_refresh', resets)
-            self.assertEqual(resets['tpch_refresh'], [], config.configuration)
+        # one refresh job serves all DBMS of a run: run the groups that share one
+        for group in (['PostgreSQL', 'PgDuckDB'], ['MySQL'], ['MariaDB', 'MariaDBCS'], ['MonetDB']):
+            _, configurations = _run_script('tpch.py', '-xrs', '1', '-dbms', *group)
+            self.assertEqual({c.docker for c in configurations}, set(group))
+            for config in configurations:
+                resets = _resets(config)
+                self.assertIn('tpch_refresh', resets)
+                self.assertEqual(resets['tpch_refresh'], [], config.configuration)
+
+    def test_tpch_refresh_stream_is_refused_without_a_job_for_every_dbms(self):
+        from bexhoma.system_descriptors import IncompatibleBenchmark
+        with self.assertRaisesRegex(IncompatibleBenchmark, 'CedarDB has no refresh job'):
+            _run_script('tpch.py', '-xrs', '1', '-dbms', 'PostgreSQL', 'CedarDB')
+        with self.assertRaisesRegex(IncompatibleBenchmark, 'need different ones'):
+            _run_script('tpch.py', '-xrs', '1', '-dbms', 'PostgreSQL', 'MySQL')
 
 
 class ResetScriptContentTest(unittest.TestCase):
