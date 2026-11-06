@@ -59,22 +59,34 @@ VARIANTS = {
     'tenants-schema': ['-mtn', '2', '-mtb', 'schema', '-nlp', '2'],
     'tenants-container': ['-mtn', '2', '-mtb', 'container', '-nlp', '2'],
     'flat': ['-xsv', 'flat', '-nw', '2'],
+    # Benchbase: the benchmark type (reset scripts, databases and schema creation depend on it), the factors
+    # of the throughput target, the connection pooler (PGBouncer) and the replicas of TiDB
+    'type-ycsb': ['-xbt', 'ycsb', '-xwl', 'b', '-nw', '2'],
+    'type-twitter': ['-xbt', 'twitter'],
+    'factors': ['-xnbf', '1,2', '-xtb', '100', '-nbp', '2'],
+    'pooling': ['-xnpp', '1,2', '-xnpi', '100,200', '-xnpo', '10'],
+    'replicas': ['-xnsr', '2', '-xnpd', '5', '-nw', '3', '-nwr', '2', '-nws', '3'],
     'distributed': ['-xdim', 'distributed', '-nw', '2', '-dbms', 'PostgreSQL', 'ClickHouse', 'ClickHouseCluster'],
 }
 
 #: Variants only some scripts have the flags for.
 ONLY_FOR = {'flat': {'ssb.py'}, 'distributed': {'tpch.py', 'ssb.py'},
-            'tenants-schema': {'tpch.py'}, 'tenants-container': {'tpch.py'}}
+            'tenants-schema': {'tpch.py', 'benchbase.py'}, 'tenants-container': {'tpch.py', 'benchbase.py'},
+            'type-ycsb': {'benchbase.py'}, 'type-twitter': {'benchbase.py'}, 'factors': {'benchbase.py'},
+            'pooling': {'benchbase.py'}, 'replicas': {'benchbase.py'}}
 
 #: Variant argv of a script that differs from the common one.
-SCRIPT_ARGV = {('tpch.py', 'tenants'): ['-mtn', '2', '-mtb', 'database', '-nlp', '2', '-dbms', 'PostgreSQL'],
+SCRIPT_ARGV = {('benchbase.py', 'tenants'): ['-mtn', '2', '-mtb', 'database', '-dbms', 'PostgreSQL', 'MySQL'],
+               ('benchbase.py', 'tenants-schema'): ['-mtn', '2', '-mtb', 'schema', '-dbms', 'PostgreSQL'],
+               ('benchbase.py', 'tenants-container'): ['-mtn', '2', '-mtb', 'container', '-dbms', 'PostgreSQL', 'MySQL'],
+               ('tpch.py', 'tenants'): ['-mtn', '2', '-mtb', 'database', '-nlp', '2', '-dbms', 'PostgreSQL'],
                ('tpch.py', 'tenants-schema'): ['-mtn', '2', '-mtb', 'schema', '-nlp', '2', '-dbms', 'PostgreSQL'],
                ('tpch.py', 'tenants-container'): ['-mtn', '2', '-mtb', 'container', '-nlp', '2', '-dbms', 'PostgreSQL'],
                ('ssb.py', 'distributed'): ['-xdim', 'distributed', '-nw', '2', '-dbms', 'PostgreSQL', 'ClickHouse',
                                            'ClickHouseCluster', 'Citus']}
 
 #: (script, variant) pairs the script refuses by design (it exits with a usage error).
-UNSUPPORTED = {('ssb.py', 'tenants'), ('benchbase.py', 'tenants'), ('tpcds.py', 'tenants'), ('hammerdb.py', 'tenants')}
+UNSUPPORTED = {('ssb.py', 'tenants'), ('tpcds.py', 'tenants'), ('hammerdb.py', 'tenants')}
 
 #: Attributes whose value changes from run to run (clock, temp folders, progress state).
 _VOLATILE = {'path', 'code', 'experiment_name', 'deployment_infos', 'current_benchmark_start',
