@@ -7,7 +7,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS A",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -261,7 +261,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS A",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -502,7 +502,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS A",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -743,7 +743,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS A",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -990,7 +990,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS A",
+   "alias": "General-A",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1224,7 +1224,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS D",
+   "alias": "Cloud-Native-1",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1463,7 +1463,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS D",
+   "alias": "Cloud-Native-2",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1700,7 +1700,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS D",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1941,7 +1941,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "DatabaseService",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -2175,7 +2175,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS F",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,

@@ -220,7 +220,7 @@ if __name__ == '__main__':
                         for tenant in range(experiment.num_tenants):
                             name_format = 'PostgreSQL-{threads}-{pods}-{target}-{tenant}'
                             #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
-                            config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
+                            config = configurations.default(experiment=experiment, docker='PostgreSQL')
                             # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before
                             # each benchmarking round, in each tenant's own container
                             config.set_benchmark_resetscript(['reset-benchbase.sql'])
@@ -276,7 +276,7 @@ if __name__ == '__main__':
                     else:
                         name_format = 'PostgreSQL-{threads}-{pods}-{target}'
                         #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                        config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
+                        config = configurations.default(experiment=experiment, docker='PostgreSQL')
                         # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before
                         # each benchmarking round (caches stay warm).
                         config.set_benchmark_resetscript(['reset-benchbase.sql'])
@@ -344,7 +344,7 @@ if __name__ == '__main__':
                     # PostgreSQL
                     name_format = 'CedarDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='CedarDB', alias='DBMS A')
+                    config = configurations.default(experiment=experiment, docker='CedarDB')
                     # With -ar: ANALYZE before each round; no CHECKPOINT and no counters to reset
                     config.set_benchmark_resetscript(['reset-benchbase.sql'])
                     config.set_storage(
@@ -402,7 +402,7 @@ if __name__ == '__main__':
                                 # this is too long
                                 #name_format = 'PGBouncer-{threads}-{pods}-{target}-{c_in}-{c_out}'
                                 #, configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out)
-                                config = configurations.default(experiment=experiment, docker='PGBouncer', alias='DBMS A')
+                                config = configurations.default(experiment=experiment, docker='PGBouncer')
                                 config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
                                 config.set_benchmark_resetscript(['reset-benchbase.sql'])                 # reset of PostgreSQL, through the pooler
                                 config.sut_has_pool = True                                                # in particular monitor pool component
@@ -462,7 +462,7 @@ if __name__ == '__main__':
                         for tenant in range(experiment.num_tenants):
                             name_format = 'MySQL-{threads}-{pods}-{target}-{tenant}'
                             #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
-                            config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS A')
+                            config = configurations.default(experiment=experiment, docker='MySQL')
                             if type_of_benchmark == 'tpcc':
                                 # With -ar: ANALYZE TABLE, then flush of the dirty pages and
                                 # FLUSH STATUS before each round, in each tenant's own container
@@ -518,7 +518,7 @@ if __name__ == '__main__':
                     else:
                         name_format = 'MySQL-{threads}-{pods}-{target}'
                         #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                        config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS A')
+                        config = configurations.default(experiment=experiment, docker='MySQL')
                         if type_of_benchmark == 'tpcc':
                             # With -ar: ANALYZE TABLE, then flush of the dirty pages and
                             # FLUSH STATUS before each benchmarking round.
@@ -583,7 +583,7 @@ if __name__ == '__main__':
                     # MariaDB
                     name_format = 'MariaDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS A')
+                    config = configurations.default(experiment=experiment, docker='MariaDB')
                     if type_of_benchmark == 'tpcc':
                         # With -ar: ANALYZE TABLE, then flush of the dirty pages and
                         # FLUSH STATUS before each benchmarking round.
@@ -630,7 +630,7 @@ if __name__ == '__main__':
                     # YugabyteDB
                     name_format = 'YugabyteDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='YugabyteDB', alias='DBMS D')
+                    config = configurations.default(experiment=experiment, docker='YugabyteDB')
                     config.set_sut_role('placeholder') # helper pod; data lives in the Helm-managed tservers
                     config.set_pvc_selector('app=yb-tserver') # storage metrics of the tserver volumes
                     create_schema = "true"
@@ -708,7 +708,7 @@ if __name__ == '__main__':
                     # CockroachDB
                     name_format = 'CockroachDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='CockroachDB', alias='DBMS D', worker=num_worker)
+                    config = configurations.default(experiment=experiment, docker='CockroachDB', worker=num_worker)
                     config.monitoring_sut = False # should not be monitored since only dummy
                     config.set_sut_role('placeholder') # client pod; data lives in the worker StatefulSet
                     if type_of_benchmark == 'tpcc':
@@ -766,7 +766,7 @@ if __name__ == '__main__':
                     # TiDB
                     name_format = 'TiDB-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='TiDB', alias='DBMS D', worker=num_worker)
+                    config = configurations.default(experiment=experiment, docker='TiDB', worker=num_worker)
                     config.set_data_components(['tikv']) # PD keeps its template resources and volume size
                     if type_of_benchmark == 'tpcc':
                         # With -ar: ANALYZE TABLE and FLUSH STATUS before each round;
@@ -827,7 +827,7 @@ if __name__ == '__main__':
                     # DatabaseService
                     name_format = 'DBS-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='DatabaseService', alias='DatabaseService')
+                    config = configurations.default(experiment=experiment, docker='DatabaseService')
                     config.monitoring_sut = False # cannot be monitored since outside of K8s
                     config.set_sut_role('placeholder') # the pod is only a client; the DBMS is outside of K8s
                     config.resource_sweep = False # resources and storage are not set by bexhoma
@@ -875,7 +875,7 @@ if __name__ == '__main__':
                     # Citus
                     name_format = 'Citus-{threads}-{pods}-{target}'
                     #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='Citus', alias='DBMS F', worker=num_worker)
+                    config = configurations.default(experiment=experiment, docker='Citus', worker=num_worker)
                     create_schema = "true"
                     if type_of_benchmark == "tpcc":
                         create_schema = "false"

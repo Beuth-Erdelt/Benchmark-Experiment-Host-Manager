@@ -8,7 +8,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS A2",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -216,7 +216,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS A2",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -406,7 +406,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS A2",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -598,7 +598,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS A1",
+   "alias": "Columnwise",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -788,7 +788,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS A1",
+   "alias": "General-A",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -983,7 +983,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS A8",
+   "alias": "Columnwise-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1177,7 +1177,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS A1",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1372,7 +1372,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS A1",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1562,7 +1562,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS C2",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1763,7 +1763,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS A1",
+   "alias": "Columnwise-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1953,7 +1953,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS C1",
+   "alias": "Columnwise-Cluster-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,

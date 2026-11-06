@@ -10,7 +10,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS A",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -262,7 +262,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS A",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -514,7 +514,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS A",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -766,7 +766,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS B",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1014,7 +1014,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS C",
+   "alias": "General-A",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1264,7 +1264,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS D",
+   "alias": "Cloud-Native-1",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1512,7 +1512,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS D",
+   "alias": "Cloud-Native-2",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1770,7 +1770,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS D",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -2032,7 +2032,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DatabaseService",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -2277,7 +2277,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS KV",
+   "alias": "Key-Value-1",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -2535,7 +2535,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS KV",
+   "alias": "Key-Value-1",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -2793,7 +2793,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS KV",
+   "alias": "Key-Value-1",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -3051,7 +3051,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS KV",
+   "alias": "Key-Value-1",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -3309,7 +3309,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS WC",
+   "alias": "Wide-Column-1",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -3567,7 +3567,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS F",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,

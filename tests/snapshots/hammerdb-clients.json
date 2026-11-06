@@ -8,7 +8,7 @@
     "usecase": "hammerdb_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS D",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -272,7 +272,7 @@
     "usecase": "hammerdb_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS D",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -546,7 +546,7 @@
     "usecase": "hammerdb_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS D",
+   "alias": "General-A",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -822,7 +822,7 @@
     "usecase": "hammerdb_tpcc",
     "warehouses": "1"
    },
-   "alias": "DBMS D",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,

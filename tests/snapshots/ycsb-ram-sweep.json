@@ -2528,7 +2528,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DBMS D",
+   "alias": "Cloud-Native-1",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -3820,7 +3820,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "DatabaseService",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,

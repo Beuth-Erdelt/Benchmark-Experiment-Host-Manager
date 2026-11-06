@@ -63,7 +63,8 @@ class SutConfiguration:
         :param docker: Name of the Docker image (used as SUT template key).
         :param configuration: Human-readable configuration name; defaults to docker + counter suffix.
         :param script: Key of the init script to use for loading; defaults to experiment's script.
-        :param alias: Optional display alias shown in result reports.
+        :param alias: Optional display alias shown in result reports; by default the
+            ``template.alias`` of the DBMS in ``cluster.config``.
         :param num_experiment_to_apply: Number of benchmark runs to perform; defaults to
             experiment setting.
         :param clients: Unused legacy parameter.
@@ -105,7 +106,9 @@ class SutConfiguration:
         self.resetscript = []                                                    #: Scripts exec'd synchronously before each round on the legacy (non experiment_dict) benchmark_list path.
         self.load_durability = getattr(experiment, 'load_durability', DEFAULT_LEVEL)  #: Requested import durability (-xld): durable, relaxed or unsafe.
         self.load_durability_scripts = None                                      #: Durability scripts included in the loading phase; None until loading starts.
-        self.alias = alias                                                       #: Human-readable alias for this configuration in result reports.
+        if alias is None and docker is not None:
+            alias = (self.dockertemplate.get('template') or {}).get('alias')     # one alias per DBMS: template.alias in cluster.config
+        self.alias = alias                                                       #: Human-readable alias for this configuration in result reports; default: ``template.alias`` of the DBMS.
         if num_experiment_to_apply is not None:
             self.num_experiment_to_apply = num_experiment_to_apply              #: Number of benchmarking runs to perform.
         else:

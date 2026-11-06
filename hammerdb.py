@@ -178,7 +178,7 @@ if __name__ == '__main__':
                 name_format = 'PostgreSQL-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 #, configuration=config_name
-                config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS D')
+                config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL')
                 # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before
                 # each benchmarking round (caches stay warm).
                 config.set_benchmark_resetscript(['reset-tpcc.sql'])
@@ -220,7 +220,7 @@ if __name__ == '__main__':
                 name_format = 'MySQL-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 #, configuration=config_name
-                config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL', alias='DBMS D')
+                config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL')
                 # With -ar: ANALYZE TABLE, then flush of the dirty pages and
                 # FLUSH STATUS before each benchmarking round.
                 config.set_benchmark_resetscript(['reset-tpcc.sql', 'reset-flush.sh'])
@@ -265,7 +265,7 @@ if __name__ == '__main__':
                 name_format = 'MariaDB-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 #, configuration=config_name
-                config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MariaDB', alias='DBMS D')
+                config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MariaDB')
                 # With -ar: ANALYZE TABLE, then flush of the dirty pages and
                 # FLUSH STATUS before each benchmarking round.
                 config.set_benchmark_resetscript(['reset-tpcc.sql', 'reset-flush.sh'])
@@ -313,7 +313,7 @@ if __name__ == '__main__':
                 name_format = 'Citus-{cluster}-{users}-{pods}'
                 config_name = name_format.format(cluster=cluster_name, users=loading_threads_per_pod, pods=loading_pods)
                 #, configuration=config_name
-                config = configurations.default(experiment=experiment, docker='Citus', dialect='Citus', alias='DBMS D', worker=num_worker)
+                config = configurations.default(experiment=experiment, docker='Citus', dialect='Citus', worker=num_worker)
                 # With -ar: VACUUM ANALYZE, then CHECKPOINT and a stats reset
                 # on the coordinator and every worker before each round.
                 config.set_benchmark_resetscript(['reset-tpcc.sql'])

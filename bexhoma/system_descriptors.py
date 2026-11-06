@@ -9,8 +9,6 @@ the entry script of that benchmark needs to configure the DBMS:
 
 ``default``
     ``True`` when the DBMS runs if ``-dbms`` is not given (absent: ``False``).
-``alias``
-    Short alias of the configuration in the reports (e.g. ``DBMS A2``).
 ``dialect``
     SQL dialect string forwarded to DBMSBenchmarker (absent: none).
 ``loading_template``
@@ -43,6 +41,8 @@ the entry script of that benchmark needs to configure the DBMS:
 A DBMS may also declare ``base_system``: the DBMS whose script folder
 (``experiments/<benchmark>/<base_system>``) it reuses when that is not its own, and
 ``storage_prefix``: the name of its storage (volume), the same for every benchmark.
+Its alias in the reports is one per DBMS, ``template.alias`` of its entry, whatever the
+benchmark (:func:`alias`).
 
 The functions take the ``dockers`` dict (``cluster.dockers``), so they work
 without a live cluster.
@@ -57,12 +57,11 @@ import os
 
 __all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "load_dockers", "benchmark_entry", "compatible_dockers",
            "default_dockers", "dimension_dockers", "unsupported_dimension", "notes", "base_system",
-           "storage_prefix", "experiment_yaml_dockers", "validate_descriptors"]
+           "storage_prefix", "alias", "experiment_yaml_dockers", "validate_descriptors"]
 
 #: Keys a benchmark entry may carry, with the type of their value.
 ENTRY_KEYS = {
     'default': bool,
-    'alias': str,
     'dialect': str,
     'loading_template': str,
     'dimensions': bool,
@@ -182,6 +181,11 @@ def base_system(dockers: dict, docker: str) -> str:
     return dockers[docker].get('base_system', docker)
 
 
+def alias(dockers: dict, docker: str) -> str:
+    """The alias of ``docker`` in the reports: ``template.alias`` of its entry, ``''`` when it has none."""
+    return ((dockers.get(docker) or {}).get('template') or {}).get('alias', '')
+
+
 def storage_prefix(dockers: dict, docker: str) -> str:
     """The name of the storage (volume) of ``docker``.
 
@@ -220,6 +224,8 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
             problems.append(f"{name}: storage_prefix must be a non-empty string, got {prefix!r}")
         if docker.get('benchmarks') and prefix is None:
             problems.append(f"{name}: has benchmarks but no storage_prefix")
+        if docker.get('benchmarks') and not alias(dockers, name):
+            problems.append(f"{name}: has benchmarks but no template.alias")
         for benchmark, entry in (docker.get('benchmarks') or {}).items():
             where = f"{name}.benchmarks.{benchmark}"
             if benchmark not in benchmarks:

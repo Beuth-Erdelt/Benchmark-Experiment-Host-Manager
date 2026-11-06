@@ -177,7 +177,7 @@ if __name__ == '__main__':
             split_portion = int(loading_pods_total/loading_pods_split)
             if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
                 # PostgreSQL
-                config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS A2')
+                config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL')
                 # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before each round
                 config.set_benchmark_resetscript(['reset-ssb.sql'])
                 config.set_storage(
@@ -192,7 +192,7 @@ if __name__ == '__main__':
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("PgDuckDB" in args.dbms):
                 # PgDuckDB (pg_duckdb extension on PostgreSQL, reuses PostgreSQL's scripts and loading job)
-                config = configurations.default(experiment=experiment, docker='PgDuckDB', dialect='PostgreSQL', alias='DBMS A4')
+                config = configurations.default(experiment=experiment, docker='PgDuckDB', dialect='PostgreSQL')
                 config.path_experiment_docker = 'PostgreSQL'
                 # With -ar: reset of PostgreSQL
                 config.set_benchmark_resetscript(['reset-ssb.sql'])
@@ -213,7 +213,7 @@ if __name__ == '__main__':
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("CedarDB" in args.dbms):
                 # CedarDB (PostgreSQL protocol, reuses PostgreSQL's loading job; own scripts)
-                config = configurations.default(experiment=experiment, docker='CedarDB', dialect='PostgreSQL', alias='DBMS A7')
+                config = configurations.default(experiment=experiment, docker='CedarDB', dialect='PostgreSQL')
                 # With -ar: ANALYZE before each round; no CHECKPOINT and no counters to reset
                 config.set_benchmark_resetscript(['reset-ssb.sql'])
                 config.set_storage(
@@ -228,7 +228,7 @@ if __name__ == '__main__':
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MonetDB" in args.dbms or len(args.dbms) == 0):
                 # MonetDB
-                config = configurations.default(experiment=experiment, docker='MonetDB', dialect='MonetDB', alias='DBMS A1')
+                config = configurations.default(experiment=experiment, docker='MonetDB', dialect='MonetDB')
                 # With -ar: ANALYZE of every table
                 config.set_benchmark_resetscript(['reset-ssb.sql'])
                 config.set_storage(
@@ -243,7 +243,7 @@ if __name__ == '__main__':
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("ClickHouse" in args.dbms or len(args.dbms) == 0):
                 # ClickHouse
-                config = configurations.default(experiment=experiment, docker='ClickHouse', dialect='Clickhouse', alias='DBMS A3')
+                config = configurations.default(experiment=experiment, docker='ClickHouse', dialect='Clickhouse')
                 # With -ar: sync of the loaded parts to disk before each round
                 config.set_benchmark_resetscript(['reset-flush.sh'])
                 config.set_storage(
@@ -258,7 +258,7 @@ if __name__ == '__main__':
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MySQL" in args.dbms):
                 # MySQL
-                config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL', alias='DBMS A5')
+                config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL')
                 # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
                 config.set_benchmark_resetscript(['reset-ssb.sql' if schema_variant == 'normal' else 'reset-ssb-flat.sql', 'reset-flush.sh'])
                 config.set_storage(
@@ -273,7 +273,7 @@ if __name__ == '__main__':
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("MariaDB" in args.dbms):
                 # MariaDB
-                config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MySQL', alias='DBMS A6')
+                config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MySQL')
                 # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
                 config.set_benchmark_resetscript(['reset-ssb.sql' if schema_variant == 'normal' else 'reset-ssb-flat.sql', 'reset-flush.sh'])
                 config.set_storage(
@@ -296,7 +296,7 @@ if __name__ == '__main__':
                 # error 1030 and the loader goes on, so rows would be missing (cpimport works in parallel)
                 if int(loading_pods_total) > 1:
                     print('MariaDBCS: loads with 1 pod, ignoring -nlp ' + str(loading_pods_total))
-                config = configurations.default(experiment=experiment, docker='MariaDBCS', dialect='MySQL', alias='DBMS A8')
+                config = configurations.default(experiment=experiment, docker='MariaDBCS', dialect='MySQL')
                 # With -ar: ANALYZE TABLE before each round; no dirty pages and no counters to reset
                 config.set_benchmark_resetscript(['reset-ssb.sql' if schema_variant == 'normal' else 'reset-ssb-flat.sql'])
                 config.set_storage(
@@ -315,7 +315,7 @@ if __name__ == '__main__':
                 config.set_loading(parallel=1, num_pods=1)
             if ("ClickHouseCluster" in args.dbms):
                 # ClickHouse cluster: coordinator (SUT) and num_worker shards
-                config = configurations.default(experiment=experiment, docker='ClickHouseCluster', dialect='Clickhouse', alias='DBMS C1', worker=num_worker)
+                config = configurations.default(experiment=experiment, docker='ClickHouseCluster', dialect='Clickhouse', worker=num_worker)
                 # -xdim distributed: scripts in ClickHouseCluster/distributed, and a volume of its own
                 config.path_experiment_docker = resolve_dimension_folder('ClickHouseCluster', schema_variant, dimensions, dimension_dockers(cluster.dockers, 'ssb'))
                 if config.path_experiment_docker != 'ClickHouseCluster':
@@ -341,7 +341,7 @@ if __name__ == '__main__':
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("Citus" in args.dbms):
                 # Citus: coordinator (SUT) and num_worker workers
-                config = configurations.default(experiment=experiment, docker='Citus', dialect='PostgreSQL', alias='DBMS C2', worker=num_worker)
+                config = configurations.default(experiment=experiment, docker='Citus', dialect='PostgreSQL', worker=num_worker)
                 # -xdim distributed: scripts in Citus/distributed, and a volume of its own
                 config.path_experiment_docker = resolve_dimension_folder('Citus', schema_variant, dimensions, dimension_dockers(cluster.dockers, 'ssb'))
                 if config.path_experiment_docker != 'Citus':

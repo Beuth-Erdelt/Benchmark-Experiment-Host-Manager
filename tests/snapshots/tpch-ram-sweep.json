@@ -2750,7 +2750,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "DBMS A1",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,

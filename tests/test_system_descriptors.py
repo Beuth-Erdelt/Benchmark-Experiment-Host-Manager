@@ -7,7 +7,7 @@ Tests for the per-DBMS, per-benchmark descriptors in the cluster configuration.
 * Until the entry scripts read the descriptors (they still carry the per-DBMS
   blocks), the data must say exactly what the scripts do: the DBMS with an entry
   are the ``-dbms`` choices, the ``default`` ones are what runs without ``-dbms``,
-  and alias, dialect, loading template and script folder equal what each script
+  and alias (the DBMS's own), dialect, loading template and script folder equal what each script
   configures (the committed snapshots of ``test_dbms_snapshots``).
 
 Authors: Patrick K. Erdelt
@@ -41,10 +41,11 @@ def _load(name: str) -> dict:
 
 def _small() -> dict:
     return {
-        'A': {'storage_prefix': 'a', 'benchmarks': {'x': {'default': True, 'alias': 'A1'}, 'y': {'alias': 'A2', 'dialect': 'd'}}},
-        'B': {'base_system': 'A', 'storage_prefix': 'b', 'benchmarks': {'x': {'alias': 'B1'}}},
+        'A': {'storage_prefix': 'a', 'template': {'alias': 'Alias-A'},
+              'benchmarks': {'x': {'default': True}, 'y': {'dialect': 'd'}}},
+        'B': {'base_system': 'A', 'storage_prefix': 'b', 'template': {'alias': 'Alias-B'}, 'benchmarks': {'x': {}}},
         'C': {},
-        'D': {'storage_prefix': 'd', 'benchmarks': {'x': {'dimensions': True, 'unsupported_dimensions': {'wide': 'too slow'}},
+        'D': {'storage_prefix': 'd', 'template': {'alias': 'Alias-D'}, 'benchmarks': {'x': {'dimensions': True, 'unsupported_dimensions': {'wide': 'too slow'}},
                              'y': {'dimensions': False}}},
     }
 
@@ -99,6 +100,11 @@ class AccessorsTest(unittest.TestCase):
         self.assertEqual(sd.notes(dockers, 'x', types.SimpleNamespace(dbms=['Z'], force=True)), '\nforced')
         self.assertEqual(sd.notes(dockers, 'x', types.SimpleNamespace(dbms=['Z'])), '')
 
+    def test_alias_is_the_templates_one_per_dbms(self) -> None:
+        self.assertEqual(sd.alias(_small(), 'A'), 'Alias-A')
+        self.assertEqual(sd.alias(_small(), 'C'), '')
+        self.assertEqual(sd.alias(_small(), 'Q'), '')
+
     def test_base_system(self) -> None:
         self.assertEqual(sd.base_system(_small(), 'B'), 'A')
         self.assertEqual(sd.base_system(_small(), 'A'), 'A')
@@ -115,21 +121,22 @@ class ValidationTest(unittest.TestCase):
     def test_problems_are_named(self) -> None:
         dockers = _small()
         dockers['B']['base_system'] = 'Q'
-        dockers['A']['benchmarks']['z'] = {'alias': 'a'}
+        dockers['A']['benchmarks']['z'] = {}
         dockers['A']['benchmarks']['x']['colour'] = 'red'
         dockers['A']['benchmarks']['y']['default'] = 'yes'
-        dockers['C'] = {'benchmarks': {'x': {'alias': ''}, 'y': 'not a dict'}}
+        dockers['C'] = {'benchmarks': {'x': {'dialect': ''}, 'y': 'not a dict'}}
         dockers['D']['benchmarks']['x']['unsupported_dimensions'] = ['wide']
         dockers['D']['benchmarks']['y']['notes'] = [{'when': 'f'}]
         problems = '\n'.join(self.check(dockers))
         for expected in ("B: base_system 'Q'", 'A.benchmarks.z: unknown benchmark', "A.benchmarks.x: unknown key 'colour'",
-                         'A.benchmarks.y.default: must be bool', 'C.benchmarks.x.alias: must not be empty',
+                         'A.benchmarks.y.default: must be bool', 'C.benchmarks.x.dialect: must not be empty', 'C: has benchmarks but no template.alias',
                          'C.benchmarks.y: must be a dict', 'D.benchmarks.x.unsupported_dimensions: must be dict',
                          "D.benchmarks.y.notes: every note needs a non-empty 'text'"):
             self.assertIn(expected, problems)
 
     def test_template_must_exist(self) -> None:
-        dockers = {'A': {'storage_prefix': 'a', 'benchmarks': {'x': {'loading_template': 'no-such-template.yml'}}}}
+        dockers = {'A': {'storage_prefix': 'a', 'template': {'alias': 'a'},
+                         'benchmarks': {'x': {'loading_template': 'no-such-template.yml'}}}}
         problems = sd.validate_descriptors(dockers, {'x'}, template_folder=os.path.join(_REPO, 'k8s'))
         self.assertEqual(len(problems), 1)
         self.assertIn('no-such-template.yml not found', problems[0])
@@ -215,7 +222,7 @@ class DescriptorsMatchScriptsTest(unittest.TestCase):
                 docker = config['docker']
                 with self.subTest(script=script, docker=docker):
                     entry = sd.benchmark_entry(self.dockers, docker, benchmark)
-                    self.assertEqual(entry['alias'], config['alias'])
+                    self.assertEqual(sd.alias(self.dockers, docker), config['alias'])
                     self.assertEqual(entry.get('dialect', ''), config['dialect'])
                     self.assertEqual(entry.get('loading_template', ''), config['_jobtemplate_loading'])
                     self.assertEqual(sd.base_system(self.dockers, docker), config['path_experiment_docker'])

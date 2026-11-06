@@ -8,7 +8,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "DBMS A2",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -198,7 +198,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "DBMS A4",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -390,7 +390,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "DBMS A7",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -580,7 +580,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "DBMS A1",
+   "alias": "Columnwise",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -770,7 +770,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "DBMS A3",
+   "alias": "Columnwise-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -960,7 +960,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "DBMS A5",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1151,7 +1151,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "DBMS A6",
+   "alias": "General-A",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1344,7 +1344,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "DBMS A8",
+   "alias": "Columnwise-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1536,7 +1536,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "DBMS C1",
+   "alias": "Columnwise-Cluster-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -1728,7 +1728,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "DBMS C2",
+   "alias": "General-B",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,

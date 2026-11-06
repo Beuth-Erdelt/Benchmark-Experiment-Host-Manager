@@ -148,7 +148,7 @@ def _configure_system(experiment: TpchExperiment, system: dict, tpch_cfg: dict) 
     dockers = experiment.cluster.dockers
     entry = benchmark_entry(dockers, dbms, 'tpch')
     configuration_name = system.get('configuration', '') or ''
-    alias = system.get('alias') or dbms
+    alias = system.get('alias')   # none: the DBMS's own alias of the cluster configuration
 
     config = configurations.default(
         experiment=experiment, docker=dbms, dialect=entry.get('dialect', ''),
