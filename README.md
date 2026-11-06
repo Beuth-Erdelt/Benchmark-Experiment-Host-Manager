@@ -10,6 +10,7 @@
 [![PyPI version](https://badge.fury.io/py/bexhoma.svg)](https://badge.fury.io/py/bexhoma)
 [![Python versions](https://img.shields.io/pypi/pyversions/bexhoma.svg)](https://pypi.org/project/bexhoma/)
 [![Documentation Status](https://readthedocs.org/projects/bexhoma/badge/?version=latest)](https://bexhoma.readthedocs.io/en/latest/?badge=latest)
+[![Tests](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/actions/workflows/tests.yml)
 [![License](https://img.shields.io/github/license/Beuth-Erdelt/Benchmark-Experiment-Host-Manager)](LICENSE)
 
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white)
