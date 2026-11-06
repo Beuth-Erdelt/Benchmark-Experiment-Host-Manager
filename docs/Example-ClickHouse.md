@@ -1304,6 +1304,16 @@ A Distributed table uses `distributed_foreground_insert=1`, so the load time inc
 
 DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)), the same for ClickHouse and ClickHouseCluster; the dimension placement of TPC-H in the cluster is `-xdim`:
 
+| Key | Benchmarks | Values | Default | Effect |
+|---|---|---|---|---|
+| `order_orders` | TPC-H | `key`, `date` | `key` | sort key (= primary index) of orders: by key, or by date first so date ranges (Q3-Q5, Q7-Q10, Q12) skip granules |
+| `order_lineitem` | TPC-H | `key`, `date` | `key` | sort key (= primary index) of lineitem: by key, or by ship date first so date ranges (Q1, Q6, Q7, Q14, Q15, Q20) skip granules |
+| `partition_orders` | TPC-H | `none`, `year`, `month` | `none` | partitions of orders by order date: queries with a date range skip whole partitions; more partitions mean more parts per insert block |
+| `partition_lineitem` | TPC-H | `none`, `year`, `month` | `none` | partitions of lineitem by ship date: queries with a ship date range (Q1, Q6, Q14, Q15, Q20) skip whole partitions; more partitions mean more parts per insert block |
+| `index_granularity` | TPC-H | integer | `8192` | rows per granule (= entry of the sparse primary index) of orders and lineitem (ClickHouse default 8192): smaller granules skip more precisely, the index grows |
+| `wide_parts` | TPC-H | `default`, `wide`, `compact` | `default` | part format of orders and lineitem by min_bytes_for_wide_part: default (10 MiB: small parts compact, one file; larger parts wide, a file per column), wide (every part), compact (every part up to 1 TiB); parallel loaders write many small parts |
+| `low_cardinality` | TPC-H | `off`, `on` | `off` | dictionary encoding of the string columns with few distinct values (flags, modes, priorities, segments, brands, types, containers, nation and region names): faster filters and GROUP BY |
+| `codec` | TPC-H | `default`, `zstd1`, `zstd3` | `default` | compression of all columns of orders and lineitem (default: the server setting, LZ4): bytes read vs. CPU per scan |
 
 
 ### Query Variants
