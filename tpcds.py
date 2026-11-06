@@ -187,7 +187,7 @@ if __name__ == '__main__':
                 # PostgreSQL
                 name_format = 'PostgreSQL-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL')
+                config = configurations.default(experiment=experiment, docker='PostgreSQL')
                 # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before each round
                 config.set_benchmark_resetscript(['reset-tpcds.sql'])
                 config.set_storage(
@@ -204,7 +204,7 @@ if __name__ == '__main__':
                 # MonetDB
                 name_format = 'MonetDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='MonetDB', dialect='MonetDB')
+                config = configurations.default(experiment=experiment, docker='MonetDB')
                 # With -ar: ANALYZE and flush of the write-ahead log before each round
                 config.set_benchmark_resetscript(['reset-tpcds.sql'])
                 config.set_storage(
@@ -221,7 +221,7 @@ if __name__ == '__main__':
                 # MariaDB
                 name_format = 'MariaDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MySQL')
+                config = configurations.default(experiment=experiment, docker='MariaDB')
                 # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
                 config.set_benchmark_resetscript(['reset-tpcds.sql', 'reset-flush.sh'])
                 config.set_storage(
@@ -244,7 +244,7 @@ if __name__ == '__main__':
                 # error 1030 and the loader goes on, so rows would be missing (cpimport works in parallel)
                 if int(loading_pods_total) > 1:
                     print('MariaDBCS: loads with 1 pod, ignoring -nlp ' + str(loading_pods_total))
-                config = configurations.default(experiment=experiment, docker='MariaDBCS', dialect='MySQL')
+                config = configurations.default(experiment=experiment, docker='MariaDBCS')
                 # With -ar: ANALYZE TABLE before each round; no dirty pages and no counters to reset
                 config.set_benchmark_resetscript(['reset-tpcds.sql'])
                 config.set_storage(
@@ -268,7 +268,7 @@ if __name__ == '__main__':
                     pods_times_threads=int(loading_pods_total)*int(threads)
                     name_format = 'MySQL-{cluster}-{pods_times_threads}'
                     #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads, pods_times_threads=pods_times_threads)
-                    config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL')
+                    config = configurations.default(experiment=experiment, docker='MySQL')
                     # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
                     config.set_benchmark_resetscript(['reset-tpcds.sql', 'reset-flush.sh'])
                     config.set_storage(
@@ -285,7 +285,7 @@ if __name__ == '__main__':
                     config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("ClickHouse" in args.dbms):
                 # ClickHouse
-                config = configurations.default(experiment=experiment, docker='ClickHouse', dialect='Clickhouse')
+                config = configurations.default(experiment=experiment, docker='ClickHouse')
                 # With -ar: sync of the loaded parts to disk before each round
                 config.set_benchmark_resetscript(['reset-flush.sh'])
                 config.set_storage(
@@ -301,7 +301,7 @@ if __name__ == '__main__':
             if ("ClickHouseCluster" in args.dbms):
                 # ClickHouse cluster: coordinator (SUT) and num_worker shards
                 num_worker = int(args.num_worker)
-                config = configurations.default(experiment=experiment, docker='ClickHouseCluster', dialect='Clickhouse', worker=num_worker)
+                config = configurations.default(experiment=experiment, docker='ClickHouseCluster', worker=num_worker)
                 # With -ar: rows held by the Distributed tables are sent to the shards
                 # (coordinator), then the loaded parts are synced to disk (every worker)
                 config.set_benchmark_resetscript(['reset-tpcds.sql', 'reset-flush.sh'])

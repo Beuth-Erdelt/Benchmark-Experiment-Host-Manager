@@ -68,7 +68,8 @@ class SutConfiguration:
         :param num_experiment_to_apply: Number of benchmark runs to perform; defaults to
             experiment setting.
         :param clients: Unused legacy parameter.
-        :param dialect: SQL dialect string forwarded to dbmsbenchmarker.
+        :param dialect: SQL dialect string forwarded to dbmsbenchmarker; by default the
+            ``template.dialect`` of the DBMS in ``cluster.config``.
         :param worker: Number of worker pods to co-deploy alongside the SUT.
         :param dockerimage: Docker image name of the SUT.
         """
@@ -148,7 +149,9 @@ class SutConfiguration:
         self.set_additional_labels(**self.experiment.additional_labels)
         self.experiment.add_configuration(self)
         self.experiment_name = self.code                                         #: Identifier of experiment.
-        self.dialect = dialect                                                   #: SQL dialect string forwarded to dbmsbenchmarker.
+        if not dialect and docker is not None:
+            dialect = (self.dockertemplate.get('template') or {}).get('dialect', '')   # one dialect per DBMS: template.dialect in cluster.config
+        self.dialect = dialect                                                   #: SQL dialect string forwarded to dbmsbenchmarker; default: ``template.dialect`` of the DBMS.
         self.use_distributed_datasource = False                                  #: True iff the SUT should mount 'benchmark-data-volume' as source of non-generated data.
         # scaling
         self.num_worker = worker                                                 #: Number of worker pods to deploy alongside the SUT.

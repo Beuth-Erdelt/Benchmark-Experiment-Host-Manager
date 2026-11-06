@@ -151,7 +151,7 @@ def _configure_system(experiment: TpchExperiment, system: dict, tpch_cfg: dict) 
     alias = system.get('alias')   # none: the DBMS's own alias of the cluster configuration
 
     config = configurations.default(
-        experiment=experiment, docker=dbms, dialect=entry.get('dialect', ''),
+        experiment=experiment, docker=dbms,
         configuration=configuration_name, alias=alias,
     )
     if base_system(dockers, dbms) != dbms:

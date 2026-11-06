@@ -265,7 +265,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     for tenant in range(experiment.num_tenants):
                         name_format = 'PostgreSQL-{cluster}-{pods}-{tenant}'
                         #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, tenant=tenant)
-                        config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL')
+                        config = configurations.default(experiment=experiment, docker='PostgreSQL')
                         #config.num_tenants = multi_tenant_num
                         #config.tenant_per = multi_tenant_by
                         # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before each
@@ -301,7 +301,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 else:
                     name_format = 'PostgreSQL-{cluster}-{pods}'
                     #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                    config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL')
+                    config = configurations.default(experiment=experiment, docker='PostgreSQL')
                     #config.num_tenants = multi_tenant_num
                     #config.tenant_per = multi_tenant_by
                     # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before each
@@ -345,7 +345,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 # PostgreSQL
                 name_format = 'CedarDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='CedarDB', dialect='CedarDB')
+                config = configurations.default(experiment=experiment, docker='CedarDB')
                 # With -ar: ANALYZE before each round; no CHECKPOINT and no counters to reset
                 config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
                 config.set_storage(
@@ -364,7 +364,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 # PgDuckDB (pg_duckdb extension on PostgreSQL, reuses PostgreSQL's DDL scripts and loading job)
                 name_format = 'PgDuckDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='PgDuckDB', dialect='PostgreSQL')
+                config = configurations.default(experiment=experiment, docker='PgDuckDB')
                 config.path_experiment_docker = 'PostgreSQL'   # pg_duckdb IS PostgreSQL: reuse its DDL/init scripts
                 config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')   # reset of PostgreSQL
                 config.set_storage(
@@ -388,7 +388,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 # MonetDB
                 name_format = 'MonetDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='MonetDB', dialect='MonetDB')
+                config = configurations.default(experiment=experiment, docker='MonetDB')
                 # With -ar: ANALYZE and flush of the write-ahead log before each round
                 config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
                 config.set_storage(
@@ -407,7 +407,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 # MariaDB
                 name_format = 'MariaDB-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MySQL')
+                config = configurations.default(experiment=experiment, docker='MariaDB')
                 # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
                 config.set_benchmark_resetscript(['reset-tpch.sql', 'reset-flush.sh'], name='tpch')
                 config.set_storage(
@@ -432,7 +432,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 # error 1030 and the loader goes on, so rows would be missing (cpimport works in parallel)
                 if int(loading_pods_total) > 1:
                     print('MariaDBCS: loads with 1 pod, ignoring -nlp ' + str(loading_pods_total))
-                config = configurations.default(experiment=experiment, docker='MariaDBCS', dialect='MySQL')
+                config = configurations.default(experiment=experiment, docker='MariaDBCS')
                 # With -ar: ANALYZE TABLE before each round; no dirty pages and no counters to reset
                 config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
                 config.set_storage(
@@ -457,7 +457,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                     pods_times_threads=int(loading_pods_total)*int(threads)
                     name_format = 'MySQL-{cluster}-{pods_times_threads}'
                     #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads, pods_times_threads=pods_times_threads)
-                    config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL')
+                    config = configurations.default(experiment=experiment, docker='MySQL')
                     # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
                     config.set_benchmark_resetscript(['reset-tpch.sql', 'reset-flush.sh'], name='tpch')
                     config.set_storage(
@@ -478,7 +478,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 # DatabaseService
                 name_format = 'DBS-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='DatabaseService', dialect='PostgreSQL')
+                config = configurations.default(experiment=experiment, docker='DatabaseService')
                 config.monitoring_sut = False # cannot be monitored since outside of K8s
                 config.set_sut_role('placeholder') # the pod is only a client; the DBMS is outside of K8s
                 config.resource_sweep = False # resources and storage are not set by bexhoma
@@ -499,7 +499,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 # PostgreSQL
                 name_format = 'Citus-{cluster}-{pods}'
                 #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='Citus', dialect='PostgreSQL', worker=num_worker)
+                config = configurations.default(experiment=experiment, docker='Citus', worker=num_worker)
                 # With -ar: VACUUM ANALYZE, then CHECKPOINT and a stats reset on the
                 # coordinator and every worker before each round
                 config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
@@ -533,7 +533,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("ClickHouse" in args.dbms):
                 # ClickHouse
-                config = configurations.default(experiment=experiment, docker='ClickHouse', dialect='Clickhouse')
+                config = configurations.default(experiment=experiment, docker='ClickHouse')
                 # With -ar: sync of the loaded parts to disk before each round
                 config.set_benchmark_resetscript(['reset-flush.sh'], name='tpch')
                 if skip_loading:
@@ -550,7 +550,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
             if ("ClickHouseCluster" in args.dbms):
                 # ClickHouse cluster: coordinator (SUT) and num_worker shards
-                config = configurations.default(experiment=experiment, docker='ClickHouseCluster', dialect='Clickhouse', worker=num_worker)
+                config = configurations.default(experiment=experiment, docker='ClickHouseCluster', worker=num_worker)
                 # -xdim distributed: scripts in ClickHouseCluster/distributed, and a volume of its own
                 config.path_experiment_docker = dimension_folder('ClickHouseCluster', dimensions, dimension_dockers(cluster.dockers, 'tpch'))
                 if config.path_experiment_docker != 'ClickHouseCluster':

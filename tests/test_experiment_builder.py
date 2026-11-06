@@ -87,7 +87,7 @@ class BuildExperimentTest(unittest.TestCase):
         self.assertEqual(experiment.configurations[1].docker, 'PgDuckDB')
 
     def test_dbms_defaults_applied(self) -> None:
-        """dialect, jobtemplate_loading, and path_experiment_docker come from the DBMS's tpch entry in the cluster config."""
+        """dialect, jobtemplate_loading, and path_experiment_docker come from the DBMS's tpch entry and template in the cluster config."""
         experiment = self._build(copy.deepcopy(_BASE_SPEC))
         postgres, pgduckdb = experiment.configurations
         self.assertEqual(postgres.dialect, 'PostgreSQL')

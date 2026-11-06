@@ -9,8 +9,6 @@ the entry script of that benchmark needs to configure the DBMS:
 
 ``default``
     ``True`` when the DBMS runs if ``-dbms`` is not given (absent: ``False``).
-``dialect``
-    SQL dialect string forwarded to DBMSBenchmarker (absent: none).
 ``loading_template``
     Name of the loading job template in ``k8s/`` (absent: the benchmark's own default).
 ``dimensions``
@@ -50,8 +48,9 @@ A DBMS may also declare ``base_system``: the DBMS whose script folder
 (``experiments/<benchmark>/<base_system>``) it reuses when that is not its own, and
 ``storage_prefix``: the name of its storage (volume), the same for every benchmark, and
 ``workers``: ``True`` when the SUT takes ``-nw`` workers (shards) next to its coordinator.
-Its alias in the reports is one per DBMS, ``template.alias`` of its entry, whatever the
-benchmark (:func:`alias`).
+Its alias in the reports (:func:`alias`) and its SQL dialect, the key of the query variants
+in the query files (:func:`dialect`), are one per DBMS, ``template.alias`` and ``template.dialect``
+of its entry, whatever the benchmark.
 
 The functions take the ``dockers`` dict (``cluster.dockers``), so they work
 without a live cluster.
@@ -66,13 +65,12 @@ import os
 
 __all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "load_dockers", "dbms_choices", "benchmark_entry", "compatible_dockers",
            "default_dockers", "dimension_dockers", "unsupported_dimension", "notes", "base_system",
-           "storage_prefix", "alias", "experiment_yaml_dockers", "refresh_template", "expand",
+           "storage_prefix", "alias", "dialect", "experiment_yaml_dockers", "refresh_template", "expand",
            "validate_descriptors"]
 
 #: Keys a benchmark entry may carry, with the type of their value.
 ENTRY_KEYS = {
     'default': bool,
-    'dialect': str,
     'loading_template': str,
     'dimensions': bool,
     'unsupported_dimensions': dict,
@@ -259,6 +257,11 @@ def base_system(dockers: dict, docker: str) -> str:
 def alias(dockers: dict, docker: str) -> str:
     """The alias of ``docker`` in the reports: ``template.alias`` of its entry, ``''`` when it has none."""
     return ((dockers.get(docker) or {}).get('template') or {}).get('alias', '')
+
+
+def dialect(dockers: dict, docker: str) -> str:
+    """The SQL dialect of ``docker``: ``template.dialect`` of its entry, ``''`` when it has none."""
+    return ((dockers.get(docker) or {}).get('template') or {}).get('dialect', '')
 
 
 def storage_prefix(dockers: dict, docker: str) -> str:

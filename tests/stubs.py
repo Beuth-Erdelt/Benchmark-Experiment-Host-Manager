@@ -69,8 +69,9 @@ class StubCluster:
                                if key in ('benchmarks', 'base_system', 'storage_prefix', 'workers')}
                         for name, docker in load_dockers(_MAIN_CONFIG).items()}
         for name, docker in load_dockers(_MAIN_CONFIG).items():
-            if (docker.get('template') or {}).get('alias'):
-                self.dockers[name]['template'] = {'alias': docker['template']['alias']}
+            template = {key: docker['template'][key] for key in ('alias', 'dialect') if (docker.get('template') or {}).get(key)}
+            if template:
+                self.dockers[name]['template'] = template
 
     def set_code(self, code) -> None:
         """Mirror ``Kubernetes.set_code`` without the ``experiments.config`` file check."""

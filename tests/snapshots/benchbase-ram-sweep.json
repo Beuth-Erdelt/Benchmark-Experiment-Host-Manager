@@ -83,7 +83,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "PostgreSQL",
    "docker": "PostgreSQL",
    "dockerimage": "",
    "eval_parameters": {
@@ -338,7 +338,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "PostgreSQL",
    "docker": "PostgreSQL",
    "dockerimage": "",
    "eval_parameters": {
@@ -589,7 +589,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "CedarDB",
    "docker": "CedarDB",
    "dockerimage": "",
    "eval_parameters": {
@@ -831,7 +831,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "CedarDB",
    "docker": "CedarDB",
    "dockerimage": "",
    "eval_parameters": {
@@ -1557,7 +1557,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "MySQL",
    "docker": "MySQL",
    "dockerimage": "",
    "eval_parameters": {
@@ -1805,7 +1805,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "MySQL",
    "docker": "MySQL",
    "dockerimage": "",
    "eval_parameters": {
@@ -2049,7 +2049,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "MySQL",
    "docker": "MariaDB",
    "dockerimage": "",
    "eval_parameters": {
@@ -2284,7 +2284,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "MySQL",
    "docker": "MariaDB",
    "dockerimage": "",
    "eval_parameters": {
@@ -3236,7 +3236,7 @@
    ],
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "MySQL",
    "docker": "TiDB",
    "dockerimage": "",
    "eval_parameters": {
@@ -3478,7 +3478,7 @@
    ],
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "MySQL",
    "docker": "TiDB",
    "dockerimage": "",
    "eval_parameters": {
@@ -3720,7 +3720,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "PostgreSQL",
    "docker": "DatabaseService",
    "dockerimage": "",
    "eval_parameters": {
@@ -3952,7 +3952,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "PostgreSQL",
    "docker": "Citus",
    "dockerimage": "",
    "eval_parameters": {
@@ -4192,7 +4192,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "",
+   "dialect": "PostgreSQL",
    "docker": "Citus",
    "dockerimage": "",
    "eval_parameters": {

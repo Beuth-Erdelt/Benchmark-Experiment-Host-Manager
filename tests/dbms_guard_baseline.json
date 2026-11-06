@@ -59,12 +59,12 @@
   "ClickHouse": 7,
   "ClickHouseCluster": 7,
   "MariaDBCS": 5,
-  "MonetDB": 7,
+  "MonetDB": 6,
   "PgDuckDB": 5,
-  "PostgreSQL": 16,
+  "PostgreSQL": 12,
   "duckdb": 3,
   "mariadb": 6,
-  "mysql": 8
+  "mysql": 5
  },
  "test_parallel_tpch_ycsb.py": {
   "Citus": 1,
@@ -78,24 +78,24 @@
   "ClickHouse": 6,
   "ClickHouseCluster": 4,
   "MariaDBCS": 5,
-  "MonetDB": 7,
-  "PostgreSQL": 7,
+  "MonetDB": 6,
+  "PostgreSQL": 6,
   "mariadb": 7,
-  "mysql": 9
+  "mysql": 6
  },
  "tpch.py": {
-  "CedarDB": 6,
+  "CedarDB": 5,
   "Citus": 7,
   "ClickHouse": 6,
   "ClickHouseCluster": 7,
   "DatabaseService": 3,
   "MariaDBCS": 5,
-  "MonetDB": 7,
+  "MonetDB": 6,
   "PgDuckDB": 6,
-  "PostgreSQL": 23,
+  "PostgreSQL": 18,
   "duckdb": 3,
   "mariadb": 7,
-  "mysql": 9
+  "mysql": 6
  },
  "ycsb.py": {
   "Cassandra": 8,

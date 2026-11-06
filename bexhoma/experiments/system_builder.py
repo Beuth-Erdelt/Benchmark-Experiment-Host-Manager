@@ -2,7 +2,7 @@
 Build the configuration of one DBMS for one benchmark from the cluster configuration.
 
 The entry scripts (``tpch.py``, ``hammerdb.py``, ...) used to carry one block per DBMS
-that named the DBMS and set its dialect, scripts, storage and parameters. Everything
+that named the DBMS and set its scripts, storage and parameters. Everything
 specific to a DBMS now lives in the ``dockers:`` section of ``cluster.config``
 (:mod:`bexhoma.system_descriptors`); a script loops over :func:`selected_dockers` and
 calls :func:`build_configuration` for each, adding only what depends on the benchmark
@@ -71,7 +71,7 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
                         reset_name: str = None, loading_parameters: dict = None):
     """Create and set up the configuration of ``docker`` for ``benchmark``.
 
-    Takes dialect, script folder, reset scripts, storage, SUT/loading/evaluation parameters
+    Takes script folder, reset scripts, storage, SUT/loading/evaluation parameters
     and the limit of parallel SUT from the DBMS's entry in the cluster configuration, and
     skips loading when ``-sl`` is given. The caller adds what the benchmark decides
     (loading and benchmarking sizes, rounds).
@@ -92,7 +92,7 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
     if dockers[docker].get('workers', False):
         options['worker'] = context['num_worker']
     config = configurations.default(
-        experiment=experiment, docker=docker, dialect=entry.get('dialect', ''), **options)
+        experiment=experiment, docker=docker, **options)
     if descriptors.base_system(dockers, docker) != docker:
         config.path_experiment_docker = descriptors.base_system(dockers, docker)
     if entry.get('reset_scripts'):

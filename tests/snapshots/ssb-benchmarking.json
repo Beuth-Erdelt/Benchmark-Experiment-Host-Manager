@@ -476,7 +476,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "PostgreSQL",
+   "dialect": "CedarDB",
    "docker": "CedarDB",
    "dockerimage": "",
    "eval_parameters": {

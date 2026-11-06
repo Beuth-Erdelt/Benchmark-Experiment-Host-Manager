@@ -634,7 +634,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "MariaDB",
+   "dialect": "MySQL",
    "docker": "MariaDB",
    "dockerimage": "",
    "eval_parameters": {
@@ -918,7 +918,7 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "Citus",
+   "dialect": "PostgreSQL",
    "docker": "Citus",
    "dockerimage": "",
    "eval_parameters": {

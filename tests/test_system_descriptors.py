@@ -7,7 +7,7 @@ Tests for the per-DBMS, per-benchmark descriptors in the cluster configuration.
 * Until the entry scripts read the descriptors (they still carry the per-DBMS
   blocks), the data must say exactly what the scripts do: the DBMS with an entry
   are the ``-dbms`` choices, the ``default`` ones are what runs without ``-dbms``,
-  and alias (the DBMS's own), dialect, loading template and script folder equal what each script
+  and alias and dialect (the DBMS's own), loading template and script folder equal what each script
   configures (the committed snapshots of ``test_dbms_snapshots``).
 
 Authors: Patrick K. Erdelt
@@ -41,8 +41,8 @@ def _load(name: str) -> dict:
 
 def _small() -> dict:
     return {
-        'A': {'storage_prefix': 'a', 'template': {'alias': 'Alias-A'},
-              'benchmarks': {'x': {'default': True}, 'y': {'dialect': 'd'}}},
+        'A': {'storage_prefix': 'a', 'template': {'alias': 'Alias-A', 'dialect': 'd'},
+              'benchmarks': {'x': {'default': True}, 'y': {}}},
         'B': {'base_system': 'A', 'storage_prefix': 'b', 'template': {'alias': 'Alias-B'}, 'benchmarks': {'x': {}}},
         'C': {},
         'D': {'storage_prefix': 'd', 'template': {'alias': 'Alias-D'}, 'benchmarks': {'x': {'dimensions': True, 'unsupported_dimensions': {'wide': 'too slow'}},
@@ -62,7 +62,9 @@ class AccessorsTest(unittest.TestCase):
         self.assertEqual(sd.default_dockers(_small(), 'y'), [])
 
     def test_entry_and_missing_entry(self) -> None:
-        self.assertEqual(sd.benchmark_entry(_small(), 'A', 'y')['dialect'], 'd')
+        self.assertEqual(sd.dialect(_small(), 'A'), 'd')
+        self.assertEqual(sd.dialect(_small(), 'B'), '')
+        self.assertEqual(sd.dialect(_small(), 'Q'), '')
         with self.assertRaisesRegex(sd.IncompatibleBenchmark, r"B is not compatible with benchmark 'y' \(compatible: A, D\)"):
             sd.benchmark_entry(_small(), 'B', 'y')
         with self.assertRaisesRegex(sd.IncompatibleBenchmark, 'unknown DBMS'):
@@ -124,12 +126,12 @@ class ValidationTest(unittest.TestCase):
         dockers['A']['benchmarks']['z'] = {}
         dockers['A']['benchmarks']['x']['colour'] = 'red'
         dockers['A']['benchmarks']['y']['default'] = 'yes'
-        dockers['C'] = {'benchmarks': {'x': {'dialect': ''}, 'y': 'not a dict'}}
+        dockers['C'] = {'benchmarks': {'x': {'loading_template': ''}, 'y': 'not a dict'}}
         dockers['D']['benchmarks']['x']['unsupported_dimensions'] = ['wide']
         dockers['D']['benchmarks']['y']['notes'] = [{'when': 'f'}]
         problems = '\n'.join(self.check(dockers))
         for expected in ("B: base_system 'Q'", 'A.benchmarks.z: unknown benchmark', "A.benchmarks.x: unknown key 'colour'",
-                         'A.benchmarks.y.default: must be bool', 'C.benchmarks.x.dialect: must not be empty', 'C: has benchmarks but no template.alias',
+                         'A.benchmarks.y.default: must be bool', 'C.benchmarks.x.loading_template: must not be empty', 'C: has benchmarks but no template.alias',
                          'C.benchmarks.y: must be a dict', 'D.benchmarks.x.unsupported_dimensions: must be dict',
                          "D.benchmarks.y.notes: every note needs a non-empty 'text'"):
             self.assertIn(expected, problems)
@@ -238,7 +240,7 @@ class DescriptorsMatchScriptsTest(unittest.TestCase):
                 with self.subTest(script=script, docker=docker):
                     entry = sd.benchmark_entry(self.dockers, docker, benchmark)
                     self.assertEqual(sd.alias(self.dockers, docker), config['alias'])
-                    self.assertEqual(entry.get('dialect', ''), config['dialect'])
+                    self.assertEqual(sd.dialect(self.dockers, docker), config['dialect'])
                     self.assertEqual(entry.get('loading_template', ''), config['_jobtemplate_loading'])
                     self.assertEqual(sd.base_system(self.dockers, docker), config['path_experiment_docker'])
 
