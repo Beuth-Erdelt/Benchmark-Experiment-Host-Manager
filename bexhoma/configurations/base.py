@@ -750,7 +750,7 @@ class SutConfiguration:
         :param parameters: Default parameter dict shared by all pods.
         :param pod_parameters: Per-pod override dicts.
         """
-        self.experiment.cluster.set_redis_values(self._pod_configs(queue_key, num_pods, parameters, pod_parameters))
+        self.experiment.cluster.set_messagequeue_values(self._pod_configs(queue_key, num_pods, parameters, pod_parameters))
 
     @staticmethod
     def _pod_configs(queue_key: str, num_pods: int, parameters: dict, pod_parameters: list) -> dict:

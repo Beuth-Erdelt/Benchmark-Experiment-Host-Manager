@@ -18,19 +18,6 @@
   "mysql": 4,
   "postgres": 1
  },
- "bexhoma/clusters.py": {
-  "Redis": 14,
-  "redis-cli": 9
- },
- "bexhoma/configurations/base.py": {
-  "Redis": 1
- },
- "bexhoma/configurations/benchmarking.py": {
-  "Redis": 8
- },
- "bexhoma/configurations/loading.py": {
-  "Redis": 3
- },
  "bexhoma/experiments/base.py": {
   "PostgreSQL": 1,
   "mysql": 1,

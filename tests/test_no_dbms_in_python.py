@@ -43,6 +43,10 @@ _NOT_A_DBMS = {'Dummy', 'Hardware'}
 #: Client tools and spellings of a DBMS that the ``dockers:`` keys do not show.
 _EXTRA_NAMES = {'postgres', 'psql', 'mysql', 'mysqld', 'mariadb', 'redis-cli', 'mclient', 'duckdb',
                 'ysqlsh', 'cockroach', 'clickhouse-client', 'cqlsh'}
+#: Names that are not DBMS-specific code in a given file: bexhoma's own message queue is
+#: a Redis pod (``bexhoma-messagequeue``), driven with its client; it is infrastructure,
+#: not a system under test, so it is no adjustment to a DBMS.
+_INFRASTRUCTURE = {'bexhoma/clusters.py': {'redis-cli'}}
 #: Directories (relative to the repository) whose Python files are scanned.
 _SCAN_ROOTS = ('bexhoma',)
 
@@ -118,7 +122,9 @@ def scan() -> dict:
         counts = collections.Counter()
         for text in texts:
             for match in pattern.findall(text):
-                counts[lowercase.get(match.lower(), match)] += 1
+                name = lowercase.get(match.lower(), match)
+                if name not in _INFRASTRUCTURE.get(relative, ()):
+                    counts[name] += 1
         if counts:
             result[relative] = dict(sorted(counts.items()))
     return result

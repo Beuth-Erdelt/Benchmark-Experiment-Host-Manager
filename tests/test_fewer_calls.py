@@ -539,7 +539,7 @@ class RedisTest(unittest.TestCase):
         self.values = {'q-config-1': {'SF': "1'0", 'NAME': 'a "b"'}, 'q-podcount': 2}
 
     def test_one_mset_for_all_keys(self) -> None:
-        self.cluster.set_redis_values(self.values)
+        self.cluster.set_messagequeue_values(self.values)
         command = self.cluster.execute_command_in_pod_api.call_args.kwargs['command']
         self.assertTrue(command.startswith('redis-cli mset q-config-1 '))
         self.assertTrue(command.endswith(" q-podcount '2'"))
@@ -548,14 +548,14 @@ class RedisTest(unittest.TestCase):
     def test_unconfirmed_mset_sets_every_key_on_its_own(self) -> None:
         self.cluster.execute_command_in_pod_api.return_value = ('', '', 'error')
         with mock.patch('builtins.print'):
-            self.cluster.set_redis_values(self.values)
+            self.cluster.set_messagequeue_values(self.values)
         commands = [call.kwargs['command'] for call in self.cluster.execute_command_in_pod.call_args_list]
         self.assertEqual(len(commands), 2)
         self.assertTrue(commands[0].startswith('redis-cli set q-config-1 '))
 
     @unittest.skipUnless(_SH, 'no sh found')
     def test_json_survives_the_quoting(self) -> None:
-        self.cluster.set_redis_values({'k': self.values['q-config-1']})
+        self.cluster.set_messagequeue_values({'k': self.values['q-config-1']})
         command = self.cluster.execute_command_in_pod_api.call_args.kwargs['command']
         argv = command.replace('redis-cli mset ', 'printf "%s\\n" ', 1)
         output = subprocess.run([_SH, '-c', argv], capture_output=True, text=True).stdout.splitlines()

@@ -3092,8 +3092,8 @@ class Kubernetes():
         else:
             pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
         self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
-        redis_command = f'redis-cli rpush {queue} {data} '
-        _, stdout, _ = self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+        mq_command = f'redis-cli rpush {queue} {data} '
+        _, stdout, _ = self.execute_command_in_pod(command=mq_command, pod=pod_messagequeue)
         try:
             return int(stdout.strip())
         except (TypeError, ValueError):
@@ -3116,8 +3116,8 @@ class Kubernetes():
         else:
             pod_messagequeue = 'bexhoma-messagequeue-5ff94984ff-mv9zn'
         self.logger.debug(f"I am using messagequeue {pod_messagequeue}")
-        redis_command = f'redis-cli del {queue} '
-        self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+        mq_command = f'redis-cli del {queue} '
+        self.execute_command_in_pod(command=mq_command, pod=pod_messagequeue)
 
     def _messagequeue_pod(self) -> str:
         """Name of the Redis (message queue) pod."""
@@ -3142,14 +3142,14 @@ class Kubernetes():
         :rtype: int or None
         """
         numbers = ' '.join(str(i) for i in range(1, length + 1))
-        redis_command = f'redis-cli del {queue} > /dev/null && redis-cli rpush {queue} {numbers}'
-        _, stdout, _ = self.execute_command_in_pod_api(command=redis_command, pod=self._messagequeue_pod())
+        mq_command = f'redis-cli del {queue} > /dev/null && redis-cli rpush {queue} {numbers}'
+        _, stdout, _ = self.execute_command_in_pod_api(command=mq_command, pod=self._messagequeue_pod())
         try:
             return int(str(stdout).strip().splitlines()[-1])
         except (TypeError, ValueError, IndexError):
             return None
 
-    def set_redis_values(self, values: dict) -> None:
+    def set_messagequeue_values(self, values: dict) -> None:
         """
         Set several Redis keys to string values in one exec (``MSET``).
 
@@ -3171,7 +3171,7 @@ class Kubernetes():
         _, stdout, _ = self.execute_command_in_pod_api(command=f"redis-cli mset {pairs}", pod=pod_messagequeue)
         if str(stdout).strip() == 'OK':
             return
-        print(f"set_redis_values: MSET of {len(values)} keys not confirmed ({str(stdout).strip()!r}), setting them one by one")
+        print(f"set_messagequeue_values: MSET of {len(values)} keys not confirmed ({str(stdout).strip()!r}), setting them one by one")
         for key, value in values.items():
             self.execute_command_in_pod(command=f"redis-cli set {key} {quoted(value)}", pod=pod_messagequeue)
 
@@ -3216,9 +3216,9 @@ class Kubernetes():
         :param queue: Redis key to set.
         :param value: Integer value to assign.  Defaults to ``0``.
         """
-        redis_command = f'redis-cli set {queue} {value} '
+        mq_command = f'redis-cli set {queue} {value} '
         # setting the same value again is harmless, so the API path may repeat it
-        self.execute_command_in_pod_api(command=redis_command, pod=self._messagequeue_pod())
+        self.execute_command_in_pod_api(command=mq_command, pod=self._messagequeue_pod())
 
     def get_pod_counter(self, queue: str) -> int | None:
         """
@@ -3229,8 +3229,8 @@ class Kubernetes():
             the reply could not be read.
         :rtype: int or None
         """
-        redis_command = f'redis-cli get {queue} '
-        _, stdout, _ = self.execute_command_in_pod_api(command=redis_command, pod=self._messagequeue_pod())
+        mq_command = f'redis-cli get {queue} '
+        _, stdout, _ = self.execute_command_in_pod_api(command=mq_command, pod=self._messagequeue_pod())
         try:
             return int(stdout.strip())
         except (TypeError, ValueError, AttributeError):
@@ -3259,8 +3259,8 @@ class Kubernetes():
         json_str = json.dumps(config)
         # Escape single quotes so the JSON can be safely wrapped in single quotes
         escaped = json_str.replace("'", "'\\''")
-        redis_command = f"redis-cli set {key} '{escaped}'"
-        self.execute_command_in_pod(command=redis_command, pod=pod_messagequeue)
+        mq_command = f"redis-cli set {key} '{escaped}'"
+        self.execute_command_in_pod(command=mq_command, pod=pod_messagequeue)
 
     def get_service_endpoints(self, service_name="bexhoma-service-monitoring-default"):
         """
