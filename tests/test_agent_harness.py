@@ -1378,11 +1378,10 @@ resources:
         result = self.workspace.read_file(self.path, "# Comment")
         self.assertIn("only supported for Markdown", result["error"])
 
-    @unittest.skipIf(sys.platform == "win32", "CRLF checkouts exceed the whole-file limit")
     def test_authoritative_files_are_whole_or_error(self) -> None:
         catalog = self.root / "contracts" / "contract_catalog.yml"
         catalog.write_text(
-            catalog.read_text(encoding="utf-8") + "\n# growth\n" + "x" * 2_000,
+            catalog.read_text(encoding="utf-8") + "\n# growth\n" + "x" * 500,
             encoding="utf-8",
         )
         result = self.workspace.read_file("contracts/contract_catalog.yml")
