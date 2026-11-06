@@ -16,12 +16,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -51,23 +49,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_MEASUREMENT_TYPE": "hdrhistogram",
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -81,23 +62,6 @@
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_MEASUREMENT_TYPE": "hdrhistogram",
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_MEASUREMENT_TYPE": "hdrhistogram",
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -146,37 +110,6 @@
         "YCSB_MAX_EXECUTION": 0,
         "YCSB_MEASUREMENT_TYPE": "hdrhistogram",
         "YCSB_OPERATIONS": 1000000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "reset-ycsb.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_MEASUREMENT_TYPE": "hdrhistogram",
-        "YCSB_OPERATIONS": 500000,
         "YCSB_ROWS": 1000000,
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
@@ -335,12 +268,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -370,23 +301,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_MEASUREMENT_TYPE": "hdrhistogram",
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -400,23 +314,6 @@
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_MEASUREMENT_TYPE": "hdrhistogram",
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_MEASUREMENT_TYPE": "hdrhistogram",
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -478,37 +375,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_MEASUREMENT_TYPE": "hdrhistogram",
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "reset-ycsb.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -526,7 +392,7 @@
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
        "YCSB_MEASUREMENT_TYPE": "hdrhistogram",
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -560,7 +426,7 @@
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
     "YCSB_MEASUREMENT_TYPE": "hdrhistogram",
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -654,12 +520,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -688,22 +552,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -716,22 +564,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -792,36 +624,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "reset-ycsb.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -838,7 +640,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -871,7 +673,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -970,12 +772,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -1004,22 +804,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -1032,22 +816,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -1109,37 +877,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "reset-ycsb.sql",
-        "reset-flush.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -1156,7 +893,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -1189,7 +926,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -1283,12 +1020,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -1317,22 +1052,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -1345,22 +1064,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -1422,37 +1125,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "reset-ycsb.sql",
-        "reset-flush.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -1469,7 +1141,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -1502,7 +1174,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -1598,12 +1270,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -1632,22 +1302,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -1660,22 +1314,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -1737,37 +1375,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "reset-ycsb.sql",
-        "reset-counters.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -1784,7 +1391,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -1806,7 +1413,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -1817,7 +1424,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -1911,12 +1518,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -1946,23 +1551,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -1976,23 +1564,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -2057,37 +1628,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_REPLICAS": 0,
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "reset-ycsb.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -2105,7 +1645,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -2127,7 +1667,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -2139,7 +1679,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -2236,12 +1776,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -2271,23 +1809,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -2301,23 +1822,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -2384,37 +1888,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_REPLICAS": 0,
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "reset-ycsb.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -2432,7 +1905,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -2454,7 +1927,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -2466,7 +1939,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -2565,12 +2038,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -2599,22 +2070,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -2627,22 +2082,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -2701,34 +2140,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -2745,7 +2156,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -2767,7 +2178,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -2778,7 +2189,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -2872,12 +2283,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -2907,23 +2316,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "redis",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -2937,23 +2329,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "redis",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -3018,37 +2393,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "redis",
-        "BEXHOMA_REPLICAS": 0,
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "save-snapshot.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -3066,7 +2410,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -3088,7 +2432,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -3100,7 +2444,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -3197,12 +2541,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -3232,23 +2574,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "redis",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -3262,23 +2587,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "redis",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -3343,37 +2651,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "redis",
-        "BEXHOMA_REPLICAS": 0,
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "save-snapshot.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -3391,7 +2668,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -3413,7 +2690,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -3425,7 +2702,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -3522,12 +2799,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -3557,23 +2832,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "redis",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -3587,23 +2845,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "redis",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -3668,37 +2909,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "redis",
-        "BEXHOMA_REPLICAS": 0,
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "save-snapshot.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -3716,7 +2926,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -3738,7 +2948,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -3750,7 +2960,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -3847,12 +3057,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -3882,23 +3090,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "redis",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -3912,23 +3103,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "redis",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -3993,37 +3167,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "redis",
-        "BEXHOMA_REPLICAS": 0,
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "save-snapshot.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -4041,7 +3184,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -4063,7 +3206,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -4075,7 +3218,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -4172,12 +3315,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -4207,23 +3348,6 @@
      "YCSB_TARGET": 16384,
      "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "cassandra",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -4237,23 +3361,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "cassandra",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -4318,37 +3425,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "cassandra",
-        "BEXHOMA_REPLICAS": 0,
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "save-snapshot.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -4366,7 +3442,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -4388,7 +3464,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -4400,7 +3476,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
@@ -4497,12 +3573,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -4533,24 +3607,6 @@
      "YCSB_THREADCOUNT": 1,
      "YCSB_USE_HOSTLIST": "true",
      "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_USE_HOSTLIST": "true",
-     "YCSB_WORKLOAD": ""
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -4564,24 +3620,6 @@
      "YCSB_INSERTORDER": "hashed",
      "YCSB_MAX_EXECUTION": 0,
      "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_USE_HOSTLIST": "true",
-     "YCSB_WORKLOAD": ""
-    },
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "2",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 500000,
      "YCSB_ROWS": 1000000,
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
@@ -4648,38 +3686,6 @@
        "target": "sut",
        "template": "jobtemplate-benchmarking-ycsb.yml"
       }
-     ],
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_REPLICAS": 0,
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "2",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 500000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_USE_HOSTLIST": "true",
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "reset-ycsb.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
      ]
     ],
     "loader": [
@@ -4697,7 +3703,7 @@
        "YCSB_BATCHSIZE": "",
        "YCSB_INSERTORDER": "hashed",
        "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 500000,
+       "YCSB_OPERATIONS": 1000000,
        "YCSB_ROWS": 1000000,
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
@@ -4720,7 +3726,7 @@
    "load_durability_scripts": null,
    "loading_active": true,
    "loading_after_time": null,
-   "loading_deactivated": false,
+   "loading_deactivated": true,
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -4732,7 +3738,7 @@
     "YCSB_BATCHSIZE": "",
     "YCSB_INSERTORDER": "hashed",
     "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 500000,
+    "YCSB_OPERATIONS": 1000000,
     "YCSB_ROWS": 1000000,
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,

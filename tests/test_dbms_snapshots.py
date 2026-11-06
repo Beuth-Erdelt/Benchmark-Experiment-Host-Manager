@@ -49,9 +49,17 @@ SCRIPTS = ('hammerdb.py', 'tpch.py', 'tpcds.py', 'ssb.py', 'benchbase.py', 'ycsb
 #: exercise the sweep/loop parameters that the per-DBMS blocks consume.
 VARIANTS = {
     'default': [],
-    'clients': ['-ne', '1,2'],
     'ram-sweep': ['-rr', '16Gi,32Gi'],
+    'skip-loading': ['-sl'],
+    'workers': ['-nw', '2', '-nwr', '2', '-nws', '2'],
+    'loading': ['-nlp', '2', '-nlt', '4'],
+    'benchmarking': ['-nbp', '2', '-nbt', '4', '-ne', '1,2'],
+    'storage': ['-rst', 'shared', '-rss', '10Gi'],
+    'tenants': ['-mtn', '2', '-mtb', 'database', '-nlp', '2'],
 }
+
+#: (script, variant) pairs the script refuses by design (it exits with a usage error).
+UNSUPPORTED = {('ssb.py', 'tenants'), ('benchbase.py', 'tenants')}
 
 #: Attributes whose value changes from run to run (clock, temp folders, progress state).
 _VOLATILE = {'path', 'code', 'experiment_name', 'deployment_infos', 'current_benchmark_start',
@@ -163,6 +171,9 @@ class DbmsSnapshotTest(unittest.TestCase):
 def _add_tests():
     for script in SCRIPTS:
         for variant in VARIANTS:
+            if (script, variant) in UNSUPPORTED:
+                continue
+
             def test(self, script=script, variant=variant):
                 self.check(script, variant)
             setattr(DbmsSnapshotTest, f'test_{script[:-3]}_{variant.replace("-", "_")}', test)

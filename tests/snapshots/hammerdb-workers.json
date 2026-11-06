@@ -14,12 +14,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -40,17 +38,6 @@
      "HAMMERDB_TYPE": "postgresql",
      "HAMMERDB_VUSERS": 1,
      "SF": "1"
-    },
-    {
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "HAMMERDB_DURATION": "5",
-     "HAMMERDB_KEYANDTHINK": "false",
-     "HAMMERDB_NUM_VU": "2",
-     "HAMMERDB_RAMPUP": "2",
-     "HAMMERDB_TIMEPROFILE": "false",
-     "HAMMERDB_TYPE": "postgresql",
-     "HAMMERDB_VUSERS": 1,
-     "SF": "1"
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -59,17 +46,6 @@
      "HAMMERDB_DURATION": "5",
      "HAMMERDB_KEYANDTHINK": "false",
      "HAMMERDB_NUM_VU": "1",
-     "HAMMERDB_RAMPUP": "2",
-     "HAMMERDB_TIMEPROFILE": "false",
-     "HAMMERDB_TYPE": "postgresql",
-     "HAMMERDB_VUSERS": 1,
-     "SF": "1"
-    },
-    {
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "HAMMERDB_DURATION": "5",
-     "HAMMERDB_KEYANDTHINK": "false",
-     "HAMMERDB_NUM_VU": "2",
      "HAMMERDB_RAMPUP": "2",
      "HAMMERDB_TIMEPROFILE": "false",
      "HAMMERDB_TYPE": "postgresql",
@@ -112,31 +88,6 @@
         "HAMMERDB_DURATION": "5",
         "HAMMERDB_KEYANDTHINK": "false",
         "HAMMERDB_NUM_VU": "1",
-        "HAMMERDB_RAMPUP": "2",
-        "HAMMERDB_TIMEPROFILE": "false",
-        "HAMMERDB_TYPE": "postgresql",
-        "HAMMERDB_VUSERS": 1,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-tpcc.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-hammerdb.yml"
-      }
-     ],
-     [
-      {
-       "benchmarker": "hammerdb",
-       "fixed_parallelism": false,
-       "name": "hammerdb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "HAMMERDB_DURATION": "5",
-        "HAMMERDB_KEYANDTHINK": "false",
-        "HAMMERDB_NUM_VU": "2",
         "HAMMERDB_RAMPUP": "2",
         "HAMMERDB_TIMEPROFILE": "false",
         "HAMMERDB_TYPE": "postgresql",
@@ -278,12 +229,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -305,18 +254,6 @@
      "HAMMERDB_TYPE": "mysql",
      "HAMMERDB_VUSERS": 1,
      "SF": "1"
-    },
-    {
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "HAMMERDB_DURATION": "5",
-     "HAMMERDB_KEYANDTHINK": "false",
-     "HAMMERDB_MYSQL_ENGINE": "innodb",
-     "HAMMERDB_NUM_VU": "2",
-     "HAMMERDB_RAMPUP": "2",
-     "HAMMERDB_TIMEPROFILE": "false",
-     "HAMMERDB_TYPE": "mysql",
-     "HAMMERDB_VUSERS": 1,
-     "SF": "1"
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -326,18 +263,6 @@
      "HAMMERDB_KEYANDTHINK": "false",
      "HAMMERDB_MYSQL_ENGINE": "innodb",
      "HAMMERDB_NUM_VU": "1",
-     "HAMMERDB_RAMPUP": "2",
-     "HAMMERDB_TIMEPROFILE": "false",
-     "HAMMERDB_TYPE": "mysql",
-     "HAMMERDB_VUSERS": 1,
-     "SF": "1"
-    },
-    {
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "HAMMERDB_DURATION": "5",
-     "HAMMERDB_KEYANDTHINK": "false",
-     "HAMMERDB_MYSQL_ENGINE": "innodb",
-     "HAMMERDB_NUM_VU": "2",
      "HAMMERDB_RAMPUP": "2",
      "HAMMERDB_TIMEPROFILE": "false",
      "HAMMERDB_TYPE": "mysql",
@@ -381,33 +306,6 @@
         "HAMMERDB_KEYANDTHINK": "false",
         "HAMMERDB_MYSQL_ENGINE": "innodb",
         "HAMMERDB_NUM_VU": "1",
-        "HAMMERDB_RAMPUP": "2",
-        "HAMMERDB_TIMEPROFILE": "false",
-        "HAMMERDB_TYPE": "mysql",
-        "HAMMERDB_VUSERS": 1,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-tpcc.sql",
-        "reset-flush.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-hammerdb.yml"
-      }
-     ],
-     [
-      {
-       "benchmarker": "hammerdb",
-       "fixed_parallelism": false,
-       "name": "hammerdb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "HAMMERDB_DURATION": "5",
-        "HAMMERDB_KEYANDTHINK": "false",
-        "HAMMERDB_MYSQL_ENGINE": "innodb",
-        "HAMMERDB_NUM_VU": "2",
         "HAMMERDB_RAMPUP": "2",
         "HAMMERDB_TIMEPROFILE": "false",
         "HAMMERDB_TYPE": "mysql",
@@ -552,12 +450,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -579,18 +475,6 @@
      "HAMMERDB_TYPE": "mariadb",
      "HAMMERDB_VUSERS": 1,
      "SF": "1"
-    },
-    {
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "HAMMERDB_DURATION": "5",
-     "HAMMERDB_KEYANDTHINK": "false",
-     "HAMMERDB_MYSQL_ENGINE": "innodb",
-     "HAMMERDB_NUM_VU": "2",
-     "HAMMERDB_RAMPUP": "2",
-     "HAMMERDB_TIMEPROFILE": "false",
-     "HAMMERDB_TYPE": "mariadb",
-     "HAMMERDB_VUSERS": 1,
-     "SF": "1"
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -600,18 +484,6 @@
      "HAMMERDB_KEYANDTHINK": "false",
      "HAMMERDB_MYSQL_ENGINE": "innodb",
      "HAMMERDB_NUM_VU": "1",
-     "HAMMERDB_RAMPUP": "2",
-     "HAMMERDB_TIMEPROFILE": "false",
-     "HAMMERDB_TYPE": "mariadb",
-     "HAMMERDB_VUSERS": 1,
-     "SF": "1"
-    },
-    {
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "HAMMERDB_DURATION": "5",
-     "HAMMERDB_KEYANDTHINK": "false",
-     "HAMMERDB_MYSQL_ENGINE": "innodb",
-     "HAMMERDB_NUM_VU": "2",
      "HAMMERDB_RAMPUP": "2",
      "HAMMERDB_TIMEPROFILE": "false",
      "HAMMERDB_TYPE": "mariadb",
@@ -655,33 +527,6 @@
         "HAMMERDB_KEYANDTHINK": "false",
         "HAMMERDB_MYSQL_ENGINE": "innodb",
         "HAMMERDB_NUM_VU": "1",
-        "HAMMERDB_RAMPUP": "2",
-        "HAMMERDB_TIMEPROFILE": "false",
-        "HAMMERDB_TYPE": "mariadb",
-        "HAMMERDB_VUSERS": 1,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-tpcc.sql",
-        "reset-flush.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-hammerdb.yml"
-      }
-     ],
-     [
-      {
-       "benchmarker": "hammerdb",
-       "fixed_parallelism": false,
-       "name": "hammerdb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "HAMMERDB_DURATION": "5",
-        "HAMMERDB_KEYANDTHINK": "false",
-        "HAMMERDB_MYSQL_ENGINE": "innodb",
-        "HAMMERDB_NUM_VU": "2",
         "HAMMERDB_RAMPUP": "2",
         "HAMMERDB_TIMEPROFILE": "false",
         "HAMMERDB_TYPE": "mariadb",
@@ -828,12 +673,10 @@
    "are_worker_ready": false,
    "benchmark": null,
    "benchmark_list": [
-    1,
-    2
+    1
    ],
    "benchmark_list_template": [
-    1,
-    2
+    1
    ],
    "benchmarking_parameters": {
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -857,20 +700,6 @@
      "HAMMERDB_TYPE": "citus",
      "HAMMERDB_VUSERS": 1,
      "SF": "1"
-    },
-    {
-     "BEXHOMA_DATABASE": "postgres",
-     "BEXHOMA_PASSWORD": "password1234",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "BEXHOMA_USER": "postgres",
-     "HAMMERDB_DURATION": "5",
-     "HAMMERDB_KEYANDTHINK": "false",
-     "HAMMERDB_NUM_VU": "2",
-     "HAMMERDB_RAMPUP": "2",
-     "HAMMERDB_TIMEPROFILE": "false",
-     "HAMMERDB_TYPE": "citus",
-     "HAMMERDB_VUSERS": 1,
-     "SF": "1"
     }
    ],
    "benchmarking_parameters_list_template": [
@@ -882,20 +711,6 @@
      "HAMMERDB_DURATION": "5",
      "HAMMERDB_KEYANDTHINK": "false",
      "HAMMERDB_NUM_VU": "1",
-     "HAMMERDB_RAMPUP": "2",
-     "HAMMERDB_TIMEPROFILE": "false",
-     "HAMMERDB_TYPE": "citus",
-     "HAMMERDB_VUSERS": 1,
-     "SF": "1"
-    },
-    {
-     "BEXHOMA_DATABASE": "postgres",
-     "BEXHOMA_PASSWORD": "password1234",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "BEXHOMA_USER": "postgres",
-     "HAMMERDB_DURATION": "5",
-     "HAMMERDB_KEYANDTHINK": "false",
-     "HAMMERDB_NUM_VU": "2",
      "HAMMERDB_RAMPUP": "2",
      "HAMMERDB_TIMEPROFILE": "false",
      "HAMMERDB_TYPE": "citus",
@@ -922,9 +737,9 @@
    "docker": "Citus",
    "dockerimage": "",
    "eval_parameters": {
-    "BEXHOMA_REPLICAS": 0,
-    "BEXHOMA_SHARDS": 0,
-    "BEXHOMA_WORKERS": 0,
+    "BEXHOMA_REPLICAS": 2,
+    "BEXHOMA_SHARDS": 2,
+    "BEXHOMA_WORKERS": 2,
     "code": "<CODE>"
    },
    "experiment_dict": {
@@ -944,34 +759,6 @@
         "HAMMERDB_DURATION": "5",
         "HAMMERDB_KEYANDTHINK": "false",
         "HAMMERDB_NUM_VU": "1",
-        "HAMMERDB_RAMPUP": "2",
-        "HAMMERDB_TIMEPROFILE": "false",
-        "HAMMERDB_TYPE": "citus",
-        "HAMMERDB_VUSERS": 1,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-tpcc.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-hammerdb.yml"
-      }
-     ],
-     [
-      {
-       "benchmarker": "hammerdb",
-       "fixed_parallelism": false,
-       "name": "hammerdb",
-       "num_pods": 2,
-       "parallelism": 2,
-       "parameters": {
-        "BEXHOMA_DATABASE": "postgres",
-        "BEXHOMA_PASSWORD": "password1234",
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "BEXHOMA_USER": "postgres",
-        "HAMMERDB_DURATION": "5",
-        "HAMMERDB_KEYANDTHINK": "false",
-        "HAMMERDB_NUM_VU": "2",
         "HAMMERDB_RAMPUP": "2",
         "HAMMERDB_TIMEPROFILE": "false",
         "HAMMERDB_TYPE": "citus",
@@ -1048,7 +835,7 @@
    "num_loading": 1,
    "num_loading_pods": 1,
    "num_tenants": 0,
-   "num_worker": 0,
+   "num_worker": 2,
    "path_experiment_docker": "Citus",
    "prometheus_interval": "10s",
    "prometheus_timeout": "10s",
@@ -1086,8 +873,8 @@
    "sut_container_name": "dbms",
    "sut_has_pool": false,
    "sut_parameters": {
-    "BEXHOMA_REPLICAS": 0,
-    "BEXHOMA_SHARDS": 0
+    "BEXHOMA_REPLICAS": 2,
+    "BEXHOMA_SHARDS": 2
    },
    "sut_pod_name": "",
    "sut_role": "data",
