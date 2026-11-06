@@ -68,6 +68,51 @@ def init_containers_without_storage(init_containers: list) -> list:
     return [c for c in init_containers if c['name'] in INIT_CONTAINERS_WITHOUT_STORAGE]
 
 
+def blackbox_targets(application_monitoring: dict, tenant_per: str, num_tenants: int) -> str:
+    """
+    Return the blackbox probe targets of the application monitoring of a SUT.
+
+    One target for the database named by ``blackbox_database`` of the DBMS's
+    ``monitor`` entry in ``cluster.config``, plus one per tenant database
+    (``tenant_<i>``) of a SUT with a database per tenant.
+
+    :param application_monitoring: The DBMS's ``monitor.<component>`` entry (``blackbox_target``,
+        ``blackbox_database``).
+    :param tenant_per: ``'database'`` when every tenant has its own database.
+    :param num_tenants: Number of tenants.
+    :return: The targets as the Prometheus ``targets`` list items, one per line.
+    :rtype: str
+    """
+    blackbox_target = application_monitoring['blackbox_target']
+    targets = "\n          - " + blackbox_target.format(database=application_monitoring['blackbox_database']) + "\n"
+    if tenant_per == 'database' and num_tenants > 0:
+        connections = [
+            "          - " + blackbox_target.format(database=f'tenant_{i}')
+            for i in range(num_tenants)
+        ]
+        targets += "\n".join(connections)
+    return targets
+
+
+def initial_cluster_members(name: str, count: int, port: int, scheme: str = 'http') -> str:
+    """
+    Return the member list of a DBMS component that bootstraps as a cluster.
+
+    Each member is ``<name>-<i>=<scheme>://<name>-<i>.<name>:<port>`` (the stateful set's
+    pods behind its headless service of the same name), comma separated.
+
+    :param name: Name of the component's stateful set (and of its headless service).
+    :param count: Number of members.
+    :param port: Peer port of the members.
+    :param scheme: URL scheme of the peer address.
+    :return: The members, comma separated.
+    :rtype: str
+    """
+    return ",".join(
+        "{name}-{i}={scheme}://{name}-{i}.{name}:{port}".format(name=name, i=i, scheme=scheme, port=port)
+        for i in range(count))
+
+
 def sum_requested_resources(docs: list) -> dict:
     """Sum the requested CPU and RAM of the ``dbms`` containers of a SUT manifest.
 
@@ -269,15 +314,8 @@ scrape_configs:
                                             prometheus_timeout=cfg.prometheus_timeout)
                                     elif ('blackbox' in application_monitoring
                                           and application_monitoring['blackbox']):
-                                        blackbox_target = application_monitoring['blackbox_target']
-                                        app_monitor_targets = (
-                                            "\n          - " + blackbox_target.format(database='postgres') + "\n")
-                                        if cfg.tenant_per == 'database' and cfg.num_tenants > 0:
-                                            connections = [
-                                                "          - " + blackbox_target.format(database=f'tenant_{i}')
-                                                for i in range(cfg.num_tenants)
-                                            ]
-                                            app_monitor_targets += "\n".join(connections)
+                                        app_monitor_targets = blackbox_targets(
+                                            application_monitoring, cfg.tenant_per, cfg.num_tenants)
                                         prometheus_config += """
   - job_name: 'monitor-app'
     scrape_interval: {prometheus_interval}
@@ -869,20 +907,13 @@ scrape_configs:
                     name_store=name_store, worker_number=0, worker_service=name_store)
                 env['BEXHOMA_STORE_FIRST'] = store_full_name
             env['BEXHOMA_STORE_LIST'] = list_of_stores_as_string
-            if cfg.docker == "TiDB":
-                name_worker = cfg.get_worker_name(component='pd')
+            initial_cluster = cfg.dockertemplate.get('initial_cluster')
+            if initial_cluster:
+                name_worker = cfg.get_worker_name(component=initial_cluster['component'])
                 name_service_headless = name_worker
-                num_pd = cfg.get_num_worker(component='pd')
-                list_initial_cluster = []
-                for worker in range(num_pd):
-                    clusternode_full_name = (
-                        "{name_worker}-{worker_number}=http://{name_worker}-{worker_number}"
-                        ".{worker_service}:2380".format(
-                            name_worker=name_worker, worker_number=worker,
-                            worker_service=name_service_headless))
-                    list_initial_cluster.append(clusternode_full_name)
-                list_initial_cluster_as_string = ",".join(list_initial_cluster)
-                env['BEXHOMA_INITIAL_CLUSTER'] = list_initial_cluster_as_string
+                num_members = cfg.get_num_worker(component=initial_cluster['component'])
+                env[initial_cluster['env']] = initial_cluster_members(
+                    name_worker, num_members, initial_cluster['port'], initial_cluster.get('scheme', 'http'))
         for statefulset_name, statefulset in cfg.deployment_infos['statefulset'].items():
             name_worker = statefulset['name']
             name_service_headless = name_worker

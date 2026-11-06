@@ -47,10 +47,6 @@
  "bexhoma/configurations/benchmarking.py": {
   "Redis": 8
  },
- "bexhoma/configurations/lifecycle.py": {
-  "TiDB": 1,
-  "postgres": 1
- },
  "bexhoma/configurations/loading.py": {
   "Redis": 3
  },
