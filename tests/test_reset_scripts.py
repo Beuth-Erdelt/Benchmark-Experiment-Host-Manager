@@ -54,6 +54,8 @@ EXPECTED = {
         'CedarDB': ['reset-ycsb.sql'],
         'Dragonfly': ['save-snapshot.sh'],
         'Redis': ['save-snapshot.sh'],
+        'Valkey': ['save-snapshot.sh'],
+        'Garnet': ['save-snapshot.sh'],
         'Cassandra': ['save-snapshot.sh'],
     },
     'benchbase.py': {

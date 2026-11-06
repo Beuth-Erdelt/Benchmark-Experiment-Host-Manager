@@ -15,16 +15,110 @@ source ./scripts/testfunctions.sh
 
 
 
-################################################
-################## ClickHouse ##################
-################################################
+####################################################
+#### Main Example ##################################
+####################################################
 
 
-
-
-#### TPC-H ClickHouse (Example-ClickHouse.md)
+# Main example: TPC-H on ClickHouse, quick, without monitoring
 # -dbms ClickHouse              DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
+# -nc 1                         number of repeated runs per configuration (2nd run: data survives the SUT restart)
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -xdt                          also measure data transfer volume per query
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lc 16                        CPU limit for the SUT container
+# -rc 16                        CPU requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -ks no                        remove the SUT at the end
+bexhoma tpch \
+  -dbms ClickHouse \
+  -sf 1 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -xdt \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lc 16 \
+  -rc 16 \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ks no \
+  run &>$LOG_DIR/docs_tpch_clickhouse.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse  sf=1"
+
+
+####################################################
+#### Monitoring ####################################
+####################################################
+
+
+# Monitoring: TPC-H on ClickHouse at SF 10 with application metrics, at least 1 minute of benchmarking
+# -dbms ClickHouse              DBMS under test
+# -sf 10                        scaling factor (controls database size in GB)
+# -nc 1                         number of repeated runs per configuration (2nd run: data survives the SUT restart)
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -xqr 10                       repeat each query 10 times, so the benchmarking phase lasts long enough for monitoring
+# -nlp 8                        number of data loader pods
+# -xdt                          also measure data transfer volume per query
+# -m                            collect SUT resource metrics
+# -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lc 16                        CPU limit for the SUT container
+# -rc 16                        CPU requested for the SUT container
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -ks no                        remove the SUT at the end
+bexhoma tpch \
+  -dbms ClickHouse \
+  -sf 10 \
+  -nc 1 \
+  -ne 1 \
+  -xqr 10 \
+  -nlp 8 \
+  -xdt \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lc 16 \
+  -rc 16 \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ks no \
+  run &>$LOG_DIR/docs_tpch_clickhouse_monitoring.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse monitoring  sf=10"
+
+
+####################################################
+#### Persistent Storage ############################
+####################################################
+
+
+# Persistent storage: TPC-H on ClickHouse, the second run finds the data on the volume
+# -dbms ClickHouse              DBMS under test
+# -sf 10                         scaling factor (controls database size in GB)
 # -nc 2                         number of repeated runs per configuration (2nd run: data survives the SUT restart)
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
@@ -46,7 +140,7 @@ source ./scripts/testfunctions.sh
 # -ks no                        remove the SUT at the end
 bexhoma tpch \
   -dbms ClickHouse \
-  -sf 1 \
+  -sf 10 \
   -nc 2 \
   -ne 1 \
   -nlp 8 \
@@ -66,15 +160,20 @@ bexhoma tpch \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
-  run &>$LOG_DIR/docs_tpch_clickhouse_1.log
+  run &>$LOG_DIR/docs_tpch_clickhouse_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse  sf=1  nc=2"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse  sf=10  nc=2"
 
 
-#### TPC-H ClickHouseCluster (Example-ClickHouse.md)
+####################################################
+#### Variants ######################################
+####################################################
+
+
+# Variant cluster: TPC-H on ClickHouseCluster with 3 shards
 # -dbms ClickHouseCluster       DBMS under test
 # -nw 3                         number of worker nodes (shards)
-# -sf 1                         scaling factor (controls database size in GB)
+# -sf 10                         scaling factor (controls database size in GB)
 # -nc 2                         number of repeated runs per configuration (2nd run: data survives the SUT restart)
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
@@ -98,7 +197,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse  sf=1  nc=2"
 bexhoma tpch \
   -dbms ClickHouseCluster \
   -nw 3 \
-  -sf 1 \
+  -sf 10 \
   -nc 2 \
   -ne 1 \
   -nlp 8 \
@@ -119,14 +218,19 @@ bexhoma tpch \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
   -ks no \
-  run &>$LOG_DIR/docs_tpch_clickhouse_2.log
+  run &>$LOG_DIR/docs_tpch_clickhouse_cluster.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouseCluster  sf=1  nw=3  nc=2"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouseCluster  sf=10  nw=3  nc=2"
 
 
-#### TPC-DS ClickHouse (Example-ClickHouse.md)
+####################################################
+#### TPC-DS ########################################
+####################################################
+
+
+# TPC-DS on ClickHouse
 # -dbms ClickHouse              DBMS under test
-# -sf 1                         scaling factor (controls database size in GB)
+# -sf 3                         scaling factor (controls database size in GB)
 # -nc 1                         number of repeated runs per configuration
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
@@ -148,7 +252,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouseCluster  sf=1  nw=3  n
 # -ks no                        remove the SUT at the end
 bexhoma tpcds \
   -dbms ClickHouse \
-  -sf 1 \
+  -sf 3 \
   -nc 1 \
   -ne 1 \
   -nlp 8 \
@@ -168,15 +272,15 @@ bexhoma tpcds \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
-  run &>$LOG_DIR/docs_tpcds_clickhouse_1.log
+  run &>$LOG_DIR/docs_tpcds_clickhouse.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS ClickHouse  sf=1"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS ClickHouse  sf=3"
 
 
-#### TPC-DS ClickHouseCluster (Example-ClickHouse.md)
+# TPC-DS on ClickHouseCluster with 3 shards
 # -dbms ClickHouseCluster       DBMS under test
 # -nw 3                         number of worker nodes (shards)
-# -sf 1                         scaling factor (controls database size in GB)
+# -sf 3                         scaling factor (controls database size in GB)
 # -nc 1                         number of repeated runs per configuration
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
@@ -200,7 +304,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS ClickHouse  sf=1"
 bexhoma tpcds \
   -dbms ClickHouseCluster \
   -nw 3 \
-  -sf 1 \
+  -sf 3 \
   -nc 1 \
   -ne 1 \
   -nlp 8 \
@@ -221,9 +325,9 @@ bexhoma tpcds \
   -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
   -ks no \
-  run &>$LOG_DIR/docs_tpcds_clickhouse_2.log
+  run &>$LOG_DIR/docs_tpcds_clickhouse_cluster.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS ClickHouseCluster  sf=1  nw=3"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS ClickHouseCluster  sf=3  nw=3"
 
 
 ###########################################

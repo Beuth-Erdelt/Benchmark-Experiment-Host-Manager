@@ -3,14 +3,14 @@
 ### Workload
 HammerDB Workload SF=4 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 1039s 
-* Code: 1792619707
+* Duration: 537s 
+* Code: 1793798712
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 4. Benchmarking runs for 2 minutes. Ramp-up period is 2 minutes before measurements begin.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.7.
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -26,15 +26,15 @@ HammerDB Workload SF=4 (warehouses for TPC-C)
 
 ### Connections
 * postgresql-1-1-1-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:908243
-  * datadisk:885
+  * disk:796085
+  * datadisk:878
   * volume_size:1.8T
-  * volume_used:887G
+  * volume_used:778G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -43,10 +43,10 @@ HammerDB Workload SF=4 (warehouses for TPC-C)
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792619707
+    * code:1793798712
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1792619707-66fb748cdc-wdbv4: 0
+* bexhoma-sut-postgresql-1-1793798712-7ff4bdf8c4-bhhgx: 0
 
 ### Workflow
 
@@ -64,7 +64,7 @@ HammerDB Workload SF=4 (warehouses for TPC-C)
 
 |                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    4 |       44.00 |           7.00 |            0.00 |         28.00 |            9.00 |              1 |           4 |             | None           |             0 | False         |              327.27 | False               |
+| PostgreSQL-1-1 |                1 |    4 |       35.00 |           3.00 |            0.00 |         28.00 |            4.00 |              1 |           4 |             | None           |             0 | False         |              411.43 | False               |
 
 ### Benchmarking
 
@@ -72,17 +72,20 @@ HammerDB Workload SF=4 (warehouses for TPC-C)
 
 | DBMS                 | phase            | job                |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        4 |        1 |               1 |       1 | 106118 | 244330 |         0.00 |          2 |        0 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        4 |        1 |               1 |       1 | 100893 | 232193 |         0.00 |          2 |        0 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   efficiency |      NOPM |       TPM |   duration |   errors |
 |:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-------------:|----------:|----------:|-----------:|---------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        4 |        1 |               1 |           1 |         0.00 | 106118.00 | 244330.00 |          2 |        0 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        4 |        1 |               1 |           1 |         0.00 | 100893.00 | 232193.00 |          2 |        0 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: NOPM contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey))
 * TEST passed: Workflow as planned

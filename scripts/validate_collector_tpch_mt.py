@@ -36,9 +36,9 @@ def _code_from_log(filename):
     return None
 
 codes = [c for c in [
-    _code_from_log("doc_tpch_testcase_collector_tenants_schema.log"),
-    _code_from_log("doc_tpch_testcase_collector_tenants_database.log"),
-    _code_from_log("doc_tpch_testcase_collector_tenants_container.log"),
+    _code_from_log("docs_tpch_postgresql_collector_tenants_schema.log"),
+    _code_from_log("docs_tpch_postgresql_collector_tenants_database.log"),
+    _code_from_log("docs_tpch_postgresql_collector_tenants_container.log"),
 ] if c is not None]
 if not codes:
     print("ERROR: no experiment codes found in logs_tests/ — run test-docs-collector first.", file=sys.stderr)

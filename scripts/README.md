@@ -72,7 +72,7 @@ these are also the defaults used by `test-docs-collector.ps1` / `test-docs-colle
 
 **Log file naming:** `logs_tests/doc_<benchmark>_<topic>[_N].log` — e.g. for
 `test-docs-collector.ps1` / `.sh`, which additionally produce multi-tenant
-variants: `doc_<benchmark>_testcase_collector[_tenants_<isolation>][_N].log`.
+variants: `docs_<benchmark>_postgresql_collector[_tenants_<isolation>][_N].log`.
 
 **Comment style in `.sh`:** a heading comment block immediately before each `bexhoma` call
 lists every parameter of that call, one `# -flag value   description` line per flag, in the

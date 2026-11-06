@@ -52,7 +52,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService ingestion  sf=1  nbp=1"
 
@@ -80,7 +80,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice_monitoring.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService execution skip-load  sf=1  nbp=1"
 
@@ -122,7 +122,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice_storage.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService storage  sf=5  nbp=1"
 
@@ -160,7 +160,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_databaseservice_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_databaseservice.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DatabaseService  sf=16  nbp=1,2"
 
@@ -179,7 +179,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_databaseservice_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_databaseservice_execution.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
 
@@ -203,7 +203,7 @@ kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 Start-Sleep -Seconds 10
 
 
-#### TCP-H Monitoring (Example-CloudDatabase.md) — no PVC
+#### TPC-H Monitoring (Example-CloudDatabase.md) — no PVC
 bexhoma tpch `
   -dbms DatabaseService         <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
@@ -212,7 +212,7 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -221,12 +221,12 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_1.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService  sf=3"
 
 
-#### TCP-H Monitoring (Example-TPC-H.md) — no PVC, skip loading
+#### TPC-H Monitoring (Example-CloudDatabase.md) — no PVC, skip loading
 bexhoma tpch `
   -dbms DatabaseService         <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
@@ -235,7 +235,7 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -245,7 +245,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_2.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_execution.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService skip-load  sf=3"
 
@@ -262,7 +262,7 @@ kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 Start-Sleep -Seconds 10
 
 
-#### TCP-H Monitoring (Example-TPC-H.md) — with PVC, ingestion
+#### TPC-H Monitoring (Example-CloudDatabase.md) — with PVC, ingestion
 bexhoma tpch `
   -dbms DatabaseService         <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
@@ -271,7 +271,7 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -283,12 +283,12 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_3.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_storage.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService PVC ingestion  sf=3"
 
 
-#### TCP-H Monitoring (Example-TPC-H.md) — with PVC, execution only
+#### TPC-H Monitoring (Example-CloudDatabase.md) — with PVC, execution only
 bexhoma tpch `
   -dbms DatabaseService         <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
@@ -297,7 +297,7 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -308,7 +308,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_4.log" -Encoding utf8
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_storage_execution.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService PVC execution  sf=3"
 

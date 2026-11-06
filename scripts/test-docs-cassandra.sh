@@ -15,11 +15,11 @@ source ./scripts/testfunctions.sh
 
 
 ####################################################
-################## YCSB Cassandra ##################
+#### Main Example ##################################
 ####################################################
 
 
-# Single host Cassandra
+# Main example: single host Cassandra, quick, without monitoring
 # -dbms Cassandra               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
@@ -32,10 +32,7 @@ source ./scripts/testfunctions.sh
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
-# -xop 5                        number of operations for the benchmark phase (in millions), longer than the scrape interval
-# -m                            collect SUT resource metrics
-# -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -tr                           verify result meets basic sanity requirements
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
@@ -57,10 +54,7 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 128 \
-  -xop 5 \
-  -m \
-  -ma \
-  -mc \
+  -xop 1 \
   -tr \
   -ar \
   -lr 16Gi \
@@ -69,14 +63,19 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_cassandra_1.log
+  run &>$LOG_DIR/docs_ycsb_cassandra.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single  sf=1  nbp=1"
 
 
-# Cluster of 3 Cassandra nodes
+####################################################
+#### Monitoring ####################################
+####################################################
+
+
+# Monitoring: single host Cassandra with application metrics, at least 1 minute of benchmarking
 # -dbms Cassandra               DBMS under test
-# -sf 1                         scaling factor (number of records in millions)
+# -sf 3                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       benchmarking throughput target as a multiple of the base ops/s
@@ -87,8 +86,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single  sf=1  nbp=1"
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
-# -nw 3                         number of worker nodes
-# -xop 5                        number of operations for the benchmark phase (in millions), longer than the scrape interval
+# -xop 10                       number of operations for the benchmark phase (in millions), longer than the scrape interval
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
@@ -97,12 +95,12 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single  sf=1  nbp=1"
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
-# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma ycsb \
   -dbms Cassandra \
-  -sf 1 \
+  -sf 3 \
   -xwl a \
   -xtb 16384 \
   -xnbf 4 \
@@ -113,8 +111,7 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 128 \
-  -nw 3 \
-  -xop 5 \
+  -xop 10 \
   -m \
   -ma \
   -mc \
@@ -123,74 +120,20 @@ bexhoma ycsb \
   -lr 16Gi \
   -rr 16Gi \
   -rss 50Gi \
-  -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_cassandra_2.log
+  run &>$LOG_DIR/docs_ycsb_cassandra_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3  sf=1  nbp=1"
-
-
-# Cluster of 3 Cassandra nodes and replication factor 3
-# -dbms Cassandra               DBMS under test
-# -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
-# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
-# -xnbf 4                       benchmarking throughput target as a multiple of the base ops/s
-# -xnlf 12                      loading throughput target as a multiple of the base ops/s
-# -nc 1                         number of repeated runs per configuration
-# -ne 1                         parallel client counts to sweep (comma-separated)
-# -nlp 8                        number of data loader pods
-# -nlt 64                       threads per loader pod
-# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
-# -nbt 128                      threads per benchmarking pod
-# -nw 3                         number of worker nodes
-# -nwr 3                        replication factor of the keyspace
-# -xop 5                        number of operations for the benchmark phase (in millions), longer than the scrape interval
-# -m                            collect SUT resource metrics
-# -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
-# -ar                           flush and wait for compactions before each benchmarking round
-# -lr 16Gi                      RAM limit for the SUT container
-# -rr 16Gi                      RAM requested for the SUT container
-# -rss 50Gi                     size of the persistent volume claim
-# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
-# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
-# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-bexhoma ycsb \
-  -dbms Cassandra \
-  -sf 1 \
-  -xwl a \
-  -xtb 16384 \
-  -xnbf 4 \
-  -xnlf 12 \
-  -nc 1 \
-  -ne 1 \
-  -nlp 8 \
-  -nlt 64 \
-  -nbp 1 \
-  -nbt 128 \
-  -nw 3 \
-  -nwr 3 \
-  -xop 5 \
-  -m \
-  -ma \
-  -mc \
-  -tr \
-  -ar \
-  -lr 16Gi \
-  -rr 16Gi \
-  -rss 50Gi \
-  -rnw $BEXHOMA_NODES_WORKER \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_cassandra_3.log
-
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3 replication 3  sf=1  nbp=1"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single monitoring  sf=3  nbp=1"
 
 
-# Single host Cassandra with PVC
+####################################################
+#### Persistent Storage ############################
+####################################################
+
+
+# Persistent storage: single host Cassandra
 # -dbms Cassandra               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
@@ -244,12 +187,133 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_cassandra_4.log
+  run &>$LOG_DIR/docs_ycsb_cassandra_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single PVC  sf=1  nbp=1  nc=2"
 
 
-# Cluster of 3 Cassandra nodes, replication factor 3 and PVC
+####################################################
+#### Variants ######################################
+####################################################
+
+
+# Variant cluster: 3 Cassandra nodes
+# -dbms Cassandra               DBMS under test
+# -sf 1                         scaling factor (number of records in millions)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 4                       benchmarking throughput target as a multiple of the base ops/s
+# -xnlf 12                      loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 128                      threads per benchmarking pod
+# -nw 3                         number of worker nodes
+# -xop 5                        number of operations for the benchmark phase (in millions), longer than the scrape interval
+# -m                            collect SUT resource metrics
+# -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
+# -tr                           verify result meets basic sanity requirements
+# -ar                           flush and wait for compactions before each benchmarking round
+# -lr 16Gi                      RAM limit for the SUT container
+# -rr 16Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ycsb \
+  -dbms Cassandra \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 128 \
+  -nw 3 \
+  -xop 5 \
+  -m \
+  -ma \
+  -mc \
+  -tr \
+  -ar \
+  -lr 16Gi \
+  -rr 16Gi \
+  -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ycsb_cassandra_cluster.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3  sf=1  nbp=1"
+
+
+# Variant replication: 3 Cassandra nodes and replication factor 3
+# -dbms Cassandra               DBMS under test
+# -sf 1                         scaling factor (number of records in millions)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 4                       benchmarking throughput target as a multiple of the base ops/s
+# -xnlf 12                      loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 128                      threads per benchmarking pod
+# -nw 3                         number of worker nodes
+# -nwr 3                        replication factor of the keyspace
+# -xop 5                        number of operations for the benchmark phase (in millions), longer than the scrape interval
+# -m                            collect SUT resource metrics
+# -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
+# -tr                           verify result meets basic sanity requirements
+# -ar                           flush and wait for compactions before each benchmarking round
+# -lr 16Gi                      RAM limit for the SUT container
+# -rr 16Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ycsb \
+  -dbms Cassandra \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 12 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 128 \
+  -nw 3 \
+  -nwr 3 \
+  -xop 5 \
+  -m \
+  -ma \
+  -mc \
+  -tr \
+  -ar \
+  -lr 16Gi \
+  -rr 16Gi \
+  -rss 50Gi \
+  -rnw $BEXHOMA_NODES_WORKER \
+  -rnl $BEXHOMA_NODE_LOAD \
+  -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ycsb_cassandra_replica.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3 replication 3  sf=1  nbp=1"
+
+
+# Variant replication: 3 Cassandra nodes, replication factor 3 and persistent storage
 # -dbms Cassandra               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
@@ -307,10 +371,9 @@ bexhoma ycsb \
   -rnw $BEXHOMA_NODES_WORKER \
   -rnl $BEXHOMA_NODE_LOAD \
   -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_cassandra_5.log
+  run &>$LOG_DIR/docs_ycsb_cassandra_replica_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3 replication 3 PVC  sf=1  nbp=1  nc=2"
-
 
 
 ###########################################

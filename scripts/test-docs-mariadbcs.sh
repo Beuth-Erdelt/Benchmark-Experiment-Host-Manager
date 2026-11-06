@@ -14,7 +14,82 @@
 source ./scripts/testfunctions.sh
 
 
-#### TPC-H next to MariaDB, the result sets of both are stored per connection
+
+
+####################################################
+#### Main Example ##################################
+####################################################
+
+
+# Main example: TPC-H on MariaDB ColumnStore, quick, without monitoring
+# -dbms MariaDBCS               DBMS under test
+# -sf 1                         scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods (MariaDBCS always uses 1)
+# -xis                          run ANALYZE after data load
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 16Gi                      RAM limit for the SUT container
+# -rr 16Gi                      RAM requested for the SUT container
+# -nc 1                         two runs, the second restarts the SUT on the same data
+# -ks no                        remove the SUT at the end
+bexhoma tpch \
+  -dbms MariaDBCS \
+  -sf 1 \
+  -nlp 8 \
+  -xis \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 16Gi \
+  -rr 16Gi \
+  -nc 1 \
+  -ks no \
+  run &>$LOG_DIR/docs_tpch_mariadbcs.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDBCS  sf=1"
+
+
+####################################################
+#### Monitoring ####################################
+####################################################
+
+
+# Monitoring: TPC-H on MariaDB ColumnStore at SF 10, at least 1 minute of benchmarking
+# -dbms MariaDBCS               DBMS under test
+# -sf 10                        scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods (MariaDBCS always uses 1)
+# -xis                          run ANALYZE after data load
+# -m                           collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -nc 1                         two runs, the second restarts the SUT on the same data
+# -ks no                        remove the SUT at the end
+bexhoma tpch \
+  -dbms MariaDBCS \
+  -sf 10 \
+  -nlp 8 \
+  -xis \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -nc 1 \
+  -ks no \
+  run &>$LOG_DIR/docs_tpch_mariadbcs_monitoring.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDBCS monitoring  sf=10"
+
+
+####################################################
+#### Persistent Storage ############################
+####################################################
+
+
+# Persistent storage: TPC-H next to MariaDB, the result sets of both are stored per connection
 # -dbms MariaDB MariaDBCS       DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
 # -nlp 8                        number of data loader pods (MariaDBCS always uses 1)
@@ -52,12 +127,17 @@ bexhoma tpch \
   -nc 2 \
   -ar \
   -ks no \
-  run &>$LOG_DIR/docs_tpch_mariadbcs_1.log
+  run &>$LOG_DIR/docs_tpch_mariadbcs_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB MariaDBCS  sf=1"
 
 
-#### TPC-DS next to MariaDB; the test SQL warnings fails on Q39, which has columns of the same name
+####################################################
+#### TPC-DS ########################################
+####################################################
+
+
+# TPC-DS next to MariaDB; the test SQL warnings fails on Q39, which has columns of the same name
 bexhoma tpcds \
   -dbms MariaDB MariaDBCS \
   -sf 1 \
@@ -76,12 +156,17 @@ bexhoma tpcds \
   -nc 2 \
   -ar \
   -ks no \
-  run &>$LOG_DIR/docs_tpcds_mariadbcs_1.log
+  run &>$LOG_DIR/docs_tpcds_mariadbcs.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDBCS  sf=1"
 
 
-#### SSB star schema
+####################################################
+#### SSB ###########################################
+####################################################
+
+
+# SSB star schema
 bexhoma ssb \
   -dbms MariaDBCS \
   -sf 1 \
@@ -97,12 +182,12 @@ bexhoma ssb \
   -nc 2 \
   -ar \
   -ks no \
-  run &>$LOG_DIR/docs_ssb_mariadbcs_1.log
+  run &>$LOG_DIR/docs_ssb_mariadbcs.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDBCS  sf=1"
 
 
-#### SSB flat schema
+# SSB flat schema
 # -xsv flat                     one denormalized table lineorder_flat
 bexhoma ssb \
   -dbms MariaDBCS \
@@ -120,9 +205,47 @@ bexhoma ssb \
   -nc 2 \
   -ar \
   -ks no \
-  run &>$LOG_DIR/docs_ssb_mariadbcs_2.log
+  run &>$LOG_DIR/docs_ssb_mariadbcs_flat.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDBCS flat  sf=1"
+
+
+#### TPC-H Refresh Stream (Example-TPC-H.md)
+# TPC-H with a refresh stream on MariaDBCS: 3 query streams and one RF1/RF2 stream in parallel
+# -dbms MariaDBCS               DBMS under test
+# -sf 1                         scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -ne 3                         parallel query streams
+# -xrs 3                        refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnn/-rnl/-rnb $BEXHOMA_NODE_*      schedule SUT, loader and benchmarker pods on these nodes
+bexhoma tpch \
+  -dbms MariaDBCS \
+  -sf 1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii \
+  -xic \
+  -xis \
+  -ne 3 \
+  -xrs 3 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_tpch_mariadbcs_refresh.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDBCS refresh  sf=1  ne=3"
 
 
 ###########################################

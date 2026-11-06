@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1792330119
-Experiment                    : starts at 2026-10-18 15:28:43.586839 (314079.0391016)
+Experiment                    : has code 1793911053
+Experiment                    : starts at 2026-11-05 21:37:34.781831 (134246.6339082)
 Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
 TPC-DS (SF=3) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q99.
@@ -11,13 +11,14 @@ All instances use the same query parameters.
 Timeout per query is 1200.
 Data transfer volume per query is also measured.
 Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.11.6.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.12.
 System metrics are monitored by a cluster-wide installation.
 Application metrics are monitored by sidecar containers.
 Experiment is limited to DBMS ['MySQL'].
 Import is handled by 2 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
 SUT is fixed to cl-worker36.
 Database uses ephemeral storage of size 50Gi.
 Loading is tested with [8] threads, split into [2] pods.
@@ -26,158 +27,356 @@ Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Maximum DBMS across the whole cluster is 10.
 Results are validated against basic correctness requirements.
-Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
-SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size', 'target': 'container'}, '32G')].
+SUT requests 4 CPU and 128Gi RAM. RAM limit is 128Gi.
 Cluster monitoring            : is running
 MySQL-1                       : will start now
 MySQL-1                       : deployments ['sut']
 MySQL-1                       : stateful sets []
 MySQL-1                       : pvcs ['sut']
-MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1792330119
-MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1792330119
-MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1792330119
+MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1793911053
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1793911053
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1793911053
 MySQL-1                       : updated deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size = 32G
+Loop pass                     : took 2.9s (1 kubectl calls 0.6s, 10 API requests 0.4s)
 - waiting 30s -               : done
 MySQL-1                       : waits for monitoring
 MySQL-1                       : wants to monitor all components in cluster
 MySQL-1                       : starts monitoring with prometheus pod
 MySQL-1                       : need application monitoring for sut
+Loop pass                     : took 2.0s (2 kubectl calls 1.0s, 14 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-10-18 13:33:44 (that is in 120 secs)
+MySQL-1                       : will start loading but not before 2026-11-05 20:42:14 (that is in 120 secs)
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-10-18 13:33:44
+MySQL-1                       : will start loading but not before 2026-11-05 20:42:14
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-10-18 13:33:44
+MySQL-1                       : will start loading but not before 2026-11-05 20:42:14
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 15 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1792330119-55cdfb74c9-sgm7c to load scripts
+MySQL-1                       : will start loading but not before 2026-11-05 20:42:14
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1793911053-6b6866bc95-dqnnq to load scripts
 MySQL-1                       : start asynch loading scripts of type schema
+MySQL-1                       : waits for the Schema scripts (schema=True) before starting the loading jobs
+MySQL-1                       : Schema scripts done after 4s
 MySQL-1                       : is loading
+Loop pass                     : took 14.2s (8 kubectl calls 4.7s, 36 API requests 2.9s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 22 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 2.8s (3 kubectl calls 1.5s, 23 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 21 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 21 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 21 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 21 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 21 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 21 API requests 0.9s)
 - waiting 30s -               : done
 MySQL-1                       : showing loader times (tpcds-loader)
-MySQL-1                       : generator times (start/end per pod and container) [(1792330471, 1792330471), (1792330471, 1792330471)]
-MySQL-1                       : loader times (start/end per pod and container) [(1792330476, 1792330652), (1792330475, 1792330515)]
-MySQL-1                       : total times (start/end per pod and container) [(1792330471, 1792330471), (1792330471, 1792330471), (1792330476, 1792330652), (1792330475, 1792330515)]
-MySQL-1                       : generator timespan (first to last [s]) = 0
-MySQL-1                       : loader timespan (first to last [s]) = 177
-MySQL-1                       : total timespan (first to last [s]) = 181
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1792330119-55cdfb74c9-sgm7c to load scripts
+MySQL-1                       : generator times (start/end per pod and container) [(1793911361, 1793911361), (1793911360, 1793911360)]
+MySQL-1                       : loader times (start/end per pod and container) [(1793911363, 1793911647), (1793911364, 1793911406)]
+MySQL-1                       : total times (start/end per pod and container) [(1793911361, 1793911361), (1793911360, 1793911360), (1793911363, 1793911647), (1793911364, 1793911406)]
+MySQL-1                       : generator timespan (first to last [s]) = 1
+MySQL-1                       : loader timespan (first to last [s]) = 284
+MySQL-1                       : total timespan (first to last [s]) = 287
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1793911053-6b6866bc95-dqnnq to load scripts
 MySQL-1                       : start asynch loading scripts of type index
 MySQL-1                       : is loading
+Loop pass                     : took 18.5s (20 kubectl calls 12.7s, 30 API requests 1.4s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 14 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 14 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 14 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 14 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 14 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 14 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 14 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 14 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 14 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 14 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
-- waiting 30s -               : done
-MySQL-1                       : is loading
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 14 API requests 0.5s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1792330119 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1793911053 initialized to 1.
 MySQL-1                       : benchmarks done 0 of 1. This will be client 1
 mysql-1-1-1-1                 : start benchmarking (benchmark_run=1)
 mysql-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
 MySQL-1                       : need application metrics for sut
 MySQL-1                       : load application metrics of type mysql
-MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1792330119
-MySQL-1                       : submitted benchmarker job in 87.4s
+MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1793911053
+MySQL-1                       : submitted benchmarker job in 13.4s (4 kubectl calls 2.5s, 24 API requests 2.3s)
 mysql-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
 mysql-1-1-1-1                 : collecting loading metrics of SUT at connection mysql-1-1-1-1
 mysql-1-1-1-1                 : collecting metrics of data generator at connection mysql-1-1-1-1
 mysql-1-1-1-1                 : collecting metrics of data injector at connection mysql-1-1-1-1
-mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1792330119(.*)", pod=~"(.*)mysql-1-1792330119(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1792330119(.*)", pod=~"(.*)mysql-1-1792330119(.*)", container="datagenerator"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1792330119(.*)", pod=~"(.*)mysql-1-1792330119(.*)", container="sensor"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-1-1-1                 : WARNING metric missing for loader: CPU Throttling Rate [s/s]
-mysql-1-1-1-1                 : WARNING metric missing for loader: CPU Throttled Time [s]
-mysql-1-1-1-1                 : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
-mysql-1-1-1-1                 : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1793911053(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1793911053(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mysql-1-1793911053-1-.+", namespace="perdelt", container="datagenerator"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mysql-1-1793911053-1-.+", namespace="perdelt", container="datagenerator"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mysql-1-1793911053-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mysql-1-1793911053-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
 mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU Throttled Time [s]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU System Time [s]
 mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU Utilization Time [s]
 mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU User Time [s]
-mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU System Time [s]
-mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU Throttled Time [s]
-mysql-1-1-1-1                 : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
 mysql-1-1-1-1                 : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+mysql-1-1-1-1                 : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+mysql-1-1-1-1                 : WARNING metric missing for loader: CPU Throttled Time [s]
 mysql-1-1-1-1                 : WARNING metric missing for loading: CPU Throttling Rate [s/s]
 mysql-1-1-1-1                 : WARNING metric missing for loading: CPU Throttled Time [s]
-Experiment                    : fetched 3 metric sets in 12s (3 at once, 0 repeated, 0 follow-up actions)
+Experiment                    : fetched 3 metric sets in 9s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 23.4s, 0 API requests 0.0s)
+Loop pass                     : took 24.7s (11 kubectl calls 26.8s, 48 API requests 3.6s)
 - waiting 30s -               : done
-mysql-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1792330119/mysql-1-1-1-1.config
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 24 API requests 1.1s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 4.6s (0 kubectl calls 0.0s, 22 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 22 API requests 1.1s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 22 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 4.6s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 22 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 22 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 4.6s (0 kubectl calls 0.0s, 22 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 22 API requests 1.1s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 22 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 5.8s (0 kubectl calls 0.0s, 22 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 22 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 22 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 4.7s (0 kubectl calls 0.0s, 22 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 22 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 22 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 22 API requests 1.2s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 22 API requests 1.2s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 22 API requests 1.1s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 1.1s)
+- waiting 30s -               : done
+mysql-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1793911053/mysql-1-1-1-1.config
 mysql-1-1-1-1                 : showing benchmarker times
-mysql-1-1-1-1                 : benchmarker timespan job from 1792331434 to 1792331521
-mysql-1-1-1-1                 : benchmarker timespan pods from 1792331440 to 1792331440
-mysql-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 0
-mysql-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1792331440, 1792331440)]
-mysql-1-1-1-1                 : found and updated times {'benchmarker': [(1792331440, 1792331440)]}
+mysql-1-1-1-1                 : benchmarker timespan job from 1793912066 to 1793913788
+mysql-1-1-1-1                 : benchmarker timespan pods from 1793912084 to 1793913776
+mysql-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 1692
+mysql-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1793912084, 1793913776)]
+mysql-1-1-1-1                 : found and updated times {'benchmarker': [(1793912084, 1793913776)]}
 mysql-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
 mysql-1-1-1-1                 : collecting execution metrics of SUT at connection mysql-1-1-1-1
 mysql-1-1-1-1                 : collecting metrics of benchmarker at connection mysql-1-1-1-1
-mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1792330119(.*)", pod=~"(.*)mysql-1-1792330119(.*)", container="dbms"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1792330119(.*)", pod=~"(.*)mysql-1-1792330119(.*)", container="dbmsbenchmarker"}) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-1-1-1                 : WARNING metric missing for benchmarker: CPU Utilization [CPUs]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarker: Memory Usage, Working Set [MiB]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarker: Memory Usage incl. Page Cache [MiB]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarker: CPU Utilization Time [s]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarker: CPU User Time [s]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarker: CPU System Time [s]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1793911053(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1793911053(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1793911053-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1793911053-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mysql-1-1-1-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 mysql-1-1-1-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: Connection Usage Ratio [0..1]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: Average Redo Log Bytes per fsync [B]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: InnoDB Buffer Pool Wait Free [count]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: InnoDB Max Dirty Pages [%]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: InnoDB Max Dirty Pages Low Watermark [%]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: InnoDB Buffer Pool Bytes Data [B]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: InnoDB Redo Log Flushed to Disk [B]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: Ratio of Dirty Pages in Buffer Pool [%]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: Threads Running
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: Open Files Usage Ratio [0..1]
-Experiment                    : fetched 2 metric sets in 11s (2 at once, 0 repeated, 0 follow-up actions)
-- waiting 30s -               : done
+Experiment                    : fetched 2 metric sets in 7s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 11.2s, 0 API requests 0.0s)
+Loop pass                     : took 19.2s (9 kubectl calls 17.3s, 28 API requests 1.2s)
 MySQL-1                       : can be stopped
-MySQL-1                       : had 1 (dbms=1, monitor-application=0) restarts at worker bexhoma-sut-mysql-1-1792330119-55cdfb74c9-sgm7c
-Experiment                    : ends at 2026-10-18 15:53:43.680068 (315579.1269306) - 1500.09s total
+MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1793911053-6b6866bc95-dqnnq
+Loop pass                     : took 10.2s (5 kubectl calls 2.4s, 37 API requests 1.4s)
+Experiment                    : ends at 2026-11-05 22:23:31.587078 (137003.4541764) - 2756.82s total
 Experiment                    : join results...done!
+bexhoma : C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\benchmarks\base.py:735: 
+PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, 
+which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a 
+de-fragmented frame, use `newframe = frame.copy()`
+In C:\Users\Patrick\AppData\Local\Temp\claude\c--Users-Patrick-eclipse-workspace-Benchmark-Experiment-Host-Manager\9113
+4c7f-b6e2-48e3-a81b-1c6e59515939\scratchpad\r_a.ps1:4 Zeichen:1
++ bexhoma tpcds `
++ ~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\Patric...= frame.copy()`:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  df_matrix['complete'] = complete.map({True: 'yes', False: 'no'})
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
@@ -189,8 +388,8 @@ Result workflow complete
 ### Workload
 TPC-DS Queries SF=3
 * Type: tpcds
-* Duration: 1501s 
-* Code: 1792330119
+* Duration: 2757s 
+* Code: 1793911053
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=3) data is loaded and benchmark is executed.
@@ -199,13 +398,14 @@ TPC-DS Queries SF=3
   * Timeout per query is 1200.
   * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.11.6.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 2 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
   * SUT is fixed to cl-worker36.
   * Database uses ephemeral storage of size 50Gi.
   * Loading is tested with [8] threads, split into [2] pods.
@@ -214,31 +414,32 @@ TPC-DS Queries SF=3
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
   * Results are validated against basic correctness requirements.
-  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size'}, '32G')].
-  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size', 'target': 'container'}, '32G')].
+  * SUT requests 4 CPU and 128Gi RAM. RAM limit is 128Gi.
 
 ### Connections
 * mysql-1-1-1-1-1 uses docker image mysql:9.7.2
-  * RAM:2164173172736
+  * RAM:2164173156352
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:898804
+  * disk:925747
+  * datadisk:44923
   * volume_size:1.8T
-  * volume_used:878G
+  * volume_used:905G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--innodb-flush-log-at-trx-commit=2', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--innodb-doublewrite=0', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
-  * requests_memory:64Gi
-  * limits_memory:64Gi
-  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1792330119
+    * code:1793911053
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1792330119-55cdfb74c9-sgm7c: 1 (dbms=1, monitor-application=0)
-  * dbms: OOMKilled (exit 137) at Sun, 18 Oct 2026 15:48:32 +0200; data on a mounted volume
+* bexhoma-sut-mysql-1-1793911053-6b6866bc95-dqnnq: 0
 
 ### Workflow
 
@@ -256,32 +457,132 @@ TPC-DS Queries SF=3
 
 |           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MySQL-1-1 |                1 |    3 |      753.00 |           6.00 |            0.00 |        177.00 |          566.00 |              2 |           0 |             | None           |             0 | False         |               14.34 | False               |
+| MySQL-1-1 |                1 |    3 |      635.00 |           2.00 |            1.00 |        284.00 |          346.00 |              2 |           0 |             | None           |             0 | False         |               17.01 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-No rows: these totals count only queries that succeeded in every connection of this experiment, and no query did (Q1 failed in 1 of 1 connections; Q2 failed in 1 of 1 connections; Q3 failed in 1 of 1 connections; Q4 failed in 1 of 1 connections; Q5 failed in 1 of 1 connections; Q6 failed in 1 of 1 connections; Q7 failed in 1 of 1 connections; Q8 failed in 1 of 1 connections; Q9 failed in 1 of 1 connections; Q10 failed in 1 of 1 connections; Q11 failed in 1 of 1 connections; Q12 failed in 1 of 1 connections; Q13 failed in 1 of 1 connections; Q14 failed in 1 of 1 connections; Q15 failed in 1 of 1 connections; Q16 failed in 1 of 1 connections; Q17 failed in 1 of 1 connections; Q18 failed in 1 of 1 connections; Q19 failed in 1 of 1 connections; Q20 failed in 1 of 1 connections; Q21 failed in 1 of 1 connections; Q22 failed in 1 of 1 connections; Q23 failed in 1 of 1 connections; Q24 failed in 1 of 1 connections; Q25 failed in 1 of 1 connections; Q26 failed in 1 of 1 connections; Q27 failed in 1 of 1 connections; Q28 failed in 1 of 1 connections; Q29 failed in 1 of 1 connections; Q30 failed in 1 of 1 connections; Q31 failed in 1 of 1 connections; Q32 failed in 1 of 1 connections; Q33 failed in 1 of 1 connections; Q34 failed in 1 of 1 connections; Q35 failed in 1 of 1 connections; Q36 failed in 1 of 1 connections; Q37 failed in 1 of 1 connections; Q38 failed in 1 of 1 connections; Q39 failed in 1 of 1 connections; Q40 failed in 1 of 1 connections; Q41 failed in 1 of 1 connections; Q42 failed in 1 of 1 connections; Q43 failed in 1 of 1 connections; Q44 failed in 1 of 1 connections; Q45 failed in 1 of 1 connections; Q46 failed in 1 of 1 connections; Q47 failed in 1 of 1 connections; Q48 failed in 1 of 1 connections; Q49 failed in 1 of 1 connections; Q50 failed in 1 of 1 connections; Q51 failed in 1 of 1 connections; Q52 failed in 1 of 1 connections; Q53 failed in 1 of 1 connections; Q54 failed in 1 of 1 connections; Q55 failed in 1 of 1 connections; Q56 failed in 1 of 1 connections; Q57 failed in 1 of 1 connections; Q58 failed in 1 of 1 connections; Q59 failed in 1 of 1 connections; Q60 failed in 1 of 1 connections; Q61 failed in 1 of 1 connections; Q62 failed in 1 of 1 connections; Q63 failed in 1 of 1 connections; Q64 failed in 1 of 1 connections; Q65 failed in 1 of 1 connections; Q66 failed in 1 of 1 connections; Q67 failed in 1 of 1 connections; Q68 failed in 1 of 1 connections; Q69 failed in 1 of 1 connections; Q70 failed in 1 of 1 connections; Q71 failed in 1 of 1 connections; Q72 failed in 1 of 1 connections; Q73 failed in 1 of 1 connections; Q74 failed in 1 of 1 connections; Q75 failed in 1 of 1 connections; Q76 failed in 1 of 1 connections; Q77 failed in 1 of 1 connections; Q78 failed in 1 of 1 connections; Q79 failed in 1 of 1 connections; Q80 failed in 1 of 1 connections; Q81 failed in 1 of 1 connections; Q82 failed in 1 of 1 connections; Q83 failed in 1 of 1 connections; Q84 failed in 1 of 1 connections; Q85 failed in 1 of 1 connections; Q86 failed in 1 of 1 connections; Q87 failed in 1 of 1 connections; Q88 failed in 1 of 1 connections; Q89 failed in 1 of 1 connections; Q90 failed in 1 of 1 connections; Q91 failed in 1 of 1 connections; Q92 failed in 1 of 1 connections; Q93 failed in 1 of 1 connections; Q94 failed in 1 of 1 connections; Q95 failed in 1 of 1 connections; Q96 failed in 1 of 1 connections; Q97 failed in 1 of 1 connections; Q98 failed in 1 of 1 connections; Q99 failed in 1 of 1 connections). See Query Completion per Phase for where, and Per Phase (Complete Phases Only) for the phases that completed every query.
+| DBMS            | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
+|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
+| mysql-1-1-1-1-1 | MySQL-1         | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |                  99 |       1692 |            2.75 |             3959.22 |            631.91 |          -1 | mysql-1-1-1-1-1 |
 
 #### Per Phase
 
-No rows: these totals count only queries that succeeded in every connection of this experiment, and no query did (Q1 failed in 1 of 1 connections; Q2 failed in 1 of 1 connections; Q3 failed in 1 of 1 connections; Q4 failed in 1 of 1 connections; Q5 failed in 1 of 1 connections; Q6 failed in 1 of 1 connections; Q7 failed in 1 of 1 connections; Q8 failed in 1 of 1 connections; Q9 failed in 1 of 1 connections; Q10 failed in 1 of 1 connections; Q11 failed in 1 of 1 connections; Q12 failed in 1 of 1 connections; Q13 failed in 1 of 1 connections; Q14 failed in 1 of 1 connections; Q15 failed in 1 of 1 connections; Q16 failed in 1 of 1 connections; Q17 failed in 1 of 1 connections; Q18 failed in 1 of 1 connections; Q19 failed in 1 of 1 connections; Q20 failed in 1 of 1 connections; Q21 failed in 1 of 1 connections; Q22 failed in 1 of 1 connections; Q23 failed in 1 of 1 connections; Q24 failed in 1 of 1 connections; Q25 failed in 1 of 1 connections; Q26 failed in 1 of 1 connections; Q27 failed in 1 of 1 connections; Q28 failed in 1 of 1 connections; Q29 failed in 1 of 1 connections; Q30 failed in 1 of 1 connections; Q31 failed in 1 of 1 connections; Q32 failed in 1 of 1 connections; Q33 failed in 1 of 1 connections; Q34 failed in 1 of 1 connections; Q35 failed in 1 of 1 connections; Q36 failed in 1 of 1 connections; Q37 failed in 1 of 1 connections; Q38 failed in 1 of 1 connections; Q39 failed in 1 of 1 connections; Q40 failed in 1 of 1 connections; Q41 failed in 1 of 1 connections; Q42 failed in 1 of 1 connections; Q43 failed in 1 of 1 connections; Q44 failed in 1 of 1 connections; Q45 failed in 1 of 1 connections; Q46 failed in 1 of 1 connections; Q47 failed in 1 of 1 connections; Q48 failed in 1 of 1 connections; Q49 failed in 1 of 1 connections; Q50 failed in 1 of 1 connections; Q51 failed in 1 of 1 connections; Q52 failed in 1 of 1 connections; Q53 failed in 1 of 1 connections; Q54 failed in 1 of 1 connections; Q55 failed in 1 of 1 connections; Q56 failed in 1 of 1 connections; Q57 failed in 1 of 1 connections; Q58 failed in 1 of 1 connections; Q59 failed in 1 of 1 connections; Q60 failed in 1 of 1 connections; Q61 failed in 1 of 1 connections; Q62 failed in 1 of 1 connections; Q63 failed in 1 of 1 connections; Q64 failed in 1 of 1 connections; Q65 failed in 1 of 1 connections; Q66 failed in 1 of 1 connections; Q67 failed in 1 of 1 connections; Q68 failed in 1 of 1 connections; Q69 failed in 1 of 1 connections; Q70 failed in 1 of 1 connections; Q71 failed in 1 of 1 connections; Q72 failed in 1 of 1 connections; Q73 failed in 1 of 1 connections; Q74 failed in 1 of 1 connections; Q75 failed in 1 of 1 connections; Q76 failed in 1 of 1 connections; Q77 failed in 1 of 1 connections; Q78 failed in 1 of 1 connections; Q79 failed in 1 of 1 connections; Q80 failed in 1 of 1 connections; Q81 failed in 1 of 1 connections; Q82 failed in 1 of 1 connections; Q83 failed in 1 of 1 connections; Q84 failed in 1 of 1 connections; Q85 failed in 1 of 1 connections; Q86 failed in 1 of 1 connections; Q87 failed in 1 of 1 connections; Q88 failed in 1 of 1 connections; Q89 failed in 1 of 1 connections; Q90 failed in 1 of 1 connections; Q91 failed in 1 of 1 connections; Q92 failed in 1 of 1 connections; Q93 failed in 1 of 1 connections; Q94 failed in 1 of 1 connections; Q95 failed in 1 of 1 connections; Q96 failed in 1 of 1 connections; Q97 failed in 1 of 1 connections; Q98 failed in 1 of 1 connections; Q99 failed in 1 of 1 connections). See Query Completion per Phase for where, and Per Phase (Complete Phases Only) for the phases that completed every query.
+|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |                  99 |       1692 |            2.75 |             3959.22 |            631.91 |          -1 |
 
 #### Query Completion per Phase
 
 | phase       |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
 |:------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
-| mysql-1-1-1 |      1 | 0/1         | 0/1         | 0/1         | 0/1         | 0/1         | 0/1         | 0/1         | 0/1         | 0/1         | 0/1          | 0/1          | 0/1          | 0/1          | 0/1             | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1             | 0/1             | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1             | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | 0/1          | no         |
+| mysql-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
 
 Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
 
-#### Per Phase (Complete Phases Only)
-
-Only the 0 of 1 phases in which every pod completed every active query; each row covers all 99 active queries, so the rows are comparable with each other. Left out: mysql-1-1-1 - see Query Completion per Phase.
-
 ### Latency of Timer Execution [ms]
-No rows: these totals count only queries that succeeded in every connection of this experiment, and no query did (Q1 failed in 1 of 1 connections; Q2 failed in 1 of 1 connections; Q3 failed in 1 of 1 connections; Q4 failed in 1 of 1 connections; Q5 failed in 1 of 1 connections; Q6 failed in 1 of 1 connections; Q7 failed in 1 of 1 connections; Q8 failed in 1 of 1 connections; Q9 failed in 1 of 1 connections; Q10 failed in 1 of 1 connections; Q11 failed in 1 of 1 connections; Q12 failed in 1 of 1 connections; Q13 failed in 1 of 1 connections; Q14 failed in 1 of 1 connections; Q15 failed in 1 of 1 connections; Q16 failed in 1 of 1 connections; Q17 failed in 1 of 1 connections; Q18 failed in 1 of 1 connections; Q19 failed in 1 of 1 connections; Q20 failed in 1 of 1 connections; Q21 failed in 1 of 1 connections; Q22 failed in 1 of 1 connections; Q23 failed in 1 of 1 connections; Q24 failed in 1 of 1 connections; Q25 failed in 1 of 1 connections; Q26 failed in 1 of 1 connections; Q27 failed in 1 of 1 connections; Q28 failed in 1 of 1 connections; Q29 failed in 1 of 1 connections; Q30 failed in 1 of 1 connections; Q31 failed in 1 of 1 connections; Q32 failed in 1 of 1 connections; Q33 failed in 1 of 1 connections; Q34 failed in 1 of 1 connections; Q35 failed in 1 of 1 connections; Q36 failed in 1 of 1 connections; Q37 failed in 1 of 1 connections; Q38 failed in 1 of 1 connections; Q39 failed in 1 of 1 connections; Q40 failed in 1 of 1 connections; Q41 failed in 1 of 1 connections; Q42 failed in 1 of 1 connections; Q43 failed in 1 of 1 connections; Q44 failed in 1 of 1 connections; Q45 failed in 1 of 1 connections; Q46 failed in 1 of 1 connections; Q47 failed in 1 of 1 connections; Q48 failed in 1 of 1 connections; Q49 failed in 1 of 1 connections; Q50 failed in 1 of 1 connections; Q51 failed in 1 of 1 connections; Q52 failed in 1 of 1 connections; Q53 failed in 1 of 1 connections; Q54 failed in 1 of 1 connections; Q55 failed in 1 of 1 connections; Q56 failed in 1 of 1 connections; Q57 failed in 1 of 1 connections; Q58 failed in 1 of 1 connections; Q59 failed in 1 of 1 connections; Q60 failed in 1 of 1 connections; Q61 failed in 1 of 1 connections; Q62 failed in 1 of 1 connections; Q63 failed in 1 of 1 connections; Q64 failed in 1 of 1 connections; Q65 failed in 1 of 1 connections; Q66 failed in 1 of 1 connections; Q67 failed in 1 of 1 connections; Q68 failed in 1 of 1 connections; Q69 failed in 1 of 1 connections; Q70 failed in 1 of 1 connections; Q71 failed in 1 of 1 connections; Q72 failed in 1 of 1 connections; Q73 failed in 1 of 1 connections; Q74 failed in 1 of 1 connections; Q75 failed in 1 of 1 connections; Q76 failed in 1 of 1 connections; Q77 failed in 1 of 1 connections; Q78 failed in 1 of 1 connections; Q79 failed in 1 of 1 connections; Q80 failed in 1 of 1 connections; Q81 failed in 1 of 1 connections; Q82 failed in 1 of 1 connections; Q83 failed in 1 of 1 connections; Q84 failed in 1 of 1 connections; Q85 failed in 1 of 1 connections; Q86 failed in 1 of 1 connections; Q87 failed in 1 of 1 connections; Q88 failed in 1 of 1 connections; Q89 failed in 1 of 1 connections; Q90 failed in 1 of 1 connections; Q91 failed in 1 of 1 connections; Q92 failed in 1 of 1 connections; Q93 failed in 1 of 1 connections; Q94 failed in 1 of 1 connections; Q95 failed in 1 of 1 connections; Q96 failed in 1 of 1 connections; Q97 failed in 1 of 1 connections; Q98 failed in 1 of 1 connections; Q99 failed in 1 of 1 connections). See Query Completion per Phase for where, and Per Phase (Complete Phases Only) for the phases that completed every query.
+| Queries       |   mysql-1-1-1-1-1 |
+|:--------------|------------------:|
+| TPC-DS Q1     |             52.92 |
+| TPC-DS Q2     |          12013.97 |
+| TPC-DS Q3     |             52.04 |
+| TPC-DS Q4     |         148229.95 |
+| TPC-DS Q5     |          32891.11 |
+| TPC-DS Q6     |         252838.43 |
+| TPC-DS Q7     |           4150.16 |
+| TPC-DS Q8     |            913.60 |
+| TPC-DS Q9     |          11705.86 |
+| TPC-DS Q10    |           1186.51 |
+| TPC-DS Q11    |          88298.33 |
+| TPC-DS Q12    |            660.59 |
+| TPC-DS Q13    |           6544.59 |
+| TPC-DS Q14a+b |         137700.90 |
+| TPC-DS Q15    |            525.38 |
+| TPC-DS Q16    |           1375.74 |
+| TPC-DS Q17    |           1256.94 |
+| TPC-DS Q18    |           3286.70 |
+| TPC-DS Q19    |            889.30 |
+| TPC-DS Q20    |           1177.50 |
+| TPC-DS Q21    |          63147.52 |
+| TPC-DS Q22    |          15801.09 |
+| TPC-DS Q23a+b |         135801.87 |
+| TPC-DS Q24a+b |           2833.88 |
+| TPC-DS Q25    |            405.46 |
+| TPC-DS Q26    |            737.57 |
+| TPC-DS Q27    |            810.65 |
+| TPC-DS Q28    |           9275.79 |
+| TPC-DS Q29    |            224.88 |
+| TPC-DS Q30    |            407.44 |
+| TPC-DS Q31    |          39416.59 |
+| TPC-DS Q32    |           1082.70 |
+| TPC-DS Q33    |           1541.45 |
+| TPC-DS Q34    |           3765.41 |
+| TPC-DS Q35    |          60047.78 |
+| TPC-DS Q36    |          17101.10 |
+| TPC-DS Q37    |             36.41 |
+| TPC-DS Q38    |          23455.35 |
+| TPC-DS Q39a+b |           5845.09 |
+| TPC-DS Q40    |            642.00 |
+| TPC-DS Q41    |           4473.17 |
+| TPC-DS Q42    |             45.67 |
+| TPC-DS Q43    |          21946.61 |
+| TPC-DS Q44    |           2269.69 |
+| TPC-DS Q45    |            378.29 |
+| TPC-DS Q46    |           1974.35 |
+| TPC-DS Q47    |          25565.36 |
+| TPC-DS Q48    |           3390.13 |
+| TPC-DS Q49    |            379.30 |
+| TPC-DS Q50    |             89.79 |
+| TPC-DS Q51    |          23101.53 |
+| TPC-DS Q52    |             46.97 |
+| TPC-DS Q53    |            561.72 |
+| TPC-DS Q54    |           7448.51 |
+| TPC-DS Q55    |             28.56 |
+| TPC-DS Q56    |            605.16 |
+| TPC-DS Q57    |          12073.25 |
+| TPC-DS Q58    |          15131.44 |
+| TPC-DS Q59    |          14676.38 |
+| TPC-DS Q60    |            887.25 |
+| TPC-DS Q61    |            783.29 |
+| TPC-DS Q62    |           8105.91 |
+| TPC-DS Q63    |            534.06 |
+| TPC-DS Q64    |           1121.65 |
+| TPC-DS Q65    |          19882.71 |
+| TPC-DS Q66    |           9339.03 |
+| TPC-DS Q67    |          23945.72 |
+| TPC-DS Q68    |            812.67 |
+| TPC-DS Q69    |           1243.44 |
+| TPC-DS Q70    |          31836.11 |
+| TPC-DS Q71    |           1573.55 |
+| TPC-DS Q72    |          39805.82 |
+| TPC-DS Q73    |           3317.79 |
+| TPC-DS Q74    |          27294.63 |
+| TPC-DS Q75    |           5712.89 |
+| TPC-DS Q76    |           1399.36 |
+| TPC-DS Q77    |          26054.16 |
+| TPC-DS Q78    |          49492.75 |
+| TPC-DS Q79    |           3024.41 |
+| TPC-DS Q80    |          15956.83 |
+| TPC-DS Q81    |          22301.80 |
+| TPC-DS Q82    |             59.93 |
+| TPC-DS Q83    |           1672.21 |
+| TPC-DS Q84    |            146.90 |
+| TPC-DS Q85    |            301.96 |
+| TPC-DS Q86    |           2807.05 |
+| TPC-DS Q87    |          24448.91 |
+| TPC-DS Q88    |           8453.95 |
+| TPC-DS Q89    |            103.62 |
+| TPC-DS Q90    |           1035.05 |
+| TPC-DS Q91    |             49.51 |
+| TPC-DS Q92    |            345.40 |
+| TPC-DS Q93    |            184.18 |
+| TPC-DS Q94    |           1181.63 |
+| TPC-DS Q95    |           9118.52 |
+| TPC-DS Q96    |            582.00 |
+| TPC-DS Q97    |          21429.96 |
+| TPC-DS Q98    |           2457.50 |
+| TPC-DS Q99    |          14882.75 |
 
 ### Errors (failed queries)
 
@@ -297,65 +598,45 @@ No warnings
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |       970.77 |      2.95 |          63.98 |                 64.00 |
+| mysql-1-1-1-1 |       653.32 |      1.87 |           9.68 |                 16.71 |
 
 ### Loading phase: component data generator
 
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| DBMS          | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|:-------------|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |         6.79 |      0.13 |           0.01 |                  2.43 |
+| mysql-1-1-1-1 |         8.53 |      0.04 |           0.01 |                  2.71 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |         0.00 |      1.03 |          63.98 |                 64.00 |
+| mysql-1-1-1-1 |      1579.39 |      1.02 |          16.00 |                 23.03 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| mysql-1-1-1-1 |        27.40 |      0.04 |           0.37 |                  0.37 |
 
 ### Missing Monitoring Metrics
-* CPU Utilization [CPUs] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
-* Memory Usage, Working Set [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
-* Memory Usage incl. Page Cache [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
-* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Utilization Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
-* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU User Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
-* CPU System Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* Connection Usage Ratio [0..1] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
-* Average Redo Log Bytes per fsync [B] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
-* InnoDB Buffer Pool Wait Free [count] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
-* InnoDB Max Dirty Pages [%] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
-* InnoDB Max Dirty Pages Low Watermark [%] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
-* InnoDB Buffer Pool Bytes Data [B] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
-* InnoDB Redo Log Flushed to Disk [B] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
-* Ratio of Dirty Pages in Buffer Pool [%] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
-* Threads Running for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
-* Open Files Usage Ratio [0..1] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log)
-* Memory Usage, Working Set [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* Memory Usage incl. Page Cache [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization [CPUs] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage, Working Set [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU User Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU System Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
@@ -367,28 +648,31 @@ No warnings
 
 | DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
 |:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
-| mysql-1-1-1-1 |                                  1.00 |                             1.18 |                            0.00 |                            0.02 |                              0.00 |
+| mysql-1-1-1-1 |                                  1.00 |                             1.43 |                            0.00 |                            0.03 |                              0.00 |
 
 #### Benchmarking phase: SUT deployment
 
 | DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
 |:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
-| mysql-1-1-1-1 |                                  1.00 |                             0.40 |                            0.00 |                            0.00 |                              0.00 |
+| mysql-1-1-1-1 |                                  1.00 |                             1.46 |                            0.00 |                            0.04 |                              0.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
-* TEST failed: No SUT container restarts
-* TEST passed: SUT data survived container restarts
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST skipped: Benchmarking phase: SUT deployment contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
-* TEST skipped: Benchmarking phase: component benchmarker contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
-* TEST failed: Monitoring metrics missing
-* TEST failed: Geo Times [s] contains 0 or NaN
-* TEST failed: Power@Size [~Q/h] contains 0 or NaN
-* TEST failed: Throughput@Size contains 0 or NaN
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (data pre-existing; series exists only while non-zero)
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
 * TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
 * TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned

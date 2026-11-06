@@ -37,9 +37,9 @@ def _code_from_log(filename):
     return None
 
 codes = [c for c in [
-    _code_from_log("doc_benchbase_testcase_collector_1.log"),
-    _code_from_log("doc_benchbase_testcase_collector_2.log"),
-    _code_from_log("doc_benchbase_testcase_collector_3.log"),
+    _code_from_log("docs_benchbase_postgresql_collector_1.log"),
+    _code_from_log("docs_benchbase_postgresql_collector_2.log"),
+    _code_from_log("docs_benchbase_postgresql_collector_3.log"),
 ] if c is not None]
 if not codes:
     print("ERROR: no experiment codes found in logs_tests/ — run test-docs-collector first.", file=sys.stderr)
@@ -220,7 +220,7 @@ try:
         merged_df["Latency Distribution.Average Latency (microseconds)"]
         * merged_df["CPU Utilization Time [s]"] / 1e6)
     merged_df["E_RAM"] = (merged_df["Goodput (requests/second)"]
-                          / merged_df["Memory Usage [MiB]"])
+                          / merged_df["Memory Usage, Working Set [MiB]"])
     df = collect.add_metadata(merged_df)
     check_df(df, "merged_perf_monitoring", HEADER_COLS + ["E_Tpx", "E_Lat", "E_RAM"])
 except Exception:

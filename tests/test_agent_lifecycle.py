@@ -545,13 +545,13 @@ class AgentLifecycleTest(unittest.TestCase):
 
         self.assertEqual(arguments.attempts, 3)
 
-    def test_model_manifest_accepts_h100_or_h200(self) -> None:
+    def test_model_manifest_accepts_h200_or_b200(self) -> None:
         expressions = _model_pod()["spec"]["affinity"]["nodeAffinity"][
             "requiredDuringSchedulingIgnoredDuringExecution"
         ]["nodeSelectorTerms"][0]["matchExpressions"]
 
         self.assertIn(
-            {"key": "gpu", "operator": "In", "values": ["h100", "h200", "b200"]},
+            {"key": "gpu", "operator": "In", "values": ["h200", "b200"]},
             expressions,
         )
 
@@ -587,6 +587,7 @@ class AgentLifecycleTest(unittest.TestCase):
         for key, value in service["spec"]["selector"].items():
             self.assertEqual(labels[key], value)
 
+    @unittest.skipIf(sys.platform == "win32", "needs a POSIX bash")
     def test_model_pod_startup_script_is_valid_shell(self) -> None:
         """This script only ever runs in-cluster, so syntax is checked here."""
         script = _model_pod()["spec"]["containers"][0]["args"][0]
@@ -598,6 +599,7 @@ class AgentLifecycleTest(unittest.TestCase):
 
         self.assertEqual(checked.returncode, 0, checked.stderr)
 
+    @unittest.skipIf(sys.platform == "win32", "needs a POSIX bash")
     def test_exact_pod_watchdog_stops_only_after_observed_activity_goes_idle(self) -> None:
         """Exercise the shipped loop with long and between-poll request signals."""
         watchdog = _watchdog_script()
@@ -630,6 +632,7 @@ probe_activity() {{
         self.assertIn("releasing the GPU", result.stdout)
         self.assertIn("kill -KILL", _watchdog_script())
 
+    @unittest.skipIf(sys.platform == "win32", "needs a POSIX bash")
     def test_watchdog_fails_open_without_both_metric_classes(self) -> None:
         """Incomplete telemetry must not be treated as proof that the pod is idle."""
         metrics = self.root / "metrics.txt"
@@ -644,6 +647,8 @@ probe_activity() {{
         self.assertEqual(result.returncode, 1)
         self.assertIn("incomplete vLLM request metrics", result.stderr)
 
+    @unittest.skipIf(sys.platform == "win32",
+                     "os.kill(SIGTERM) terminates the process on Windows instead of calling the handler")
     def test_termination_signal_still_stops_the_model_server(self) -> None:
         """A polite kill must release the GPU, not strand it as the default would."""
         class _Signalled(_Lifecycle):

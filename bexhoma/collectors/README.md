@@ -41,23 +41,23 @@ This script runs experiments for Benchbase, TPC-H (DBMSBenchmarker), YCSB, and H
 and writes logs to `logs_tests/`:
 
 ```
-logs_tests/doc_benchbase_testcase_collector_1.log
-logs_tests/doc_benchbase_testcase_collector_2.log
-logs_tests/doc_tpch_testcase_collector_1.log
-logs_tests/doc_tpch_testcase_collector_2.log
-logs_tests/doc_ycsb_testcase_collector_1.log
-logs_tests/doc_ycsb_testcase_collector_2.log
-logs_tests/doc_hammerdb_testcase_collector_1.log
-logs_tests/doc_hammerdb_testcase_collector_2.log
+logs_tests/docs_benchbase_postgresql_collector_1.log
+logs_tests/docs_benchbase_postgresql_collector_2.log
+logs_tests/docs_tpch_postgresql_collector_1.log
+logs_tests/docs_tpch_postgresql_collector_2.log
+logs_tests/docs_ycsb_postgresql_collector_1.log
+logs_tests/docs_ycsb_postgresql_collector_2.log
+logs_tests/docs_hammerdb_postgresql_collector_1.log
+logs_tests/docs_hammerdb_postgresql_collector_2.log
 ```
 
 Multi-tenant variants (schema / database / container tenancy) are also generated:
 
 ```
-logs_tests/doc_benchbase_testcase_collector_tenants_schema.log
-logs_tests/doc_benchbase_testcase_collector_tenants_database.log
-logs_tests/doc_benchbase_testcase_collector_tenants_container.log
-logs_tests/doc_tpch_testcase_collector_tenants_schema.log
+logs_tests/docs_benchbase_postgresql_collector_tenants_schema.log
+logs_tests/docs_benchbase_postgresql_collector_tenants_database.log
+logs_tests/docs_benchbase_postgresql_collector_tenants_container.log
+logs_tests/docs_tpch_postgresql_collector_tenants_schema.log
 ...
 ```
 

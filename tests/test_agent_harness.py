@@ -7,6 +7,7 @@ import io
 import json
 import os
 import shutil
+import sys
 import tempfile
 import threading
 import time
@@ -410,6 +411,7 @@ class WorkspaceTest(unittest.TestCase):
         with self.assertRaises(ToolError):
             workspace.peek_text("agent/handbook/handbook_source_map.md")
 
+    @unittest.skipIf(sys.platform == "win32", "the message shows native path separators")
     def test_a_refused_read_aimed_at_the_handbook_names_its_path(self) -> None:
         """Models guessed mount points for turns on end when the refusal said only 'no'."""
         method = self.root / "agent" / "handbook" / "handbook.md"
@@ -1379,7 +1381,7 @@ resources:
     def test_authoritative_files_are_whole_or_error(self) -> None:
         catalog = self.root / "contracts" / "contract_catalog.yml"
         catalog.write_text(
-            catalog.read_text(encoding="utf-8") + "\n# growth\n" + "x" * 2_000,
+            catalog.read_text(encoding="utf-8") + "\n# growth\n" + "x" * 500,
             encoding="utf-8",
         )
         result = self.workspace.read_file("contracts/contract_catalog.yml")
@@ -4968,6 +4970,7 @@ class PhaseTest(unittest.TestCase):
         self.assertIn("submit", names(DESIGN_TOOLS))
         self.assertIn("submit", names(FOLLOWUP_AUTHOR_TOOLS))
 
+    @unittest.skipIf(sys.platform == "win32", "POSIX absolute path")
     def test_result_root_comes_from_the_config_bexhoma_reads(self) -> None:
         """Agent and Bexhoma must agree on the folder without a second setting."""
         with tempfile.TemporaryDirectory() as directory:
@@ -5075,6 +5078,7 @@ class PhaseTest(unittest.TestCase):
         self.assertIn("the report does not link to it", system)
 
 
+@unittest.skipIf(sys.platform == "win32", "uses the POSIX true/false commands")
 class ClusterCredentialTest(unittest.TestCase):
     """A design phase can outlive the cluster session it was launched with."""
 

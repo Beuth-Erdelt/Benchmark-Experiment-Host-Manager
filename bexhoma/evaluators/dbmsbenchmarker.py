@@ -146,8 +146,8 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         """
         Returns the DataFrame containing all loading-phase timing results.
 
-        Reads loading time fields (``timeGenerate``, ``timeIngesting``, ``timeSchema``,
-        ``timeIndex``, ``timeLoad``) from the inspector's connection data.
+        Reads loading time fields (``time_generated``, ``time_ingested``, ``time_schema``,
+        ``time_index``, ``time_loading``) from the inspector's connection data.
 
         :return: DataFrame with one row per DBMS connection indexed as ``"DBMS"``.
         :rtype: pandas.DataFrame

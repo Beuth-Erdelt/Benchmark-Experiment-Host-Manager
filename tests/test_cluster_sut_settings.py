@@ -148,6 +148,8 @@ class CheckScriptsAlwaysRunTest(unittest.TestCase):
 
     def test_every_post_load_list_ends_with_the_check_script(self):
         for config_file in ('k8s-cluster.config', 'cluster.config'):
+            if not os.path.isfile(os.path.join(_REPO, config_file)):
+                continue  # cluster.config is a local, gitignored copy
             volumes = _load_config(config_file)['volumes']
             for benchmark in ('tpch', 'tpcds'):
                 scripts = volumes[benchmark]['initscripts']

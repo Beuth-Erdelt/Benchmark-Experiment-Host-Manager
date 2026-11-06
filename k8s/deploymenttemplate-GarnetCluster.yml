@@ -191,7 +191,8 @@ spec:
       - name: dbms
         image: ghcr.io/microsoft/garnet:2.2.5
         # cluster mode, checkpoint (SAVE) and append-only file in /data, recovered at start
-        args: ["--port", "6379", "--cluster", "--checkpointdir", "/data/checkpoints", "--aof", "--aof-commit-freq", "1000", "--recover"]
+        # nodes announce the DNS name of their pod: the recovered cluster config keeps names, an IP would be stale after a restart
+        args: ["--port", "6379", "--cluster", "--cluster-preferred-endpoint-type", "hostname", "--cluster-announce-hostname", "$(POD_NAME).{statefulset}.$(POD_NAMESPACE).svc.cluster.local", "--checkpointdir", "/data/checkpoints", "--aof", "--aof-commit-freq", "1000", "--recover"]
         readinessProbe:
           tcpSocket:
             port: 6379

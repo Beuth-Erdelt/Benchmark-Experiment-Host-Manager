@@ -1,0 +1,220 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1793617939
+Experiment                    : starts at 2026-11-02 12:12:20.147950 (164863.9334105)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'.
+Number of rows to insert is 1000000.
+Ordering of inserts is hashed.
+Number of operations is 10000000.
+Batch size is ''.
+Target is based on multiples of '16384'.
+Factors for loading are [4].
+Factors for benchmarking are [4].
+Status is logged every 10s.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.12.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['DatabaseService'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Loading is skipped.
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [64] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Maximum DBMS across the whole cluster is 2.
+Results are validated against basic correctness requirements.
+SUT requests 4 CPU and 16Gi RAM.
+Cluster monitoring            : is running
+DatabaseService-1             : will start now
+DatabaseService-1             : deployments ['sut']
+DatabaseService-1             : stateful sets []
+DatabaseService-1             : pvcs ['sut']
+DatabaseService-1             : name of SUT pods = bexhoma-sut-databaseservice-1-1793617939
+DatabaseService-1             : name of SUT service = bexhoma-sut-databaseservice-1-1793617939
+Loop pass                     : took 1.5s (1 kubectl calls 0.6s, 9 API requests 0.4s)
+- waiting 30s -               : done
+DatabaseService-1             : waits for health check to succeed
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 14 API requests 0.7s)
+- waiting 30s -               : done
+DatabaseService-1             : waits for health check to succeed
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 14 API requests 0.4s)
+- waiting 30s -               : done
+DatabaseService-1             : waits for health check to succeed
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 14 API requests 0.6s)
+- waiting 30s -               : done
+DatabaseService-1             : waits for health check to succeed
+Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 14 API requests 0.3s)
+- waiting 30s -               : done
+DatabaseService-1             : will start benchmarking but not before 2026-11-02 11:15:58 (that is in 60 secs)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 14 API requests 0.5s)
+- waiting 30s -               : done
+DatabaseService-1             : will start benchmarking but not before 2026-11-02 11:15:58
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 11 API requests 0.5s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-DatabaseService-1-1793617939 initialized to 1.
+DatabaseService-1             : benchmarks done 0 of 1. This will be client 1
+databaseservice-1-1-1-1       : start benchmarking (benchmark_run=1)
+databaseservice-1-1-1-1       : needs monitoring (common metrics) for deployment sut
+DatabaseService-1             : benchmarking results in folder C:\data\benchmarks/1793617939
+DatabaseService-1             : submitted benchmarker job in 4.9s (4 kubectl calls 2.5s, 24 API requests 2.4s)
+Loop pass                     : took 6.3s (4 kubectl calls 2.5s, 41 API requests 3.3s)
+- waiting 30s -               : done
+DatabaseService-1             : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 17 API requests 0.8s)
+- waiting 30s -               : done
+DatabaseService-1             : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 15 API requests 0.6s)
+- waiting 30s -               : done
+DatabaseService-1             : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 15 API requests 0.5s)
+- waiting 30s -               : done
+DatabaseService-1             : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 15 API requests 0.7s)
+- waiting 30s -               : done
+DatabaseService-1             : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.6s)
+- waiting 30s -               : done
+databaseservice-1-1-1-1       : wrote benchmarking_timespans to /data/benchmarks/1793617939/databaseservice-1-1-1-1.config
+databaseservice-1-1-1-1       : showing benchmarker times
+databaseservice-1-1-1-1       : benchmarker timespan job from 1793618164 to 1793618352
+databaseservice-1-1-1-1       : benchmarker timespan pods from 1793618166 to 1793618319
+databaseservice-1-1-1-1       : benchmarker timespan (start to end single container [s]) = 153
+databaseservice-1-1-1-1       : benchmarker times (start/end per pod and container) = [(1793618166, 1793618319)]
+databaseservice-1-1-1-1       : found and updated times {'benchmarker': [(1793618166, 1793618319)]}
+databaseservice-1-1-1-1       : needs monitoring (common metrics) for deployment sut
+databaseservice-1-1-1-1       : collecting metrics of benchmarker at connection databaseservice-1-1-1-1
+databaseservice-1-1-1-1       : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-databaseservice-1-1793617939-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-databaseservice-1-1793617939-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+databaseservice-1-1-1-1       : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+databaseservice-1-1-1-1       : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+Experiment                    : fetched 1 metric sets in 4s (1 at once, 0 repeated, 0 follow-up actions; 3 kubectl calls 4.2s, 0 API requests 0.0s)
+Loop pass                     : took 8.8s (8 kubectl calls 7.5s, 21 API requests 0.8s)
+DatabaseService-1             : can be stopped
+DatabaseService-1             : had 0 restarts at worker bexhoma-sut-databaseservice-1-1793617939-74b4987f44-gh52g
+Loop pass                     : took 8.0s (3 kubectl calls 1.5s, 28 API requests 0.9s)
+Experiment                    : ends at 2026-11-02 12:19:27.295111 (165291.0733218) - 427.14s total
+Experiment                    : transforming metrics for loading
+Experiment                    : transforming metrics for loading completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for loader
+Experiment                    : transforming metrics for loader completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+YCSB SF=1
+* Type: ycsb
+* Duration: 428s 
+* Code: 1793617939
+* YCSB driver runs the experiment.
+* This experiment compares run time and resource consumption of YCSB queries.
+  * Workload is 'A'.
+  * Number of rows to insert is 1000000.
+  * Ordering of inserts is hashed.
+  * Number of operations is 10000000.
+  * Batch size is ''.
+  * Target is based on multiples of '16384'.
+  * Factors for loading are [4].
+  * Factors for benchmarking are [4].
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['DatabaseService'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Loading is skipped.
+  * Loading is tested with [64] threads, split into [8] pods.
+  * Benchmarking is tested with [64] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 2.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* databaseservice-1-1-1-1 uses docker image postgres:16.1
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:741415
+  * datadisk:39
+  * volume_size:1.8T
+  * volume_used:725G
+  * cpu_list:0-223
+  * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 1.0 CPU, 1.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
+  * eval_parameters
+    * code:1793617939
+
+### SUT Container Restarts
+* bexhoma-sut-databaseservice-1-1793617939-74b4987f44-gh52g: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS DatabaseService-1 - Experiment 1 Client 1: ycsb (1 pods)
+
+#### Planned
+
+* DBMS DatabaseService-1 - Experiment 1 Client 1: ycsb (1 pods)
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                      | phase                 | job                     | configuration     |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:--------------------------|:----------------------|:------------------------|:------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| databaseservice-1-1-1-1-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 | DatabaseService-1 |                1 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                        65383.41 |               152944.00 |            5004929 |                             425.00 |              4995071 |                               829.00 |
+
+#### Per Phase
+
+| DBMS                  | phase                 |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:----------------------|:----------------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |        64 |    65536 |               1 |           1 |            0 |                        65383.41 |               152944.00 |            5004929 |                             425.00 |              4995071 |                               829.00 |
+
+### Monitoring
+
+### Benchmarking phase: component benchmarker
+
+| DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------------|-------------:|----------:|---------------:|----------------------:|
+| databaseservice-1-1-1-1 |       609.04 |      4.86 |           1.05 |                  1.05 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
+* TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: contains no FAILED column

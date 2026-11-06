@@ -443,6 +443,30 @@ bexhoma ssb `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB MariaDB  sf=1"
 
 
+#### SSB Monitoring (Example-SSB.md)
+# SSB with monitoring: a scaling factor large enough that loading and benchmarking last more than a minute
+bexhoma ssb `
+  -dbms PostgreSQL MonetDB ClickHouse<# DBMS under test #> `
+  -sf 10                        <# scaling factor (lineorder has about 6 million rows per SF) #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# add primary and foreign keys after data load #> `
+  -xis                          <# run statistics after data load #> `
+  -nlp 8                        <# number of loader pods (lineorder is generated in 8 chunks) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms 1                         <# one DBMS at a time, so the metrics of one SUT are not disturbed by another #> `
+  -t 1200                       <# query timeout in seconds #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 100Gi                    <# size of the persistent volume claim #> `
+  -ks no                        <# remove the SUT at the end #> `
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ssb_monitoring.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB monitoring  sf=10"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################

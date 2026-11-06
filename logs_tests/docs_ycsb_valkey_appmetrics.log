@@ -1,0 +1,432 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1793710913
+Experiment                    : starts at 2026-11-03 14:01:53.595257 (15114.008507876)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'.
+Number of rows to insert is 1000000.
+Ordering of inserts is hashed.
+Number of operations is 10000000.
+Batch size is ''.
+Target is based on multiples of '16384'.
+Factors for loading are [12].
+Factors for benchmarking are [4].
+Status is logged every 10s.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.12.
+System metrics are monitored by a cluster-wide installation.
+Application metrics are monitored by sidecar containers.
+Experiment is limited to DBMS ['Valkey'].
+Import is handled by 8 processes (pods).
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Database uses ephemeral storage of size 50Gi.
+Loading is tested with [64] threads, split into [8] pods.
+Benchmarking is tested with [128] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Results are validated against basic correctness requirements.
+Distributed DBMS uses 3 worker nodes, 1 replicas and 0 shards per node.
+SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
+Cluster monitoring            : is running
+Valkey-1                      : will start now
+Valkey-1                      : deployments ['sut']
+Valkey-1                      : stateful sets ['worker']
+Valkey-1                      : pvcs ['sut']
+Valkey-1                      : name of SUT pods = bexhoma-sut-valkey-1-1793710913
+Valkey-1                      : name of SUT service = bexhoma-sut-valkey-1-1793710913
+Valkey-1                      : name of worker pods = bx-w-valkey-1-1793710913
+Valkey-1                      : name of worker service headless = bx-w-valkey-1-1793710913
+Loop pass                     : took 0.6s (1 kubectl calls 0.2s, 9 API requests 0.3s)
+- waiting 30s -               : done
+Valkey-1                      : waits for monitoring
+Valkey-1                      : wants to monitor all components in cluster
+Valkey-1                      : starts monitoring with prometheus pod
+Valkey-1                      : need application monitoring for worker
+Valkey-1                      : worker pods found: ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2']
+Valkey-1                      : worker pods found (only stateful set pods): ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2']
+Valkey-1                      : worker endpoint: bx-w-valkey-1-1793710913-0.bx-w-valkey-1-1793710913
+Valkey-1                      : worker endpoint: bx-w-valkey-1-1793710913-1.bx-w-valkey-1-1793710913
+Valkey-1                      : worker endpoint: bx-w-valkey-1-1793710913-2.bx-w-valkey-1-1793710913
+Valkey-1                      : found worker endpoint (cAdvisor) for monitoring GPUs of bx-w-valkey-1-1793710913-0.bx-w-valkey-1-1793710913 (added to Prometheus) of sidecar container
+Valkey-1                      : found worker endpoint (cAdvisor) for monitoring GPUs of bx-w-valkey-1-1793710913-1.bx-w-valkey-1-1793710913 (added to Prometheus) of sidecar container
+Valkey-1                      : found worker endpoint (cAdvisor) for monitoring GPUs of bx-w-valkey-1-1793710913-2.bx-w-valkey-1-1793710913 (added to Prometheus) of sidecar container
+Loop pass                     : took 0.6s (2 kubectl calls 0.4s, 14 API requests 0.2s)
+- waiting 30s -               : done
+Valkey-1                      : worker pods found: ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2', 'bx-w-valkey-1-1793710913-3', 'bx-w-valkey-1-1793710913-4', 'bx-w-valkey-1-1793710913-5']
+Valkey-1                      : worker pods found (only stateful set pods): ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2', 'bx-w-valkey-1-1793710913-3', 'bx-w-valkey-1-1793710913-4', 'bx-w-valkey-1-1793710913-5']
+Valkey-1                      : found 5 / 6 running workers (component worker)
+Valkey-1                      : waits for health check of workers to succeed
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 30 API requests 0.3s)
+- waiting 30s -               : done
+Valkey-1                      : worker pods found: ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2', 'bx-w-valkey-1-1793710913-3', 'bx-w-valkey-1-1793710913-4', 'bx-w-valkey-1-1793710913-5']
+Valkey-1                      : worker pods found (only stateful set pods): ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2', 'bx-w-valkey-1-1793710913-3', 'bx-w-valkey-1-1793710913-4', 'bx-w-valkey-1-1793710913-5']
+Valkey-1                      : found 6 / 6 running workers (component worker)
+Valkey-1                      : is not loaded yet
+Valkey-1                      : load durability relaxed, scripts []
+Valkey-1                      : loading scripts not in folder, skipped: initschema-ycsb.sql
+Valkey-1                      : connect to pod bexhoma-sut-valkey-1-1793710913-589bdc759d-98m79 to load scripts
+Valkey-1                      : start asynch loading scripts of type schema
+Valkey-1                      : waits for the Schema scripts (schema=True) before starting the loading jobs
+Valkey-1                      : Schema scripts done after 2s
+Valkey-1                      : is loading
+Loop pass                     : took 3.4s (3 kubectl calls 0.5s, 49 API requests 0.8s)
+- waiting 30s -               : done
+Valkey-1                      : is loading
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 35 API requests 0.2s)
+- waiting 30s -               : done
+Valkey-1                      : showing loader times (ycsb-loader)
+Valkey-1                      : generator times (start/end per pod and container) []
+Valkey-1                      : loader times (start/end per pod and container) [(1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051)]
+Valkey-1                      : total times (start/end per pod and container) [(1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051), (1793711017, 1793711051)]
+Valkey-1                      : loader timespan (first to last [s]) = 34
+Valkey-1                      : worker pods found: ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2', 'bx-w-valkey-1-1793710913-3', 'bx-w-valkey-1-1793710913-4', 'bx-w-valkey-1-1793710913-5']
+Valkey-1                      : worker pods found (only stateful set pods): ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2', 'bx-w-valkey-1-1793710913-3', 'bx-w-valkey-1-1793710913-4', 'bx-w-valkey-1-1793710913-5']
+Valkey-1                      : scripts ['save-snapshot.sh'] ran on 6 worker pods in 11s
+Valkey-1                      : loading scripts not in folder, skipped: checkschema-ycsb.sql
+Valkey-1                      : connect to pod bexhoma-sut-valkey-1-1793710913-589bdc759d-98m79 to load scripts
+Valkey-1                      : start asynch loading scripts of type index
+Valkey-1                      : is loading
+Loop pass                     : took 15.5s (48 kubectl calls 35.4s, 64 API requests 0.8s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Valkey-1-1793710913 initialized to 1.
+Valkey-1                      : benchmarks done 0 of 1. This will be client 1
+valkey-1-1-1-1                : start benchmarking (benchmark_run=1)
+Valkey-1                      : worker pods found: ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2', 'bx-w-valkey-1-1793710913-3', 'bx-w-valkey-1-1793710913-4', 'bx-w-valkey-1-1793710913-5']
+Valkey-1                      : worker pods found (only stateful set pods): ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2', 'bx-w-valkey-1-1793710913-3', 'bx-w-valkey-1-1793710913-4', 'bx-w-valkey-1-1793710913-5']
+Valkey-1                      : distributed system - get host info for worker bx-w-valkey-1-1793710913-0
+Valkey-1                      : distributed system - get host info for worker bx-w-valkey-1-1793710913-1
+Valkey-1                      : distributed system - get host info for worker bx-w-valkey-1-1793710913-2
+Valkey-1                      : distributed system - get host info for worker bx-w-valkey-1-1793710913-3
+Valkey-1                      : distributed system - get host info for worker bx-w-valkey-1-1793710913-4
+Valkey-1                      : distributed system - get host info for worker bx-w-valkey-1-1793710913-5
+valkey-1-1-1-1                : needs monitoring (common metrics) for deployment sut
+valkey-1-1-1-1                : needs monitoring (custom metrics) for stateful set worker
+Valkey-1                      : need application metrics for worker
+Valkey-1                      : load application metrics of type redis
+Valkey-1                      : benchmarking results in folder /data/benchmarks/1793710913
+Valkey-1                      : submitted benchmarker job in 10.0s (4 kubectl calls 0.8s, 115 API requests 8.4s)
+valkey-1-1-1-1                : needs monitoring (common metrics) for deployment sut
+valkey-1-1-1-1                : needs monitoring (custom metrics) for stateful set worker
+valkey-1-1-1-1                : collecting metrics of data injector at connection valkey-1-1-1-1
+valkey-1-1-1-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-valkey-1-1793710913-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-valkey-1-1793710913-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+valkey-1-1-1-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-valkey-1-1793710913-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-valkey-1-1793710913-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+valkey-1-1-1-1                : WARNING metric missing for workerloading: CPU Throttling Rate [s/s]
+valkey-1-1-1-1                : WARNING metric missing for workerloading: CPU Throttled Time [s]
+valkey-1-1-1-1                : WARNING metric missing for loader: CPU Utilization [CPUs]
+valkey-1-1-1-1                : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+valkey-1-1-1-1                : WARNING metric missing for loader: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 3s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 4.6s, 0 API requests 0.0s)
+Loop pass                     : took 13.6s (10 kubectl calls 5.7s, 140 API requests 8.8s)
+- waiting 30s -               : done
+Valkey-1                      : has running benchmarks
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 25 API requests 0.3s)
+- waiting 30s -               : done
+Valkey-1                      : has running benchmarks
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 23 API requests 0.4s)
+- waiting 30s -               : done
+Valkey-1                      : has running benchmarks
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 23 API requests 0.3s)
+- waiting 30s -               : done
+Valkey-1                      : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 23 API requests 0.2s)
+- waiting 30s -               : done
+Valkey-1                      : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 23 API requests 0.7s)
+- waiting 30s -               : done
+Valkey-1                      : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 22 API requests 0.2s)
+- waiting 30s -               : done
+valkey-1-1-1-1                : wrote benchmarking_timespans to /data/benchmarks/1793710913/valkey-1-1-1-1.config
+valkey-1-1-1-1                : showing benchmarker times
+valkey-1-1-1-1                : benchmarker timespan job from 1793711125 to 1793711342
+valkey-1-1-1-1                : benchmarker timespan pods from 1793711126 to 1793711324
+valkey-1-1-1-1                : benchmarker timespan (start to end single container [s]) = 198
+valkey-1-1-1-1                : benchmarker times (start/end per pod and container) = [(1793711126, 1793711324)]
+valkey-1-1-1-1                : found and updated times {'benchmarker': [(1793711126, 1793711324)]}
+valkey-1-1-1-1                : needs monitoring (common metrics) for deployment sut
+valkey-1-1-1-1                : needs monitoring (custom metrics) for stateful set worker
+valkey-1-1-1-1                : collecting execution metrics of worker at connection valkey-1-1-1-1
+valkey-1-1-1-1                : collecting metrics of benchmarker at connection valkey-1-1-1-1
+valkey-1-1-1-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-valkey-1-1793710913-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-valkey-1-1793710913-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+valkey-1-1-1-1                : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-valkey-1-1793710913-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-valkey-1-1793710913-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+valkey-1-1-1-1                : WARNING metric missing for workerbenchmarking: CPU Throttling Rate [s/s]
+valkey-1-1-1-1                : WARNING metric missing for workerbenchmarking: CPU Throttled Time [s]
+valkey-1-1-1-1                : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+valkey-1-1-1-1                : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 3s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 5.7s, 0 API requests 0.0s)
+Loop pass                     : took 5.0s (9 kubectl calls 6.7s, 28 API requests 0.5s)
+Valkey-1                      : can be stopped
+Valkey-1                      : had 0 restarts at worker bexhoma-sut-valkey-1-1793710913-589bdc759d-98m79
+Valkey-1                      : worker pods found: ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2', 'bx-w-valkey-1-1793710913-3', 'bx-w-valkey-1-1793710913-4', 'bx-w-valkey-1-1793710913-5']
+Valkey-1                      : worker pods found (only stateful set pods): ['bx-w-valkey-1-1793710913-0', 'bx-w-valkey-1-1793710913-1', 'bx-w-valkey-1-1793710913-2', 'bx-w-valkey-1-1793710913-3', 'bx-w-valkey-1-1793710913-4', 'bx-w-valkey-1-1793710913-5']
+Valkey-1                      : had 0 restarts at worker bx-w-valkey-1-1793710913-0
+Valkey-1                      : had 0 restarts at worker bx-w-valkey-1-1793710913-1
+Valkey-1                      : had 0 restarts at worker bx-w-valkey-1-1793710913-2
+Valkey-1                      : had 0 restarts at worker bx-w-valkey-1-1793710913-3
+Valkey-1                      : had 0 restarts at worker bx-w-valkey-1-1793710913-4
+Valkey-1                      : had 0 restarts at worker bx-w-valkey-1-1793710913-5
+Loop pass                     : took 3.8s (22 kubectl calls 2.8s, 49 API requests 0.7s)
+Experiment                    : ends at 2026-11-03 14:09:10.317862 (15550.731113679) - 436.72s total
+Experiment                    : transforming metrics for loading
+Experiment                    : transforming metrics for loading completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for loader
+Experiment                    : transforming metrics for loader completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : transforming metrics for workerloading
+Experiment                    : transforming metrics for workerloading completed
+Experiment                    : transforming metrics for loader
+Experiment                    : transforming metrics for loader completed
+Experiment                    : transforming metrics for workerbenchmarking
+Experiment                    : transforming metrics for workerbenchmarking completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+YCSB SF=1
+* Type: ycsb
+* Duration: 437s 
+* Code: 1793710913
+* YCSB driver runs the experiment.
+* This experiment compares run time and resource consumption of YCSB queries.
+  * Workload is 'A'.
+  * Number of rows to insert is 1000000.
+  * Ordering of inserts is hashed.
+  * Number of operations is 10000000.
+  * Batch size is ''.
+  * Target is based on multiples of '16384'.
+  * Factors for loading are [12].
+  * Factors for benchmarking are [4].
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
+  * System metrics are monitored by a cluster-wide installation.
+  * Application metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['Valkey'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 50Gi.
+  * Loading is tested with [64] threads, split into [8] pods.
+  * Benchmarking is tested with [128] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 3 worker nodes, 1 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
+
+### Connections
+* valkey-1-1-1-1 uses docker image valkey/valkey:9.1.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:796085
+  * datadisk:1
+  * cpu_list:0-223
+  * args:['--maxclients', '10000', '--io-threads', '64']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * worker 0
+    * RAM:540590792704
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-146-generic
+    * node:cl-worker25
+    * disk:130906
+    * datadisk:721
+    * cpu_list:0-95
+  * worker 1
+    * RAM:540590821376
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-137-generic
+    * node:cl-worker23
+    * disk:1283667
+    * datadisk:806
+    * cpu_list:0-95
+  * worker 2
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker22
+    * disk:268836
+    * datadisk:720
+    * cpu_list:0-127
+  * worker 3
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:929650
+    * datadisk:715
+    * cpu_list:0-255
+  * worker 4
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:796344
+    * datadisk:723
+    * cpu_list:0-223
+  * worker 5
+    * RAM:540590800896
+    * CPU:AMD EPYC 7352 24-Core Processor
+    * Cores:96
+    * host:6.8.0-146-generic
+    * node:cl-worker24
+    * disk:170798
+    * datadisk:805
+    * cpu_list:0-95
+  * resources_total: 24.25 CPU, 384.5 GiB RAM requested in 7 pods
+    * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
+    * worker: 6 x, 24.0 CPU, 384.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793710913
+    * BEXHOMA_REPLICAS:1
+    * BEXHOMA_WORKERS:3
+
+### Init Scripts Not in Folder
+* Valkey-1: skipped checkschema-ycsb.sql, initschema-ycsb.sql
+
+### SUT Container Restarts
+* bexhoma-sut-valkey-1-1793710913-589bdc759d-98m79: 0
+* bx-w-valkey-1-1793710913-0: 0
+* bx-w-valkey-1-1793710913-1: 0
+* bx-w-valkey-1-1793710913-2: 0
+* bx-w-valkey-1-1793710913-3: 0
+* bx-w-valkey-1-1793710913-4: 0
+* bx-w-valkey-1-1793710913-5: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Valkey-1 - Experiment 1 Client 1: ycsb (1 pods)
+
+#### Planned
+
+* DBMS Valkey-1 - Experiment 1 Client 1: ycsb (1 pods)
+
+### Loading
+
+#### Per Connection
+
+| connection       |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
+|:-----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| valkey-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3686.12 |                33911.00 |            125000.00 |                              4411.00 | 1.00 |              106.16 |
+| valkey-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3690.58 |                33870.00 |            125000.00 |                              4411.00 | 1.00 |              106.29 |
+| valkey-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3696.48 |                33816.00 |            125000.00 |                              4447.00 | 1.00 |              106.46 |
+| valkey-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3667.95 |                34079.00 |            125000.00 |                              4447.00 | 1.00 |              105.64 |
+| valkey-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3699.21 |                33791.00 |            125000.00 |                              4403.00 | 1.00 |              106.54 |
+| valkey-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3703.70 |                33750.00 |            125000.00 |                              4435.00 | 1.00 |              106.67 |
+| valkey-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3684.49 |                33926.00 |            125000.00 |                              4427.00 | 1.00 |              106.11 |
+| valkey-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         3678.20 |                33984.00 |            125000.00 |                              4395.00 | 1.00 |              105.93 |
+
+#### Per Run
+
+| DBMS       |   experiment_run |   threads |    target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:-----------|-----------------:|----------:|----------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| Valkey-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 1.00 |              105.64 |                        29506.73 |                34079.00 |           1000000.00 |                              4422.00 |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS             | phase        | job            | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-----------------|:-------------|:---------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| valkey-1-1-1-1-1 | valkey-1-1-1 | valkey-1-1-1-1 | Valkey-1        |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        50794.94 |               196870.00 |            5001337 |                            1582.00 |              4998663 |                              1564.00 |
+
+#### Per Phase
+
+| DBMS         | phase        |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-------------|:-------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| valkey-1-1-1 | valkey-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        50794.94 |               196870.00 |            5001337 |                            1582.00 |              4998663 |                              1564.00 |
+
+### Monitoring
+
+### Loading phase: component worker
+
+| DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|-------------:|----------:|---------------:|----------------------:|
+| valkey-1-1-1-1 |       121.68 |      2.94 |           2.97 |                  2.98 |
+
+### Loading phase: component loader
+
+| DBMS           | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|:-------------|----------:|---------------:|----------------------:|
+| valkey-1-1-1-1 | n/a          |         0 |           0.30 |                  0.30 |
+
+### Benchmarking phase: component worker
+
+| DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|-------------:|----------:|---------------:|----------------------:|
+| valkey-1-1-1-1 |       497.17 |      3.86 |           3.13 |                  3.14 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:---------------|-------------:|----------:|---------------:|----------------------:|
+| valkey-1-1-1-1 |       641.96 |      5.18 |           1.50 |                  1.50 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
+* CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
+
+### Application Metrics
+
+#### Loading phase: component worker
+
+| DBMS           |   Redis Cluster State |   Connected Clients [count] |   Redis Memory Used [GiB] |   Redis Master Link Status |   Redis Operations Rate, Busiest Instance [ops/s] |
+|:---------------|----------------------:|----------------------------:|--------------------------:|---------------------------:|--------------------------------------------------:|
+| valkey-1-1-1-1 |                  6.00 |                      201.00 |                      2.88 |                       3.00 |                                           6176.52 |
+
+#### Benchmarking phase: component worker
+
+| DBMS           |   Redis Cluster State |   Connected Clients [count] |   Redis Memory Used [GiB] |   Redis Master Link Status |   Redis Operations Rate, Busiest Instance [ops/s] |
+|:---------------|----------------------:|----------------------------:|--------------------------:|---------------------------:|--------------------------------------------------:|
+| valkey-1-1-1-1 |                  6.00 |                      393.00 |                      2.88 |                       3.00 |                                          13122.77 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component loader contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
+* TEST passed: Benchmarking phase: component worker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (job pods ran shorter than scrape interval; series exists only while non-zero)
+* TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
+* TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: contains no FAILED column

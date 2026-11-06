@@ -148,7 +148,7 @@ in the manifest changes the watchdog window (0 disables it).
 local Ollama and the BHT API. For OpenRouter, pin one full-precision provider
 through `AGENT_EXTRA_BODY`, as the block shows; otherwise OpenRouter may route
 to a reduced-precision provider or one without tool calls. Tested models and
-token limits are in `agent/README.md`.
+token limits are in the [agent README](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/agent/README.md).
 
 ## Running in Kubernetes
 

@@ -12,13 +12,9 @@
 . .\scripts\testfunctions.ps1
 
 
-
-
 ###########################################
 ################# TPC-DS ##################
 ###########################################
-
-
 
 
 #### TCP-DS PostgreSQL (Example-TPC-DS.md)
@@ -30,7 +26,7 @@ bexhoma tpcds `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
@@ -64,7 +60,7 @@ bexhoma tpcds `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -102,7 +98,7 @@ bexhoma tpcds `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
@@ -137,7 +133,7 @@ bexhoma tpcds `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
@@ -169,82 +165,6 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS storage  sf=
 ###########################################
 
 
-#### TCP-DS Power 30 (Example-TPC-DS.md)
-bexhoma tpcds `
-  -dbms MonetDB                 <# DBMS under test #> `
-  -sf 30                        <# scaling factor (controls database size in GB) #> `
-  -nc 1                         <# number of repeated runs per configuration #> `
-  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-  -nlp 8                        <# number of data loader pods #> `
-  -nlt 8                        <# threads per loader pod #> `
-  -xii                          <# create indexes after data load #> `
-  -xic                          <# enforce constraints after data load #> `
-  -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -t 14400                      <# query timeout in seconds #> `
-  -lr 1024Gi                    <# RAM limit for the SUT container #> `
-  -rr 900Gi                     <# RAM requested for the SUT container #> `
-  -rsr                          <# delete and recreate the PVC at experiment start #> `
-  -rss 2000Gi                   <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_1.log" -Encoding utf8
-
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=1"
-
-
-#### TCP-DS Power 30 repeated (Example-TPC-DS.md)
-bexhoma tpcds `
-  -dbms MonetDB                 <# DBMS under test #> `
-  -sf 30                        <# scaling factor (controls database size in GB) #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
-  -ne 1,1                       <# parallel client counts to sweep (comma-separated) #> `
-  -nlp 8                        <# number of data loader pods #> `
-  -nlt 8                        <# threads per loader pod #> `
-  -xii                          <# create indexes after data load #> `
-  -xic                          <# enforce constraints after data load #> `
-  -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -t 14400                      <# query timeout in seconds #> `
-  -lr 1024Gi                    <# RAM limit for the SUT container #> `
-  -rr 900Gi                     <# RAM requested for the SUT container #> `
-  -rss 2000Gi                   <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_2.log" -Encoding utf8
-
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
-
-
-#### TCP-DS Throughput 30 (Example-TPC-DS.md)
-bexhoma tpcds `
-  -dbms MonetDB                 <# DBMS under test #> `
-  -sf 30                        <# scaling factor (controls database size in GB) #> `
-  -nc 1                         <# number of repeated runs per configuration #> `
-  -ne 1,1,3                     <# parallel client counts to sweep (comma-separated) #> `
-  -nlp 8                        <# number of data loader pods #> `
-  -nlt 8                        <# threads per loader pod #> `
-  -xii                          <# create indexes after data load #> `
-  -xic                          <# enforce constraints after data load #> `
-  -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
-  -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
-  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -t 14400                      <# query timeout in seconds #> `
-  -lr 1024Gi                    <# RAM limit for the SUT container #> `
-  -rr 900Gi                     <# RAM requested for the SUT container #> `
-  -rss 2000Gi                   <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_3.log" -Encoding utf8
-
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
-
-
 ###########################################
 ############ Profiling MonetDB ############
 ###########################################
@@ -260,14 +180,14 @@ bexhoma tpcds `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -xdt                          <# disable result type checking #> `
+  -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rss 100Gi                    <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `

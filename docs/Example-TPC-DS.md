@@ -958,8 +958,8 @@ This runs 3 streams (`-ne`), the first one as a single stream and the following 
 ### Workload
 TPC-DS Queries SF=1
 * Type: tpcds
-* Duration: 924s 
-* Code: 1792708107
+* Duration: 766s 
+* Code: 1793872761
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=1) data is loaded and benchmark is executed.
@@ -969,7 +969,7 @@ TPC-DS Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.8.
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -987,15 +987,15 @@ TPC-DS Queries SF=1
 
 ### Connections
 * postgresql-1-1-1-1-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:925841
-  * datadisk:5794
+  * disk:887125
+  * datadisk:5791
   * volume_size:1.8T
-  * volume_used:905G
+  * volume_used:867G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -1005,17 +1005,17 @@ TPC-DS Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792708107
+    * code:1793872761
 * postgresql-1-1-2-1-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:925843
-  * datadisk:5794
+  * disk:855511
+  * datadisk:5791
   * volume_size:1.8T
-  * volume_used:905G
+  * volume_used:836G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -1025,17 +1025,17 @@ TPC-DS Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792708107
+    * code:1793872761
 * postgresql-1-1-2-1-2 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:925843
-  * datadisk:5794
+  * disk:855511
+  * datadisk:5791
   * volume_size:1.8T
-  * volume_used:905G
+  * volume_used:836G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -1045,10 +1045,10 @@ TPC-DS Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792708107
+    * code:1793872761
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1792708107-84cf9b955b-855vx: 0
+* bexhoma-sut-postgresql-1-1793872761-797d65bbc5-77shs: 0
 
 ### Workflow
 
@@ -1068,7 +1068,7 @@ TPC-DS Queries SF=1
 
 |                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    1 |      100.00 |           6.00 |            1.00 |         43.00 |           40.00 |              8 |           0 |             | None           |             0 | False         |               36.00 | False               |
+| PostgreSQL-1-1 |                1 |    1 |       94.00 |           2.00 |            1.00 |         43.00 |           34.00 |              8 |           0 |             | None           |             0 | False         |               38.30 | False               |
 
 ### Benchmarking
 
@@ -1076,16 +1076,16 @@ TPC-DS Queries SF=1
 
 | DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
 |:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        160 |            0.32 |            11645.48 |           2227.50 |          -1 | postgresql-1-1-1-1-1 |
-| postgresql-1-1-2-1-1 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |                  99 |        164 |            0.32 |            11379.37 |           2173.17 |          -1 | postgresql-1-1-2-1-1 |
-| postgresql-1-1-2-1-2 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |                  99 |        159 |            0.32 |            11387.77 |           2241.51 |          -1 | postgresql-1-1-2-1-2 |
+| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        187 |            0.34 |            10935.88 |           1905.88 |          -1 | postgresql-1-1-1-1-1 |
+| postgresql-1-1-2-1-1 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |                  99 |        183 |            0.37 |            10020.16 |           1947.54 |          -1 | postgresql-1-1-2-1-1 |
+| postgresql-1-1-2-1-2 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               99 |                  99 |        179 |            0.36 |            10142.11 |           1991.06 |          -1 | postgresql-1-1-2-1-2 |
 
 #### Per Phase
 
 |                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        160 |            0.32 |            11645.48 |           2227.50 |          -1 |
-| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |              198 |                 198 |        164 |            0.32 |            11383.57 |           4346.34 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        187 |            0.34 |            10935.88 |           1905.88 |          -1 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |              198 |                 198 |        183 |            0.37 |            10080.95 |           3895.08 |          -1 |
 
 #### Query Completion per Phase
 
@@ -1099,105 +1099,105 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries       |   postgresql-1-1-1-1-1 |   postgresql-1-1-2-1-1 |   postgresql-1-1-2-1-2 |
 |:--------------|-----------------------:|-----------------------:|-----------------------:|
-| TPC-DS Q1     |                 391.40 |                  97.67 |                 441.61 |
-| TPC-DS Q2     |                 333.13 |                 345.76 |                 345.76 |
-| TPC-DS Q3     |                  97.23 |                  98.99 |                 107.71 |
-| TPC-DS Q4     |                5379.31 |                5467.30 |                5438.00 |
-| TPC-DS Q5     |                 476.68 |                 636.88 |                 636.44 |
-| TPC-DS Q6     |               47658.71 |               50814.04 |               48169.94 |
-| TPC-DS Q7     |                 323.51 |                 320.88 |                 322.18 |
-| TPC-DS Q8     |                  47.12 |                  51.51 |                  47.60 |
-| TPC-DS Q9     |                1789.15 |                1821.68 |                1826.34 |
-| TPC-DS Q10    |                 875.50 |                 868.53 |                 898.50 |
-| TPC-DS Q11    |                3041.75 |                3062.88 |                3234.48 |
-| TPC-DS Q12    |                  56.76 |                  55.73 |                  61.42 |
-| TPC-DS Q13    |                 476.07 |                 470.41 |                 483.25 |
-| TPC-DS Q14a+b |                2162.14 |                2395.81 |                2420.20 |
-| TPC-DS Q15    |                 103.16 |                 102.92 |                 104.42 |
-| TPC-DS Q16    |                 187.54 |                 196.54 |                 185.30 |
-| TPC-DS Q17    |                 248.18 |                 261.52 |                 264.95 |
-| TPC-DS Q18    |                 328.97 |                 354.21 |                 322.18 |
-| TPC-DS Q19    |                 121.46 |                 132.01 |                 122.58 |
-| TPC-DS Q20    |                  79.60 |                  85.40 |                  80.03 |
-| TPC-DS Q21    |                 236.14 |                 332.79 |                 244.76 |
-| TPC-DS Q22    |                2722.02 |                2777.73 |                2612.50 |
-| TPC-DS Q23a+b |                3761.90 |                3984.62 |                3592.24 |
-| TPC-DS Q24a+b |                 574.97 |                 483.85 |                 488.04 |
-| TPC-DS Q25    |                 264.87 |                 251.12 |                 258.42 |
-| TPC-DS Q26    |                 195.10 |                 195.91 |                 203.09 |
-| TPC-DS Q27    |                  41.72 |                  42.41 |                  41.41 |
-| TPC-DS Q28    |                1317.54 |                1330.61 |                1357.25 |
-| TPC-DS Q29    |                 280.36 |                 277.40 |                 278.16 |
-| TPC-DS Q30    |                7669.54 |                7574.95 |                7584.00 |
-| TPC-DS Q31    |                1381.16 |                1287.82 |                1305.37 |
-| TPC-DS Q32    |                 143.38 |                 138.15 |                 145.05 |
-| TPC-DS Q33    |                 323.02 |                 328.97 |                 323.56 |
-| TPC-DS Q34    |                  17.97 |                  17.59 |                  20.61 |
-| TPC-DS Q35    |                 956.96 |                 980.66 |                 942.37 |
-| TPC-DS Q36    |                  19.34 |                  22.55 |                  17.77 |
-| TPC-DS Q37    |                 330.94 |                 334.74 |                 324.89 |
-| TPC-DS Q38    |                 999.47 |                1437.44 |                1001.64 |
-| TPC-DS Q39a+b |                2003.78 |                2325.63 |                2071.85 |
-| TPC-DS Q40    |                 109.94 |                 110.64 |                 104.01 |
-| TPC-DS Q41    |                 816.17 |                 827.47 |                 761.81 |
-| TPC-DS Q42    |                  87.37 |                  82.12 |                  88.91 |
-| TPC-DS Q43    |                  22.89 |                  17.12 |                  20.04 |
-| TPC-DS Q44    |                 385.38 |                 401.94 |                 391.54 |
-| TPC-DS Q45    |                  75.49 |                  73.26 |                  74.58 |
-| TPC-DS Q46    |                  24.97 |                  23.85 |                  33.55 |
-| TPC-DS Q47    |                1041.93 |                1116.78 |                1068.21 |
-| TPC-DS Q48    |                 507.97 |                 486.16 |                 486.80 |
-| TPC-DS Q49    |                 439.10 |                 488.63 |                 419.82 |
-| TPC-DS Q50    |                 384.80 |                 382.78 |                 369.53 |
-| TPC-DS Q51    |                 742.13 |                 924.35 |                 858.04 |
-| TPC-DS Q52    |                  88.73 |                  87.48 |                  89.67 |
-| TPC-DS Q53    |                 110.59 |                 104.69 |                 110.18 |
-| TPC-DS Q54    |                  70.81 |                  61.71 |                  55.97 |
-| TPC-DS Q55    |                  84.32 |                  83.79 |                  83.01 |
-| TPC-DS Q56    |                 287.77 |                 285.27 |                 268.62 |
-| TPC-DS Q57    |                 640.66 |                 710.14 |                 694.98 |
-| TPC-DS Q58    |                 316.72 |                 328.34 |                 301.99 |
-| TPC-DS Q59    |                 425.92 |                 427.70 |                 411.96 |
-| TPC-DS Q60    |                 328.00 |                 324.23 |                 309.52 |
-| TPC-DS Q61    |                 105.83 |                 110.34 |                 107.48 |
-| TPC-DS Q62    |                  95.22 |                  95.80 |                  89.76 |
-| TPC-DS Q63    |                 114.69 |                 115.94 |                 103.12 |
-| TPC-DS Q64    |                 599.72 |                 587.42 |                 595.72 |
-| TPC-DS Q65    |                 504.19 |                 707.76 |                 540.20 |
-| TPC-DS Q66    |                 169.02 |                 173.51 |                 166.43 |
-| TPC-DS Q67    |                2088.65 |                2177.48 |                2083.48 |
-| TPC-DS Q68    |                  35.25 |                  29.85 |                  29.37 |
-| TPC-DS Q69    |                 299.23 |                 403.58 |                 382.98 |
-| TPC-DS Q70    |                 346.20 |                 358.38 |                 525.05 |
-| TPC-DS Q71    |                 262.64 |                 289.84 |                 257.85 |
-| TPC-DS Q72    |                 763.98 |                 812.98 |                 770.80 |
-| TPC-DS Q73    |                  22.25 |                  22.50 |                  19.51 |
-| TPC-DS Q74    |                 920.61 |                 962.38 |                 928.48 |
-| TPC-DS Q75    |                 578.30 |                 614.21 |                 586.16 |
-| TPC-DS Q76    |                 222.73 |                 235.13 |                 366.93 |
-| TPC-DS Q77    |                 288.42 |                 270.82 |                 280.77 |
-| TPC-DS Q78    |                1065.69 |                1072.72 |                1034.25 |
-| TPC-DS Q79    |                 157.68 |                 155.16 |                 156.51 |
-| TPC-DS Q80    |                 362.85 |                 365.85 |                 371.13 |
-| TPC-DS Q81    |               31421.22 |               31589.30 |               31448.59 |
-| TPC-DS Q82    |                 344.95 |                 338.26 |                 346.72 |
-| TPC-DS Q83    |                  64.16 |                  67.62 |                  68.52 |
-| TPC-DS Q84    |                  66.95 |                  70.76 |                  70.08 |
-| TPC-DS Q85    |                 265.68 |                 266.23 |                 272.46 |
-| TPC-DS Q86    |                 177.83 |                 159.62 |                 163.62 |
-| TPC-DS Q87    |                1114.59 |                1018.78 |                1094.30 |
-| TPC-DS Q88    |                1985.77 |                1950.95 |                1956.44 |
-| TPC-DS Q89    |                 112.94 |                 116.12 |                 227.50 |
-| TPC-DS Q90    |                  98.45 |                  93.09 |                  92.93 |
-| TPC-DS Q91    |                 119.27 |                 119.57 |                 123.53 |
-| TPC-DS Q92    |                  45.79 |                  47.15 |                  51.38 |
-| TPC-DS Q93    |                 239.68 |                 467.64 |                 304.20 |
-| TPC-DS Q94    |                 130.40 |                 121.94 |                 125.35 |
-| TPC-DS Q95    |                2755.35 |                2593.97 |                2633.09 |
-| TPC-DS Q96    |                  93.57 |                  97.98 |                  92.22 |
-| TPC-DS Q97    |                 325.73 |                 333.63 |                 328.48 |
-| TPC-DS Q98    |                 132.10 |                 266.12 |                 132.61 |
-| TPC-DS Q99    |                 156.55 |                 156.24 |                 162.25 |
+| TPC-DS Q1     |                  93.46 |                 340.01 |                 234.79 |
+| TPC-DS Q2     |                 366.66 |                1429.43 |                1323.70 |
+| TPC-DS Q3     |                 114.52 |                 394.50 |                 328.39 |
+| TPC-DS Q4     |                6354.55 |                9563.13 |                9050.97 |
+| TPC-DS Q5     |                 458.32 |                 455.67 |                 593.54 |
+| TPC-DS Q6     |               62436.34 |               54442.17 |               54893.08 |
+| TPC-DS Q7     |                 323.57 |                 532.80 |                 506.75 |
+| TPC-DS Q8     |                  48.49 |                  49.73 |                  45.53 |
+| TPC-DS Q9     |                2019.88 |                2052.53 |                2048.58 |
+| TPC-DS Q10    |                 920.74 |                 894.55 |                 883.12 |
+| TPC-DS Q11    |                4080.73 |                3409.79 |                3279.23 |
+| TPC-DS Q12    |                  51.61 |                  56.22 |                  51.81 |
+| TPC-DS Q13    |                 508.50 |                 494.08 |                 489.56 |
+| TPC-DS Q14a+b |                2979.93 |                3185.99 |                2569.78 |
+| TPC-DS Q15    |                 285.06 |                  97.22 |                  95.37 |
+| TPC-DS Q16    |                 253.44 |                 187.95 |                 184.68 |
+| TPC-DS Q17    |                 291.46 |                 262.85 |                 259.64 |
+| TPC-DS Q18    |                 332.87 |                 326.16 |                 355.87 |
+| TPC-DS Q19    |                 136.19 |                 136.40 |                 129.86 |
+| TPC-DS Q20    |                  89.03 |                  89.29 |                  82.52 |
+| TPC-DS Q21    |                 255.42 |                 246.16 |                 241.98 |
+| TPC-DS Q22    |                3051.00 |                3004.91 |                3027.87 |
+| TPC-DS Q23a+b |                4101.80 |                4392.67 |                4282.44 |
+| TPC-DS Q24a+b |                 592.42 |                 523.22 |                 587.65 |
+| TPC-DS Q25    |                 273.82 |                 275.36 |                 257.78 |
+| TPC-DS Q26    |                 197.29 |                 206.20 |                 203.00 |
+| TPC-DS Q27    |                 311.73 |                 345.23 |                 320.61 |
+| TPC-DS Q28    |                1698.12 |                1417.50 |                1488.87 |
+| TPC-DS Q29    |                 528.06 |                 451.86 |                 282.28 |
+| TPC-DS Q30    |                 758.68 |                 784.82 |                 971.78 |
+| TPC-DS Q31    |                1304.72 |                1406.66 |                1385.60 |
+| TPC-DS Q32    |                 147.58 |                 154.48 |                 152.48 |
+| TPC-DS Q33    |                 309.38 |                 334.09 |                 331.67 |
+| TPC-DS Q34    |                  19.37 |                  20.39 |                  24.65 |
+| TPC-DS Q35    |                 946.46 |                 972.08 |                 962.99 |
+| TPC-DS Q36    |                 661.11 |                 270.57 |                 286.53 |
+| TPC-DS Q37    |                 486.13 |                 292.44 |                 279.83 |
+| TPC-DS Q38    |                 974.15 |                1290.97 |                1075.37 |
+| TPC-DS Q39a+b |                2584.40 |                2613.78 |                2730.16 |
+| TPC-DS Q40    |                 110.39 |                 103.05 |                 124.16 |
+| TPC-DS Q41    |                 869.47 |                1113.23 |                 966.34 |
+| TPC-DS Q42    |                  90.67 |                 111.43 |                  93.77 |
+| TPC-DS Q43    |                  19.03 |                  27.35 |                  23.54 |
+| TPC-DS Q44    |                   1.77 |                   2.32 |                   1.97 |
+| TPC-DS Q45    |                  74.85 |                  75.41 |                  79.02 |
+| TPC-DS Q46    |                  31.87 |                  29.33 |                  33.64 |
+| TPC-DS Q47    |                1291.47 |                1367.50 |                1521.89 |
+| TPC-DS Q48    |                 800.67 |                 765.39 |                 529.34 |
+| TPC-DS Q49    |                 945.25 |                 963.14 |                 792.64 |
+| TPC-DS Q50    |                 462.81 |                 370.00 |                 536.61 |
+| TPC-DS Q51    |                 740.87 |                 849.77 |                 762.94 |
+| TPC-DS Q52    |                  91.84 |                 104.06 |                 109.95 |
+| TPC-DS Q53    |                 119.01 |                 134.84 |                 139.21 |
+| TPC-DS Q54    |                  69.58 |                  81.49 |                  85.53 |
+| TPC-DS Q55    |                  91.51 |                 101.26 |                  97.13 |
+| TPC-DS Q56    |                 321.66 |                 298.45 |                 366.12 |
+| TPC-DS Q57    |                 783.12 |                 927.49 |                 841.39 |
+| TPC-DS Q58    |                 328.27 |                 401.05 |                 363.04 |
+| TPC-DS Q59    |                 808.51 |                 544.73 |                 542.52 |
+| TPC-DS Q60    |                 776.86 |                 512.64 |                 368.40 |
+| TPC-DS Q61    |                 111.58 |                 110.13 |                 144.53 |
+| TPC-DS Q62    |                  94.53 |                 109.66 |                 120.69 |
+| TPC-DS Q63    |                 142.95 |                 380.46 |                 131.05 |
+| TPC-DS Q64    |                 696.72 |                 900.98 |                 874.77 |
+| TPC-DS Q65    |                 569.32 |                1097.41 |                 735.63 |
+| TPC-DS Q66    |                 182.95 |                 253.45 |                 220.58 |
+| TPC-DS Q67    |                2981.52 |                3299.44 |                3397.28 |
+| TPC-DS Q68    |                  35.66 |                  35.14 |                  42.68 |
+| TPC-DS Q69    |                 312.49 |                 449.30 |                 502.51 |
+| TPC-DS Q70    |                 357.51 |                 510.18 |                 427.67 |
+| TPC-DS Q71    |                 306.95 |                 325.60 |                 325.55 |
+| TPC-DS Q72    |                1309.31 |                1091.93 |                1112.48 |
+| TPC-DS Q73    |                  23.46 |                  24.08 |                  25.00 |
+| TPC-DS Q74    |                1160.99 |                1349.37 |                1051.34 |
+| TPC-DS Q75    |                1011.05 |                 878.99 |                 737.94 |
+| TPC-DS Q76    |                 238.28 |                 267.23 |                 249.47 |
+| TPC-DS Q77    |                 294.82 |                 361.38 |                 360.63 |
+| TPC-DS Q78    |                1088.56 |                1349.49 |                1594.62 |
+| TPC-DS Q79    |                 186.13 |                 189.72 |                 174.17 |
+| TPC-DS Q80    |                 429.81 |                 511.17 |                 408.30 |
+| TPC-DS Q81    |               38188.01 |               40849.44 |               41235.62 |
+| TPC-DS Q82    |                 362.88 |                 377.25 |                 381.78 |
+| TPC-DS Q83    |                  72.12 |                  86.27 |                  76.58 |
+| TPC-DS Q84    |                  21.43 |                  20.61 |                  22.67 |
+| TPC-DS Q85    |                 268.70 |                 297.62 |                 285.26 |
+| TPC-DS Q86    |                 175.74 |                 192.65 |                 180.45 |
+| TPC-DS Q87    |                 841.71 |                 993.28 |                 930.66 |
+| TPC-DS Q88    |                2302.86 |                2602.75 |                2274.75 |
+| TPC-DS Q89    |                  19.93 |                  23.95 |                  30.66 |
+| TPC-DS Q90    |                 101.16 |                 108.86 |                 222.69 |
+| TPC-DS Q91    |                  87.72 |                 103.90 |                 199.13 |
+| TPC-DS Q92    |                  53.77 |                  63.18 |                 151.80 |
+| TPC-DS Q93    |                 263.38 |                 289.51 |                 312.96 |
+| TPC-DS Q94    |                 150.17 |                 155.85 |                 171.74 |
+| TPC-DS Q95    |                3237.27 |                3404.04 |                3120.19 |
+| TPC-DS Q96    |                  98.02 |                 111.57 |                 105.98 |
+| TPC-DS Q97    |                 346.14 |                 412.71 |                 411.30 |
+| TPC-DS Q98    |                 154.47 |                 168.12 |                 215.40 |
+| TPC-DS Q99    |                 167.04 |                 179.12 |                 175.36 |
 
 ### Errors (failed queries)
 
@@ -1205,20 +1205,19 @@ No errors
 
 ### Warnings (result mismatch)
 
-|                      |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
-|:---------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
-| postgresql-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| postgresql-1-1-2-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+No warnings
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
-* TEST failed: SQL warnings (result mismatch)
+* TEST passed: No SQL warnings
 * TEST passed: All active queries counted in the totals
 * TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
@@ -1300,8 +1299,8 @@ The result looks something like
 ### Workload
 TPC-DS Queries SF=1
 * Type: tpcds
-* Duration: 1134s 
-* Code: 1792709181
+* Duration: 1077s 
+* Code: 1793872554
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=1) data is loaded and benchmark is executed.
@@ -1311,7 +1310,7 @@ TPC-DS Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.8.
+  * Experiment uses bexhoma version 0.11.12.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -1329,13 +1328,13 @@ TPC-DS Queries SF=1
 
 ### Connections
 * postgresql-1-1-1-1-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:920048
-  * datadisk:5794
+  * disk:878780
+  * datadisk:5790
   * volume_size:49G
   * volume_used:5.7G
   * cpu_list:0-223
@@ -1347,15 +1346,15 @@ TPC-DS Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792709181
+    * code:1793872554
 * postgresql-1-2-1-1-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:920018
-  * datadisk:5794
+  * disk:893631
+  * datadisk:5790
   * volume_size:49G
   * volume_used:5.7G
   * cpu_list:0-223
@@ -1367,14 +1366,17 @@ TPC-DS Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792709181
+    * code:1793872554
 
 ### Inherited Loading
 * loading skipped, loading times copied from an earlier repetition: PostgreSQL-1-2
 
+### Data Parameters of Reused Volumes
+* PostgreSQL-1: loading values of the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
+
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1792709181-7bc865bb85-76vzf: 0
-* bexhoma-sut-postgresql-1-1792709181-86566ccf8f-f7gz8: 0
+* bexhoma-sut-postgresql-1-1793872554-858cd4cb9b-4mm7t: 0
+* bexhoma-sut-postgresql-1-1793872554-544fd7d6d9-qxb5g: 0
 
 ### Workflow
 
@@ -1394,8 +1396,8 @@ TPC-DS Queries SF=1
 
 |                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    1 |      101.00 |           7.00 |            1.00 |         43.00 |           42.00 |              8 |           0 |             | None           |             0 | False         |               35.64 | False               |
-| PostgreSQL-1-2 |                2 |    1 |      101.00 |           7.00 |            1.00 |         43.00 |           42.00 |              8 |           0 |             | None           |             0 | False         |               35.64 | True                |
+| PostgreSQL-1-1 |                1 |    1 |      104.00 |           2.00 |            0.00 |         56.00 |           37.00 |              8 |           0 |             | None           |             0 | False         |               34.62 | False               |
+| PostgreSQL-1-2 |                2 |    1 |      104.00 |           2.00 |            0.00 |         56.00 |           37.00 |              8 |           0 |             | None           |             0 | False         |               34.62 | True                |
 
 ### Benchmarking
 
@@ -1403,15 +1405,15 @@ TPC-DS Queries SF=1
 
 | DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
 |:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        160 |            0.29 |            12744.12 |           2227.50 |          -1 | postgresql-1-1-1-1-1 |
-| postgresql-1-2-1-1-1 | PostgreSQL-1    | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        168 |            0.32 |            11676.30 |           2121.43 |          -1 | postgresql-1-2-1-1-1 |
+| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        204 |            0.36 |            10277.17 |           1747.06 |          -1 | postgresql-1-1-1-1-1 |
+| postgresql-1-2-1-1-1 | PostgreSQL-1    | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        201 |            0.40 |             9279.48 |           1773.13 |          -1 | postgresql-1-2-1-1-1 |
 
 #### Per Phase
 
 |                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        160 |            0.29 |            12744.12 |           2227.50 |          -1 |
-| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        168 |            0.32 |            11676.30 |           2121.43 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        204 |            0.36 |            10277.17 |           1747.06 |          -1 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        201 |            0.40 |             9279.48 |           1773.13 |          -1 |
 
 #### Query Completion per Phase
 
@@ -1425,105 +1427,105 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries       |   postgresql-1-1-1-1-1 |   postgresql-1-2-1-1-1 |
 |:--------------|-----------------------:|-----------------------:|
-| TPC-DS Q1     |                  83.00 |                1639.93 |
-| TPC-DS Q2     |                 328.66 |                 435.69 |
-| TPC-DS Q3     |                  95.66 |                 224.87 |
-| TPC-DS Q4     |                5404.33 |                5601.19 |
-| TPC-DS Q5     |                 461.25 |                 527.55 |
-| TPC-DS Q6     |               48854.02 |               48292.68 |
-| TPC-DS Q7     |                 303.64 |                 373.05 |
-| TPC-DS Q8     |                  49.02 |                  50.83 |
-| TPC-DS Q9     |                1846.80 |                1868.25 |
-| TPC-DS Q10    |                 873.83 |                2690.03 |
-| TPC-DS Q11    |                3049.11 |                3158.64 |
-| TPC-DS Q12    |                  54.72 |                  56.14 |
-| TPC-DS Q13    |                 482.72 |                 473.96 |
-| TPC-DS Q14a+b |                2144.67 |                2153.59 |
-| TPC-DS Q15    |                  93.03 |                 106.86 |
-| TPC-DS Q16    |                 175.58 |                 205.71 |
-| TPC-DS Q17    |                 244.03 |                 263.61 |
-| TPC-DS Q18    |                 310.39 |                 342.01 |
-| TPC-DS Q19    |                 121.64 |                 122.74 |
-| TPC-DS Q20    |                  78.53 |                  81.95 |
-| TPC-DS Q21    |                 233.41 |                 310.20 |
-| TPC-DS Q22    |                2560.65 |                2655.79 |
-| TPC-DS Q23a+b |                3615.45 |                3541.90 |
-| TPC-DS Q24a+b |                 646.92 |                 661.22 |
-| TPC-DS Q25    |                 259.27 |                 253.64 |
-| TPC-DS Q26    |                 193.84 |                 206.05 |
-| TPC-DS Q27    |                  40.43 |                  37.46 |
-| TPC-DS Q28    |                1343.76 |                1329.40 |
-| TPC-DS Q29    |                 268.86 |                 279.32 |
-| TPC-DS Q30    |                7687.49 |                7608.32 |
-| TPC-DS Q31    |                1300.76 |                1308.44 |
-| TPC-DS Q32    |                 101.96 |                 111.28 |
-| TPC-DS Q33    |                 329.18 |                 326.42 |
-| TPC-DS Q34    |                  18.42 |                  21.32 |
-| TPC-DS Q35    |                 969.84 |                 989.42 |
-| TPC-DS Q36    |                 284.61 |                 285.48 |
-| TPC-DS Q37    |                 324.12 |                 333.45 |
-| TPC-DS Q38    |                 958.22 |                 965.90 |
-| TPC-DS Q39a+b |                1933.71 |                1960.22 |
-| TPC-DS Q40    |                 102.62 |                 107.28 |
-| TPC-DS Q41    |                 744.67 |                 746.10 |
-| TPC-DS Q42    |                  92.10 |                  86.67 |
-| TPC-DS Q43    |                  20.79 |                  17.96 |
-| TPC-DS Q44    |                   2.35 |                   4.36 |
-| TPC-DS Q45    |                  73.66 |                  71.55 |
-| TPC-DS Q46    |                  24.95 |                  22.97 |
-| TPC-DS Q47    |                1152.17 |                1160.27 |
-| TPC-DS Q48    |                 476.95 |                 477.76 |
-| TPC-DS Q49    |                 426.08 |                 424.85 |
-| TPC-DS Q50    |                 383.02 |                 383.00 |
-| TPC-DS Q51    |                 692.25 |                 684.41 |
-| TPC-DS Q52    |                  80.66 |                  90.40 |
-| TPC-DS Q53    |                 103.10 |                 109.34 |
-| TPC-DS Q54    |                  62.30 |                  67.54 |
-| TPC-DS Q55    |                  80.22 |                  80.42 |
-| TPC-DS Q56    |                 313.38 |                 312.30 |
-| TPC-DS Q57    |                 622.50 |                 588.30 |
-| TPC-DS Q58    |                 296.78 |                 317.13 |
-| TPC-DS Q59    |                 410.26 |                 416.67 |
-| TPC-DS Q60    |                 303.86 |                 300.83 |
-| TPC-DS Q61    |                 105.67 |                 106.04 |
-| TPC-DS Q62    |                  92.37 |                 101.88 |
-| TPC-DS Q63    |                 103.31 |                 109.41 |
-| TPC-DS Q64    |                 589.87 |                 581.91 |
-| TPC-DS Q65    |                 503.70 |                 512.04 |
-| TPC-DS Q66    |                 166.93 |                 187.43 |
-| TPC-DS Q67    |                2084.58 |                2126.38 |
-| TPC-DS Q68    |                  30.00 |                  34.92 |
-| TPC-DS Q69    |                 114.55 |                 121.95 |
-| TPC-DS Q70    |                 341.50 |                 340.63 |
-| TPC-DS Q71    |                 263.06 |                 276.72 |
-| TPC-DS Q72    |                 792.00 |                 829.22 |
-| TPC-DS Q73    |                  20.86 |                  21.20 |
-| TPC-DS Q74    |                 845.76 |                 817.94 |
-| TPC-DS Q75    |                 604.96 |                 586.65 |
-| TPC-DS Q76    |                 198.53 |                 206.74 |
-| TPC-DS Q77    |                 281.85 |                 289.19 |
-| TPC-DS Q78    |                 946.73 |                1036.25 |
-| TPC-DS Q79    |                 143.91 |                 155.42 |
-| TPC-DS Q80    |                 351.15 |                 359.40 |
-| TPC-DS Q81    |               31507.87 |               31646.11 |
-| TPC-DS Q82    |                 348.41 |                 361.89 |
-| TPC-DS Q83    |                  67.78 |                  71.24 |
-| TPC-DS Q84    |                  18.18 |                  19.75 |
-| TPC-DS Q85    |                 275.60 |                 265.13 |
-| TPC-DS Q86    |                 159.21 |                 150.52 |
-| TPC-DS Q87    |                1011.85 |                1027.39 |
-| TPC-DS Q88    |                1935.71 |                1938.40 |
-| TPC-DS Q89    |                 129.54 |                 130.49 |
-| TPC-DS Q90    |                  94.05 |                  97.63 |
-| TPC-DS Q91    |                  86.38 |                  93.09 |
-| TPC-DS Q92    |                  49.65 |                  50.62 |
-| TPC-DS Q93    |                 238.30 |                 237.87 |
-| TPC-DS Q94    |                 124.71 |                 137.63 |
-| TPC-DS Q95    |                2627.93 |                2605.66 |
-| TPC-DS Q96    |                  93.53 |                  97.88 |
-| TPC-DS Q97    |                 336.12 |                 332.55 |
-| TPC-DS Q98    |                 131.58 |                 135.74 |
-| TPC-DS Q99    |                 161.26 |                 164.67 |
+| TPC-DS Q1     |                  78.57 |                3406.38 |
+| TPC-DS Q2     |                 343.67 |                1429.11 |
+| TPC-DS Q3     |                 105.03 |                 678.32 |
+| TPC-DS Q4     |                6250.10 |                7425.21 |
+| TPC-DS Q5     |                 773.17 |                 670.86 |
+| TPC-DS Q6     |               59432.00 |               62316.77 |
+| TPC-DS Q7     |                 372.86 |                1061.78 |
+| TPC-DS Q8     |                 101.85 |                  50.84 |
+| TPC-DS Q9     |                2326.82 |                2210.19 |
+| TPC-DS Q10    |                 906.38 |                6629.32 |
+| TPC-DS Q11    |                4203.30 |                3632.85 |
+| TPC-DS Q12    |                  56.20 |                  59.03 |
+| TPC-DS Q13    |                 481.33 |                 514.34 |
+| TPC-DS Q14a+b |                2268.85 |                2921.00 |
+| TPC-DS Q15    |                 106.57 |                 106.00 |
+| TPC-DS Q16    |                 204.20 |                 354.32 |
+| TPC-DS Q17    |                 261.86 |                 302.60 |
+| TPC-DS Q18    |                 327.07 |                 401.41 |
+| TPC-DS Q19    |                 122.87 |                 136.34 |
+| TPC-DS Q20    |                  81.05 |                  88.48 |
+| TPC-DS Q21    |                 422.52 |                 686.87 |
+| TPC-DS Q22    |                3896.81 |                3545.15 |
+| TPC-DS Q23a+b |                4487.89 |                4258.04 |
+| TPC-DS Q24a+b |                 468.85 |                 722.40 |
+| TPC-DS Q25    |                 254.98 |                 271.84 |
+| TPC-DS Q26    |                 241.10 |                 268.56 |
+| TPC-DS Q27    |                 304.38 |                 343.93 |
+| TPC-DS Q28    |                1491.02 |                2144.30 |
+| TPC-DS Q29    |                 443.79 |                 313.62 |
+| TPC-DS Q30    |                8306.46 |                8611.32 |
+| TPC-DS Q31    |                1750.15 |                1613.82 |
+| TPC-DS Q32    |                  99.04 |                 227.90 |
+| TPC-DS Q33    |                 308.89 |                 335.38 |
+| TPC-DS Q34    |                  18.83 |                  21.91 |
+| TPC-DS Q35    |                1104.94 |                1025.50 |
+| TPC-DS Q36    |                 267.51 |                 301.63 |
+| TPC-DS Q37    |                 281.89 |                 274.07 |
+| TPC-DS Q38    |                1358.88 |                 878.28 |
+| TPC-DS Q39a+b |                2579.46 |                2661.56 |
+| TPC-DS Q40    |                 104.47 |                 140.08 |
+| TPC-DS Q41    |                 754.34 |                 808.10 |
+| TPC-DS Q42    |                  93.63 |                  89.50 |
+| TPC-DS Q43    |                  22.50 |                  22.36 |
+| TPC-DS Q44    |                   2.77 |                   8.75 |
+| TPC-DS Q45    |                  70.72 |                  75.08 |
+| TPC-DS Q46    |                  34.52 |                  28.60 |
+| TPC-DS Q47    |                2462.33 |                1331.88 |
+| TPC-DS Q48    |                 462.23 |                 542.14 |
+| TPC-DS Q49    |                 448.91 |                 661.17 |
+| TPC-DS Q50    |                 320.75 |                 505.55 |
+| TPC-DS Q51    |                 848.84 |                 794.29 |
+| TPC-DS Q52    |                 105.73 |                  98.14 |
+| TPC-DS Q53    |                 129.56 |                 135.33 |
+| TPC-DS Q54    |                  67.44 |                  76.86 |
+| TPC-DS Q55    |                  86.98 |                 100.41 |
+| TPC-DS Q56    |                 273.24 |                 350.45 |
+| TPC-DS Q57    |                 705.35 |                 779.87 |
+| TPC-DS Q58    |                 320.41 |                 345.58 |
+| TPC-DS Q59    |                 431.32 |                 463.86 |
+| TPC-DS Q60    |                 313.83 |                 343.68 |
+| TPC-DS Q61    |                 211.69 |                 137.23 |
+| TPC-DS Q62    |                 157.56 |                 149.29 |
+| TPC-DS Q63    |                 225.37 |                 166.36 |
+| TPC-DS Q64    |                1247.39 |                 817.97 |
+| TPC-DS Q65    |                 508.87 |                 552.27 |
+| TPC-DS Q66    |                 154.69 |                 208.91 |
+| TPC-DS Q67    |                2512.72 |                2991.78 |
+| TPC-DS Q68    |                  38.77 |                  32.70 |
+| TPC-DS Q69    |                 117.93 |                 131.43 |
+| TPC-DS Q70    |                 362.42 |                 355.01 |
+| TPC-DS Q71    |                 707.54 |                 263.71 |
+| TPC-DS Q72    |                1304.07 |                 833.87 |
+| TPC-DS Q73    |                  22.93 |                  22.17 |
+| TPC-DS Q74    |                1141.86 |                1165.25 |
+| TPC-DS Q75    |                 957.68 |                 633.99 |
+| TPC-DS Q76    |                 223.04 |                 249.57 |
+| TPC-DS Q77    |                 291.18 |                 275.68 |
+| TPC-DS Q78    |                 909.38 |                1028.32 |
+| TPC-DS Q79    |                 129.75 |                 153.13 |
+| TPC-DS Q80    |                 420.74 |                 451.05 |
+| TPC-DS Q81    |               41625.53 |               35871.32 |
+| TPC-DS Q82    |                 424.15 |                 344.28 |
+| TPC-DS Q83    |                  99.29 |                  69.86 |
+| TPC-DS Q84    |                  77.34 |                  68.96 |
+| TPC-DS Q85    |                 287.57 |                 256.54 |
+| TPC-DS Q86    |                 162.28 |                 260.11 |
+| TPC-DS Q87    |                1119.58 |                1077.82 |
+| TPC-DS Q88    |                2194.86 |                2215.90 |
+| TPC-DS Q89    |                 141.82 |                 103.70 |
+| TPC-DS Q90    |                 101.84 |                  95.05 |
+| TPC-DS Q91    |                 148.51 |                 118.98 |
+| TPC-DS Q92    |                  95.70 |                  62.10 |
+| TPC-DS Q93    |                 366.70 |                 248.83 |
+| TPC-DS Q94    |                 150.15 |                 143.31 |
+| TPC-DS Q95    |                2931.78 |                2713.11 |
+| TPC-DS Q96    |                  90.43 |                  94.16 |
+| TPC-DS Q97    |                 351.45 |                 348.42 |
+| TPC-DS Q98    |                 165.27 |                 141.13 |
+| TPC-DS Q99    |                 370.88 |                 230.47 |
 
 ### Errors (failed queries)
 
@@ -1531,19 +1533,19 @@ No errors
 
 ### Warnings (result mismatch)
 
-|                      |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
-|:---------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
-| postgresql-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
+No warnings
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
 * TEST passed: No SQL errors
-* TEST failed: SQL warnings (result mismatch)
+* TEST passed: No SQL warnings
 * TEST passed: All active queries counted in the totals
 * TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
@@ -1595,7 +1597,7 @@ bexhoma tpcds \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rss 50Gi \
+  -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   profiling &>$LOG_DIR/docs_tpcds_postgresql_profiling.log
@@ -1612,459 +1614,556 @@ bexhoma tpcds \
 ### Workload
 TPC-DS Data Profiling SF=10
 * Type: tpcds
-* Duration: 1511s 
-* Code: 1783024751
+* Duration: 2549s 
+* Code: 1793879951
 * We compute for all columns: Minimum, maximum, average, count, count distinct, count NULL and non NULL entries and coefficient of variation.
 * This experiment compares imported TPC-DS data sets in different DBMS.
   * TPC-DS (SF=10) data is loaded and benchmark is executed.
   * Query ordering is Q1 - Q99.
   * All instances use the same query parameters.
-  * Timeout per query is 600.
+  * Timeout per query is 1800.
+  * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
-  * Experiment uses bexhoma version 0.10.2.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * Database is persisted to disk of type shared and size 50Gi.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 100Gi.
   * Loading is tested with [8] threads, split into [8] pods.
   * Benchmarking is tested with [1] threads, split into [1] pods.
   * Benchmarking is run as [1, 1] times the number of benchmarking pods.
   * Experiment is run once.
-
-### Connections
-* PostgreSQL-1-1-1-1-1 uses docker image postgres:18.3
-  * RAM:1081853939712
-  * CPU:Intel(R) Xeon(R) Gold 6438Y+
-  * Cores:128
-  * host:6.8.0-111-generic
-  * node:cl-worker37
-  * disk:676748
-  * volume_size:50G
-  * volume_used:50G
-  * cpu_list:0-127
-  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
-  * requests_cpu:4
-  * requests_memory:64Gi
-  * limits_memory:64Gi
-  * eval_parameters
-    * code:1783024751
-* PostgreSQL-1-1-2-1-1 uses docker image postgres:18.3
-  * RAM:1081853939712
-  * CPU:Intel(R) Xeon(R) Gold 6438Y+
-  * Cores:128
-  * host:6.8.0-111-generic
-  * node:cl-worker37
-  * disk:676753
-  * volume_size:50G
-  * volume_used:50G
-  * cpu_list:0-127
-  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
-  * requests_cpu:4
-  * requests_memory:64Gi
-  * limits_memory:64Gi
-  * eval_parameters
-    * code:1783024751
-
-### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1783024751-f9968dd55-kw6cv: 0 0
-
-### Workflow
-
-#### Actual
-
-* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
-* DBMS PostgreSQL-1 - Experiment 1 Client 2: tpcds (1 pods)
-
-#### Planned
-
-* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
-* DBMS PostgreSQL-1 - Experiment 1 Client 2: tpcds (1 pods)
-
-### Loading
-
-#### Per Run
-
-|                |   experiment_run |    SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:---------------|-----------------:|------:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|
-| PostgreSQL-1-1 |                1 | 10.00 |     1997.00 |           1.00 |            1.00 |        919.00 |         1069.00 |              8 |           0 |             | None           |             0 | False         |               18.03 |
-
-### Execution
-
-#### Per Connection
-
-
-#### Per Phase
-
-
-
-### Latency of Timer Execution [ms]
-
-### Errors (failed queries)
-
-No errors
-
-### Warnings (result mismatch)
-
-No warnings
-
-### Monitoring
-
-### Loading phase: SUT deployment
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |      1652.96 |      2.19 |          12.84 |                 37.64 |
-| PostgreSQL-1-1-2-1 |      1652.96 |      2.19 |          12.84 |                 37.64 |
-
-### Loading phase: component data generator
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
-| PostgreSQL-1-1-2-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
-
-### Loading phase: component loader
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |       139.44 |      0.66 |           0.01 |                  2.82 |
-| PostgreSQL-1-1-2-1 |       139.44 |      0.66 |           0.01 |                  2.82 |
-
-### Execution phase: SUT deployment
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |         0.00 |      0.26 |           3.74 |                 30.20 |
-| PostgreSQL-1-1-2-1 |         0.00 |      0.28 |           8.16 |                 40.21 |
-
-### Execution phase: component benchmarker
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| PostgreSQL-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
-| PostgreSQL-1-1-2-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
-
-### Tests
-* TEST passed: No SUT container restarts
-* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
-* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST failed: Execution phase: SUT deployment contains 0 or NaN in CPU [CPUs]
-* TEST failed: Execution phase: component benchmarker contains 0 or NaN in CPU [CPUs]
-* TEST failed: Geo Times [s] contains 0 or NaN
-* TEST failed: Power@Size [~Q/h] contains 0 or NaN
-* TEST failed: Throughput@Size contains 0 or NaN
-* TEST passed: No SQL errors
-* TEST passed: No SQL warnings
-* TEST passed: Workflow as planned
-```
-
-</details>
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Example: MonetDB TPC-DS@30
-
-<img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
-
-This example shows how to run Q1-Q99 derived from TPC-DS in MonetDB at SF=30.
-It covers the power and the throughput test.
-The refresh stream is not included.
-
-> The query file is derived from the TPC-DS and as such is not comparable to published TPC-DS results, as the query file results do not comply with the TPC-DS specification.
-
-Official TPC-DS benchmark - http://www.tpc.org/tpcds
-
-**The results are not official benchmark results.
-Exact performance depends on a number of parameters.
-You may get different results.
-These examples are solely to illustrate how to use bexhoma and show the result evaluation.**
-
-
-
-### Generate and Load Data
-
-At first we generate TPC-DS data at SF=30 (`-sf`) with 8 parallel generators (`-nlp`).
-The generated data is stored at the shared disk `data`.
-Moreover the data is loaded into an instance of MonetDB using again 8 parallel loaders.
-Afterwards the script creates contraints (`-xic`) and indexes (`-xii`) and updates table statistics (`-xis`).
-The database is located in another shared disk of storageClass shared (`-rst`) and of size 2000Gi (`-rss`).
-Storage is cleaned if it has existed (`-rsr`).
-
-The script also runs a power test (`-ne` set to 1) with timeout 14400s (`-t`) and data transfer activated (`-xdt`) once (`-nc` set to 1).
-To avoid conflicts with other experiments we set a maximum of 1 DBMS per time (`-ms`).
-Monitoring is activated (`-m`) for all components (`-mc`).
-A node is requested that has 900Gi RAM (`-rr`), the RAM limit is 1024Gi (`-lr`).
-
-```bash
-BEXHOMA_NODE_SUT="cl-worker11"
-BEXHOMA_NODE_LOAD="cl-worker19"
-BEXHOMA_NODE_BENCHMARK="cl-worker19"
-LOG_DIR="./logs_tests"
-BEXHOMA_MS=1
-BEXHOMA_STORAGE_CLASS="shared"
-
-mkdir -p $LOG_DIR
-
-bexhoma tpcds \
-  -dbms MonetDB \
-  -sf 30 \
-  -nc 1 \
-  -ne 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
-  -m \
-  -mc \
-  -ms $BEXHOMA_MS \
-  -t 14400 \
-  -lr 1024Gi \
-  -rr 900Gi \
-  -rsr \
-  -rss 2000Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  run &>$LOG_DIR/docs_tpcds_monetdb_1.log
-```
-
-
-### Status Database and Benchmark
-
-You can watch the status of experiments via `bexhoma status`.
-
-In the following example output we see all components of bexhoma are up and running.
-The cluster stores a MonetDB database corresponding to TPC-DS of SF=30.
-The disk is of storageClass shared and of size 2000Gi and 156G of that space is used.
-It took about 4000s to build this database.
-Currently no DBMS is running.
-
-```bash
-Dashboard: Running
-Message Queue: Running
-Data directory: Running
-Result directory: Running
-Cluster Prometheus: Running
-+-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-| Volumes                                 | configuration   | experiment   | loaded [s]   |   timeLoading [s] | dbms       | storage_class_name   | storage   | status   | size   | used   |
-+=========================================+=================+==============+==============+===================+============+======================+===========+==========+========+========+
-| bexhoma-storage-monetdb-tpcds-30        | monetdb         | tpcds-30     | True         |              4019 | MonetDB    | shared               | 300Gi     | Bound    | 1000G  | 156G   |
-+-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
-```
-
-### Summary of Results
-
-At the end of a benchmark you will see a summary like
-
-<details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_monetdb_1_summary.md" target="_blank" rel="noopener">docs_tpcds_monetdb_1.log</a></summary>
-
-```markdown
-## Show Summary
-
-### Workload
-TPC-DS Queries SF=30
-* Type: tpcds
-* Duration: 9842s 
-* Code: 1792720113
-* This includes the reading queries of TPC-DS.
-* This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
-  * TPC-DS (SF=30) data is loaded and benchmark is executed.
-  * Query ordering is Q1 - Q99.
-  * All instances use the same query parameters.
-  * Timeout per query is 14400.
-  * Data transfer volume per query is also measured.
-  * Import sets indexes and constraints after loading and recomputes statistics.
-  * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.8.
-  * System metrics are monitored by a cluster-wide installation.
-  * Experiment is limited to DBMS ['MonetDB'].
-  * Import is handled by 8 processes (pods).
-  * Database is persisted to disk of type nvme and size 2000Gi. Persistent storage is removed at experiment start.
-  * Loading is tested with [8] threads, split into [8] pods.
-  * Benchmarking is tested with [1] threads, split into [1] pods.
-  * Benchmarking is run as [1] times the number of benchmarking pods.
-  * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
-  * SUT requests 4 CPU and 900Gi RAM. RAM limit is 1024Gi.
+  * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2GB')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173172736
+* postgresql-1-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:922325
-  * datadisk:52440
-  * volume_size:2.0T
-  * volume_used:52G
+  * disk:956397
+  * datadisk:60749
+  * volume_size:98G
+  * volume_used:60G
   * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
-  * requests_memory:900Gi
-  * limits_memory:1024Gi
-  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792720113
+    * code:1793879951
+* postgresql-1-1-2-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:956382
+  * datadisk:60749
+  * volume_size:98G
+  * volume_used:60G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
+  * requests_cpu:4
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1793879951
 
 ### SUT Container Restarts
-* bexhoma-sut-monetdb-1-1792720113-56fb44c77f-2mfzt: 0
+* bexhoma-sut-postgresql-1-1793879951-f575c9c9d-thln5: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: tpcds (1 pods)
 
 #### Planned
 
-* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS PostgreSQL-1 - Experiment 1 Client 2: tpcds (1 pods)
 
 ### Loading
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MonetDB-1-1 |                1 |   30 |      688.00 |           4.00 |            1.00 |        517.00 |          147.00 |              8 |           0 |             | None           |             0 | False         |              156.98 | False               |
+|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |   10 |      757.00 |           2.00 |            1.00 |        447.00 |          296.00 |              8 |           0 |             | None           |             0 | False         |               47.56 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
-|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| monetdb-1-1-1-1-1 | MonetDB-1       | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        626 |            0.61 |           183437.84 |          17079.87 |          -1 | monetdb-1-1-1-1-1 |
+| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
+|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
+| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |              429 |                 429 |        738 |            0.06 |           653052.84 |          20926.83 |          -1 | postgresql-1-1-1-1-1 |
+| postgresql-1-1-2-1-1 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 10.00 |              429 |                 429 |        725 |            0.06 |           676585.80 |          21302.07 |          -1 | postgresql-1-1-2-1-1 |
 
 #### Per Phase
 
-|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        626 |            0.61 |           183437.84 |          17079.87 |          -1 |
+|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |              429 |                 429 |        738 |            0.06 |           653052.84 |          20926.83 |          -1 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           1 | 10.00 |              429 |                 429 |        725 |            0.06 |           676585.80 |          21302.07 |          -1 |
 
 #### Query Completion per Phase
 
-| phase         |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
-|:--------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
-| monetdb-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+| phase            |   pods | statistics_tab about call_center.cc_call_center_sk - all   | statistics_tab about call_center.cc_call_center_id - all   | statistics_tab about call_center.cc_rec_start_date - all   | statistics_tab about call_center.cc_rec_end_date - all   | statistics_tab about call_center.cc_closed_date_sk - all   | statistics_tab about call_center.cc_open_date_sk - all   | statistics_tab about call_center.cc_name - all   | statistics_tab about call_center.cc_class - all   | statistics_tab about call_center.cc_employees - all   | statistics_tab about call_center.cc_sq_ft - all   | statistics_tab about call_center.cc_hours - all   | statistics_tab about call_center.cc_manager - all   | statistics_tab about call_center.cc_mkt_id - all   | statistics_tab about call_center.cc_mkt_class - all   | statistics_tab about call_center.cc_mkt_desc - all   | statistics_tab about call_center.cc_market_manager - all   | statistics_tab about call_center.cc_division - all   | statistics_tab about call_center.cc_division_name - all   | statistics_tab about call_center.cc_company - all   | statistics_tab about call_center.cc_company_name - all   | statistics_tab about call_center.cc_street_number - all   | statistics_tab about call_center.cc_street_name - all   | statistics_tab about call_center.cc_street_type - all   | statistics_tab about call_center.cc_suite_number - all   | statistics_tab about call_center.cc_city - all   | statistics_tab about call_center.cc_county - all   | statistics_tab about call_center.cc_state - all   | statistics_tab about call_center.cc_zip - all   | statistics_tab about call_center.cc_country - all   | statistics_tab about call_center.cc_gmt_offset - all   | statistics_tab about call_center.cc_tax_percentage - all   | statistics_tab about catalog_page.cp_catalog_page_sk - all   | statistics_tab about catalog_page.cp_catalog_page_id - all   | statistics_tab about catalog_page.cp_start_date_sk - all   | statistics_tab about catalog_page.cp_end_date_sk - all   | statistics_tab about catalog_page.cp_department - all   | statistics_tab about catalog_page.cp_catalog_number - all   | statistics_tab about catalog_page.cp_catalog_page_number - all   | statistics_tab about catalog_page.cp_description - all   | statistics_tab about catalog_page.cp_type - all   | statistics_tab about catalog_returns.cr_returned_date_sk - all   | statistics_tab about catalog_returns.cr_returned_time_sk - all   | statistics_tab about catalog_returns.cr_item_sk - all   | statistics_tab about catalog_returns.cr_refunded_customer_sk - all   | statistics_tab about catalog_returns.cr_refunded_cdemo_sk - all   | statistics_tab about catalog_returns.cr_refunded_hdemo_sk - all   | statistics_tab about catalog_returns.cr_refunded_addr_sk - all   | statistics_tab about catalog_returns.cr_returning_customer_sk - all   | statistics_tab about catalog_returns.cr_returning_cdemo_sk - all   | statistics_tab about catalog_returns.cr_returning_hdemo_sk - all   | statistics_tab about catalog_returns.cr_returning_addr_sk - all   | statistics_tab about catalog_returns.cr_call_center_sk - all   | statistics_tab about catalog_returns.cr_catalog_page_sk - all   | statistics_tab about catalog_returns.cr_ship_mode_sk - all   | statistics_tab about catalog_returns.cr_warehouse_sk - all   | statistics_tab about catalog_returns.cr_reason_sk - all   | statistics_tab about catalog_returns.cr_order_number - all   | statistics_tab about catalog_returns.cr_return_quantity - all   | statistics_tab about catalog_returns.cr_return_amount - all   | statistics_tab about catalog_returns.cr_return_tax - all   | statistics_tab about catalog_returns.cr_return_amt_inc_tax - all   | statistics_tab about catalog_returns.cr_fee - all   | statistics_tab about catalog_returns.cr_return_ship_cost - all   | statistics_tab about catalog_returns.cr_refunded_cash - all   | statistics_tab about catalog_returns.cr_reversed_charge - all   | statistics_tab about catalog_returns.cr_store_credit - all   | statistics_tab about catalog_returns.cr_net_loss - all   | statistics_tab about catalog_sales.cs_sold_date_sk - all   | statistics_tab about catalog_sales.cs_sold_time_sk - all   | statistics_tab about catalog_sales.cs_ship_date_sk - all   | statistics_tab about catalog_sales.cs_bill_customer_sk - all   | statistics_tab about catalog_sales.cs_bill_cdemo_sk - all   | statistics_tab about catalog_sales.cs_bill_hdemo_sk - all   | statistics_tab about catalog_sales.cs_bill_addr_sk - all   | statistics_tab about catalog_sales.cs_ship_customer_sk - all   | statistics_tab about catalog_sales.cs_ship_cdemo_sk - all   | statistics_tab about catalog_sales.cs_ship_hdemo_sk - all   | statistics_tab about catalog_sales.cs_ship_addr_sk - all   | statistics_tab about catalog_sales.cs_call_center_sk - all   | statistics_tab about catalog_sales.cs_catalog_page_sk - all   | statistics_tab about catalog_sales.cs_ship_mode_sk - all   | statistics_tab about catalog_sales.cs_warehouse_sk - all   | statistics_tab about catalog_sales.cs_item_sk - all   | statistics_tab about catalog_sales.cs_promo_sk - all   | statistics_tab about catalog_sales.cs_order_number - all   | statistics_tab about catalog_sales.cs_quantity - all   | statistics_tab about catalog_sales.cs_wholesale_cost - all   | statistics_tab about catalog_sales.cs_list_price - all   | statistics_tab about catalog_sales.cs_sales_price - all   | statistics_tab about catalog_sales.cs_ext_discount_amt - all   | statistics_tab about catalog_sales.cs_ext_sales_price - all   | statistics_tab about catalog_sales.cs_ext_wholesale_cost - all   | statistics_tab about catalog_sales.cs_ext_list_price - all   | statistics_tab about catalog_sales.cs_ext_tax - all   | statistics_tab about catalog_sales.cs_coupon_amt - all   | statistics_tab about catalog_sales.cs_ext_ship_cost - all   | statistics_tab about catalog_sales.cs_net_paid - all   | statistics_tab about catalog_sales.cs_net_paid_inc_tax - all   | statistics_tab about catalog_sales.cs_net_paid_inc_ship - all   | statistics_tab about catalog_sales.cs_net_paid_inc_ship_tax - all   | statistics_tab about catalog_sales.cs_net_profit - all   | statistics_tab about customer.c_customer_sk - all   | statistics_tab about customer.c_customer_id - all   | statistics_tab about customer.c_current_cdemo_sk - all   | statistics_tab about customer.c_current_hdemo_sk - all   | statistics_tab about customer.c_current_addr_sk - all   | statistics_tab about customer.c_first_shipto_date_sk - all   | statistics_tab about customer.c_first_sales_date_sk - all   | statistics_tab about customer.c_salutation - all   | statistics_tab about customer.c_first_name - all   | statistics_tab about customer.c_last_name - all   | statistics_tab about customer.c_preferred_cust_flag - all   | statistics_tab about customer.c_birth_day - all   | statistics_tab about customer.c_birth_month - all   | statistics_tab about customer.c_birth_year - all   | statistics_tab about customer.c_birth_country - all   | statistics_tab about customer.c_login - all   | statistics_tab about customer.c_email_address - all   | statistics_tab about customer.c_last_review_date - all   | statistics_tab about customer_address.ca_address_sk - all   | statistics_tab about customer_address.ca_address_id - all   | statistics_tab about customer_address.ca_street_number - all   | statistics_tab about customer_address.ca_street_name - all   | statistics_tab about customer_address.ca_street_type - all   | statistics_tab about customer_address.ca_suite_number - all   | statistics_tab about customer_address.ca_city - all   | statistics_tab about customer_address.ca_county - all   | statistics_tab about customer_address.ca_state - all   | statistics_tab about customer_address.ca_zip - all   | statistics_tab about customer_address.ca_country - all   | statistics_tab about customer_address.ca_gmt_offset - all   | statistics_tab about customer_address.ca_location_type - all   | statistics_tab about customer_demographics.cd_demo_sk - all   | statistics_tab about customer_demographics.cd_gender - all   | statistics_tab about customer_demographics.cd_marital_status - all   | statistics_tab about customer_demographics.cd_education_status - all   | statistics_tab about customer_demographics.cd_purchase_estimate - all   | statistics_tab about customer_demographics.cd_credit_rating - all   | statistics_tab about customer_demographics.cd_dep_count - all   | statistics_tab about customer_demographics.cd_dep_employed_count - all   | statistics_tab about customer_demographics.cd_dep_college_count - all   | statistics_tab about date_dim.d_date_sk - all   | statistics_tab about date_dim.d_date_id - all   | statistics_tab about date_dim.d_date - all   | statistics_tab about date_dim.d_month_seq - all   | statistics_tab about date_dim.d_week_seq - all   | statistics_tab about date_dim.d_quarter_seq - all   | statistics_tab about date_dim.d_year - all   | statistics_tab about date_dim.d_dow - all   | statistics_tab about date_dim.d_moy - all   | statistics_tab about date_dim.d_dom - all   | statistics_tab about date_dim.d_qoy - all   | statistics_tab about date_dim.d_fy_year - all   | statistics_tab about date_dim.d_fy_quarter_seq - all   | statistics_tab about date_dim.d_fy_week_seq - all   | statistics_tab about date_dim.d_day_name - all   | statistics_tab about date_dim.d_quarter_name - all   | statistics_tab about date_dim.d_holiday - all   | statistics_tab about date_dim.d_weekend - all   | statistics_tab about date_dim.d_following_holiday - all   | statistics_tab about date_dim.d_first_dom - all   | statistics_tab about date_dim.d_last_dom - all   | statistics_tab about date_dim.d_same_day_ly - all   | statistics_tab about date_dim.d_same_day_lq - all   | statistics_tab about date_dim.d_current_day - all   | statistics_tab about date_dim.d_current_week - all   | statistics_tab about date_dim.d_current_month - all   | statistics_tab about date_dim.d_current_quarter - all   | statistics_tab about date_dim.d_current_year - all   | statistics_tab about dbgen_version.dv_version - all   | statistics_tab about dbgen_version.dv_create_date - all   | statistics_tab about dbgen_version.dv_create_time - all   | statistics_tab about dbgen_version.dv_cmdline_args - all   | statistics_tab about household_demographics.hd_demo_sk - all   | statistics_tab about household_demographics.hd_income_band_sk - all   | statistics_tab about household_demographics.hd_buy_potential - all   | statistics_tab about household_demographics.hd_dep_count - all   | statistics_tab about household_demographics.hd_vehicle_count - all   | statistics_tab about income_band.ib_income_band_sk - all   | statistics_tab about income_band.ib_lower_bound - all   | statistics_tab about income_band.ib_upper_bound - all   | statistics_tab about inventory.inv_date_sk - all   | statistics_tab about inventory.inv_item_sk - all   | statistics_tab about inventory.inv_warehouse_sk - all   | statistics_tab about inventory.inv_quantity_on_hand - all   | statistics_tab about item.i_item_sk - all   | statistics_tab about item.i_item_id - all   | statistics_tab about item.i_rec_start_date - all   | statistics_tab about item.i_rec_end_date - all   | statistics_tab about item.i_item_desc - all   | statistics_tab about item.i_current_price - all   | statistics_tab about item.i_wholesale_cost - all   | statistics_tab about item.i_brand_id - all   | statistics_tab about item.i_brand - all   | statistics_tab about item.i_class_id - all   | statistics_tab about item.i_class - all   | statistics_tab about item.i_category_id - all   | statistics_tab about item.i_category - all   | statistics_tab about item.i_manufact_id - all   | statistics_tab about item.i_manufact - all   | statistics_tab about item.i_size - all   | statistics_tab about item.i_formulation - all   | statistics_tab about item.i_color - all   | statistics_tab about item.i_units - all   | statistics_tab about item.i_container - all   | statistics_tab about item.i_manager_id - all   | statistics_tab about item.i_product_name - all   | statistics_tab about promotion.p_promo_sk - all   | statistics_tab about promotion.p_promo_id - all   | statistics_tab about promotion.p_start_date_sk - all   | statistics_tab about promotion.p_end_date_sk - all   | statistics_tab about promotion.p_item_sk - all   | statistics_tab about promotion.p_cost - all   | statistics_tab about promotion.p_response_target - all   | statistics_tab about promotion.p_promo_name - all   | statistics_tab about promotion.p_channel_dmail - all   | statistics_tab about promotion.p_channel_email - all   | statistics_tab about promotion.p_channel_catalog - all   | statistics_tab about promotion.p_channel_tv - all   | statistics_tab about promotion.p_channel_radio - all   | statistics_tab about promotion.p_channel_press - all   | statistics_tab about promotion.p_channel_event - all   | statistics_tab about promotion.p_channel_demo - all   | statistics_tab about promotion.p_channel_details - all   | statistics_tab about promotion.p_purpose - all   | statistics_tab about promotion.p_discount_active - all   | statistics_tab about reason.r_reason_sk - all   | statistics_tab about reason.r_reason_id - all   | statistics_tab about reason.r_reason_desc - all   | statistics_tab about ship_mode.sm_ship_mode_sk - all   | statistics_tab about ship_mode.sm_ship_mode_id - all   | statistics_tab about ship_mode.sm_type - all   | statistics_tab about ship_mode.sm_code - all   | statistics_tab about ship_mode.sm_carrier - all   | statistics_tab about ship_mode.sm_contract - all   | statistics_tab about store.s_store_sk - all   | statistics_tab about store.s_store_id - all   | statistics_tab about store.s_rec_start_date - all   | statistics_tab about store.s_rec_end_date - all   | statistics_tab about store.s_closed_date_sk - all   | statistics_tab about store.s_store_name - all   | statistics_tab about store.s_number_employees - all   | statistics_tab about store.s_floor_space - all   | statistics_tab about store.s_hours - all   | statistics_tab about store.s_manager - all   | statistics_tab about store.s_market_id - all   | statistics_tab about store.s_geography_class - all   | statistics_tab about store.s_market_desc - all   | statistics_tab about store.s_market_manager - all   | statistics_tab about store.s_division_id - all   | statistics_tab about store.s_division_name - all   | statistics_tab about store.s_company_id - all   | statistics_tab about store.s_company_name - all   | statistics_tab about store.s_street_number - all   | statistics_tab about store.s_street_name - all   | statistics_tab about store.s_street_type - all   | statistics_tab about store.s_suite_number - all   | statistics_tab about store.s_city - all   | statistics_tab about store.s_county - all   | statistics_tab about store.s_state - all   | statistics_tab about store.s_zip - all   | statistics_tab about store.s_country - all   | statistics_tab about store.s_gmt_offset - all   | statistics_tab about store.s_tax_precentage - all   | statistics_tab about store_returns.sr_returned_date_sk - all   | statistics_tab about store_returns.sr_return_time_sk - all   | statistics_tab about store_returns.sr_item_sk - all   | statistics_tab about store_returns.sr_customer_sk - all   | statistics_tab about store_returns.sr_cdemo_sk - all   | statistics_tab about store_returns.sr_hdemo_sk - all   | statistics_tab about store_returns.sr_addr_sk - all   | statistics_tab about store_returns.sr_store_sk - all   | statistics_tab about store_returns.sr_reason_sk - all   | statistics_tab about store_returns.sr_ticket_number - all   | statistics_tab about store_returns.sr_return_quantity - all   | statistics_tab about store_returns.sr_return_amt - all   | statistics_tab about store_returns.sr_return_tax - all   | statistics_tab about store_returns.sr_return_amt_inc_tax - all   | statistics_tab about store_returns.sr_fee - all   | statistics_tab about store_returns.sr_return_ship_cost - all   | statistics_tab about store_returns.sr_refunded_cash - all   | statistics_tab about store_returns.sr_reversed_charge - all   | statistics_tab about store_returns.sr_store_credit - all   | statistics_tab about store_returns.sr_net_loss - all   | statistics_tab about store_sales.ss_sold_date_sk - all   | statistics_tab about store_sales.ss_sold_time_sk - all   | statistics_tab about store_sales.ss_item_sk - all   | statistics_tab about store_sales.ss_customer_sk - all   | statistics_tab about store_sales.ss_cdemo_sk - all   | statistics_tab about store_sales.ss_hdemo_sk - all   | statistics_tab about store_sales.ss_addr_sk - all   | statistics_tab about store_sales.ss_store_sk - all   | statistics_tab about store_sales.ss_promo_sk - all   | statistics_tab about store_sales.ss_ticket_number - all   | statistics_tab about store_sales.ss_quantity - all   | statistics_tab about store_sales.ss_wholesale_cost - all   | statistics_tab about store_sales.ss_list_price - all   | statistics_tab about store_sales.ss_sales_price - all   | statistics_tab about store_sales.ss_ext_discount_amt - all   | statistics_tab about store_sales.ss_ext_sales_price - all   | statistics_tab about store_sales.ss_ext_wholesale_cost - all   | statistics_tab about store_sales.ss_ext_list_price - all   | statistics_tab about store_sales.ss_ext_tax - all   | statistics_tab about store_sales.ss_coupon_amt - all   | statistics_tab about store_sales.ss_net_paid - all   | statistics_tab about store_sales.ss_net_paid_inc_tax - all   | statistics_tab about store_sales.ss_net_profit - all   | statistics_tab about time_dim.t_time_sk - all   | statistics_tab about time_dim.t_time_id - all   | statistics_tab about time_dim.t_time - all   | statistics_tab about time_dim.t_hour - all   | statistics_tab about time_dim.t_minute - all   | statistics_tab about time_dim.t_second - all   | statistics_tab about time_dim.t_am_pm - all   | statistics_tab about time_dim.t_shift - all   | statistics_tab about time_dim.t_sub_shift - all   | statistics_tab about time_dim.t_meal_time - all   | statistics_tab about warehouse.w_warehouse_sk - all   | statistics_tab about warehouse.w_warehouse_id - all   | statistics_tab about warehouse.w_warehouse_name - all   | statistics_tab about warehouse.w_warehouse_sq_ft - all   | statistics_tab about warehouse.w_street_number - all   | statistics_tab about warehouse.w_street_name - all   | statistics_tab about warehouse.w_street_type - all   | statistics_tab about warehouse.w_suite_number - all   | statistics_tab about warehouse.w_city - all   | statistics_tab about warehouse.w_county - all   | statistics_tab about warehouse.w_state - all   | statistics_tab about warehouse.w_zip - all   | statistics_tab about warehouse.w_country - all   | statistics_tab about warehouse.w_gmt_offset - all   | statistics_tab about web_page.wp_web_page_sk - all   | statistics_tab about web_page.wp_web_page_id - all   | statistics_tab about web_page.wp_rec_start_date - all   | statistics_tab about web_page.wp_rec_end_date - all   | statistics_tab about web_page.wp_creation_date_sk - all   | statistics_tab about web_page.wp_access_date_sk - all   | statistics_tab about web_page.wp_autogen_flag - all   | statistics_tab about web_page.wp_customer_sk - all   | statistics_tab about web_page.wp_url - all   | statistics_tab about web_page.wp_type - all   | statistics_tab about web_page.wp_char_count - all   | statistics_tab about web_page.wp_link_count - all   | statistics_tab about web_page.wp_image_count - all   | statistics_tab about web_page.wp_max_ad_count - all   | statistics_tab about web_returns.wr_returned_date_sk - all   | statistics_tab about web_returns.wr_returned_time_sk - all   | statistics_tab about web_returns.wr_item_sk - all   | statistics_tab about web_returns.wr_refunded_customer_sk - all   | statistics_tab about web_returns.wr_refunded_cdemo_sk - all   | statistics_tab about web_returns.wr_refunded_hdemo_sk - all   | statistics_tab about web_returns.wr_refunded_addr_sk - all   | statistics_tab about web_returns.wr_returning_customer_sk - all   | statistics_tab about web_returns.wr_returning_cdemo_sk - all   | statistics_tab about web_returns.wr_returning_hdemo_sk - all   | statistics_tab about web_returns.wr_returning_addr_sk - all   | statistics_tab about web_returns.wr_web_page_sk - all   | statistics_tab about web_returns.wr_reason_sk - all   | statistics_tab about web_returns.wr_order_number - all   | statistics_tab about web_returns.wr_return_quantity - all   | statistics_tab about web_returns.wr_return_amt - all   | statistics_tab about web_returns.wr_return_tax - all   | statistics_tab about web_returns.wr_return_amt_inc_tax - all   | statistics_tab about web_returns.wr_fee - all   | statistics_tab about web_returns.wr_return_ship_cost - all   | statistics_tab about web_returns.wr_refunded_cash - all   | statistics_tab about web_returns.wr_reversed_charge - all   | statistics_tab about web_returns.wr_account_credit - all   | statistics_tab about web_returns.wr_net_loss - all   | statistics_tab about web_sales.ws_sold_date_sk - all   | statistics_tab about web_sales.ws_sold_time_sk - all   | statistics_tab about web_sales.ws_ship_date_sk - all   | statistics_tab about web_sales.ws_item_sk - all   | statistics_tab about web_sales.ws_bill_customer_sk - all   | statistics_tab about web_sales.ws_bill_cdemo_sk - all   | statistics_tab about web_sales.ws_bill_hdemo_sk - all   | statistics_tab about web_sales.ws_bill_addr_sk - all   | statistics_tab about web_sales.ws_ship_customer_sk - all   | statistics_tab about web_sales.ws_ship_cdemo_sk - all   | statistics_tab about web_sales.ws_ship_hdemo_sk - all   | statistics_tab about web_sales.ws_ship_addr_sk - all   | statistics_tab about web_sales.ws_web_page_sk - all   | statistics_tab about web_sales.ws_web_site_sk - all   | statistics_tab about web_sales.ws_ship_mode_sk - all   | statistics_tab about web_sales.ws_warehouse_sk - all   | statistics_tab about web_sales.ws_promo_sk - all   | statistics_tab about web_sales.ws_order_number - all   | statistics_tab about web_sales.ws_quantity - all   | statistics_tab about web_sales.ws_wholesale_cost - all   | statistics_tab about web_sales.ws_list_price - all   | statistics_tab about web_sales.ws_sales_price - all   | statistics_tab about web_sales.ws_ext_discount_amt - all   | statistics_tab about web_sales.ws_ext_sales_price - all   | statistics_tab about web_sales.ws_ext_wholesale_cost - all   | statistics_tab about web_sales.ws_ext_list_price - all   | statistics_tab about web_sales.ws_ext_tax - all   | statistics_tab about web_sales.ws_coupon_amt - all   | statistics_tab about web_sales.ws_ext_ship_cost - all   | statistics_tab about web_sales.ws_net_paid - all   | statistics_tab about web_sales.ws_net_paid_inc_tax - all   | statistics_tab about web_sales.ws_net_paid_inc_ship - all   | statistics_tab about web_sales.ws_net_paid_inc_ship_tax - all   | statistics_tab about web_sales.ws_net_profit - all   | statistics_tab about web_site.web_site_sk - all   | statistics_tab about web_site.web_site_id - all   | statistics_tab about web_site.web_rec_start_date - all   | statistics_tab about web_site.web_rec_end_date - all   | statistics_tab about web_site.web_name - all   | statistics_tab about web_site.web_open_date_sk - all   | statistics_tab about web_site.web_close_date_sk - all   | statistics_tab about web_site.web_class - all   | statistics_tab about web_site.web_manager - all   | statistics_tab about web_site.web_mkt_id - all   | statistics_tab about web_site.web_mkt_class - all   | statistics_tab about web_site.web_mkt_desc - all   | statistics_tab about web_site.web_market_manager - all   | statistics_tab about web_site.web_company_id - all   | statistics_tab about web_site.web_company_name - all   | statistics_tab about web_site.web_street_number - all   | statistics_tab about web_site.web_street_name - all   | statistics_tab about web_site.web_street_type - all   | statistics_tab about web_site.web_suite_number - all   | statistics_tab about web_site.web_city - all   | statistics_tab about web_site.web_county - all   | statistics_tab about web_site.web_state - all   | statistics_tab about web_site.web_zip - all   | statistics_tab about web_site.web_country - all   | statistics_tab about web_site.web_gmt_offset - all   | statistics_tab about web_site.web_tax_percentage - all   | complete   |
+|:-----------------|-------:|:-----------------------------------------------------------|:-----------------------------------------------------------|:-----------------------------------------------------------|:---------------------------------------------------------|:-----------------------------------------------------------|:---------------------------------------------------------|:-------------------------------------------------|:--------------------------------------------------|:------------------------------------------------------|:--------------------------------------------------|:--------------------------------------------------|:----------------------------------------------------|:---------------------------------------------------|:------------------------------------------------------|:-----------------------------------------------------|:-----------------------------------------------------------|:-----------------------------------------------------|:----------------------------------------------------------|:----------------------------------------------------|:---------------------------------------------------------|:----------------------------------------------------------|:--------------------------------------------------------|:--------------------------------------------------------|:---------------------------------------------------------|:-------------------------------------------------|:---------------------------------------------------|:--------------------------------------------------|:------------------------------------------------|:----------------------------------------------------|:-------------------------------------------------------|:-----------------------------------------------------------|:-------------------------------------------------------------|:-------------------------------------------------------------|:-----------------------------------------------------------|:---------------------------------------------------------|:--------------------------------------------------------|:------------------------------------------------------------|:-----------------------------------------------------------------|:---------------------------------------------------------|:--------------------------------------------------|:-----------------------------------------------------------------|:-----------------------------------------------------------------|:--------------------------------------------------------|:---------------------------------------------------------------------|:------------------------------------------------------------------|:------------------------------------------------------------------|:-----------------------------------------------------------------|:----------------------------------------------------------------------|:-------------------------------------------------------------------|:-------------------------------------------------------------------|:------------------------------------------------------------------|:---------------------------------------------------------------|:----------------------------------------------------------------|:-------------------------------------------------------------|:-------------------------------------------------------------|:----------------------------------------------------------|:-------------------------------------------------------------|:----------------------------------------------------------------|:--------------------------------------------------------------|:-----------------------------------------------------------|:-------------------------------------------------------------------|:----------------------------------------------------|:-----------------------------------------------------------------|:--------------------------------------------------------------|:----------------------------------------------------------------|:-------------------------------------------------------------|:---------------------------------------------------------|:-----------------------------------------------------------|:-----------------------------------------------------------|:-----------------------------------------------------------|:---------------------------------------------------------------|:------------------------------------------------------------|:------------------------------------------------------------|:-----------------------------------------------------------|:---------------------------------------------------------------|:------------------------------------------------------------|:------------------------------------------------------------|:-----------------------------------------------------------|:-------------------------------------------------------------|:--------------------------------------------------------------|:-----------------------------------------------------------|:-----------------------------------------------------------|:------------------------------------------------------|:-------------------------------------------------------|:-----------------------------------------------------------|:-------------------------------------------------------|:-------------------------------------------------------------|:---------------------------------------------------------|:----------------------------------------------------------|:---------------------------------------------------------------|:--------------------------------------------------------------|:-----------------------------------------------------------------|:-------------------------------------------------------------|:------------------------------------------------------|:---------------------------------------------------------|:------------------------------------------------------------|:-------------------------------------------------------|:---------------------------------------------------------------|:----------------------------------------------------------------|:--------------------------------------------------------------------|:---------------------------------------------------------|:----------------------------------------------------|:----------------------------------------------------|:---------------------------------------------------------|:---------------------------------------------------------|:--------------------------------------------------------|:-------------------------------------------------------------|:------------------------------------------------------------|:---------------------------------------------------|:---------------------------------------------------|:--------------------------------------------------|:------------------------------------------------------------|:--------------------------------------------------|:----------------------------------------------------|:---------------------------------------------------|:------------------------------------------------------|:----------------------------------------------|:------------------------------------------------------|:---------------------------------------------------------|:------------------------------------------------------------|:------------------------------------------------------------|:---------------------------------------------------------------|:-------------------------------------------------------------|:-------------------------------------------------------------|:--------------------------------------------------------------|:------------------------------------------------------|:--------------------------------------------------------|:-------------------------------------------------------|:-----------------------------------------------------|:---------------------------------------------------------|:------------------------------------------------------------|:---------------------------------------------------------------|:--------------------------------------------------------------|:-------------------------------------------------------------|:---------------------------------------------------------------------|:-----------------------------------------------------------------------|:------------------------------------------------------------------------|:--------------------------------------------------------------------|:----------------------------------------------------------------|:-------------------------------------------------------------------------|:------------------------------------------------------------------------|:------------------------------------------------|:------------------------------------------------|:---------------------------------------------|:--------------------------------------------------|:-------------------------------------------------|:----------------------------------------------------|:---------------------------------------------|:--------------------------------------------|:--------------------------------------------|:--------------------------------------------|:--------------------------------------------|:------------------------------------------------|:-------------------------------------------------------|:----------------------------------------------------|:-------------------------------------------------|:-----------------------------------------------------|:------------------------------------------------|:------------------------------------------------|:----------------------------------------------------------|:--------------------------------------------------|:-------------------------------------------------|:----------------------------------------------------|:----------------------------------------------------|:----------------------------------------------------|:-----------------------------------------------------|:------------------------------------------------------|:--------------------------------------------------------|:-----------------------------------------------------|:------------------------------------------------------|:----------------------------------------------------------|:----------------------------------------------------------|:-----------------------------------------------------------|:---------------------------------------------------------------|:----------------------------------------------------------------------|:---------------------------------------------------------------------|:-----------------------------------------------------------------|:---------------------------------------------------------------------|:-----------------------------------------------------------|:--------------------------------------------------------|:--------------------------------------------------------|:---------------------------------------------------|:---------------------------------------------------|:--------------------------------------------------------|:------------------------------------------------------------|:--------------------------------------------|:--------------------------------------------|:---------------------------------------------------|:-------------------------------------------------|:----------------------------------------------|:--------------------------------------------------|:---------------------------------------------------|:---------------------------------------------|:------------------------------------------|:---------------------------------------------|:------------------------------------------|:------------------------------------------------|:---------------------------------------------|:------------------------------------------------|:---------------------------------------------|:-----------------------------------------|:------------------------------------------------|:------------------------------------------|:------------------------------------------|:----------------------------------------------|:-----------------------------------------------|:-------------------------------------------------|:--------------------------------------------------|:--------------------------------------------------|:-------------------------------------------------------|:-----------------------------------------------------|:-------------------------------------------------|:----------------------------------------------|:---------------------------------------------------------|:----------------------------------------------------|:-------------------------------------------------------|:-------------------------------------------------------|:---------------------------------------------------------|:----------------------------------------------------|:-------------------------------------------------------|:-------------------------------------------------------|:-------------------------------------------------------|:------------------------------------------------------|:---------------------------------------------------------|:-------------------------------------------------|:---------------------------------------------------------|:------------------------------------------------|:------------------------------------------------|:--------------------------------------------------|:-------------------------------------------------------|:-------------------------------------------------------|:-----------------------------------------------|:-----------------------------------------------|:--------------------------------------------------|:---------------------------------------------------|:----------------------------------------------|:----------------------------------------------|:----------------------------------------------------|:--------------------------------------------------|:----------------------------------------------------|:------------------------------------------------|:------------------------------------------------------|:-------------------------------------------------|:-------------------------------------------|:---------------------------------------------|:-----------------------------------------------|:-----------------------------------------------------|:-------------------------------------------------|:----------------------------------------------------|:-------------------------------------------------|:---------------------------------------------------|:------------------------------------------------|:--------------------------------------------------|:---------------------------------------------------|:-------------------------------------------------|:-------------------------------------------------|:--------------------------------------------------|:------------------------------------------|:--------------------------------------------|:-------------------------------------------|:-----------------------------------------|:---------------------------------------------|:------------------------------------------------|:----------------------------------------------------|:---------------------------------------------------------------|:-------------------------------------------------------------|:------------------------------------------------------|:----------------------------------------------------------|:-------------------------------------------------------|:-------------------------------------------------------|:------------------------------------------------------|:-------------------------------------------------------|:--------------------------------------------------------|:------------------------------------------------------------|:--------------------------------------------------------------|:---------------------------------------------------------|:---------------------------------------------------------|:-----------------------------------------------------------------|:--------------------------------------------------|:---------------------------------------------------------------|:------------------------------------------------------------|:--------------------------------------------------------------|:-----------------------------------------------------------|:-------------------------------------------------------|:---------------------------------------------------------|:---------------------------------------------------------|:----------------------------------------------------|:--------------------------------------------------------|:-----------------------------------------------------|:-----------------------------------------------------|:----------------------------------------------------|:-----------------------------------------------------|:-----------------------------------------------------|:----------------------------------------------------------|:-----------------------------------------------------|:-----------------------------------------------------------|:-------------------------------------------------------|:--------------------------------------------------------|:-------------------------------------------------------------|:------------------------------------------------------------|:---------------------------------------------------------------|:-----------------------------------------------------------|:----------------------------------------------------|:-------------------------------------------------------|:-----------------------------------------------------|:-------------------------------------------------------------|:-------------------------------------------------------|:------------------------------------------------|:------------------------------------------------|:---------------------------------------------|:---------------------------------------------|:-----------------------------------------------|:-----------------------------------------------|:----------------------------------------------|:----------------------------------------------|:--------------------------------------------------|:--------------------------------------------------|:------------------------------------------------------|:------------------------------------------------------|:--------------------------------------------------------|:---------------------------------------------------------|:-------------------------------------------------------|:-----------------------------------------------------|:-----------------------------------------------------|:------------------------------------------------------|:----------------------------------------------|:------------------------------------------------|:-----------------------------------------------|:---------------------------------------------|:-------------------------------------------------|:----------------------------------------------------|:-----------------------------------------------------|:-----------------------------------------------------|:--------------------------------------------------------|:------------------------------------------------------|:----------------------------------------------------------|:--------------------------------------------------------|:------------------------------------------------------|:-----------------------------------------------------|:---------------------------------------------|:----------------------------------------------|:----------------------------------------------------|:----------------------------------------------------|:-----------------------------------------------------|:------------------------------------------------------|:-------------------------------------------------------------|:-------------------------------------------------------------|:----------------------------------------------------|:-----------------------------------------------------------------|:--------------------------------------------------------------|:--------------------------------------------------------------|:-------------------------------------------------------------|:------------------------------------------------------------------|:---------------------------------------------------------------|:---------------------------------------------------------------|:--------------------------------------------------------------|:--------------------------------------------------------|:------------------------------------------------------|:---------------------------------------------------------|:------------------------------------------------------------|:-------------------------------------------------------|:-------------------------------------------------------|:---------------------------------------------------------------|:------------------------------------------------|:-------------------------------------------------------------|:----------------------------------------------------------|:------------------------------------------------------------|:-----------------------------------------------------------|:-----------------------------------------------------|:-------------------------------------------------------|:-------------------------------------------------------|:-------------------------------------------------------|:--------------------------------------------------|:-----------------------------------------------------------|:--------------------------------------------------------|:--------------------------------------------------------|:-------------------------------------------------------|:-----------------------------------------------------------|:--------------------------------------------------------|:--------------------------------------------------------|:-------------------------------------------------------|:------------------------------------------------------|:------------------------------------------------------|:-------------------------------------------------------|:-------------------------------------------------------|:---------------------------------------------------|:-------------------------------------------------------|:---------------------------------------------------|:---------------------------------------------------------|:-----------------------------------------------------|:------------------------------------------------------|:-----------------------------------------------------------|:----------------------------------------------------------|:-------------------------------------------------------------|:---------------------------------------------------------|:--------------------------------------------------|:-----------------------------------------------------|:--------------------------------------------------------|:---------------------------------------------------|:-----------------------------------------------------------|:------------------------------------------------------------|:----------------------------------------------------------------|:-----------------------------------------------------|:--------------------------------------------------|:--------------------------------------------------|:---------------------------------------------------------|:-------------------------------------------------------|:-----------------------------------------------|:-------------------------------------------------------|:--------------------------------------------------------|:------------------------------------------------|:--------------------------------------------------|:-------------------------------------------------|:----------------------------------------------------|:---------------------------------------------------|:---------------------------------------------------------|:-----------------------------------------------------|:-------------------------------------------------------|:--------------------------------------------------------|:------------------------------------------------------|:------------------------------------------------------|:-------------------------------------------------------|:-----------------------------------------------|:-------------------------------------------------|:------------------------------------------------|:----------------------------------------------|:--------------------------------------------------|:-----------------------------------------------------|:---------------------------------------------------------|:-----------|
+| postgresql-1-1-1 |      1 | 1/1                                                        | 1/1                                                        | 1/1                                                        | 1/1                                                      | 1/1                                                        | 1/1                                                      | 1/1                                              | 1/1                                               | 1/1                                                   | 1/1                                               | 1/1                                               | 1/1                                                 | 1/1                                                | 1/1                                                   | 1/1                                                  | 1/1                                                        | 1/1                                                  | 1/1                                                       | 1/1                                                 | 1/1                                                      | 1/1                                                       | 1/1                                                     | 1/1                                                     | 1/1                                                      | 1/1                                              | 1/1                                                | 1/1                                               | 1/1                                             | 1/1                                                 | 1/1                                                    | 1/1                                                        | 1/1                                                          | 1/1                                                          | 1/1                                                        | 1/1                                                      | 1/1                                                     | 1/1                                                         | 1/1                                                              | 1/1                                                      | 1/1                                               | 1/1                                                              | 1/1                                                              | 1/1                                                     | 1/1                                                                  | 1/1                                                               | 1/1                                                               | 1/1                                                              | 1/1                                                                   | 1/1                                                                | 1/1                                                                | 1/1                                                               | 1/1                                                            | 1/1                                                             | 1/1                                                          | 1/1                                                          | 1/1                                                       | 1/1                                                          | 1/1                                                             | 1/1                                                           | 1/1                                                        | 1/1                                                                | 1/1                                                 | 1/1                                                              | 1/1                                                           | 1/1                                                             | 1/1                                                          | 1/1                                                      | 1/1                                                        | 1/1                                                        | 1/1                                                        | 1/1                                                            | 1/1                                                         | 1/1                                                         | 1/1                                                        | 1/1                                                            | 1/1                                                         | 1/1                                                         | 1/1                                                        | 1/1                                                          | 1/1                                                           | 1/1                                                        | 1/1                                                        | 1/1                                                   | 1/1                                                    | 1/1                                                        | 1/1                                                    | 1/1                                                          | 1/1                                                      | 1/1                                                       | 1/1                                                            | 1/1                                                           | 1/1                                                              | 1/1                                                          | 1/1                                                   | 1/1                                                      | 1/1                                                         | 1/1                                                    | 1/1                                                            | 1/1                                                             | 1/1                                                                 | 1/1                                                      | 1/1                                                 | 1/1                                                 | 1/1                                                      | 1/1                                                      | 1/1                                                     | 1/1                                                          | 1/1                                                         | 1/1                                                | 1/1                                                | 1/1                                               | 1/1                                                         | 1/1                                               | 1/1                                                 | 1/1                                                | 1/1                                                   | 1/1                                           | 1/1                                                   | 1/1                                                      | 1/1                                                         | 1/1                                                         | 1/1                                                            | 1/1                                                          | 1/1                                                          | 1/1                                                           | 1/1                                                   | 1/1                                                     | 1/1                                                    | 1/1                                                  | 1/1                                                      | 1/1                                                         | 1/1                                                            | 1/1                                                           | 1/1                                                          | 1/1                                                                  | 1/1                                                                    | 1/1                                                                     | 1/1                                                                 | 1/1                                                             | 1/1                                                                      | 1/1                                                                     | 1/1                                             | 1/1                                             | 1/1                                          | 1/1                                               | 1/1                                              | 1/1                                                 | 1/1                                          | 1/1                                         | 1/1                                         | 1/1                                         | 1/1                                         | 1/1                                             | 1/1                                                    | 1/1                                                 | 1/1                                              | 1/1                                                  | 1/1                                             | 1/1                                             | 1/1                                                       | 1/1                                               | 1/1                                              | 1/1                                                 | 1/1                                                 | 1/1                                                 | 1/1                                                  | 1/1                                                   | 1/1                                                     | 1/1                                                  | 1/1                                                   | 1/1                                                       | 1/1                                                       | 1/1                                                        | 1/1                                                            | 1/1                                                                   | 1/1                                                                  | 1/1                                                              | 1/1                                                                  | 1/1                                                        | 1/1                                                     | 1/1                                                     | 1/1                                                | 1/1                                                | 1/1                                                     | 1/1                                                         | 1/1                                         | 1/1                                         | 1/1                                                | 1/1                                              | 1/1                                           | 1/1                                               | 1/1                                                | 1/1                                          | 1/1                                       | 1/1                                          | 1/1                                       | 1/1                                             | 1/1                                          | 1/1                                             | 1/1                                          | 1/1                                      | 1/1                                             | 1/1                                       | 1/1                                       | 1/1                                           | 1/1                                            | 1/1                                              | 1/1                                               | 1/1                                               | 1/1                                                    | 1/1                                                  | 1/1                                              | 1/1                                           | 1/1                                                      | 1/1                                                 | 1/1                                                    | 1/1                                                    | 1/1                                                      | 1/1                                                 | 1/1                                                    | 1/1                                                    | 1/1                                                    | 1/1                                                   | 1/1                                                      | 1/1                                              | 1/1                                                      | 1/1                                             | 1/1                                             | 1/1                                               | 1/1                                                    | 1/1                                                    | 1/1                                            | 1/1                                            | 1/1                                               | 1/1                                                | 1/1                                           | 1/1                                           | 1/1                                                 | 1/1                                               | 1/1                                                 | 1/1                                             | 1/1                                                   | 1/1                                              | 1/1                                        | 1/1                                          | 1/1                                            | 1/1                                                  | 1/1                                              | 1/1                                                 | 1/1                                              | 1/1                                                | 1/1                                             | 1/1                                               | 1/1                                                | 1/1                                              | 1/1                                              | 1/1                                               | 1/1                                       | 1/1                                         | 1/1                                        | 1/1                                      | 1/1                                          | 1/1                                             | 1/1                                                 | 1/1                                                            | 1/1                                                          | 1/1                                                   | 1/1                                                       | 1/1                                                    | 1/1                                                    | 1/1                                                   | 1/1                                                    | 1/1                                                     | 1/1                                                         | 1/1                                                           | 1/1                                                      | 1/1                                                      | 1/1                                                              | 1/1                                               | 1/1                                                            | 1/1                                                         | 1/1                                                           | 1/1                                                        | 1/1                                                    | 1/1                                                      | 1/1                                                      | 1/1                                                 | 1/1                                                     | 1/1                                                  | 1/1                                                  | 1/1                                                 | 1/1                                                  | 1/1                                                  | 1/1                                                       | 1/1                                                  | 1/1                                                        | 1/1                                                    | 1/1                                                     | 1/1                                                          | 1/1                                                         | 1/1                                                            | 1/1                                                        | 1/1                                                 | 1/1                                                    | 1/1                                                  | 1/1                                                          | 1/1                                                    | 1/1                                             | 1/1                                             | 1/1                                          | 1/1                                          | 1/1                                            | 1/1                                            | 1/1                                           | 1/1                                           | 1/1                                               | 1/1                                               | 1/1                                                   | 1/1                                                   | 1/1                                                     | 1/1                                                      | 1/1                                                    | 1/1                                                  | 1/1                                                  | 1/1                                                   | 1/1                                           | 1/1                                             | 1/1                                            | 1/1                                          | 1/1                                              | 1/1                                                 | 1/1                                                  | 1/1                                                  | 1/1                                                     | 1/1                                                   | 1/1                                                       | 1/1                                                     | 1/1                                                   | 1/1                                                  | 1/1                                          | 1/1                                           | 1/1                                                 | 1/1                                                 | 1/1                                                  | 1/1                                                   | 1/1                                                          | 1/1                                                          | 1/1                                                 | 1/1                                                              | 1/1                                                           | 1/1                                                           | 1/1                                                          | 1/1                                                               | 1/1                                                            | 1/1                                                            | 1/1                                                           | 1/1                                                     | 1/1                                                   | 1/1                                                      | 1/1                                                         | 1/1                                                    | 1/1                                                    | 1/1                                                            | 1/1                                             | 1/1                                                          | 1/1                                                       | 1/1                                                         | 1/1                                                        | 1/1                                                  | 1/1                                                    | 1/1                                                    | 1/1                                                    | 1/1                                               | 1/1                                                        | 1/1                                                     | 1/1                                                     | 1/1                                                    | 1/1                                                        | 1/1                                                     | 1/1                                                     | 1/1                                                    | 1/1                                                   | 1/1                                                   | 1/1                                                    | 1/1                                                    | 1/1                                                | 1/1                                                    | 1/1                                                | 1/1                                                      | 1/1                                                  | 1/1                                                   | 1/1                                                        | 1/1                                                       | 1/1                                                          | 1/1                                                      | 1/1                                               | 1/1                                                  | 1/1                                                     | 1/1                                                | 1/1                                                        | 1/1                                                         | 1/1                                                             | 1/1                                                  | 1/1                                               | 1/1                                               | 1/1                                                      | 1/1                                                    | 1/1                                            | 1/1                                                    | 1/1                                                     | 1/1                                             | 1/1                                               | 1/1                                              | 1/1                                                 | 1/1                                                | 1/1                                                      | 1/1                                                  | 1/1                                                    | 1/1                                                     | 1/1                                                   | 1/1                                                   | 1/1                                                    | 1/1                                            | 1/1                                              | 1/1                                             | 1/1                                           | 1/1                                               | 1/1                                                  | 1/1                                                      | yes        |
+| postgresql-1-1-2 |      1 | 1/1                                                        | 1/1                                                        | 1/1                                                        | 1/1                                                      | 1/1                                                        | 1/1                                                      | 1/1                                              | 1/1                                               | 1/1                                                   | 1/1                                               | 1/1                                               | 1/1                                                 | 1/1                                                | 1/1                                                   | 1/1                                                  | 1/1                                                        | 1/1                                                  | 1/1                                                       | 1/1                                                 | 1/1                                                      | 1/1                                                       | 1/1                                                     | 1/1                                                     | 1/1                                                      | 1/1                                              | 1/1                                                | 1/1                                               | 1/1                                             | 1/1                                                 | 1/1                                                    | 1/1                                                        | 1/1                                                          | 1/1                                                          | 1/1                                                        | 1/1                                                      | 1/1                                                     | 1/1                                                         | 1/1                                                              | 1/1                                                      | 1/1                                               | 1/1                                                              | 1/1                                                              | 1/1                                                     | 1/1                                                                  | 1/1                                                               | 1/1                                                               | 1/1                                                              | 1/1                                                                   | 1/1                                                                | 1/1                                                                | 1/1                                                               | 1/1                                                            | 1/1                                                             | 1/1                                                          | 1/1                                                          | 1/1                                                       | 1/1                                                          | 1/1                                                             | 1/1                                                           | 1/1                                                        | 1/1                                                                | 1/1                                                 | 1/1                                                              | 1/1                                                           | 1/1                                                             | 1/1                                                          | 1/1                                                      | 1/1                                                        | 1/1                                                        | 1/1                                                        | 1/1                                                            | 1/1                                                         | 1/1                                                         | 1/1                                                        | 1/1                                                            | 1/1                                                         | 1/1                                                         | 1/1                                                        | 1/1                                                          | 1/1                                                           | 1/1                                                        | 1/1                                                        | 1/1                                                   | 1/1                                                    | 1/1                                                        | 1/1                                                    | 1/1                                                          | 1/1                                                      | 1/1                                                       | 1/1                                                            | 1/1                                                           | 1/1                                                              | 1/1                                                          | 1/1                                                   | 1/1                                                      | 1/1                                                         | 1/1                                                    | 1/1                                                            | 1/1                                                             | 1/1                                                                 | 1/1                                                      | 1/1                                                 | 1/1                                                 | 1/1                                                      | 1/1                                                      | 1/1                                                     | 1/1                                                          | 1/1                                                         | 1/1                                                | 1/1                                                | 1/1                                               | 1/1                                                         | 1/1                                               | 1/1                                                 | 1/1                                                | 1/1                                                   | 1/1                                           | 1/1                                                   | 1/1                                                      | 1/1                                                         | 1/1                                                         | 1/1                                                            | 1/1                                                          | 1/1                                                          | 1/1                                                           | 1/1                                                   | 1/1                                                     | 1/1                                                    | 1/1                                                  | 1/1                                                      | 1/1                                                         | 1/1                                                            | 1/1                                                           | 1/1                                                          | 1/1                                                                  | 1/1                                                                    | 1/1                                                                     | 1/1                                                                 | 1/1                                                             | 1/1                                                                      | 1/1                                                                     | 1/1                                             | 1/1                                             | 1/1                                          | 1/1                                               | 1/1                                              | 1/1                                                 | 1/1                                          | 1/1                                         | 1/1                                         | 1/1                                         | 1/1                                         | 1/1                                             | 1/1                                                    | 1/1                                                 | 1/1                                              | 1/1                                                  | 1/1                                             | 1/1                                             | 1/1                                                       | 1/1                                               | 1/1                                              | 1/1                                                 | 1/1                                                 | 1/1                                                 | 1/1                                                  | 1/1                                                   | 1/1                                                     | 1/1                                                  | 1/1                                                   | 1/1                                                       | 1/1                                                       | 1/1                                                        | 1/1                                                            | 1/1                                                                   | 1/1                                                                  | 1/1                                                              | 1/1                                                                  | 1/1                                                        | 1/1                                                     | 1/1                                                     | 1/1                                                | 1/1                                                | 1/1                                                     | 1/1                                                         | 1/1                                         | 1/1                                         | 1/1                                                | 1/1                                              | 1/1                                           | 1/1                                               | 1/1                                                | 1/1                                          | 1/1                                       | 1/1                                          | 1/1                                       | 1/1                                             | 1/1                                          | 1/1                                             | 1/1                                          | 1/1                                      | 1/1                                             | 1/1                                       | 1/1                                       | 1/1                                           | 1/1                                            | 1/1                                              | 1/1                                               | 1/1                                               | 1/1                                                    | 1/1                                                  | 1/1                                              | 1/1                                           | 1/1                                                      | 1/1                                                 | 1/1                                                    | 1/1                                                    | 1/1                                                      | 1/1                                                 | 1/1                                                    | 1/1                                                    | 1/1                                                    | 1/1                                                   | 1/1                                                      | 1/1                                              | 1/1                                                      | 1/1                                             | 1/1                                             | 1/1                                               | 1/1                                                    | 1/1                                                    | 1/1                                            | 1/1                                            | 1/1                                               | 1/1                                                | 1/1                                           | 1/1                                           | 1/1                                                 | 1/1                                               | 1/1                                                 | 1/1                                             | 1/1                                                   | 1/1                                              | 1/1                                        | 1/1                                          | 1/1                                            | 1/1                                                  | 1/1                                              | 1/1                                                 | 1/1                                              | 1/1                                                | 1/1                                             | 1/1                                               | 1/1                                                | 1/1                                              | 1/1                                              | 1/1                                               | 1/1                                       | 1/1                                         | 1/1                                        | 1/1                                      | 1/1                                          | 1/1                                             | 1/1                                                 | 1/1                                                            | 1/1                                                          | 1/1                                                   | 1/1                                                       | 1/1                                                    | 1/1                                                    | 1/1                                                   | 1/1                                                    | 1/1                                                     | 1/1                                                         | 1/1                                                           | 1/1                                                      | 1/1                                                      | 1/1                                                              | 1/1                                               | 1/1                                                            | 1/1                                                         | 1/1                                                           | 1/1                                                        | 1/1                                                    | 1/1                                                      | 1/1                                                      | 1/1                                                 | 1/1                                                     | 1/1                                                  | 1/1                                                  | 1/1                                                 | 1/1                                                  | 1/1                                                  | 1/1                                                       | 1/1                                                  | 1/1                                                        | 1/1                                                    | 1/1                                                     | 1/1                                                          | 1/1                                                         | 1/1                                                            | 1/1                                                        | 1/1                                                 | 1/1                                                    | 1/1                                                  | 1/1                                                          | 1/1                                                    | 1/1                                             | 1/1                                             | 1/1                                          | 1/1                                          | 1/1                                            | 1/1                                            | 1/1                                           | 1/1                                           | 1/1                                               | 1/1                                               | 1/1                                                   | 1/1                                                   | 1/1                                                     | 1/1                                                      | 1/1                                                    | 1/1                                                  | 1/1                                                  | 1/1                                                   | 1/1                                           | 1/1                                             | 1/1                                            | 1/1                                          | 1/1                                              | 1/1                                                 | 1/1                                                  | 1/1                                                  | 1/1                                                     | 1/1                                                   | 1/1                                                       | 1/1                                                     | 1/1                                                   | 1/1                                                  | 1/1                                          | 1/1                                           | 1/1                                                 | 1/1                                                 | 1/1                                                  | 1/1                                                   | 1/1                                                          | 1/1                                                          | 1/1                                                 | 1/1                                                              | 1/1                                                           | 1/1                                                           | 1/1                                                          | 1/1                                                               | 1/1                                                            | 1/1                                                            | 1/1                                                           | 1/1                                                     | 1/1                                                   | 1/1                                                      | 1/1                                                         | 1/1                                                    | 1/1                                                    | 1/1                                                            | 1/1                                             | 1/1                                                          | 1/1                                                       | 1/1                                                         | 1/1                                                        | 1/1                                                  | 1/1                                                    | 1/1                                                    | 1/1                                                    | 1/1                                               | 1/1                                                        | 1/1                                                     | 1/1                                                     | 1/1                                                    | 1/1                                                        | 1/1                                                     | 1/1                                                     | 1/1                                                    | 1/1                                                   | 1/1                                                   | 1/1                                                    | 1/1                                                    | 1/1                                                | 1/1                                                    | 1/1                                                | 1/1                                                      | 1/1                                                  | 1/1                                                   | 1/1                                                        | 1/1                                                       | 1/1                                                          | 1/1                                                      | 1/1                                               | 1/1                                                  | 1/1                                                     | 1/1                                                | 1/1                                                        | 1/1                                                         | 1/1                                                             | 1/1                                                  | 1/1                                               | 1/1                                               | 1/1                                                      | 1/1                                                    | 1/1                                            | 1/1                                                    | 1/1                                                     | 1/1                                             | 1/1                                               | 1/1                                              | 1/1                                                 | 1/1                                                | 1/1                                                      | 1/1                                                  | 1/1                                                    | 1/1                                                     | 1/1                                                   | 1/1                                                   | 1/1                                                    | 1/1                                            | 1/1                                              | 1/1                                             | 1/1                                           | 1/1                                               | 1/1                                                  | 1/1                                                      | yes        |
 
 Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
 
 ### Latency of Timer Execution [ms]
-| Queries       |   monetdb-1-1-1-1-1 |
-|:--------------|--------------------:|
-| TPC-DS Q1     |              213.05 |
-| TPC-DS Q2     |             1335.04 |
-| TPC-DS Q3     |              128.90 |
-| TPC-DS Q4     |            14673.24 |
-| TPC-DS Q5     |             1362.44 |
-| TPC-DS Q6     |              328.85 |
-| TPC-DS Q7     |              186.54 |
-| TPC-DS Q8     |              229.80 |
-| TPC-DS Q9     |              525.15 |
-| TPC-DS Q10    |               84.96 |
-| TPC-DS Q11    |             6359.08 |
-| TPC-DS Q12    |              184.47 |
-| TPC-DS Q13    |              294.19 |
-| TPC-DS Q14a+b |            34541.82 |
-| TPC-DS Q15    |              135.70 |
-| TPC-DS Q16    |            43099.63 |
-| TPC-DS Q17    |             1805.36 |
-| TPC-DS Q18    |              688.40 |
-| TPC-DS Q19    |              176.13 |
-| TPC-DS Q20    |              123.37 |
-| TPC-DS Q21    |              113.15 |
-| TPC-DS Q22    |             1140.32 |
-| TPC-DS Q23a+b |            49744.89 |
-| TPC-DS Q24a+b |            23023.03 |
-| TPC-DS Q25    |             2396.98 |
-| TPC-DS Q26    |              204.19 |
-| TPC-DS Q27    |             1081.00 |
-| TPC-DS Q28    |              565.97 |
-| TPC-DS Q29    |             1384.46 |
-| TPC-DS Q30    |               76.50 |
-| TPC-DS Q31    |             1797.82 |
-| TPC-DS Q32    |              193.28 |
-| TPC-DS Q33    |               96.73 |
-| TPC-DS Q34    |              108.57 |
-| TPC-DS Q35    |             1352.05 |
-| TPC-DS Q36    |             1177.63 |
-| TPC-DS Q37    |              374.99 |
-| TPC-DS Q38    |             2261.55 |
-| TPC-DS Q39a+b |             1495.71 |
-| TPC-DS Q40    |              926.98 |
-| TPC-DS Q41    |                8.22 |
-| TPC-DS Q42    |              110.12 |
-| TPC-DS Q43    |              214.88 |
-| TPC-DS Q44    |              470.92 |
-| TPC-DS Q45    |              135.74 |
-| TPC-DS Q46    |              219.05 |
-| TPC-DS Q47    |              752.28 |
-| TPC-DS Q48    |              256.54 |
-| TPC-DS Q49    |             1080.88 |
-| TPC-DS Q50    |              529.08 |
-| TPC-DS Q51    |             2260.14 |
-| TPC-DS Q52    |               89.89 |
-| TPC-DS Q53    |               71.90 |
-| TPC-DS Q54    |              196.11 |
-| TPC-DS Q55    |               88.79 |
-| TPC-DS Q56    |              112.72 |
-| TPC-DS Q57    |              134.53 |
-| TPC-DS Q58    |             3938.10 |
-| TPC-DS Q59    |             1082.28 |
-| TPC-DS Q60    |              111.34 |
-| TPC-DS Q61    |              188.99 |
-| TPC-DS Q62    |              244.07 |
-| TPC-DS Q63    |               80.84 |
-| TPC-DS Q64    |             3871.49 |
-| TPC-DS Q65    |              971.58 |
-| TPC-DS Q66    |             1942.64 |
-| TPC-DS Q67    |             4547.36 |
-| TPC-DS Q68    |              364.21 |
-| TPC-DS Q69    |               72.16 |
-| TPC-DS Q70    |             1767.51 |
-| TPC-DS Q71    |              142.95 |
-| TPC-DS Q72    |             1098.13 |
-| TPC-DS Q73    |               78.47 |
-| TPC-DS Q74    |             6588.90 |
-| TPC-DS Q75    |             5153.34 |
-| TPC-DS Q76    |              298.94 |
-| TPC-DS Q77    |              778.39 |
-| TPC-DS Q78    |            12022.19 |
-| TPC-DS Q79    |              196.48 |
-| TPC-DS Q80    |             7161.39 |
-| TPC-DS Q81    |               80.46 |
-| TPC-DS Q82    |              730.52 |
-| TPC-DS Q83    |              360.26 |
-| TPC-DS Q84    |               33.68 |
-| TPC-DS Q85    |              919.66 |
-| TPC-DS Q86    |              374.42 |
-| TPC-DS Q87    |             2539.96 |
-| TPC-DS Q88    |              496.58 |
-| TPC-DS Q89    |              150.26 |
-| TPC-DS Q90    |               68.45 |
-| TPC-DS Q91    |               27.64 |
-| TPC-DS Q92    |              183.12 |
-| TPC-DS Q93    |             1888.86 |
-| TPC-DS Q94    |            37608.56 |
-| TPC-DS Q95    |           294697.32 |
-| TPC-DS Q96    |              434.13 |
-| TPC-DS Q97    |             4713.24 |
-| TPC-DS Q98    |              575.40 |
-| TPC-DS Q99    |              290.65 |
+| Queries                                                                |   postgresql-1-1-1-1-1 |   postgresql-1-1-2-1-1 |
+|:-----------------------------------------------------------------------|-----------------------:|-----------------------:|
+| statistics_tab about call_center.cc_call_center_sk - all               |                 215.63 |                 244.64 |
+| statistics_tab about call_center.cc_call_center_id - all               |                   2.96 |                   1.80 |
+| statistics_tab about call_center.cc_rec_start_date - all               |                   1.93 |                   1.68 |
+| statistics_tab about call_center.cc_rec_end_date - all                 |                   2.00 |                   1.28 |
+| statistics_tab about call_center.cc_closed_date_sk - all               |                   1.27 |                   1.10 |
+| statistics_tab about call_center.cc_open_date_sk - all                 |                   1.71 |                   1.20 |
+| statistics_tab about call_center.cc_name - all                         |                   1.44 |                   1.50 |
+| statistics_tab about call_center.cc_class - all                        |                   4.01 |                   1.33 |
+| statistics_tab about call_center.cc_employees - all                    |                   1.14 |                   1.26 |
+| statistics_tab about call_center.cc_sq_ft - all                        |                   1.05 |                   1.18 |
+| statistics_tab about call_center.cc_hours - all                        |                   1.61 |                   1.49 |
+| statistics_tab about call_center.cc_manager - all                      |                   1.34 |                   1.29 |
+| statistics_tab about call_center.cc_mkt_id - all                       |                   1.80 |                   1.31 |
+| statistics_tab about call_center.cc_mkt_class - all                    |                   1.52 |                   1.41 |
+| statistics_tab about call_center.cc_mkt_desc - all                     |                   1.81 |                   1.37 |
+| statistics_tab about call_center.cc_market_manager - all               |                   1.57 |                   1.32 |
+| statistics_tab about call_center.cc_division - all                     |                   1.33 |                   1.09 |
+| statistics_tab about call_center.cc_division_name - all                |                   1.44 |                   1.20 |
+| statistics_tab about call_center.cc_company - all                      |                   1.35 |                   1.31 |
+| statistics_tab about call_center.cc_company_name - all                 |                   1.80 |                   2.34 |
+| statistics_tab about call_center.cc_street_number - all                |                   1.27 |                   1.73 |
+| statistics_tab about call_center.cc_street_name - all                  |                   1.25 |                   1.76 |
+| statistics_tab about call_center.cc_street_type - all                  |                   1.34 |                   1.84 |
+| statistics_tab about call_center.cc_suite_number - all                 |                   1.04 |                   1.74 |
+| statistics_tab about call_center.cc_city - all                         |                   1.10 |                   1.71 |
+| statistics_tab about call_center.cc_county - all                       |                   1.26 |                   1.71 |
+| statistics_tab about call_center.cc_state - all                        |                   1.11 |                   1.52 |
+| statistics_tab about call_center.cc_zip - all                          |                   1.01 |                   1.63 |
+| statistics_tab about call_center.cc_country - all                      |                   1.25 |                   1.28 |
+| statistics_tab about call_center.cc_gmt_offset - all                   |                   1.35 |                   1.45 |
+| statistics_tab about call_center.cc_tax_percentage - all               |                   1.24 |                   1.25 |
+| statistics_tab about catalog_page.cp_catalog_page_sk - all             |                   5.57 |                   5.38 |
+| statistics_tab about catalog_page.cp_catalog_page_id - all             |                  13.59 |                  13.57 |
+| statistics_tab about catalog_page.cp_start_date_sk - all               |                   3.22 |                   2.86 |
+| statistics_tab about catalog_page.cp_end_date_sk - all                 |                   3.61 |                   2.79 |
+| statistics_tab about catalog_page.cp_department - all                  |                   5.34 |                   3.88 |
+| statistics_tab about catalog_page.cp_catalog_number - all              |                   7.10 |                   2.90 |
+| statistics_tab about catalog_page.cp_catalog_page_number - all         |                  10.67 |                   2.94 |
+| statistics_tab about catalog_page.cp_description - all                 |                  34.53 |                  13.05 |
+| statistics_tab about catalog_page.cp_type - all                        |                  10.84 |                   4.00 |
+| statistics_tab about catalog_returns.cr_returned_date_sk - all         |                1158.58 |                 655.24 |
+| statistics_tab about catalog_returns.cr_returned_time_sk - all         |                 310.91 |                 306.82 |
+| statistics_tab about catalog_returns.cr_item_sk - all                  |                 935.02 |                 764.96 |
+| statistics_tab about catalog_returns.cr_refunded_customer_sk - all     |                 713.36 |                 321.15 |
+| statistics_tab about catalog_returns.cr_refunded_cdemo_sk - all        |                 333.13 |                 683.52 |
+| statistics_tab about catalog_returns.cr_refunded_hdemo_sk - all        |                 270.09 |                 587.56 |
+| statistics_tab about catalog_returns.cr_refunded_addr_sk - all         |                 306.98 |                 299.39 |
+| statistics_tab about catalog_returns.cr_returning_customer_sk - all    |                 804.56 |                 756.60 |
+| statistics_tab about catalog_returns.cr_returning_cdemo_sk - all       |                 323.88 |                 325.20 |
+| statistics_tab about catalog_returns.cr_returning_hdemo_sk - all       |                 266.86 |                 274.62 |
+| statistics_tab about catalog_returns.cr_returning_addr_sk - all        |                 303.92 |                 307.28 |
+| statistics_tab about catalog_returns.cr_call_center_sk - all           |                 253.39 |                 256.05 |
+| statistics_tab about catalog_returns.cr_catalog_page_sk - all          |                 259.67 |                 254.46 |
+| statistics_tab about catalog_returns.cr_ship_mode_sk - all             |                 619.08 |                 584.11 |
+| statistics_tab about catalog_returns.cr_warehouse_sk - all             |                 918.35 |                 857.98 |
+| statistics_tab about catalog_returns.cr_reason_sk - all                |                 655.20 |                 267.54 |
+| statistics_tab about catalog_returns.cr_order_number - all             |                 446.29 |                 298.93 |
+| statistics_tab about catalog_returns.cr_return_quantity - all          |                 289.60 |                 267.52 |
+| statistics_tab about catalog_returns.cr_return_amount - all            |                 540.53 |                 476.51 |
+| statistics_tab about catalog_returns.cr_return_tax - all               |                 453.38 |                 431.97 |
+| statistics_tab about catalog_returns.cr_return_amt_inc_tax - all       |                 505.43 |                 505.93 |
+| statistics_tab about catalog_returns.cr_fee - all                      |                 550.46 |                 459.13 |
+| statistics_tab about catalog_returns.cr_return_ship_cost - all         |                 953.73 |                 484.97 |
+| statistics_tab about catalog_returns.cr_refunded_cash - all            |                1069.69 |                 490.84 |
+| statistics_tab about catalog_returns.cr_reversed_charge - all          |                 548.91 |                 472.83 |
+| statistics_tab about catalog_returns.cr_store_credit - all             |                 499.51 |                 527.62 |
+| statistics_tab about catalog_returns.cr_net_loss - all                 |                 546.10 |                 686.81 |
+| statistics_tab about catalog_sales.cs_sold_date_sk - all               |                3860.60 |                3466.72 |
+| statistics_tab about catalog_sales.cs_sold_time_sk - all               |                2477.23 |                2279.53 |
+| statistics_tab about catalog_sales.cs_ship_date_sk - all               |                2883.49 |                3361.46 |
+| statistics_tab about catalog_sales.cs_bill_customer_sk - all           |                5908.23 |                4423.11 |
+| statistics_tab about catalog_sales.cs_bill_cdemo_sk - all              |                2603.63 |                2506.30 |
+| statistics_tab about catalog_sales.cs_bill_hdemo_sk - all              |                2470.17 |                2942.57 |
+| statistics_tab about catalog_sales.cs_bill_addr_sk - all               |                2581.96 |                3016.11 |
+| statistics_tab about catalog_sales.cs_ship_customer_sk - all           |                5508.88 |                4591.09 |
+| statistics_tab about catalog_sales.cs_ship_cdemo_sk - all              |                3137.67 |                2464.24 |
+| statistics_tab about catalog_sales.cs_ship_hdemo_sk - all              |                2285.49 |                2212.09 |
+| statistics_tab about catalog_sales.cs_ship_addr_sk - all               |                5208.33 |                5098.33 |
+| statistics_tab about catalog_sales.cs_call_center_sk - all             |                4928.56 |                4748.82 |
+| statistics_tab about catalog_sales.cs_catalog_page_sk - all            |                2509.75 |                2795.73 |
+| statistics_tab about catalog_sales.cs_ship_mode_sk - all               |                2520.28 |                3125.28 |
+| statistics_tab about catalog_sales.cs_warehouse_sk - all               |                6623.98 |                6688.65 |
+| statistics_tab about catalog_sales.cs_item_sk - all                    |               12634.79 |               13142.99 |
+| statistics_tab about catalog_sales.cs_promo_sk - all                   |               11389.05 |               10240.78 |
+| statistics_tab about catalog_sales.cs_order_number - all               |                4739.82 |                5028.99 |
+| statistics_tab about catalog_sales.cs_quantity - all                   |                2596.45 |                3943.51 |
+| statistics_tab about catalog_sales.cs_wholesale_cost - all             |                4351.81 |                6627.52 |
+| statistics_tab about catalog_sales.cs_list_price - all                 |                5135.21 |                4778.87 |
+| statistics_tab about catalog_sales.cs_sales_price - all                |                4467.74 |                5549.97 |
+| statistics_tab about catalog_sales.cs_ext_discount_amt - all           |                5175.18 |                7024.13 |
+| statistics_tab about catalog_sales.cs_ext_sales_price - all            |                5356.06 |                6907.70 |
+| statistics_tab about catalog_sales.cs_ext_wholesale_cost - all         |                5090.93 |                8121.71 |
+| statistics_tab about catalog_sales.cs_ext_list_price - all             |                5782.12 |                7409.16 |
+| statistics_tab about catalog_sales.cs_ext_tax - all                    |                4696.86 |                6218.69 |
+| statistics_tab about catalog_sales.cs_coupon_amt - all                 |                4306.68 |                5272.95 |
+| statistics_tab about catalog_sales.cs_ext_ship_cost - all              |                4978.56 |                4921.72 |
+| statistics_tab about catalog_sales.cs_net_paid - all                   |                5006.91 |                5717.21 |
+| statistics_tab about catalog_sales.cs_net_paid_inc_tax - all           |                5438.08 |                5873.89 |
+| statistics_tab about catalog_sales.cs_net_paid_inc_ship - all          |                5765.70 |                5817.55 |
+| statistics_tab about catalog_sales.cs_net_paid_inc_ship_tax - all      |               13918.53 |                6492.09 |
+| statistics_tab about catalog_sales.cs_net_profit - all                 |               18342.61 |                5863.28 |
+| statistics_tab about customer.c_customer_sk - all                      |                 350.57 |                 131.90 |
+| statistics_tab about customer.c_customer_id - all                      |                1127.55 |                 724.96 |
+| statistics_tab about customer.c_current_cdemo_sk - all                 |                 275.79 |                 287.05 |
+| statistics_tab about customer.c_current_hdemo_sk - all                 |                 115.64 |                 112.24 |
+| statistics_tab about customer.c_current_addr_sk - all                  |                 267.44 |                 259.04 |
+| statistics_tab about customer.c_first_shipto_date_sk - all             |                 104.12 |                 104.64 |
+| statistics_tab about customer.c_first_sales_date_sk - all              |                 104.97 |                 105.25 |
+| statistics_tab about customer.c_salutation - all                       |                 137.41 |                 132.56 |
+| statistics_tab about customer.c_first_name - all                       |                 204.03 |                 186.25 |
+| statistics_tab about customer.c_last_name - all                        |                 408.27 |                 210.91 |
+| statistics_tab about customer.c_preferred_cust_flag - all              |                 131.06 |                 123.81 |
+| statistics_tab about customer.c_birth_day - all                        |                 105.50 |                  96.80 |
+| statistics_tab about customer.c_birth_month - all                      |                 106.70 |                 121.95 |
+| statistics_tab about customer.c_birth_year - all                       |                 108.19 |                 110.54 |
+| statistics_tab about customer.c_birth_country - all                    |                 270.59 |                 318.20 |
+| statistics_tab about customer.c_login - all                            |                 107.01 |                 104.24 |
+| statistics_tab about customer.c_email_address - all                    |                 743.62 |                1003.83 |
+| statistics_tab about customer.c_last_review_date - all                 |                 187.96 |                 422.95 |
+| statistics_tab about customer_address.ca_address_sk - all              |                  97.10 |                 145.90 |
+| statistics_tab about customer_address.ca_address_id - all              |                 301.45 |                 430.64 |
+| statistics_tab about customer_address.ca_street_number - all           |                  86.43 |                 107.59 |
+| statistics_tab about customer_address.ca_street_name - all             |                  89.93 |                  94.80 |
+| statistics_tab about customer_address.ca_street_type - all             |                  83.70 |                  92.93 |
+| statistics_tab about customer_address.ca_suite_number - all            |                  84.91 |                  91.31 |
+| statistics_tab about customer_address.ca_city - all                    |                  81.87 |                  81.23 |
+| statistics_tab about customer_address.ca_county - all                  |                 133.87 |                 133.94 |
+| statistics_tab about customer_address.ca_state - all                   |                  76.61 |                  77.33 |
+| statistics_tab about customer_address.ca_zip - all                     |                 242.32 |                  87.65 |
+| statistics_tab about customer_address.ca_country - all                 |                 144.06 |                  82.64 |
+| statistics_tab about customer_address.ca_gmt_offset - all              |                  63.53 |                  66.34 |
+| statistics_tab about customer_address.ca_location_type - all           |                  87.23 |                  81.68 |
+| statistics_tab about customer_demographics.cd_demo_sk - all            |                 438.99 |                 498.74 |
+| statistics_tab about customer_demographics.cd_gender - all             |                 325.93 |                 353.85 |
+| statistics_tab about customer_demographics.cd_marital_status - all     |                 345.94 |                 340.55 |
+| statistics_tab about customer_demographics.cd_education_status - all   |                 760.32 |                 425.25 |
+| statistics_tab about customer_demographics.cd_purchase_estimate - all  |                 554.16 |                 312.34 |
+| statistics_tab about customer_demographics.cd_credit_rating - all      |                 412.25 |                 407.16 |
+| statistics_tab about customer_demographics.cd_dep_count - all          |                 318.93 |                 318.40 |
+| statistics_tab about customer_demographics.cd_dep_employed_count - all |                 301.07 |                 339.93 |
+| statistics_tab about customer_demographics.cd_dep_college_count - all  |                 317.98 |                 324.37 |
+| statistics_tab about date_dim.d_date_sk - all                          |                  19.72 |                  27.02 |
+| statistics_tab about date_dim.d_date_id - all                          |                 199.36 |                  75.64 |
+| statistics_tab about date_dim.d_date - all                             |                  50.49 |                  51.26 |
+| statistics_tab about date_dim.d_month_seq - all                        |                  13.17 |                  10.15 |
+| statistics_tab about date_dim.d_week_seq - all                         |                  13.08 |                  10.89 |
+| statistics_tab about date_dim.d_quarter_seq - all                      |                  13.29 |                  12.95 |
+| statistics_tab about date_dim.d_year - all                             |                  15.90 |                  14.21 |
+| statistics_tab about date_dim.d_dow - all                              |                  13.16 |                  11.05 |
+| statistics_tab about date_dim.d_moy - all                              |                  13.75 |                  11.09 |
+| statistics_tab about date_dim.d_dom - all                              |                  42.09 |                  11.73 |
+| statistics_tab about date_dim.d_qoy - all                              |                  14.58 |                  10.96 |
+| statistics_tab about date_dim.d_fy_year - all                          |                  16.95 |                  11.09 |
+| statistics_tab about date_dim.d_fy_quarter_seq - all                   |                  13.87 |                  11.51 |
+| statistics_tab about date_dim.d_fy_week_seq - all                      |                  14.29 |                  11.04 |
+| statistics_tab about date_dim.d_day_name - all                         |                  23.18 |                  19.04 |
+| statistics_tab about date_dim.d_quarter_name - all                     |                  22.36 |                  18.08 |
+| statistics_tab about date_dim.d_holiday - all                          |                  22.80 |                  18.52 |
+| statistics_tab about date_dim.d_weekend - all                          |                  22.11 |                  18.10 |
+| statistics_tab about date_dim.d_following_holiday - all                |                  70.57 |                  19.68 |
+| statistics_tab about date_dim.d_first_dom - all                        |                  24.43 |                  12.45 |
+| statistics_tab about date_dim.d_last_dom - all                         |                  16.52 |                  16.00 |
+| statistics_tab about date_dim.d_same_day_ly - all                      |                  15.16 |                  12.67 |
+| statistics_tab about date_dim.d_same_day_lq - all                      |                  16.96 |                  13.73 |
+| statistics_tab about date_dim.d_current_day - all                      |                  25.08 |                  20.61 |
+| statistics_tab about date_dim.d_current_week - all                     |                  24.89 |                  20.12 |
+| statistics_tab about date_dim.d_current_month - all                    |                  29.89 |                  21.73 |
+| statistics_tab about date_dim.d_current_quarter - all                  |                  28.50 |                  21.50 |
+| statistics_tab about date_dim.d_current_year - all                     |                  26.03 |                  21.77 |
+| statistics_tab about dbgen_version.dv_version - all                    |                   2.15 |                   1.43 |
+| statistics_tab about dbgen_version.dv_create_date - all                |                   2.29 |                   1.35 |
+| statistics_tab about dbgen_version.dv_create_time - all                |                   1.87 |                   1.65 |
+| statistics_tab about dbgen_version.dv_cmdline_args - all               |                   1.73 |                   1.17 |
+| statistics_tab about household_demographics.hd_demo_sk - all           |                   3.06 |                   2.67 |
+| statistics_tab about household_demographics.hd_income_band_sk - all    |                   2.66 |                   2.14 |
+| statistics_tab about household_demographics.hd_buy_potential - all     |                   6.19 |                   3.15 |
+| statistics_tab about household_demographics.hd_dep_count - all         |                   2.82 |                   1.90 |
+| statistics_tab about household_demographics.hd_vehicle_count - all     |                   2.71 |                   2.52 |
+| statistics_tab about income_band.ib_income_band_sk - all               |                   2.01 |                   1.07 |
+| statistics_tab about income_band.ib_lower_bound - all                  |                   1.71 |                   0.97 |
+| statistics_tab about income_band.ib_upper_bound - all                  |                   0.90 |                   1.09 |
+| statistics_tab about inventory.inv_date_sk - all                       |               24839.93 |               24626.20 |
+| statistics_tab about inventory.inv_item_sk - all                       |               64165.96 |               66008.77 |
+| statistics_tab about inventory.inv_warehouse_sk - all                  |               24023.17 |               22230.32 |
+| statistics_tab about inventory.inv_quantity_on_hand - all              |               24886.72 |               25582.49 |
+| statistics_tab about item.i_item_sk - all                              |                  43.16 |                  41.76 |
+| statistics_tab about item.i_item_id - all                              |                  88.56 |                  85.02 |
+| statistics_tab about item.i_rec_start_date - all                       |                  34.50 |                  31.54 |
+| statistics_tab about item.i_rec_end_date - all                         |                  29.80 |                  29.57 |
+| statistics_tab about item.i_item_desc - all                            |                 124.52 |                 122.87 |
+| statistics_tab about item.i_current_price - all                        |                  34.73 |                  38.29 |
+| statistics_tab about item.i_wholesale_cost - all                       |                  32.88 |                  44.27 |
+| statistics_tab about item.i_brand_id - all                             |                  22.50 |                  24.72 |
+| statistics_tab about item.i_brand - all                                |                  81.41 |                  81.45 |
+| statistics_tab about item.i_class_id - all                             |                  20.56 |                  21.33 |
+| statistics_tab about item.i_class - all                                |                  56.33 |                  54.49 |
+| statistics_tab about item.i_category_id - all                          |                  21.29 |                  28.83 |
+| statistics_tab about item.i_category - all                             |                  50.12 |                  57.20 |
+| statistics_tab about item.i_manufact_id - all                          |                  25.30 |                  24.20 |
+| statistics_tab about item.i_manufact - all                             |                  78.85 |                  64.43 |
+| statistics_tab about item.i_size - all                                 |                  51.45 |                  45.64 |
+| statistics_tab about item.i_formulation - all                          |                  94.31 |                 103.42 |
+| statistics_tab about item.i_color - all                                |                  48.16 |                  58.66 |
+| statistics_tab about item.i_units - all                                |                  46.02 |                  47.33 |
+| statistics_tab about item.i_container - all                            |                  40.80 |                  38.51 |
+| statistics_tab about item.i_manager_id - all                           |                  24.32 |                  24.13 |
+| statistics_tab about item.i_product_name - all                         |                 239.54 |                 190.16 |
+| statistics_tab about promotion.p_promo_sk - all                        |                   2.98 |                   1.56 |
+| statistics_tab about promotion.p_promo_id - all                        |                   1.81 |                   1.70 |
+| statistics_tab about promotion.p_start_date_sk - all                   |                   1.13 |                   1.78 |
+| statistics_tab about promotion.p_end_date_sk - all                     |                   1.22 |                   1.12 |
+| statistics_tab about promotion.p_item_sk - all                         |                   1.15 |                   1.50 |
+| statistics_tab about promotion.p_cost - all                            |                   1.07 |                   1.06 |
+| statistics_tab about promotion.p_response_target - all                 |                   1.21 |                   1.32 |
+| statistics_tab about promotion.p_promo_name - all                      |                   1.60 |                   1.20 |
+| statistics_tab about promotion.p_channel_dmail - all                   |                   1.38 |                   1.25 |
+| statistics_tab about promotion.p_channel_email - all                   |                   1.32 |                   1.11 |
+| statistics_tab about promotion.p_channel_catalog - all                 |                   1.28 |                   1.33 |
+| statistics_tab about promotion.p_channel_tv - all                      |                   1.46 |                   1.31 |
+| statistics_tab about promotion.p_channel_radio - all                   |                   1.39 |                   1.43 |
+| statistics_tab about promotion.p_channel_press - all                   |                   1.17 |                   1.58 |
+| statistics_tab about promotion.p_channel_event - all                   |                   1.37 |                   1.53 |
+| statistics_tab about promotion.p_channel_demo - all                    |                   1.40 |                   1.99 |
+| statistics_tab about promotion.p_channel_details - all                 |                   1.51 |                   1.73 |
+| statistics_tab about promotion.p_purpose - all                         |                   1.63 |                   1.89 |
+| statistics_tab about promotion.p_discount_active - all                 |                   1.30 |                   1.71 |
+| statistics_tab about reason.r_reason_sk - all                          |                   1.04 |                   1.17 |
+| statistics_tab about reason.r_reason_id - all                          |                   1.15 |                   1.07 |
+| statistics_tab about reason.r_reason_desc - all                        |                   1.15 |                   1.32 |
+| statistics_tab about ship_mode.sm_ship_mode_sk - all                   |                   1.07 |                   1.12 |
+| statistics_tab about ship_mode.sm_ship_mode_id - all                   |                   1.02 |                   1.26 |
+| statistics_tab about ship_mode.sm_type - all                           |                   1.37 |                   1.15 |
+| statistics_tab about ship_mode.sm_code - all                           |                   1.15 |                   1.17 |
+| statistics_tab about ship_mode.sm_carrier - all                        |                   1.14 |                   1.28 |
+| statistics_tab about ship_mode.sm_contract - all                       |                   1.17 |                   1.11 |
+| statistics_tab about store.s_store_sk - all                            |                   1.45 |                   1.29 |
+| statistics_tab about store.s_store_id - all                            |                   1.40 |                   1.34 |
+| statistics_tab about store.s_rec_start_date - all                      |                   1.43 |                   1.30 |
+| statistics_tab about store.s_rec_end_date - all                        |                   1.40 |                   1.47 |
+| statistics_tab about store.s_closed_date_sk - all                      |                   1.09 |                   1.30 |
+| statistics_tab about store.s_store_name - all                          |                   1.37 |                   1.55 |
+| statistics_tab about store.s_number_employees - all                    |                   1.16 |                   1.24 |
+| statistics_tab about store.s_floor_space - all                         |                   1.31 |                   1.37 |
+| statistics_tab about store.s_hours - all                               |                   1.59 |                   1.64 |
+| statistics_tab about store.s_manager - all                             |                   1.59 |                   1.30 |
+| statistics_tab about store.s_market_id - all                           |                   1.39 |                   1.10 |
+| statistics_tab about store.s_geography_class - all                     |                   1.24 |                   1.63 |
+| statistics_tab about store.s_market_desc - all                         |                   1.48 |                   3.29 |
+| statistics_tab about store.s_market_manager - all                      |                   1.84 |                   1.84 |
+| statistics_tab about store.s_division_id - all                         |                   1.52 |                   1.21 |
+| statistics_tab about store.s_division_name - all                       |                   1.80 |                   1.43 |
+| statistics_tab about store.s_company_id - all                          |                   1.20 |                   1.53 |
+| statistics_tab about store.s_company_name - all                        |                   1.57 |                   1.62 |
+| statistics_tab about store.s_street_number - all                       |                   1.45 |                   1.55 |
+| statistics_tab about store.s_street_name - all                         |                   1.98 |                   1.98 |
+| statistics_tab about store.s_street_type - all                         |                   1.36 |                   1.70 |
+| statistics_tab about store.s_suite_number - all                        |                   1.47 |                   1.84 |
+| statistics_tab about store.s_city - all                                |                   1.28 |                   1.60 |
+| statistics_tab about store.s_county - all                              |                   1.32 |                   1.40 |
+| statistics_tab about store.s_state - all                               |                   1.68 |                   1.36 |
+| statistics_tab about store.s_zip - all                                 |                   1.46 |                   1.36 |
+| statistics_tab about store.s_country - all                             |                   1.53 |                   1.40 |
+| statistics_tab about store.s_gmt_offset - all                          |                   1.40 |                   1.44 |
+| statistics_tab about store.s_tax_precentage - all                      |                   1.30 |                   1.42 |
+| statistics_tab about store_returns.sr_returned_date_sk - all           |                1670.98 |                2165.98 |
+| statistics_tab about store_returns.sr_return_time_sk - all             |                 511.20 |                 518.48 |
+| statistics_tab about store_returns.sr_item_sk - all                    |                1649.13 |                1635.94 |
+| statistics_tab about store_returns.sr_customer_sk - all                |                1436.53 |                1425.26 |
+| statistics_tab about store_returns.sr_cdemo_sk - all                   |                 596.72 |                 974.89 |
+| statistics_tab about store_returns.sr_hdemo_sk - all                   |                 493.70 |                 594.61 |
+| statistics_tab about store_returns.sr_addr_sk - all                    |                 543.21 |                 563.95 |
+| statistics_tab about store_returns.sr_store_sk - all                   |                1300.91 |                1318.22 |
+| statistics_tab about store_returns.sr_reason_sk - all                  |                 526.94 |                 501.66 |
+| statistics_tab about store_returns.sr_ticket_number - all              |                1610.96 |                 574.74 |
+| statistics_tab about store_returns.sr_return_quantity - all            |                 534.06 |                 530.43 |
+| statistics_tab about store_returns.sr_return_amt - all                 |                1021.92 |                 921.59 |
+| statistics_tab about store_returns.sr_return_tax - all                 |                1177.41 |                 802.37 |
+| statistics_tab about store_returns.sr_return_amt_inc_tax - all         |                 997.45 |                 894.27 |
+| statistics_tab about store_returns.sr_fee - all                        |                 845.66 |                 972.36 |
+| statistics_tab about store_returns.sr_return_ship_cost - all           |                 899.48 |                1167.64 |
+| statistics_tab about store_returns.sr_refunded_cash - all              |                 894.88 |                 913.66 |
+| statistics_tab about store_returns.sr_reversed_charge - all            |                1218.70 |                 867.87 |
+| statistics_tab about store_returns.sr_store_credit - all               |                1053.20 |                 852.54 |
+| statistics_tab about store_returns.sr_net_loss - all                   |                 973.05 |                1675.27 |
+| statistics_tab about store_sales.ss_sold_date_sk - all                 |                9241.52 |                8692.41 |
+| statistics_tab about store_sales.ss_sold_time_sk - all                 |                4532.70 |                4730.38 |
+| statistics_tab about store_sales.ss_item_sk - all                      |               26011.61 |               23891.17 |
+| statistics_tab about store_sales.ss_customer_sk - all                  |                9464.70 |                9069.75 |
+| statistics_tab about store_sales.ss_cdemo_sk - all                     |                5305.79 |                5453.00 |
+| statistics_tab about store_sales.ss_hdemo_sk - all                     |                4915.39 |                4689.24 |
+| statistics_tab about store_sales.ss_addr_sk - all                      |                4716.71 |                4585.45 |
+| statistics_tab about store_sales.ss_store_sk - all                     |                9137.35 |                8991.26 |
+| statistics_tab about store_sales.ss_promo_sk - all                     |               19775.07 |               21411.19 |
+| statistics_tab about store_sales.ss_ticket_number - all                |                4579.67 |                4690.49 |
+| statistics_tab about store_sales.ss_quantity - all                     |                5337.99 |                4547.93 |
+| statistics_tab about store_sales.ss_wholesale_cost - all               |                8066.42 |                8144.77 |
+| statistics_tab about store_sales.ss_list_price - all                   |                8225.60 |               22050.77 |
+| statistics_tab about store_sales.ss_sales_price - all                  |                8623.49 |               21231.69 |
+| statistics_tab about store_sales.ss_ext_discount_amt - all             |                7619.73 |                7761.28 |
+| statistics_tab about store_sales.ss_ext_sales_price - all              |                9704.89 |               11542.36 |
+| statistics_tab about store_sales.ss_ext_wholesale_cost - all           |               10079.14 |                9012.57 |
+| statistics_tab about store_sales.ss_ext_list_price - all               |               10281.77 |                9719.61 |
+| statistics_tab about store_sales.ss_ext_tax - all                      |                8319.48 |                9009.24 |
+| statistics_tab about store_sales.ss_coupon_amt - all                   |                7943.56 |                7853.40 |
+| statistics_tab about store_sales.ss_net_paid - all                     |               10401.26 |               10780.48 |
+| statistics_tab about store_sales.ss_net_paid_inc_tax - all             |                9615.86 |               10285.42 |
+| statistics_tab about store_sales.ss_net_profit - all                   |               10530.23 |               11356.27 |
+| statistics_tab about time_dim.t_time_sk - all                          |                  19.57 |                  22.27 |
+| statistics_tab about time_dim.t_time_id - all                          |                  88.89 |                  90.59 |
+| statistics_tab about time_dim.t_time - all                             |                  18.10 |                  17.70 |
+| statistics_tab about time_dim.t_hour - all                             |                  13.46 |                  13.86 |
+| statistics_tab about time_dim.t_minute - all                           |                  13.46 |                  14.97 |
+| statistics_tab about time_dim.t_second - all                           |                  14.14 |                  15.67 |
+| statistics_tab about time_dim.t_am_pm - all                            |                  41.12 |                  33.59 |
+| statistics_tab about time_dim.t_shift - all                            |                  38.43 |                  32.44 |
+| statistics_tab about time_dim.t_sub_shift - all                        |                  40.77 |                  32.05 |
+| statistics_tab about time_dim.t_meal_time - all                        |                  36.89 |                  29.86 |
+| statistics_tab about warehouse.w_warehouse_sk - all                    |                   1.33 |                   0.84 |
+| statistics_tab about warehouse.w_warehouse_id - all                    |                   1.38 |                   1.27 |
+| statistics_tab about warehouse.w_warehouse_name - all                  |                   1.50 |                   1.01 |
+| statistics_tab about warehouse.w_warehouse_sq_ft - all                 |                   1.40 |                   1.22 |
+| statistics_tab about warehouse.w_street_number - all                   |                   1.61 |                   1.20 |
+| statistics_tab about warehouse.w_street_name - all                     |                   1.40 |                   1.28 |
+| statistics_tab about warehouse.w_street_type - all                     |                   1.35 |                   2.55 |
+| statistics_tab about warehouse.w_suite_number - all                    |                   1.33 |                   1.26 |
+| statistics_tab about warehouse.w_city - all                            |                   1.07 |                   1.33 |
+| statistics_tab about warehouse.w_county - all                          |                   1.97 |                   1.45 |
+| statistics_tab about warehouse.w_state - all                           |                   1.72 |                   1.78 |
+| statistics_tab about warehouse.w_zip - all                             |                   1.36 |                   1.45 |
+| statistics_tab about warehouse.w_country - all                         |                   1.62 |                   1.59 |
+| statistics_tab about warehouse.w_gmt_offset - all                      |                   1.35 |                   1.67 |
+| statistics_tab about web_page.wp_web_page_sk - all                     |                   1.59 |                   2.62 |
+| statistics_tab about web_page.wp_web_page_id - all                     |                   1.99 |                   3.80 |
+| statistics_tab about web_page.wp_rec_start_date - all                  |                   1.65 |                   1.21 |
+| statistics_tab about web_page.wp_rec_end_date - all                    |                   1.52 |                   1.04 |
+| statistics_tab about web_page.wp_creation_date_sk - all                |                   1.86 |                   0.94 |
+| statistics_tab about web_page.wp_access_date_sk - all                  |                   1.38 |                   1.16 |
+| statistics_tab about web_page.wp_autogen_flag - all                    |                   1.30 |                   1.04 |
+| statistics_tab about web_page.wp_customer_sk - all                     |                   1.15 |                   0.75 |
+| statistics_tab about web_page.wp_url - all                             |                   1.57 |                   0.93 |
+| statistics_tab about web_page.wp_type - all                            |                   1.37 |                   1.18 |
+| statistics_tab about web_page.wp_char_count - all                      |                   1.10 |                   0.93 |
+| statistics_tab about web_page.wp_link_count - all                      |                   1.25 |                   1.33 |
+| statistics_tab about web_page.wp_image_count - all                     |                   1.28 |                   0.93 |
+| statistics_tab about web_page.wp_max_ad_count - all                    |                   1.33 |                   0.84 |
+| statistics_tab about web_returns.wr_returned_date_sk - all             |                 374.65 |                 452.17 |
+| statistics_tab about web_returns.wr_returned_time_sk - all             |                 167.85 |                 276.74 |
+| statistics_tab about web_returns.wr_item_sk - all                      |                 403.33 |                 383.13 |
+| statistics_tab about web_returns.wr_refunded_customer_sk - all         |                 175.64 |                 173.01 |
+| statistics_tab about web_returns.wr_refunded_cdemo_sk - all            |                 175.16 |                 171.88 |
+| statistics_tab about web_returns.wr_refunded_hdemo_sk - all            |                 146.22 |                 143.99 |
+| statistics_tab about web_returns.wr_refunded_addr_sk - all             |                 163.51 |                 164.64 |
+| statistics_tab about web_returns.wr_returning_customer_sk - all        |                 384.90 |                 397.10 |
+| statistics_tab about web_returns.wr_returning_cdemo_sk - all           |                 171.55 |                 176.95 |
+| statistics_tab about web_returns.wr_returning_hdemo_sk - all           |                 149.64 |                 150.83 |
+| statistics_tab about web_returns.wr_returning_addr_sk - all            |                 172.58 |                 172.85 |
+| statistics_tab about web_returns.wr_web_page_sk - all                  |                 138.52 |                 140.44 |
+| statistics_tab about web_returns.wr_reason_sk - all                    |                 138.18 |                 140.68 |
+| statistics_tab about web_returns.wr_order_number - all                 |                 149.95 |                 150.21 |
+| statistics_tab about web_returns.wr_return_quantity - all              |                 134.62 |                 136.16 |
+| statistics_tab about web_returns.wr_return_amt - all                   |                 253.12 |                 273.31 |
+| statistics_tab about web_returns.wr_return_tax - all                   |                 333.16 |                 258.20 |
+| statistics_tab about web_returns.wr_return_amt_inc_tax - all           |                 376.99 |                 308.98 |
+| statistics_tab about web_returns.wr_fee - all                          |                 405.63 |                 286.69 |
+| statistics_tab about web_returns.wr_return_ship_cost - all             |                 290.12 |                 393.01 |
+| statistics_tab about web_returns.wr_refunded_cash - all                |                 279.40 |                 295.45 |
+| statistics_tab about web_returns.wr_reversed_charge - all              |                 254.73 |                 254.24 |
+| statistics_tab about web_returns.wr_account_credit - all               |                 243.65 |                 274.55 |
+| statistics_tab about web_returns.wr_net_loss - all                     |                 249.89 |                 319.88 |
+| statistics_tab about web_sales.ws_sold_date_sk - all                   |                2018.49 |                2524.17 |
+| statistics_tab about web_sales.ws_sold_time_sk - all                   |                1248.21 |                2129.02 |
+| statistics_tab about web_sales.ws_ship_date_sk - all                   |                3949.34 |                5123.46 |
+| statistics_tab about web_sales.ws_item_sk - all                        |                4217.15 |                5719.51 |
+| statistics_tab about web_sales.ws_bill_customer_sk - all               |                2339.32 |                2149.11 |
+| statistics_tab about web_sales.ws_bill_cdemo_sk - all                  |                1486.75 |                2058.43 |
+| statistics_tab about web_sales.ws_bill_hdemo_sk - all                  |                1237.83 |                1139.24 |
+| statistics_tab about web_sales.ws_bill_addr_sk - all                   |                1685.39 |                1267.06 |
+| statistics_tab about web_sales.ws_ship_customer_sk - all               |                2041.82 |                2158.28 |
+| statistics_tab about web_sales.ws_ship_cdemo_sk - all                  |                1212.71 |                2013.76 |
+| statistics_tab about web_sales.ws_ship_hdemo_sk - all                  |                1120.55 |                1276.56 |
+| statistics_tab about web_sales.ws_ship_addr_sk - all                   |                2811.56 |                2461.97 |
+| statistics_tab about web_sales.ws_web_page_sk - all                    |                1396.04 |                1676.58 |
+| statistics_tab about web_sales.ws_web_site_sk - all                    |                4423.60 |                4315.88 |
+| statistics_tab about web_sales.ws_ship_mode_sk - all                   |                1425.14 |                2006.63 |
+| statistics_tab about web_sales.ws_warehouse_sk - all                   |                3494.36 |                3425.17 |
+| statistics_tab about web_sales.ws_promo_sk - all                       |                4444.84 |                5439.51 |
+| statistics_tab about web_sales.ws_order_number - all                   |                1252.27 |                1901.57 |
+| statistics_tab about web_sales.ws_quantity - all                       |                1277.32 |                1304.64 |
+| statistics_tab about web_sales.ws_wholesale_cost - all                 |                2034.85 |                2654.84 |
+| statistics_tab about web_sales.ws_list_price - all                     |                2750.69 |                2147.98 |
+| statistics_tab about web_sales.ws_sales_price - all                    |                2041.98 |                2108.27 |
+| statistics_tab about web_sales.ws_ext_discount_amt - all               |                2388.79 |                2835.20 |
+| statistics_tab about web_sales.ws_ext_sales_price - all                |                2807.00 |                2978.37 |
+| statistics_tab about web_sales.ws_ext_wholesale_cost - all             |                2397.76 |                2360.09 |
+| statistics_tab about web_sales.ws_ext_list_price - all                 |                3053.16 |                2725.99 |
+| statistics_tab about web_sales.ws_ext_tax - all                        |                2279.51 |                2176.77 |
+| statistics_tab about web_sales.ws_coupon_amt - all                     |                1936.92 |                1927.16 |
+| statistics_tab about web_sales.ws_ext_ship_cost - all                  |                3222.84 |                2306.91 |
+| statistics_tab about web_sales.ws_net_paid - all                       |                2517.15 |                2467.75 |
+| statistics_tab about web_sales.ws_net_paid_inc_tax - all               |                2968.36 |                2488.99 |
+| statistics_tab about web_sales.ws_net_paid_inc_ship - all              |                2866.62 |                2672.21 |
+| statistics_tab about web_sales.ws_net_paid_inc_ship_tax - all          |                2678.12 |                3302.61 |
+| statistics_tab about web_sales.ws_net_profit - all                     |                2452.17 |                2519.30 |
+| statistics_tab about web_site.web_site_sk - all                        |                   1.36 |                   1.63 |
+| statistics_tab about web_site.web_site_id - all                        |                   1.24 |                   1.24 |
+| statistics_tab about web_site.web_rec_start_date - all                 |                   1.04 |                   1.12 |
+| statistics_tab about web_site.web_rec_end_date - all                   |                   1.13 |                   1.15 |
+| statistics_tab about web_site.web_name - all                           |                   1.05 |                   0.86 |
+| statistics_tab about web_site.web_open_date_sk - all                   |                   0.91 |                   1.01 |
+| statistics_tab about web_site.web_close_date_sk - all                  |                   0.77 |                   0.96 |
+| statistics_tab about web_site.web_class - all                          |                   0.88 |                   1.04 |
+| statistics_tab about web_site.web_manager - all                        |                   0.97 |                   1.05 |
+| statistics_tab about web_site.web_mkt_id - all                         |                   0.78 |                   0.88 |
+| statistics_tab about web_site.web_mkt_class - all                      |                   1.11 |                   0.89 |
+| statistics_tab about web_site.web_mkt_desc - all                       |                   1.00 |                   1.40 |
+| statistics_tab about web_site.web_market_manager - all                 |                   0.84 |                   1.01 |
+| statistics_tab about web_site.web_company_id - all                     |                   1.15 |                   0.97 |
+| statistics_tab about web_site.web_company_name - all                   |                   0.91 |                   0.90 |
+| statistics_tab about web_site.web_street_number - all                  |                   1.04 |                   0.94 |
+| statistics_tab about web_site.web_street_name - all                    |                   0.93 |                   1.50 |
+| statistics_tab about web_site.web_street_type - all                    |                   0.94 |                   1.21 |
+| statistics_tab about web_site.web_suite_number - all                   |                   1.06 |                   1.36 |
+| statistics_tab about web_site.web_city - all                           |                   0.88 |                   0.93 |
+| statistics_tab about web_site.web_county - all                         |                   0.97 |                   1.46 |
+| statistics_tab about web_site.web_state - all                          |                   0.90 |                   1.30 |
+| statistics_tab about web_site.web_zip - all                            |                   1.07 |                   0.94 |
+| statistics_tab about web_site.web_country - all                        |                   1.05 |                   1.44 |
+| statistics_tab about web_site.web_gmt_offset - all                     |                   0.91 |                   1.07 |
+| statistics_tab about web_site.web_tax_percentage - all                 |                   0.85 |                   1.08 |
 
 ### Errors (failed queries)
 
@@ -2078,54 +2177,58 @@ No warnings
 
 ### Loading phase: SUT deployment
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| monetdb-1-1-1-1 |      2602.42 |      6.17 |          47.99 |                 48.03 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 |      1346.27 |      2.96 |          23.49 |                 51.49 |
+| postgresql-1-1-2-1 |      1346.27 |      2.96 |          23.49 |                 51.49 |
 
 ### Loading phase: component data generator
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| monetdb-1-1-1-1 |         0.00 |      0.00 |           0.00 |                  0.00 |
+| DBMS               | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|:-------------|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
+| postgresql-1-1-2-1 | n/a          |         0 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| monetdb-1-1-1-1 |       201.84 |      0.45 |           0.01 |                  3.36 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 |       205.30 |      1.20 |           0.01 |                  2.82 |
+| postgresql-1-1-2-1 |       205.30 |      1.20 |           0.01 |                  2.82 |
 
 ### Benchmarking phase: SUT deployment
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| monetdb-1-1-1-1 |     13349.04 |    124.86 |        1014.57 |               1023.96 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 |      1000.24 |      1.94 |          24.03 |                 51.86 |
+| postgresql-1-1-2-1 |      1045.49 |      2.11 |          24.54 |                 51.26 |
 
 ### Benchmarking phase: component benchmarker
 
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| monetdb-1-1-1-1 |        26.27 |      0.61 |           0.36 |                  0.37 |
+| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|-------------:|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 |        26.54 |      0.67 |           0.31 |                  0.32 |
+| postgresql-1-1-2-1 |        26.12 |      0.12 |           0.28 |                  0.29 |
 
 ### Missing Monitoring Metrics
-* CPU Throttling Rate [s/s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Utilization [CPUs] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* Memory Usage, Working Set [MiB] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Throttling Rate [s/s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* Memory Usage incl. Page Cache [MiB] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU User Time [s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Utilization Time [s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Throttled Time [s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU System Time [s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Throttling Rate [s/s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-loading.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
@@ -2146,739 +2249,18 @@ No warnings
 
 </details>
 
-### Perform Benchmark - Power Test
 
-We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
-We then run two power tests, one after the other (`-ne 1,1`), and shut down the DBMS.
-This is repeated 2 times (`-nc`).
 
-```bash
-bexhoma tpcds \
-  -dbms MonetDB \
-  -sf 30 \
-  -nc 2 \
-  -ne 1,1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
-  -m \
-  -mc \
-  -ms $BEXHOMA_MS \
-  -t 14400 \
-  -lr 1024Gi \
-  -rr 900Gi \
-  -rss 2000Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  run &>$LOG_DIR/docs_tpcds_monetdb_2.log
-```
 
-### Evaluate Results
 
-<details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_monetdb_2_summary.md" target="_blank" rel="noopener">docs_tpcds_monetdb_2.log</a></summary>
 
-```markdown
-## Show Summary
 
-### Workload
-TPC-DS Queries SF=30
-* Type: tpcds
-* Duration: 3995s 
-* Code: 1792730083
-* This includes the reading queries of TPC-DS.
-* This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
-  * TPC-DS (SF=30) data is loaded and benchmark is executed.
-  * Query ordering is Q1 - Q99.
-  * All instances use the same query parameters.
-  * Timeout per query is 14400.
-  * Data transfer volume per query is also measured.
-  * Import sets indexes and constraints after loading and recomputes statistics.
-  * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.8.
-  * System metrics are monitored by a cluster-wide installation.
-  * Experiment is limited to DBMS ['MonetDB'].
-  * Import is handled by 8 processes (pods).
-  * Database is persisted to disk of type nvme and size 2000Gi.
-  * Loading is tested with [8] threads, split into [8] pods.
-  * Benchmarking is tested with [1] threads, split into [1] pods.
-  * Benchmarking is run as [1, 1] times the number of benchmarking pods.
-  * Experiment is run 2 times.
-  * Maximum DBMS across the whole cluster is 10.
-  * SUT requests 4 CPU and 900Gi RAM. RAM limit is 1024Gi.
 
-### Connections
-* monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173172736
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-137-generic
-  * node:cl-worker36
-  * disk:926103
-  * datadisk:52423
-  * volume_size:2.0T
-  * volume_used:52G
-  * cpu_list:0-223
-  * requests_cpu:4
-  * requests_memory:900Gi
-  * limits_memory:1024Gi
-  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
-  * eval_parameters
-    * code:1792730083
-* monetdb-1-1-2-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173172736
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-137-generic
-  * node:cl-worker36
-  * disk:922760
-  * datadisk:51000
-  * volume_size:2.0T
-  * volume_used:50G
-  * cpu_list:0-223
-  * requests_cpu:4
-  * requests_memory:900Gi
-  * limits_memory:1024Gi
-  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
-  * eval_parameters
-    * code:1792730083
-* monetdb-1-2-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173172736
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-137-generic
-  * node:cl-worker36
-  * disk:920092
-  * datadisk:51000
-  * volume_size:2.0T
-  * volume_used:50G
-  * cpu_list:0-223
-  * requests_cpu:4
-  * requests_memory:900Gi
-  * limits_memory:1024Gi
-  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
-  * eval_parameters
-    * code:1792730083
-* monetdb-1-2-2-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173172736
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-137-generic
-  * node:cl-worker36
-  * disk:924425
-  * datadisk:51000
-  * volume_size:2.0T
-  * volume_used:50G
-  * cpu_list:0-223
-  * requests_cpu:4
-  * requests_memory:900Gi
-  * limits_memory:1024Gi
-  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
-  * eval_parameters
-    * code:1792730083
 
-### Reused Storage
-* loading skipped, loading times inherited from an earlier experiment: MonetDB-1
 
-### SUT Container Restarts
-* bexhoma-sut-monetdb-1-1792730083-fbd98d694-cwknv: 0
-* bexhoma-sut-monetdb-1-1792730083-6fc46c7797-86r9r: 0
 
-### Workflow
 
-#### Actual
 
-* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
-* DBMS MonetDB-1 - Experiment 1 Client 2: tpcds (1 pods)
-* DBMS MonetDB-1 - Experiment 2 Client 1: tpcds (1 pods)
-* DBMS MonetDB-1 - Experiment 2 Client 2: tpcds (1 pods)
+## MonetDB at SF 30
 
-#### Planned
-
-* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
-* DBMS MonetDB-1 - Experiment 1 Client 2: tpcds (1 pods)
-* DBMS MonetDB-1 - Experiment 2 Client 1: tpcds (1 pods)
-* DBMS MonetDB-1 - Experiment 2 Client 2: tpcds (1 pods)
-
-### Loading
-
-#### Per Run
-
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MonetDB-1-1 |                1 |   30 |      688.00 |           4.00 |            1.00 |        517.00 |          147.00 |              0 |           0 |             | None           |             0 | False         |              156.98 | True                |
-| MonetDB-1-2 |                2 |   30 |      688.00 |           4.00 |            1.00 |        517.00 |          147.00 |              0 |           0 |             | None           |             0 | False         |              156.98 | True                |
-
-### Benchmarking
-
-#### Per Connection
-
-| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
-|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| monetdb-1-1-1-1-1 | MonetDB-1       | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        863 |            1.04 |           107800.86 |          12389.34 |          -1 | monetdb-1-1-1-1-1 |
-| monetdb-1-1-2-1-1 | MonetDB-1       | monetdb-1-1-2 | monetdb-1-1-2-1 |                1 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        818 |            0.83 |           136333.55 |          13070.90 |          -1 | monetdb-1-1-2-1-1 |
-| monetdb-1-2-1-1-1 | MonetDB-1       | monetdb-1-2-1 | monetdb-1-2-1-1 |                2 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        924 |            1.23 |            90244.92 |          11571.43 |          -1 | monetdb-1-2-1-1-1 |
-| monetdb-1-2-2-1-1 | MonetDB-1       | monetdb-1-2-2 | monetdb-1-2-2-1 |                2 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        829 |            0.99 |           112895.14 |          12897.47 |          -1 | monetdb-1-2-2-1-1 |
-
-#### Per Phase
-
-|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        863 |            1.04 |           107800.86 |          12389.34 |          -1 |
-| monetdb-1-1-2 | monetdb-1-1-2 |                1 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        818 |            0.83 |           136333.55 |          13070.90 |          -1 |
-| monetdb-1-2-1 | monetdb-1-2-1 |                2 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        924 |            1.23 |            90244.92 |          11571.43 |          -1 |
-| monetdb-1-2-2 | monetdb-1-2-2 |                2 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        829 |            0.99 |           112895.14 |          12897.47 |          -1 |
-
-#### Query Completion per Phase
-
-| phase         |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
-|:--------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
-| monetdb-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
-| monetdb-1-1-2 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
-| monetdb-1-2-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
-| monetdb-1-2-2 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
-
-Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
-
-### Latency of Timer Execution [ms]
-| Queries       |   monetdb-1-1-1-1-1 |   monetdb-1-1-2-1-1 |   monetdb-1-2-1-1-1 |   monetdb-1-2-2-1-1 |
-|:--------------|--------------------:|--------------------:|--------------------:|--------------------:|
-| TPC-DS Q1     |             1287.34 |              235.06 |             1341.01 |              367.13 |
-| TPC-DS Q2     |             3622.46 |             2289.75 |             3779.29 |             4118.27 |
-| TPC-DS Q3     |             7106.32 |             6547.23 |             6883.26 |             5166.57 |
-| TPC-DS Q4     |            24195.40 |            16126.95 |            24258.47 |            17180.74 |
-| TPC-DS Q5     |            18965.70 |             1812.08 |            21878.90 |             1831.25 |
-| TPC-DS Q6     |             3761.56 |              322.43 |             9799.22 |              737.20 |
-| TPC-DS Q7     |             5675.96 |             1164.66 |             9806.50 |              798.86 |
-| TPC-DS Q8     |             2639.88 |             3003.18 |             3185.97 |             3147.34 |
-| TPC-DS Q9     |             1094.01 |              527.25 |             2432.22 |              569.00 |
-| TPC-DS Q10    |            21849.03 |              292.76 |            26015.12 |              282.93 |
-| TPC-DS Q11    |             8202.96 |             6553.94 |            11277.32 |             6938.86 |
-| TPC-DS Q12    |              228.76 |              692.82 |              236.40 |              120.87 |
-| TPC-DS Q13    |             1102.80 |             1905.00 |             3835.34 |              470.97 |
-| TPC-DS Q14a+b |            36377.00 |            35850.11 |            38191.16 |            38399.09 |
-| TPC-DS Q15    |             1298.68 |              117.63 |             1379.04 |              515.91 |
-| TPC-DS Q16    |            44898.70 |            43723.49 |            45880.31 |            44062.78 |
-| TPC-DS Q17    |             5903.77 |             4774.51 |             4676.49 |             7939.31 |
-| TPC-DS Q18    |             1262.91 |             1314.15 |             1272.77 |             1296.60 |
-| TPC-DS Q19    |              180.37 |              171.69 |              173.79 |              156.96 |
-| TPC-DS Q20    |             1090.74 |              128.25 |              101.69 |             1883.23 |
-| TPC-DS Q21    |             2197.12 |              129.82 |             2452.17 |              117.48 |
-| TPC-DS Q22    |             1216.59 |             1358.42 |             1252.76 |             1290.43 |
-| TPC-DS Q23a+b |            50682.42 |            50333.50 |            55702.25 |            51958.87 |
-| TPC-DS Q24a+b |            31040.75 |            27924.68 |            27916.19 |            29299.31 |
-| TPC-DS Q25    |             1273.55 |             1755.11 |             1257.76 |             1754.00 |
-| TPC-DS Q26    |              164.07 |              150.84 |             1567.72 |              162.14 |
-| TPC-DS Q27    |             1047.38 |              960.94 |              934.69 |             1162.23 |
-| TPC-DS Q28    |              606.56 |              681.38 |              621.96 |              648.31 |
-| TPC-DS Q29    |             2043.50 |             2964.09 |             2200.06 |             2276.28 |
-| TPC-DS Q30    |               92.82 |              105.03 |              107.97 |              104.89 |
-| TPC-DS Q31    |             3561.46 |             2011.00 |             1891.12 |             2297.20 |
-| TPC-DS Q32    |              175.71 |              208.07 |             1611.28 |              149.27 |
-| TPC-DS Q33    |              119.48 |              118.19 |              106.28 |              105.25 |
-| TPC-DS Q34    |              100.23 |              109.80 |              108.01 |              121.15 |
-| TPC-DS Q35    |             1010.41 |              838.16 |             1014.58 |              966.41 |
-| TPC-DS Q36    |             1201.48 |             1301.60 |             1178.02 |             1473.39 |
-| TPC-DS Q37    |              372.22 |              420.15 |              434.00 |              388.19 |
-| TPC-DS Q38    |             2217.35 |             2725.73 |             2316.35 |             2356.33 |
-| TPC-DS Q39a+b |             1559.06 |             1578.63 |             1549.81 |             2959.89 |
-| TPC-DS Q40    |             1969.27 |             1200.78 |             2008.86 |             1500.14 |
-| TPC-DS Q41    |                5.36 |                5.11 |                4.45 |                4.69 |
-| TPC-DS Q42    |              109.60 |               86.99 |             1108.99 |              117.74 |
-| TPC-DS Q43    |              302.32 |             1520.16 |              839.01 |              312.76 |
-| TPC-DS Q44    |              207.41 |              212.63 |              218.43 |              256.08 |
-| TPC-DS Q45    |              134.72 |              140.56 |              422.56 |              235.77 |
-| TPC-DS Q46    |              217.27 |              227.77 |              220.16 |              208.28 |
-| TPC-DS Q47    |             1034.41 |              999.88 |              942.83 |             1072.67 |
-| TPC-DS Q48    |              481.04 |              230.30 |              471.42 |              550.35 |
-| TPC-DS Q49    |             4252.59 |             1788.40 |             4879.77 |             1775.18 |
-| TPC-DS Q50    |              601.58 |              575.60 |              547.20 |              574.35 |
-| TPC-DS Q51    |             2972.54 |             2453.11 |             2492.32 |             3444.72 |
-| TPC-DS Q52    |              106.92 |               94.25 |              103.05 |              108.70 |
-| TPC-DS Q53    |               77.36 |               87.11 |               74.69 |               82.57 |
-| TPC-DS Q54    |               89.14 |              100.01 |               98.84 |               96.69 |
-| TPC-DS Q55    |               75.53 |               66.26 |               90.35 |             1164.61 |
-| TPC-DS Q56    |               93.81 |              108.50 |               88.85 |              103.62 |
-| TPC-DS Q57    |              146.95 |              143.35 |              136.55 |              153.66 |
-| TPC-DS Q58    |             6224.42 |             5303.05 |             5158.18 |             7359.22 |
-| TPC-DS Q59    |             1055.50 |             1107.29 |             1114.95 |             1192.43 |
-| TPC-DS Q60    |              168.01 |              158.76 |              141.35 |              180.26 |
-| TPC-DS Q61    |              201.97 |              206.88 |              207.59 |              214.27 |
-| TPC-DS Q62    |              252.85 |              301.45 |             2097.85 |              352.56 |
-| TPC-DS Q63    |               86.18 |               93.83 |               85.67 |               89.57 |
-| TPC-DS Q64    |             3958.97 |             4593.14 |             8094.55 |             6440.59 |
-| TPC-DS Q65    |             1103.59 |             1079.07 |             1133.27 |             1173.47 |
-| TPC-DS Q66    |             2040.09 |             2514.33 |             2251.12 |             2644.37 |
-| TPC-DS Q67    |             4823.22 |             4872.60 |             4756.53 |             7593.72 |
-| TPC-DS Q68    |              348.40 |              373.84 |              330.34 |              361.50 |
-| TPC-DS Q69    |              290.81 |              346.02 |              292.12 |              350.42 |
-| TPC-DS Q70    |             1845.81 |             2160.23 |             2035.23 |             2975.71 |
-| TPC-DS Q71    |              207.78 |              187.07 |              305.57 |             1107.15 |
-| TPC-DS Q72    |             1138.92 |             1144.46 |             1156.88 |             1275.81 |
-| TPC-DS Q73    |               70.82 |               83.99 |               76.18 |               83.53 |
-| TPC-DS Q74    |             1801.52 |             1741.70 |             2947.44 |             1712.33 |
-| TPC-DS Q75    |             5556.96 |            34708.40 |             6557.27 |             6900.06 |
-| TPC-DS Q76    |             8106.24 |            17656.01 |             6669.04 |            10371.47 |
-| TPC-DS Q77    |             1182.22 |              887.95 |              753.75 |              864.46 |
-| TPC-DS Q78    |            12442.51 |            14639.71 |            13692.92 |            13578.45 |
-| TPC-DS Q79    |              225.30 |              213.07 |              234.16 |              245.63 |
-| TPC-DS Q80    |             7507.60 |             8853.23 |             9149.26 |             8269.46 |
-| TPC-DS Q81    |              147.40 |              148.29 |             2136.47 |              147.63 |
-| TPC-DS Q82    |              435.24 |              448.05 |              440.15 |              451.21 |
-| TPC-DS Q83    |               49.59 |               56.79 |             1903.75 |              258.01 |
-| TPC-DS Q84    |              350.16 |              335.76 |              354.03 |              368.74 |
-| TPC-DS Q85    |             1257.63 |             1223.39 |            12030.56 |             1507.73 |
-| TPC-DS Q86    |              372.85 |              377.05 |              389.84 |              422.18 |
-| TPC-DS Q87    |             2588.99 |             2541.34 |             2766.70 |             3795.63 |
-| TPC-DS Q88    |              500.50 |              518.47 |             2319.86 |              546.69 |
-| TPC-DS Q89    |              149.22 |              143.89 |              138.91 |             1677.70 |
-| TPC-DS Q90    |               70.80 |               94.24 |               72.24 |              105.92 |
-| TPC-DS Q91    |             1101.26 |               79.74 |               54.04 |               80.82 |
-| TPC-DS Q92    |              148.37 |              153.39 |              173.77 |             5241.62 |
-| TPC-DS Q93    |             2030.58 |             2011.97 |             2032.08 |             4328.29 |
-| TPC-DS Q94    |            36946.47 |            37302.68 |            38332.73 |            39547.86 |
-| TPC-DS Q95    |           370600.83 |           354662.99 |           379412.24 |           375111.99 |
-| TPC-DS Q96    |             1846.42 |             1394.46 |              424.03 |              409.88 |
-| TPC-DS Q97    |             4147.63 |             4149.78 |             3556.72 |             3317.90 |
-| TPC-DS Q98    |             2205.84 |              238.11 |             1539.75 |             2215.88 |
-| TPC-DS Q99    |             1640.42 |              306.32 |              289.26 |              289.84 |
-
-### Errors (failed queries)
-
-No errors
-
-### Warnings (result mismatch)
-
-|                   |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
-|:------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
-| monetdb-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| monetdb-1-2-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| monetdb-1-2-2-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-
-### Monitoring
-
-### Benchmarking phase: SUT deployment
-
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| monetdb-1-1-1-1 |     11121.16 |    175.59 |        1014.75 |               1023.99 |
-| monetdb-1-1-2-1 |     13243.25 |    191.90 |        1005.46 |               1023.98 |
-| monetdb-1-2-1-1 |     13871.87 |    170.64 |        1016.95 |               1023.97 |
-| monetdb-1-2-2-1 |     12766.76 |    186.16 |         991.97 |               1024.00 |
-
-### Benchmarking phase: component benchmarker
-
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| monetdb-1-1-1-1 |        69.37 |      0.69 |           0.61 |                  0.63 |
-| monetdb-1-1-2-1 |        68.24 |      0.73 |           0.56 |                  0.57 |
-| monetdb-1-2-1-1 |        70.25 |      0.89 |           0.53 |                  0.55 |
-| monetdb-1-2-2-1 |        68.71 |      0.97 |           0.57 |                  0.59 |
-
-### Missing Monitoring Metrics
-* CPU Throttling Rate [s/s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection monetdb-1-1-2-1 (bexhoma-metrics-monetdb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection monetdb-1-1-2-1 (bexhoma-metrics-monetdb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection monetdb-1-2-1-1 (bexhoma-metrics-monetdb-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection monetdb-1-2-1-1 (bexhoma-metrics-monetdb-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection monetdb-1-2-2-1 (bexhoma-metrics-monetdb-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection monetdb-1-2-2-1 (bexhoma-metrics-monetdb-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
-
-### Tests
-* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MonetDB-1)
-* TEST passed: No SUT container restarts
-* TEST skipped: SUT data survived container restarts (no restarts)
-* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
-* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
-* TEST passed: Geo Times [s] contains no 0 or NaN
-* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-* TEST passed: Throughput@Size contains no 0 or NaN
-* TEST passed: No SQL errors
-* TEST failed: SQL warnings (result mismatch)
-* TEST passed: All active queries counted in the totals
-* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
-* TEST passed: Workflow as planned
-```
-
-</details>
-
-### Perform Benchmark - Throughput Test
-
-We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
-We then run two power tests, one after the other, and then a throughput test with 3 parallel driver (`-ne 1,1,3`). and shut down the DBMS.
-
-
-```bash
-bexhoma tpcds \
-  -dbms MonetDB \
-  -sf 30 \
-  -nc 1 \
-  -ne 1,1,3 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
-  -m \
-  -mc \
-  -ms $BEXHOMA_MS \
-  -t 14400 \
-  -lr 1024Gi \
-  -rr 900Gi \
-  -rss 2000Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  run &>$LOG_DIR/docs_tpcds_monetdb_3.log
-```
-
-### Evaluate Results
-
-<details>
-<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_monetdb_3_summary.md" target="_blank" rel="noopener">docs_tpcds_monetdb_3.log</a></summary>
-
-```markdown
-## Show Summary
-
-### Workload
-TPC-DS Queries SF=30
-* Type: tpcds
-* Duration: 3193s 
-* Code: 1792734284
-* This includes the reading queries of TPC-DS.
-* This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
-  * TPC-DS (SF=30) data is loaded and benchmark is executed.
-  * Query ordering is Q1 - Q99.
-  * All instances use the same query parameters.
-  * Timeout per query is 14400.
-  * Data transfer volume per query is also measured.
-  * Import sets indexes and constraints after loading and recomputes statistics.
-  * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.8.
-  * System metrics are monitored by a cluster-wide installation.
-  * Experiment is limited to DBMS ['MonetDB'].
-  * Import is handled by 8 processes (pods).
-  * Database is persisted to disk of type nvme and size 2000Gi.
-  * Loading is tested with [8] threads, split into [8] pods.
-  * Benchmarking is tested with [1] threads, split into [1] pods.
-  * Benchmarking is run as [1, 1, 3] times the number of benchmarking pods.
-  * Experiment is run once.
-  * Maximum DBMS across the whole cluster is 10.
-  * SUT requests 4 CPU and 900Gi RAM. RAM limit is 1024Gi.
-
-### Connections
-* monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173172736
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-137-generic
-  * node:cl-worker36
-  * disk:920070
-  * datadisk:51000
-  * volume_size:2.0T
-  * volume_used:50G
-  * cpu_list:0-223
-  * requests_cpu:4
-  * requests_memory:900Gi
-  * limits_memory:1024Gi
-  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
-  * eval_parameters
-    * code:1792734284
-* monetdb-1-1-2-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173172736
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-137-generic
-  * node:cl-worker36
-  * disk:920015
-  * datadisk:51000
-  * volume_size:2.0T
-  * volume_used:50G
-  * cpu_list:0-223
-  * requests_cpu:4
-  * requests_memory:900Gi
-  * limits_memory:1024Gi
-  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
-  * eval_parameters
-    * code:1792734284
-* monetdb-1-1-3-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173172736
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-137-generic
-  * node:cl-worker36
-  * disk:920020
-  * datadisk:51000
-  * volume_size:2.0T
-  * volume_used:50G
-  * cpu_list:0-223
-  * requests_cpu:4
-  * requests_memory:900Gi
-  * limits_memory:1024Gi
-  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
-  * eval_parameters
-    * code:1792734284
-* monetdb-1-1-3-1-2 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173172736
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-137-generic
-  * node:cl-worker36
-  * disk:920020
-  * datadisk:51000
-  * volume_size:2.0T
-  * volume_used:50G
-  * cpu_list:0-223
-  * requests_cpu:4
-  * requests_memory:900Gi
-  * limits_memory:1024Gi
-  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
-  * eval_parameters
-    * code:1792734284
-* monetdb-1-1-3-1-3 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173172736
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-137-generic
-  * node:cl-worker36
-  * disk:920020
-  * datadisk:51000
-  * volume_size:2.0T
-  * volume_used:50G
-  * cpu_list:0-223
-  * requests_cpu:4
-  * requests_memory:900Gi
-  * limits_memory:1024Gi
-  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
-  * eval_parameters
-    * code:1792734284
-
-### Reused Storage
-* loading skipped, loading times inherited from an earlier experiment: MonetDB-1
-
-### SUT Container Restarts
-* bexhoma-sut-monetdb-1-1792734284-5d4d46898d-vgb5m: 0
-
-### Workflow
-
-#### Actual
-
-* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
-* DBMS MonetDB-1 - Experiment 1 Client 2: tpcds (1 pods)
-* DBMS MonetDB-1 - Experiment 1 Client 3: tpcds (3 pods)
-
-#### Planned
-
-* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
-* DBMS MonetDB-1 - Experiment 1 Client 2: tpcds (1 pods)
-* DBMS MonetDB-1 - Experiment 1 Client 3: tpcds (3 pods)
-
-### Loading
-
-#### Per Run
-
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MonetDB-1-1 |                1 |   30 |      688.00 |           4.00 |            1.00 |        517.00 |          147.00 |              0 |           0 |             | None           |             0 | False         |              156.98 | True                |
-
-### Benchmarking
-
-#### Per Connection
-
-| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
-|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| monetdb-1-1-1-1-1 | MonetDB-1       | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        647 |            0.92 |           122585.57 |          16525.50 |          -1 | monetdb-1-1-1-1-1 |
-| monetdb-1-1-2-1-1 | MonetDB-1       | monetdb-1-1-2 | monetdb-1-1-2-1 |                1 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        558 |            0.64 |           179040.49 |          19161.29 |          -1 | monetdb-1-1-2-1-1 |
-| monetdb-1-1-3-1-1 | MonetDB-1       | monetdb-1-1-3 | monetdb-1-1-3-1 |                1 |        3 |               1 |           1 | 30.00 |               99 |                  99 |       1593 |            0.85 |           131938.85 |           6711.86 |          -1 | monetdb-1-1-3-1-1 |
-| monetdb-1-1-3-1-2 | MonetDB-1       | monetdb-1-1-3 | monetdb-1-1-3-1 |                1 |        3 |               1 |           1 | 30.00 |               99 |                  99 |        858 |            1.07 |           104503.48 |          12461.54 |          -1 | monetdb-1-1-3-1-2 |
-| monetdb-1-1-3-1-3 | MonetDB-1       | monetdb-1-1-3 | monetdb-1-1-3-1 |                1 |        3 |               1 |           1 | 30.00 |               99 |                  99 |       1622 |            0.85 |           133354.40 |           6591.86 |          -1 | monetdb-1-1-3-1-3 |
-
-#### Per Phase
-
-|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        647 |            0.92 |           122585.57 |          16525.50 |          -1 |
-| monetdb-1-1-2 | monetdb-1-1-2 |                1 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        558 |            0.64 |           179040.49 |          19161.29 |          -1 |
-| monetdb-1-1-3 | monetdb-1-1-3 |                1 |        3 |               1 |           3 | 30.00 |              297 |                 297 |       1622 |            0.92 |           122509.64 |          19775.59 |          -1 |
-
-#### Query Completion per Phase
-
-| phase         |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
-|:--------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
-| monetdb-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
-| monetdb-1-1-2 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
-| monetdb-1-1-3 |      3 | 3/3         | 3/3         | 3/3         | 3/3         | 3/3         | 3/3         | 3/3         | 3/3         | 3/3         | 3/3          | 3/3          | 3/3          | 3/3          | 3/3             | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3             | 3/3             | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3             | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | 3/3          | yes        |
-
-Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
-
-### Latency of Timer Execution [ms]
-| Queries       |   monetdb-1-1-1-1-1 |   monetdb-1-1-2-1-1 |   monetdb-1-1-3-1-1 |   monetdb-1-1-3-1-2 |   monetdb-1-1-3-1-3 |
-|:--------------|--------------------:|--------------------:|--------------------:|--------------------:|--------------------:|
-| TPC-DS Q1     |             1597.41 |              251.28 |              404.99 |              391.14 |              822.32 |
-| TPC-DS Q2     |             3707.42 |             2260.92 |             1879.92 |             2687.72 |             2412.33 |
-| TPC-DS Q3     |             6772.81 |              141.92 |              854.65 |              214.21 |              709.42 |
-| TPC-DS Q4     |            23754.43 |            14319.85 |            19912.89 |            15703.58 |            16029.96 |
-| TPC-DS Q5     |            19987.04 |             1270.47 |             1577.24 |             1636.59 |             1726.09 |
-| TPC-DS Q6     |              568.43 |              290.26 |             1034.23 |              452.05 |             1443.57 |
-| TPC-DS Q7     |             5345.23 |              172.40 |              193.94 |              201.15 |              179.39 |
-| TPC-DS Q8     |             3160.88 |              206.85 |              381.50 |              221.28 |              262.27 |
-| TPC-DS Q9     |              519.26 |             1126.27 |              617.15 |             1074.57 |             1312.71 |
-| TPC-DS Q10    |            22224.34 |              124.98 |              131.19 |              115.88 |              130.95 |
-| TPC-DS Q11    |             6718.46 |             7903.05 |             8195.27 |             7645.84 |             6962.59 |
-| TPC-DS Q12    |              253.15 |             3352.91 |             2025.47 |              871.86 |              124.42 |
-| TPC-DS Q13    |              357.60 |             1631.91 |             2022.81 |             2103.34 |              314.28 |
-| TPC-DS Q14a+b |            31255.23 |            30565.85 |            31390.51 |            33553.53 |            33649.77 |
-| TPC-DS Q15    |              174.35 |              861.33 |              129.99 |             2058.16 |              157.28 |
-| TPC-DS Q16    |            47109.07 |            40383.85 |            94729.66 |            39797.17 |            64914.01 |
-| TPC-DS Q17    |             4887.11 |             1879.82 |             2148.09 |             4823.26 |             5042.48 |
-| TPC-DS Q18    |             1401.98 |             1635.64 |             5170.08 |             3730.30 |             8638.36 |
-| TPC-DS Q19    |              180.86 |             1446.97 |              220.99 |            14320.56 |            19996.59 |
-| TPC-DS Q20    |              150.59 |              160.16 |              896.22 |             2053.83 |              231.76 |
-| TPC-DS Q21    |             2491.03 |              103.63 |              106.47 |            25459.22 |              168.84 |
-| TPC-DS Q22    |             1265.09 |             1078.98 |             1142.07 |             5974.90 |             1308.31 |
-| TPC-DS Q23a+b |            34702.70 |            43920.03 |            45274.45 |            38201.30 |            45535.33 |
-| TPC-DS Q24a+b |            39306.70 |            39127.48 |            56509.24 |            63603.04 |            56018.98 |
-| TPC-DS Q25    |             2293.80 |             2287.50 |             2609.15 |             8266.52 |             7975.78 |
-| TPC-DS Q26    |             1495.54 |              168.27 |             1924.45 |             1524.81 |              178.94 |
-| TPC-DS Q27    |              928.45 |              961.71 |             1813.78 |             1579.50 |             1772.69 |
-| TPC-DS Q28    |              630.36 |              529.80 |             1633.00 |             1236.28 |             2726.69 |
-| TPC-DS Q29    |             2192.55 |             3660.81 |             2379.03 |             2856.47 |             2494.39 |
-| TPC-DS Q30    |               96.68 |               71.31 |               96.02 |              325.10 |               70.55 |
-| TPC-DS Q31    |             1936.59 |             1697.98 |             1866.34 |             2372.63 |             2384.68 |
-| TPC-DS Q32    |              163.42 |              179.10 |              189.76 |              309.37 |              535.14 |
-| TPC-DS Q33    |              114.71 |               91.98 |               99.80 |             1202.56 |              120.20 |
-| TPC-DS Q34    |              104.68 |              100.89 |              105.98 |              231.79 |              187.13 |
-| TPC-DS Q35    |              801.26 |              860.18 |              875.89 |              941.72 |              802.74 |
-| TPC-DS Q36    |             1517.66 |             1618.78 |             1675.22 |             1616.22 |             1668.06 |
-| TPC-DS Q37    |              416.09 |              433.76 |              348.03 |              439.08 |              385.13 |
-| TPC-DS Q38    |             2564.39 |             2138.27 |             2808.87 |             2354.71 |             2330.16 |
-| TPC-DS Q39a+b |             1257.66 |             1251.34 |             1439.76 |             1370.24 |             1349.31 |
-| TPC-DS Q40    |             1574.61 |              898.16 |             1435.25 |             2468.94 |              936.77 |
-| TPC-DS Q41    |                6.48 |                5.70 |                6.23 |                8.78 |                5.44 |
-| TPC-DS Q42    |              105.77 |               70.87 |               75.94 |              128.40 |               82.09 |
-| TPC-DS Q43    |              304.76 |              289.27 |              441.06 |              476.27 |             1957.95 |
-| TPC-DS Q44    |             7993.69 |              500.65 |              477.67 |              704.59 |              492.90 |
-| TPC-DS Q45    |             1163.79 |              140.73 |              166.50 |              272.89 |              167.55 |
-| TPC-DS Q46    |              202.88 |              195.13 |              249.67 |              197.53 |              250.23 |
-| TPC-DS Q47    |              788.13 |              781.04 |              863.12 |             1139.08 |             1279.02 |
-| TPC-DS Q48    |              212.26 |              209.12 |              228.71 |              222.95 |              279.57 |
-| TPC-DS Q49    |             4522.60 |             1026.49 |             1017.17 |             1252.06 |             2516.64 |
-| TPC-DS Q50    |              525.46 |              512.52 |              665.55 |              549.74 |              626.30 |
-| TPC-DS Q51    |             2312.30 |             2343.64 |             2649.19 |             2580.46 |             2830.79 |
-| TPC-DS Q52    |               97.21 |              100.47 |              111.15 |               96.81 |               80.62 |
-| TPC-DS Q53    |               76.47 |               84.27 |               83.36 |               82.08 |               87.38 |
-| TPC-DS Q54    |               88.19 |               93.21 |               94.24 |              107.50 |               97.27 |
-| TPC-DS Q55    |               89.64 |               84.77 |              100.37 |              105.77 |               59.96 |
-| TPC-DS Q56    |               94.12 |               88.20 |              124.33 |              113.96 |              111.50 |
-| TPC-DS Q57    |              136.61 |              132.48 |              154.04 |              203.96 |              146.98 |
-| TPC-DS Q58    |             6275.82 |             4844.48 |             6122.77 |             4656.50 |             4337.37 |
-| TPC-DS Q59    |             1096.81 |             1135.85 |              779.93 |              907.32 |              889.70 |
-| TPC-DS Q60    |              119.82 |              120.68 |              123.12 |              120.19 |              106.47 |
-| TPC-DS Q61    |              160.01 |              164.13 |              203.18 |              637.47 |              482.92 |
-| TPC-DS Q62    |              252.32 |              245.55 |             1363.24 |              362.28 |              280.69 |
-| TPC-DS Q63    |               84.50 |               92.80 |               90.98 |              101.44 |               81.69 |
-| TPC-DS Q64    |             3941.21 |             3911.14 |             4538.23 |             5817.23 |             4601.79 |
-| TPC-DS Q65    |             1578.48 |             1040.79 |             2855.89 |             1306.40 |             1497.94 |
-| TPC-DS Q66    |             1917.58 |             1746.09 |             4981.09 |             7586.23 |             5697.03 |
-| TPC-DS Q67    |             4593.13 |             4578.33 |             4911.89 |             5041.24 |             5558.25 |
-| TPC-DS Q68    |              366.44 |              377.70 |              214.40 |              246.33 |              325.01 |
-| TPC-DS Q69    |               98.36 |               72.69 |               61.09 |               83.02 |               66.80 |
-| TPC-DS Q70    |             1876.16 |             1933.56 |             1801.66 |             1925.06 |             2148.35 |
-| TPC-DS Q71    |              227.91 |              139.25 |              138.50 |              121.90 |              196.15 |
-| TPC-DS Q72    |             1174.61 |             1132.73 |             1367.48 |             1139.57 |             1124.10 |
-| TPC-DS Q73    |               73.54 |               81.58 |             2086.61 |               80.17 |               71.95 |
-| TPC-DS Q74    |             1795.04 |             1703.94 |             3794.04 |             4700.31 |             3884.41 |
-| TPC-DS Q75    |             5484.80 |             5588.02 |             6333.89 |             6355.40 |             6449.30 |
-| TPC-DS Q76    |             3013.77 |              167.59 |              160.84 |              280.11 |              150.38 |
-| TPC-DS Q77    |              738.02 |              769.26 |             1315.09 |             1186.98 |              768.25 |
-| TPC-DS Q78    |            12295.69 |            12004.23 |            14595.10 |            15458.00 |            14822.52 |
-| TPC-DS Q79    |              209.00 |              194.82 |              190.76 |              204.68 |              467.71 |
-| TPC-DS Q80    |             7559.98 |             7498.00 |             9188.28 |             9447.77 |             9630.26 |
-| TPC-DS Q81    |              146.74 |              146.76 |              127.63 |              205.42 |              143.58 |
-| TPC-DS Q82    |              400.27 |              436.25 |              402.86 |              383.05 |             1422.24 |
-| TPC-DS Q83    |              284.68 |               57.69 |               53.51 |               47.74 |              159.11 |
-| TPC-DS Q84    |              399.14 |               34.63 |               31.99 |               33.84 |               31.33 |
-| TPC-DS Q85    |              929.36 |              874.20 |              910.02 |              804.83 |              899.82 |
-| TPC-DS Q86    |              392.11 |              383.98 |              403.86 |              380.20 |              367.24 |
-| TPC-DS Q87    |             2620.05 |             2421.52 |             2719.28 |             2552.54 |             2683.82 |
-| TPC-DS Q88    |              498.57 |              503.05 |              565.12 |              540.29 |             2451.31 |
-| TPC-DS Q89    |              121.09 |              125.95 |              130.28 |              121.62 |              110.20 |
-| TPC-DS Q90    |               72.15 |               65.38 |               84.01 |              146.56 |               67.96 |
-| TPC-DS Q91    |               44.25 |               33.64 |               45.43 |               31.54 |               40.81 |
-| TPC-DS Q92    |              170.27 |              160.88 |              807.21 |              185.87 |              520.18 |
-| TPC-DS Q93    |             1941.84 |             1953.46 |             2735.78 |             2683.60 |             3137.62 |
-| TPC-DS Q94    |            36065.55 |            37270.07 |           160860.79 |            35764.44 |           192940.43 |
-| TPC-DS Q95    |           217497.11 |           206215.32 |          1017826.53 |           378028.73 |          1017694.09 |
-| TPC-DS Q96    |               36.40 |               38.36 |              567.50 |            10280.38 |               51.25 |
-| TPC-DS Q97    |             3343.61 |             4809.53 |             4884.06 |            15769.23 |             2963.11 |
-| TPC-DS Q98    |              160.54 |              146.41 |              441.07 |             6505.34 |              155.57 |
-| TPC-DS Q99    |             2186.10 |              230.62 |              379.66 |             5125.89 |              237.60 |
-
-### Errors (failed queries)
-
-No errors
-
-### Warnings (result mismatch)
-
-|                   |   TPC-DS Q1 |   TPC-DS Q2 |   TPC-DS Q3 |   TPC-DS Q4 |   TPC-DS Q5 |   TPC-DS Q6 |   TPC-DS Q7 |   TPC-DS Q8 |   TPC-DS Q9 |   TPC-DS Q10 |   TPC-DS Q11 |   TPC-DS Q12 |   TPC-DS Q13 |   TPC-DS Q14a+b |   TPC-DS Q15 |   TPC-DS Q16 |   TPC-DS Q17 |   TPC-DS Q18 |   TPC-DS Q19 |   TPC-DS Q20 |   TPC-DS Q21 |   TPC-DS Q22 |   TPC-DS Q23a+b |   TPC-DS Q24a+b |   TPC-DS Q25 |   TPC-DS Q26 |   TPC-DS Q27 |   TPC-DS Q28 |   TPC-DS Q29 |   TPC-DS Q30 |   TPC-DS Q31 |   TPC-DS Q32 |   TPC-DS Q33 |   TPC-DS Q34 |   TPC-DS Q35 |   TPC-DS Q36 |   TPC-DS Q37 |   TPC-DS Q38 |   TPC-DS Q39a+b |   TPC-DS Q40 |   TPC-DS Q41 |   TPC-DS Q42 |   TPC-DS Q43 |   TPC-DS Q44 |   TPC-DS Q45 |   TPC-DS Q46 |   TPC-DS Q47 |   TPC-DS Q48 |   TPC-DS Q49 |   TPC-DS Q50 |   TPC-DS Q51 |   TPC-DS Q52 |   TPC-DS Q53 |   TPC-DS Q54 |   TPC-DS Q55 |   TPC-DS Q56 |   TPC-DS Q57 |   TPC-DS Q58 |   TPC-DS Q59 |   TPC-DS Q60 |   TPC-DS Q61 |   TPC-DS Q62 |   TPC-DS Q63 |   TPC-DS Q64 |   TPC-DS Q65 |   TPC-DS Q66 |   TPC-DS Q67 |   TPC-DS Q68 |   TPC-DS Q69 |   TPC-DS Q70 |   TPC-DS Q71 |   TPC-DS Q72 |   TPC-DS Q73 |   TPC-DS Q74 |   TPC-DS Q75 |   TPC-DS Q76 |   TPC-DS Q77 |   TPC-DS Q78 |   TPC-DS Q79 |   TPC-DS Q80 |   TPC-DS Q81 |   TPC-DS Q82 |   TPC-DS Q83 |   TPC-DS Q84 |   TPC-DS Q85 |   TPC-DS Q86 |   TPC-DS Q87 |   TPC-DS Q88 |   TPC-DS Q89 |   TPC-DS Q90 |   TPC-DS Q91 |   TPC-DS Q92 |   TPC-DS Q93 |   TPC-DS Q94 |   TPC-DS Q95 |   TPC-DS Q96 |   TPC-DS Q97 |   TPC-DS Q98 |   TPC-DS Q99 |
-|:------------------|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|----------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|-------------:|
-| monetdb-1-1-1-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| monetdb-1-1-3-1-1 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| monetdb-1-1-3-1-2 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-| monetdb-1-1-3-1-3 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |        0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            0.00 |            0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |            1.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |         0.00 |
-
-### Monitoring
-
-### Benchmarking phase: SUT deployment
-
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| monetdb-1-1-1-1 |      9257.78 |    121.48 |         986.95 |                986.96 |
-| monetdb-1-1-2-1 |      9525.96 |    115.80 |         940.81 |                940.82 |
-| monetdb-1-1-3-1 |     27387.42 |    214.25 |        1022.34 |               1024.00 |
-
-### Benchmarking phase: component benchmarker
-
-| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:----------------|-------------:|----------:|---------------:|----------------------:|
-| monetdb-1-1-1-1 |        28.61 |      0.38 |           0.40 |                  0.40 |
-| monetdb-1-1-2-1 |        31.46 |      0.40 |           0.38 |                  0.38 |
-| monetdb-1-1-3-1 |        99.95 |      1.40 |           0.41 |                  0.42 |
-
-### Missing Monitoring Metrics
-* CPU Throttling Rate [s/s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection monetdb-1-1-2-1 (bexhoma-metrics-monetdb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection monetdb-1-1-2-1 (bexhoma-metrics-monetdb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection monetdb-1-1-3-1 (bexhoma-metrics-monetdb-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection monetdb-1-1-3-1 (bexhoma-metrics-monetdb-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
-
-### Tests
-* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MonetDB-1)
-* TEST passed: No SUT container restarts
-* TEST skipped: SUT data survived container restarts (no restarts)
-* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
-* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
-* TEST passed: Geo Times [s] contains no 0 or NaN
-* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-* TEST passed: Throughput@Size contains no 0 or NaN
-* TEST passed: No SQL errors
-* TEST failed: SQL warnings (result mismatch)
-* TEST passed: All active queries counted in the totals
-* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
-* TEST passed: Workflow as planned
-```
-
-</details>
-
-
-
+An example of MonetDB at SF=30, power and throughput test, is on [Example: Benchmark MonetDB](Example-MonetDB.md#tpc-ds-at-sf-30).

@@ -153,7 +153,7 @@ class MariaDBCSScriptsTest(unittest.TestCase):
             queries = ast.literal_eval(f.read())['queries']
         variants = {q['title']: q['DBMS'] for q in queries if 'MariaDBCS' in q.get('DBMS', {})}
         rollups = {f'TPC-DS Q{n}' for n in (18, 22, 27, 36, 67, 70, 86)}
-        refused = {f'TPC-DS Q{n}' for n in (6, 8, 9, 10, 21, 28, 35, 38, 44, 45, 61, 77, 87, 88, 90)} | {'TPC-DS Q14a+b', 'TPC-DS Q23a+b'}
+        refused = {f'TPC-DS Q{n}' for n in (6, 8, 9, 10, 28, 35, 38, 44, 45, 61, 77, 87, 88, 90)} | {'TPC-DS Q14a+b', 'TPC-DS Q23a+b'}
         self.assertEqual(set(variants), rollups | refused | {f'TPC-DS Q{n}' for n in (47, 57, 72, 93)})
         for title in refused:
             with self.subTest(query=title):

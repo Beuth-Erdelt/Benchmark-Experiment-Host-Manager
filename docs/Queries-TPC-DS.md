@@ -59,7 +59,7 @@ or when the connection's `dialect` equals it. MariaDB and MySQL connections both
 `mariadb-…` connection also matches the `MariaDB` key, so the two can run different SQL.
 A `mariadbcs-…` connection (MariaDB ColumnStore) matches the keys `MariaDB` and `MariaDBCS`; the last key in the query wins, so `MariaDBCS` comes last.
 
-53 queries carry a `'DBMS'` key with dialect-specific SQL for one or more systems:
+52 queries carry a `'DBMS'` key with dialect-specific SQL for one or more systems:
 
 | Query | DBMS overrides | Reason |
 |-------|---------------|--------|
@@ -73,7 +73,6 @@ A `mariadbcs-…` connection (MariaDB ColumnStore) matches the keys `MariaDB` an
 | Q14a+b | Exasol, MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `INTERSECT` substitute (MariaDB); dialect-specific SQL for the others; MariaDBCS: `INTERSECT` as `GROUP BY ... HAVING count(*) = 3`, rollup by a join with one row per level |
 | Q16 | ClickHouse | `EXISTS` on another warehouse rewritten as `IN` over `GROUP BY … HAVING` |
 | Q18 | MariaDB, MariaDBCS, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDBCS emulates the rollup with `UNION ALL` |
-| Q21 | MariaDBCS | `CAST(... AS FLOAT)` as `+ 0.0e0` |
 | Q22 | MariaDB, MariaDBCS, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDBCS emulates the rollup with `UNION ALL` |
 | Q23a+b | MariaDBCS | Scalar subquery in `HAVING` as a join |
 | Q26 | MonetDB | Averages computed as `double` (MonetDB averages `DECIMAL` columns with two decimals) |
@@ -169,7 +168,6 @@ overrides above; the reasons are:
 | MariaDBCS | Q45 | `IN` subquery in `OR` is refused: a `LEFT JOIN` with the items, `IS NOT NULL` in the `OR` |
 | MariaDBCS | Q6, Q23, Q44 | Scalar subqueries in a function or in `HAVING` are refused: derived tables, joined |
 | MariaDBCS | Q9 | A subquery in `SELECT` is refused: all buckets as conditional aggregates of one scan of `store_sales`. **Remark:** the row of `reason` is left out, it only gives the one row of the result |
-| MariaDBCS | Q21 | `CAST(... AS FLOAT)` is refused: `+ 0.0e0` |
 | ClickHouse, PostgreSQL | Q33, Q56 | `ORDER BY total_sales NULLS FIRST`. The main text is the reference query, MySQL, MariaDB, MariaDBCS and MonetDB sort NULL first by default. `ORDER BY total_sales IS NOT NULL, total_sales` does not work here: `total_sales` in an expression means the column of the inner query. PostgreSQL refuses that, MySQL and MariaDB sort by the wrong value |
 | MariaDBCS | Q14, Q77 | Rollup by a join with one row per level, grouped by the level and the kept columns, so the expensive input is read once (a `UNION ALL` per level took more than 280 s for Q14, and the server died at 32 GiB) |
 | MariaDB, MySQL | Q80 | `concat()` instead of `\|\|`, which is logical OR there |
@@ -178,7 +176,11 @@ overrides above; the reasons are:
 | MySQL | Q51, Q97 | `FULL OUTER JOIN` rewritten with `UNION ALL` |
 | MariaDB | Q5, Q14, Q77, Q80 | Nested CTE workaround (MariaDB <10.4) |
 | all | Q12, Q20, Q36, Q98, Q78 | `(sum(x)+0.0e0)*100/…` and `ss_qty*1.0/…` instead of plain division: the same value, but ClickHouse no longer truncates `Decimal` division and PostgreSQL and MonetDB no longer divide integers |
-| all | Q5, Q12, Q15, Q18, Q20, Q21, Q22, Q27, Q35, Q36, Q51, Q62, Q65, Q67, Q70, Q72, Q74, Q76, Q79, Q80, Q86, Q93, Q99 | Explicit NULL ordering: `ORDER BY col IS NOT NULL, col` puts NULLs **first** on every system (MySQL, MariaDB and MonetDB do this by default; PostgreSQL and ClickHouse sort NULLs last) |
+| all | Q5, Q12, Q15, Q18, Q20, Q21, Q22, Q27, Q35, Q36, Q51, Q62, Q65, Q67, Q68, Q70, Q72, Q74, Q76, Q79, Q80, Q86, Q93, Q99 | Explicit NULL ordering: `ORDER BY col IS NOT NULL, col` puts NULLs **first** on every system (MySQL, MariaDB and MonetDB do this by default; PostgreSQL and ClickHouse sort NULLs last) |
+| all | Q21 | The ratio test is done in integers: `inv_before > 0 and 3*inv_after >= 2*inv_before and 2*inv_after <= 3*inv_before` instead of `CAST(inv_after AS FLOAT) / inv_before between 2.0/3.0 and 3.0/2.0`. The template test is the same inequality, but `2.0/3.0` is the decimal `0.67` in MonetDB and `FLOAT` is single precision in MySQL, so rows at the boundary were taken or left out differently. The MariaDBCS override, which only avoided `CAST ... AS FLOAT`, is gone |
+| all | Q31, Q47, Q53, Q57, Q63, Q66, Q89 | `+ 0.0e0` on the numerator of the quarterly ratios (Q31), inside the average over the months or quarters (Q47, Q53, Q57, Q63, Q89) and on the monthly sales before they are divided by the square feet (Q66): the same value, but MonetDB no longer rounds `DECIMAL` division and averages to two decimals (Q47: 4267.4999 became 4268; Q31 lost a row at a ratio boundary; Q66: 76.5 became 77) |
+| all | Q68 | `ORDER BY` extended to a total order: `c_last_name IS NOT NULL, c_last_name, ss_ticket_number`, then first name, cities (with the NULL flag) and the three sums. Rows without a last name sort first on every system, and ties at the `LIMIT` boundary no longer depend on the plan |
+| all | Q78 | `ss_qty IS NULL, ss_qty DESC` (and the same for `ss_wc`, `ss_sp`): `DESC` puts NULL first in PostgreSQL and last in MySQL, MariaDB and MonetDB, so the `LIMIT` kept different rows. **Remark:** the NULL ordering of the `{SELECTONE}` columns `ss_item_sk` and `ss_customer_sk` is not made explicit, rows with NULL there can still sort differently |
 | all | Q72 | The column `d1.d_week_seq` is aliased `d_week_seq`, because ClickHouse otherwise labels it `D1.D_WEEK_SEQ` and the result comparison treats the column names as different |
 
 ### Syntactic Differences (same result set, dialect adaptation)
@@ -189,7 +191,6 @@ overrides above; the reasons are:
 | `CONCAT('a', ',', 'b')` vs. standard `'a' \|\| ',' \|\| 'b'` | Q5, Q66, Q84 | MySQL/MariaDB default; `\|\|` used in PostgreSQL/MonetDB/Exasol overrides |
 | `interval 'N' day` vs. `+ N days` date arithmetic | Q5, Q21, Q32, Q72, Q77, Q80, Q92 | Both express the same time offset; dialect normalised for portability |
 | `CAST(… AS SIGNED)` vs. `CAST(… AS INT)` | Q54 (MySQL override) | MySQL does not support `INT` as a cast target |
-| `CAST(inv_after AS FLOAT) / inv_before` vs. plain division | Q21 | Forces floating-point division; semantically equivalent on non-integer inputs |
 
 ### Environment Differences
 
@@ -249,6 +250,10 @@ The comparison is done by dbmsbenchmarker (`tools.py` and `benchmarker.py`), not
 | ClickHouse returned `''` instead of `NULL` for subtotal keys of `ROLLUP` | Q5, Q18, Q67, Q77, Q80 | `group_by_use_nulls = 1` in the ClickHouse deployment profile |
 | ClickHouse truncates `Decimal` division, MonetDB rounds `DECIMAL` division and averages to two decimals | Q7, Q12, Q18, Q20, Q26, Q31, Q36, Q44, Q58, Q66, Q98 | Numerator or average computed as `double` (`+ 0.0e0`, `toFloat64`, `cast(… as double)`), partly as MonetDB or ClickHouse overrides |
 | Integer division in PostgreSQL and MonetDB | Q78 | `ss_qty*1.0/…` |
+| `2.0/3.0` is a decimal in MonetDB and `FLOAT` is single precision in MySQL, so rows at the boundary of the ratio test were taken or left out (SF=1 comparison of PostgreSQL, MonetDB, MySQL and MariaDB, 2026-11-06) | Q21 | Test in integers: `3*inv_after >= 2*inv_before and 2*inv_after <= 3*inv_before` |
+| MonetDB rounds `DECIMAL` division and averages to two decimals, same comparison | Q31, Q47, Q53, Q57, Q63, Q66, Q89 | `+ 0.0e0` on the numerator or inside the average (Q63 differed in the 2026-11-06 comparison; Q53, Q57, Q89 have the same shape) |
+| NULL last names sort first in MySQL, MariaDB and MonetDB and last in PostgreSQL; ties at the `LIMIT` boundary, same comparison | Q68 | `c_last_name IS NOT NULL, c_last_name`, then a total order |
+| `DESC` puts NULL first in PostgreSQL and last in MySQL, MariaDB and MonetDB, same comparison | Q78 | `ss_qty IS NULL, ss_qty DESC` and the same for `ss_wc`, `ss_sp` |
 | Every store in the generated data is in TN, so random states gave an empty result | Q27, Q36 | `'TN'` is always part of the state list |
 | `\|\|` is logical OR in MySQL and MariaDB, so the ids were 0 or 1 | Q80 | `concat()` in the MariaDB variant and a new MySQL variant |
 | MariaDB has no `GROUPING()`: real NULL categories were taken for subtotals, and Q27 had no `ORDER BY` | Q27, Q36, Q86 | Sentinel for real NULLs before the rollup; wrapped rollup with an outer `ORDER BY` |

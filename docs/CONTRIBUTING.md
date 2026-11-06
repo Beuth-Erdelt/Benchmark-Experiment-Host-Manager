@@ -109,8 +109,8 @@ def my_method(self, param='default'):
   showing.
 - Referenced from `docs/conf.py` (`html_logo`, `html_favicon`) for the
   Sphinx/Read the Docs build.
-- Licensed separately from the AGPL v3 code, under CC BY 4.0 — see
-  `docs/logo/README.md`.
+- Licensed separately from the AGPL v3 code, under CC BY 4.0 — see the
+  [logo README](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/logo/README.md).
 
 ---
 

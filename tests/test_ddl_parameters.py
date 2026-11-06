@@ -458,18 +458,20 @@ class RepositoryDeclarationsTest(unittest.TestCase):
         return found
 
     def test_every_key_is_in_the_dbms_docs(self):
-        """docs/DBMS.md lists every key in the section of its DBMS, with default and values."""
-        with open(os.path.join(_REPO, 'docs', 'DBMS.md'), encoding='utf-8') as f:
-            sections = re.split(r'^## ', f.read(), flags=re.M)
+        """docs/Example-<DBMS>.md lists every key of its DBMS, with default and values."""
+        pages = {os.path.basename(p)[len('Example-'):-len('.md')].lower(): p
+                 for p in glob.glob(os.path.join(_REPO, 'docs', 'Example-*.md'))}
         for folder in self.folders():
             relative = os.path.relpath(folder, _EXPERIMENTS).replace(os.sep, '/')
             if relative == 'tpch/CockroachDB':
                 continue  # tpch.py has no CockroachDB
             dbms = os.path.basename(folder)
-            section = next(s for s in sections if s.startswith(dbms + '\n'))
+            page = pages.get(dbms.lower()) or pages.get(dbms.lower().removesuffix('cluster')) or pages['other-dbms']
+            with open(page, encoding='utf-8') as f:
+                lines = f.read().splitlines()
             for key, declaration in ddl_parameters.load_declarations(os.path.dirname(folder), dbms).items():
                 with self.subTest(folder=relative, key=key):
-                    row = next(line for line in section.splitlines() if line.startswith(f'| `{key}` |'))
+                    row = next(line for line in lines if line.startswith(f'| `{key}` |'))
                     self.assertIn(f"| `{declaration['default']}` |", row)
                     for value in declaration.get('values') or []:
                         self.assertIn(f'`{value}`', row)

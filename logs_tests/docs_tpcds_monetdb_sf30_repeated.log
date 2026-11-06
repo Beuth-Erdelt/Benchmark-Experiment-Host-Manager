@@ -1,0 +1,840 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1793887265
+Experiment                    : starts at 2026-11-05 15:01:05.154569 (55821.876601286)
+Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+TPC-DS (SF=30) data is loaded and benchmark is executed.
+Query ordering is Q1 - Q99.
+All instances use the same query parameters.
+Timeout per query is 14400.
+Data transfer volume per query is also measured.
+Import sets indexes and constraints after loading and recomputes statistics.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.12.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['MonetDB'].
+Import is handled by 8 processes (pods).
+Database is persisted to disk of type nvme and size 3000Gi.
+Loading is tested with [8] threads, split into [8] pods.
+Benchmarking is tested with [1] threads, split into [1] pods.
+Benchmarking is run as [1, 1] times the number of benchmarking pods.
+Experiment is run 2 times.
+Maximum DBMS across the whole cluster is 10.
+SUT requests 4 CPU and 900Gi RAM. RAM limit is 1024Gi.
+Cluster monitoring            : is running
+MonetDB-1                     : will start now
+MonetDB-1                     : deployments ['sut']
+MonetDB-1                     : stateful sets []
+MonetDB-1                     : pvcs ['sut']
+MonetDB-1                     : list of pvcs ['bexhoma-storage-mo-nvme-tpcds-30']
+MonetDB-1                     : storage bexhoma-storage-mo-nvme-tpcds-30 exists
+MonetDB-1                     : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '1', 'time_index': '499', 'time_ingested': '420', 'time_initconstraints': '373', 'time_initindexes': '19', 'time_initschema': '2', 'time_initstatistics': '108', 'time_loading': '941', 'time_loading_end': '1793886520', 'time_loading_start': '1793885520', 'time_schema': '2'}
+MonetDB-1                     : name of SUT pods = bexhoma-sut-monetdb-1-1793887265
+MonetDB-1                     : name of SUT service = bexhoma-sut-monetdb-1-1793887265
+MonetDB-1                     : name of SUT PVC name = bexhoma-storage-mo-nvme-tpcds-30
+MonetDB-1                     : loading values taken from the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
+MonetDB-1                     : copied label data = True
+MonetDB-1                     : copied label index = True
+MonetDB-1                     : copied label loaded = True
+MonetDB-1                     : copied label schema = True
+MonetDB-1                     : copied label time_generated = 1
+MonetDB-1                     : copied label time_index = 499
+MonetDB-1                     : copied label time_ingested = 420
+MonetDB-1                     : copied label time_initconstraints = 373
+MonetDB-1                     : copied label time_initindexes = 19
+MonetDB-1                     : copied label time_initschema = 2
+MonetDB-1                     : copied label time_initstatistics = 108
+MonetDB-1                     : copied label time_loading = 941
+MonetDB-1                     : copied label time_loading_end = 1793886520
+MonetDB-1                     : copied label time_loading_start = 1793885520
+MonetDB-1                     : copied label time_schema = 2
+MonetDB-1                     : loading is set to finished
+Loop pass                     : took 0.6s (1 kubectl calls 0.2s, 12 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : will start benchmarking but not before 2026-11-05 14:02:36 (that is in 60 secs)
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 15 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : will start benchmarking but not before 2026-11-05 14:02:36
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 12 API requests 0.1s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MonetDB-1-1793887265 initialized to 1.
+MonetDB-1                     : benchmarks done 0 of 2. This will be client 1
+monetdb-1-1-1-1               : start benchmarking (benchmark_run=1)
+monetdb-1-1-1-1               : needs monitoring (common metrics) for deployment sut
+MonetDB-1                     : get size via pod bexhoma-sut-monetdb-1-1793887265-b8dc746d8-dfgbq and write to pvc bexhoma-storage-mo-nvme-tpcds-30
+MonetDB-1                     : benchmarking results in folder /data/benchmarks/1793887265
+MonetDB-1                     : submitted benchmarker job in 6.3s (5 kubectl calls 1.2s, 30 API requests 1.2s)
+Loop pass                     : took 6.7s (5 kubectl calls 1.2s, 48 API requests 1.5s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 18 API requests 0.4s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 16 API requests 0.3s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.3s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.1s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.3s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.4s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.4s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.3s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 16 API requests 0.3s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+monetdb-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1793887265/monetdb-1-1-1-1.config
+monetdb-1-1-1-1               : showing benchmarker times
+monetdb-1-1-1-1               : benchmarker timespan job from 1793887362 to 1793888155
+monetdb-1-1-1-1               : benchmarker timespan pods from 1793887365 to 1793888145
+monetdb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 780
+monetdb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1793887365, 1793888145)]
+monetdb-1-1-1-1               : found and updated times {'benchmarker': [(1793887365, 1793888145)]}
+monetdb-1-1-1-1               : needs monitoring (common metrics) for deployment sut
+monetdb-1-1-1-1               : collecting execution metrics of SUT at connection monetdb-1-1-1-1
+monetdb-1-1-1-1               : collecting metrics of benchmarker at connection monetdb-1-1-1-1
+MonetDB-1                     : get size via pod bexhoma-sut-monetdb-1-1793887265-b8dc746d8-dfgbq and write to pvc bexhoma-storage-mo-nvme-tpcds-30
+monetdb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1793887265(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1793887265(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+monetdb-1-1-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-monetdb-1-1793887265-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-monetdb-1-1793887265-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+monetdb-1-1-1-1               : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+monetdb-1-1-1-1               : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 3s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 5.8s, 0 API requests 0.0s)
+Loop pass                     : took 5.6s (10 kubectl calls 7.4s, 24 API requests 0.4s)
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MonetDB-1-1793887265 initialized to 1.
+MonetDB-1                     : benchmarks done 0 of 2. This will be client 2
+monetdb-1-1-2-1               : start benchmarking (benchmark_run=1)
+monetdb-1-1-2-1               : needs monitoring (common metrics) for deployment sut
+MonetDB-1                     : get size via pod bexhoma-sut-monetdb-1-1793887265-b8dc746d8-dfgbq and write to pvc bexhoma-storage-mo-nvme-tpcds-30
+MonetDB-1                     : benchmarking results in folder /data/benchmarks/1793887265
+MonetDB-1                     : submitted benchmarker job in 4.8s (3 kubectl calls 0.7s, 14 API requests 0.5s)
+Loop pass                     : took 5.1s (3 kubectl calls 0.7s, 32 API requests 0.7s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 18 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 16 API requests 0.4s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.3s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 16 API requests 0.4s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.4s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.8s)
+- waiting 30s -               : done
+monetdb-1-1-2-1               : wrote benchmarking_timespans to /data/benchmarks/1793887265/monetdb-1-1-2-1.config
+monetdb-1-1-2-1               : showing benchmarker times
+monetdb-1-1-2-1               : benchmarker timespan job from 1793888165 to 1793888899
+monetdb-1-1-2-1               : benchmarker timespan pods from 1793888174 to 1793888878
+monetdb-1-1-2-1               : benchmarker timespan (start to end single container [s]) = 704
+monetdb-1-1-2-1               : benchmarker times (start/end per pod and container) = [(1793888174, 1793888878)]
+monetdb-1-1-2-1               : found and updated times {'benchmarker': [(1793888174, 1793888878)]}
+monetdb-1-1-2-1               : needs monitoring (common metrics) for deployment sut
+monetdb-1-1-2-1               : collecting execution metrics of SUT at connection monetdb-1-1-2-1
+monetdb-1-1-2-1               : collecting metrics of benchmarker at connection monetdb-1-1-2-1
+MonetDB-1                     : get size via pod bexhoma-sut-monetdb-1-1793887265-b8dc746d8-dfgbq and write to pvc bexhoma-storage-mo-nvme-tpcds-30
+monetdb-1-1-2-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1793887265(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1793887265(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+monetdb-1-1-2-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-monetdb-1-1793887265-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-monetdb-1-1793887265-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+monetdb-1-1-2-1               : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+monetdb-1-1-2-1               : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 3s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 5.2s, 0 API requests 0.0s)
+Loop pass                     : took 4.9s (9 kubectl calls 6.1s, 24 API requests 0.9s)
+MonetDB-1                     : can be stopped
+MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1793887265-b8dc746d8-dfgbq
+Loop pass                     : took 1.5s (3 kubectl calls 0.3s, 29 API requests 1.0s)
+- waiting 30s -               : done
+MonetDB-1                     : starts again
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 7 API requests 0.2s)
+MonetDB-1                     : will start now
+MonetDB-1                     : deployments ['sut']
+MonetDB-1                     : stateful sets []
+MonetDB-1                     : pvcs ['sut']
+MonetDB-1                     : list of pvcs ['bexhoma-storage-mo-nvme-tpcds-30']
+MonetDB-1                     : storage bexhoma-storage-mo-nvme-tpcds-30 exists
+MonetDB-1                     : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '1', 'time_index': '499', 'time_ingested': '420', 'time_initconstraints': '373', 'time_initindexes': '19', 'time_initschema': '2', 'time_initstatistics': '108', 'time_loading': '941', 'time_loading_end': '1793886520', 'time_loading_start': '1793885520', 'time_schema': '2'}
+MonetDB-1                     : name of SUT pods = bexhoma-sut-monetdb-1-1793887265
+MonetDB-1                     : name of SUT service = bexhoma-sut-monetdb-1-1793887265
+MonetDB-1                     : name of SUT PVC name = bexhoma-storage-mo-nvme-tpcds-30
+MonetDB-1                     : loading values taken from the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
+MonetDB-1                     : copied label data = True
+MonetDB-1                     : copied label index = True
+MonetDB-1                     : copied label loaded = True
+MonetDB-1                     : copied label schema = True
+MonetDB-1                     : copied label time_generated = 1
+MonetDB-1                     : copied label time_index = 499
+MonetDB-1                     : copied label time_ingested = 420
+MonetDB-1                     : copied label time_initconstraints = 373
+MonetDB-1                     : copied label time_initindexes = 19
+MonetDB-1                     : copied label time_initschema = 2
+MonetDB-1                     : copied label time_initstatistics = 108
+MonetDB-1                     : copied label time_loading = 941
+MonetDB-1                     : copied label time_loading_end = 1793886520
+MonetDB-1                     : copied label time_loading_start = 1793885520
+MonetDB-1                     : copied label time_schema = 2
+MonetDB-1                     : loading is set to finished
+Loop pass                     : took 1.2s (1 kubectl calls 0.2s, 12 API requests 0.4s)
+- waiting 30s -               : done
+MonetDB-1                     : will start benchmarking but not before 2026-11-05 14:30:27 (that is in 60 secs)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 15 API requests 0.7s)
+- waiting 30s -               : done
+MonetDB-1                     : will start benchmarking but not before 2026-11-05 14:30:27
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 12 API requests 0.2s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MonetDB-1-1793887265 initialized to 1.
+MonetDB-1                     : benchmarks done 1 of 2. This will be client 1
+monetdb-1-2-1-1               : start benchmarking (benchmark_run=1)
+monetdb-1-2-1-1               : needs monitoring (common metrics) for deployment sut
+MonetDB-1                     : get size via pod bexhoma-sut-monetdb-1-1793887265-68fd4f5f49-rqts9 and write to pvc bexhoma-storage-mo-nvme-tpcds-30
+MonetDB-1                     : benchmarking results in folder /data/benchmarks/1793887265
+MonetDB-1                     : submitted benchmarker job in 5.3s (3 kubectl calls 0.6s, 27 API requests 1.2s)
+Loop pass                     : took 5.9s (3 kubectl calls 0.6s, 45 API requests 1.6s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.8s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.3s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.1s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.1s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.4s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 16 API requests 0.4s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.4s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+monetdb-1-2-1-1               : wrote benchmarking_timespans to /data/benchmarks/1793887265/monetdb-1-2-1-1.config
+monetdb-1-2-1-1               : showing benchmarker times
+monetdb-1-2-1-1               : benchmarker timespan job from 1793889033 to 1793889857
+monetdb-1-2-1-1               : benchmarker timespan pods from 1793889041 to 1793889838
+monetdb-1-2-1-1               : benchmarker timespan (start to end single container [s]) = 797
+monetdb-1-2-1-1               : benchmarker times (start/end per pod and container) = [(1793889041, 1793889838)]
+monetdb-1-2-1-1               : found and updated times {'benchmarker': [(1793889041, 1793889838)]}
+monetdb-1-2-1-1               : needs monitoring (common metrics) for deployment sut
+monetdb-1-2-1-1               : collecting execution metrics of SUT at connection monetdb-1-2-1-1
+monetdb-1-2-1-1               : collecting metrics of benchmarker at connection monetdb-1-2-1-1
+MonetDB-1                     : get size via pod bexhoma-sut-monetdb-1-1793887265-68fd4f5f49-rqts9 and write to pvc bexhoma-storage-mo-nvme-tpcds-30
+monetdb-1-2-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1793887265(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1793887265(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+monetdb-1-2-1-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-monetdb-1-1793887265-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-monetdb-1-1793887265-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+monetdb-1-2-1-1               : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+monetdb-1-2-1-1               : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 7.5s, 0 API requests 0.0s)
+Loop pass                     : took 6.3s (9 kubectl calls 8.9s, 24 API requests 0.4s)
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-MonetDB-1-1793887265 initialized to 1.
+MonetDB-1                     : benchmarks done 1 of 2. This will be client 2
+monetdb-1-2-2-1               : start benchmarking (benchmark_run=1)
+monetdb-1-2-2-1               : needs monitoring (common metrics) for deployment sut
+MonetDB-1                     : get size via pod bexhoma-sut-monetdb-1-1793887265-68fd4f5f49-rqts9 and write to pvc bexhoma-storage-mo-nvme-tpcds-30
+MonetDB-1                     : benchmarking results in folder /data/benchmarks/1793887265
+MonetDB-1                     : submitted benchmarker job in 4.8s (3 kubectl calls 0.6s, 14 API requests 0.5s)
+Loop pass                     : took 5.1s (3 kubectl calls 0.6s, 32 API requests 0.8s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 18 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.1s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.4s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.3s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.3s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.1s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.1s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.2s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.3s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.1s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 16 API requests 0.3s)
+- waiting 30s -               : done
+MonetDB-1                     : has running benchmarks
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 16 API requests 0.1s)
+- waiting 30s -               : done
+monetdb-1-2-2-1               : wrote benchmarking_timespans to /data/benchmarks/1793887265/monetdb-1-2-2-1.config
+monetdb-1-2-2-1               : showing benchmarker times
+monetdb-1-2-2-1               : benchmarker timespan job from 1793889868 to 1793890627
+monetdb-1-2-2-1               : benchmarker timespan pods from 1793889879 to 1793890601
+monetdb-1-2-2-1               : benchmarker timespan (start to end single container [s]) = 722
+monetdb-1-2-2-1               : benchmarker times (start/end per pod and container) = [(1793889879, 1793890601)]
+monetdb-1-2-2-1               : found and updated times {'benchmarker': [(1793889879, 1793890601)]}
+monetdb-1-2-2-1               : needs monitoring (common metrics) for deployment sut
+monetdb-1-2-2-1               : collecting execution metrics of SUT at connection monetdb-1-2-2-1
+monetdb-1-2-2-1               : collecting metrics of benchmarker at connection monetdb-1-2-2-1
+MonetDB-1                     : get size via pod bexhoma-sut-monetdb-1-1793887265-68fd4f5f49-rqts9 and write to pvc bexhoma-storage-mo-nvme-tpcds-30
+monetdb-1-2-2-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1793887265(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)monetdb-1-1793887265(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+monetdb-1-2-2-1               : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-monetdb-1-1793887265-2-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-monetdb-1-1793887265-2-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+monetdb-1-2-2-1               : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+monetdb-1-2-2-1               : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 3s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 4.8s, 0 API requests 0.0s)
+Loop pass                     : took 4.0s (9 kubectl calls 5.8s, 24 API requests 0.3s)
+MonetDB-1                     : can be stopped
+MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1793887265-68fd4f5f49-rqts9
+Loop pass                     : took 0.8s (3 kubectl calls 0.4s, 29 API requests 0.3s)
+Experiment                    : ends at 2026-11-05 15:57:11.692541 (59188.414574521) - 3366.54s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+
+## Show Summary
+
+### Workload
+TPC-DS Queries SF=30
+* Type: tpcds
+* Duration: 3367s 
+* Code: 1793887265
+* This includes the reading queries of TPC-DS.
+* This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
+  * TPC-DS (SF=30) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q99.
+  * All instances use the same query parameters.
+  * Timeout per query is 14400.
+  * Data transfer volume per query is also measured.
+  * Import sets indexes and constraints after loading and recomputes statistics.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.12.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['MonetDB'].
+  * Import is handled by 8 processes (pods).
+  * Database is persisted to disk of type nvme and size 3000Gi.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1, 1] times the number of benchmarking pods.
+  * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * SUT requests 4 CPU and 900Gi RAM. RAM limit is 1024Gi.
+
+### Connections
+* monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:956526
+  * datadisk:76803
+  * volume_size:2.9T
+  * volume_used:76G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:900Gi
+  * limits_memory:1024Gi
+  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
+  * eval_parameters
+    * code:1793887265
+* monetdb-1-1-2-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:956532
+  * datadisk:75380
+  * volume_size:2.9T
+  * volume_used:74G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:900Gi
+  * limits_memory:1024Gi
+  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
+  * eval_parameters
+    * code:1793887265
+* monetdb-1-2-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:956530
+  * datadisk:75380
+  * volume_size:2.9T
+  * volume_used:74G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:900Gi
+  * limits_memory:1024Gi
+  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
+  * eval_parameters
+    * code:1793887265
+* monetdb-1-2-2-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:956734
+  * datadisk:75380
+  * volume_size:2.9T
+  * volume_used:74G
+  * cpu_list:0-223
+  * requests_cpu:4
+  * requests_memory:900Gi
+  * limits_memory:1024Gi
+  * resources_total: 4.0 CPU, 900.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 900.0 GiB RAM
+  * eval_parameters
+    * code:1793887265
+
+### Reused Storage
+* loading skipped, loading times inherited from an earlier experiment: MonetDB-1
+
+### Data Parameters of Reused Volumes
+* MonetDB-1: loading values of the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
+
+### SUT Container Restarts
+* bexhoma-sut-monetdb-1-1793887265-b8dc746d8-dfgbq: 0
+* bexhoma-sut-monetdb-1-1793887265-68fd4f5f49-rqts9: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 2: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 2 Client 1: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 2 Client 2: tpcds (1 pods)
+
+#### Planned
+
+* DBMS MonetDB-1 - Experiment 1 Client 1: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 1 Client 2: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 2 Client 1: tpcds (1 pods)
+* DBMS MonetDB-1 - Experiment 2 Client 2: tpcds (1 pods)
+
+### Loading
+
+#### Per Run
+
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MonetDB-1-1 |                1 |   30 |      941.00 |           2.00 |            1.00 |        420.00 |          499.00 |              0 |           0 |             | None           |             0 | False         |              114.77 | True                |
+| MonetDB-1-2 |                2 |   30 |      941.00 |           2.00 |            1.00 |        420.00 |          499.00 |              0 |           0 |             | None           |             0 | False         |              114.77 | True                |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
+|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
+| monetdb-1-1-1-1-1 | MonetDB-1       | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        780 |            0.93 |           120010.43 |          13707.69 |          -1 | monetdb-1-1-1-1-1 |
+| monetdb-1-1-2-1-1 | MonetDB-1       | monetdb-1-1-2 | monetdb-1-1-2-1 |                1 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        704 |            0.76 |           147313.41 |          15187.50 |          -1 | monetdb-1-1-2-1-1 |
+| monetdb-1-2-1-1-1 | MonetDB-1       | monetdb-1-2-1 | monetdb-1-2-1-1 |                2 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        797 |            0.90 |           124477.73 |          13415.31 |          -1 | monetdb-1-2-1-1-1 |
+| monetdb-1-2-2-1-1 | MonetDB-1       | monetdb-1-2-2 | monetdb-1-2-2-1 |                2 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        722 |            0.74 |           150423.07 |          14808.86 |          -1 | monetdb-1-2-2-1-1 |
+
+#### Per Phase
+
+|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:--------------|:--------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        780 |            0.93 |           120010.43 |          13707.69 |          -1 |
+| monetdb-1-1-2 | monetdb-1-1-2 |                1 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        704 |            0.76 |           147313.41 |          15187.50 |          -1 |
+| monetdb-1-2-1 | monetdb-1-2-1 |                2 |        1 |               1 |           1 | 30.00 |               99 |                  99 |        797 |            0.90 |           124477.73 |          13415.31 |          -1 |
+| monetdb-1-2-2 | monetdb-1-2-2 |                2 |        2 |               1 |           1 | 30.00 |               99 |                  99 |        722 |            0.74 |           150423.07 |          14808.86 |          -1 |
+
+#### Query Completion per Phase
+
+| phase         |   pods | TPC-DS Q1   | TPC-DS Q2   | TPC-DS Q3   | TPC-DS Q4   | TPC-DS Q5   | TPC-DS Q6   | TPC-DS Q7   | TPC-DS Q8   | TPC-DS Q9   | TPC-DS Q10   | TPC-DS Q11   | TPC-DS Q12   | TPC-DS Q13   | TPC-DS Q14a+b   | TPC-DS Q15   | TPC-DS Q16   | TPC-DS Q17   | TPC-DS Q18   | TPC-DS Q19   | TPC-DS Q20   | TPC-DS Q21   | TPC-DS Q22   | TPC-DS Q23a+b   | TPC-DS Q24a+b   | TPC-DS Q25   | TPC-DS Q26   | TPC-DS Q27   | TPC-DS Q28   | TPC-DS Q29   | TPC-DS Q30   | TPC-DS Q31   | TPC-DS Q32   | TPC-DS Q33   | TPC-DS Q34   | TPC-DS Q35   | TPC-DS Q36   | TPC-DS Q37   | TPC-DS Q38   | TPC-DS Q39a+b   | TPC-DS Q40   | TPC-DS Q41   | TPC-DS Q42   | TPC-DS Q43   | TPC-DS Q44   | TPC-DS Q45   | TPC-DS Q46   | TPC-DS Q47   | TPC-DS Q48   | TPC-DS Q49   | TPC-DS Q50   | TPC-DS Q51   | TPC-DS Q52   | TPC-DS Q53   | TPC-DS Q54   | TPC-DS Q55   | TPC-DS Q56   | TPC-DS Q57   | TPC-DS Q58   | TPC-DS Q59   | TPC-DS Q60   | TPC-DS Q61   | TPC-DS Q62   | TPC-DS Q63   | TPC-DS Q64   | TPC-DS Q65   | TPC-DS Q66   | TPC-DS Q67   | TPC-DS Q68   | TPC-DS Q69   | TPC-DS Q70   | TPC-DS Q71   | TPC-DS Q72   | TPC-DS Q73   | TPC-DS Q74   | TPC-DS Q75   | TPC-DS Q76   | TPC-DS Q77   | TPC-DS Q78   | TPC-DS Q79   | TPC-DS Q80   | TPC-DS Q81   | TPC-DS Q82   | TPC-DS Q83   | TPC-DS Q84   | TPC-DS Q85   | TPC-DS Q86   | TPC-DS Q87   | TPC-DS Q88   | TPC-DS Q89   | TPC-DS Q90   | TPC-DS Q91   | TPC-DS Q92   | TPC-DS Q93   | TPC-DS Q94   | TPC-DS Q95   | TPC-DS Q96   | TPC-DS Q97   | TPC-DS Q98   | TPC-DS Q99   | complete   |
+|:--------------|-------:|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:----------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-------------|:-----------|
+| monetdb-1-1-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+| monetdb-1-1-2 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+| monetdb-1-2-1 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+| monetdb-1-2-2 |      1 | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1         | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1             | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | 1/1          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
+
+### Latency of Timer Execution [ms]
+| Queries       |   monetdb-1-1-1-1-1 |   monetdb-1-1-2-1-1 |   monetdb-1-2-1-1-1 |   monetdb-1-2-2-1-1 |
+|:--------------|--------------------:|--------------------:|--------------------:|--------------------:|
+| TPC-DS Q1     |             1218.56 |              320.19 |             1341.53 |              248.64 |
+| TPC-DS Q2     |             4706.90 |             1713.52 |             4002.93 |             1616.56 |
+| TPC-DS Q3     |             2263.11 |              133.30 |             2595.19 |              115.23 |
+| TPC-DS Q4     |            26792.74 |            18441.67 |            24687.07 |            17222.13 |
+| TPC-DS Q5     |            18697.68 |             2216.15 |            20245.41 |             2421.91 |
+| TPC-DS Q6     |              581.39 |              578.02 |              528.25 |              319.17 |
+| TPC-DS Q7     |             4988.84 |             1167.33 |             5699.93 |             1100.99 |
+| TPC-DS Q8     |             3886.28 |              622.83 |             3850.25 |              677.19 |
+| TPC-DS Q9     |              842.11 |              517.28 |              528.88 |              500.98 |
+| TPC-DS Q10    |            19019.51 |              516.21 |            22459.87 |              483.57 |
+| TPC-DS Q11    |             6981.28 |             7404.07 |             6347.73 |             6633.43 |
+| TPC-DS Q12    |              236.24 |              177.62 |              246.30 |              147.77 |
+| TPC-DS Q13    |              438.73 |              527.91 |              452.12 |              678.55 |
+| TPC-DS Q14a+b |            36127.10 |            39039.60 |            33515.08 |            37178.50 |
+| TPC-DS Q15    |              269.47 |              128.69 |              229.16 |              137.98 |
+| TPC-DS Q16    |            49513.41 |            41732.07 |            47391.90 |            42231.85 |
+| TPC-DS Q17    |             3454.03 |             3298.60 |             3410.47 |             3355.09 |
+| TPC-DS Q18    |             2020.09 |             2141.90 |             2161.51 |             1936.76 |
+| TPC-DS Q19    |              173.58 |              185.06 |              173.75 |              150.17 |
+| TPC-DS Q20    |              129.48 |              117.37 |              130.46 |              100.12 |
+| TPC-DS Q21    |             1994.86 |              158.72 |             2293.90 |              166.42 |
+| TPC-DS Q22    |             2132.76 |             2200.13 |             1753.37 |             1756.56 |
+| TPC-DS Q23a+b |            40832.35 |            34155.88 |            37910.48 |            35844.27 |
+| TPC-DS Q24a+b |            15264.98 |            15632.94 |            14482.29 |            15840.84 |
+| TPC-DS Q25    |             2409.62 |             2556.10 |             2548.54 |             2309.27 |
+| TPC-DS Q26    |              167.58 |              193.64 |              178.48 |              175.81 |
+| TPC-DS Q27    |             1815.14 |             1324.42 |             1414.02 |             1312.11 |
+| TPC-DS Q28    |              626.33 |              624.22 |              678.40 |              611.42 |
+| TPC-DS Q29    |             2449.05 |             2358.97 |             2194.25 |             2406.86 |
+| TPC-DS Q30    |               97.74 |              120.85 |              127.99 |              130.64 |
+| TPC-DS Q31    |             2587.74 |             2364.81 |             2306.97 |             2491.74 |
+| TPC-DS Q32    |              217.58 |              191.24 |              169.12 |              183.82 |
+| TPC-DS Q33    |              131.13 |              133.34 |              163.84 |              133.12 |
+| TPC-DS Q34    |              308.76 |              151.11 |              320.95 |              107.63 |
+| TPC-DS Q35    |              703.71 |              748.54 |              854.65 |              828.43 |
+| TPC-DS Q36    |             1380.08 |             1597.01 |             1373.52 |             1319.51 |
+| TPC-DS Q37    |             1926.69 |             2186.63 |             1930.82 |             1829.77 |
+| TPC-DS Q38    |             3624.19 |             2380.92 |             2588.21 |             3249.27 |
+| TPC-DS Q39a+b |             1200.05 |             1164.30 |             1160.61 |             1141.61 |
+| TPC-DS Q40    |              419.74 |              646.77 |              424.76 |              658.66 |
+| TPC-DS Q41    |                5.83 |                6.47 |                5.41 |                5.83 |
+| TPC-DS Q42    |               98.51 |              123.33 |              101.34 |              103.50 |
+| TPC-DS Q43    |              288.90 |              299.64 |              320.56 |              277.61 |
+| TPC-DS Q44    |              349.77 |              410.41 |              369.79 |              377.21 |
+| TPC-DS Q45    |              117.60 |              132.72 |              138.47 |              134.99 |
+| TPC-DS Q46    |              211.12 |              197.65 |              198.48 |              190.28 |
+| TPC-DS Q47    |             1928.94 |             1040.63 |              961.70 |              959.78 |
+| TPC-DS Q48    |              240.79 |              212.98 |              214.73 |              209.84 |
+| TPC-DS Q49    |             4004.94 |             1698.78 |             4459.10 |             1614.23 |
+| TPC-DS Q50    |              590.77 |              574.89 |              576.93 |              580.66 |
+| TPC-DS Q51    |             3063.47 |             2398.52 |             2413.79 |             2320.91 |
+| TPC-DS Q52    |              122.58 |               86.34 |              108.81 |               97.07 |
+| TPC-DS Q53    |               99.34 |               91.16 |               96.80 |               90.85 |
+| TPC-DS Q54    |               84.69 |               85.24 |               82.26 |               85.14 |
+| TPC-DS Q55    |               77.86 |               88.10 |               73.80 |               70.33 |
+| TPC-DS Q56    |              162.76 |              143.08 |              159.44 |              508.33 |
+| TPC-DS Q57    |              138.66 |              132.81 |              140.51 |              234.48 |
+| TPC-DS Q58    |              583.22 |              554.61 |              597.58 |              619.65 |
+| TPC-DS Q59    |             1438.88 |             1147.89 |             1024.17 |             1078.04 |
+| TPC-DS Q60    |              159.95 |              166.96 |              175.29 |              160.49 |
+| TPC-DS Q61    |              221.37 |              194.56 |              199.04 |              205.75 |
+| TPC-DS Q62    |              446.15 |              455.88 |              432.13 |              461.76 |
+| TPC-DS Q63    |               94.97 |               95.42 |               90.89 |              100.22 |
+| TPC-DS Q64    |             4721.44 |             5441.91 |             4873.73 |             4680.40 |
+| TPC-DS Q65    |             1291.98 |             1069.93 |             1055.59 |             1163.28 |
+| TPC-DS Q66    |             2355.48 |             2648.01 |             2368.38 |             2913.24 |
+| TPC-DS Q67    |             5952.91 |             5554.85 |             5524.58 |             5475.04 |
+| TPC-DS Q68    |              389.02 |              378.51 |              399.48 |              426.65 |
+| TPC-DS Q69    |              364.05 |              522.13 |              406.98 |              377.76 |
+| TPC-DS Q70    |             1382.74 |             1410.26 |             1372.43 |             1335.22 |
+| TPC-DS Q71    |              521.19 |              535.20 |              365.26 |              516.23 |
+| TPC-DS Q72    |             2138.63 |             2550.72 |             2241.74 |             2388.29 |
+| TPC-DS Q73    |              102.38 |               94.26 |               99.19 |              109.69 |
+| TPC-DS Q74    |             1847.07 |             1848.15 |             1969.33 |             2879.52 |
+| TPC-DS Q75    |             6360.78 |             6080.82 |             5400.97 |             5932.12 |
+| TPC-DS Q76    |             8930.58 |            10444.16 |             6757.32 |             9915.69 |
+| TPC-DS Q77    |             1086.60 |             1080.74 |             1157.00 |             1389.88 |
+| TPC-DS Q78    |            13730.79 |            12163.30 |            12092.31 |            12399.54 |
+| TPC-DS Q79    |              305.81 |              282.37 |              269.12 |              257.66 |
+| TPC-DS Q80    |             8168.15 |             7490.11 |             7149.59 |             7108.41 |
+| TPC-DS Q81    |               71.74 |               88.00 |               82.36 |               96.82 |
+| TPC-DS Q82    |              430.50 |              459.79 |              430.53 |              405.97 |
+| TPC-DS Q83    |              221.33 |              285.50 |              258.43 |              237.90 |
+| TPC-DS Q84    |               66.72 |               65.29 |               53.60 |               48.04 |
+| TPC-DS Q85    |              551.23 |              318.54 |              311.34 |              291.96 |
+| TPC-DS Q86    |              302.62 |              311.59 |              338.13 |              301.21 |
+| TPC-DS Q87    |             2766.91 |             2927.50 |             2754.86 |             2699.55 |
+| TPC-DS Q88    |              752.56 |              424.88 |              667.01 |              418.51 |
+| TPC-DS Q89    |              139.83 |              132.65 |              142.48 |              142.45 |
+| TPC-DS Q90    |               86.73 |              132.48 |               89.54 |              129.01 |
+| TPC-DS Q91    |               38.87 |               45.48 |               46.10 |               35.40 |
+| TPC-DS Q92    |              140.88 |              165.08 |              161.72 |              155.64 |
+| TPC-DS Q93    |             2014.81 |             1930.46 |             1929.81 |             2067.18 |
+| TPC-DS Q94    |            40091.01 |            39132.88 |            37345.08 |            40179.47 |
+| TPC-DS Q95    |           362510.78 |           362886.63 |           394968.74 |           383028.30 |
+| TPC-DS Q96    |              776.78 |              773.53 |              751.87 |              835.58 |
+| TPC-DS Q97    |             4704.73 |             4048.28 |             4619.13 |             4298.59 |
+| TPC-DS Q98    |              522.29 |             1128.82 |              514.41 |              520.06 |
+| TPC-DS Q99    |              412.85 |              401.07 |              397.34 |              400.94 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Monitoring
+
+### Benchmarking phase: SUT deployment
+
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| monetdb-1-1-1-1 |     10892.34 |     95.01 |         987.90 |               1023.82 |
+| monetdb-1-1-2-1 |     13136.71 |    156.74 |        1012.93 |               1023.78 |
+| monetdb-1-2-1-1 |     13862.28 |    181.09 |        1013.14 |               1023.87 |
+| monetdb-1-2-2-1 |     11994.80 |    109.91 |         975.63 |               1023.99 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| monetdb-1-1-1-1 |        33.23 |      0.47 |           0.39 |                  0.40 |
+| monetdb-1-1-2-1 |        33.94 |      0.46 |           0.37 |                  0.37 |
+| monetdb-1-2-1-1 |        33.58 |      0.50 |           0.39 |                  0.40 |
+| monetdb-1-2-2-1 |        33.35 |      0.46 |           0.37 |                  0.38 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection monetdb-1-1-1-1 (bexhoma-metrics-monetdb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection monetdb-1-1-2-1 (bexhoma-metrics-monetdb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection monetdb-1-1-2-1 (bexhoma-metrics-monetdb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection monetdb-1-2-1-1 (bexhoma-metrics-monetdb-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection monetdb-1-2-1-1 (bexhoma-metrics-monetdb-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection monetdb-1-2-2-1 (bexhoma-metrics-monetdb-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection monetdb-1-2-2-1 (bexhoma-metrics-monetdb-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
+
+### Tests
+* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MonetDB-1)
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
+* TEST passed: Workflow as planned

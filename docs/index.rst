@@ -31,20 +31,25 @@
     ./Example-SSB.md
     ./Queries-SSB.md
     ./Example-Hardware.md
+    ./Example-PostgreSQL.md
+    ./Example-PGBouncer.md
+    ./Example-PgDuckDB.md
+    ./Example-MySQL.md
+    ./Example-MariaDB.md
+    ./Example-MariaDBCS.md
+    ./Example-MonetDB.md
+    ./Example-ClickHouse.md
     ./Example-Citus.md
     ./Example-YugaByteDB.md
     ./Example-CockroachDB.md
     ./Example-TiDB.md
-    ./Example-ClickHouse.md
-    ./Example-MariaDBCS.md
     ./Example-Redis.md
     ./Example-Dragonfly.md
     ./Example-Valkey.md
     ./Example-Garnet.md
     ./Example-Cassandra.md
-    ./Example-PGBouncer.md
-    ./Example-Other-DBMS.md
     ./Example-CloudDatabase.md
+    ./Example-Other-DBMS.md
     ./Example-custom.md
     ./Example-Multi-Tenant.md
     ./Example-Metrics.md

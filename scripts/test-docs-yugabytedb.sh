@@ -107,10 +107,72 @@ remove_yugabytedb() {
 }
 
 
-# install YugabyteDB
-install_yugabytedb no
 
-#### YCSB Ingestion (Example-YugaByteDB.md)
+
+####################################################
+#### Main Example ##################################
+####################################################
+
+
+# install YugabyteDB
+install_yugabytedb no shared 2 "$BEXHOMA_NODES_WORKER"
+sleep 30
+
+# Main example: YCSB on YugabyteDB, quick, without monitoring
+# -dbms YugabyteDB              DBMS under test
+# -sf 1                         scaling factor (number of records in millions)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 4                       throughput target as a multiple of the base ops/s
+# -xnlf 4                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -xop 1                        number of operations for the benchmark phase (in millions)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ycsb \
+  -dbms YugabyteDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ycsb_yugabytedb.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB  sf=1  nbp=1"
+
+# remove YugabyteDB installation
+remove_yugabytedb no
+sleep 30
+
+
+####################################################
+#### Monitoring ####################################
+####################################################
+
+
+# install YugabyteDB
+install_yugabytedb no shared 2 "$BEXHOMA_NODES_WORKER"
+sleep 30
+
+# Monitoring: YCSB on YugabyteDB
 # -dbms YugabyteDB              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
@@ -150,11 +212,11 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_yugabytedb_1.log
+  run &>$LOG_DIR/docs_ycsb_yugabytedb_monitoring.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB ingestion  sf=1  nbp=1"
 
-#### YCSB Execution (Example-YugaByteDB.md)
+# Execution only (-sl): on the data loaded by the monitoring run before (same installation)
 # -dbms YugabyteDB              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
@@ -196,20 +258,76 @@ bexhoma ycsb \
   -sl \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_yugabytedb_2.log
+  run &>$LOG_DIR/docs_ycsb_yugabytedb_execution.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
-
 
 # remove YugabyteDB installation
 remove_yugabytedb no
 sleep 30
 
+
 # install YugabyteDB
-install_yugabytedb no
+install_yugabytedb no shared 2 "$BEXHOMA_NODES_WORKER"
 sleep 30
 
-#### YCSB Dummy Persistent Storage (Example-YugaByteDB.md)
+# Application metrics: YCSB on YugabyteDB
+# -dbms YugabyteDB              DBMS under test
+# -sf 1                         scaling factor (number of records in millions)
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 4                       throughput target as a multiple of the base ops/s
+# -xnlf 4                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -xop 10                       number of operations for the benchmark phase (in millions)
+# -m                            collect SUT resource metrics
+# -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+bexhoma ycsb \
+  -dbms YugabyteDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xop 10 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  run &>$LOG_DIR/docs_ycsb_yugabytedb_appmetrics.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
+
+# remove YugabyteDB installation
+remove_yugabytedb no
+sleep 30
+
+
+####################################################
+#### Persistent Storage ############################
+####################################################
+
+
+# install YugabyteDB
+install_yugabytedb no shared 2 "$BEXHOMA_NODES_WORKER"
+sleep 30
+
+# Persistent storage: status volume of bexhoma (YugabyteDB itself is ephemeral)
 # -dbms YugabyteDB              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
@@ -255,21 +373,25 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_ycsb_yugabytedb_3.log
+  run &>$LOG_DIR/docs_ycsb_yugabytedb_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
-
 
 # remove YugabyteDB installation
 remove_yugabytedb no
 sleep 30
 
+
+####################################################
+#### Benchbase TPC-C ###############################
+####################################################
+
+
 # install YugabyteDB
-install_yugabytedb no
+install_yugabytedb no shared 2 "$BEXHOMA_NODES_WORKER"
 sleep 30
 
-
-#### Benchbase Simple (Example-YugaByteDB.md)
+# Benchbase TPC-C: simple
 # -dbms YugabyteDB              DBMS under test
 # -sf 16                        scaling factor (controls database size)
 # -xsd 5                        benchmark duration in minutes
@@ -297,21 +419,20 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_benchbase_yugabytedb_1.log
+  run &>$LOG_DIR/docs_benchbase_yugabytedb.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB simple  sf=16  nbp=1,2"
-
 
 # remove YugabyteDB installation
 remove_yugabytedb no
 sleep 30
 
+
 # install YugabyteDB
-install_yugabytedb no
+install_yugabytedb no shared 2 "$BEXHOMA_NODES_WORKER"
 sleep 30
 
-
-#### Benchbase More Complex (Example-YugaByteDB.md)
+# Benchbase TPC-C: realistic, with keying and thinking time
 # -dbms YugabyteDB              DBMS under test
 # -sf 128                       scaling factor (controls database size)
 # -xsd 20                       benchmark duration in minutes
@@ -343,76 +464,20 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
-  run &>$LOG_DIR/docs_benchbase_yugabytedb_2.log
+  run &>$LOG_DIR/docs_benchbase_yugabytedb_keytime.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
 
-
 # remove YugabyteDB installation
 remove_yugabytedb no
-
-
-################################################
-######## YugaByteDB Application Metrics ########
-################################################
-
-
-# install YugabyteDB
-install_yugabytedb no
-sleep 30
-
-# -dbms YugabyteDB              DBMS under test
-# -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
-# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
-# -xnbf 4                       throughput target as a multiple of the base ops/s
-# -xnlf 4                       loading throughput target as a multiple of the base ops/s
-# -nc 1                         number of repeated runs per configuration
-# -ne 1                         parallel client counts to sweep (comma-separated)
-# -nlp 8                        number of data loader pods
-# -nlt 64                       threads per loader pod
-# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
-# -nbt 64                       threads per benchmarking pod
-# -xop 10                       number of operations for the benchmark phase (in millions)
-# -m                            collect SUT resource metrics
-# -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
-# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
-bexhoma ycsb \
-  -dbms YugabyteDB \
-  -sf 1 \
-  -xwl a \
-  -xtb 16384 \
-  -xnbf 4 \
-  -xnlf 4 \
-  -nc 1 \
-  -ne 1 \
-  -nlp 8 \
-  -nlt 64 \
-  -nbp 1 \
-  -nbt 64 \
-  -xop 10 \
-  -m \
-  -ma \
-  -mc \
-  -ms $BEXHOMA_MS \
-  -tr \
-  run &>$LOG_DIR/docs_ycsb_yugabytedb_appmetrics.log
-
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
-
-
-# remove YugabyteDB installation
-remove_yugabytedb no
-
-
-# install YugabyteDB
-install_yugabytedb no
 sleep 30
 
 
-#### Benchbase Application Metrics (Example-YugaByteDB.md)
+# install YugabyteDB
+install_yugabytedb no shared 2 "$BEXHOMA_NODES_WORKER"
+sleep 30
+
+# Benchbase TPC-C: application metrics
 # -dbms YugabyteDB              DBMS under test
 # -sf 16                        scaling factor (controls database size)
 # -xsd 5                        benchmark duration in minutes
@@ -442,9 +507,10 @@ bexhoma benchbase \
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
 
-
 # remove YugabyteDB installation
 remove_yugabytedb no
+sleep 30
+
 
 
 ###########################################

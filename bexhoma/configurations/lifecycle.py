@@ -984,6 +984,15 @@ scrape_configs:
                         search.format(statefulset=statefulset['name'],
                                       namespace=cfg.experiment.cluster.namespace)
                         for search in dns_config['searches']]
+                # container arguments may name the headless service, too, e.g. a
+                # cluster announcing its pods by DNS name instead of by IP (an IP
+                # is stale after a restart); other braces are left alone
+                for container in dep['spec']['template']['spec'].get('containers', []):
+                    if container.get('args'):
+                        container['args'] = [
+                            arg.replace('{statefulset}', statefulset['name']).replace(
+                                '{namespace}', cfg.experiment.cluster.namespace)
+                            for arg in container['args']]
                 dep['metadata']['labels']['configuration'] = configuration
                 dep['metadata']['labels']['experiment'] = experiment
                 dep['metadata']['labels']['dbms'] = cfg.docker
