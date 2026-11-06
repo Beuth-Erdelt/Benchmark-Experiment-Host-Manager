@@ -37,7 +37,7 @@ def context_of(args) -> dict:
     return context
 
 
-def selected_dockers(dockers: dict, benchmark: str, dbms: list) -> list:
+def selected_dockers(dockers: dict, benchmark: str, dbms: list, args=None) -> list:
     """The DBMS a run of ``benchmark`` builds configurations for.
 
     The DBMS named by ``-dbms``, or the default set of the benchmark when there is none,
@@ -46,15 +46,25 @@ def selected_dockers(dockers: dict, benchmark: str, dbms: list) -> list:
     :param dockers: The ``dockers`` section of the cluster configuration.
     :param benchmark: Benchmark key.
     :param dbms: The ``-dbms`` list.
+    :param args: The parsed command line; with it, a multi-tenant run (``-mtn``) is refused for a DBMS that
+        does not support the requested ``-mtb`` mode.
     :return: DBMS names.
     :rtype: list
-    :raises bexhoma.system_descriptors.IncompatibleBenchmark: When a named DBMS cannot run the benchmark.
+    :raises bexhoma.system_descriptors.IncompatibleBenchmark: When a named DBMS cannot run the benchmark,
+        or cannot run it multi-tenant.
     """
     for name in dbms or []:
         descriptors.benchmark_entry(dockers, name, benchmark)
     if dbms:
-        return [name for name in descriptors.compatible_dockers(dockers, benchmark) if name in dbms]
-    return descriptors.default_dockers(dockers, benchmark)
+        selected = [name for name in descriptors.compatible_dockers(dockers, benchmark) if name in dbms]
+    else:
+        selected = descriptors.default_dockers(dockers, benchmark)
+    if args is not None:
+        reason = descriptors.unsupported_tenancy(
+            dockers, benchmark, selected, getattr(args, 'multi_tenant_num', 0) or 0, getattr(args, 'multi_tenant_by', '') or '')
+        if reason:
+            raise descriptors.IncompatibleBenchmark(reason)
+    return selected
 
 
 def entry_parameters(dockers: dict, docker: str, benchmark: str, key: str, args) -> dict:

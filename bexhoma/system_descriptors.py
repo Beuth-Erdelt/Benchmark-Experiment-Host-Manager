@@ -41,7 +41,8 @@ the entry script of that benchmark needs to configure the DBMS:
 ``max_sut_dbms``
     Number of SUT of this DBMS that may run at the same time.
 ``multi_tenancy``
-    ``True`` when the DBMS takes part in the multi-tenant variants (``-mtn``/``-mtb``) of the benchmark.
+    The tenancy modes (``-mtb``: ``container``, ``schema``, ``database``) the DBMS supports in the benchmark.
+    A run with ``-mtn`` is refused for a DBMS that does not list the requested mode (:func:`unsupported_tenancy`).
 ``per_loading_threads``
     Loading parameters of a DBMS that gets one configuration per ``-nlt`` value; ``{threads}`` is that value.
 ``option_experiment``
@@ -72,7 +73,7 @@ See LICENSE for details.
 import ast
 import os
 
-__all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "load_dockers", "dbms_choices", "benchmark_entry", "compatible_dockers",
+__all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "TENANCY_MODES", "unsupported_tenancy", "load_dockers", "dbms_choices", "benchmark_entry", "compatible_dockers",
            "default_dockers", "dimension_dockers", "unsupported_dimension", "notes", "base_system",
            "storage_prefix", "alias", "dialect", "experiment_yaml_dockers", "refresh_template", "expand",
            "validate_descriptors"]
@@ -94,10 +95,14 @@ ENTRY_KEYS = {
     'benchmarking_parameters': dict,
     'eval_parameters': dict,
     'max_sut_dbms': int,
-    'multi_tenancy': bool,
+    'multi_tenancy': list,
     'per_loading_threads': dict,
     'option_experiment': dict,
 }
+
+
+#: Values of ``-mtb``.
+TENANCY_MODES = ('container', 'schema', 'database')
 
 
 class IncompatibleBenchmark(ValueError):
@@ -188,6 +193,35 @@ def notes(dockers: dict, benchmark: str, args) -> str:
             if applies:
                 text += '\n' + note['text'].format(**vars(args))
     return text
+
+
+def unsupported_tenancy(dockers: dict, benchmark: str, dbms: list, number: int, mode: str) -> str:
+    """Why a multi-tenant run cannot use these DBMS, or ``''`` when it can.
+
+    A run with ``-mtn`` above 0 needs every selected DBMS to list the requested ``-mtb`` mode in
+    ``multi_tenancy``; otherwise it would take part in the tenant machinery without tenant
+    storage, parameters or scripts.
+
+    :param dockers: The ``dockers`` section of the cluster configuration.
+    :param benchmark: Benchmark key.
+    :param dbms: The selected DBMS.
+    :param number: ``-mtn``, the number of tenants (0: no tenancy).
+    :param mode: ``-mtb``.
+    :return: The message, ``''`` when the run is fine.
+    :rtype: str
+    """
+    if int(number) <= 0:
+        return ''
+    declared = {name: list(dockers[name]['benchmarks'][benchmark].get('multi_tenancy') or [])
+                for name in compatible_dockers(dockers, benchmark)}
+    refused = [name for name in dbms if mode not in declared.get(name, [])]
+    if not refused:
+        return ''
+    supporting = {name: modes for name, modes in declared.items() if modes}
+    where = ('; '.join(f"{name}: {', '.join(modes)}" for name, modes in supporting.items())
+             or f"no DBMS supports multi-tenancy in {benchmark}")
+    return (f"-mtn {number} -mtb {mode or '(missing)'}: {', '.join(refused)} "
+            f"{'does' if len(refused) == 1 else 'do'} not support this tenancy in {benchmark} (supported: {where})")
 
 
 def benchmark_entry(dockers: dict, docker: str, benchmark: str) -> dict:
@@ -340,6 +374,12 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
                     problems.append(f"{where}.notes: every note needs a non-empty 'text'")
                 elif not isinstance(note.get('when', ''), str):
                     problems.append(f"{where}.notes: 'when' must be a string")
+            modes = entry.get('multi_tenancy')
+            if isinstance(modes, list):
+                unknown = [mode for mode in modes if mode not in TENANCY_MODES]
+                if unknown:
+                    problems.append(f"{where}.multi_tenancy: unknown mode {', '.join(map(repr, unknown))} "
+                                    f"(allowed: {', '.join(TENANCY_MODES)})")
             for key in ('loading_template', 'refresh_template'):
                 template = entry.get(key)
                 if template_folder and isinstance(template, str) and template \

@@ -169,7 +169,7 @@ if __name__ == '__main__':
         for loading_pods in [1]:
             loading_threads_per_pod = int(loading_threads/loading_pods)
             # every DBMS that can run TPC-C (or the ones named by -dbms), as declared in cluster.config
-            for docker in selected_dockers(cluster.dockers, 'tpcc', args.dbms):
+            for docker in selected_dockers(cluster.dockers, 'tpcc', args.dbms, args):
                 config = build_configuration(
                     experiment, docker, 'tpcc', args,
                     loading_parameters={'HAMMERDB_VUSERS': loading_threads_per_pod})

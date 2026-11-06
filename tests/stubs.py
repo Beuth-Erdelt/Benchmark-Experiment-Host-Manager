@@ -61,6 +61,8 @@ class StubCluster:
                     'Index_and_Statistics': [],
                     'Constraints_and_Statistics': [],
                     'Index_and_Constraints_and_Statistics': [],
+                    'Schema_tenant': [],
+                    'Index_and_Constraints_and_Statistics_tenant': [],
                 },
             },
         }

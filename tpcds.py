@@ -182,7 +182,7 @@ if __name__ == '__main__':
             # how many in parallel?
             split_portion = int(loading_pods_total/loading_pods_split)
             # every DBMS that can run TPC-DS (or the ones named by -dbms), as declared in cluster.config
-            for docker in selected_dockers(cluster.dockers, 'tpcds', args.dbms):
+            for docker in selected_dockers(cluster.dockers, 'tpcds', args.dbms, args):
                 entry = benchmark_entry(cluster.dockers, docker, 'tpcds')
                 # a DBMS may tolerate fewer loading pods than asked for
                 pods_total, pods_parallel = limit_loading_pods(entry, docker, loading_pods_total, split_portion)

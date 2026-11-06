@@ -118,7 +118,7 @@ class LoadingVariantsTest(unittest.TestCase):
 class TenantTest(unittest.TestCase):
     """The multi-tenant variants of tpch.py, for a DBMS that declares ``multi_tenancy``."""
 
-    entry = {'multi_tenancy': True}
+    entry = {'multi_tenancy': ['container', 'schema', 'database']}
 
     def experiment(self, by: str, number: int = 2):
         return types.SimpleNamespace(tenant_per=by, num_tenants=number)
