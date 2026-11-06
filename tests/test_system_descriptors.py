@@ -211,11 +211,13 @@ class DescriptorsMatchScriptsTest(unittest.TestCase):
                   'MariaDB': 'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
                   'MariaDBCS': 'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
                   'MonetDB': 'jobtemplate-benchmarking-tpch-refresh-MonetDB.yml'}
-        for docker in sd.compatible_dockers(self.dockers, 'tpch'):
+        for docker, template in former.items():
             with self.subTest(docker=docker):
-                # the DBMS the table did not list have no job: there is no fallback to another one
-                self.assertEqual(sd.benchmark_entry(self.dockers, docker, 'tpch').get('refresh_template'),
-                                 former.get(docker))
+                self.assertEqual(sd.benchmark_entry(self.dockers, docker, 'tpch').get('refresh_template'), template)
+        # every other DBMS of the benchmark declares a job as well (test_refresh_loaders): no code fallback
+        for docker in sd.compatible_dockers(self.dockers, 'tpch'):
+            with self.subTest(declared=docker):
+                self.assertTrue(sd.benchmark_entry(self.dockers, docker, 'tpch').get('refresh_template'))
 
     def test_builder_defaults_are_the_former_special_cases(self) -> None:
         entry = lambda docker: sd.benchmark_entry(self.dockers, docker, 'tpch')

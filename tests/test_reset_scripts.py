@@ -218,12 +218,17 @@ class ResetCompletenessTest(unittest.TestCase):
                 self.assertIn('tpch_refresh', resets)
                 self.assertEqual(resets['tpch_refresh'], [], config.configuration)
 
-    def test_tpch_refresh_stream_is_refused_without_a_job_for_every_dbms(self):
+    def test_tpch_refresh_stream_runs_for_the_postgresql_protocol_systems_together(self):
+        group = ['PostgreSQL', 'CedarDB', 'Citus', 'DatabaseService']
+        _, configurations = _run_script('tpch.py', '-xrs', '1', '-dbms', *group)
+        self.assertEqual({c.docker for c in configurations}, set(group))
+
+    def test_tpch_refresh_stream_is_refused_when_the_dbms_need_different_jobs(self):
         from bexhoma.system_descriptors import IncompatibleBenchmark
-        with self.assertRaisesRegex(IncompatibleBenchmark, 'CedarDB has no refresh job'):
-            _run_script('tpch.py', '-xrs', '1', '-dbms', 'PostgreSQL', 'CedarDB')
         with self.assertRaisesRegex(IncompatibleBenchmark, 'need different ones'):
             _run_script('tpch.py', '-xrs', '1', '-dbms', 'PostgreSQL', 'MySQL')
+        with self.assertRaisesRegex(IncompatibleBenchmark, 'need different ones'):
+            _run_script('tpch.py', '-xrs', '1', '-dbms', 'PostgreSQL', 'ClickHouse')
 
 
 class ResetScriptContentTest(unittest.TestCase):
