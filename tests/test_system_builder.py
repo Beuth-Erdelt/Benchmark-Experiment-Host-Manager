@@ -9,8 +9,12 @@ Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
+import contextlib
+import io
 import types
 import unittest
+
+import tpch
 
 from bexhoma import system_descriptors as sd
 from bexhoma.experiments import system_builder as builder
@@ -73,6 +77,74 @@ class ContextTest(unittest.TestCase):
         args = types.SimpleNamespace(num_worker='2')
         self.assertEqual(builder.entry_parameters(dockers, 'A', 'x', 'sut_parameters', args), {'N': 2, 'T': 'fixed'})
         self.assertEqual(builder.entry_parameters(dockers, 'A', 'x', 'eval_parameters', args), {})
+
+
+class LoadingPodsTest(unittest.TestCase):
+
+    def test_no_limit(self) -> None:
+        self.assertEqual(builder.limit_loading_pods({}, 'A', 4, 2), (4, 2))
+
+    def test_within_the_limit(self) -> None:
+        self.assertEqual(builder.limit_loading_pods({'max_loading_pods': 2}, 'A', 2, 1), (2, 1))
+
+    def test_capped_with_a_message(self) -> None:
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(builder.limit_loading_pods({'max_loading_pods': 1}, 'A', 4, 2), (1, 1))
+        self.assertEqual(out.getvalue().strip(), 'A: loads with 1 pod, ignoring -nlp 4')
+
+    def test_parallel_only_capped_without_a_message(self) -> None:
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(builder.limit_loading_pods({'max_loading_pods': 1}, 'A', 1, 3), (1, 1))
+        self.assertEqual(out.getvalue(), '')
+
+
+class LoadingVariantsTest(unittest.TestCase):
+
+    def test_one_without_declaration(self) -> None:
+        self.assertEqual(builder.loading_variants({}, [1, 8]), [{}])
+
+    def test_one_per_thread_count(self) -> None:
+        entry = {'per_loading_threads': {'T': '{threads}', 'P': 1}}
+        self.assertEqual(builder.loading_variants(entry, [1, '8']), [{'T': 1, 'P': 1}, {'T': 8, 'P': 1}])
+
+
+class TenantTest(unittest.TestCase):
+    """The multi-tenant variants of tpch.py, for a DBMS that declares ``multi_tenancy``."""
+
+    entry = {'multi_tenancy': True}
+
+    def experiment(self, by: str, number: int = 2):
+        return types.SimpleNamespace(tenant_per=by, num_tenants=number)
+
+    def test_a_dbms_without_the_flag_has_no_tenants(self) -> None:
+        experiment = self.experiment('container')
+        self.assertEqual(tpch.tenant_ids(experiment, {}), [None])
+        self.assertEqual(tpch.tenant_parameters(experiment, {}, None, 'p'), {})
+
+    def test_container_tenancy_is_one_configuration_per_tenant(self) -> None:
+        experiment = self.experiment('container', 3)
+        self.assertEqual(tpch.tenant_ids(experiment, self.entry), [0, 1, 2])
+        result = tpch.tenant_parameters(experiment, self.entry, 1, 'p')
+        self.assertEqual(result['storage'], 'p-1-3')
+        self.assertEqual(result['loading'], {'BEXHOMA_TENANT_BY': 'container', 'BEXHOMA_TENANT_NUM': 3, 'BEXHOMA_TENANT_ID': 1})
+        self.assertEqual(result['eval'], {'TENANT_BY': 'container', 'TENANT_NUM': 3, 'TENANT': 1})
+        self.assertNotIn('experiment', result)
+
+    def test_schema_tenancy_switches_scripts(self) -> None:
+        experiment = self.experiment('schema')
+        self.assertEqual(tpch.tenant_ids(experiment, self.entry), [None])
+        result = tpch.tenant_parameters(experiment, self.entry, None, 'p')
+        self.assertEqual(result['storage'], 'p-schema-2')
+        self.assertEqual(result['experiment']['script'], 'Schema_tenant')
+        self.assertEqual(result['benchmarking']['BEXHOMA_TENANT_ID'], 0)
+
+    def test_no_tenancy_keeps_the_storage_but_still_sets_the_parameters(self) -> None:
+        result = tpch.tenant_parameters(self.experiment('', 0), self.entry, None, 'p')
+        self.assertNotIn('storage', result)
+        self.assertEqual(result['loading']['BEXHOMA_TENANT_BY'], '')
+        self.assertEqual(result['eval'], {'TENANT_BY': '', 'TENANT_NUM': 0})
 
 
 if __name__ == '__main__':

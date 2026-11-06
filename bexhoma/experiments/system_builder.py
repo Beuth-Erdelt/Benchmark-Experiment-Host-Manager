@@ -16,7 +16,8 @@ See LICENSE for details.
 from bexhoma import configurations
 from bexhoma import system_descriptors as descriptors
 
-__all__ = ["context_of", "selected_dockers", "entry_parameters", "build_configuration"]
+__all__ = ["context_of", "selected_dockers", "entry_parameters", "limit_loading_pods", "loading_variants",
+           "build_configuration"]
 
 #: Command line options that are numbers in the descriptors' placeholders.
 _INTEGER_OPTIONS = ("num_worker", "num_worker_replicas", "num_worker_shards")
@@ -67,14 +68,50 @@ def entry_parameters(dockers: dict, docker: str, benchmark: str, key: str, args)
     return descriptors.expand(entry.get(key) or {}, context_of(args))
 
 
+def limit_loading_pods(entry: dict, docker: str, total: int, parallel: int) -> tuple:
+    """The loading pods a DBMS tolerates: ``max_loading_pods`` of its entry caps the requested ones.
+
+    :param entry: The DBMS's entry for the benchmark.
+    :param docker: Name of the DBMS (for the message).
+    :param total: Requested number of loading pods (``-nlp``).
+    :param parallel: Requested number of pods in parallel.
+    :return: ``(total, parallel)``.
+    :rtype: tuple
+    """
+    limit = entry.get('max_loading_pods')
+    if limit is None or (total <= limit and parallel <= limit):
+        return total, parallel
+    if total > limit:
+        print('%s: loads with %d pod, ignoring -nlp %s' % (docker, limit, total))
+    return min(total, limit), min(parallel, limit)
+
+
+def loading_variants(entry: dict, threads: list) -> list:
+    """The loading parameters of the configurations to build for a DBMS: one set, or one per ``-nlt`` value.
+
+    A DBMS whose entry declares ``per_loading_threads`` gets a configuration per thread count
+    (``{threads}`` is that count); every other DBMS gets one without extra parameters.
+
+    :param entry: The DBMS's entry for the benchmark.
+    :param threads: The values of ``-nlt``.
+    :return: A list of parameter dicts.
+    :rtype: list
+    """
+    declared = entry.get('per_loading_threads')
+    if not declared:
+        return [{}]
+    return [descriptors.expand(declared, {'threads': int(count)}) for count in threads]
+
+
 def build_configuration(experiment, docker: str, benchmark: str, args,
-                        reset_name: str = None, loading_parameters: dict = None):
+                        reset_name: str = None, loading_parameters: dict = None,
+                        storage_configuration: str = None):
     """Create and set up the configuration of ``docker`` for ``benchmark``.
 
-    Takes script folder, reset scripts, storage, SUT/loading/evaluation parameters
-    and the limit of parallel SUT from the DBMS's entry in the cluster configuration, and
-    skips loading when ``-sl`` is given. The caller adds what the benchmark decides
-    (loading and benchmarking sizes, rounds).
+    Takes script folder, reset scripts, storage, SUT/loading/evaluation parameters,
+    the scripts an option switches to and the limit of parallel SUT from the DBMS's entry
+    in the cluster configuration, and skips loading when ``-sl`` is given. The caller adds what
+    the benchmark decides (loading and benchmarking sizes, rounds).
 
     :param experiment: The experiment the configuration belongs to.
     :param docker: Name of the DBMS.
@@ -82,6 +119,7 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
     :param args: Parsed command line.
     :param reset_name: Name of the benchmarker entry the reset scripts belong to (default: all).
     :param loading_parameters: Loading parameters the benchmark adds to the DBMS's own.
+    :param storage_configuration: Name of the storage if it is not the DBMS's ``storage_prefix``.
     :return: The configuration, already attached to the experiment.
     :raises bexhoma.system_descriptors.IncompatibleBenchmark: When the DBMS cannot run the benchmark.
     """
@@ -95,16 +133,30 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
         experiment=experiment, docker=docker, **options)
     if descriptors.base_system(dockers, docker) != docker:
         config.path_experiment_docker = descriptors.base_system(dockers, docker)
+    if dockers[docker].get('external', False):
+        config.monitoring_sut = False   # cannot be monitored since outside of K8s
+        config.set_sut_role('placeholder')   # the pod is only a client; the DBMS is outside of K8s
+        config.resource_sweep = False   # resources and storage are not set by bexhoma
+    if dockers[docker].get('script_target'):
+        config.set_script_target(dockers[docker]['script_target'])
     if entry.get('reset_scripts'):
         config.set_benchmark_resetscript(list(entry['reset_scripts']), name=reset_name)
-    config.set_storage(storageConfiguration=descriptors.storage_prefix(dockers, docker))
-    if entry.get('sut_parameters'):
-        config.set_sut_parameters(**descriptors.expand(entry['sut_parameters'], context))
+    config.set_storage(storageConfiguration=storage_configuration or descriptors.storage_prefix(dockers, docker))
+    sut_parameters = {env_name: str(context.get(option, False)).lower()
+                      for env_name, option in (entry.get('option_parameters') or {}).items()}
+    sut_parameters.update(descriptors.expand(entry.get('sut_parameters') or {}, context))
+    if sut_parameters:
+        config.set_sut_parameters(**sut_parameters)
     if entry.get('eval_parameters'):
         config.set_eval_parameters(**descriptors.expand(entry['eval_parameters'], context))
+    for option, scripts in (entry.get('option_experiment') or {}).items():
+        if context.get(option, False):
+            config.set_experiment(**scripts)
     if context.get('skip_loading', False):
         config.loading_deactivated = True
-    loading = {**descriptors.expand(entry.get('loading_parameters') or {}, context), **(loading_parameters or {})}
+    if entry.get('loading_template'):
+        config.jobtemplate_loading = entry['loading_template']
+    loading ={**descriptors.expand(entry.get('loading_parameters') or {}, context), **(loading_parameters or {})}
     if loading:
         config.set_loading_parameters(**loading)
     if entry.get('max_sut_dbms') is not None:

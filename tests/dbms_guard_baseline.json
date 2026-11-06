@@ -6,17 +6,11 @@
   "DatabaseService": 3,
   "PGBouncer": 3,
   "PostgreSQL": 11,
-  "TiDB": 6,
+  "TiDB": 5,
   "YugabyteDB": 5,
   "mariadb": 7,
   "mysql": 17,
   "postgres": 20
- },
- "bexhoma/cli_args.py": {
-  "PostgreSQL": 4,
-  "mariadb": 1,
-  "mysql": 4,
-  "postgres": 1
  },
  "bexhoma/experiments/base.py": {
   "PostgreSQL": 1,
@@ -50,31 +44,24 @@
  "example.py": {
   "PostgreSQL": 1
  },
- "hardware.py": {
-  "PostgreSQL": 1
- },
  "ssb.py": {
   "CedarDB": 4,
-  "Citus": 8,
-  "ClickHouse": 7,
-  "ClickHouseCluster": 7,
+  "Citus": 6,
+  "ClickHouse": 6,
+  "ClickHouseCluster": 6,
   "MariaDBCS": 5,
-  "MonetDB": 6,
-  "PgDuckDB": 5,
-  "PostgreSQL": 12,
-  "duckdb": 3,
+  "MonetDB": 5,
+  "PgDuckDB": 4,
+  "PostgreSQL": 9,
+  "duckdb": 2,
   "mariadb": 6,
   "mysql": 5
  },
  "test_parallel_tpch_ycsb.py": {
-  "Citus": 1,
-  "PgDuckDB": 1,
-  "PostgreSQL": 9,
-  "TiDB": 1,
-  "duckdb": 2
+  "PostgreSQL": 6,
+  "duckdb": 1
  },
  "tpcds.py": {
-  "Citus": 1,
   "ClickHouse": 6,
   "ClickHouseCluster": 4,
   "MariaDBCS": 5,
@@ -84,18 +71,7 @@
   "mysql": 6
  },
  "tpch.py": {
-  "CedarDB": 5,
-  "Citus": 7,
-  "ClickHouse": 6,
-  "ClickHouseCluster": 7,
-  "DatabaseService": 3,
-  "MariaDBCS": 5,
-  "MonetDB": 6,
-  "PgDuckDB": 6,
-  "PostgreSQL": 18,
-  "duckdb": 3,
-  "mariadb": 7,
-  "mysql": 6
+  "duckdb": 1
  },
  "ycsb.py": {
   "Cassandra": 8,
@@ -110,7 +86,7 @@
   "PGBouncer": 3,
   "PostgreSQL": 7,
   "Redis": 14,
-  "TiDB": 6,
+  "TiDB": 5,
   "Valkey": 6,
   "YugabyteDB": 5,
   "mariadb": 5,

@@ -40,6 +40,13 @@ the entry script of that benchmark needs to configure the DBMS:
     command line (:func:`expand`).
 ``max_sut_dbms``
     Number of SUT of this DBMS that may run at the same time.
+``multi_tenancy``
+    ``True`` when the DBMS takes part in the multi-tenant variants (``-mtn``/``-mtb``) of the benchmark.
+``per_loading_threads``
+    Loading parameters of a DBMS that gets one configuration per ``-nlt`` value; ``{threads}`` is that value.
+``option_experiment``
+    ``{option: {script: ..., indexing: ...}}``: init and indexing scripts the DBMS switches to when the
+    boolean command line option is set (e.g. columnar storage).
 ``experiment_yaml``
     ``True`` when a declarative ``experiment.yaml`` may name this DBMS for the benchmark:
     the builder makes one configuration of it, without workers or tenants.
@@ -47,7 +54,9 @@ the entry script of that benchmark needs to configure the DBMS:
 A DBMS may also declare ``base_system``: the DBMS whose script folder
 (``experiments/<benchmark>/<base_system>``) it reuses when that is not its own, and
 ``storage_prefix``: the name of its storage (volume), the same for every benchmark, and
-``workers``: ``True`` when the SUT takes ``-nw`` workers (shards) next to its coordinator.
+``workers``: ``True`` when the SUT takes ``-nw`` workers (shards) next to its coordinator,
+``script_target``: the component (``workers``) the reset and schema scripts run on, and
+``external``: ``True`` when the DBMS runs outside of Kubernetes (no SUT monitoring, no resources or storage).
 Its alias in the reports (:func:`alias`) and its SQL dialect, the key of the query variants
 in the query files (:func:`dialect`), are one per DBMS, ``template.alias`` and ``template.dialect``
 of its entry, whatever the benchmark.
@@ -85,6 +94,9 @@ ENTRY_KEYS = {
     'benchmarking_parameters': dict,
     'eval_parameters': dict,
     'max_sut_dbms': int,
+    'multi_tenancy': bool,
+    'per_loading_threads': dict,
+    'option_experiment': dict,
 }
 
 
@@ -300,8 +312,11 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
         prefix = docker.get('storage_prefix')
         if prefix is not None and (not isinstance(prefix, str) or not prefix):
             problems.append(f"{name}: storage_prefix must be a non-empty string, got {prefix!r}")
-        if not isinstance(docker.get('workers', False), bool):
-            problems.append(f"{name}: workers must be bool, got {docker['workers']!r}")
+        for flag in ('workers', 'external'):
+            if not isinstance(docker.get(flag, False), bool):
+                problems.append(f"{name}: {flag} must be bool, got {docker[flag]!r}")
+        if not isinstance(docker.get('script_target', ''), str):
+            problems.append(f"{name}: script_target must be a string, got {docker['script_target']!r}")
         if docker.get('benchmarks') and prefix is None:
             problems.append(f"{name}: has benchmarks but no storage_prefix")
         if docker.get('benchmarks') and not alias(dockers, name):

@@ -10,7 +10,8 @@ names of their client tools) in
 * string literals that are not docstrings,
 * identifiers (names, attributes, arguments, keyword arguments, def/class names).
 
-Docstrings and ``#`` comments are exempt: they may name a DBMS as an example.
+Docstrings, ``#`` comments and the ``help=``/``description=``/``epilog=`` texts of the command line
+(its documentation) are exempt: they may name a DBMS as an example.
 
 The existing violations are recorded per file in
 ``tests/dbms_guard_baseline.json``. The test fails when a file gets *more*
@@ -90,10 +91,21 @@ def _docstring_nodes(tree: ast.AST) -> set:
     return ids
 
 
+#: Keyword arguments whose string is documentation (of the command line), not code.
+_DOCUMENTATION_KEYWORDS = ("help", "description", "epilog")
+
+
+def _documentation_nodes(tree: ast.AST) -> set:
+    """Ids of the ``Constant`` nodes that are the value of a ``help=``/``description=``/``epilog=`` keyword."""
+    return {id(node.value) for node in ast.walk(tree)
+            if isinstance(node, ast.keyword) and node.arg in _DOCUMENTATION_KEYWORDS
+            and isinstance(node.value, ast.Constant)}
+
+
 def code_texts(source: str) -> list:
-    """Texts of a file's non-docstring string literals and identifiers."""
+    """Texts of a file's string literals and identifiers, without docstrings and command line help texts."""
     tree = ast.parse(source)
-    docstrings = _docstring_nodes(tree)
+    docstrings = _docstring_nodes(tree) | _documentation_nodes(tree)
     texts = []
     for node in ast.walk(tree):
         if isinstance(node, ast.Constant) and isinstance(node.value, str) and id(node) not in docstrings:
@@ -157,6 +169,12 @@ class NoDbmsInPythonTest(unittest.TestCase):
     def test_docstrings_and_comments_are_exempt(self) -> None:
         source = '"""PostgreSQL docs."""\n\ndef f():\n    """MySQL docs."""\n    # MariaDB comment\n    return 1\n'
         self.assertEqual(code_texts(source), ['f'])
+
+    def test_command_line_help_is_exempt(self) -> None:
+        source = "parser.add_argument('-x', help='only for PostgreSQL', choices=['A'])\nparser = ArgumentParser(description='MySQL tool')\n"
+        self.assertNotIn('only for PostgreSQL', code_texts(source))
+        self.assertNotIn('MySQL tool', code_texts(source))
+        self.assertIn('A', code_texts(source))
 
     def test_code_is_found(self) -> None:
         source = 'x = "PostgreSQL"\nclass PgDuckDB:\n    pass\nconfig.docker == "TiDB"\n'

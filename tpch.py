@@ -14,8 +14,10 @@ See LICENSE for details.
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.benchmarks.base import DIMENSION_VARIANTS, dimension_folder
-from bexhoma.system_descriptors import (default_dockers, dimension_dockers, load_dockers, refresh_template,
-                                        unsupported_dimension)
+from bexhoma.system_descriptors import (benchmark_entry, dbms_choices, default_dockers, dimension_dockers, load_dockers,
+                                        refresh_template, storage_prefix, unsupported_dimension)
+from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, limit_loading_pods,
+                                                loading_variants, selected_dockers)
 from bexhoma.cli_args import storage_suffix as _storage_suffix, set_cell_storage as _set_cell_storage
 # resource sweeps (-rc/-lc/-rr/-lr/-rst lists) are expanded for every DBMS by
 # ExperimentBase.expand_resource_cells(); kept here under its old name
@@ -54,7 +56,7 @@ def build_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: profile import, run queries, start SUT only, load data, empty tables, or summarize results', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'MariaDBCS', 'DatabaseService', 'Citus', 'CedarDB', 'PgDuckDB', 'ClickHouse', 'ClickHouseCluster'], default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=dbms_choices('tpch'), default=[], nargs='*')
     parser.add_argument('-xlit',  '--xlimit-import-table', help='import only this table (useful for partial re-loads)', default='', dest='limit_import_table')
     parser.add_argument('-xdt',   '--xdata-transfer', help='also measure data transfer volume per query', action='store_true', default=False, dest='datatransfer')
     parser.add_argument('-xqr',   '--xnum-query-runs', help='number of times to repeat each query', default=1, dest='num_run')
@@ -73,6 +75,56 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('-xve',   '--xverbose-explain', help='run and print configured EXPLAIN statements after each benchmark query (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='verbose_explain')
     parser.add_argument('-xse',   '--xstore-explain', help='run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='store_explain')
     return parser
+
+
+def tenant_ids(experiment, entry: dict) -> list:
+    """
+    The tenants a DBMS gets a configuration for.
+
+    A DBMS that takes part in the multi-tenant variants (``multi_tenancy`` in its ``tpch``
+    entry) gets one configuration per tenant for container-tenancy; every other DBMS, and
+    every other kind of tenancy, one configuration without a tenant id.
+
+    :param experiment: The experiment (``tenant_per``, ``num_tenants``).
+    :param entry: The DBMS's entry for the benchmark.
+    :return: The tenant ids, or ``[None]``.
+    :rtype: list
+    """
+    if entry.get('multi_tenancy') and experiment.tenant_per == 'container':
+        return list(range(experiment.num_tenants))
+    return [None]
+
+
+def tenant_parameters(experiment, entry: dict, tenant, storage_prefix: str) -> dict:
+    """
+    What the multi-tenant variants add to a DBMS's configuration.
+
+    :param experiment: The experiment (``tenant_per``, ``num_tenants``).
+    :param entry: The DBMS's entry for the benchmark.
+    :param tenant: The tenant id from :func:`tenant_ids`, ``None`` without container-tenancy.
+    :param storage_prefix: The ``storage_prefix`` of the DBMS.
+    :return: ``storage`` (name of the storage), ``loading``, ``benchmarking`` and ``eval`` parameters and
+        ``experiment`` (scripts) as far as they apply; empty for a DBMS without ``multi_tenancy``.
+    :rtype: dict
+    """
+    if not entry.get('multi_tenancy'):
+        return {}
+    by, number = experiment.tenant_per, experiment.num_tenants
+    tenant_id = 0 if tenant is None else tenant
+    result = {
+        'loading': {'BEXHOMA_TENANT_BY': by, 'BEXHOMA_TENANT_NUM': number, 'BEXHOMA_TENANT_ID': tenant_id},
+        'benchmarking': {'TENANT_BY': by, 'TENANT_NUM': number, 'BEXHOMA_TENANT_BY': by,
+                         'BEXHOMA_TENANT_NUM': number, 'BEXHOMA_TENANT_ID': tenant_id},
+        'eval': {'TENANT_BY': by, 'TENANT_NUM': number},
+    }
+    if tenant is not None:
+        result['storage'] = f'{storage_prefix}-{tenant}-{number}'
+        result['eval']['TENANT'] = tenant
+    elif by:
+        result['storage'] = f'{storage_prefix}-{by}-{number}'
+        if by == 'schema':
+            result['experiment'] = {'script': 'Schema_tenant', 'indexing': 'Index_and_Constraints_and_Statistics_tenant'}
+    return result
 
 
 def run(args: argparse.Namespace, on_experiment_built=None) -> None:
@@ -128,12 +180,6 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
         list_clients = [int(x) for x in list_clients if len(x) > 0]
     else:
         list_clients = []
-    # do not ingest, start benchmarking immediately
-    skip_loading = args.skip_loading
-    # how many workers (for distributed dbms)
-    num_worker = int(args.num_worker)
-    num_worker_replicas = int(args.num_worker_replicas)
-    num_worker_shards = int(args.num_worker_shards)
     # placement of the dimensions on multi-node DBMS
     dimensions = args.dimensions
     #multi_tenant_num = int(args.multi_tenant_num)
@@ -150,8 +196,6 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     store_explain = args.store_explain
     # limit to one table
     limit_import_table = args.limit_import_table
-    # columnar storage
-    init_columns = args.init_columns
     # refresh stream
     num_refresh_streams = args.num_refresh_streams
     num_refresh_stream_offset = args.num_refresh_stream_offset
@@ -172,7 +216,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
         #cluster.scale_nodegroups(node_sizes)
     else:
         cluster = clusters.Kubernetes(context=args.context)
-    cluster_name = cluster.contextdata['clustername']
+    # the DBMS -xdim applies to
+    dimension_dbms = dimension_dockers(cluster.dockers, 'tpch')
     # limit number of sut
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
@@ -259,322 +304,39 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
                 continue
             # how many in parallel?
             split_portion = int(loading_pods_total/loading_pods_split)
-            if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
-                # PostgreSQL
-                if experiment.tenant_per == 'container':
-                    for tenant in range(experiment.num_tenants):
-                        name_format = 'PostgreSQL-{cluster}-{pods}-{tenant}'
-                        #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, tenant=tenant)
-                        config = configurations.default(experiment=experiment, docker='PostgreSQL')
-                        #config.num_tenants = multi_tenant_num
-                        #config.tenant_per = multi_tenant_by
-                        # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before each
-                        # round, in each tenant's own container; only before the query
-                        # stream, which also precedes the refresh stream (-xrs)
-                        config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
-                        config.set_storage(
-                            storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)
-                            )
-                        if skip_loading:
-                            config.loading_deactivated = True
-                        config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
-                        config.set_loading_parameters(
-                            PODS_TOTAL = str(loading_pods_total),
-                            PODS_PARALLEL = str(split_portion),
-                            BEXHOMA_TENANT_BY = config.tenant_per,
-                            BEXHOMA_TENANT_NUM = config.num_tenants,
-                            BEXHOMA_TENANT_ID = tenant,
-                            )
+            # every DBMS that can run TPC-H (or the ones named by -dbms), as declared in cluster.config
+            for docker in selected_dockers(cluster.dockers, 'tpch', args.dbms):
+                entry = benchmark_entry(cluster.dockers, docker, 'tpch')
+                # a DBMS may tolerate fewer loading pods than asked for
+                pods_total, pods_parallel = limit_loading_pods(entry, docker, loading_pods_total, split_portion)
+                # a DBMS may get one configuration per number of loading threads
+                for thread_parameters in loading_variants(entry, num_loading_threads):
+                    # a DBMS in the multi-tenant variants gets one configuration per tenant (container-tenancy)
+                    for tenant in tenant_ids(experiment, entry):
+                        tenants = tenant_parameters(experiment, entry, tenant, storage_prefix(cluster.dockers, docker))
+                        config = build_configuration(
+                            experiment, docker, 'tpch', args, reset_name='tpch',
+                            loading_parameters={
+                                'PODS_TOTAL': str(pods_total),
+                                'PODS_PARALLEL': str(pods_parallel),
+                                **thread_parameters,
+                                **tenants.get('loading', {}),
+                            },
+                            storage_configuration=tenants.get('storage'))
                         config.set_benchmarking_parameters(
-                            TENANT_BY = config.tenant_per,
-                            TENANT_NUM = config.num_tenants,
-                            BEXHOMA_TENANT_BY = config.tenant_per,
-                            BEXHOMA_TENANT_NUM = config.num_tenants,
-                            BEXHOMA_TENANT_ID = tenant,
-                            )
-                        config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-                        config.set_eval_parameters(
-                            TENANT_BY = config.tenant_per,
-                            TENANT_NUM = config.num_tenants,
-                            TENANT = tenant,
-                            )
-                else:
-                    name_format = 'PostgreSQL-{cluster}-{pods}'
-                    #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                    config = configurations.default(experiment=experiment, docker='PostgreSQL')
-                    #config.num_tenants = multi_tenant_num
-                    #config.tenant_per = multi_tenant_by
-                    # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before each
-                    # round; only before the query stream, which also precedes the
-                    # refresh stream (-xrs)
-                    config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
-                    if config.tenant_per:
-                        config.set_storage(
-                            storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)
-                            )
-                    else:
-                        config.set_storage(
-                            storageConfiguration = 'postgresql'
-                            )
-                    if skip_loading:
-                        config.loading_deactivated = True
-                    config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
-                    config.set_loading_parameters(
-                        PODS_TOTAL = str(loading_pods_total),
-                        PODS_PARALLEL = str(split_portion),
-                        BEXHOMA_TENANT_BY = config.tenant_per,
-                        BEXHOMA_TENANT_NUM = config.num_tenants,
-                        BEXHOMA_TENANT_ID = 0,
-                        )
-                    config.set_benchmarking_parameters(
-                        TENANT_BY = config.tenant_per,
-                        TENANT_NUM = config.num_tenants,
-                        BEXHOMA_TENANT_BY = config.tenant_per,
-                        BEXHOMA_TENANT_NUM = config.num_tenants,
-                        BEXHOMA_TENANT_ID = 0,
-                        )
-                    config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-                    if config.tenant_per == 'schema':
-                        config.set_experiment(script='Schema_tenant')
-                        config.set_experiment(indexing='Index_and_Constraints_and_Statistics_tenant')
-                    config.set_eval_parameters(
-                        TENANT_BY = config.tenant_per,
-                        TENANT_NUM = config.num_tenants,
-                        )
-            if ("CedarDB" in args.dbms):
-                # PostgreSQL
-                name_format = 'CedarDB-{cluster}-{pods}'
-                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='CedarDB')
-                # With -ar: ANALYZE before each round; no CHECKPOINT and no counters to reset
-                config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
-                config.set_storage(
-                    storageConfiguration = 'cedardb'
-                    )
-                if skip_loading:
-                    config.loading_deactivated = True
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    )
-                config.set_benchmarking_parameters()
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("PgDuckDB" in args.dbms):
-                # PgDuckDB (pg_duckdb extension on PostgreSQL, reuses PostgreSQL's DDL scripts and loading job)
-                name_format = 'PgDuckDB-{cluster}-{pods}'
-                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='PgDuckDB')
-                config.path_experiment_docker = 'PostgreSQL'   # pg_duckdb IS PostgreSQL: reuse its DDL/init scripts
-                config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')   # reset of PostgreSQL
-                config.set_storage(
-                    storageConfiguration = 'PgDuckDB'
-                    )
-                config.sut_parameters = {
-                    # read by deploymenttemplate-PgDuckDB.yml's postStart hook to decide
-                    # whether to ALTER ROLE ... SET duckdb.force_execution
-                    'DUCKDB_FORCE_EXECUTION': str(args.duckdb_force_execution).lower(),
-                }
-                if skip_loading:
-                    config.loading_deactivated = True
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    )
-                config.set_benchmarking_parameters()
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("MonetDB" in args.dbms or len(args.dbms) == 0):
-                # MonetDB
-                name_format = 'MonetDB-{cluster}-{pods}'
-                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='MonetDB')
-                # With -ar: ANALYZE and flush of the write-ahead log before each round
-                config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
-                config.set_storage(
-                    storageConfiguration = 'monetdb'
-                    )
-                if skip_loading:
-                    config.loading_deactivated = True
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-MonetDB.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    )
-                config.set_benchmarking_parameters()
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("MariaDB" in args.dbms or len(args.dbms) == 0):
-                # MariaDB
-                name_format = 'MariaDB-{cluster}-{pods}'
-                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='MariaDB')
-                # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
-                config.set_benchmark_resetscript(['reset-tpch.sql', 'reset-flush.sh'], name='tpch')
-                config.set_storage(
-                    storageConfiguration = 'mariadb'
-                    )
-                if skip_loading:
-                    config.loading_deactivated = True
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-MariaDB.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    MYSQL_LOADING_FROM = "LOCAL",
-                    )
-                config.set_benchmarking_parameters()
-                config.set_sut_parameters(
-                    MARIADB_DATABASE = "tpch",
-                    )
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("MariaDBCS" in args.dbms):
-                # MariaDB ColumnStore (reuses MariaDB's loading job; own scripts)
-                # one loader pod, whatever -nlp says: concurrent LOAD DATA into a table fails with
-                # error 1030 and the loader goes on, so rows would be missing (cpimport works in parallel)
-                if int(loading_pods_total) > 1:
-                    print('MariaDBCS: loads with 1 pod, ignoring -nlp ' + str(loading_pods_total))
-                config = configurations.default(experiment=experiment, docker='MariaDBCS')
-                # With -ar: ANALYZE TABLE before each round; no dirty pages and no counters to reset
-                config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
-                config.set_storage(
-                    storageConfiguration = 'mariadbcs'
-                    )
-                if skip_loading:
-                    config.loading_deactivated = True
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-MariaDB.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = "1",
-                    PODS_PARALLEL = "1",
-                    MYSQL_LOADING_FROM = "LOCAL",
-                    )
-                config.set_benchmarking_parameters()
-                config.set_sut_parameters(
-                    MARIADB_DATABASE = "tpch",
-                    )
-                config.set_loading(parallel=1, num_pods=1)
-            if ("MySQL" in args.dbms or len(args.dbms) == 0):
-                # MySQL
-                for threads in num_loading_threads:
-                    pods_times_threads=int(loading_pods_total)*int(threads)
-                    name_format = 'MySQL-{cluster}-{pods_times_threads}'
-                    #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads, pods_times_threads=pods_times_threads)
-                    config = configurations.default(experiment=experiment, docker='MySQL')
-                    # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
-                    config.set_benchmark_resetscript(['reset-tpch.sql', 'reset-flush.sh'], name='tpch')
-                    config.set_storage(
-                        storageConfiguration = 'mysql'
-                        )
-                    if skip_loading:
-                        config.loading_deactivated = True
-                    config.jobtemplate_loading = "jobtemplate-loading-tpch-MySQL.yml"
-                    config.set_loading_parameters(
-                        PODS_TOTAL = str(loading_pods_total),
-                        PODS_PARALLEL = str(split_portion),
-                        MYSQL_LOADING_THREADS = int(threads),#int(num_loading_threads),#int(loading_pods_total),
-                        MYSQL_LOADING_PARALLEL = 1, # not possible from RAM disk, only filesystem
-                        )
-                    config.set_benchmarking_parameters()
-                    config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("DatabaseService" in args.dbms):# or len(args.dbms) == 0): # not included per default
-                # DatabaseService
-                name_format = 'DBS-{cluster}-{pods}'
-                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='DatabaseService')
-                config.monitoring_sut = False # cannot be monitored since outside of K8s
-                config.set_sut_role('placeholder') # the pod is only a client; the DBMS is outside of K8s
-                config.resource_sweep = False # resources and storage are not set by bexhoma
-                if skip_loading:
-                    config.loading_deactivated = True
-                config.set_storage(
-                    storageConfiguration = 'dbs'
-                    )
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    BEXHOMA_HOST = 'bexhoma-service',
-                    )
-                config.set_benchmarking_parameters()
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("Citus" in args.dbms):
-                # PostgreSQL
-                name_format = 'Citus-{cluster}-{pods}'
-                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='Citus', worker=num_worker)
-                # With -ar: VACUUM ANALYZE, then CHECKPOINT and a stats reset on the
-                # coordinator and every worker before each round
-                config.set_benchmark_resetscript(['reset-tpch.sql'], name='tpch')
-                if skip_loading:
-                    config.loading_deactivated = True
-                if init_columns:
-                    config.set_experiment(script='Schema-Columnar')
-                    config.set_experiment(indexing='Index_and_Statistics')
-                config.set_storage(
-                    storageConfiguration = 'citus'
-                    )
-                config.set_sut_parameters(
-                    BEXHOMA_REPLICAS = num_worker_replicas,
-                    BEXHOMA_SHARDS = num_worker_shards,
-                    )
-                config.set_eval_parameters(
-                    BEXHOMA_REPLICAS = num_worker_replicas,
-                    BEXHOMA_SHARDS = num_worker_shards,
-                    BEXHOMA_WORKERS = num_worker,
-                    COLUMNAR = init_columns,
-                    )
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-PostgreSQL.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    BEXHOMA_REPLICAS = num_worker_replicas,
-                    )
-                config.set_benchmarking_parameters(
-                    BEXHOMA_REPLICAS = num_worker_replicas,
-                    )
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("ClickHouse" in args.dbms):
-                # ClickHouse
-                config = configurations.default(experiment=experiment, docker='ClickHouse')
-                # With -ar: sync of the loaded parts to disk before each round
-                config.set_benchmark_resetscript(['reset-flush.sh'], name='tpch')
-                if skip_loading:
-                    config.loading_deactivated = True
-                config.set_storage(
-                    storageConfiguration = 'clickhouse'
-                    )
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-ClickHouse.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    )
-                config.set_benchmarking_parameters()
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("ClickHouseCluster" in args.dbms):
-                # ClickHouse cluster: coordinator (SUT) and num_worker shards
-                config = configurations.default(experiment=experiment, docker='ClickHouseCluster', worker=num_worker)
-                # -xdim distributed: scripts in ClickHouseCluster/distributed, and a volume of its own
-                config.path_experiment_docker = dimension_folder('ClickHouseCluster', dimensions, dimension_dockers(cluster.dockers, 'tpch'))
-                if config.path_experiment_docker != 'ClickHouseCluster':
-                    config.storage_label = f'tpch-distributed-{SF}'
-                # With -ar: rows held by the Distributed tables are sent to the shards and the
-                # replicated tables are synced (coordinator), then the loaded parts are synced
-                # to disk (every worker)
-                config.set_benchmark_resetscript(['reset-tpch.sql', 'reset-flush.sh'], name='tpch')
-                config.set_script_target('workers')
-                if skip_loading:
-                    config.loading_deactivated = True
-                config.set_storage(
-                    storageConfiguration = 'clickhousecluster'
-                    )
-                config.set_eval_parameters(
-                    BEXHOMA_WORKERS = num_worker,
-                    )
-                config.jobtemplate_loading = "jobtemplate-loading-tpch-ClickHouse.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    )
-                config.set_benchmarking_parameters()
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+                            **entry_parameters(cluster.dockers, docker, 'tpch', 'benchmarking_parameters', args),
+                            **tenants.get('benchmarking', {}))
+                        config.set_loading(parallel=pods_parallel, num_pods=pods_total)
+                        if tenants.get('eval'):
+                            config.set_eval_parameters(**tenants['eval'])
+                        if tenants.get('experiment'):
+                            config.set_experiment(**tenants['experiment'])
+                        # -xdim distributed: scripts in <DBMS>/distributed, and a volume of its own
+                        if docker in dimension_dbms:
+                            config.path_experiment_docker = dimension_folder(docker, dimensions, dimension_dbms)
+                            if config.path_experiment_docker != docker:
+                                config.storage_label = f'tpch-distributed-{SF}'
+
     ##############
     ### per-system physical-design overrides (yaml-governed runs only; see
     ### bexhoma.spec.resolve_physical_design_overrides -- never set by tpch.py's
