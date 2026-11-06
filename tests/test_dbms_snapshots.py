@@ -56,7 +56,16 @@ VARIANTS = {
     'benchmarking': ['-nbp', '2', '-nbt', '4', '-ne', '1,2'],
     'storage': ['-rst', 'shared', '-rss', '10Gi'],
     'tenants': ['-mtn', '2', '-mtb', 'database', '-nlp', '2'],
+    'flat': ['-xsv', 'flat', '-nw', '2'],
+    'distributed': ['-xdim', 'distributed', '-nw', '2', '-dbms', 'PostgreSQL', 'ClickHouse', 'ClickHouseCluster'],
 }
+
+#: Variants only some scripts have the flags for.
+ONLY_FOR = {'flat': {'ssb.py'}, 'distributed': {'tpch.py', 'ssb.py'}}
+
+#: Variant argv of a script that differs from the common one.
+SCRIPT_ARGV = {('ssb.py', 'distributed'): ['-xdim', 'distributed', '-nw', '2', '-dbms', 'PostgreSQL', 'ClickHouse',
+                                           'ClickHouseCluster', 'Citus']}
 
 #: (script, variant) pairs the script refuses by design (it exits with a usage error).
 UNSUPPORTED = {('ssb.py', 'tenants'), ('benchbase.py', 'tenants')}
@@ -147,7 +156,7 @@ class DbmsSnapshotTest(unittest.TestCase):
     """Every entry script builds, per DBMS, exactly the committed configurations."""
 
     def check(self, script: str, variant: str) -> None:
-        actual = build_snapshot(script, VARIANTS[variant])
+        actual = build_snapshot(script, SCRIPT_ARGV.get((script, variant), VARIANTS[variant]))
         path = os.path.join(_SNAPSHOT_DIR, f'{script[:-3]}-{variant}.json')
         if _UPDATE:
             os.makedirs(_SNAPSHOT_DIR, exist_ok=True)
@@ -172,7 +181,7 @@ class DbmsSnapshotTest(unittest.TestCase):
 def _add_tests():
     for script in SCRIPTS:
         for variant in VARIANTS:
-            if (script, variant) in UNSUPPORTED:
+            if (script, variant) in UNSUPPORTED or script not in ONLY_FOR.get(variant, {script}):
                 continue
 
             def test(self, script=script, variant=variant):

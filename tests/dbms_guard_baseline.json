@@ -45,30 +45,11 @@
   "PostgreSQL": 1
  },
  "ssb.py": {
-  "CedarDB": 4,
-  "Citus": 6,
-  "ClickHouse": 6,
-  "ClickHouseCluster": 6,
-  "MariaDBCS": 5,
-  "MonetDB": 5,
-  "PgDuckDB": 4,
-  "PostgreSQL": 9,
-  "duckdb": 2,
-  "mariadb": 6,
-  "mysql": 5
+  "duckdb": 1
  },
  "test_parallel_tpch_ycsb.py": {
   "PostgreSQL": 6,
   "duckdb": 1
- },
- "tpcds.py": {
-  "ClickHouse": 6,
-  "ClickHouseCluster": 4,
-  "MariaDBCS": 5,
-  "MonetDB": 6,
-  "PostgreSQL": 6,
-  "mariadb": 7,
-  "mysql": 6
  },
  "tpch.py": {
   "duckdb": 1

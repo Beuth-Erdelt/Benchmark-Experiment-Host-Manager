@@ -45,6 +45,11 @@ class ExpandTest(unittest.TestCase):
         self.assertEqual(sd.expand({'a': ['{n}', 'x{n}'], 'b': {'c': '{name}'}, 'd': 5}, self.context),
                          {'a': [3, 'x3'], 'b': {'c': 'abc'}, 'd': 5})
 
+    def test_reset_script_names_follow_the_benchmark_context(self) -> None:
+        scripts = ['reset-ssb{schema_suffix}.sql', 'reset-flush.sh']
+        self.assertEqual(sd.expand(scripts, {'schema_suffix': ''}), ['reset-ssb.sql', 'reset-flush.sh'])
+        self.assertEqual(sd.expand(scripts, {'schema_suffix': '-flat'}), ['reset-ssb-flat.sql', 'reset-flush.sh'])
+
     def test_unknown_placeholder_raises(self) -> None:
         with self.assertRaises(KeyError):
             sd.expand('{missing}', self.context)

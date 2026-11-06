@@ -105,7 +105,7 @@ def loading_variants(entry: dict, threads: list) -> list:
 
 def build_configuration(experiment, docker: str, benchmark: str, args,
                         reset_name: str = None, loading_parameters: dict = None,
-                        storage_configuration: str = None):
+                        storage_configuration: str = None, context: dict = None):
     """Create and set up the configuration of ``docker`` for ``benchmark``.
 
     Takes script folder, reset scripts, storage, SUT/loading/evaluation parameters,
@@ -120,12 +120,14 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
     :param reset_name: Name of the benchmarker entry the reset scripts belong to (default: all).
     :param loading_parameters: Loading parameters the benchmark adds to the DBMS's own.
     :param storage_configuration: Name of the storage if it is not the DBMS's ``storage_prefix``.
+    :param context: Values the benchmark adds to the command line for the descriptors' ``{placeholders}``
+        (e.g. the suffix of the reset script of the schema variant).
     :return: The configuration, already attached to the experiment.
     :raises bexhoma.system_descriptors.IncompatibleBenchmark: When the DBMS cannot run the benchmark.
     """
     dockers = experiment.cluster.dockers
     entry = descriptors.benchmark_entry(dockers, docker, benchmark)
-    context = context_of(args)
+    context = {**context_of(args), **(context or {})}
     options = {}
     if dockers[docker].get('workers', False):
         options['worker'] = context['num_worker']
@@ -140,7 +142,7 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
     if dockers[docker].get('script_target'):
         config.set_script_target(dockers[docker]['script_target'])
     if entry.get('reset_scripts'):
-        config.set_benchmark_resetscript(list(entry['reset_scripts']), name=reset_name)
+        config.set_benchmark_resetscript(descriptors.expand(list(entry['reset_scripts']), context), name=reset_name)
     config.set_storage(storageConfiguration=storage_configuration or descriptors.storage_prefix(dockers, docker))
     sut_parameters = {env_name: str(context.get(option, False)).lower()
                       for env_name, option in (entry.get('option_parameters') or {}).items()}
