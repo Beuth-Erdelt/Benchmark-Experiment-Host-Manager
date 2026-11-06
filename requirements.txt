@@ -19,3 +19,4 @@ zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
 seaborn>=0.13.2
 idna>=3.15 # not directly required, pinned by Snyk to avoid a vulnerability
 ipython # imported by bexhoma/collectors (display, Markdown)
+pyasn1>=0.6.5 # not directly required, pinned by Snyk to avoid a vulnerability
