@@ -443,6 +443,37 @@ bexhoma tpch `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus columnar  sf=10  ne=1,1  nc=2"
 
 
+####################################################
+#### Refresh Stream ################################
+####################################################
+
+
+#### TPC-H Refresh Stream (Example-TPC-H.md)
+# TPC-H with a refresh stream on Citus: the loader image of PostgreSQL applies RF1 and RF2 on the coordinator
+bexhoma tpch `
+  -dbms Citus                   <# DBMS under test #> `
+  -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nw 4                         <# number of worker nodes #> `
+  -nwr 1                        <# number of replicas per shard #> `
+  -nws 48                       <# number of shards #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -ne 3                         <# parallel query streams #> `
+  -xrs 3                        <# refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
+  -rnw $BEXHOMA_NODES_WORKER_4  <# schedule worker pods on these nodes (joined by '+') #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_citus_refresh.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus refresh  sf=1  nw=4  ne=3"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################
