@@ -190,6 +190,21 @@ class ConfigFilesTest(unittest.TestCase):
         self.assertEqual(sd.validate_descriptors(config['dockers'], set(config['volumes']),
                                                  os.path.join(_REPO, 'k8s')), [])
 
+    def test_catalog_option_flags_exist_in_tpch(self) -> None:
+        """An env-var knob of an experiment.yaml that is a tpch.py option is passed as that option's flag."""
+        import tpch
+        from bexhoma.experiments.tpch_catalog import option_flags
+        destinations = {option: action.dest for action in tpch.build_parser()._actions for option in action.option_strings}
+        dockers = _load('k8s-cluster.config')['dockers']
+        checked = 0
+        for name, docker in dockers.items():
+            declared = ((docker.get('benchmarks') or {}).get('tpch') or {}).get('option_parameters') or {}
+            for env_var, flag in option_flags(name).items():
+                with self.subTest(docker=name, env_var=env_var):
+                    self.assertEqual(destinations.get(flag), declared[env_var])
+                    checked += 1
+        self.assertGreater(checked, 0)
+
     @unittest.skipUnless(os.path.exists(os.path.join(_REPO, 'cluster.config')), 'cluster.config is local (git-ignored)')
     def test_local_config_declares_the_same(self) -> None:
         main, local = _load('k8s-cluster.config')['dockers'], _load('cluster.config')['dockers']

@@ -489,7 +489,7 @@ class CollectorBase:
             return pd.DataFrame()
         return pd.concat(results, axis=1).round(2)
 
-    def get_monitoring_timeseries_single(self, code, metric='pg_locks_count', component="benchmarking"):
+    def get_monitoring_timeseries_single(self, code, metric, component="benchmarking"):
         """
         Returns a single monitoring metric as a wide-format time-series DataFrame.
 
@@ -497,7 +497,7 @@ class CollectorBase:
 
         :param code: Experiment identifier.
         :type code: str
-        :param metric: Monitoring metric name (default ``'pg_locks_count'``).
+        :param metric: Monitoring metric name, a key of the metrics in ``cluster.config`` (e.g. ``'total_cpu_memory'``).
         :type metric: str
         :param component: Component name to filter metrics (default ``'benchmarking'``).
         :type component: str
@@ -590,7 +590,7 @@ class CollectorBase:
         df_phase['phase'] = df_phase.index
         return df_phase
 
-    def get_monitoring_timeseries_per_phase(self, code, metric='pg_locks_count', component="benchmarking"):
+    def get_monitoring_timeseries_per_phase(self, code, metric, component="benchmarking"):
         """
         Returns a single monitoring metric as a transposed time-series DataFrame.
 
@@ -599,7 +599,7 @@ class CollectorBase:
 
         :param code: Experiment identifier.
         :type code: str
-        :param metric: Monitoring metric name (default ``'pg_locks_count'``).
+        :param metric: Monitoring metric name, a key of the metrics in ``cluster.config`` (e.g. ``'total_cpu_memory'``).
         :type metric: str
         :param component: Component name to filter metrics (default ``'benchmarking'``).
         :type component: str
@@ -748,7 +748,7 @@ class CollectorBase:
             print("add_metadata: combine failed!")
             return pd.DataFrame()
 
-    def get_monitoring_timeseries_all(self, metric='pg_locks_count', component="benchmarking"):
+    def get_monitoring_timeseries_all(self, metric, component="benchmarking"):
         """
         Collects long-format time-series data for a given metric across all experiment codes.
 
@@ -757,7 +757,7 @@ class CollectorBase:
         is grouped by ``(timestamp, code, phase, experiment_run, client, type_tenants,
         vol_tenants, num_tenants, metric, component)`` and summed.
 
-        :param metric: Monitoring metric name (default ``'pg_locks_count'``).
+        :param metric: Monitoring metric name, a key of the metrics in ``cluster.config`` (e.g. ``'total_cpu_memory'``).
         :type metric: str
         :param component: Component to read the metric for (e.g. ``'benchmarking'``,
             ``'loading'``); also stored as a label column (default ``'benchmarking'``).
@@ -793,7 +793,7 @@ class CollectorBase:
         )
         return df_sum
 
-    def get_monitoring_timeseries_all_multitenant(self, metric='pg_locks_count', component="benchmarking"):
+    def get_monitoring_timeseries_all_multitenant(self, metric, component="benchmarking"):
         """
         Collects long-format multi-tenant time-series data for a given metric across all experiment codes.
 
@@ -805,7 +805,7 @@ class CollectorBase:
         The final DataFrame is grouped by ``(timestamp, code, experiment_run, client,
         type_tenants, vol_tenants, num_tenants, metric, component)`` and summed.
 
-        :param metric: Monitoring metric name (default ``'pg_locks_count'``).
+        :param metric: Monitoring metric name, a key of the metrics in ``cluster.config`` (e.g. ``'total_cpu_memory'``).
         :type metric: str
         :param component: Component name used as a label column (default ``'benchmarking'``).
         :type component: str
