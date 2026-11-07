@@ -7,7 +7,7 @@ corresponding log / summary file in logs_tests/ and display:
   - experiment code
   - duration
   - bexhoma version
-  - TEST-failed lines
+  - TEST-failed and TEST-warning lines
 
 Run from the repo root:
     python scripts/scan-docs.py
@@ -34,7 +34,7 @@ _RE_CODE = re.compile(r'(?:^\s*\*\s+|^\s{2,})Code:\s+(\d+)', re.MULTILINE)
 _RE_DURATION = re.compile(r'(?:^\s*\*\s+|^\s{2,})Duration:\s+([\d]+s)', re.MULTILINE)
 _RE_VERSION = re.compile(r'bexhoma version (\d+(?:\.\d+)*)')
 # Newer logs prefix the line with "* ", older summaries do not.
-_RE_TEST = re.compile(r'^(?:\*\s+)?(TEST (?:passed|failed):[^\n]+)', re.MULTILINE)
+_RE_TEST = re.compile(r'^(?:\*\s+)?(TEST (?:passed|failed|warning):[^\n]+)', re.MULTILINE)
 
 
 def extract_metadata(text: str) -> dict:
@@ -114,15 +114,17 @@ def print_table(rows: list[tuple], col_widths: list[int], header: list[str]) -> 
 
 
 def print_report(all_records: list[dict]) -> None:
-    """Print a formatted table of all log references, then failed-test details."""
-    HEADERS = ["Doc", "Log file", "Code", "Duration", "Version", "OK", "FAIL", "St"]
+    """Print a formatted table of all log references, then failed-test and warning details."""
+    HEADERS = ["Doc", "Log file", "Code", "Duration", "Version", "OK", "FAIL", "WARN", "St"]
 
     table_rows: list[tuple] = []
     failures: list[dict] = []
+    warnings: list[dict] = []
 
     for rec in all_records:
         failed = [t for t in rec["tests"] if t.startswith("TEST failed")]
         passed = [t for t in rec["tests"] if t.startswith("TEST passed")]
+        warned = [t for t in rec["tests"] if t.startswith("TEST warning")]
         table_rows.append((
             rec["doc"],
             rec["logfile"],
@@ -131,12 +133,15 @@ def print_report(all_records: list[dict]) -> None:
             rec["version"] or "—",
             str(len(passed)) if passed else "—",
             str(len(failed) + (1 if rec.get("crashed") else 0)) if (failed or rec.get("crashed")) else "",
+            str(len(warned)) if warned else "",
             _status_flags(rec),
         ))
         if rec.get("crashed"):
             failed = failed + ["log contains a Python traceback (evaluation crashed)"]
         if failed:
             failures.append({"logfile": rec["logfile"], "doc": rec["doc"], "failed": failed})
+        if warned:
+            warnings.append({"logfile": rec["logfile"], "doc": rec["doc"], "warned": warned})
 
     col_widths = [
         max(len(HEADERS[i]), max(len(str(row[i])) for row in table_rows))
@@ -152,6 +157,14 @@ def print_report(all_records: list[dict]) -> None:
             print(f"\n  {entry['logfile']}  ({entry['doc']})")
             for msg in entry["failed"]:
                 print(f"    ✗ {msg}")
+
+    if warnings:
+        print(f"\n\nTests with warnings (need judgement, not failures)")
+        print("-" * 70)
+        for entry in warnings:
+            print(f"\n  {entry['logfile']}  ({entry['doc']})")
+            for msg in entry["warned"]:
+                print(f"    ! {msg}")
 
     missing = sorted({rec["logfile"] for rec in all_records if not rec["log_exists"]})
     if missing:

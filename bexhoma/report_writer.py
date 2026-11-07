@@ -75,6 +75,7 @@ from bexhoma import evaluators
 from bexhoma import failure_timeline
 from bexhoma import missing_metrics
 from bexhoma import sut_restarts
+from bexhoma import test_status
 from bexhoma.monitoring_math import counter_total, read_connections, scoped_job_connections
 from bexhoma.__version__ import __version__ as _BEXHOMA_VERSION
 from bexhoma.benchmarks.base import Section
@@ -84,7 +85,7 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.12.0"
+SCHEMA_VERSION = "1.13.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
@@ -240,11 +241,14 @@ quoting any number, not after:
 | `Init scripts without errors` | A loading script of the listed configurations failed or was missing (schema, constraints, indexes, statistics, the final checks that restore load relaxations), or a reused volume was loaded with failed scripts: tables, keys or indexes may be missing, statistics stale or relaxations still active - their results may not describe the intended setup | the `bexhoma-loading-<configuration>-<script>-*.stderr.log` files and the summary's Init Scripts with Errors |
 | `Geo Times [s]` / `Power@Size [~Q/h]` / `Throughput@Size` contains 0 or NaN | That metric column is incomplete for at least one row - for DBMSBenchmarker usually because a query failed somewhere, which removes it from every row; the note under the Per Phase table says which | `benchmarking.md`'s Per Phase table, Query Completion per Phase, and Per Phase (Complete Phases Only) for the phases that still measured every query |
 | `{component} contains 0 or NaN in CPU [CPUs]` | Monitoring data for that component/phase | `monitoring.md` |
-| `Monitoring metrics missing` | The listed metrics returned no data from Prometheus and were filled with zeros - their values in `monitoring.md` are not measurements. Skipped (not failed) when every gap has an `expected` reason | `monitoring.md`'s Missing Metrics |
+| `Monitoring metrics missing` | The listed metrics returned no data from Prometheus and were filled with zeros - their values in `monitoring.md` are not measurements. Skipped (not failed) when every gap has an `expected` reason; a warning when the remaining gaps have a `warning` reason (a metric whose series needs activity, e.g. disk I/O, is missing for pods that were scraped) | `monitoring.md`'s Missing Metrics |
 
 A **skipped** test (e.g. monitoring skipped because data was pre-existing, or
 a phase shorter than the Prometheus scrape interval) does not invalidate
-anything - only a **failed** row does.
+anything - only a **failed** row does. A **warning** does not invalidate
+anything either, but needs judgement: the label says what was not seen (e.g. no
+disk I/O of a DBMS component) - plausible for an in-memory DBMS, a reason to
+check the setup for one that stores its data on disk.
 
 One skipped test still says something about the numbers:
 `Loading measured in this experiment (storage reused, ...)` lists the
@@ -606,6 +610,10 @@ def _build_monitoring_sections(
                    "scrapes it needs, so its CPU is shown as n/a; "
                    f"`{missing_metrics.EXPECTED_SHORT_JOB}` means the same for the pods of a job "
                    "(loader, data generator, benchmarker), which ran only part of the phase. "
+                   f"Where `warning` says `{missing_metrics.WARNING_NO_ACTIVITY}`, the metric only has a "
+                   "series once the component did something (e.g. disk I/O) and the same pods have CPU "
+                   "data: the zeros are probably correct, which needs judgement (an in-memory DBMS does "
+                   "no disk I/O, one that stores its data on disk should). "
                    "`source` is the log that reported "
                    "it (see files.md)."],
         ))
@@ -869,14 +877,13 @@ def _build_tests_lines(test_results: list[tuple]) -> list[str]:
     Render ``experiment._test_results`` as a Markdown table.
 
     :param test_results: List of ``(passed, label)`` tuples; ``passed`` is
-        ``True``/``False``/``None`` (``None`` = skipped).
+        ``True``/``False``/``None``/:data:`bexhoma.test_status.WARNING` (see :mod:`bexhoma.test_status`).
     :return: Markdown lines for the ``### Tests`` table.
     :rtype: list[str]
     """
     lines = ["### Tests", "", "| status | label |", "|---|---|"]
     for passed, label in test_results:
-        status = "skipped" if passed is None else ("passed" if passed else "failed")
-        lines.append(f"| {status} | {label} |")
+        lines.append(f"| {test_status.status_of(passed)} | {label} |")
     return lines
 
 
@@ -933,8 +940,9 @@ def _build_health_summary_lines(
                      "Per Phase (Complete Phases Only) for their metrics")
         lines.append(line)
     if missing is not None:
-        unexpected = [entry for entry in missing if not entry.expected]
+        unexpected = [entry for entry in missing if not entry.expected and not entry.warning]
         expected = [entry for entry in missing if entry.expected]
+        warned = [entry for entry in missing if entry.warning]
         if not unexpected:
             lines.append("- Missing monitoring metrics: none")
         else:
@@ -945,6 +953,10 @@ def _build_health_summary_lines(
             reasons = "; ".join(sorted({entry.expected for entry in expected}))
             lines.append(f"- Expected monitoring gaps: {len(expected)} ({reasons}) - the zeros are correct, "
                          "see [monitoring.md](monitoring.md)'s Missing Metrics")
+        if warned:
+            titles = sorted({f"{entry.title} of {entry.component}" for entry in warned})
+            lines.append(f"- Monitoring gaps that need judgement: {len(warned)} ({', '.join(titles)}) - "
+                         f"{missing_metrics.WARNING_NO_ACTIVITY}, see [monitoring.md](monitoring.md)'s Missing Metrics")
     return lines
 
 
@@ -1320,9 +1332,7 @@ def _write_index_md(
     :param timeline_lines: Pre-rendered ``### Failure Timeline`` block (see
         :func:`failure_timeline.build_timeline_lines`), or ``None`` for none.
     """
-    passed = sum(1 for p, _ in experiment._test_results if p is True)
-    failed = sum(1 for p, _ in experiment._test_results if p is False)
-    skipped = sum(1 for p, _ in experiment._test_results if p is None)
+    counts = test_status.count_statuses(experiment._test_results)
     frontmatter = _frontmatter({
         "schema_version": SCHEMA_VERSION,
         "bexhoma_version": _BEXHOMA_VERSION,
@@ -1331,7 +1341,7 @@ def _write_index_md(
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "benchmarking_active": experiment.benchmarking_is_active(),
         "loading_active": experiment.loading_is_active(),
-        "overall_status": {"passed": passed, "failed": failed, "skipped": skipped},
+        "overall_status": counts,
         "sections": [{"title": s["title"], "file": s["file"]} for s in written_sections],
     })
     lines: list[str] = []

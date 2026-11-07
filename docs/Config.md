@@ -152,6 +152,8 @@ Each entry has:
 | `metric` | `ratio` | Aggregated as max over the interval |
 | `query` | PromQL string | Placeholders: `{configuration}`, `{experiment}`, `{pods}` (pod regex of the query set, see [Monitoring.md](Monitoring.md#pods-of-a-phase)), `{namespace}`, `{host}`, `{gpuid}`, `{database}`, `{schema}`; literal PromQL braces are written `{{ }}` |
 | `sparse` | `True` (optional) | The metric only has a Prometheus series while its value is non-zero (e.g. backends waiting on locks, or CPU throttling of a container without a CPU limit). No data then means 0, so the report lists the gap as expected instead of failing the "No monitoring metrics missing" test |
+| `sparse_components` | list of component types (optional) | Like `sparse`, but only for these components, e.g. `['loader', 'benchmarker', ...]` for the filesystem I/O of client containers |
+| `activity_dependent` | key of another metric (optional) | The metric only has a series once the component did something, e.g. disk I/O (`total_fs_read`, `total_fs_write`). A gap is then a warning, not a failure, when the named metric (`total_cpu_util`) has data for the same connection and component: the pods were scraped, they just did no I/O. See [Monitoring.md](Monitoring.md#missing-metrics) |
 
 The default set of hardware metrics covers CPU utilization, CPU throttle, memory (working set and including page cache), network RX/TX, filesystem read/write, and, for the whole node rather than the container, I/O wait and per-core utilization (maximum and variance).
 Pick `metric` by what the query returns, not by the underlying series: a query that already applies `rate()` returns a value per second and is a `gauge`; only a query returning an ever-growing total is a `counter`.

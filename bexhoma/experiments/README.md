@@ -714,8 +714,9 @@ To add any new secondary benchmarker that runs in parallel with the query stream
 `show_summary(experiment, write_report=False)` — the default — behaves exactly as
 before the 2026-07-23 refactor: `render_stdout(document)` reproduces the historical
 `print()` sequence byte-for-byte, and `experiment._test_results` (populated by
-`_record_test()`/`_record_skipped_test()`/`_test_column()`, printed by
-`_print_test_summary()`) still lives only for the duration of the call. Pass
+`_record_test()`/`_record_skipped_test()`/`_record_warning_test()`/`_test_column()`, printed by
+`_print_test_summary()` as `* TEST passed|failed|skipped|warning: <label>`, see
+`bexhoma/test_status.py`) still lives only for the duration of the call. Pass
 `write_report=True` (wired to the `-rp`/`--report` CLI flag on every entry script and
 on `bexhoma summary`) to additionally persist a tiered Markdown report — see §9h.
 

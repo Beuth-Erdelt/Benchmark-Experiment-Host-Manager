@@ -291,8 +291,14 @@ Some gaps are expected, and their zeros are correct:
 | `series exists only while non-zero` | The metric is marked `sparse: True` in `cluster.config`: its series only exists while the value is non-zero (e.g. backends waiting on locks, or CPU throttling of a container without a CPU limit) |
 | `phase shorter than scrape interval` | The fetch's window was too short for the scrapes the component needs (see [Short phases](#short-phases)), so no scrape may have landed inside it |
 
-The test `No monitoring metrics missing` fails only on unexpected gaps; when every gap is expected it is recorded as skipped, with the reasons.
-The report lists all gaps in `monitoring.md`'s Missing Metrics, with an `expected` column, and counts expected and unexpected gaps separately in `index.md`'s Health Summary (see [AgentReport](AgentReport.md)).
+Some gaps need judgement, and their zeros are probably correct:
+
+| Reason | When |
+|---|---|
+| `no activity seen, the pods were scraped` | The metric is marked `activity_dependent` in `cluster.config` (filesystem read and write: cAdvisor reports a device only after I/O on it), and the metric it names, CPU utilization, has data for the same connection and component. The pods were scraped, they just did no disk I/O. That is plausible for an in-memory DBMS on ephemeral storage (e.g. a short load into Dragonfly), and a reason to check the setup for a DBMS that stores its data on disk. When CPU utilization is missing too, the pods were not scraped and the gap stays unexpected |
+
+The test `No monitoring metrics missing` fails only on unexpected gaps. When every remaining gap needs judgement it is a warning (`* TEST warning: Monitoring metrics missing (...)`, naming the metrics and components), and when every gap is expected it is recorded as skipped, with the reasons.
+The report lists all gaps in `monitoring.md`'s Missing Metrics, with an `expected` and a `warning` column, and counts expected gaps, gaps that need judgement and unexpected gaps separately in `index.md`'s Health Summary (see [AgentReport](AgentReport.md)).
 
 ---
 
