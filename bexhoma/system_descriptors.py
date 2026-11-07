@@ -10,7 +10,8 @@ the entry script of that benchmark needs to configure the DBMS:
 ``default``
     ``True`` when the DBMS runs if ``-dbms`` is not given (absent: ``False``).
 ``loading_template``
-    Name of the loading job template in ``k8s/`` (absent: the benchmark's own default).
+    Name of the loading job template in ``k8s/``. There is no default: without it, a DBMS is refused
+    when loading is on, unless the benchmark brings a loading job of its own (HammerDB, Benchbase, YCSB).
 ``dimensions``
     ``True`` when ``-xdim`` (placement of the dimension tables of a star or snowflake
     schema on a multi-node DBMS) applies to this DBMS: its ``distributed`` variant has
@@ -57,16 +58,21 @@ the entry script of that benchmark needs to configure the DBMS:
 ``experiment_yaml``
     ``True`` when a declarative ``experiment.yaml`` may name this DBMS for the benchmark:
     the builder makes one configuration of it, without workers or tenants.
+``variants``
+    ``[{'when': <expression>, <entry keys>}]``: changes that depend on the command line, applied
+    by :func:`effective_entry`. Besides the keys above, a variant (or the entry itself) may set
+    ``docker`` (build the configuration from another ``dockers`` entry, e.g. a cluster mode),
+    ``sut_template``, ``storage_prefix``, ``worker_count`` (an expression for the number of worker
+    pods, e.g. ``'num_worker * (1 + num_worker_replicas)'``) and ``sut_attributes``.
 
 A DBMS may also declare ``base_system``: the DBMS whose script folder
 (``experiments/<benchmark>/<base_system>``) it reuses when that is not its own, and
 ``storage_prefix``: the name of its storage (volume), the same for every benchmark, and
 ``workers``: ``True`` when the SUT takes ``-nw`` workers (shards) next to its coordinator,
 ``sut_attributes``: how the SUT of the DBMS is set up, a dict of ``key: value`` applied to the configuration:
-``sut_role``, ``pvc_selector``, ``script_target``, ``data_components`` and ``resources`` call the setter of that
-name, ``statefulsets`` (``{name: pods}``) records stateful sets that something else manages (Helm), every other
-key is an attribute of the configuration (``monitoring_sut``, ``resource_sweep``, ``sut_has_pool``,
-``sut_service_name``, ...). Values are expanded with the command line (:func:`expand`).
+the keys of :data:`SUT_SETTERS` call the setter of that name, ``statefulsets`` (``{name: pods}``) records stateful
+sets that something else manages (Helm), and the keys of :data:`SUT_ATTRIBUTES` are attributes of the
+configuration; any other key is refused. Values are expanded with the command line (:func:`expand`).
 Its alias in the reports (:func:`alias`) and its SQL dialect, the key of the query variants
 in the query files (:func:`dialect`), are one per DBMS, ``template.alias`` and ``template.dialect``
 of its entry, whatever the benchmark.
@@ -83,7 +89,7 @@ import ast
 import operator
 import os
 
-__all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "evaluate", "effective_entry", "TENANCY_MODES", "unsupported_tenancy", "load_dockers", "dbms_choices", "benchmark_entry", "compatible_dockers",
+__all__ = ["IncompatibleBenchmark", "ENTRY_KEYS", "SUT_SETTERS", "SUT_ATTRIBUTES", "SUT_STATEFULSETS","evaluate", "effective_entry", "TENANCY_MODES", "unsupported_tenancy", "load_dockers", "dbms_choices", "benchmark_entry", "compatible_dockers",
            "default_dockers", "dimension_dockers", "unsupported_dimension", "notes", "base_system",
            "storage_prefix", "alias", "dialect", "experiment_yaml_dockers", "refresh_template", "expand",
            "validate_descriptors"]
@@ -117,6 +123,22 @@ ENTRY_KEYS = {
     'worker_count': str,
     'sut_attributes': dict,
 }
+
+#: Keys of ``sut_attributes`` that call a setter of the configuration (a dict is passed as keyword arguments).
+SUT_SETTERS = {
+    'sut_role': 'set_sut_role',
+    'pvc_selector': 'set_pvc_selector',
+    'script_target': 'set_script_target',
+    'data_components': 'set_data_components',
+    'resources': 'set_resources',
+}
+
+#: Keys of ``sut_attributes`` that are set as attributes of the configuration.
+SUT_ATTRIBUTES = ('monitoring_sut', 'resource_sweep', 'statefulset_name', 'sut_container_name', 'sut_has_pool',
+                  'sut_pod_name', 'sut_service_name', 'worker_metric_strip_container')
+
+#: Key of ``sut_attributes`` that records stateful sets something else manages (``{name: pods}``).
+SUT_STATEFULSETS = 'statefulsets'
 
 #: Dict-valued entry keys whose values a variant merges into the entry's (any other key is replaced).
 MERGED_KEYS = ('loading_parameters', 'benchmarking_parameters', 'sut_parameters', 'eval_parameters',
@@ -433,7 +455,14 @@ def experiment_yaml_dockers(dockers: dict, benchmark: str) -> list:
 
 
 def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = '') -> list:
-    """Check the ``benchmarks`` and ``base_system`` declarations of all DBMS.
+    """Check the descriptors of all DBMS: what the module docstring describes.
+
+    Per DBMS: ``base_system`` names a DBMS of ``dockers``, ``storage_prefix`` is a non-empty string,
+    ``workers`` is a bool, the keys of ``sut_attributes`` are known, and a DBMS with ``benchmarks``
+    has a ``storage_prefix`` and a ``template.alias``. Per benchmark entry and per variant: the
+    benchmark exists, every key is known and has its type (:data:`ENTRY_KEYS`), notes have a text,
+    ``when`` expressions are allowed (:func:`evaluate`), tenancy modes are known, and the job
+    templates exist in ``template_folder``.
 
     :param dockers: The ``dockers`` section of the cluster configuration.
     :param benchmarks: The benchmark keys that exist (the keys of ``volumes``).
@@ -444,20 +473,7 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
     """
     problems = []
     for name, docker in dockers.items():
-        base = docker.get('base_system')
-        if base is not None and base not in dockers:
-            problems.append(f"{name}: base_system {base!r} is not a DBMS of dockers")
-        prefix = docker.get('storage_prefix')
-        if prefix is not None and (not isinstance(prefix, str) or not prefix):
-            problems.append(f"{name}: storage_prefix must be a non-empty string, got {prefix!r}")
-        if not isinstance(docker.get('workers', False), bool):
-            problems.append(f"{name}: workers must be bool, got {docker['workers']!r}")
-        if not isinstance(docker.get('sut_attributes', {}), dict):
-            problems.append(f"{name}: sut_attributes must be a dict, got {docker['sut_attributes']!r}")
-        if docker.get('benchmarks') and prefix is None:
-            problems.append(f"{name}: has benchmarks but no storage_prefix")
-        if docker.get('benchmarks') and not alias(dockers, name):
-            problems.append(f"{name}: has benchmarks but no template.alias")
+        problems += _docker_problems(dockers, name)
         for benchmark, entry in (docker.get('benchmarks') or {}).items():
             where = f"{name}.benchmarks.{benchmark}"
             if benchmark not in benchmarks:
@@ -465,39 +481,84 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
             if not isinstance(entry, dict):
                 problems.append(f"{where}: must be a dict")
                 continue
-            for key, value in entry.items():
-                if key not in ENTRY_KEYS:
-                    problems.append(f"{where}: unknown key {key!r} (allowed: {', '.join(ENTRY_KEYS)})")
-                elif not (isinstance(value, ENTRY_KEYS[key]) or (isinstance(value, dict) and '$by' in value)):
-                    problems.append(f"{where}.{key}: must be {ENTRY_KEYS[key].__name__}, got {value!r}")
-                elif ENTRY_KEYS[key] is str and not value:
-                    problems.append(f"{where}.{key}: must not be empty (leave the key out)")
-            for note in entry.get('notes') or []:
-                if not isinstance(note, dict) or not isinstance(note.get('text'), str) or not note['text']:
-                    problems.append(f"{where}.notes: every note needs a non-empty 'text'")
-                elif not isinstance(note.get('when', ''), str):
-                    problems.append(f"{where}.notes: 'when' must be a string")
-            for number, variant in enumerate(entry.get('variants') or [], start=1):
-                label = f"{where}.variants[{number}]"
-                if not isinstance(variant, dict) or not isinstance(variant.get('when'), str):
-                    problems.append(f"{label}: needs a 'when' expression")
-                    continue
-                try:
-                    evaluate(variant['when'], _names_of(variant['when']))
-                except (ValueError, SyntaxError) as error:
-                    problems.append(f"{label}.when: {error}")
-                unknown = [key for key in variant if key != 'when' and (key not in ENTRY_KEYS or key == 'variants')]
-                if unknown:
-                    problems.append(f"{label}: unknown key {', '.join(map(repr, unknown))}")
-            modes = entry.get('multi_tenancy')
-            if isinstance(modes, list):
-                unknown = [mode for mode in modes if mode not in TENANCY_MODES]
-                if unknown:
-                    problems.append(f"{where}.multi_tenancy: unknown mode {', '.join(map(repr, unknown))} "
-                                    f"(allowed: {', '.join(TENANCY_MODES)})")
-            for key in ('loading_template', 'refresh_template'):
-                template = entry.get(key)
-                if template_folder and isinstance(template, str) and template \
-                        and not os.path.isfile(os.path.join(template_folder, template)):
-                    problems.append(f"{where}.{key}: {template} not found in {template_folder}")
+            problems += _entry_problems(where, entry, template_folder)
     return problems
+
+
+def _docker_problems(dockers: dict, name: str) -> list:
+    """The problems of the DBMS-level keys of ``dockers[name]`` (see :func:`validate_descriptors`)."""
+    docker, problems = dockers[name], []
+    base = docker.get('base_system')
+    if base is not None and base not in dockers:
+        problems.append(f"{name}: base_system {base!r} is not a DBMS of dockers")
+    prefix = docker.get('storage_prefix')
+    if prefix is not None and (not isinstance(prefix, str) or not prefix):
+        problems.append(f"{name}: storage_prefix must be a non-empty string, got {prefix!r}")
+    if not isinstance(docker.get('workers', False), bool):
+        problems.append(f"{name}: workers must be bool, got {docker['workers']!r}")
+    if not isinstance(docker.get('sut_attributes', {}), dict):
+        problems.append(f"{name}: sut_attributes must be a dict, got {docker['sut_attributes']!r}")
+    else:
+        problems += _sut_attribute_problems(f"{name}.sut_attributes", docker.get('sut_attributes') or {})
+    if docker.get('benchmarks') and prefix is None:
+        problems.append(f"{name}: has benchmarks but no storage_prefix")
+    if docker.get('benchmarks') and not alias(dockers, name):
+        problems.append(f"{name}: has benchmarks but no template.alias")
+    return problems
+
+
+def _entry_problems(where: str, entry: dict, template_folder: str) -> list:
+    """The problems of one benchmark entry, ``where`` names it in the messages (see :func:`validate_descriptors`)."""
+    problems = _key_problems(where, entry)
+    for note in entry.get('notes') or []:
+        if not isinstance(note, dict) or not isinstance(note.get('text'), str) or not note['text']:
+            problems.append(f"{where}.notes: every note needs a non-empty 'text'")
+        elif not isinstance(note.get('when', ''), str):
+            problems.append(f"{where}.notes: 'when' must be a string")
+    for number, variant in enumerate(entry.get('variants') or [], start=1):
+        label = f"{where}.variants[{number}]"
+        if not isinstance(variant, dict) or not isinstance(variant.get('when'), str):
+            problems.append(f"{label}: needs a 'when' expression")
+            continue
+        # the expression is checked with every name it uses set to 1, there is no command line here
+        try:
+            evaluate(variant['when'], _names_of(variant['when']))
+        except (ValueError, SyntaxError) as error:
+            problems.append(f"{label}.when: {error}")
+        # a variant takes the keys of an entry, with their types, but no variants of its own
+        if 'variants' in variant:
+            problems.append(f"{label}: unknown key 'variants' (a variant has no variants)")
+        problems += _key_problems(label, {key: value for key, value in variant.items() if key not in ('when', 'variants')})
+    modes = entry.get('multi_tenancy')
+    if isinstance(modes, list):
+        unknown = [mode for mode in modes if mode not in TENANCY_MODES]
+        if unknown:
+            problems.append(f"{where}.multi_tenancy: unknown mode {', '.join(map(repr, unknown))} "
+                            f"(allowed: {', '.join(TENANCY_MODES)})")
+    for key in ('loading_template', 'refresh_template'):
+        template = entry.get(key)
+        if template_folder and isinstance(template, str) and template \
+                and not os.path.isfile(os.path.join(template_folder, template)):
+            problems.append(f"{where}.{key}: {template} not found in {template_folder}")
+    return problems
+
+
+def _key_problems(where: str, entry: dict) -> list:
+    """Unknown keys and wrong types of an entry or variant (:data:`ENTRY_KEYS`; a ``$by`` selector stands for any type)."""
+    problems = []
+    for key, value in entry.items():
+        if key not in ENTRY_KEYS:
+            problems.append(f"{where}: unknown key {key!r} (allowed: {', '.join(ENTRY_KEYS)})")
+        elif not (isinstance(value, ENTRY_KEYS[key]) or (isinstance(value, dict) and '$by' in value)):
+            problems.append(f"{where}.{key}: must be {ENTRY_KEYS[key].__name__}, got {value!r}")
+        elif ENTRY_KEYS[key] is str and not value:
+            problems.append(f"{where}.{key}: must not be empty (leave the key out)")
+        elif key == 'sut_attributes':
+            problems += _sut_attribute_problems(f"{where}.sut_attributes", value)
+    return problems
+
+
+def _sut_attribute_problems(where: str, attributes: dict) -> list:
+    """Keys of ``sut_attributes`` that are neither a setter, ``statefulsets`` nor a known attribute."""
+    known = (*SUT_SETTERS, SUT_STATEFULSETS, *SUT_ATTRIBUTES)
+    return [f"{where}: unknown key {key!r} (allowed: {', '.join(known)})" for key in attributes if key not in known]

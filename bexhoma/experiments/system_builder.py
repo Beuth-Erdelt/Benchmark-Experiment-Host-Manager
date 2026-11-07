@@ -17,19 +17,10 @@ from bexhoma import configurations
 from bexhoma import system_descriptors as descriptors
 
 __all__ = ["context_of", "selected_dockers", "entry_of", "set_loading_template", "entry_parameters", "limit_loading_pods", "loading_variants",
-           "pooling_variants", "apply_sut_attributes", "tenant_ids", "tenancy_error", "build_configuration"]
+           "pooling_variants", "apply_sut_attributes", "tenant_ids", "tenancy_error", "loading_layouts", "build_configuration"]
 
 #: Command line options that are numbers in the descriptors' placeholders.
 _INTEGER_OPTIONS = ("num_worker", "num_worker_replicas", "num_worker_shards", "num_sut_replicas", "num_pd_nodes")
-
-#: Keys of ``sut_attributes`` that call a setter of the configuration (a dict is passed as keyword arguments).
-_SUT_SETTERS = {
-    "sut_role": "set_sut_role",
-    "pvc_selector": "set_pvc_selector",
-    "script_target": "set_script_target",
-    "data_components": "set_data_components",
-    "resources": "set_resources",
-}
 
 
 def context_of(args) -> dict:
@@ -44,6 +35,16 @@ def context_of(args) -> dict:
         if name in context:
             context[name] = int(context[name])
     return context
+
+
+def _context(args, context: dict = None) -> dict:
+    """The command line (:func:`context_of`) with the values a benchmark adds (they win)."""
+    return {**context_of(args), **(context or {})}
+
+
+def _tenancy(args) -> tuple:
+    """``(-mtn, -mtb)`` of the command line, ``(0, '')`` when it has no tenancy options."""
+    return getattr(args, 'multi_tenant_num', 0) or 0, getattr(args, 'multi_tenant_by', '') or ''
 
 
 def _selection(dockers: dict, benchmark: str, dbms: list) -> list:
@@ -68,8 +69,7 @@ def tenancy_error(benchmark: str, args, clusterconfig: str = 'cluster.config') -
     """
     dockers = descriptors.load_dockers(clusterconfig)
     return descriptors.unsupported_tenancy(
-        dockers, benchmark, _selection(dockers, benchmark, list(getattr(args, 'dbms', None) or [])),
-        getattr(args, 'multi_tenant_num', 0) or 0, getattr(args, 'multi_tenant_by', '') or '')
+        dockers, benchmark, _selection(dockers, benchmark, list(getattr(args, 'dbms', None) or [])), *_tenancy(args))
 
 
 def selected_dockers(dockers: dict, benchmark: str, dbms: list, args=None) -> list:
@@ -88,12 +88,12 @@ def selected_dockers(dockers: dict, benchmark: str, dbms: list, args=None) -> li
     :raises bexhoma.system_descriptors.IncompatibleBenchmark: When a named DBMS cannot run the benchmark,
         or cannot run it multi-tenant.
     """
+    # a named DBMS that cannot run the benchmark is an error, not silently left out
     for name in dbms or []:
         descriptors.benchmark_entry(dockers, name, benchmark)
     selected = _selection(dockers, benchmark, dbms)
     if args is not None:
-        reason = descriptors.unsupported_tenancy(
-            dockers, benchmark, selected, getattr(args, 'multi_tenant_num', 0) or 0, getattr(args, 'multi_tenant_by', '') or '')
+        reason = descriptors.unsupported_tenancy(dockers, benchmark, selected, *_tenancy(args))
         if reason:
             raise descriptors.IncompatibleBenchmark(reason)
     return selected
@@ -107,8 +107,7 @@ def entry_of(dockers: dict, docker: str, benchmark: str, args, context: dict = N
     :rtype: dict
     :raises bexhoma.system_descriptors.IncompatibleBenchmark: When the DBMS cannot run the benchmark.
     """
-    return descriptors.effective_entry(descriptors.benchmark_entry(dockers, docker, benchmark),
-                                       {**context_of(args), **(context or {})})
+    return descriptors.effective_entry(descriptors.benchmark_entry(dockers, docker, benchmark), _context(args, context))
 
 
 def entry_parameters(dockers: dict, docker: str, benchmark: str, key: str, args, context: dict = None) -> dict:
@@ -120,7 +119,7 @@ def entry_parameters(dockers: dict, docker: str, benchmark: str, key: str, args,
     :rtype: dict
     """
     entry = entry_of(dockers, docker, benchmark, args, context)
-    return _without_none(descriptors.expand(entry.get(key) or {}, {**context_of(args), **(context or {})}))
+    return _without_none(descriptors.expand(entry.get(key) or {}, _context(args, context)))
 
 
 def set_loading_template(config, entry: dict, docker: str, benchmark: str) -> None:
@@ -156,18 +155,26 @@ def apply_sut_attributes(config, attributes: dict, context: dict) -> None:
     :param config: The configuration.
     :param attributes: ``sut_attributes`` of the DBMS in the cluster configuration.
     :param context: Values for the ``{placeholders}``.
+    :raises ValueError: On a key that is neither a setter, ``statefulsets`` nor a known attribute
+        (see :data:`~bexhoma.system_descriptors.SUT_ATTRIBUTES`).
     """
     for key, value in descriptors.expand(attributes, context).items():
-        if key == 'statefulsets':
+        if key == descriptors.SUT_STATEFULSETS:
             # stateful sets that something else manages (e.g. Helm): record their pods
             config.deployment_infos['statefulset'] = {
                 name: {'name': name, 'pods': [f"{name}-{i}" for i in range(pods)], 'containers': []}
                 for name, pods in value.items()}
-        elif key in _SUT_SETTERS:
-            setter = getattr(config, _SUT_SETTERS[key])
-            setter(**value) if isinstance(value, dict) else setter(value)
-        else:
+        elif key in descriptors.SUT_SETTERS:
+            setter = getattr(config, descriptors.SUT_SETTERS[key])
+            if isinstance(value, dict):
+                setter(**value)
+            else:
+                setter(value)
+        elif key in descriptors.SUT_ATTRIBUTES:
             setattr(config, key, value)
+        else:
+            # a typo would otherwise become a new attribute that nothing reads
+            raise ValueError(f"unknown key {key!r} in sut_attributes of {config.docker}")
 
 
 def tenant_ids(experiment, entry: dict) -> list:
@@ -242,6 +249,35 @@ def loading_variants(entry: dict, threads: list) -> list:
     return [descriptors.expand(declared, {'threads': int(count)}) for count in threads]
 
 
+def loading_layouts(dockers: dict, benchmark: str, args, splits: list, pods: list, threads: list):
+    """The ways to load each selected DBMS, for the scripts that load with parallel pods (TPC-H, TPC-DS, SSB).
+
+    One layout per split of ``-nls``, number of pods of ``-nlp`` (a split larger than the number of
+    pods is skipped), DBMS of :func:`selected_dockers` and set of :func:`loading_variants`, with the
+    pods capped by :func:`limit_loading_pods`.
+
+    :param dockers: The ``dockers`` section of the cluster configuration.
+    :param benchmark: Benchmark key.
+    :param args: Parsed command line (``-dbms``, tenancy).
+    :param splits: Values of ``-nls``: into how many parts the pods are split (pods in parallel = pods // split).
+    :param pods: Values of ``-nlp``.
+    :param threads: Values of ``-nlt``.
+    :return: ``(docker, entry, pods_total, pods_parallel, loading_parameters)`` per layout; ``loading_parameters``
+        holds ``PODS_TOTAL``, ``PODS_PARALLEL`` and the thread variant's parameters.
+    :rtype: generator
+    """
+    for split in splits:
+        for total in pods:
+            if total < split:
+                continue
+            for docker in selected_dockers(dockers, benchmark, args.dbms, args):
+                entry = descriptors.benchmark_entry(dockers, docker, benchmark)
+                pods_total, pods_parallel = limit_loading_pods(entry, docker, total, int(total / split))
+                for thread_parameters in loading_variants(entry, threads):
+                    yield docker, entry, pods_total, pods_parallel, {
+                        'PODS_TOTAL': str(pods_total), 'PODS_PARALLEL': str(pods_parallel), **thread_parameters}
+
+
 def build_configuration(experiment, docker: str, benchmark: str, args,
                         reset_name: str = None, loading_parameters: dict = None,
                         storage_configuration: str = None, context: dict = None, pooling: dict = None):
@@ -266,10 +302,11 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
     :raises bexhoma.system_descriptors.IncompatibleBenchmark: When the DBMS cannot run the benchmark.
     """
     dockers = experiment.cluster.dockers
-    context = {**context_of(args), **(context or {})}
+    context = _context(args, context)
     entry = descriptors.effective_entry(descriptors.benchmark_entry(dockers, docker, benchmark), context)
     # a variant may build the configuration from another docker entry (a cluster mode), keeping the DBMS's scripts
     config_docker = entry.get('docker', docker)
+    # worker pods: an expression of the entry, else -nw for a DBMS that takes workers
     options = {}
     if entry.get('worker_count'):
         options['worker'] = descriptors.evaluate(entry['worker_count'], context)
@@ -281,7 +318,8 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
         config.path_experiment_docker = descriptors.base_system(dockers, docker)
     if entry.get('sut_template'):
         config.sut_template = entry['sut_template']
-    attributes = {**(dockers[docker].get('sut_attributes') or {}), **(entry.get('sut_attributes') or {})}
+    # how the SUT is set up: the DBMS's attributes, a selected variant's on top
+    attributes ={**(dockers[docker].get('sut_attributes') or {}), **(entry.get('sut_attributes') or {})}
     if attributes:
         apply_sut_attributes(config, attributes, context)
     if pooling:
@@ -292,6 +330,7 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
         config.set_benchmark_resetscript(list(reset_scripts), name=reset_name)
     config.set_storage(storageConfiguration=storage_configuration or entry.get('storage_prefix')
                        or descriptors.storage_prefix(dockers, docker))
+    # SUT environment: boolean options as 'true'/'false' first, so that a declared value wins
     sut_parameters = {env_name: str(context.get(option, False)).lower()
                       for env_name, option in (entry.get('option_parameters') or {}).items()}
     sut_parameters.update(_without_none(descriptors.expand(entry.get('sut_parameters') or {}, context)))
@@ -305,7 +344,8 @@ def build_configuration(experiment, docker: str, benchmark: str, args,
     if context.get('skip_loading', False):
         config.loading_deactivated = True
     set_loading_template(config, entry, docker, benchmark)
-    loading = {**_without_none(descriptors.expand(entry.get('loading_parameters') or {}, context)), **(loading_parameters or {})}
+    # loading environment: the DBMS's, the benchmark's on top
+    loading ={**_without_none(descriptors.expand(entry.get('loading_parameters') or {}, context)), **(loading_parameters or {})}
     if loading:
         config.set_loading_parameters(**loading)
     if entry.get('max_sut_dbms') is not None:

@@ -13,9 +13,8 @@ See LICENSE for details.
 """
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
-from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, limit_loading_pods,
-                                                loading_variants, selected_dockers, tenancy_error)
-from bexhoma.system_descriptors import benchmark_entry, dbms_choices
+from bexhoma.experiments.system_builder import build_configuration, entry_parameters, loading_layouts, tenancy_error
+from bexhoma.system_descriptors import dbms_choices
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -176,31 +175,14 @@ if __name__ == '__main__':
     ##############
     ### add configs of dbms to be tested
     ##############
-    for loading_pods_split in num_loading_split: # should be a number of splits, e.g. 4 for 1/4th of all pods
-        for loading_pods_total in num_loading_pods: # number of loading pods in total
-            # split number of loading pods into parallel potions
-            if loading_pods_total < loading_pods_split:
-                # thats not possible
-                continue
-            # how many in parallel?
-            split_portion = int(loading_pods_total/loading_pods_split)
-            # every DBMS that can run TPC-DS (or the ones named by -dbms), as declared in cluster.config
-            for docker in selected_dockers(cluster.dockers, 'tpcds', args.dbms, args):
-                entry = benchmark_entry(cluster.dockers, docker, 'tpcds')
-                # a DBMS may tolerate fewer loading pods than asked for
-                pods_total, pods_parallel = limit_loading_pods(entry, docker, loading_pods_total, split_portion)
-                # a DBMS may get one configuration per number of loading threads
-                for thread_parameters in loading_variants(entry, num_loading_threads):
-                    config = build_configuration(
-                        experiment, docker, 'tpcds', args,
-                        loading_parameters={
-                            'PODS_TOTAL': str(pods_total),
-                            'PODS_PARALLEL': str(pods_parallel),
-                            **thread_parameters,
-                        })
-                    config.set_benchmarking_parameters(
-                        **entry_parameters(cluster.dockers, docker, 'tpcds', 'benchmarking_parameters', args))
-                    config.set_loading(parallel=pods_parallel, num_pods=pods_total)
+    # every DBMS that can run TPC-DS (or the ones named by -dbms), as declared in cluster.config,
+    # once per way to load it (-nls, -nlp, -nlt)
+    for docker, entry, pods_total, pods_parallel, loading_parameters in loading_layouts(
+            cluster.dockers, 'tpcds', args, num_loading_split, num_loading_pods, num_loading_threads):
+        config = build_configuration(experiment, docker, 'tpcds', args, loading_parameters=loading_parameters)
+        config.set_benchmarking_parameters(
+            **entry_parameters(cluster.dockers, docker, 'tpcds', 'benchmarking_parameters', args))
+        config.set_loading(parallel=pods_parallel, num_pods=pods_total)
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############

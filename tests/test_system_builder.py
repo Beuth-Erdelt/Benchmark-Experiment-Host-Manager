@@ -194,6 +194,7 @@ class _Config:
     def __init__(self) -> None:
         self.calls = []
         self.deployment_infos = {}
+        self.docker = 'X'
 
     def __getattr__(self, name):
         if name.startswith('set_'):
@@ -225,6 +226,10 @@ class SutAttributesTest(unittest.TestCase):
         self.assertEqual(config.deployment_infos['statefulset'], {
             'tserver': {'name': 'tserver', 'pods': ['tserver-0', 'tserver-1'], 'containers': []},
             'master': {'name': 'master', 'pods': ['master-0'], 'containers': []}})
+
+    def test_an_unknown_key_is_refused_not_set(self) -> None:
+        with self.assertRaisesRegex(ValueError, "unknown key 'sut_rolle' in sut_attributes of X"):
+            self.apply({'sut_rolle': 'placeholder'})
 
 
 class PoolingTest(unittest.TestCase):

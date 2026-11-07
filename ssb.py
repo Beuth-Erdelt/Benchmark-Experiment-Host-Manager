@@ -15,9 +15,8 @@ See LICENSE for details.
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.benchmarks.ssb import SCHEMA_VARIANTS, QUERY_VARIANTS, DIMENSION_VARIANTS, resolve_dimension_folder
-from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, limit_loading_pods,
-                                                loading_variants, selected_dockers)
-from bexhoma.system_descriptors import benchmark_entry, dbms_choices, dimension_dockers
+from bexhoma.experiments.system_builder import build_configuration, entry_parameters, loading_layouts
+from bexhoma.system_descriptors import dbms_choices, dimension_dockers
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -171,37 +170,21 @@ if __name__ == '__main__':
     schema_suffix = '' if schema_variant == 'normal' else '-flat'
     # the DBMS -xdim applies to
     dimension_dbms = dimension_dockers(cluster.dockers, 'ssb')
-    for loading_pods_split in num_loading_split: # should be a number of splits, e.g. 4 for 1/4th of all pods
-        for loading_pods_total in num_loading_pods: # number of loading pods in total
-            # split number of loading pods into parallel potions
-            if loading_pods_total < loading_pods_split:
-                # thats not possible
-                continue
-            # how many in parallel?
-            split_portion = int(loading_pods_total/loading_pods_split)
-            # every DBMS that can run SSB (or the ones named by -dbms), as declared in cluster.config
-            for docker in selected_dockers(cluster.dockers, 'ssb', args.dbms, args):
-                entry = benchmark_entry(cluster.dockers, docker, 'ssb')
-                # a DBMS may tolerate fewer loading pods than asked for
-                pods_total, pods_parallel = limit_loading_pods(entry, docker, loading_pods_total, split_portion)
-                for thread_parameters in loading_variants(entry, num_loading_threads):
-                    config = build_configuration(
-                        experiment, docker, 'ssb', args,
-                        loading_parameters={
-                            'PODS_TOTAL': str(pods_total),
-                            'PODS_PARALLEL': str(pods_parallel),
-                            **thread_parameters,
-                        },
-                        context={'schema_suffix': schema_suffix})
-                    config.set_benchmarking_parameters(
-                        **entry_parameters(cluster.dockers, docker, 'ssb', 'benchmarking_parameters', args))
-                    config.set_loading(parallel=pods_parallel, num_pods=pods_total)
-                    # -xdim distributed: scripts in <DBMS>/distributed, and a volume of its own
-                    if docker in dimension_dbms:
-                        config.path_experiment_docker = resolve_dimension_folder(
-                            docker, schema_variant, dimensions, dimension_dbms)
-                        if config.path_experiment_docker != docker:
-                            config.storage_label = f'ssb-distributed-{SF}'
+    # every DBMS that can run SSB (or the ones named by -dbms), as declared in cluster.config,
+    # once per way to load it (-nls, -nlp, -nlt)
+    for docker, entry, pods_total, pods_parallel, loading_parameters in loading_layouts(
+            cluster.dockers, 'ssb', args, num_loading_split, num_loading_pods, num_loading_threads):
+        config = build_configuration(experiment, docker, 'ssb', args, loading_parameters=loading_parameters,
+                                     context={'schema_suffix': schema_suffix})
+        config.set_benchmarking_parameters(
+            **entry_parameters(cluster.dockers, docker, 'ssb', 'benchmarking_parameters', args))
+        config.set_loading(parallel=pods_parallel, num_pods=pods_total)
+        # -xdim distributed: scripts in <DBMS>/distributed, and a volume of its own
+        if docker in dimension_dbms:
+            config.path_experiment_docker = resolve_dimension_folder(
+                docker, schema_variant, dimensions, dimension_dbms)
+            if config.path_experiment_docker != docker:
+                config.storage_label = f'ssb-distributed-{SF}'
     ##############
     ### branch for workflows
     ##############

@@ -136,6 +136,45 @@ class ValidationTest(unittest.TestCase):
                          "D.benchmarks.y.notes: every note needs a non-empty 'text'"):
             self.assertIn(expected, problems)
 
+    def test_variant_keys_are_type_checked_like_the_entry(self) -> None:
+        dockers = _small()
+        dockers['A']['benchmarks']['x']['variants'] = [
+            {'when': 'num_worker > 0', 'loading_parameters': 'not a dict', 'worker_count': '', 'colour': 'red'},
+            {'when': 'num_worker > 1', 'variants': []},
+        ]
+        problems = '\n'.join(self.check(dockers))
+        for expected in ('A.benchmarks.x.variants[1].loading_parameters: must be dict',
+                         'A.benchmarks.x.variants[1].worker_count: must not be empty',
+                         "A.benchmarks.x.variants[1]: unknown key 'colour'",
+                         "A.benchmarks.x.variants[2]: unknown key 'variants'"):
+            self.assertIn(expected, problems)
+
+    def test_sut_attributes_keys_are_known(self) -> None:
+        dockers = _small()
+        dockers['A']['sut_attributes'] = {'sut_rolle': 'placeholder', 'monitoring_sut': False}
+        dockers['A']['benchmarks']['x']['sut_attributes'] = {'statefulsets': {'s': 1}, 'resource_swep': False}
+        dockers['A']['benchmarks']['y']['variants'] = [{'when': 'num_worker > 0', 'sut_attributes': {'scripttarget': 'workers'}}]
+        problems = self.check(dockers)
+        self.assertEqual(len(problems), 3, problems)
+        for expected, problem in zip(("A.sut_attributes: unknown key 'sut_rolle'",
+                                      "A.benchmarks.x.sut_attributes: unknown key 'resource_swep'",
+                                      "A.benchmarks.y.variants[1].sut_attributes: unknown key 'scripttarget'"), problems):
+            self.assertIn(expected, problem)
+
+    def test_sut_attribute_keys_exist_on_the_configuration(self) -> None:
+        from bexhoma import configurations
+        # the setters are methods of the configuration, the attributes are set in its __init__
+        for setter in sd.SUT_SETTERS.values():
+            with self.subTest(setter=setter):
+                self.assertTrue(callable(getattr(configurations.default, setter, None)))
+        with open(os.path.join(_REPO, 'bexhoma', 'configurations', 'base.py'), encoding='utf-8') as file:
+            assigned = {node.attr for node in ast.walk(ast.parse(file.read()))
+                        if isinstance(node, ast.Attribute) and isinstance(node.ctx, ast.Store)
+                        and isinstance(node.value, ast.Name) and node.value.id == 'self'}
+        for attribute in sd.SUT_ATTRIBUTES:
+            with self.subTest(attribute=attribute):
+                self.assertIn(attribute, assigned)
+
     def test_template_must_exist(self) -> None:
         dockers = {'A': {'storage_prefix': 'a', 'template': {'alias': 'a'},
                          'benchmarks': {'x': {'loading_template': 'no-such-template.yml'}}}}

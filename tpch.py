@@ -14,10 +14,10 @@ See LICENSE for details.
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.benchmarks.base import DIMENSION_VARIANTS, dimension_folder
-from bexhoma.system_descriptors import (benchmark_entry, dbms_choices, default_dockers, dimension_dockers, load_dockers,
+from bexhoma.system_descriptors import (dbms_choices, default_dockers, dimension_dockers, load_dockers,
                                         refresh_template, storage_prefix, unsupported_dimension)
-from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, limit_loading_pods,
-                                                loading_variants, selected_dockers, tenancy_error, tenant_ids)
+from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, loading_layouts,
+                                                tenancy_error, tenant_ids)
 from bexhoma.cli_args import storage_suffix as _storage_suffix, set_cell_storage as _set_cell_storage
 # resource sweeps (-rc/-lc/-rr/-lr/-rst lists) are expanded for every DBMS by
 # ExperimentBase.expand_resource_cells(); kept here under its old name
@@ -278,46 +278,30 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     ##############
     ### add configs of dbms to be tested
     ##############
-    for loading_pods_split in num_loading_split: # should be a number of splits, e.g. 4 for 1/4th of all pods
-        for loading_pods_total in num_loading_pods: # number of loading pods in total
-            # split number of loading pods into parallel potions
-            if loading_pods_total < loading_pods_split:
-                # thats not possible
-                continue
-            # how many in parallel?
-            split_portion = int(loading_pods_total/loading_pods_split)
-            # every DBMS that can run TPC-H (or the ones named by -dbms), as declared in cluster.config
-            for docker in selected_dockers(cluster.dockers, 'tpch', args.dbms, args):
-                entry = benchmark_entry(cluster.dockers, docker, 'tpch')
-                # a DBMS may tolerate fewer loading pods than asked for
-                pods_total, pods_parallel = limit_loading_pods(entry, docker, loading_pods_total, split_portion)
-                # a DBMS may get one configuration per number of loading threads
-                for thread_parameters in loading_variants(entry, num_loading_threads):
-                    # a DBMS in the multi-tenant variants gets one configuration per tenant (container-tenancy)
-                    for tenant in tenant_ids(experiment, entry):
-                        tenants = tenant_parameters(experiment, entry, tenant, storage_prefix(cluster.dockers, docker))
-                        config = build_configuration(
-                            experiment, docker, 'tpch', args, reset_name='tpch',
-                            loading_parameters={
-                                'PODS_TOTAL': str(pods_total),
-                                'PODS_PARALLEL': str(pods_parallel),
-                                **thread_parameters,
-                                **tenants.get('loading', {}),
-                            },
-                            storage_configuration=tenants.get('storage'))
-                        config.set_benchmarking_parameters(
-                            **entry_parameters(cluster.dockers, docker, 'tpch', 'benchmarking_parameters', args),
-                            **tenants.get('benchmarking', {}))
-                        config.set_loading(parallel=pods_parallel, num_pods=pods_total)
-                        if tenants.get('eval'):
-                            config.set_eval_parameters(**tenants['eval'])
-                        if tenants.get('experiment'):
-                            config.set_experiment(**tenants['experiment'])
-                        # -xdim distributed: scripts in <DBMS>/distributed, and a volume of its own
-                        if docker in dimension_dbms:
-                            config.path_experiment_docker = dimension_folder(docker, dimensions, dimension_dbms)
-                            if config.path_experiment_docker != docker:
-                                config.storage_label = f'tpch-distributed-{SF}'
+    # every DBMS that can run TPC-H (or the ones named by -dbms), as declared in cluster.config,
+    # once per way to load it (-nls, -nlp, -nlt)
+    for docker, entry, pods_total, pods_parallel, loading_parameters in loading_layouts(
+            cluster.dockers, 'tpch', args, num_loading_split, num_loading_pods, num_loading_threads):
+        # a DBMS in the multi-tenant variants gets one configuration per tenant (container-tenancy)
+        for tenant in tenant_ids(experiment, entry):
+            tenants = tenant_parameters(experiment, entry, tenant, storage_prefix(cluster.dockers, docker))
+            config = build_configuration(
+                experiment, docker, 'tpch', args, reset_name='tpch',
+                loading_parameters={**loading_parameters, **tenants.get('loading', {})},
+                storage_configuration=tenants.get('storage'))
+            config.set_benchmarking_parameters(
+                **entry_parameters(cluster.dockers, docker, 'tpch', 'benchmarking_parameters', args),
+                **tenants.get('benchmarking', {}))
+            config.set_loading(parallel=pods_parallel, num_pods=pods_total)
+            if tenants.get('eval'):
+                config.set_eval_parameters(**tenants['eval'])
+            if tenants.get('experiment'):
+                config.set_experiment(**tenants['experiment'])
+            # -xdim distributed: scripts in <DBMS>/distributed, and a volume of its own
+            if docker in dimension_dbms:
+                config.path_experiment_docker = dimension_folder(docker, dimensions, dimension_dbms)
+                if config.path_experiment_docker != docker:
+                    config.storage_label = f'tpch-distributed-{SF}'
 
     ##############
     ### per-system physical-design overrides (yaml-governed runs only; see
