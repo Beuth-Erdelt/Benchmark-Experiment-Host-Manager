@@ -61,6 +61,8 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 | `monitor` | no | Application-level monitoring configuration; see [Monitoring](Monitoring.md) |
 | `benchmarks` | yes² | The benchmarks the DBMS can run, and what each needs of it; see [Benchmarks of a DBMS](#benchmarks-of-a-dbms) |
 | `storage_prefix` | yes² | Name of the storage (volume) of the DBMS, the same for every benchmark (e.g. `postgresql`, `PgDuckDB`) |
+| `abbreviation` | no | Short name of the DBMS in the names of volumes and worker stateful sets (`pg`, `chc`, `df`, ...): a storage name that starts with the DBMS name gets it instead (`postgresql-schema-16` → `pg-schema-16`), since Kubernetes and some DBMS limit the length of these names |
+| `tls` | no | `{'secret': True}`: a CA and server certificate Secret is created per SUT, for the server and the benchmark client (MySQL with HammerDB, see [MySQL](Example-MySQL.md)) |
 | `base_system` | no | DBMS whose script folder `experiments/<benchmark>/<base_system>` this DBMS uses, if it is not its own (PgDuckDB and PGBouncer use `PostgreSQL`) |
 | `workers` | no | `True` if the SUT takes `-nw` workers (shards) next to its coordinator |
 | `sut_attributes` | no | How the SUT is set up (placeholder pod, no monitoring, Helm-managed stateful sets, ...); see [Benchmarks of a DBMS](#how-the-sut-is-set-up-sut_attributes) |
@@ -220,7 +222,7 @@ The template filename is derived automatically from the `dockers` key:
 k8s/deploymenttemplate-{Key}.yml
 ```
 
-The `Key` must exactly match the key in the `dockers` section of `cluster.config` and the value passed as `docker=` to `configurations.default(...)`.
+The `Key` must exactly match the key of the DBMS in the `dockers` section of `cluster.config` (or the `docker` a variant of its `benchmarks` entry names, e.g. `DragonflyCluster`), unless the entry sets its own `sut_template`.
 Casing matters: `PostgreSQL` → `deploymenttemplate-PostgreSQL.yml`.
 
 ### Document structure
