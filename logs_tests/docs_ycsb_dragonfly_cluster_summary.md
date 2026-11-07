@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 415s 
-* Code: 1794040924
+* Duration: 416s 
+* Code: 1794051387
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -42,10 +42,10 @@ YCSB SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:804836
+  * disk:806761
   * datadisk:1
   * volume_size:1.8T
-  * volume_used:786G
+  * volume_used:788G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
@@ -56,10 +56,10 @@ YCSB SF=1
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:206328
+    * disk:219603
     * datadisk:356
     * volume_size:879G
-    * volume_used:202G
+    * volume_used:215G
     * cpu_list:0-127
   * worker 1
     * RAM:1081742753792
@@ -67,7 +67,7 @@ YCSB SF=1
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:717392
+    * disk:717641
     * datadisk:377
     * volume_size:1.8T
     * volume_used:701G
@@ -78,7 +78,7 @@ YCSB SF=1
     * Cores:256
     * host:6.8.0-137-generic
     * node:cl-worker27
-    * disk:663359
+    * disk:663362
     * datadisk:355
     * volume_size:1.8T
     * volume_used:648G
@@ -88,17 +88,17 @@ YCSB SF=1
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794040924
+    * code:1794051387
     * BEXHOMA_WORKERS:3
 
 ### Init Scripts Not in Folder
 * DragonflyCluster-1: skipped checkschema-ycsb.sql, initschema-ycsb.sql
 
 ### SUT Container Restarts
-* bexhoma-sut-dragonflycluster-1-1794040924-665fd78dbd-wjc6k: 0
-* bx-w-dragonflycluster-1-1794040924-0: 0
-* bx-w-dragonflycluster-1-1794040924-1: 0
-* bx-w-dragonflycluster-1-1794040924-2: 0
+* bexhoma-sut-dragonflycluster-1-1794051387-6df9cff8b9-sfpzb: 0
+* bx-w-dragonflycluster-1-1794051387-0: 0
+* bx-w-dragonflycluster-1-1794051387-1: 0
+* bx-w-dragonflycluster-1-1794051387-2: 0
 
 ### Workflow
 
@@ -116,20 +116,20 @@ YCSB SF=1
 
 | connection                 |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
 |:---------------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| dragonflycluster-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        17700.37 |                 7062.00 |            125000.00 |                               774.00 | 1.00 |              509.77 |
-| dragonflycluster-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        17864.80 |                 6997.00 |            125000.00 |                               763.00 | 1.00 |              514.51 |
-| dragonflycluster-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        18910.74 |                 6610.00 |            125000.00 |                               631.00 | 1.00 |              544.63 |
-| dragonflycluster-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        19180.60 |                 6517.00 |            125000.00 |                               652.00 | 1.00 |              552.40 |
-| dragonflycluster-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        18808.31 |                 6646.00 |            125000.00 |                               696.00 | 1.00 |              541.68 |
-| dragonflycluster-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        19549.58 |                 6394.00 |            125000.00 |                               633.00 | 1.00 |              563.03 |
-| dragonflycluster-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        17775.88 |                 7032.00 |            125000.00 |                               763.00 | 1.00 |              511.95 |
-| dragonflycluster-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        19275.25 |                 6485.00 |            125000.00 |                               660.00 | 1.00 |              555.13 |
+| dragonflycluster-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        16801.08 |                 7440.00 |            125000.00 |                               894.00 | 1.00 |              483.87 |
+| dragonflycluster-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        18785.69 |                 6654.00 |            125000.00 |                               674.00 | 1.00 |              541.03 |
+| dragonflycluster-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        16796.56 |                 7442.00 |            125000.00 |                               905.00 | 1.00 |              483.74 |
+| dragonflycluster-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        16620.13 |                 7521.00 |            125000.00 |                               936.00 | 1.00 |              478.66 |
+| dragonflycluster-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        16857.72 |                 7415.00 |            125000.00 |                               909.00 | 1.00 |              485.50 |
+| dragonflycluster-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        19192.38 |                 6513.00 |            125000.00 |                               625.00 | 1.00 |              552.74 |
+| dragonflycluster-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        19388.86 |                 6447.00 |            125000.00 |                               633.00 | 1.00 |              558.40 |
+| dragonflycluster-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        20019.22 |                 6244.00 |            125000.00 |                               626.00 | 1.00 |              576.55 |
 
 #### Per Run
 
 | DBMS                 |   experiment_run |   threads |    target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:---------------------|-----------------:|----------:|----------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| DragonflyCluster-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 1.00 |              509.77 |                       149065.53 |                 7062.00 |           1000000.00 |                               696.50 |
+| DragonflyCluster-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 1.00 |              478.66 |                       144461.65 |                 7521.00 |           1000000.00 |                               775.25 |
 
 ### Benchmarking
 
@@ -137,13 +137,13 @@ YCSB SF=1
 
 | DBMS                       | phase                  | job                      | configuration      |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:---------------------------|:-----------------------|:-------------------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| dragonflycluster-1-1-1-1-1 | dragonflycluster-1-1-1 | dragonflycluster-1-1-1-1 | DragonflyCluster-1 |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        61335.39 |               163038.00 |            4999755 |                             267.00 |              5000245 |                               251.00 |
+| dragonflycluster-1-1-1-1-1 | dragonflycluster-1-1-1 | dragonflycluster-1-1-1-1 | DragonflyCluster-1 |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        61039.25 |               163829.00 |            4996849 |                             267.00 |              5003151 |                               253.00 |
 
 #### Per Phase
 
 | DBMS                   | phase                  |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:-----------------------|:-----------------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| dragonflycluster-1-1-1 | dragonflycluster-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        61335.39 |               163038.00 |            4999755 |                             267.00 |              5000245 |                               251.00 |
+| dragonflycluster-1-1-1 | dragonflycluster-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        61039.25 |               163829.00 |            4996849 |                             267.00 |              5003151 |                               253.00 |
 
 #### Reset
 
@@ -157,7 +157,7 @@ YCSB SF=1
 
 | DBMS                     |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------------|-------------:|----------:|---------------:|----------------------:|
-| dragonflycluster-1-1-1-1 |       109.17 |      3.68 |           1.64 |                  1.64 |
+| dragonflycluster-1-1-1-1 |       106.81 |      2.96 |           1.64 |                  1.64 |
 
 ### Loading phase: component loader
 
@@ -169,34 +169,39 @@ YCSB SF=1
 
 | DBMS                     |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------------|-------------:|----------:|---------------:|----------------------:|
-| dragonflycluster-1-1-1-1 |       554.43 |      3.77 |           1.68 |                  2.03 |
+| dragonflycluster-1-1-1-1 |       555.55 |      3.84 |           1.68 |                  2.03 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS                     |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------------|-------------:|----------:|---------------:|----------------------:|
-| dragonflycluster-1-1-1-1 |       632.02 |      4.93 |           1.48 |                  1.48 |
+| dragonflycluster-1-1-1-1 |       693.99 |      5.02 |           1.50 |                  1.50 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Memory Usage, Working Set [MiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
 * CPU Utilization [CPUs] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
+* Memory Usage incl. Page Cache [MiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
+* CPU Throttling Rate [s/s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU User Time [s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
+* CPU Utilization Time [s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
+* CPU System Time [s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
 * Replica Lag [records] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
 * Replication Streaming Memory [GiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
 * Full Sync Replication Memory [GiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, warning: no activity seen, the pods were scraped)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, warning: no activity seen, the pods were scraped)
 * Replica Lag [records] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
-* Full Sync Replication Memory [GiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
 * Replication Streaming Memory [GiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
+* Full Sync Replication Memory [GiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
@@ -204,13 +209,13 @@ YCSB SF=1
 
 | DBMS                     |   Replies Sent [count] |   Memory Usage [GiB] |   Processed Commands [ops/s] |   Network Input [MiB/s] |   Replica Lag [records] |
 |:-------------------------|-----------------------:|---------------------:|-----------------------------:|------------------------:|------------------------:|
-| dragonflycluster-1-1-1-1 |             2001602.00 |                 1.52 |                     10258.04 |                    7.23 |                    0.00 |
+| dragonflycluster-1-1-1-1 |             2001628.00 |                 1.52 |                      9623.55 |                    6.28 |                    0.00 |
 
 #### Benchmarking phase: component worker
 
 | DBMS                     |   Replies Sent [count] |   Memory Usage [GiB] |   Processed Commands [ops/s] |   Network Input [MiB/s] |   Replica Lag [records] |
 |:-------------------------|-----------------------:|---------------------:|-----------------------------:|------------------------:|------------------------:|
-| dragonflycluster-1-1-1-1 |             9179925.00 |                 1.52 |                     38832.80 |                    7.49 |                    0.00 |
+| dragonflycluster-1-1-1-1 |             9116813.00 |                 1.52 |                     36460.35 |                    7.20 |                    0.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -222,7 +227,7 @@ YCSB SF=1
 * TEST skipped: Loading phase: component loader contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
 * TEST passed: Benchmarking phase: component worker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
-* TEST failed: Monitoring metrics missing
+* TEST warning: Monitoring metrics missing (Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] of workerloading: no activity seen, the pods were scraped; Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] of workerloading: no activity seen, the pods were scraped)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
