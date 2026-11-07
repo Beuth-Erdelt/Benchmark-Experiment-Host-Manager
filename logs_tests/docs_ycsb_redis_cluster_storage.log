@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1793791966
-Experiment                    : starts at 2026-11-04 12:32:47.130967 (15158.859601)
+Experiment                    : has code 1794005495
+Experiment                    : starts at 2026-11-06 23:51:36.882335 (228686.4454108)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 3000000.
@@ -15,7 +15,7 @@ Factors for loading are [12].
 Factors for benchmarking are [4].
 Status is logged every 10s.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.12.
+Experiment uses bexhoma version 0.11.13.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['Redis'].
 Import is handled by 8 processes (pods).
@@ -36,265 +36,240 @@ Redis-1                       : deployments ['sut']
 Redis-1                       : stateful sets ['worker']
 Redis-1                       : pvcs ['sut']
 Redis-1                       : found labels on pvc = []
-Redis-1                       : name of SUT pods = bexhoma-sut-redis-1-1793791966
-Redis-1                       : name of SUT service = bexhoma-sut-redis-1-1793791966
-Redis-1                       : name of SUT PVC name = bexhoma-storage-redis-nvme-ycsb-3
-Redis-1                       : name of worker pods = bx-w-redis-nvme-ycsb-3
-Redis-1                       : name of worker service headless = bx-w-redis-nvme-ycsb-3
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-0 exists
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-0 should be removed
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-1 exists
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-1 should be removed
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-2 exists
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-2 should be removed
-- waiting 10s -               : done
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-0 is gone
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-1 is gone
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-2 is gone
-Redis-1                       : storage bexhoma-storage-redis-nvme-ycsb-3 should be removed
-- waiting 10s -               : done
-Redis-1                       : storage bexhoma-storage-redis-nvme-ycsb-3 is gone
-Loop pass                     : took 22.7s (1 kubectl calls 0.9s, 21 API requests 1.2s)
+Redis-1                       : name of SUT pods = bexhoma-sut-redis-1-1794005495
+Redis-1                       : name of SUT service = bexhoma-sut-redis-1-1794005495
+Redis-1                       : name of SUT PVC name = bexhoma-storage-rd-nvme-ycsb-3
+Redis-1                       : name of worker pods = bx-w-rd-nvme-ycsb-3
+Redis-1                       : name of worker service headless = bx-w-rd-nvme-ycsb-3
+Loop pass                     : took 3.2s (1 kubectl calls 1.5s, 13 API requests 0.6s)
 - waiting 30s -               : done
-Redis-1                       : worker pods found: ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : worker pods found (only stateful set pods): ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : found 2 / 3 running workers (component worker)
-Redis-1                       : waits for health check of workers to succeed
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 22 API requests 0.8s)
-- waiting 30s -               : done
-Redis-1                       : worker pods found: ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : worker pods found (only stateful set pods): ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
+Redis-1                       : worker pods found: ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : worker pods found (only stateful set pods): ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
 Redis-1                       : found 3 / 3 running workers (component worker)
 Redis-1                       : is not loaded yet
 Redis-1                       : load durability relaxed, scripts []
 Redis-1                       : loading scripts not in folder, skipped: initschema-ycsb.sql
-Redis-1                       : connect to pod bexhoma-sut-redis-1-1793791966-7c7d6bdc96-sfctd to load scripts
-Redis-1                       : list of pvcs ['bexhoma-storage-redis-nvme-ycsb-3', 'bxw-bx-w-redis-nvme-ycsb-3-0', 'bxw-bx-w-redis-nvme-ycsb-3-1', 'bxw-bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : will be labeling bexhoma-storage-redis-nvme-ycsb-3
+Redis-1                       : connect to pod bexhoma-sut-redis-1-1794005495-5b54cc4b9-25swl to load scripts
+Redis-1                       : list of pvcs ['bexhoma-storage-rd-nvme-ycsb-3', 'bxw-bx-w-rd-nvme-ycsb-3-0', 'bxw-bx-w-rd-nvme-ycsb-3-1', 'bxw-bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : will be labeling bexhoma-storage-rd-nvme-ycsb-3
 Redis-1                       : start asynch loading scripts of type schema
 Redis-1                       : waits for the Schema scripts (schema=True) before starting the loading jobs
-Redis-1                       : Schema scripts done after 2s
+Redis-1                       : Schema scripts done after 4s
 Redis-1                       : is loading
-Loop pass                     : took 6.2s (3 kubectl calls 1.5s, 41 API requests 2.1s)
+Loop pass                     : took 8.1s (1 kubectl calls 1.1s, 45 API requests 2.8s)
 - waiting 30s -               : done
 Redis-1                       : is loading
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 35 API requests 1.3s)
+Loop pass                     : took 4.5s (2 kubectl calls 2.3s, 35 API requests 1.1s)
 - waiting 30s -               : done
 Redis-1                       : is loading
-Loop pass                     : took 8.0s (0 kubectl calls 0.0s, 35 API requests 1.3s)
-- waiting 30s -               : done
-Redis-1                       : is loading
-Loop pass                     : took 8.4s (12 kubectl calls 6.3s, 41 API requests 1.5s)
+Loop pass                     : took 19.0s (0 kubectl calls 0.0s, 35 API requests 1.5s)
 - waiting 30s -               : done
 Redis-1                       : showing loader times (ycsb-loader)
 Redis-1                       : generator times (start/end per pod and container) []
-Redis-1                       : loader times (start/end per pod and container) [(1793792063, 1793792145), (1793792063, 1793792144), (1793792063, 1793792145), (1793792063, 1793792145), (1793792063, 1793792145), (1793792063, 1793792145), (1793792064, 1793792145), (1793792064, 1793792145)]
-Redis-1                       : total times (start/end per pod and container) [(1793792063, 1793792145), (1793792063, 1793792144), (1793792063, 1793792145), (1793792063, 1793792145), (1793792063, 1793792145), (1793792063, 1793792145), (1793792064, 1793792145), (1793792064, 1793792145)]
-Redis-1                       : loader timespan (first to last [s]) = 82
-Redis-1                       : list of pvcs ['bexhoma-storage-redis-nvme-ycsb-3', 'bxw-bx-w-redis-nvme-ycsb-3-0', 'bxw-bx-w-redis-nvme-ycsb-3-1', 'bxw-bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : will be labeling bexhoma-storage-redis-nvme-ycsb-3
-Redis-1                       : worker pods found: ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : worker pods found (only stateful set pods): ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : scripts ['save-snapshot.sh'] ran on 3 worker pods in 18s
+Redis-1                       : loader times (start/end per pod and container) [(1794005548, 1794005641), (1794005547, 1794005639), (1794005548, 1794005641), (1794005548, 1794005640), (1794005548, 1794005641), (1794005547, 1794005640), (1794005548, 1794005641), (1794005548, 1794005640)]
+Redis-1                       : total times (start/end per pod and container) [(1794005548, 1794005641), (1794005547, 1794005639), (1794005548, 1794005641), (1794005548, 1794005640), (1794005548, 1794005641), (1794005547, 1794005640), (1794005548, 1794005641), (1794005548, 1794005640)]
+Redis-1                       : loader timespan (first to last [s]) = 94
+Redis-1                       : list of pvcs ['bexhoma-storage-rd-nvme-ycsb-3', 'bxw-bx-w-rd-nvme-ycsb-3-0', 'bxw-bx-w-rd-nvme-ycsb-3-1', 'bxw-bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : will be labeling bexhoma-storage-rd-nvme-ycsb-3
+Redis-1                       : worker pods found: ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : worker pods found (only stateful set pods): ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : scripts ['save-snapshot.sh'] ran on 3 worker pods in 19s
 Redis-1                       : loading scripts not in folder, skipped: checkschema-ycsb.sql
-Redis-1                       : connect to pod bexhoma-sut-redis-1-1793791966-7c7d6bdc96-sfctd to load scripts
-Redis-1                       : list of pvcs ['bexhoma-storage-redis-nvme-ycsb-3', 'bxw-bx-w-redis-nvme-ycsb-3-0', 'bxw-bx-w-redis-nvme-ycsb-3-1', 'bxw-bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : will be labeling bexhoma-storage-redis-nvme-ycsb-3
+Redis-1                       : connect to pod bexhoma-sut-redis-1-1794005495-5b54cc4b9-25swl to load scripts
+Redis-1                       : list of pvcs ['bexhoma-storage-rd-nvme-ycsb-3', 'bxw-bx-w-rd-nvme-ycsb-3-0', 'bxw-bx-w-rd-nvme-ycsb-3-1', 'bxw-bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : will be labeling bexhoma-storage-rd-nvme-ycsb-3
 Redis-1                       : start asynch loading scripts of type index
 Redis-1                       : is loading
-Loop pass                     : took 24.3s (22 kubectl calls 54.2s, 52 API requests 2.0s)
+Loop pass                     : took 46.3s (34 kubectl calls 78.8s, 64 API requests 2.3s)
 - waiting 30s -               : done
-Redis-1                       : list of pvcs ['bexhoma-storage-redis-nvme-ycsb-3', 'bxw-bx-w-redis-nvme-ycsb-3-0', 'bxw-bx-w-redis-nvme-ycsb-3-1', 'bxw-bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : will be labeling bexhoma-storage-redis-nvme-ycsb-3
+Redis-1                       : list of pvcs ['bexhoma-storage-rd-nvme-ycsb-3', 'bxw-bx-w-rd-nvme-ycsb-3-0', 'bxw-bx-w-rd-nvme-ycsb-3-1', 'bxw-bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : will be labeling bexhoma-storage-rd-nvme-ycsb-3
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Redis-1-1793791966 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Redis-1-1794005495 initialized to 1.
 Redis-1                       : benchmarks done 0 of 2. This will be client 1
 redis-1-1-1-1                 : start benchmarking (benchmark_run=1)
-Redis-1                       : worker pods found: ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : worker pods found (only stateful set pods): ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : distributed system - get host info for worker bx-w-redis-nvme-ycsb-3-0
-Redis-1                       : distributed system - get host info for worker bx-w-redis-nvme-ycsb-3-1
-Redis-1                       : distributed system - get host info for worker bx-w-redis-nvme-ycsb-3-2
+Redis-1                       : worker pods found: ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : worker pods found (only stateful set pods): ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : distributed system - get host info for worker bx-w-rd-nvme-ycsb-3-0
+Redis-1                       : distributed system - get host info for worker bx-w-rd-nvme-ycsb-3-1
+Redis-1                       : distributed system - get host info for worker bx-w-rd-nvme-ycsb-3-2
 redis-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
 redis-1-1-1-1                 : needs monitoring (custom metrics) for stateful set worker
-Redis-1                       : get size via pod bexhoma-sut-redis-1-1793791966-7c7d6bdc96-sfctd and write to pvc bexhoma-storage-redis-nvme-ycsb-3
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-0 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-0
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-1 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-1
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-2 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-2
-Redis-1                       : benchmarking results in folder C:\data\benchmarks/1793791966
-Redis-1                       : submitted benchmarker job in 13.3s (8 kubectl calls 4.4s, 85 API requests 8.3s)
+Redis-1                       : get size via pod bexhoma-sut-redis-1-1794005495-5b54cc4b9-25swl and write to pvc bexhoma-storage-rd-nvme-ycsb-3
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-0 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-0
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-1 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-1
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-2 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-2
+Redis-1                       : benchmarking results in folder C:\data\benchmarks/1794005495
+Redis-1                       : submitted benchmarker job in 19.4s (8 kubectl calls 9.8s, 85 API requests 8.7s)
 redis-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
 redis-1-1-1-1                 : needs monitoring (custom metrics) for stateful set worker
 redis-1-1-1-1                 : collecting metrics of data injector at connection redis-1-1-1-1
-redis-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-redis-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-redis-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-redis-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-redis-1-1793791966-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-redis-1-1793791966-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+redis-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-rd-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-rd-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+redis-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-redis-1-1794005495-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-redis-1-1794005495-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 redis-1-1-1-1                 : WARNING metric missing for loader: CPU Throttling Rate [s/s]
 redis-1-1-1-1                 : WARNING metric missing for loader: CPU Throttled Time [s]
 redis-1-1-1-1                 : WARNING metric missing for workerloading: CPU Throttling Rate [s/s]
 redis-1-1-1-1                 : WARNING metric missing for workerloading: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 5s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 7.8s, 0 API requests 0.0s)
-Loop pass                     : took 20.7s (15 kubectl calls 13.6s, 106 API requests 9.5s)
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.1s, 0 API requests 0.0s)
+Loop pass                     : took 31.1s (15 kubectl calls 22.4s, 106 API requests 10.1s)
 - waiting 30s -               : done
 Redis-1                       : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 21 API requests 1.4s)
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 21 API requests 0.8s)
 - waiting 30s -               : done
 Redis-1                       : has running benchmarks
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 19 API requests 1.2s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 Redis-1                       : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 18 API requests 0.7s)
 - waiting 30s -               : done
 Redis-1                       : has running benchmarks
 Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
-Redis-1                       : has running benchmarks
-Loop pass                     : took 4.2s (0 kubectl calls 0.0s, 18 API requests 0.6s)
-- waiting 30s -               : done
-redis-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1793791966/redis-1-1-1-1.config
+redis-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1794005495/redis-1-1-1-1.config
 redis-1-1-1-1                 : showing benchmarker times
-redis-1-1-1-1                 : benchmarker timespan job from 1793792264 to 1793792462
-redis-1-1-1-1                 : benchmarker timespan pods from 1793792265 to 1793792431
-redis-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 166
-redis-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1793792265, 1793792431)]
-redis-1-1-1-1                 : found and updated times {'benchmarker': [(1793792265, 1793792431)]}
+redis-1-1-1-1                 : benchmarker timespan job from 1794005752 to 1794005929
+redis-1-1-1-1                 : benchmarker timespan pods from 1794005754 to 1794005919
+redis-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 165
+redis-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1794005754, 1794005919)]
+redis-1-1-1-1                 : found and updated times {'benchmarker': [(1794005754, 1794005919)]}
 redis-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
 redis-1-1-1-1                 : needs monitoring (custom metrics) for stateful set worker
 redis-1-1-1-1                 : collecting execution metrics of worker at connection redis-1-1-1-1
 redis-1-1-1-1                 : collecting metrics of benchmarker at connection redis-1-1-1-1
-Redis-1                       : get size via pod bexhoma-sut-redis-1-1793791966-7c7d6bdc96-sfctd and write to pvc bexhoma-storage-redis-nvme-ycsb-3
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-0 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-0
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-1 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-1
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-2 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-2
-redis-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-redis-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-redis-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-redis-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-redis-1-1793791966-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-redis-1-1793791966-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-redis-1-1-1-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
-redis-1-1-1-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+Redis-1                       : get size via pod bexhoma-sut-redis-1-1794005495-5b54cc4b9-25swl and write to pvc bexhoma-storage-rd-nvme-ycsb-3
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-0 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-0
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-1 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-1
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-2 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-2
+redis-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-rd-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-rd-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+redis-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-redis-1-1794005495-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-redis-1-1794005495-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 redis-1-1-1-1                 : WARNING metric missing for workerbenchmarking: CPU Throttling Rate [s/s]
 redis-1-1-1-1                 : WARNING metric missing for workerbenchmarking: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 6.6s, 0 API requests 0.0s)
-Loop pass                     : took 10.7s (12 kubectl calls 11.3s, 29 API requests 1.7s)
+redis-1-1-1-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+redis-1-1-1-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.0s, 0 API requests 0.0s)
+Loop pass                     : took 26.1s (10 kubectl calls 16.7s, 29 API requests 2.0s)
 Redis-1                       : can be stopped
-Redis-1                       : had 0 restarts at worker bexhoma-sut-redis-1-1793791966-7c7d6bdc96-sfctd
-Redis-1                       : worker pods found: ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : worker pods found (only stateful set pods): ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : had 0 restarts at worker bx-w-redis-nvme-ycsb-3-0
-Redis-1                       : had 0 restarts at worker bx-w-redis-nvme-ycsb-3-1
-Redis-1                       : had 0 restarts at worker bx-w-redis-nvme-ycsb-3-2
-Loop pass                     : took 8.3s (12 kubectl calls 6.3s, 41 API requests 1.7s)
+Redis-1                       : had 0 restarts at worker bexhoma-sut-redis-1-1794005495-5b54cc4b9-25swl
+Redis-1                       : worker pods found: ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : worker pods found (only stateful set pods): ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : had 0 restarts at worker bx-w-rd-nvme-ycsb-3-0
+Redis-1                       : had 0 restarts at worker bx-w-rd-nvme-ycsb-3-1
+Redis-1                       : had 0 restarts at worker bx-w-rd-nvme-ycsb-3-2
+Loop pass                     : took 16.7s (12 kubectl calls 14.6s, 41 API requests 1.4s)
 - waiting 30s -               : done
 Redis-1                       : starts again
-Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 8 API requests 0.4s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 8 API requests 0.3s)
 Redis-1                       : will start now
 Redis-1                       : deployments ['sut']
 Redis-1                       : stateful sets ['worker']
 Redis-1                       : pvcs ['sut']
-Redis-1                       : list of pvcs ['bexhoma-storage-redis-nvme-ycsb-3', 'bxw-bx-w-redis-nvme-ycsb-3-0', 'bxw-bx-w-redis-nvme-ycsb-3-1', 'bxw-bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : storage bexhoma-storage-redis-nvme-ycsb-3 exists
-Redis-1                       : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '1', 'time_ingested': '82', 'time_loading': '102', 'time_loading_end': '1793792220', 'time_loading_start': '1793792052', 'time_schema': '1'}
-Redis-1                       : name of SUT pods = bexhoma-sut-redis-1-1793791966
-Redis-1                       : name of SUT service = bexhoma-sut-redis-1-1793791966
-Redis-1                       : name of SUT PVC name = bexhoma-storage-redis-nvme-ycsb-3
-Redis-1                       : name of worker pods = bx-w-redis-nvme-ycsb-3
-Redis-1                       : name of worker service headless = bx-w-redis-nvme-ycsb-3
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-0 exists
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-1 exists
-Redis-1                       : storage bxw-bx-w-redis-nvme-ycsb-3-2 exists
+Redis-1                       : list of pvcs ['bexhoma-storage-rd-nvme-ycsb-3', 'bxw-bx-w-rd-nvme-ycsb-3-0', 'bxw-bx-w-rd-nvme-ycsb-3-1', 'bxw-bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : storage bexhoma-storage-rd-nvme-ycsb-3 exists
+Redis-1                       : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '3', 'time_ingested': '94', 'time_loading': '119', 'time_loading_end': '1794005701', 'time_loading_start': '1794005532', 'time_schema': '3'}
+Redis-1                       : name of SUT pods = bexhoma-sut-redis-1-1794005495
+Redis-1                       : name of SUT service = bexhoma-sut-redis-1-1794005495
+Redis-1                       : name of SUT PVC name = bexhoma-storage-rd-nvme-ycsb-3
+Redis-1                       : name of worker pods = bx-w-rd-nvme-ycsb-3
+Redis-1                       : name of worker service headless = bx-w-rd-nvme-ycsb-3
+Redis-1                       : storage bxw-bx-w-rd-nvme-ycsb-3-0 exists
+Redis-1                       : storage bxw-bx-w-rd-nvme-ycsb-3-1 exists
+Redis-1                       : storage bxw-bx-w-rd-nvme-ycsb-3-2 exists
 Redis-1                       : loading values taken from the volume: script=Schema, indexing=Checks, insert_order=hashed
 Redis-1                       : copied label data = True
 Redis-1                       : copied label index = True
 Redis-1                       : copied label loaded = True
 Redis-1                       : copied label schema = True
 Redis-1                       : copied label time_generated = 0
-Redis-1                       : copied label time_index = 1
-Redis-1                       : copied label time_ingested = 82
-Redis-1                       : copied label time_loading = 102
-Redis-1                       : copied label time_loading_end = 1793792220
-Redis-1                       : copied label time_loading_start = 1793792052
-Redis-1                       : copied label time_schema = 1
+Redis-1                       : copied label time_index = 3
+Redis-1                       : copied label time_ingested = 94
+Redis-1                       : copied label time_loading = 119
+Redis-1                       : copied label time_loading_end = 1794005701
+Redis-1                       : copied label time_loading_start = 1794005532
+Redis-1                       : copied label time_schema = 3
 Redis-1                       : loading is set to finished
-Loop pass                     : took 1.7s (1 kubectl calls 0.8s, 15 API requests 0.8s)
+Loop pass                     : took 2.1s (1 kubectl calls 1.4s, 15 API requests 0.6s)
 - waiting 30s -               : done
-Redis-1                       : worker pods found: ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1']
-Redis-1                       : worker pods found (only stateful set pods): ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1']
+Redis-1                       : worker pods found: ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1']
+Redis-1                       : worker pods found (only stateful set pods): ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1']
 Redis-1                       : found 1 / 3 running workers (component worker)
 Redis-1                       : waits for health check of workers to succeed
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 21 API requests 0.7s)
 - waiting 30s -               : done
-Redis-1                       : worker pods found: ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : worker pods found (only stateful set pods): ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
+Redis-1                       : worker pods found: ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : worker pods found (only stateful set pods): ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
 Redis-1                       : found 2 / 3 running workers (component worker)
 Redis-1                       : waits for health check of workers to succeed
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 19 API requests 0.9s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 20 API requests 0.6s)
 - waiting 30s -               : done
-Redis-1                       : worker pods found: ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : worker pods found (only stateful set pods): ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
+Redis-1                       : worker pods found: ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : worker pods found (only stateful set pods): ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
 Redis-1                       : found 3 / 3 running workers (component worker)
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-Redis-1-1793791966 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-Redis-1-1794005495 initialized to 1.
 Redis-1                       : benchmarks done 1 of 2. This will be client 1
 redis-1-2-1-1                 : start benchmarking (benchmark_run=1)
-Redis-1                       : worker pods found: ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : worker pods found (only stateful set pods): ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : distributed system - get host info for worker bx-w-redis-nvme-ycsb-3-0
-Redis-1                       : distributed system - get host info for worker bx-w-redis-nvme-ycsb-3-1
-Redis-1                       : distributed system - get host info for worker bx-w-redis-nvme-ycsb-3-2
+Redis-1                       : worker pods found: ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : worker pods found (only stateful set pods): ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : distributed system - get host info for worker bx-w-rd-nvme-ycsb-3-0
+Redis-1                       : distributed system - get host info for worker bx-w-rd-nvme-ycsb-3-1
+Redis-1                       : distributed system - get host info for worker bx-w-rd-nvme-ycsb-3-2
 redis-1-2-1-1                 : needs monitoring (common metrics) for deployment sut
 redis-1-2-1-1                 : needs monitoring (custom metrics) for stateful set worker
-Redis-1                       : get size via pod bexhoma-sut-redis-1-1793791966-df6c99789-n67c4 and write to pvc bexhoma-storage-redis-nvme-ycsb-3
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-0 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-0
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-1 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-1
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-2 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-2
-Redis-1                       : benchmarking results in folder C:\data\benchmarks/1793791966
-Redis-1                       : submitted benchmarker job in 12.0s (6 kubectl calls 3.3s, 82 API requests 8.6s)
-Loop pass                     : took 13.6s (6 kubectl calls 3.3s, 108 API requests 9.7s)
+Redis-1                       : get size via pod bexhoma-sut-redis-1-1794005495-596dc98856-mzzjm and write to pvc bexhoma-storage-rd-nvme-ycsb-3
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-0 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-0
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-1 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-1
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-2 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-2
+Redis-1                       : benchmarking results in folder C:\data\benchmarks/1794005495
+Redis-1                       : submitted benchmarker job in 12.4s (3 kubectl calls 3.7s, 82 API requests 8.5s)
+Loop pass                     : took 16.2s (5 kubectl calls 6.0s, 108 API requests 10.0s)
 - waiting 30s -               : done
 Redis-1                       : has running benchmarks
-Loop pass                     : took 1.9s (2 kubectl calls 1.0s, 19 API requests 0.9s)
-- waiting 30s -               : done
-Redis-1                       : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 Redis-1                       : has running benchmarks
 Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 17 API requests 0.7s)
 - waiting 30s -               : done
 Redis-1                       : has running benchmarks
-Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 17 API requests 0.7s)
 - waiting 30s -               : done
 Redis-1                       : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+Loop pass                     : took 4.2s (0 kubectl calls 0.0s, 17 API requests 0.6s)
 - waiting 30s -               : done
-redis-1-2-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1793791966/redis-1-2-1-1.config
+Redis-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+redis-1-2-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1794005495/redis-1-2-1-1.config
 redis-1-2-1-1                 : showing benchmarker times
-redis-1-2-1-1                 : benchmarker timespan job from 1793792616 to 1793792806
-redis-1-2-1-1                 : benchmarker timespan pods from 1793792617 to 1793792778
-redis-1-2-1-1                 : benchmarker timespan (start to end single container [s]) = 161
-redis-1-2-1-1                 : benchmarker times (start/end per pod and container) = [(1793792617, 1793792778)]
-redis-1-2-1-1                 : found and updated times {'benchmarker': [(1793792617, 1793792778)]}
+redis-1-2-1-1                 : benchmarker timespan job from 1794006099 to 1794006294
+redis-1-2-1-1                 : benchmarker timespan pods from 1794006102 to 1794006266
+redis-1-2-1-1                 : benchmarker timespan (start to end single container [s]) = 164
+redis-1-2-1-1                 : benchmarker times (start/end per pod and container) = [(1794006102, 1794006266)]
+redis-1-2-1-1                 : found and updated times {'benchmarker': [(1794006102, 1794006266)]}
 redis-1-2-1-1                 : needs monitoring (common metrics) for deployment sut
 redis-1-2-1-1                 : needs monitoring (custom metrics) for stateful set worker
 redis-1-2-1-1                 : collecting execution metrics of worker at connection redis-1-2-1-1
 redis-1-2-1-1                 : collecting metrics of benchmarker at connection redis-1-2-1-1
-Redis-1                       : get size via pod bexhoma-sut-redis-1-1793791966-df6c99789-n67c4 and write to pvc bexhoma-storage-redis-nvme-ycsb-3
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-0 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-0
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-1 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-1
-Redis-1                       : get size via pod bx-w-redis-nvme-ycsb-3-2 and write to pvc bxw-bx-w-redis-nvme-ycsb-3-2
-redis-1-2-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-redis-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-redis-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-redis-1-2-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-redis-1-1793791966-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-redis-1-1793791966-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+Redis-1                       : get size via pod bexhoma-sut-redis-1-1794005495-596dc98856-mzzjm and write to pvc bexhoma-storage-rd-nvme-ycsb-3
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-0 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-0
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-1 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-1
+Redis-1                       : get size via pod bx-w-rd-nvme-ycsb-3-2 and write to pvc bxw-bx-w-rd-nvme-ycsb-3-2
+redis-1-2-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-rd-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-rd-nvme-ycsb-3-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+redis-1-2-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-redis-1-1794005495-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-redis-1-1794005495-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 redis-1-2-1-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 redis-1-2-1-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
 redis-1-2-1-1                 : WARNING metric missing for workerbenchmarking: CPU Throttling Rate [s/s]
 redis-1-2-1-1                 : WARNING metric missing for workerbenchmarking: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 6.2s, 0 API requests 0.0s)
-Loop pass                     : took 10.4s (12 kubectl calls 10.7s, 28 API requests 1.5s)
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.7s, 0 API requests 0.0s)
+Loop pass                     : took 19.2s (12 kubectl calls 19.8s, 28 API requests 1.7s)
 Redis-1                       : can be stopped
-Redis-1                       : had 0 restarts at worker bexhoma-sut-redis-1-1793791966-df6c99789-n67c4
-Redis-1                       : worker pods found: ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : worker pods found (only stateful set pods): ['bx-w-redis-nvme-ycsb-3-0', 'bx-w-redis-nvme-ycsb-3-1', 'bx-w-redis-nvme-ycsb-3-2']
-Redis-1                       : had 0 restarts at worker bx-w-redis-nvme-ycsb-3-0
-Redis-1                       : had 0 restarts at worker bx-w-redis-nvme-ycsb-3-1
-Redis-1                       : had 0 restarts at worker bx-w-redis-nvme-ycsb-3-2
-Loop pass                     : took 8.0s (12 kubectl calls 6.3s, 40 API requests 1.4s)
-Experiment                    : ends at 2026-11-04 12:47:02.523456 (16014.2524698) - 855.39s total
+Redis-1                       : had 0 restarts at worker bexhoma-sut-redis-1-1794005495-596dc98856-mzzjm
+Redis-1                       : worker pods found: ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : worker pods found (only stateful set pods): ['bx-w-rd-nvme-ycsb-3-0', 'bx-w-rd-nvme-ycsb-3-1', 'bx-w-rd-nvme-ycsb-3-2']
+Redis-1                       : had 0 restarts at worker bx-w-rd-nvme-ycsb-3-0
+Redis-1                       : had 0 restarts at worker bx-w-rd-nvme-ycsb-3-1
+Redis-1                       : had 0 restarts at worker bx-w-rd-nvme-ycsb-3-2
+Loop pass                     : took 16.3s (12 kubectl calls 14.0s, 40 API requests 1.6s)
+Experiment                    : ends at 2026-11-07 00:05:25.640700 (229515.1831418) - 828.74s total
 Experiment                    : transforming metrics for loading
 Experiment                    : transforming metrics for loading completed
 Experiment                    : transforming metrics for benchmarking
@@ -321,8 +296,8 @@ Result workflow complete
 ### Workload
 YCSB SF=3
 * Type: ycsb
-* Duration: 856s 
-* Code: 1793791966
+* Duration: 829s 
+* Code: 1794005495
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -335,7 +310,7 @@ YCSB SF=3
   * Factors for benchmarking are [4].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.13.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['Redis'].
   * Import is handled by 8 processes (pods).
@@ -358,7 +333,7 @@ YCSB SF=3
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741709
+  * disk:870465
   * datadisk:1
   * cpu_list:0-223
   * args:['--maxclients', '10000', '--io-threads', '64']
@@ -366,44 +341,44 @@ YCSB SF=3
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:263400
+    * datadisk:2188
+    * volume_size:49G
+    * volume_used:2.2G
+    * cpu_list:0-127
+  * worker 1
     * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:602471
-    * datadisk:2181
+    * disk:715470
+    * datadisk:2327
     * volume_size:49G
-    * volume_used:2.2G
+    * volume_used:2.3G
     * cpu_list:0-127
-  * worker 1
+  * worker 2
     * RAM:1077381263360
     * CPU:AMD EPYC 7742 64-Core Processor
     * Cores:256
     * host:6.8.0-137-generic
     * node:cl-worker27
-    * disk:494288
-    * datadisk:2444
-    * volume_size:49G
-    * volume_used:2.4G
-    * cpu_list:0-255
-  * worker 2
-    * RAM:540579299328
-    * CPU:AMD EPYC 7502 32-Core Processor
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker22
-    * disk:237087
-    * datadisk:2179
+    * disk:662749
+    * datadisk:2186
     * volume_size:49G
     * volume_used:2.2G
-    * cpu_list:0-127
+    * cpu_list:0-255
   * resources_total: 12.25 CPU, 192.5 GiB RAM requested in 4 pods
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793791966
+    * code:1794005495
     * BEXHOMA_WORKERS:3
 * redis-1-2-1-1 uses docker image redis:8.10.2
   * RAM:2164173156352
@@ -411,7 +386,7 @@ YCSB SF=3
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:848628
+  * disk:869245
   * datadisk:1
   * cpu_list:0-223
   * args:['--maxclients', '10000', '--io-threads', '64']
@@ -419,44 +394,44 @@ YCSB SF=3
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:1077381263360
-    * CPU:AMD EPYC 7742 64-Core Processor
-    * Cores:256
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
     * host:6.8.0-137-generic
-    * node:cl-worker27
-    * disk:494288
-    * datadisk:2129
+    * node:cl-worker37
+    * disk:263322
+    * datadisk:2250
     * volume_size:49G
-    * volume_used:2.1G
-    * cpu_list:0-255
+    * volume_used:2.2G
+    * cpu_list:0-127
   * worker 1
     * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:602471
-    * datadisk:2727
+    * disk:715473
+    * datadisk:2596
     * volume_size:49G
-    * volume_used:2.7G
+    * volume_used:2.6G
     * cpu_list:0-127
   * worker 2
-    * RAM:540597891072
-    * CPU:Intel(R) Xeon(R) 6767P
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
     * Cores:256
     * host:6.8.0-137-generic
-    * node:cl-worker39
-    * disk:243965
-    * datadisk:2131
+    * node:cl-worker27
+    * disk:662816
+    * datadisk:2173
     * volume_size:49G
-    * volume_used:2.1G
+    * volume_used:2.2G
     * cpu_list:0-255
   * resources_total: 12.25 CPU, 192.5 GiB RAM requested in 4 pods
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793791966
+    * code:1794005495
     * BEXHOMA_WORKERS:3
 
 ### Inherited Loading
@@ -469,11 +444,11 @@ YCSB SF=3
 * Redis-1: skipped checkschema-ycsb.sql, initschema-ycsb.sql
 
 ### SUT Container Restarts
-* bexhoma-sut-redis-1-1793791966-7c7d6bdc96-sfctd: 0
-* bx-w-redis-nvme-ycsb-3-0: 0
-* bx-w-redis-nvme-ycsb-3-1: 0
-* bx-w-redis-nvme-ycsb-3-2: 0
-* bexhoma-sut-redis-1-1793791966-df6c99789-n67c4: 0
+* bexhoma-sut-redis-1-1794005495-5b54cc4b9-25swl: 0
+* bx-w-rd-nvme-ycsb-3-0: 0
+* bx-w-rd-nvme-ycsb-3-1: 0
+* bx-w-rd-nvme-ycsb-3-2: 0
+* bexhoma-sut-redis-1-1794005495-596dc98856-mzzjm: 0
 
 ### Workflow
 
@@ -493,20 +468,20 @@ YCSB SF=3
 
 | connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
 |:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| redis-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4602.41 |                81479.00 |            375000.00 |                              3363.00 | 3.00 |              132.55 |
-| redis-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4624.43 |                81091.00 |            375000.00 |                              3369.00 | 3.00 |              133.18 |
-| redis-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4607.73 |                81385.00 |            375000.00 |                              3373.00 | 3.00 |              132.70 |
-| redis-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4595.70 |                81598.00 |            375000.00 |                              3369.00 | 3.00 |              132.36 |
-| redis-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4597.73 |                81562.00 |            375000.00 |                              3355.00 | 3.00 |              132.41 |
-| redis-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4614.65 |                81263.00 |            375000.00 |                              3365.00 | 3.00 |              132.90 |
-| redis-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4597.33 |                81569.00 |            375000.00 |                              3375.00 | 3.00 |              132.40 |
-| redis-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4600.49 |                81513.00 |            375000.00 |                              3369.00 | 3.00 |              132.49 |
+| redis-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4059.89 |                92367.00 |            375000.00 |                              3865.00 | 3.00 |              116.92 |
+| redis-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4077.68 |                91964.00 |            375000.00 |                              3855.00 | 3.00 |              117.44 |
+| redis-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4066.32 |                92221.00 |            375000.00 |                              3851.00 | 3.00 |              117.11 |
+| redis-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4058.35 |                92402.00 |            375000.00 |                              3865.00 | 3.00 |              116.88 |
+| redis-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4086.53 |                91765.00 |            375000.00 |                              3855.00 | 3.00 |              117.69 |
+| redis-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4067.42 |                92196.00 |            375000.00 |                              3855.00 | 3.00 |              117.14 |
+| redis-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4057.96 |                92411.00 |            375000.00 |                              3869.00 | 3.00 |              116.87 |
+| redis-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         4068.83 |                92164.00 |            375000.00 |                              3869.00 | 3.00 |              117.18 |
 
 #### Per Run
 
 | DBMS      |   experiment_run |   threads |    target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:----------|-----------------:|----------:|----------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| Redis-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 3.00 |              132.36 |                        36840.48 |                81598.00 |           3000000.00 |                              3367.25 |
+| Redis-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 3.00 |              116.87 |                        32542.99 |                92411.00 |           3000000.00 |                              3860.50 |
 
 ### Benchmarking
 
@@ -514,15 +489,15 @@ YCSB SF=3
 
 | DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| redis-1-1-1-1-1 | redis-1-1-1 | redis-1-1-1-1 | Redis-1         |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        60714.98 |               164704.00 |            4997701 |                            2629.00 |              5002299 |                              2619.00 |
-| redis-1-2-1-1-1 | redis-1-2-1 | redis-1-2-1-1 | Redis-1         |                2 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        62708.11 |               159469.00 |            5002170 |                            3589.00 |              4997830 |                              3597.00 |
+| redis-1-1-1-1-1 | redis-1-1-1 | redis-1-1-1-1 | Redis-1         |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        61002.76 |               163927.00 |            4996624 |                            2241.00 |              5003376 |                              2223.00 |
+| redis-1-2-1-1-1 | redis-1-2-1 | redis-1-2-1-1 | Redis-1         |                2 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        61211.12 |               163369.00 |            5001804 |                            1797.00 |              4998196 |                              1787.00 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| redis-1-1-1 | redis-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        60714.98 |               164704.00 |            4997701 |                            2629.00 |              5002299 |                              2619.00 |
-| redis-1-2-1 | redis-1-2-1 |                2 |       128 |    65536 |               1 |           1 |            0 |                        62708.11 |               159469.00 |            5002170 |                            3589.00 |              4997830 |                              3597.00 |
+| redis-1-1-1 | redis-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        61002.76 |               163927.00 |            4996624 |                            2241.00 |              5003376 |                              2223.00 |
+| redis-1-2-1 | redis-1-2-1 |                2 |       128 |    65536 |               1 |           1 |            0 |                        61211.12 |               163369.00 |            5001804 |                            1797.00 |              4998196 |                              1787.00 |
 
 ### Monitoring
 
@@ -530,27 +505,27 @@ YCSB SF=3
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| redis-1-1-1-1 |       245.46 |      2.82 |           4.46 |                  4.47 |
+| redis-1-1-1-1 |       274.11 |      2.76 |           4.74 |                  4.75 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| redis-1-1-1-1 |       379.30 |      5.45 |           0.55 |                  0.55 |
+| redis-1-1-1-1 |       324.60 |      5.01 |           0.55 |                  0.56 |
 
 ### Benchmarking phase: component worker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| redis-1-1-1-1 |       359.94 |      3.15 |           4.81 |                  4.82 |
-| redis-1-2-1-1 |       360.71 |      3.07 |           4.40 |                  4.41 |
+| redis-1-1-1-1 |       346.36 |      3.13 |           4.97 |                  4.98 |
+| redis-1-2-1-1 |       322.59 |      3.28 |           4.71 |                  4.72 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| redis-1-1-1-1 |      1196.17 |     10.52 |           1.49 |                  1.49 |
-| redis-1-2-1-1 |      1992.83 |     14.95 |           1.50 |                  1.50 |
+| redis-1-1-1-1 |       753.62 |      5.12 |           1.50 |                  1.50 |
+| redis-1-2-1-1 |       663.01 |      5.20 |           1.49 |                  1.49 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection redis-1-1-1-1 (bexhoma-metrics-redis-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)

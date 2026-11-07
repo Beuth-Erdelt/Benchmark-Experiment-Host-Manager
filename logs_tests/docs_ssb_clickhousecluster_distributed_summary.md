@@ -3,8 +3,8 @@
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 1060s 
-* Code: 1793201126
+* Duration: 348s 
+* Code: 1794007941
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -15,7 +15,7 @@ SSB Queries SF=1
   * Timeout per query is 1200.
   * Data transfer volume per query is also measured.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.9.
+  * Experiment uses bexhoma version 0.11.13.
   * Experiment is limited to DBMS ['ClickHouseCluster'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -39,60 +39,60 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:623775
-  * datadisk:211
+  * disk:867986
+  * datadisk:153
   * volume_size:1.8T
-  * volume_used:610G
+  * volume_used:848G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:2164173156352
-    * CPU:INTEL(R) XEON(R) PLATINUM 8570
-    * Cores:224
-    * host:6.8.0-147-generic
-    * node:cl-worker36
-    * disk:623890
-    * datadisk:270
-    * volume_size:1.8T
-    * volume_used:610G
-    * cpu_list:0-223
-  * worker 1
     * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:500517
-    * datadisk:272
+    * disk:716471
+    * datadisk:200
     * volume_size:1.8T
-    * volume_used:489G
+    * volume_used:700G
     * cpu_list:0-127
-  * worker 2
+  * worker 1
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:561727
-    * datadisk:279
+    * disk:309930
+    * datadisk:201
     * volume_size:879G
-    * volume_used:549G
+    * volume_used:303G
     * cpu_list:0-127
+  * worker 2
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:867989
+    * datadisk:201
+    * volume_size:1.8T
+    * volume_used:848G
+    * cpu_list:0-223
   * resources_total: 16.0 CPU, 256.0 GiB RAM requested in 4 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793201126
+    * code:1794007941
     * BEXHOMA_WORKERS:3
 
 ### SUT Container Restarts
-* bexhoma-sut-clickhousecluster-1-1793201126-6c7c6854fc-gbmvc: 0
-* bexhoma-worker-clickhousecluster-ssb-distributed-1-0: 0
-* bexhoma-worker-clickhousecluster-ssb-distributed-1-1: 0
-* bexhoma-worker-clickhousecluster-ssb-distributed-1-2: 0
+* bexhoma-sut-clickhousecluster-1-1794007941-7f5bc7f4-26s22: 0
+* bx-w-chc-1-1794007941-0: 0
+* bx-w-chc-1-1794007941-1: 0
+* bx-w-chc-1-1794007941-2: 0
 
 ### Workflow
 
@@ -110,7 +110,7 @@ SSB Queries SF=1
 
 |                       |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:----------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| ClickHouseCluster-1-1 |                1 |    1 |       53.00 |          15.00 |           12.00 |          4.00 |           12.00 |              8 |           0 |             | None           |             0 | False         |               67.92 | False               |
+| ClickHouseCluster-1-1 |                1 |    1 |       36.00 |           3.00 |           20.00 |          2.00 |            3.00 |              8 |           0 |             | None           |             0 | False         |              100.00 | False               |
 
 ### Benchmarking
 
@@ -118,13 +118,13 @@ SSB Queries SF=1
 
 | DBMS                        | configuration       | phase                   | job                       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                         |
 |:----------------------------|:--------------------|:------------------------|:--------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------------------|
-| clickhousecluster-1-1-1-1-1 | ClickHouseCluster-1 | clickhousecluster-1-1-1 | clickhousecluster-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         12 |            0.46 |             7835.72 |           3900.00 |          -1 | clickhousecluster-1-1-1-1-1 |
+| clickhousecluster-1-1-1-1-1 | ClickHouseCluster-1 | clickhousecluster-1-1-1 | clickhousecluster-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         11 |            0.48 |             7496.79 |           4254.55 |          -1 | clickhousecluster-1-1-1-1-1 |
 
 #### Per Phase
 
 |                         | phase                   |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------------------|:------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| clickhousecluster-1-1-1 | clickhousecluster-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         12 |            0.46 |             7835.72 |           3900.00 |          -1 |
+| clickhousecluster-1-1-1 | clickhousecluster-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         11 |            0.48 |             7496.79 |           4254.55 |          -1 |
 
 #### Query Completion per Phase
 
@@ -137,19 +137,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   clickhousecluster-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|------------------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                        240.04 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                        112.10 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                         77.86 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                        318.90 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                        220.45 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                        201.92 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                        901.72 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                        809.82 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                        744.89 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                       1102.99 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                       1356.16 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                       1245.85 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                       1347.81 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                        314.42 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                         80.44 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                         77.34 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                        450.19 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                        228.39 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                        198.61 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                        865.01 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                        981.54 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                        763.85 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                        708.21 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                       1469.36 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                       1629.61 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                       1643.47 |
 
 ### Errors (failed queries)
 
@@ -161,6 +161,8 @@ No warnings
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
