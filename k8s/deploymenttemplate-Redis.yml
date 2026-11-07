@@ -43,6 +43,10 @@ spec:
       #- key: "nvidia.com/gpu"
       #  effect: "NoSchedule"
       terminationGracePeriodSeconds: 180
+      # redis-server runs as redis (uid/gid 999): a new volume's root belongs to root, so without
+      # the group SAVE cannot write dump.rdb to /data ("Permission denied", SAVE answers ERR)
+      securityContext:
+        fsGroup: 999
       containers:
       - name: dbms
         image: redis:8.10.2 #7.4.2
