@@ -734,6 +734,7 @@ class ParallelStepsTest(unittest.TestCase):
         cluster.get_jobs.return_value = ['job-done', 'job-running', 'job-gone']
         cluster.get_job_pods.return_value = []
         cluster.get_job_status.side_effect = lambda job: job == 'job-done'
+        cluster.get_job_failed.return_value = False
         experiment._ended_jobs().add('job-gone')
         config = SimpleNamespace(configuration='PostgreSQL-1', host=mock.Mock())
         uploads = []
@@ -742,6 +743,25 @@ class ParallelStepsTest(unittest.TestCase):
         experiment.end_benchmarking.assert_called_once_with('job-done', config, fetch_batch='batch', pending_uploads=uploads)
         cluster.delete_job.assert_called_once_with('job-done')
         self.assertIn('job-done', experiment._ended_jobs())
+
+    def test_a_failed_job_is_ended_and_recorded_instead_of_waited_for(self) -> None:
+        experiment = _experiment()
+        experiment.code = '42'
+        experiment.end_benchmarking = mock.Mock()
+        experiment._runtime_test_results = []
+        cluster = experiment.cluster
+        cluster.get_jobs.return_value = ['job-failed', 'job-running']
+        cluster.get_job_pods.return_value = []
+        cluster.get_job_status.return_value = False
+        cluster.get_job_failed.side_effect = lambda job: job == 'job-failed'
+        config = SimpleNamespace(configuration='PostgreSQL-1', host=mock.Mock())
+        with mock.patch('builtins.print'):
+            running, incomplete, ended = experiment._end_finished_jobs(config, 'batch', [])
+        self.assertEqual((running, incomplete, ended), (True, True, ['job-failed']))
+        cluster.delete_job.assert_called_once_with('job-failed')
+        self.assertEqual(len(experiment._runtime_test_results), 1)
+        self.assertFalse(experiment._runtime_test_results[0][0])
+        self.assertIn('job-failed', experiment._runtime_test_results[0][1])
 
     def test_submit_round_runs_every_entry_and_starts_the_timer(self) -> None:
         experiment = _experiment()

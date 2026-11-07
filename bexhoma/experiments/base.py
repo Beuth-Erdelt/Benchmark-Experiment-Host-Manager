@@ -2530,8 +2530,14 @@ class ExperimentBase():
             success = self.cluster.get_job_status(job)
             self.cluster.logger.debug('job {} has success status {}'.format(job, success))
             if not success:
-                incomplete = True
-                continue
+                # a job in Kubernetes' terminal Failed condition (e.g. backoffLimit 0) never succeeds:
+                # it is ended like a finished one, so the run goes on instead of waiting for it forever
+                if not self.cluster.get_job_failed(job):
+                    incomplete = True
+                    continue
+                reason = f"Benchmarking job {job} for {configuration} reached Kubernetes' terminal Failed condition"
+                print(f"{'Experiment':30s}: {reason}")
+                self._runtime_test_results.append((False, reason))
             # status per pod
             for p in pods:
                 status = self.cluster.get_pod_status(p)
