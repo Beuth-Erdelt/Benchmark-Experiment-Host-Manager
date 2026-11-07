@@ -53,11 +53,14 @@ class ClickHouseLoaderTest(unittest.TestCase):
         with open(_LOADER, encoding='utf-8') as file:
             script = file.read()
         self.assertIn('INSERT INTO $TABLE FORMAT CSV', script)
-        self.assertIn('DELETE FROM lineitem$DELETE_SUFFIX $ON_CLUSTER WHERE l_orderkey IN', script)
-        self.assertIn('DELETE FROM orders$DELETE_SUFFIX $ON_CLUSTER WHERE o_orderkey IN', script)
-        # a Distributed table cannot be deleted from: the cluster deletes on the local tables
+        self.assertIn('DELETE FROM lineitem$DELETE_SUFFIX WHERE l_orderkey IN', script)
+        self.assertIn('DELETE FROM orders$DELETE_SUFFIX WHERE o_orderkey IN', script)
+        # a Distributed table cannot be deleted from: the cluster deletes on the local tables of each shard,
+        # the coordinator has none (ON CLUSTER would look them up on the coordinator and fail)
         self.assertIn('DELETE_SUFFIX="_local"', script)
-        self.assertIn('ON_CLUSTER="ON CLUSTER $BEXHOMA_CLICKHOUSE_CLUSTER"', script)
+        self.assertIn('FROM system.clusters WHERE cluster = ', script)
+        self.assertIn('for DELETE_HOST in $DELETE_HOSTS', script)
+        self.assertNotIn('ON_CLUSTER', script)
         # lineitem is deleted before orders, as in the other loaders
         self.assertLess(script.index('DELETE FROM lineitem'), script.index('DELETE FROM orders'))
         # a failure is reported, not swallowed

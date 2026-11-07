@@ -43,18 +43,22 @@ ls $destination_raw -lh
 
 ######################## ClickHouse connection and table options ########################
 # Native protocol (BEXHOMA_PORT is the HTTP port of the service, used by JDBC).
-CLICKHOUSE="clickhouse-client --host $BEXHOMA_HOST --port $CLICKHOUSE_PORT --database $BEXHOMA_DATABASE"
+# The host is not part of CLICKHOUSE_CLIENT: clickhouse-client takes the first --host it is given.
+CLICKHOUSE_CLIENT="clickhouse-client --port $CLICKHOUSE_PORT --database $BEXHOMA_DATABASE"
+CLICKHOUSE="$CLICKHOUSE_CLIENT --host $BEXHOMA_HOST"
 # '|'-separated, trailing '|' removed by the generator (TRANSFORM_RAW_DATA); double quotes are data.
 # A Distributed table sends the rows to the shards before the INSERT returns.
 CSV_OPTS="--format_csv_delimiter=| --format_csv_allow_double_quotes=0 --distributed_foreground_insert=1"
 # On a cluster, orders and lineitem are Distributed tables on top of <name>_local on every shard,
 # and a Distributed table cannot be deleted from: RF2 runs on the local tables of all shards.
+# The coordinator holds only the Distributed tables, so the loader connects to each shard.
 DELETE_SUFFIX=""
-ON_CLUSTER=""
+DELETE_HOSTS="$BEXHOMA_HOST"
 if test -n "$BEXHOMA_CLICKHOUSE_CLUSTER"
 then
     DELETE_SUFFIX="_local"
-    ON_CLUSTER="ON CLUSTER $BEXHOMA_CLICKHOUSE_CLUSTER"
+    DELETE_HOSTS=$($CLICKHOUSE --query "SELECT host_name FROM system.clusters WHERE cluster = '$BEXHOMA_CLICKHOUSE_CLUSTER' ORDER BY shard_num, replica_num")
+    echo "RF2 runs on: $DELETE_HOSTS"
 fi
 # lightweight DELETE, returns when the rows are masked on all replicas
 DELETE_OPTS="--lightweight_deletes_sync=2 --max_query_size=4194304"
@@ -119,20 +123,22 @@ for K in $(seq $FIRST_SET $LAST_SET); do
     split -l $KEYS_PER_DELETE $destination_raw/delete.$K $KEY_CHUNKS
     for CHUNK in ${KEY_CHUNKS}*; do
         KEYS=$(paste -sd, $CHUNK)
-        $CLICKHOUSE $DELETE_OPTS --query \
-            "DELETE FROM lineitem$DELETE_SUFFIX $ON_CLUSTER WHERE l_orderkey IN ($KEYS)"
-        if test $? -ne 0
-        then
-            echo "RF2 failed at lineitem of set $K ($CHUNK)"
-            FAILED="$FAILED RF2:lineitem:$K"
-        fi
-        $CLICKHOUSE $DELETE_OPTS --query \
-            "DELETE FROM orders$DELETE_SUFFIX $ON_CLUSTER WHERE o_orderkey IN ($KEYS)"
-        if test $? -ne 0
-        then
-            echo "RF2 failed at orders of set $K ($CHUNK)"
-            FAILED="$FAILED RF2:orders:$K"
-        fi
+        for DELETE_HOST in $DELETE_HOSTS; do
+            $CLICKHOUSE_CLIENT --host $DELETE_HOST $DELETE_OPTS --query \
+                "DELETE FROM lineitem$DELETE_SUFFIX WHERE l_orderkey IN ($KEYS)"
+            if test $? -ne 0
+            then
+                echo "RF2 failed at lineitem of set $K ($CHUNK) on $DELETE_HOST"
+                FAILED="$FAILED RF2:lineitem:$K"
+            fi
+            $CLICKHOUSE_CLIENT --host $DELETE_HOST $DELETE_OPTS --query \
+                "DELETE FROM orders$DELETE_SUFFIX WHERE o_orderkey IN ($KEYS)"
+            if test $? -ne 0
+            then
+                echo "RF2 failed at orders of set $K ($CHUNK) on $DELETE_HOST"
+                FAILED="$FAILED RF2:orders:$K"
+            fi
+        done
         rm -f $CHUNK
     done
 

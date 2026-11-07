@@ -36,7 +36,8 @@ See [images/tpch_refresh/README.md](https://github.com/Beuth-Erdelt/Benchmark-Ex
    * **RF2**: the order keys of `delete.K` in chunks of 10000: `DELETE FROM lineitem WHERE l_orderkey IN (...)`,
      then the same on `orders` (lightweight delete, waits for all replicas). With `BEXHOMA_CLICKHOUSE_CLUSTER`
      set, a Distributed table cannot be deleted from, so the DELETE runs on `lineitem_local` and `orders_local`
-     `ON CLUSTER <name>`.
+     on every shard: the loader reads the hosts of cluster `<name>` from `system.clusters`
+     and connects to each (the coordinator has only the Distributed tables, so `ON CLUSTER` does not work).
 4. Print `BEXHOMA_DURATION`, `BEXHOMA_START` and `BEXHOMA_END`.
 
 ## Failure
