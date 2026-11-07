@@ -59,6 +59,15 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 | `store_args` | no | Whether to capture and display the container startup arguments in the experiment summary (default: `True`) |
 | `priceperhourdollar` | no | Reserved for cost modelling (currently unused) |
 | `monitor` | no | Application-level monitoring configuration; see [Monitoring](Monitoring.md) |
+| `benchmarks` | yes² | The benchmarks the DBMS can run, and what each needs of it; see [Benchmarks of a DBMS](#benchmarks-of-a-dbms) |
+| `storage_prefix` | yes² | Name of the storage (volume) of the DBMS, the same for every benchmark (e.g. `postgresql`, `PgDuckDB`) |
+| `base_system` | no | DBMS whose script folder `experiments/<benchmark>/<base_system>` this DBMS uses, if it is not its own (PgDuckDB and PGBouncer use `PostgreSQL`) |
+| `workers` | no | `True` if the SUT takes `-nw` workers (shards) next to its coordinator |
+| `sut_attributes` | no | How the SUT is set up (placeholder pod, no monitoring, Helm-managed stateful sets, ...); see [Benchmarks of a DBMS](#how-the-sut-is-set-up-sut_attributes) |
+| `initial_cluster` | no | `{component, port, scheme, env}`: the members of this component are passed to the SUT pods as `env`, for a DBMS that bootstraps as a cluster (TiDB: the `pd` nodes) |
+| `template.alias` | yes | The name of the DBMS in the reports: one per DBMS, the same for every benchmark and experiment |
+| `template.dialect` | no | SQL dialect of the DBMS: the key of its query variants in the query files (`MySQL`, `Clickhouse`, `CedarDB`, ...) |
+| `monitor.<component>.blackbox_database` | no | Database that the blackbox probe of the application monitoring connects to |
 
 ¹ Only required for SQL DBMS queried via DBMSBenchmarker. Entries whose SUT is
 never queried through DBMSBenchmarker — [Dragonfly](#dragonfly),
@@ -68,6 +77,99 @@ omit `template.JDBC` entirely; `template` itself is still required (at minimum
 password]` pair) becomes required instead — `configurations/manifest.py`
 falls back to `template['auth']` for `BEXHOMA_USER`/`BEXHOMA_PASSWORD`
 injection whenever `template.JDBC` is absent.
+
+² Required for a DBMS that has `benchmarks`.
+
+### Benchmarks of a DBMS
+
+The entry scripts (`tpch.py`, `tpcds.py`, `ssb.py`, `ycsb.py`, `benchbase.py`, `hammerdb.py`) contain nothing that is specific to a DBMS.
+Everything a script needs to know about a DBMS is in its `dockers` entry, so a DBMS is added by configuration alone, see [Add a New DBMS](#add-a-new-dbms).
+
+`benchmarks` has one key per benchmark the DBMS can run: `tpch`, `tpcds`, `ssb`, `ycsb`, `benchbase` and `tpcc` (HammerDB).
+**A missing key means that the DBMS cannot run that benchmark**: the `-dbms` of a script offers exactly the DBMS that have an entry for it.
+For example, MariaDB ColumnStore has no `ycsb` key:
+
+```python
+'MariaDBCS': {
+    'storage_prefix': 'mariadbcs',
+    'template': {'alias': 'Columnwise-C', 'dialect': 'MySQL', ...},
+    'benchmarks': {
+        'tpch': {'loading_template': 'jobtemplate-loading-tpch-MariaDB.yml',
+                 'refresh_template': 'jobtemplate-benchmarking-tpch-refresh-MariaDB.yml',
+                 'reset_scripts': ['reset-tpch.sql'],
+                 'loading_parameters': {'MYSQL_LOADING_FROM': 'LOCAL'},
+                 'sut_parameters': {'MARIADB_DATABASE': 'tpch'},
+                 'max_loading_pods': 1},
+        'ssb': {...},
+    },
+},
+```
+
+The keys of an entry of `benchmarks`:
+
+| Key | Description |
+|---|---|
+| `default` | `True`: the DBMS runs if `-dbms` is not given. Without it the DBMS has to be named. |
+| `loading_template` | Job template in `k8s/` that loads the data (TPC-H, TPC-DS, SSB). A DBMS that loads needs one: there is no default job. HammerDB, Benchbase and YCSB bring a loading job of their own. |
+| `refresh_template` | Job template of the TPC-H refresh stream (`-xrs`), see [TPC-H](Example-TPC-H.md#refresh-stream). All DBMS of one run need the same job. |
+| `reset_scripts` | Scripts run before each benchmarking round with `-ar`, see [Reset scripts](#reset-scripts--ar) |
+| `loading_parameters`, `benchmarking_parameters` | Environment of the loading and benchmarking jobs |
+| `sut_parameters` | Environment of the SUT container; a value you set yourself wins |
+| `eval_parameters` | Parameters stored with the results |
+| `option_parameters` | `{ENV_NAME: option}`: environment of the SUT container taken from a boolean option of the command line (`DUCKDB_FORCE_EXECUTION` from `-xdfe`) |
+| `option_experiment` | Init and indexing scripts used when a boolean option is set (Citus: `-xcol` switches to columnar storage) |
+| `max_loading_pods` | Number of loading pods the DBMS tolerates; more are reduced with a message (MariaDB ColumnStore: 1) |
+| `max_sut_dbms` | Number of SUT of the DBMS that may run at the same time |
+| `per_loading_threads` | The DBMS gets one configuration per `-nlt` value, with these loading parameters (MySQL) |
+| `pooling` | For a DBMS behind a connection pooler: one configuration per combination of `-xnpp`, `-xnpi` and `-xnpo` (PGBouncer) |
+| `dimensions`, `unsupported_dimensions` | `-xdim` applies to the DBMS; or it refuses a variant of it, with the reason |
+| `multi_tenancy`, `tenant_parameters` | The tenancy modes the DBMS supports and the parameters it gets, see [Multi-Tenant](Example-Multi-Tenant.md) |
+| `notes` | Lines for the workload info of the experiment |
+| `experiment_yaml` | An `experiment.yaml` may name the DBMS for the benchmark |
+| `variants` | Changes that depend on the command line, see below |
+
+#### Values
+
+Values of `loading_parameters`, `sut_parameters`, `reset_scripts` and the like may contain placeholders for options of the command line, e.g. `'{num_worker_replicas}'` or `'{workload}'`.
+A value that is exactly one placeholder keeps its type, so numbers stay numbers.
+A selector `{'$by': 'benchmark', 'tpcc': 'false', '*': 'true'}` takes the value for the option `benchmark` (`-xbt` of Benchbase), or the one of `'*'`; without a match, the value is left out.
+
+#### Variants
+
+A DBMS can look different depending on the options.
+`variants` is a list of `{'when': <expression>, ...}`; every variant whose expression holds for the command line is applied in order, and the keys it names replace those of the entry (dicts are merged).
+An expression may use options of the command line, numbers, strings, `+ - * //`, comparisons, `and`, `or` and `not`; nothing else is allowed.
+A variant can also set `docker` (another entry of `dockers` to build the configuration from), `sut_template`, `storage_prefix`, `worker_count` and `sut_attributes`.
+
+The key-value systems use this for their modes.
+Dragonfly, for example, is a single node by default; with workers it is the `DragonflyCluster`, and with replicas on top it uses the replica template and its own storage:
+
+```python
+'variants': [
+    {'when': 'num_worker > 0', 'docker': 'DragonflyCluster',
+     'sut_attributes': {'sut_role': 'placeholder', 'monitoring_sut': False, 'script_target': 'workers'},
+     'loading_parameters': {'BEXHOMA_DBMS_TYPE': 'redis-cluster'},
+     'benchmarking_parameters': {'BEXHOMA_DBMS_TYPE': 'redis-cluster'}},
+    {'when': 'num_worker > 0 and num_worker_replicas > 0',
+     'sut_template': 'deploymenttemplate-DragonflyReplica.yml', 'storage_prefix': 'dfr',
+     'loading_parameters': {'BEXHOMA_DBMS_TYPE': 'redis'},
+     'benchmarking_parameters': {'BEXHOMA_DBMS_TYPE': 'redis'}},
+],
+```
+
+Redis, Valkey and Garnet use `'worker_count': 'num_worker * (1 + num_worker_replicas)'` for the pods of a cluster with replicas.
+
+#### How the SUT is set up (`sut_attributes`)
+
+`sut_attributes` is a dict that is applied to the configuration of the DBMS.
+`sut_role`, `pvc_selector`, `script_target`, `data_components` and `resources` call the setter of that name, `statefulsets` (`{name: pods}`) records stateful sets that something else manages (the Helm chart of YugabyteDB), and `monitoring_sut`, `resource_sweep`, `statefulset_name`, `sut_container_name`, `sut_has_pool`, `sut_pod_name`, `sut_service_name` and `worker_metric_strip_container` are attributes of the configuration.
+Any other key is refused, so a typo does not go unnoticed.
+For example, DatabaseService runs outside of Kubernetes: `{'sut_role': 'placeholder', 'monitoring_sut': False, 'resource_sweep': False}`.
+
+#### Checking an entry
+
+`python -m pytest tests/test_system_descriptors.py` checks the entries of `k8s-cluster.config`: known keys, correct types, expressions that are allowed, and job templates that exist in `k8s/`.
+`tests/test_dbms_snapshots.py` records what each entry script builds for each DBMS.
 
 ### JDBC URL Placeholders
 
@@ -682,30 +784,13 @@ To add a DBMS called `NewDBMS`:
 
 3. **Add DDL scripts** in a subfolder of `experiments/`, e.g., `experiments/tpch/NewDBMS/` for TPC-H.
 
-4. **Register the DBMS in the experiment script** (e.g., `example.py`):
-
-   ```python
-   if args.dbms == "NewDBMS":
-       name_format = 'NewDBMS-{cluster}'
-       config = configurations.default(
-           experiment=experiment,
-           docker='NewDBMS',
-           configuration=name_format.format(cluster=cluster_name),
-           alias='DBMS A1'
-       )
-   ```
-
-   The `docker='NewDBMS'` parameter must match the `dockers` key and the YAML filename.
-
-5. **Add the choice** to the CLI argument parser:
-
-   ```python
-   parser.add_argument('-dbms', help='DBMS to run the experiment on', choices=['NewDBMS'])
-   ```
+4. **Declare the benchmarks** it can run in `benchmarks` of the entry, with `storage_prefix` and `template.alias`, see [Benchmarks of a DBMS](#benchmarks-of-a-dbms).
+   No entry script has to be changed: `-dbms` offers every DBMS that has an entry for the benchmark, and the configuration is built from the entry.
+   The key of the entry must match the YAML filename of the deployment template (`docker='NewDBMS'`).
 
 If you need a JDBC driver that is not yet included, please raise an issue at https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues.
 
-6. **Add an example page** `docs/Example-NewDBMS.md` with a test script `scripts/test-docs-newdbms.sh` and `.ps1`, whose runs are in the order of the page.
+5. **Add an example page** `docs/Example-NewDBMS.md` with a test script `scripts/test-docs-newdbms.sh` and `.ps1`, whose runs are in the order of the page.
    All example pages of a DBMS have the same structure:
 
    * a short introduction and references (as links), including the test script

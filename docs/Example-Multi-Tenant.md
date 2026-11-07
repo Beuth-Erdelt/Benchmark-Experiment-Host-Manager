@@ -19,7 +19,16 @@ To make this work, there has to be some preparation.
 * In the experiment folders, there are init scripts containing placeholders for the database `{BEXHOMA_DATABASE}` or schema `{BEXHOMA_SCHEMA}`
 * The DBMS must have placeholders in the connection parameters - c.f. [DBMS](DBMS.html#postgresql)
 
-Bexhoma contains these preparations for PostgreSQL and MySQL (without the schema-per-tenant option).
+Bexhoma contains these preparations for PostgreSQL and MySQL.
+Which DBMS supports which tenancy is declared per benchmark in the `multi_tenancy` of the DBMS in `cluster.config`, see [DBMS](DBMS.md#benchmarks-of-a-dbms):
+
+| DBMS | TPC-H | Benchbase |
+|---|---|---|
+| PostgreSQL | container, schema, database | container, schema, database |
+| MySQL | | container, database |
+
+A DBMS that does not list the requested `-mtb` is not run: bexhoma stops with a message that names the DBMS that support it.
+Without `-dbms`, the default DBMS of the benchmark are meant, so name the DBMS that take part, e.g. `-dbms PostgreSQL MySQL`.
 
 ## Preparation
 

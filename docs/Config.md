@@ -308,7 +308,9 @@ It is **not used** in Kubernetes mode and should be left empty.
 ## `dockers` — DBMS Configurations
 
 The `dockers` section defines how each DBMS is started, connected to, and monitored.
-See [DBMS](DBMS.md) for the full reference and per-DBMS configuration snippets.
+It also says which benchmarks a DBMS can run (`benchmarks`), and what each benchmark needs of it: scripts, job templates, parameters, tenancy modes.
+Nothing else is specific to a DBMS: the entry scripts read it from here, and a DBMS name, alias and SQL dialect are defined only here.
+See [DBMS](DBMS.md) for the full reference, [Benchmarks of a DBMS](DBMS.md#benchmarks-of-a-dbms) for the keys of `benchmarks`, and per-DBMS configuration snippets.
 
 ---
 
