@@ -11,6 +11,7 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/bexhoma.svg)](https://pypi.org/project/bexhoma/)
 [![Documentation Status](https://app.readthedocs.org/projects/bexhoma/badge/?version=latest)](https://bexhoma.readthedocs.io/en/latest/?badge=latest)
 [![Tests](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/actions/workflows/tests.yml)
+[![Demo runs](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FBeuth-Erdelt%2FBenchmark-Experiment-Host-Manager%2Fmaster%2Flogs_tests%2Fdemo-runs-badge.json)](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/SUMMARY.md)
 [![License](https://img.shields.io/github/license/Beuth-Erdelt/Benchmark-Experiment-Host-Manager)](LICENSE)
 
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?logo=kubernetes&logoColor=white)
