@@ -2072,7 +2072,22 @@ For ClickHouse, a loader image of its own is used: RF1 is applied with `INSERT I
 Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 
 ```bash
-bexhoma tpch   -dbms ClickHouse   -sf 1   -nlp 8   -ne 3   -xrs 3   -ms $BEXHOMA_MS   -tr   -lc 16   -rc 16   -lr 64Gi   -rr 64Gi   -rss 50Gi   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK   -ks no   run &>$LOG_DIR/docs_tpch_clickhouse_refresh.log
+bexhoma tpch \
+  -dbms ClickHouse \
+  -sf 1 \
+  -nlp 8 \
+  -ne 3 \
+  -xrs 3 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lc 16 \
+  -rc 16 \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ks no \
+  run &>$LOG_DIR/docs_tpch_clickhouse_refresh.log
 ```
 
 <details>

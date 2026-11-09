@@ -107,6 +107,7 @@ bexhoma tpch `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rss 150Gi                    <# size of the persistent volume claim #> `
@@ -232,6 +233,13 @@ bexhoma tpcds `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
+  --set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=48Gi <# tmpdir of MySQL in RAM, larger than the template (32Gi): temporary files of large sorts and joins #> `
+  --set deployment[bexhoma-deployment-mysql].container[dbms].sort_buffer_size=32M <# sorts of TPC-DS stay in memory (default 256K: thousands of merge passes with temporary files) #> `
+  --set deployment[bexhoma-deployment-mysql].container[dbms].join_buffer_size=64M <# hash joins stay in memory (default 256K) #> `
+  --set deployment[bexhoma-deployment-mysql].container[dbms].tmp_table_size=1G <# internal temporary tables up to 1G in memory (default 16M) #> `
+  --set deployment[bexhoma-deployment-mysql].container[dbms].max_heap_table_size=1G <# MEMORY tables up to 1G (default 16M) #> `
+  --set deployment[bexhoma-deployment-mysql].container[dbms].temptable_max_ram=4G <# RAM of the TempTable engine (default 1G) #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `

@@ -2,413 +2,936 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1748912641
-Experiment                    : starts at 2025-06-03 03:04:00.842075 (13104804.312624684)
+Experiment                    : has code 1794205145
+Experiment                    : starts at 2026-11-09 07:19:06.592488 (428331.5294513)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-TPC-H (SF=1) data is loaded and benchmark is executed.
+TPC-H (SF=10) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
 All instances use the same query parameters.
 Timeout per query is 1200.
-Import sets indexes and constraints after loading and recomputes statistics.
-Experiment uses bexhoma version 0.8.7.
+Data transfer volume per query is also measured.
+Import sets indexes, constraints, statistics recomputation after loading.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.11.13.
 System metrics are monitored by a cluster-wide installation.
-Benchmark is limited to DBMS ['MySQL'].
+Experiment is limited to DBMS ['MySQL'].
 Import is handled by 8 processes (pods).
-Loading is fixed to cl-worker19.
-Benchmarking is fixed to cl-worker19.
-SUT is fixed to cl-worker11.
-Database is persisted to disk of type shared and size 30Gi.
-Loading is tested with [1] threads, split into [8] pods.
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Database is persisted to disk of type nvme and size 150Gi. Persistent storage is removed at experiment start.
+Loading is tested with [8] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1, 2] times the number of benchmarking pods.
 Experiment is run 2 times.
+Maximum DBMS across the whole cluster is 10.
+Results are validated against basic correctness requirements.
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size', 'target': 'container'}, '32G')].
+SUT requests 4 CPU and 128Gi RAM. RAM limit is 128Gi.
 Cluster monitoring            : is running
-done
-MySQL-BHT-8                   : will start now
-MySQL-BHT-8                   : Name of SUT pods = bexhoma-sut-mysql-bht-8-1748912641
-MySQL-BHT-8                   : Name of SUT service = bexhoma-sut-mysql-bht-8-1748912641
-MySQL-BHT-8                   : Name of SUT PVC name = bexhoma-storage-mysql-tpch-1
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
-- waiting 30s -               : done
-MySQL-BHT-8                   : is not loaded yet
-MySQL-BHT-8                   : will start loading but not before 2025-06-03 01:13:05 (that is in 60 secs)
-- waiting 30s -               : done
-MySQL-BHT-8                   : is not loaded yet
-MySQL-BHT-8                   : will start loading but not before 2025-06-03 01:13:05
-done
-MySQL-BHT-8                   : is not loaded yet
-MySQL-BHT-8                   : start asynch loading scripts of type loaded
-MySQL-BHT-8                   : is loading
-- waiting 30s -               : done
-MySQL-BHT-8                   : is loading
-done
-MySQL-BHT-8                   : showing loader times
-MySQL-BHT-8                   : generator timespan (first to last [s]) = 1
-MySQL-BHT-8                   : loader timespan (first to last [s]) = 4
-MySQL-BHT-8                   : total timespan (first to last [s]) = 12
-MySQL-BHT-8                   : start asynch loading scripts of type indexed
-MySQL-BHT-8                   : is loading
-done
-MySQL-BHT-8                   : benchmarks done 0 of 2. This will be client 1
-MySQL-BHT-8-1-1               : start benchmarking
-MySQL-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1748912641
+MySQL-1                       : will start now
+MySQL-1                       : deployments ['sut']
+MySQL-1                       : stateful sets []
+MySQL-1                       : pvcs ['sut']
+MySQL-1                       : found labels on pvc = []
+MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1794205145
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1794205145
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1794205145
+MySQL-1                       : name of SUT PVC name = bexhoma-storage-my-nvme-tpch-10
+MySQL-1                       : updated deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size = 32G
+MySQL-1                       : storage bexhoma-storage-my-nvme-tpch-10 should be removed
 - waiting 10s -               : done
-found
-MySQL-BHT-8-1-1               : collecting loading metrics of SUT at connection MySQL-BHT-8-1-1
-MySQL-BHT-8-1-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-MySQL-BHT-8-1-1               : collecting metrics of data generator at connection MySQL-BHT-8-1-1
-MySQL-BHT-8-1-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-MySQL-BHT-8-1-1               : collecting metrics of data injector at connection MySQL-BHT-8-1-1
-MySQL-BHT-8-1-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-MySQL-BHT-8-1-1               : showing benchmarker times
-MySQL-BHT-8-1-1               : benchmarker timespan (start to end single container [s]) = 27
-MySQL-BHT-8-1-1               : benchmarker times (start/end per pod and container) = [(1748913291, 1748913293)]
-MySQL-BHT-8-1-1               : found and updated times {'benchmarker': [(1748913291, 1748913293)]}
-MySQL-BHT-8-1-1               : collecting execution metrics of SUT at connection MySQL-BHT-8-1-1
-MySQL-BHT-8-1-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-MySQL-BHT-8-1-1               : collecting metrics of benchmarker at connection MySQL-BHT-8-1-1
-MySQL-BHT-8-1-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-done
-MySQL-BHT-8                   : benchmarks done 0 of 2. This will be client 2
-MySQL-BHT-8-1-2               : start benchmarking
-MySQL-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1748912641
-- waiting 10s -               : done
-found
-MySQL-BHT-8-1-2               : collecting loading metrics of SUT at connection MySQL-BHT-8-1-2
-MySQL-BHT-8-1-2               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-MySQL-BHT-8-1-2               : collecting metrics of data generator at connection MySQL-BHT-8-1-2
-MySQL-BHT-8-1-2               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="datagenerator"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-MySQL-BHT-8-1-2               : collecting metrics of data injector at connection MySQL-BHT-8-1-2
-MySQL-BHT-8-1-2               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="sensor"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-MySQL-BHT-8-1-2               : showing benchmarker times
-MySQL-BHT-8-1-2               : benchmarker timespan (start to end single container [s]) = 27
-MySQL-BHT-8-1-2               : benchmarker times (start/end per pod and container) = [(1748913364, 1748913365), (1748913363, 1748913366)]
-MySQL-BHT-8-1-2               : found and updated times {'benchmarker': [(1748913364, 1748913365), (1748913363, 1748913366)]}
-MySQL-BHT-8-1-2               : collecting execution metrics of SUT at connection MySQL-BHT-8-1-2
-MySQL-BHT-8-1-2               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-MySQL-BHT-8-1-2               : collecting metrics of benchmarker at connection MySQL-BHT-8-1-2
-MySQL-BHT-8-1-2               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-done
-MySQL-BHT-8                   : can be stopped
-MySQL-BHT-8                   : still being removed
-done
-MySQL-BHT-8                   : starts again
-MySQL-BHT-8                   : Name of SUT pods = bexhoma-sut-mysql-bht-8-1748912641
-MySQL-BHT-8                   : Name of SUT service = bexhoma-sut-mysql-bht-8-1748912641
-MySQL-BHT-8                   : Name of SUT PVC name = bexhoma-storage-mysql-tpch-1
-MySQL-BHT-8                   : storage exists bexhoma-storage-mysql-tpch-1
-MySQL-BHT-8                   : label loaded copied value True
-MySQL-BHT-8                   : label timeLoading copied value 41
-MySQL-BHT-8                   : label timeLoadingStart copied value 1748913186
-MySQL-BHT-8                   : label timeLoadingEnd copied value 1748913273
-MySQL-BHT-8                   : label indexed copied value True
-MySQL-BHT-8                   : label time_generated copied value 1
-MySQL-BHT-8                   : label time_indexed copied value 20
-MySQL-BHT-8                   : label time_ingested copied value 4
-MySQL-BHT-8                   : label time_initconstraints copied value 17
-MySQL-BHT-8                   : label time_initindexes copied value 3
-MySQL-BHT-8                   : label time_initschema copied value 8
-MySQL-BHT-8                   : label time_initstatistics copied value 1
-MySQL-BHT-8                   : label time_loaded copied value 9
-MySQL-BHT-8                   : loading is set to finished
-- waiting 10s -               : done
+MySQL-1                       : storage bexhoma-storage-my-nvme-tpch-10 is gone
+Loop pass                     : took 13.1s (1 kubectl calls 1.2s, 13 API requests 0.6s)
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 8.8s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 16 API requests 0.9s)
 - waiting 30s -               : done
-MySQL-BHT-8                   : waits for health check to succeed
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-11-09 06:24:04 (that is in 120 secs)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 16 API requests 0.8s)
 - waiting 30s -               : done
-MySQL-BHT-8                   : will start benchmarking but not before 2025-06-03 01:21:48 (that is in 60 secs)
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-11-09 06:24:04
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 13 API requests 0.7s)
 - waiting 30s -               : done
-MySQL-BHT-8                   : will start benchmarking but not before 2025-06-03 01:21:48
-done
-MySQL-BHT-8                   : benchmarks done 1 of 2. This will be client 1
-MySQL-BHT-8-2-1               : start benchmarking
-MySQL-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1748912641
-- waiting 10s -               : done
-MySQL-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-8-1748912641-2-1-46btv: found
-done
-MySQL-BHT-8                   : has running benchmarks
-MySQL-BHT-8-2-1               : showing benchmarker times
-MySQL-BHT-8-2-1               : benchmarker timespan (start to end single container [s]) = 41
-MySQL-BHT-8-2-1               : benchmarker times (start/end per pod and container) = [(1748913720, 1748913722)]
-MySQL-BHT-8-2-1               : found and updated times {'benchmarker': [(1748913720, 1748913722)]}
-MySQL-BHT-8-2-1               : collecting execution metrics of SUT at connection MySQL-BHT-8-2-1
-MySQL-BHT-8-2-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-MySQL-BHT-8-2-1               : collecting metrics of benchmarker at connection MySQL-BHT-8-2-1
-MySQL-BHT-8-2-1               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-done
-MySQL-BHT-8                   : benchmarks done 1 of 2. This will be client 2
-MySQL-BHT-8-2-2               : start benchmarking
-MySQL-BHT-8                   : benchmarking results in folder /home/perdelt/benchmarks/1748912641
-- waiting 10s -               : done
-MySQL-BHT-8                   : benchmarking is waiting for job bexhoma-benchmarker-mysql-bht-8-1748912641-2-2-42jb2: found
-done
-MySQL-BHT-8                   : has running benchmarks
-MySQL-BHT-8-2-2               : showing benchmarker times
-MySQL-BHT-8-2-2               : benchmarker timespan (start to end single container [s]) = 41
-MySQL-BHT-8-2-2               : benchmarker times (start/end per pod and container) = [(1748913802, 1748913805), (1748913802, 1748913804)]
-MySQL-BHT-8-2-2               : found and updated times {'benchmarker': [(1748913802, 1748913805), (1748913802, 1748913804)]}
-MySQL-BHT-8-2-2               : collecting execution metrics of SUT at connection MySQL-BHT-8-2-2
-MySQL-BHT-8-2-2               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="dbms"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-MySQL-BHT-8-2-2               : collecting metrics of benchmarker at connection MySQL-BHT-8-2-2
-MySQL-BHT-8-2-2               : example metric {'query': '(sum(max(container_memory_working_set_bytes{pod=~"(.*)mysql-bht-8-1748912641(.*)", container="dbmsbenchmarker"}) by (pod)))/1024/1024', 'title': 'CPU Memory [MiB]'}
-done
-MySQL-BHT-8                   : can be stopped
-Experiment                    : ends at 2025-06-03 03:24:41.407610 (13106044.878163587) - 1240.57s total
-Join results done!
-done!
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-11-09 06:24:04
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 13 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : will start loading but not before 2026-11-09 06:24:04
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 13 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : is not loaded yet
+MySQL-1                       : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1794205145-5f7f68ddb5-hr27v to load scripts
+MySQL-1                       : list of pvcs ['bexhoma-storage-my-nvme-tpch-10']
+MySQL-1                       : will be labeling bexhoma-storage-my-nvme-tpch-10
+MySQL-1                       : start asynch loading scripts of type schema
+MySQL-1                       : waits for the Schema scripts (schema=True) before starting the loading jobs
+MySQL-1                       : Schema scripts done after 8s
+MySQL-1                       : is loading
+Loop pass                     : took 20.6s (8 kubectl calls 9.7s, 36 API requests 2.7s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 18.3s (0 kubectl calls 0.0s, 34 API requests 1.6s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 34 API requests 1.4s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 34 API requests 1.3s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 34 API requests 1.3s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 34 API requests 1.4s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 31.0s (24 kubectl calls 27.8s, 42 API requests 2.0s)
+- waiting 30s -               : done
+MySQL-1                       : showing loader times (tpch-loader)
+MySQL-1                       : generator times (start/end per pod and container) [(1794205497, 1794205497), (1794205500, 1794205500), (1794205493, 1794205493), (1794205507, 1794205507), (1794205504, 1794205504), (1794205487, 1794205487), (1794205490, 1794205490), (1794205510, 1794205510)]
+MySQL-1                       : loader times (start/end per pod and container) [(1794205515, 1794205673), (1794205515, 1794205673), (1794205516, 1794205671), (1794205515, 1794205672), (1794205516, 1794205673), (1794205515, 1794205673), (1794205515, 1794205668), (1794205515, 1794205657)]
+MySQL-1                       : total times (start/end per pod and container) [(1794205497, 1794205497), (1794205500, 1794205500), (1794205493, 1794205493), (1794205507, 1794205507), (1794205504, 1794205504), (1794205487, 1794205487), (1794205490, 1794205490), (1794205510, 1794205510), (1794205515, 1794205673), (1794205515, 1794205673), (1794205516, 1794205671), (1794205515, 1794205672), (1794205516, 1794205673), (1794205515, 1794205673), (1794205515, 1794205668), (1794205515, 1794205657)]
+MySQL-1                       : generator timespan (first to last [s]) = 23
+MySQL-1                       : loader timespan (first to last [s]) = 158
+MySQL-1                       : total timespan (first to last [s]) = 186
+MySQL-1                       : list of pvcs ['bexhoma-storage-my-nvme-tpch-10']
+MySQL-1                       : will be labeling bexhoma-storage-my-nvme-tpch-10
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1794205145-5f7f68ddb5-hr27v to load scripts
+MySQL-1                       : list of pvcs ['bexhoma-storage-my-nvme-tpch-10']
+MySQL-1                       : will be labeling bexhoma-storage-my-nvme-tpch-10
+MySQL-1                       : start asynch loading scripts of type index
+MySQL-1                       : is loading
+Loop pass                     : took 26.3s (18 kubectl calls 22.8s, 46 API requests 2.4s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 14 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 7.3s (0 kubectl calls 0.0s, 14 API requests 0.5s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 14 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 14 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 14 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 14 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 14 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 14 API requests 0.5s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 14 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 14 API requests 0.5s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 14 API requests 0.5s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 3.7s (0 kubectl calls 0.0s, 14 API requests 0.5s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 14 API requests 0.5s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 14 API requests 0.5s)
+- waiting 30s -               : done
+MySQL-1                       : is loading
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 14 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : list of pvcs ['bexhoma-storage-my-nvme-tpch-10']
+MySQL-1                       : will be labeling bexhoma-storage-my-nvme-tpch-10
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1794205145 initialized to 1.
+MySQL-1                       : benchmarks done 0 of 2. This will be client 1
+mysql-1-1-1-1                 : start benchmarking (benchmark_run=1)
+mysql-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794205145-5f7f68ddb5-hr27v and write to pvc bexhoma-storage-my-nvme-tpch-10
+MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1794205145
+MySQL-1                       : submitted benchmarker job in 10.3s (5 kubectl calls 6.3s, 30 API requests 2.6s)
+mysql-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
+mysql-1-1-1-1                 : collecting loading metrics of SUT at connection mysql-1-1-1-1
+mysql-1-1-1-1                 : collecting metrics of data generator at connection mysql-1-1-1-1
+mysql-1-1-1-1                 : collecting metrics of data injector at connection mysql-1-1-1-1
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794205145(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794205145(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mysql-1-1794205145-1-.+", namespace="perdelt", container="datagenerator"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mysql-1-1794205145-1-.+", namespace="perdelt", container="datagenerator"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mysql-1-1794205145-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mysql-1-1794205145-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-1-1                 : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+mysql-1-1-1-1                 : WARNING metric missing for loader: CPU Throttled Time [s]
+mysql-1-1-1-1                 : WARNING metric missing for loading: CPU Throttling Rate [s/s]
+mysql-1-1-1-1                 : WARNING metric missing for loading: CPU Throttled Time [s]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU Throttled Time [s]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU User Time [s]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU System Time [s]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: CPU Utilization Time [s]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+mysql-1-1-1-1                 : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+Experiment                    : fetched 3 metric sets in 6s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 13.9s, 0 API requests 0.0s)
+Loop pass                     : took 22.4s (13 kubectl calls 23.5s, 51 API requests 4.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 21 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 10.2s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 10.1s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+mysql-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1794205145/mysql-1-1-1-1.config
+mysql-1-1-1-1                 : showing benchmarker times
+mysql-1-1-1-1                 : benchmarker timespan job from 1794206282 to 1794206877
+mysql-1-1-1-1                 : benchmarker timespan pods from 1794206287 to 1794206842
+mysql-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 555
+mysql-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1794206287, 1794206842)]
+mysql-1-1-1-1                 : found and updated times {'benchmarker': [(1794206287, 1794206842)]}
+mysql-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
+mysql-1-1-1-1                 : collecting execution metrics of SUT at connection mysql-1-1-1-1
+mysql-1-1-1-1                 : collecting metrics of benchmarker at connection mysql-1-1-1-1
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794205145-5f7f68ddb5-hr27v and write to pvc bexhoma-storage-my-nvme-tpch-10
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794205145(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794205145(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794205145-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794205145-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-1-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+mysql-1-1-1-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.0s, 0 API requests 0.0s)
+Loop pass                     : took 14.8s (9 kubectl calls 16.2s, 26 API requests 2.3s)
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MySQL-1-1794205145 initialized to 2.
+MySQL-1                       : benchmarks done 0 of 2. This will be client 2
+mysql-1-1-2-1                 : start benchmarking (benchmark_run=1)
+mysql-1-1-2-1                 : needs monitoring (common metrics) for deployment sut
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794205145-5f7f68ddb5-hr27v and write to pvc bexhoma-storage-my-nvme-tpch-10
+MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1794205145
+MySQL-1                       : submitted benchmarker job in 6.9s (3 kubectl calls 4.2s, 24 API requests 2.2s)
+mysql-1-1-2-1                 : reused loading metrics of mysql-1-1-1-1 (loading, datagenerator, loader)
+Experiment                    : ran 1 follow-up actions (e.g. reused loading metrics) in 7s
+Loop pass                     : took 15.4s (6 kubectl calls 10.8s, 46 API requests 3.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 20 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 8.8s (0 kubectl calls 0.0s, 20 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 20 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 20 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 20 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 20 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 20 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 10.7s (0 kubectl calls 0.0s, 20 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 20 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 20 API requests 0.6s)
+- waiting 30s -               : done
+mysql-1-1-2-1                 : wrote benchmarking_timespans to /data/benchmarks/1794205145/mysql-1-1-2-1.config
+mysql-1-1-2-1                 : showing benchmarker times
+mysql-1-1-2-1                 : benchmarker timespan job from 1794206895 to 1794207461
+mysql-1-1-2-1                 : benchmarker timespan pods from 1794206904 to 1794207441
+mysql-1-1-2-1                 : benchmarker timespan (start to end single container [s]) = 537
+mysql-1-1-2-1                 : benchmarker times (start/end per pod and container) = [(1794206904, 1794207441), (1794206904, 1794207441)]
+mysql-1-1-2-1                 : found and updated times {'benchmarker': [(1794206904, 1794207441), (1794206904, 1794207441)]}
+mysql-1-1-2-1                 : needs monitoring (common metrics) for deployment sut
+mysql-1-1-2-1                 : collecting execution metrics of SUT at connection mysql-1-1-2-1
+mysql-1-1-2-1                 : collecting metrics of benchmarker at connection mysql-1-1-2-1
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794205145-5f7f68ddb5-hr27v and write to pvc bexhoma-storage-my-nvme-tpch-10
+mysql-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794205145(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794205145(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794205145-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794205145-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-2-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+mysql-1-1-2-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.1s, 0 API requests 0.0s)
+Loop pass                     : took 16.8s (11 kubectl calls 17.3s, 30 API requests 1.7s)
+MySQL-1                       : can be stopped
+MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1794205145-5f7f68ddb5-hr27v
+Loop pass                     : took 6.3s (4 kubectl calls 4.5s, 32 API requests 1.3s)
+- waiting 30s -               : done
+MySQL-1                       : starts again
+Loop pass                     : took 0.2s (0 kubectl calls 0.0s, 7 API requests 0.2s)
+MySQL-1                       : will start now
+MySQL-1                       : deployments ['sut']
+MySQL-1                       : stateful sets []
+MySQL-1                       : pvcs ['sut']
+MySQL-1                       : list of pvcs ['bexhoma-storage-my-nvme-tpch-10']
+MySQL-1                       : storage bexhoma-storage-my-nvme-tpch-10 exists
+MySQL-1                       : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '23', 'time_index': '504', 'time_ingested': '158', 'time_initconstraints': '138', 'time_initindexes': '318', 'time_initschema': '2', 'time_initstatistics': '2', 'time_loading': '695', 'time_loading_end': '1794206266', 'time_loading_start': '1794205458', 'time_schema': '5'}
+MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1794205145
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1794205145
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1794205145
+MySQL-1                       : name of SUT PVC name = bexhoma-storage-my-nvme-tpch-10
+MySQL-1                       : updated deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size = 32G
+MySQL-1                       : DDL values taken from the volume: histograms=off, stats_sample_pages=default
+MySQL-1                       : loading values taken from the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
+MySQL-1                       : copied label data = True
+MySQL-1                       : copied label index = True
+MySQL-1                       : copied label loaded = True
+MySQL-1                       : copied label schema = True
+MySQL-1                       : copied label time_generated = 23
+MySQL-1                       : copied label time_index = 504
+MySQL-1                       : copied label time_ingested = 158
+MySQL-1                       : copied label time_initconstraints = 138
+MySQL-1                       : copied label time_initindexes = 318
+MySQL-1                       : copied label time_initschema = 2
+MySQL-1                       : copied label time_initstatistics = 2
+MySQL-1                       : copied label time_loading = 695
+MySQL-1                       : copied label time_loading_end = 1794206266
+MySQL-1                       : copied label time_loading_start = 1794205458
+MySQL-1                       : copied label time_schema = 5
+MySQL-1                       : loading is set to finished
+Loop pass                     : took 2.0s (1 kubectl calls 1.2s, 13 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 15 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 15 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 15 API requests 0.5s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : will start benchmarking but not before 2026-11-09 07:03:08 (that is in 120 secs)
+Loop pass                     : took 8.3s (0 kubectl calls 0.0s, 15 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : will start benchmarking but not before 2026-11-09 07:03:08
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 12 API requests 0.4s)
+- waiting 30s -               : done
+MySQL-1                       : will start benchmarking but not before 2026-11-09 07:03:08
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 12 API requests 0.5s)
+- waiting 30s -               : done
+MySQL-1                       : will start benchmarking but not before 2026-11-09 07:03:08
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 12 API requests 0.5s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MySQL-1-1794205145 initialized to 1.
+MySQL-1                       : benchmarks done 1 of 2. This will be client 1
+mysql-1-2-1-1                 : start benchmarking (benchmark_run=1)
+mysql-1-2-1-1                 : needs monitoring (common metrics) for deployment sut
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794205145-5db9f54fd9-dn7vf and write to pvc bexhoma-storage-my-nvme-tpch-10
+MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1794205145
+MySQL-1                       : submitted benchmarker job in 6.4s (3 kubectl calls 3.7s, 27 API requests 2.2s)
+Loop pass                     : took 7.7s (3 kubectl calls 3.7s, 46 API requests 3.5s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 19 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 17 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 9.1s (0 kubectl calls 0.0s, 17 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 17 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 10.6s (0 kubectl calls 0.0s, 17 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 17 API requests 0.8s)
+- waiting 30s -               : done
+mysql-1-2-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1794205145/mysql-1-2-1-1.config
+mysql-1-2-1-1                 : showing benchmarker times
+mysql-1-2-1-1                 : benchmarker timespan job from 1794207802 to 1794208705
+mysql-1-2-1-1                 : benchmarker timespan pods from 1794207811 to 1794208666
+mysql-1-2-1-1                 : benchmarker timespan (start to end single container [s]) = 855
+mysql-1-2-1-1                 : benchmarker times (start/end per pod and container) = [(1794207811, 1794208666)]
+mysql-1-2-1-1                 : found and updated times {'benchmarker': [(1794207811, 1794208666)]}
+mysql-1-2-1-1                 : needs monitoring (common metrics) for deployment sut
+mysql-1-2-1-1                 : collecting execution metrics of SUT at connection mysql-1-2-1-1
+mysql-1-2-1-1                 : collecting metrics of benchmarker at connection mysql-1-2-1-1
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794205145-5db9f54fd9-dn7vf and write to pvc bexhoma-storage-my-nvme-tpch-10
+mysql-1-2-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794205145(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794205145(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-2-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794205145-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794205145-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-2-1-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+mysql-1-2-1-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 7s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.8s, 0 API requests 0.0s)
+Loop pass                     : took 17.0s (9 kubectl calls 17.8s, 24 API requests 1.8s)
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-MySQL-1-1794205145 initialized to 2.
+MySQL-1                       : benchmarks done 1 of 2. This will be client 2
+mysql-1-2-2-1                 : start benchmarking (benchmark_run=1)
+mysql-1-2-2-1                 : needs monitoring (common metrics) for deployment sut
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794205145-5db9f54fd9-dn7vf and write to pvc bexhoma-storage-my-nvme-tpch-10
+MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1794205145
+MySQL-1                       : submitted benchmarker job in 8.3s (3 kubectl calls 4.1s, 24 API requests 3.3s)
+Loop pass                     : took 9.4s (3 kubectl calls 4.1s, 44 API requests 4.3s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 18 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 3.8s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 18 API requests 1.1s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 18 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 0.9s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 18 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 9.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 18 API requests 1.0s)
+- waiting 30s -               : done
+MySQL-1                       : has running benchmarks
+mysql-1-2-2-1                 : wrote benchmarking_timespans to /data/benchmarks/1794205145/mysql-1-2-2-1.config
+mysql-1-2-2-1                 : showing benchmarker times
+mysql-1-2-2-1                 : benchmarker timespan job from 1794208725 to 1794209279
+mysql-1-2-2-1                 : benchmarker timespan pods from 1794208733 to 1794209267
+mysql-1-2-2-1                 : benchmarker timespan (start to end single container [s]) = 534
+mysql-1-2-2-1                 : benchmarker times (start/end per pod and container) = [(1794208733, 1794209267), (1794208733, 1794209265)]
+mysql-1-2-2-1                 : found and updated times {'benchmarker': [(1794208733, 1794209267), (1794208733, 1794209265)]}
+mysql-1-2-2-1                 : needs monitoring (common metrics) for deployment sut
+mysql-1-2-2-1                 : collecting execution metrics of SUT at connection mysql-1-2-2-1
+mysql-1-2-2-1                 : collecting metrics of benchmarker at connection mysql-1-2-2-1
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794205145-5db9f54fd9-dn7vf and write to pvc bexhoma-storage-my-nvme-tpch-10
+mysql-1-2-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794205145(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794205145(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-2-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794205145-2-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794205145-2-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-2-2-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+mysql-1-2-2-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.1s, 0 API requests 0.0s)
+Loop pass                     : took 17.1s (11 kubectl calls 18.6s, 28 API requests 2.1s)
+MySQL-1                       : can be stopped
+MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1794205145-5db9f54fd9-dn7vf
+Loop pass                     : took 6.8s (4 kubectl calls 4.6s, 30 API requests 1.5s)
+Experiment                    : ends at 2026-11-09 08:28:16.882001 (432481.7363382) - 4150.21s total
+Experiment                    : join results...done!
+Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
+Result workflow complete
 
 ## Show Summary
 
 ### Workload
-TPC-H Queries SF=1
-    Type: tpch
-    Duration: 1241s 
-    Code: 1748912641
-    This includes the reading queries of TPC-H.
-    This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
-    TPC-H (SF=1) data is loaded and benchmark is executed.
-    Query ordering is Q1 - Q22.
-    All instances use the same query parameters.
-    Timeout per query is 1200.
-    Import sets indexes and constraints after loading and recomputes statistics.
-    Experiment uses bexhoma version 0.8.7.
-    System metrics are monitored by a cluster-wide installation.
-    Benchmark is limited to DBMS ['MySQL'].
-    Import is handled by 8 processes (pods).
-    Loading is fixed to cl-worker19.
-    Benchmarking is fixed to cl-worker19.
-    SUT is fixed to cl-worker11.
-    Database is persisted to disk of type shared and size 30Gi.
-    Loading is tested with [1] threads, split into [8] pods.
-    Benchmarking is tested with [1] threads, split into [1] pods.
-    Benchmarking is run as [1, 2] times the number of benchmarking pods.
-    Experiment is run 2 times.
+TPC-H Queries SF=10
+* Type: tpch
+* Duration: 4151s 
+* Code: 1794205145
+* This includes the reading queries of TPC-H.
+* This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+  * TPC-H (SF=10) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q22.
+  * All instances use the same query parameters.
+  * Timeout per query is 1200.
+  * Data transfer volume per query is also measured.
+  * Import sets indexes, constraints, statistics recomputation after loading.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.13.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['MySQL'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 150Gi. Persistent storage is removed at experiment start.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [1, 2] times the number of benchmarking pods.
+  * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size', 'target': 'container'}, '32G')].
+  * SUT requests 4 CPU and 128Gi RAM. RAM limit is 128Gi.
 
 ### Connections
-MySQL-BHT-8-1-1-1 uses docker image mysql:8.4.0
-    RAM:541008568320
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:317384432
-    datadisk:8286
-    volume_size:30G
-    volume_used:8.1G
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1748912641
-MySQL-BHT-8-1-2-1 uses docker image mysql:8.4.0
-    RAM:541008568320
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:317384432
-    datadisk:8286
-    volume_size:30G
-    volume_used:8.1G
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1748912641
-MySQL-BHT-8-1-2-2 uses docker image mysql:8.4.0
-    RAM:541008568320
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:317384432
-    datadisk:8286
-    volume_size:30G
-    volume_used:8.1G
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1748912641
-MySQL-BHT-8-2-1-1 uses docker image mysql:8.4.0
-    RAM:541008568320
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:317384416
-    datadisk:8286
-    volume_size:30G
-    volume_used:8.1G
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1748912641
-MySQL-BHT-8-2-2-1 uses docker image mysql:8.4.0
-    RAM:541008568320
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:317384420
-    datadisk:8286
-    volume_size:30G
-    volume_used:8.1G
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1748912641
-MySQL-BHT-8-2-2-2 uses docker image mysql:8.4.0
-    RAM:541008568320
-    Cores:64
-    host:5.15.0-140-generic
-    node:cl-worker11
-    disk:317384420
-    datadisk:8286
-    volume_size:30G
-    volume_used:8.1G
-    requests_cpu:4
-    requests_memory:16Gi
-    eval_parameters
-        code:1748912641
+* mysql-1-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:826288
+  * datadisk:51310
+  * volume_size:147G
+  * volume_used:51G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1794205145
+* mysql-1-1-2-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:826375
+  * datadisk:51310
+  * volume_size:147G
+  * volume_used:51G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1794205145
+* mysql-1-1-2-1-2 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:826375
+  * datadisk:51310
+  * volume_size:147G
+  * volume_used:51G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1794205145
+* mysql-1-2-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:826438
+  * datadisk:51312
+  * volume_size:147G
+  * volume_used:51G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1794205145
+* mysql-1-2-2-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:826870
+  * datadisk:51312
+  * volume_size:147G
+  * volume_used:51G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1794205145
+* mysql-1-2-2-1-2 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:826870
+  * datadisk:51312
+  * volume_size:147G
+  * volume_used:51G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1794205145
 
-### Errors (failed queries)
-No errors
+### Inherited Loading
+* loading skipped, loading times copied from an earlier repetition: MySQL-1-2
 
-### Warnings (result mismatch)
-No warnings
+### Data Parameters of Reused Volumes
+* MySQL-1: DDL values of the volume: histograms=off, stats_sample_pages=default
+* MySQL-1: loading values of the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
 
-### Latency of Timer Execution [ms]
-DBMS                                                 MySQL-BHT-8-1-1-1  MySQL-BHT-8-1-2-1  MySQL-BHT-8-1-2-2  MySQL-BHT-8-2-1-1  MySQL-BHT-8-2-2-1  MySQL-BHT-8-2-2-2
-Pricing Summary Report (TPC-H Q1)                                77.71              71.17             113.27              90.10              68.93              81.12
-Minimum Cost Supplier Query (TPC-H Q2)                            4.07               3.44               3.64              16.93               4.26               3.92
-Shipping Priority (TPC-H Q3)                                      2.18               1.87               2.57               3.00               1.75               2.78
-Order Priority Checking Query (TPC-H Q4)                          1.64               1.53               3.12               3.66               1.49               2.79
-Local Supplier Volume (TPC-H Q5)                                  1.87               1.74               3.57               2.56               1.77               3.41
-Forecasting Revenue Change (TPC-H Q6)                             1.33               1.32               2.57               2.35               1.45               2.29
-Forecasting Revenue Change (TPC-H Q7)                             1.90               2.24               3.55               2.75               1.87               2.75
-National Market Share (TPC-H Q8)                                  3.18               1.92               3.07               3.26               2.51               2.98
-Product Type Profit Measure (TPC-H Q9)                            1.94               1.69               2.81               2.76               1.92               2.73
-Forecasting Revenue Change (TPC-H Q10)                            2.34               1.73               2.02               3.02               1.69               2.82
-Important Stock Identification (TPC-H Q11)                        2.17               1.62               2.62               2.36               1.46               2.78
-Shipping Modes and Order Priority (TPC-H Q12)                     2.92               1.41               3.14               2.75               1.71               2.73
-Customer Distribution (TPC-H Q13)                                 2.79               1.47               2.62               2.19               1.32               2.65
-Forecasting Revenue Change (TPC-H Q14)                            1.91               1.28               2.55               2.31               1.13               2.48
-Top Supplier Query (TPC-H Q15)                                    4.25               2.78               4.84               5.21               3.27               4.68
-Parts/Supplier Relationship (TPC-H Q16)                           2.79               1.84               3.10               2.31               2.02               3.30
-Small-Quantity-Order Revenue (TPC-H Q17)                          2.13               1.24               5.14               2.00               1.73               2.81
-Large Volume Customer (TPC-H Q18)                                 2.22               1.51               2.48               2.56               2.05               3.17
-Discounted Revenue (TPC-H Q19)                                    2.26               1.71               2.63               2.48               2.09               2.37
-Potential Part Promotion (TPC-H Q20)                              2.61               1.49               3.36               2.88               1.79               3.23
-Suppliers Who Kept Orders Waiting Query (TPC-H Q21)               3.06               1.52               3.19               3.00               1.87               3.14
-Global Sales Opportunity Query (TPC-H Q22)                        2.52               1.74               2.90               2.54               2.01               2.95
-
-### Loading [s]
-                   timeGenerate  timeIngesting  timeSchema  timeIndex  timeLoad
-MySQL-BHT-8-1-1-1           1.0            4.0         9.0       20.0      41.0
-MySQL-BHT-8-1-2-1           1.0            4.0         9.0       20.0      41.0
-MySQL-BHT-8-1-2-2           1.0            4.0         9.0       20.0      41.0
-MySQL-BHT-8-2-1-1           1.0            4.0         9.0       20.0      41.0
-MySQL-BHT-8-2-2-1           1.0            4.0         9.0       20.0      41.0
-MySQL-BHT-8-2-2-2           1.0            4.0         9.0       20.0      41.0
-
-### Geometric Mean of Medians of Timer Run [s]
-                   Geo Times [s]
-DBMS                            
-MySQL-BHT-8-1-1-1            0.0
-MySQL-BHT-8-1-2-1            0.0
-MySQL-BHT-8-1-2-2            0.0
-MySQL-BHT-8-2-1-1            0.0
-MySQL-BHT-8-2-2-1            0.0
-MySQL-BHT-8-2-2-2            0.0
-
-### Power@Size ((3600*SF)/(geo times))
-                   Power@Size [~Q/h]
-DBMS                                
-MySQL-BHT-8-1-1-1         1287048.59
-MySQL-BHT-8-1-2-1         1775137.53
-MySQL-BHT-8-1-2-2         1003150.78
-MySQL-BHT-8-2-1-1         1034211.47
-MySQL-BHT-8-2-2-1         1630827.76
-MySQL-BHT-8-2-2-2         1050194.94
-
-### Throughput@Size ((queries*streams*3600*SF)/(span of time))
-                                              time [s]  count  SF  Throughput@Size
-DBMS            SF num_experiment num_client                                      
-MySQL-BHT-8-1-1 1  1              1                  2      1   1          39600.0
-MySQL-BHT-8-1-2 1  1              2                  3      2   1          52800.0
-MySQL-BHT-8-2-1 1  2              1                  2      1   1          39600.0
-MySQL-BHT-8-2-2 1  2              2                  3      2   1          52800.0
+### SUT Container Restarts
+* bexhoma-sut-mysql-1-1794205145-5f7f68ddb5-hr27v: 0
+* bexhoma-sut-mysql-1-1794205145-5db9f54fd9-dn7vf: 0
 
 ### Workflow
 
 #### Actual
-DBMS MySQL-BHT-8 - Pods [[1, 2], [1, 2]]
+
+* DBMS MySQL-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 2: tpch (2 pods)
+* DBMS MySQL-1 - Experiment 2 Client 1: tpch (1 pods)
+* DBMS MySQL-1 - Experiment 2 Client 2: tpch (2 pods)
 
 #### Planned
-DBMS MySQL-BHT-8 - Pods [[1, 2], [1, 2]]
 
-### Ingestion - SUT
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-8-1-1        4.72     0.02         37.47                45.51
-MySQL-BHT-8-1-2        4.72     0.02         37.47                45.51
+* DBMS MySQL-1 - Experiment 1 Client 1: tpch (1 pods)
+* DBMS MySQL-1 - Experiment 1 Client 2: tpch (2 pods)
+* DBMS MySQL-1 - Experiment 2 Client 1: tpch (1 pods)
+* DBMS MySQL-1 - Experiment 2 Client 2: tpch (2 pods)
 
-### Ingestion - Loader
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-8-1-1           0        0           0.0                  0.0
-MySQL-BHT-8-1-2           0        0           0.0                  0.0
+### Loading
 
-### Execution - SUT
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-8-1-1        0.00     0.00         37.47                45.51
-MySQL-BHT-8-1-2        1.35     0.00         37.75                45.78
-MySQL-BHT-8-2-1      255.00     0.00         75.20                91.06
-MySQL-BHT-8-2-2        0.00     0.02         37.46                45.29
+#### Per Run
 
-### Execution - Benchmarker
-                 CPU [CPUs]  Max CPU  Max RAM [Gb]  Max RAM Cached [Gb]
-MySQL-BHT-8-1-1        0.00      0.0           0.0                  0.0
-MySQL-BHT-8-1-2        0.00      0.0           0.0                  0.0
-MySQL-BHT-8-2-1        0.00      0.0           0.0                  0.0
-MySQL-BHT-8-2-2        0.03      0.0           0.0                  0.0
+|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MySQL-1-1 |                1 |   10 |      695.00 |           5.00 |           23.00 |        158.00 |          504.00 |              8 |           0 |             | None           |             0 | False         |               51.80 | False               |
+| MySQL-1-2 |                2 |   10 |      695.00 |           5.00 |           23.00 |        158.00 |          504.00 |              8 |           0 |             | None           |             0 | False         |               51.80 | True                |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS            | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
+|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
+| mysql-1-1-1-1-1 | MySQL-1         | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               22 |                  22 |        555 |            9.90 |             3693.55 |           1427.03 |          -1 | mysql-1-1-1-1-1 |
+| mysql-1-1-2-1-1 | MySQL-1         | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |           1 | 10.00 |               22 |                  22 |        537 |            9.08 |             4026.26 |           1474.86 |          -1 | mysql-1-1-2-1-1 |
+| mysql-1-1-2-1-2 | MySQL-1         | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |           1 | 10.00 |               22 |                  22 |        537 |            9.09 |             4018.81 |           1474.86 |          -1 | mysql-1-1-2-1-2 |
+| mysql-1-2-1-1-1 | MySQL-1         | mysql-1-2-1 | mysql-1-2-1-1 |                2 |        1 |               1 |           1 | 10.00 |               22 |                  22 |        855 |           15.55 |             2332.29 |            926.32 |          -1 | mysql-1-2-1-1-1 |
+| mysql-1-2-2-1-1 | MySQL-1         | mysql-1-2-2 | mysql-1-2-2-1 |                2 |        2 |               1 |           1 | 10.00 |               22 |                  22 |        532 |            9.32 |             3920.42 |           1488.72 |          -1 | mysql-1-2-2-1-1 |
+| mysql-1-2-2-1-2 | MySQL-1         | mysql-1-2-2 | mysql-1-2-2-1 |                2 |        2 |               1 |           1 | 10.00 |               22 |                  22 |        534 |            8.81 |             4144.60 |           1483.15 |          -1 | mysql-1-2-2-1-2 |
+
+#### Per Phase
+
+|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------|:------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               22 |                  22 |        555 |            9.90 |             3693.55 |           1427.03 |          -1 |
+| mysql-1-1-2 | mysql-1-1-2 |                1 |        2 |               1 |           2 | 10.00 |               44 |                  44 |        537 |            9.08 |             4022.53 |           2949.72 |          -1 |
+| mysql-1-2-1 | mysql-1-2-1 |                2 |        1 |               1 |           1 | 10.00 |               22 |                  22 |        855 |           15.55 |             2332.29 |            926.32 |          -1 |
+| mysql-1-2-2 | mysql-1-2-2 |                2 |        2 |               1 |           2 | 10.00 |               44 |                  44 |        534 |            9.06 |             4030.95 |           2966.29 |          -1 |
+
+#### Query Completion per Phase
+
+| phase       |   pods | Pricing Summary Report (TPC-H Q1)   | Minimum Cost Supplier Query (TPC-H Q2)   | Shipping Priority (TPC-H Q3)   | Order Priority Checking Query (TPC-H Q4)   | Local Supplier Volume (TPC-H Q5)   | Forecasting Revenue Change (TPC-H Q6)   | Volume Shipping Query (TPC-H Q7)   | National Market Share (TPC-H Q8)   | Product Type Profit Measure (TPC-H Q9)   | Returned Item Reporting Query (TPC-H Q10)   | Important Stock Identification (TPC-H Q11)   | Shipping Modes and Order Priority (TPC-H Q12)   | Customer Distribution (TPC-H Q13)   | Promotion Effect Query (TPC-H Q14)   | Top Supplier Query (TPC-H Q15)   | Parts/Supplier Relationship (TPC-H Q16)   | Small-Quantity-Order Revenue (TPC-H Q17)   | Large Volume Customer (TPC-H Q18)   | Discounted Revenue (TPC-H Q19)   | Potential Part Promotion (TPC-H Q20)   | Suppliers Who Kept Orders Waiting Query (TPC-H Q21)   | Global Sales Opportunity Query (TPC-H Q22)   | complete   |
+|:------------|-------:|:------------------------------------|:-----------------------------------------|:-------------------------------|:-------------------------------------------|:-----------------------------------|:----------------------------------------|:-----------------------------------|:-----------------------------------|:-----------------------------------------|:--------------------------------------------|:---------------------------------------------|:------------------------------------------------|:------------------------------------|:-------------------------------------|:---------------------------------|:------------------------------------------|:-------------------------------------------|:------------------------------------|:---------------------------------|:---------------------------------------|:------------------------------------------------------|:---------------------------------------------|:-----------|
+| mysql-1-1-1 |      1 | 1/1                                 | 1/1                                      | 1/1                            | 1/1                                        | 1/1                                | 1/1                                     | 1/1                                | 1/1                                | 1/1                                      | 1/1                                         | 1/1                                          | 1/1                                             | 1/1                                 | 1/1                                  | 1/1                              | 1/1                                       | 1/1                                        | 1/1                                 | 1/1                              | 1/1                                    | 1/1                                                   | 1/1                                          | yes        |
+| mysql-1-1-2 |      2 | 2/2                                 | 2/2                                      | 2/2                            | 2/2                                        | 2/2                                | 2/2                                     | 2/2                                | 2/2                                | 2/2                                      | 2/2                                         | 2/2                                          | 2/2                                             | 2/2                                 | 2/2                                  | 2/2                              | 2/2                                       | 2/2                                        | 2/2                                 | 2/2                              | 2/2                                    | 2/2                                                   | 2/2                                          | yes        |
+| mysql-1-2-1 |      1 | 1/1                                 | 1/1                                      | 1/1                            | 1/1                                        | 1/1                                | 1/1                                     | 1/1                                | 1/1                                | 1/1                                      | 1/1                                         | 1/1                                          | 1/1                                             | 1/1                                 | 1/1                                  | 1/1                              | 1/1                                       | 1/1                                        | 1/1                                 | 1/1                              | 1/1                                    | 1/1                                                   | 1/1                                          | yes        |
+| mysql-1-2-2 |      2 | 2/2                                 | 2/2                                      | 2/2                            | 2/2                                        | 2/2                                | 2/2                                     | 2/2                                | 2/2                                | 2/2                                      | 2/2                                         | 2/2                                          | 2/2                                             | 2/2                                 | 2/2                                  | 2/2                              | 2/2                                       | 2/2                                        | 2/2                                 | 2/2                              | 2/2                                    | 2/2                                                   | 2/2                                          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   mysql-1-1-1-1-1 |   mysql-1-1-2-1-1 |   mysql-1-1-2-1-2 |   mysql-1-2-1-1-1 |   mysql-1-2-2-1-1 |   mysql-1-2-2-1-2 |
+|:----------------------------------------------------|------------------:|------------------:|------------------:|------------------:|------------------:|------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |          64246.23 |          60591.93 |          60485.34 |         188542.41 |          65469.69 |          66092.63 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |            660.89 |            790.65 |            788.30 |          16752.50 |            635.76 |            558.39 |
+| Shipping Priority (TPC-H Q3)                        |          16036.19 |          18593.23 |          18553.65 |          97663.45 |          16904.66 |          15629.31 |
+| Order Priority Checking Query (TPC-H Q4)            |           3956.15 |           3540.98 |           3522.30 |           6064.84 |           3650.75 |           3463.39 |
+| Local Supplier Volume (TPC-H Q5)                    |          10854.95 |          13482.28 |          13305.98 |          11791.32 |          12263.73 |          11106.61 |
+| Forecasting Revenue Change (TPC-H Q6)               |           8736.68 |           7800.69 |           7826.89 |          10290.97 |           8478.47 |           8222.05 |
+| Volume Shipping Query (TPC-H Q7)                    |           7971.99 |           7351.67 |           7488.30 |           7856.28 |           7378.76 |           6999.66 |
+| National Market Share (TPC-H Q8)                    |          27920.99 |          33000.35 |          32999.07 |          26732.51 |          29713.08 |          29630.91 |
+| Product Type Profit Measure (TPC-H Q9)              |          60392.37 |          28578.36 |          28578.90 |          96076.81 |          20698.29 |          22846.83 |
+| Returned Item Reporting Query (TPC-H Q10)           |          12940.13 |          12266.51 |          12266.96 |          12856.04 |          12709.71 |          12599.16 |
+| Important Stock Identification (TPC-H Q11)          |           2247.38 |           2628.67 |           2494.27 |          16007.58 |           2666.94 |           2665.05 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |          14016.00 |          12272.88 |          12461.86 |          15673.65 |          13678.33 |          13678.72 |
+| Customer Distribution (TPC-H Q13)                   |          58322.24 |          62949.07 |          63285.75 |          62736.09 |          67105.41 |          67687.85 |
+| Promotion Effect Query (TPC-H Q14)                  |          11358.04 |          10071.13 |          10070.38 |          12839.85 |          12720.62 |          11951.15 |
+| Top Supplier Query (TPC-H Q15)                      |         181086.78 |         185832.69 |         185832.69 |         197872.44 |         175923.54 |         176254.21 |
+| Parts/Supplier Relationship (TPC-H Q16)             |           2430.08 |           2163.04 |           2029.84 |           3472.73 |           2225.56 |           2026.39 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |           2569.60 |           3083.57 |           3108.57 |           2761.29 |           3123.95 |           3114.77 |
+| Large Volume Customer (TPC-H Q18)                   |          12932.66 |          11773.42 |          11963.79 |          15074.99 |          12801.32 |          13667.15 |
+| Discounted Revenue (TPC-H Q19)                      |           1974.42 |            943.72 |            942.31 |           2213.44 |           1212.84 |            849.04 |
+| Potential Part Promotion (TPC-H Q20)                |           6380.72 |           2891.68 |           2894.71 |           5720.09 |           2483.71 |           2557.35 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |          36266.43 |          47917.54 |          47863.71 |          38334.16 |          49649.18 |          52754.10 |
+| Global Sales Opportunity Query (TPC-H Q22)          |            917.98 |            774.46 |            870.80 |            849.82 |           1364.05 |            806.01 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 |      1110.46 |      5.58 |          20.11 |                 38.24 |
+| mysql-1-1-2-1 |      1110.46 |      5.58 |          20.11 |                 38.24 |
+
+### Loading phase: component data generator
+
+| DBMS          | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|:-------------|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
+| mysql-1-1-2-1 | n/a          |         0 |           0.00 |                  0.00 |
+
+### Loading phase: component loader
+
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 |        30.84 |      0.43 |           0.01 |                  1.14 |
+| mysql-1-1-2-1 |        30.84 |      0.43 |           0.01 |                  1.14 |
+
+### Benchmarking phase: SUT deployment
+
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 |       477.59 |      1.02 |          21.20 |                 39.33 |
+| mysql-1-1-2-1 |      1045.77 |      2.02 |          22.03 |                 40.16 |
+| mysql-1-2-1-1 |       519.32 |      1.00 |          18.49 |                 18.49 |
+| mysql-1-2-2-1 |      1039.23 |      2.01 |          19.31 |                 19.32 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:--------------|-------------:|----------:|---------------:|----------------------:|
+| mysql-1-1-1-1 |        20.01 |      0.57 |           0.36 |                  0.37 |
+| mysql-1-1-2-1 |        44.40 |      0.44 |           0.39 |                  0.40 |
+| mysql-1-2-1-1 |        20.76 |      0.42 |           0.37 |                  0.38 |
+| mysql-1-2-2-1 |        41.58 |      0.40 |           0.41 |                  0.41 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage, Working Set [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-2-1 (bexhoma-metrics-mysql-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-2-1-1 (bexhoma-metrics-mysql-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-2-1-1 (bexhoma-metrics-mysql-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mysql-1-2-2-1 (bexhoma-metrics-mysql-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-2-2-1 (bexhoma-metrics-mysql-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Tests
-TEST passed: Geo Times [s] contains no 0 or NaN
-TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-TEST passed: Throughput@Size contains no 0 or NaN
-TEST passed: No SQL errors
-TEST passed: No SQL warnings
-TEST passed: Ingestion SUT contains no 0 or NaN in CPU [CPUs]
-TEST failed: Ingestion Loader contains 0 or NaN in CPU [CPUs]
-TEST failed: Execution SUT contains 0 or NaN in CPU [CPUs]
-TEST failed: Execution Benchmarker contains 0 or NaN in CPU [CPUs]
-TEST passed: Workflow as planned
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (data pre-existing; series exists only while non-zero)
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
+* TEST passed: Workflow as planned
