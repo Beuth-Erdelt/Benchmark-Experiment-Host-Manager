@@ -33,7 +33,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_mysql_scale.log | Example-MySQL.md | 2026-11-07 | 0.11.13 | 1984s |  |
 | passed | docs_benchbase_mysql_storage.log | Example-MySQL.md | 2026-11-07 | 0.11.13 | 982s |  |
 | passed | docs_benchbase_mysql_tenants_container.log | Example-Multi-Tenant.md | 2026-10-31 | 0.11.11 | 1112s |  |
-| passed | docs_benchbase_mysql_tenants_database.log | Example-Multi-Tenant.md | 2026-11-04 | 0.11.12 | 1133s |  |
+| passed | docs_benchbase_mysql_tenants_database.log | Example-Multi-Tenant.md | 2026-11-10 | 0.11.13 | 1096s |  |
 | passed | docs_benchbase_pgbouncer_appmetrics.log | Example-Metrics.md | 2026-11-05 | 0.11.12 | 1479s |  |
 | passed | docs_benchbase_pgbouncer_newconn.log | Example-PGBouncer.md | 2026-07-12 | 0.10.5 | 1837s |  |
 | passed | docs_benchbase_pgbouncer_newconn_pool.log | Example-PGBouncer.md | 2026-07-12 | 0.10.5 | 1717s |  |
@@ -159,8 +159,8 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_hardware_sysbench_noisy_neighbor.log | Example-Hardware.md | 2026-10-29 | 0.11.10 | 176s |  |
 | passed | docs_reset_benchbase_citus.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 988s |  |
 | passed | docs_reset_benchbase_cockroachdb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 934s |  |
-| passed | docs_reset_benchbase_mariadb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 700s |  |
-| passed | docs_reset_benchbase_mysql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 814s |  |
+| passed | docs_reset_benchbase_mariadb.log | Test-Reset.md | 2026-11-10 | 0.11.13 | 723s |  |
+| passed | docs_reset_benchbase_mysql.log | Test-Reset.md | 2026-11-10 | 0.11.13 | 760s |  |
 | passed | docs_reset_benchbase_pgbouncer.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 666s |  |
 | passed | docs_reset_benchbase_postgresql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 580s |  |
 | passed | docs_reset_benchbase_tidb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 772s |  |

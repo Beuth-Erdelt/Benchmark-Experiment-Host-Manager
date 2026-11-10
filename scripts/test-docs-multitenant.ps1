@@ -213,6 +213,7 @@ bexhoma benchbase `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 10                       <# threads per benchmarking pod #> `
   -xkey                         <# simulate user think time and keying delays #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
