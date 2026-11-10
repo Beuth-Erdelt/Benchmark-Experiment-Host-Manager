@@ -1,6 +1,8 @@
 # Plan: no loading step fails silently (#848)
 
-Status: **implemented 2026-11-10 (W1-W7), not committed, not run on a cluster; images must be rebuilt.** Decisions (user): O1 `backoffLimit: 0`; O2 ClickHouse exit
+Status: **done 2026-11-10: implemented (W1-W7) on branch no-silent-load-failures, verified on the cluster
+(section 4, results in 4b), images rebuilt.** Open: exit codes of `mclient` (stdin) and `cqlsh -f` on an
+error; MySQL/MariaDB restoredurability value check. Decisions (user): O1 `backoffLimit: 0`; O2 ClickHouse exit
 code only; O3 P4 is included (section 3, W7); O4 fail on `Skipped > 0` only; O5 no `ON_ERROR_STOP`
 (default kept); O6 order W1+W5 (+W7), then W2/W3, then W4.
 
@@ -245,3 +247,19 @@ Not done / open:
 | O4 | MySQL/MariaDB: fail on any `Warnings > 0` or only on `Skipped > 0` | `Skipped > 0` fails; warnings are logged and counted, fail after the first clean run shows they are 0 |
 | O5 | psql `ON_ERROR_STOP=1` in `loadData` (script stops at the first error instead of going on) | no: detection is already there; keep the behaviour |
 | O6 | Order | W1 + W5 first (pure bexhoma, visible right away), then W2/W3 (images), then W4 |
+
+## 4b. Cluster results (2026-11-10, dev/test-loading-failures.ps1, logs in logs_tests/local)
+
+| Step | Codes | Result |
+|---|---|---|
+| A1-A3 TPC-H, TPC-DS, SSB load (PostgreSQL, MySQL, MariaDB, MonetDB, ClickHouse) | 1794324139, 1794324679, 1794325429 | 250 + 195 + 60 units ok, expected = reported everywhere (ClickHouse: exit code only), no false alarm |
+| A4 refresh PostgreSQL, MySQL, MariaDB, MonetDB | 1794325944, 1794329659, 1794333791, 1794334661 | rf1 1500/1500 and 5822/5822 ok, rf2 ok (MonetDB 1500/1500); Q17/Q20 query timeouts without -xii, unrelated |
+| A5 YCSB, A6 Benchbase, A7 HammerDB load | 1794334980, 1794335305, 1794335624 | 4 x 250000 inserts; Benchbase finished, no ERROR; 16/16 warehouses |
+| B1/B2 `-xld relaxed --set synchronous_commit=on` PostgreSQL, Citus | 1794335910, 1794336270 | database setting off during the load, removed afterwards; Citus refuses ALTER DATABASE on a worker and propagates the coordinator's (worker statement removed, 910cb4ab) |
+| B3 `-xld unsafe --set fsync=on` | 1794336856, 1794340431, 1794342938 | refused before loading; the first pass started a benchmark round (fixed 7cf1955f), the second crashed in the summary without queries.config (fixed ce0cf561); third: short summary, one failed test |
+| C1 SUT stopped during the ingest (TPC-H SF 10) | 1794343115 | `kill 1` had no effect in two passes (smart shutdown request never logged); `pg_ctl stop -m immediate`: every file failed, loader pod exit 1, job Failed (8 failed pods), experiment aborted, volume loaded=False |
+| C2 same without -rsr | 1794343409 | refused cleanly: "holds an unfinished load (loaded=False); remove it (-rsr)" (4f22792f) |
+| C3 with -rsr | 1794343425 | volume removed and reloaded, 50 units ok, loaded=True |
+
+Also from the runs: the short summary of an aborted experiment judges its loader pods (07b8f1b0); no evaluation
+and no download for an experiment without results (b2ec2865).
