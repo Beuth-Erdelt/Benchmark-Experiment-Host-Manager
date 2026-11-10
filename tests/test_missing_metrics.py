@@ -173,6 +173,39 @@ class CollectMissingMetricsTest(unittest.TestCase):
             missing = missing_metrics.collect_missing_metrics(result_dir)
         self.assertEqual([entry.warning for entry in missing], [""])
 
+    def test_a_reference_inactive_in_another_connection_does_not_excuse_a_gap(self) -> None:
+        """The activity map is by title: CPU disabled anywhere means no evidence anywhere."""
+        active = {"cpu": {"title": "CPU", "active": True},
+                  "fs_read": {"title": "FS Read", "activity_dependent": "cpu"}}
+        inactive = {"cpu": {"title": "CPU", "active": False},
+                    "fs_read": {"title": "FS Read", "activity_dependent": "cpu"}}
+        connections = [{"name": "a", "monitoring": {"metrics": active}},
+                       {"name": "b", "monitoring": {"metrics": inactive}}]
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result_dir = Path(tmp_dir)
+            (result_dir / "connections.config").write_text(repr(connections))
+            (result_dir / missing_metrics.fetch_log_name("b-1", "loading")).write_text(
+                f"ERROR:root:Metrics missing for FS Read (sum(x)) for connection b-1: {_URL}\n")
+            missing = missing_metrics.collect_missing_metrics(result_dir)
+        self.assertEqual([entry.warning for entry in missing], [""])
+
+    def test_a_benchmarker_gap_finds_the_deduplicated_reference_gap(self) -> None:
+        """Both logs miss CPU, only the benchmarker misses FS Read: still a failure, not a warning."""
+        metrics = {"cpu": {"title": "CPU", "active": True},
+                   "fs_read": {"title": "FS Read", "activity_dependent": "cpu"}}
+        def gap(title: str, connection: str) -> str:
+            return f"ERROR:root:Metrics missing for {title} (sum(x)) for connection {connection}: {_URL}\n"
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result_dir = Path(tmp_dir)
+            (result_dir / "connections.config").write_text(repr([{"name": "pg", "monitoring": {"metrics": metrics}}]))
+            (result_dir / missing_metrics.fetch_log_name("pg-1-1-1-1", "benchmarking")).write_text(
+                gap("CPU", "pg-1-1-1-1"))
+            (result_dir / "bexhoma-benchmarker-pg-1-123-1-1-1-cwkhp.dbmsbenchmarker.log").write_text(
+                gap("CPU", "pg-1-1-1-1-1") + gap("FS Read", "pg-1-1-1-1-1"))
+            missing = missing_metrics.collect_missing_metrics(result_dir)
+        verdict = {(entry.title, entry.connection): entry.warning for entry in missing}
+        self.assertEqual(verdict, {("CPU", "pg-1-1-1-1"): "", ("FS Read", "pg-1-1-1-1-1"): ""})
+
     def test_gaps_in_short_windows_are_expected(self) -> None:
         """A gap is expected below the window the component needs at the scrape interval (30 s)."""
         windows = {("pg-1", "benchmarking"): 11, ("pg-2", "benchmarking"): 45,
