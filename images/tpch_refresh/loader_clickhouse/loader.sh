@@ -54,10 +54,12 @@ CSV_OPTS="--format_csv_delimiter=| --format_csv_allow_double_quotes=0 --distribu
 # The coordinator holds only the Distributed tables, so the loader connects to each shard.
 DELETE_SUFFIX=""
 DELETE_HOSTS="$BEXHOMA_HOST"
+DISCOVERY_STATUS=0
 if test -n "$BEXHOMA_CLICKHOUSE_CLUSTER"
 then
     DELETE_SUFFIX="_local"
     DELETE_HOSTS=$($CLICKHOUSE --query "SELECT host_name FROM system.clusters WHERE cluster = '$BEXHOMA_CLICKHOUSE_CLUSTER' ORDER BY shard_num, replica_num")
+    DISCOVERY_STATUS=$?
     echo "RF2 runs on: $DELETE_HOSTS"
 fi
 # lightweight DELETE, returns when the rows are masked on all replicas
@@ -65,6 +67,13 @@ DELETE_OPTS="--lightweight_deletes_sync=2 --max_query_size=4194304"
 # order keys per DELETE statement, keeps the statement far below max_query_size
 KEYS_PER_DELETE=10000
 FAILED=""
+# Without hosts the RF2 loop deletes nothing and the stream would end as a success.
+# No early exit: the pod still runs through the barriers and fails at the end.
+if test -z "$DELETE_HOSTS" || test "$DISCOVERY_STATUS" -ne 0
+then
+    echo "RF2 has no host to delete on (cluster '$BEXHOMA_CLICKHOUSE_CLUSTER', query status $DISCOVERY_STATUS)"
+    FAILED=" RF2:shards"
+fi
 
 ######################## Wait until all pods of job are ready ########################
 echo "Decrementing job counter bexhoma-benchmarker-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"

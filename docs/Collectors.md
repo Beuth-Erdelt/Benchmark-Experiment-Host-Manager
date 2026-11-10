@@ -174,16 +174,16 @@ Extends `get_monitoring_aggregated_per_job()` by grouping across tenants, in two
 
 ### Monitoring — Time Series
 
-**`get_monitoring_timeseries_single(code, metric='pg_locks_count', component='benchmarking')`**  
+**`get_monitoring_timeseries_single(code, metric, component='benchmarking')`**  
 Returns a wide-format DataFrame for one metric in one experiment. Rows are timestamps; columns are monitored pod instances.
 
-**`get_monitoring_timeseries_per_phase(code, metric='pg_locks_count', component='benchmarking')`**  
+**`get_monitoring_timeseries_per_phase(code, metric, component='benchmarking')`**  
 Same data as above, transposed: rows are pod instances, columns are timestamps.
 
-**`get_monitoring_timeseries_all(metric='pg_locks_count', component='benchmarking')`**  
+**`get_monitoring_timeseries_all(metric, component='benchmarking')`**  
 Collects long-format time-series across all codes. Columns include `timestamp`, `value`, `code`, `phase`, `experiment_run`, `client`, `type_tenants`, `num_tenants`, `vol_tenants`, `metric`, `component`. Values are summed across parallel pods.
 
-**`get_monitoring_timeseries_all_multitenant(metric='pg_locks_count', component='benchmarking')`**  
+**`get_monitoring_timeseries_all_multitenant(metric, component='benchmarking')`**  
 Like `get_monitoring_timeseries_all` but annotates each row with tenant metadata from the workload config. For non-container tenancy the `tenant` column is set to `"0"`.
 
 ---

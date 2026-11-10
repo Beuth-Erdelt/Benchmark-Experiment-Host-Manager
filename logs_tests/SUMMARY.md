@@ -4,7 +4,7 @@ Last recorded runs of the examples in `docs/`, one row per log in `logs_tests/`.
 Nothing is run to create this page: it is read from the committed logs by `scripts/demo-runs.py`,
 so it shows what the runs looked like when they were recorded, not whether the current code still passes.
 
-**307 passed, 0 failed, 1 warn, 5 unchecked** (313 runs)
+**373 passed, 0 failed, 1 warn, 5 unchecked** (379 runs)
 
 | Status | Log | Page | Date | Version | Duration | Failed tests / warnings |
 |---|---|---|---|---|---|---|
@@ -33,7 +33,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_mysql_scale.log | Example-MySQL.md | 2026-11-07 | 0.11.13 | 1984s |  |
 | passed | docs_benchbase_mysql_storage.log | Example-MySQL.md | 2026-11-07 | 0.11.13 | 982s |  |
 | passed | docs_benchbase_mysql_tenants_container.log | Example-Multi-Tenant.md | 2026-10-31 | 0.11.11 | 1112s |  |
-| passed | docs_benchbase_mysql_tenants_database.log | Example-Multi-Tenant.md | 2026-11-04 | 0.11.12 | 1133s |  |
+| passed | docs_benchbase_mysql_tenants_database.log | Example-Multi-Tenant.md | 2026-11-10 | 0.11.13 | 1096s |  |
 | passed | docs_benchbase_pgbouncer_appmetrics.log | Example-Metrics.md | 2026-11-05 | 0.11.12 | 1479s |  |
 | passed | docs_benchbase_pgbouncer_newconn.log | Example-PGBouncer.md | 2026-07-12 | 0.10.5 | 1837s |  |
 | passed | docs_benchbase_pgbouncer_newconn_pool.log | Example-PGBouncer.md | 2026-07-12 | 0.10.5 | 1717s |  |
@@ -83,6 +83,36 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_yugabytedb.log | Example-YugaByteDB.md | 2026-10-28 | 0.11.10 | 1508s |  |
 | passed | docs_benchbase_yugabytedb_appmetrics.log | Example-Metrics.md | 2026-11-05 | 0.11.12 | 1348s |  |
 | passed | docs_benchbase_yugabytedb_keytime.log | Example-YugaByteDB.md | 2026-10-28 | 0.11.10 | 8154s |  |
+| passed | docs_durability_benchbase_citus_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 907s |  |
+| passed | docs_durability_benchbase_mysql_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 573s |  |
+| passed | docs_durability_benchbase_mysql_unsafe.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 575s |  |
+| passed | docs_durability_benchbase_pgbouncer_relaxed.log | Test-Durability.md | 2026-10-22 | 0.11.7 | 416s |  |
+| passed | docs_durability_benchbase_postgresql_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 472s |  |
+| passed | docs_durability_benchbase_twitter_postgresql_unsafe.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 487s |  |
+| passed | docs_durability_hammerdb_citus_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 1004s |  |
+| passed | docs_durability_hammerdb_mysql_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 753s |  |
+| passed | docs_durability_hammerdb_mysql_unsafe.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 755s |  |
+| passed | docs_durability_hammerdb_postgresql_relaxed.log | Test-Durability.md | 2026-11-04 | 0.11.12 | 537s |  |
+| passed | docs_durability_tpcds_mysql_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 1297s |  |
+| passed | docs_durability_tpcds_mysql_unsafe.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 1185s |  |
+| passed | docs_durability_tpcds_postgresql_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 704s |  |
+| passed | docs_durability_tpch_citus_unsafe.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 880s |  |
+| passed | docs_durability_tpch_mariadb_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 551s |  |
+| passed | docs_durability_tpch_mysql_durable.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 555s |  |
+| passed | docs_durability_tpch_mysql_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 551s |  |
+| passed | docs_durability_tpch_mysql_unsafe.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 567s |  |
+| passed | docs_durability_tpch_pgduckdb_unsafe.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 1085s |  |
+| passed | docs_durability_tpch_postgresql_durable.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 422s |  |
+| passed | docs_durability_tpch_postgresql_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 470s |  |
+| passed | docs_durability_tpch_postgresql_tenants_schema.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 641s |  |
+| passed | docs_durability_tpch_postgresql_unsafe.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 491s |  |
+| passed | docs_durability_tpch_postgresql_unsafe_storage.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 757s |  |
+| passed | docs_durability_ycsb_citus_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 846s |  |
+| passed | docs_durability_ycsb_mysql_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 567s |  |
+| passed | docs_durability_ycsb_mysql_unsafe.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 564s |  |
+| passed | docs_durability_ycsb_pgbouncer_unsafe.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 411s |  |
+| passed | docs_durability_ycsb_postgresql_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 424s |  |
+| passed | docs_durability_ycsb_tidb_relaxed.log | Test-Durability.md | 2026-10-21 | 0.11.7 | 595s |  |
 | passed | docs_hammerdb_citus.log | Example-Citus.md | 2026-10-24 | 0.11.8 | 1134s |  |
 | passed | docs_hammerdb_citus_paper.log | Example-Citus.md | 2026-10-24 | 0.11.8 | 14514s |  |
 | passed | docs_hammerdb_citus_scale.log | Example-Citus.md | 2026-10-24 | 0.11.8 | 9264s |  |
@@ -127,6 +157,42 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_hardware_sysbench_nbp_overhead_sweep.log | Example-Hardware.md | 2026-10-29 | 0.11.10 | 373s |  |
 | passed | docs_hardware_sysbench_ne_saturation_sweep.log | Example-Hardware.md | 2026-10-29 | 0.11.10 | 494s |  |
 | passed | docs_hardware_sysbench_noisy_neighbor.log | Example-Hardware.md | 2026-10-29 | 0.11.10 | 176s |  |
+| passed | docs_reset_benchbase_citus.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 988s |  |
+| passed | docs_reset_benchbase_cockroachdb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 934s |  |
+| passed | docs_reset_benchbase_mariadb.log | Test-Reset.md | 2026-11-10 | 0.11.13 | 723s |  |
+| passed | docs_reset_benchbase_mysql.log | Test-Reset.md | 2026-11-10 | 0.11.13 | 760s |  |
+| passed | docs_reset_benchbase_pgbouncer.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 666s |  |
+| passed | docs_reset_benchbase_postgresql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 580s |  |
+| passed | docs_reset_benchbase_tidb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 772s |  |
+| passed | docs_reset_benchbase_twitter_postgresql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 591s |  |
+| passed | docs_reset_benchbase_yugabytedb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 1047s |  |
+| passed | docs_reset_hammerdb_citus.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 1309s |  |
+| passed | docs_reset_hammerdb_mariadb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 951s |  |
+| passed | docs_reset_hammerdb_mysql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 1110s |  |
+| passed | docs_reset_hammerdb_postgresql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 891s |  |
+| passed | docs_reset_tpcds_mariadb.log | Test-Reset.md | 2026-11-07 | 0.11.13 | 1339s |  |
+| passed | docs_reset_tpcds_monetdb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 579s |  |
+| passed | docs_reset_tpcds_mysql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 1999s |  |
+| passed | docs_reset_tpcds_postgresql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 938s |  |
+| passed | docs_reset_tpch_citus.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 939s |  |
+| passed | docs_reset_tpch_mariadb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 730s |  |
+| passed | docs_reset_tpch_monetdb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 425s |  |
+| passed | docs_reset_tpch_mysql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 800s |  |
+| passed | docs_reset_tpch_pgduckdb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 468s |  |
+| passed | docs_reset_tpch_postgresql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 440s |  |
+| passed | docs_reset_tpch_refresh_postgresql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 492s |  |
+| passed | docs_reset_ycsb_citus.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 1059s |  |
+| passed | docs_reset_ycsb_cockroachdb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 773s |  |
+| passed | docs_reset_ycsb_dragonfly.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 430s |  |
+| passed | docs_reset_ycsb_dragonfly_replica.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 672s |  |
+| passed | docs_reset_ycsb_mariadb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 1043s |  |
+| passed | docs_reset_ycsb_mysql.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 965s |  |
+| passed | docs_reset_ycsb_pgbouncer.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 592s |  |
+| passed | docs_reset_ycsb_postgresql.log | Test-Reset.md | 2026-10-21 | 0.11.7 | 560s |  |
+| passed | docs_reset_ycsb_redis.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 342s |  |
+| passed | docs_reset_ycsb_redis_cluster.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 606s |  |
+| passed | docs_reset_ycsb_tidb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 732s |  |
+| passed | docs_reset_ycsb_yugabytedb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 725s |  |
 | passed | docs_ssb_cedardb.log | Example-SSB.md | 2026-11-06 | 0.11.13 | 290s |  |
 | passed | docs_ssb_citus.log | Example-SSB.md | 2026-11-06 | 0.11.13 | 818s |  |
 | passed | docs_ssb_clickhouse.log | Example-SSB.md | 2026-11-06 | 0.11.13 | 328s |  |

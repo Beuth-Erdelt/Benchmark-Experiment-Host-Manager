@@ -232,6 +232,9 @@ def _sparse_titles(result_dir: Path) -> tuple[set[str], set[tuple[str, str]], di
     titles = set()
     pairs = set()
     activity = {}
+    # The map is by title, not per connection and metric set: a reference that is
+    # inactive or absent in any of them would excuse a gap without evidence there.
+    unreferenced = set()
     for connection in connections if isinstance(connections, list) else []:
         for key, metrics in connection.get("monitoring", {}).items():
             if key.startswith("metrics") and isinstance(metrics, dict):
@@ -242,9 +245,15 @@ def _sparse_titles(result_dir: Path) -> tuple[set[str], set[tuple[str, str]], di
                         titles.add(metric.get("title"))
                     pairs.update((metric.get("title"), component)
                                  for component in metric.get("sparse_components") or ())
-                    reference = metrics.get(metric.get("activity_dependent") or "")
+                    if not metric.get("activity_dependent"):
+                        continue
+                    reference = metrics.get(metric["activity_dependent"])
                     if isinstance(reference, dict) and reference.get("active", True):
-                        activity[metric.get("title")] = reference.get("title")
+                        activity.setdefault(metric.get("title"), reference.get("title"))
+                    else:
+                        unreferenced.add(metric.get("title"))
+    for title in unreferenced:
+        activity.pop(title, None)
     return titles, pairs, activity
 
 
@@ -327,11 +336,19 @@ def collect_missing_metrics(
     ]
     # an activity dependent metric without data is a warning when its reference metric has data
     # for the same connection and component: the pods were scraped, they did not do that activity
+    # A benchmarker copy of the reference gap may have been dropped above in favour of the
+    # dashboard pod's entry under the parent connection name, so a benchmarker entry also
+    # looks up its parent name.
     missing_pairs = {(entry.title, entry.connection, entry.component) for entry in found}
+
+    def reference_missing(entry: MissingMetric) -> bool:
+        names = {entry.connection}
+        if not _FETCH_LOG.match(entry.source):
+            names.add(entry.connection.rsplit("-", 1)[0])
+        return any((activity[entry.title], name, entry.component) in missing_pairs for name in names)
     return [
         replace(entry, warning=WARNING_NO_ACTIVITY)
-        if (not entry.expected and entry.title in activity
-            and (activity[entry.title], entry.connection, entry.component) not in missing_pairs)
+        if not entry.expected and entry.title in activity and not reference_missing(entry)
         else entry
         for entry in found
     ]

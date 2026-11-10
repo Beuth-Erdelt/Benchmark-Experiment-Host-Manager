@@ -33,5 +33,20 @@ class ClassifyTest(unittest.TestCase):
         self.assertEqual(green["color"], "brightgreen")
 
 
+class ScanDocTest(unittest.TestCase):
+    def test_plain_log_links_are_runs_too(self):
+        """Test-Reset.md and Test-Durability.md link their logs outside <summary> blocks."""
+        import tempfile
+        scanner = demo_runs.load_scanner()
+        page = ('<details>\n<summary>Show <a href="x">docs_a.log</a></summary>\n\n</details>\n\n'
+                'Result: <a href="y">docs_b.log</a>\n\nResult: <a href="y">docs_b.log</a>\n'
+                'Again: <a href="x">docs_a.log</a>\n')
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            path = Path(tmp_dir) / "Test-Page.md"
+            path.write_text(page, encoding="utf-8")
+            records = scanner.scan_doc(path)
+        self.assertEqual([rec["logfile"] for rec in records], ["docs_a.log", "docs_b.log"])
+
+
 if __name__ == "__main__":
     unittest.main()

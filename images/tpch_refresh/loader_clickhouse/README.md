@@ -42,5 +42,7 @@ See [images/tpch_refresh/README.md](https://github.com/Beuth-Erdelt/Benchmark-Ex
 
 ## Failure
 
-Any failing statement is reported and the container exits with 1. The job has `backoffLimit: 0`: ClickHouse has no
+Any failing statement is reported and the container exits with 1. So does a cluster whose hosts cannot be read
+from `system.clusters` (query failed or no rows): RF2 would delete nothing. The loader still runs the stream to the
+end in that case, so the query stream is not left waiting. The job has `backoffLimit: 0`: ClickHouse has no
 primary key to refuse a second RF1, so a retry would insert the rows twice.

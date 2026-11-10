@@ -8,14 +8,16 @@
 --          with -ar. ANALYZE TABLE refreshes optimizer statistics on every
 --          TPC-C table. Steps 2 (persist) and 3 (counters) follow in
 --          reset-flush.sh.
+--          MariaDB's loadData selects no database, so the tables are
+--          qualified with benchbase (as in checkschema-benchbase.sql).
 
 
-ANALYZE TABLE customer;
-ANALYZE TABLE district;
-ANALYZE TABLE history;
-ANALYZE TABLE warehouse;
-ANALYZE TABLE stock;
-ANALYZE TABLE new_order;
-ANALYZE TABLE oorder;
-ANALYZE TABLE order_line;
-ANALYZE TABLE item;
+ANALYZE TABLE benchbase.customer;
+ANALYZE TABLE benchbase.district;
+ANALYZE TABLE benchbase.history;
+ANALYZE TABLE benchbase.warehouse;
+ANALYZE TABLE benchbase.stock;
+ANALYZE TABLE benchbase.new_order;
+ANALYZE TABLE benchbase.oorder;
+ANALYZE TABLE benchbase.order_line;
+ANALYZE TABLE benchbase.item;

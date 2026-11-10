@@ -386,6 +386,24 @@ class ExecResetScriptTest(unittest.TestCase):
         self.assertEqual(self._sent_with_tenants('database'),
                          [f'psql -d tenant_{tenant} < /tmp/reset-ycsb.sql' for tenant in range(3)])
 
+    def test_the_benchmark_database_wins_over_the_jdbc_one(self):
+        """Benchbase on MySQL: JDBC names `mysql`, the tables are in `benchbase` (BEXHOMA_DATABASE)."""
+        self.cfg.loading_parameters = {'BEXHOMA_DATABASE': 'benchbase'}
+        self.assertEqual(self._sent_with_tenants('container'), ['psql -d benchbase < /tmp/reset-ycsb.sql'])
+
+    def test_database_tenancy_ignores_the_benchmark_database(self):
+        self.cfg.loading_parameters = {'BEXHOMA_DATABASE': 'benchbase'}
+        self.assertEqual(self._sent_with_tenants('database'),
+                         [f'psql -d tenant_{tenant} < /tmp/reset-ycsb.sql' for tenant in range(3)])
+
+    def test_mysql_benchbase_scripts_select_no_database(self):
+        """With database tenancy they run in tenant_<n>; a USE would switch away from it."""
+        folder = os.path.join(_REPO, 'experiments', 'benchbase', 'tpcc', 'MySQL')
+        for name in os.listdir(folder):
+            if name.endswith('.sql'):
+                with self.subTest(name), open(os.path.join(folder, name), encoding='utf-8') as f:
+                    self.assertNotRegex(f.read(), r'(?im)^\s*USE\s')
+
 
 class SchemaTenancyScriptsTest(unittest.TestCase):
     """What schema tenancy needs of its scripts."""
