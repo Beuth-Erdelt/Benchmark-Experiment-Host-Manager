@@ -2238,6 +2238,33 @@ class ExperimentBase():
             )
         return None
 
+    def _start_sut_or_abort(self, config: "SutConfiguration") -> bool:
+        """Start the SUT of a configuration; abort the experiment when it is refused.
+
+        :meth:`LifecycleManager.start_sut` refuses with a :class:`ValueError` before
+        anything of the configuration exists, e.g. for a volume that holds an
+        unfinished or failed load or is on another storage class. The refusal is
+        handled like a load that failed before it ran: a failed test with the
+        reason, diagnostics, and every component of the experiment removed, instead
+        of a traceback that leaves the other configurations running.
+
+        :param config: The configuration whose SUT starts.
+        :return: False if the experiment was aborted.
+        :rtype: bool
+        """
+        try:
+            config.lifecycle.start_sut()
+            return True
+        except ValueError as exc:
+            reason = str(exc)
+            prefix = config.configuration + ': '
+            if reason.startswith(prefix):
+                reason = reason[len(prefix):]
+            print("{:30s}: SUT not started: {}".format(config.configuration, reason))
+            config.loader.fail_loading_fatally(reason)
+            self._abort_loading_if_needed(config, datetime.utcnow())
+            return False
+
     def _abort_loading_if_needed(
         self,
         config: "SutConfiguration",
@@ -2805,7 +2832,8 @@ class ExperimentBase():
                                     we_can_start_new_sut = False
                             if we_can_start_new_sut:
                                 print("{:30s}: will start now".format(config.configuration))
-                                config.lifecycle.start_sut()
+                                if not self._start_sut_or_abort(config):
+                                    return
                                 num_pods_pending_experiment += 1
                                 num_pods_pending_cluster += 1
                                 if config.max_sut_dbms is not None:

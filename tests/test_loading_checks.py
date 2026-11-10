@@ -232,6 +232,28 @@ class AbortedSummaryTest(unittest.TestCase):
             e.show_summary.assert_called_once_with(write_report=False)
 
 
+class RefusedSutTest(unittest.TestCase):
+    """A refused volume aborts the experiment with a failed test, not with a traceback."""
+
+    def test_refused_volume_aborts(self) -> None:
+        e = experiment()
+        e._runtime_test_results = []
+        e.remove_experiment = mock.Mock()
+        e.cluster = mock.Mock()
+        cfg = SimpleNamespace(configuration='DBMS-1', loading_failed=[], loading_failed_fatal='',
+                              loading_started=False, loading_finished=False, loading_active=True,
+                              lifecycle=mock.Mock())
+        cfg.loader = LoadingCoordinator(cfg)
+        cfg.lifecycle.start_sut.side_effect = ValueError(
+            'DBMS-1: existing storage pvc holds an unfinished load (loaded=False); remove it (-rsr)')
+        self.assertFalse(e._start_sut_or_abort(cfg))
+        e.remove_experiment.assert_called_once()
+        self.assertEqual(e._runtime_test_results, [(False, 'Loading of DBMS-1 failed: existing storage pvc holds '
+                                                           'an unfinished load (loaded=False); remove it (-rsr)')])
+        cfg.lifecycle.start_sut.side_effect = None
+        self.assertTrue(e._start_sut_or_abort(cfg))
+
+
 class LoadDurabilityTest(unittest.TestCase):
     """-xld with --set: database-level synchronous_commit, server-wide conflicts refused."""
 
