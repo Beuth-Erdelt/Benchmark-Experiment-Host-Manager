@@ -138,8 +138,10 @@ for i in *tbl*; do
     if grep -qx "$lines" /tmp/OUTPUT.txt
     then
         echo "Import ok"
+        echo "BEXHOMA_INGEST:$i:$lines:$lines:ok"
     else
         echo "Import failed at $table (expected $lines rows)"
+        echo "BEXHOMA_INGEST:$i:$lines:$(grep -xE '[0-9]+' /tmp/OUTPUT.txt | head -1):failed"
         FAILED_TABLES="$FAILED_TABLES $table"
     fi
 done

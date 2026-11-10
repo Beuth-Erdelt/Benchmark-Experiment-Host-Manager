@@ -1879,6 +1879,74 @@ class ExperimentBase():
             print("* loading skipped, loading times copied from an earlier repetition: {}".format(", ".join(inherited)))
         self._show_volume_checks(connections_sorted)
         self._show_init_script_checks(connections_sorted)
+        self._show_loader_pod_checks(connections_sorted)
+        self._show_loading_failures(connections_sorted)
+
+    def _show_loader_pod_checks(self, connections_sorted: list) -> None:
+        """
+        Print failed loader pods and failed ingestion units, and record the test ``Loader pods without errors``.
+
+        Judged from the result folder only (:func:`bexhoma.loading_checks.check_loader_pods`):
+        stored pod and job descriptions of the loading jobs and the
+        ``BEXHOMA_INGEST`` lines of the loader container logs. Records nothing
+        when no loader pod of this experiment was stored (loading by scripts
+        only, or a reused volume).
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        from bexhoma.loading_checks import check_loader_pods
+        configurations = sorted({c.get('configuration', c['name']) for c in connections_sorted})
+        checks = check_loader_pods(getattr(self, 'path', ''), getattr(self, 'appname', 'bexhoma'),
+                                   getattr(self, 'code', ''), configurations)
+        if not checks:
+            return
+        units = [u for check in checks.values() for u in check.units]
+        if units:
+            print("\n### Ingestion")
+            for configuration, check in sorted(checks.items()):
+                if check.units:
+                    num_ok = sum(1 for u in check.units if u.ok)
+                    print("* {}: {} of {} units ok".format(configuration, num_ok, len(check.units)))
+        failed = {configuration: check.failures for configuration, check in checks.items() if check.failures}
+        if failed:
+            print("\n### Loader Pods with Errors")
+            for configuration, failures in sorted(failed.items()):
+                for failure in failures:
+                    print("* {}: {}".format(configuration, failure))
+            self._record_test(False, "Loader pods without errors (failed: {})".format("; ".join(
+                "{}: {}".format(configuration, len(failures)) for configuration, failures in sorted(failed.items()))))
+        else:
+            self._record_test(True, "Loader pods without errors")
+
+    def _show_loading_failures(self, connections_sorted: list) -> None:
+        """
+        Print why a load counts as failed, and record the test ``Loading completed without failures``.
+
+        The reasons are collected while loading (``loading_failed`` of the
+        connection, e.g. a SUT restart during the load or a script upload that
+        failed). A volume of a failed load is never labelled ``loaded=True``.
+        Results written before ``loading_failed`` was recorded record nothing.
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        recorded = [c for c in connections_sorted if 'loading_failed' in c]
+        if not recorded:
+            return
+        failed = {}
+        for c in recorded:
+            for reason in c['loading_failed'] or []:
+                reasons = failed.setdefault(c.get('configuration', c['name']), [])
+                if reason not in reasons:
+                    reasons.append(reason)
+        if failed:
+            print("\n### Failed Loading")
+            for configuration, reasons in sorted(failed.items()):
+                for reason in reasons:
+                    print("* {}: {}".format(configuration, reason))
+            self._record_test(False, "Loading completed without failures (failed: {})".format("; ".join(
+                "{}: {}".format(configuration, ", ".join(reasons)) for configuration, reasons in sorted(failed.items()))))
+        else:
+            self._record_test(True, "Loading completed without failures")
 
     def _init_script_errors(self, configurations: list) -> dict:
         """
@@ -2106,6 +2174,9 @@ class ExperimentBase():
         now: datetime,
     ) -> Optional[str]:
         """Return why an active load must abort, or ``None`` while it may continue."""
+        fatal = getattr(config, 'loading_failed_fatal', '')
+        if fatal:
+            return f"Loading of {config.configuration} failed: {fatal}"
         if not config.loading_started or config.loading_finished:
             config.loading_started_at = None
             return None

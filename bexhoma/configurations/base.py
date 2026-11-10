@@ -11,7 +11,8 @@ from typing import List, Optional, Tuple
 
 from bexhoma import ceph_storage, ddl_parameters, experiments
 from bexhoma.cli_args import abbreviate_storage_name, limit_name, storage_suffix
-from bexhoma.load_durability import DEFAULT_LEVEL, expand_durability_placeholders
+from bexhoma.load_durability import (DEFAULT_LEVEL, conflicting_set_args, expand_durability_placeholders,
+                                     server_wide_settings)
 
 from .benchmarking import BenchmarkRunner
 from .host import HostProbe
@@ -183,6 +184,9 @@ class SutConfiguration:
         self.time_loading = 0                                                     #: Seconds taken for the initial data load.
         self.storage_reused = False                                              #: True iff the SUT found a loaded volume from an earlier experiment, so loading was skipped and its times inherited.
         self.loading_inherited = False                                           #: True iff this repetition found a loaded volume (of this or an earlier experiment), so it did not load and its loading times are copied.
+        self.loading_failed = []                                                 #: Why this repetition's load counts as failed (SUT restart, script upload); its volume is then never labelled loaded=True.
+        self.loading_failed_fatal = ''                                           #: Reason that aborts the experiment (e.g. index scripts could not be uploaded); empty while loading may go on.
+        self.sut_restarts_at_loading_start = None                                #: Sum of the SUT pod's container restarts when this repetition's loading started.
         self.storage_monitoring = None                                           #: Storage placeholders for Ceph monitoring (see resolve_storage_monitoring()), resolved once after deployment.
         self.time_generating = 0                                                  #: Seconds taken for data generation.
         self.time_ingesting = 0                                                   #: Seconds taken for ingesting existing data.
@@ -280,6 +284,9 @@ class SutConfiguration:
         self.loading_after_time = None
         self.loading_finished = False
         self.loading_inherited = False
+        self.loading_failed = []
+        self.loading_failed_fatal = ''
+        self.sut_restarts_at_loading_start = None
         self.storage_monitoring = None
         self.client = 1
         self.is_sut_ready = False
@@ -1464,6 +1471,50 @@ class SutConfiguration:
             raise ValueError(
                 f"{self.configuration}: existing storage {volume} was loaded with {found} workers, "
                 f"but {self.num_worker} are requested; remove it (-rsr) or request -nw {found}")
+
+    def load_durability_conflicts(self) -> list:
+        """``--set`` values that keep the load from running with the requested ``-xld`` level.
+
+        A durability script names the server-wide values it needs in a
+        ``-- server-wide: name=value ...`` line (:func:`bexhoma.load_durability.server_wide_settings`):
+        values that cannot be set per database or session, so a value fixed with
+        ``--set`` (on the command line) wins and the load would run with another
+        durability than requested. Call after :meth:`apply_load_durability`.
+
+        :return: One message per conflicting ``--set`` operation; empty if none.
+        :rtype: list[str]
+        """
+        folder = os.path.join(self.experiment.cluster.experiments_configfolder, self.path_experiment_docker)
+        required = server_wide_settings(self.load_durability_scripts or [], folder)
+        if not required:
+            return []
+        return conflicting_set_args(required, getattr(self.experiment, 'dbms_args', []), self.configuration)
+
+    def check_volume_loaded(self, volume: str, labels: dict) -> None:
+        """Refuse an existing volume whose load did not end cleanly.
+
+        A volume found before this experiment loaded anything must hold a
+        finished, clean load: ``loaded=False`` means its load never ended
+        (aborted, crashed), ``loading_failed=True`` that it failed (see
+        :meth:`LoadingCoordinator.check`). Reusing it would benchmark partial
+        data. A volume without a ``loaded`` label predates the label and is
+        reused as before. A later repetition that finds the volume this
+        experiment loaded goes on; its failure is in the tests already.
+
+        :param volume: Name of the PVC.
+        :param labels: Labels of the PVC.
+        :raises ValueError: If the volume holds an unfinished or failed load.
+        """
+        if self.num_experiment_to_apply_done > 0 or self.loading_started or self.loading_finished:
+            return
+        if labels.get('loading_failed') == 'True':
+            raise ValueError(
+                f"{self.configuration}: existing storage {volume} holds a failed load "
+                f"(loading_failed=True); remove it (-rsr)")
+        if labels.get('loaded') == 'False':
+            raise ValueError(
+                f"{self.configuration}: existing storage {volume} holds an unfinished load "
+                f"(loaded=False); remove it (-rsr)")
 
     def apply_volume_parameters(self, labels: dict) -> dict:
         """Take the DDL values of a reused volume and compare all loading values.

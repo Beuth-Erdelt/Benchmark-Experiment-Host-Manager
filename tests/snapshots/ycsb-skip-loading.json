@@ -163,6 +163,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -234,6 +236,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -415,6 +418,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -486,6 +491,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -663,6 +669,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -738,6 +746,7 @@
     "MIN_POOL_SIZE": 1
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -916,6 +925,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -986,6 +997,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -1164,6 +1176,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -1236,6 +1250,7 @@
     "MARIADB_DATABASE": "ycsb"
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -1414,6 +1429,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -1484,6 +1501,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "yb-tserver-",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "placeholder",
    "sut_service_name": "yb-tserver-service",
    "sut_startup_args": [],
@@ -1668,6 +1686,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -1742,6 +1762,7 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "placeholder",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -1926,6 +1947,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -2000,6 +2023,7 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -2184,6 +2208,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -2258,6 +2284,7 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -2442,6 +2469,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -2516,6 +2545,7 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -2700,6 +2730,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -2774,6 +2806,7 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -2958,6 +2991,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -3032,6 +3067,7 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -3220,6 +3256,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -3295,6 +3333,7 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -3481,6 +3520,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -3557,6 +3598,7 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -3732,6 +3774,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": true,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -3802,6 +3846,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "placeholder",
    "sut_service_name": "",
    "sut_startup_args": [],

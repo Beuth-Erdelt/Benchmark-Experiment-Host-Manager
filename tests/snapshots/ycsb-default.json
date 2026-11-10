@@ -163,6 +163,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -234,6 +236,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -415,6 +418,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -486,6 +491,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -663,6 +669,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -738,6 +746,7 @@
     "MIN_POOL_SIZE": 1
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -916,6 +925,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -986,6 +997,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -1164,6 +1176,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -1236,6 +1250,7 @@
     "MARIADB_DATABASE": "ycsb"
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -1414,6 +1429,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -1484,6 +1501,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "yb-tserver-",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "placeholder",
    "sut_service_name": "yb-tserver-service",
    "sut_startup_args": [],
@@ -1668,6 +1686,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -1742,517 +1762,11 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "placeholder",
    "sut_service_name": "",
    "sut_startup_args": [],
    "sut_template": "deploymenttemplate-CockroachDB.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "ycsb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "",
-   "additional_labels": {
-    "experiment_design": "compare-scaleout",
-    "operations": 1000000,
-    "rows": 1000000,
-    "usecase": "ycsb",
-    "workload": ""
-   },
-   "alias": "General-C",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "SF": "1",
-    "YCSB_BATCHSIZE": "",
-    "YCSB_INSERTORDER": "hashed",
-    "YCSB_MAX_EXECUTION": 0,
-    "YCSB_ROWS": 1000000,
-    "YCSB_STATUS": 1,
-    "YCSB_STATUS_INTERVAL": 10,
-    "YCSB_WORKLOAD": ""
-   },
-   "benchmarking_parameters_list": [
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "1",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    }
-   ],
-   "benchmarking_parameters_list_template": [
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "1",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    }
-   ],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "TiDB-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": [
-    "tikv"
-   ],
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "MySQL",
-   "docker": "TiDB",
-   "dockerimage": "",
-   "eval_parameters": {
-    "BEXHOMA_REPLICAS": 0,
-    "BEXHOMA_SHARDS": 0,
-    "BEXHOMA_WORKERS": 0,
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_REPLICAS": 0,
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "1",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 1000000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "reset-ycsb.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "ycsb",
-      "name": "ycsb-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BEXHOMA_DBMS_TYPE": "jdbc",
-       "BEXHOMA_REPLICAS": 0,
-       "BEXHOMA_SYNCH_LOAD": 1,
-       "PARALLEL": "1",
-       "SF": "1",
-       "YCSB_BATCHSIZE": "",
-       "YCSB_INSERTORDER": "hashed",
-       "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 1000000,
-       "YCSB_ROWS": 1000000,
-       "YCSB_STATUS": 1,
-       "YCSB_STATUS_INTERVAL": 10,
-       "YCSB_TARGET": 16384,
-       "YCSB_THREADCOUNT": 1,
-       "YCSB_WORKLOAD": ""
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-ycsb.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": false,
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BEXHOMA_DBMS_TYPE": "jdbc",
-    "BEXHOMA_REPLICAS": 0,
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "PARALLEL": "1",
-    "SF": "1",
-    "YCSB_BATCHSIZE": "",
-    "YCSB_INSERTORDER": "hashed",
-    "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 1000000,
-    "YCSB_ROWS": 1000000,
-    "YCSB_STATUS": 1,
-    "YCSB_STATUS_INTERVAL": 10,
-    "YCSB_TARGET": 16384,
-    "YCSB_THREADCOUNT": 1,
-    "YCSB_WORKLOAD": ""
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 0,
-   "path_experiment_docker": "TiDB",
-   "prometheus_interval": "30s",
-   "prometheus_timeout": "30s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": true,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "replicas_pd": 3,
-    "replicas_sut": 1,
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "sut",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "tidb",
-    "storageSize": ""
-   },
-   "storage_label": "ycsb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {
-    "BEXHOMA_REPLICAS": 0,
-    "BEXHOMA_SHARDS": 0
-   },
-   "sut_pod_name": "",
-   "sut_role": "data",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-TiDB.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "ycsb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "",
-   "additional_labels": {
-    "experiment_design": "compare-scaleout",
-    "operations": 1000000,
-    "rows": 1000000,
-    "usecase": "ycsb",
-    "workload": ""
-   },
-   "alias": "General-B",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "SF": "1",
-    "YCSB_BATCHSIZE": "",
-    "YCSB_INSERTORDER": "hashed",
-    "YCSB_MAX_EXECUTION": 0,
-    "YCSB_ROWS": 1000000,
-    "YCSB_STATUS": 1,
-    "YCSB_STATUS_INTERVAL": 10,
-    "YCSB_WORKLOAD": ""
-   },
-   "benchmarking_parameters_list": [
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "1",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    }
-   ],
-   "benchmarking_parameters_list_template": [
-    {
-     "BEXHOMA_DBMS_TYPE": "jdbc",
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "1",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    }
-   ],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "DatabaseService-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "PostgreSQL",
-   "docker": "DatabaseService",
-   "dockerimage": "",
-   "eval_parameters": {
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "jdbc",
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "1",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 1000000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "ycsb",
-      "name": "ycsb-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BEXHOMA_DBMS_TYPE": "jdbc",
-       "BEXHOMA_SYNCH_LOAD": 1,
-       "PARALLEL": "1",
-       "SF": "1",
-       "YCSB_BATCHSIZE": "",
-       "YCSB_INSERTORDER": "hashed",
-       "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 1000000,
-       "YCSB_ROWS": 1000000,
-       "YCSB_STATUS": 1,
-       "YCSB_STATUS_INTERVAL": 10,
-       "YCSB_TARGET": 16384,
-       "YCSB_THREADCOUNT": 1,
-       "YCSB_WORKLOAD": ""
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-ycsb.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": false,
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BEXHOMA_DBMS_TYPE": "jdbc",
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "PARALLEL": "1",
-    "SF": "1",
-    "YCSB_BATCHSIZE": "",
-    "YCSB_INSERTORDER": "hashed",
-    "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 1000000,
-    "YCSB_ROWS": 1000000,
-    "YCSB_STATUS": 1,
-    "YCSB_STATUS_INTERVAL": 10,
-    "YCSB_TARGET": 16384,
-    "YCSB_THREADCOUNT": 1,
-    "YCSB_WORKLOAD": ""
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": false,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 0,
-   "path_experiment_docker": "DatabaseService",
-   "prometheus_interval": "30s",
-   "prometheus_timeout": "30s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": false,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "sut",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "dbs",
-    "storageSize": ""
-   },
-   "storage_label": "ycsb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {},
-   "sut_pod_name": "",
-   "sut_role": "placeholder",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-DatabaseService.yml",
    "tenant_per": "",
    "tenant_ready_to_index": false,
    "tenant_ready_to_load": false,
@@ -2433,6 +1947,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -2507,6 +2023,7 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -2691,6 +2208,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -2765,10 +2284,272 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
    "sut_template": "deploymenttemplate-Redis.yml",
+   "tenant_per": "",
+   "tenant_ready_to_index": false,
+   "tenant_ready_to_load": false,
+   "tenant_started_to_index": false,
+   "tenant_started_to_load": false,
+   "times_scripts": {},
+   "tls_secret": "",
+   "use_distributed_datasource": false,
+   "volume": "ycsb",
+   "volume_check": {},
+   "volume_per_tenant": false,
+   "volumeid": "",
+   "worker_metric_strip_container": false,
+   "worker_startup_args": []
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "experiment_design": "compare-scaleout",
+    "operations": 1000000,
+    "rows": 1000000,
+    "usecase": "ycsb",
+    "workload": ""
+   },
+   "alias": "Wide-Column-1",
+   "appname": "bexhoma",
+   "are_pool_ready": false,
+   "are_worker_ready": false,
+   "benchmark": null,
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "SF": "1",
+    "YCSB_BATCHSIZE": "",
+    "YCSB_INSERTORDER": "hashed",
+    "YCSB_MAX_EXECUTION": 0,
+    "YCSB_ROWS": 1000000,
+    "YCSB_STATUS": 1,
+    "YCSB_STATUS_INTERVAL": 10,
+    "YCSB_WORKLOAD": ""
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BEXHOMA_DBMS_TYPE": "cassandra",
+     "BEXHOMA_REPLICAS": 0,
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "PARALLEL": "1",
+     "SF": "1",
+     "YCSB_BATCHSIZE": "",
+     "YCSB_INSERTORDER": "hashed",
+     "YCSB_MAX_EXECUTION": 0,
+     "YCSB_OPERATIONS": 1000000,
+     "YCSB_ROWS": 1000000,
+     "YCSB_STATUS": 1,
+     "YCSB_STATUS_INTERVAL": 10,
+     "YCSB_TARGET": 16384,
+     "YCSB_THREADCOUNT": 1,
+     "YCSB_WORKLOAD": ""
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BEXHOMA_DBMS_TYPE": "cassandra",
+     "BEXHOMA_REPLICAS": 0,
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "PARALLEL": "1",
+     "SF": "1",
+     "YCSB_BATCHSIZE": "",
+     "YCSB_INSERTORDER": "hashed",
+     "YCSB_MAX_EXECUTION": 0,
+     "YCSB_OPERATIONS": 1000000,
+     "YCSB_ROWS": 1000000,
+     "YCSB_STATUS": 1,
+     "YCSB_STATUS_INTERVAL": 10,
+     "YCSB_TARGET": 16384,
+     "YCSB_THREADCOUNT": 1,
+     "YCSB_WORKLOAD": ""
+    }
+   ],
+   "benchmarking_patch": "",
+   "benchmarking_timespans": {},
+   "client": 1,
+   "configuration": "Cassandra-1",
+   "connection": "",
+   "connection_management": {
+    "numProcesses": 1,
+    "runsPerConnection": 0,
+    "singleConnection": true,
+    "timeout": 1800
+   },
+   "connection_parameter": {},
+   "data_components": null,
+   "ddl_given": [],
+   "ddl_parameters": {},
+   "dialect": "",
+   "docker": "Cassandra",
+   "dockerimage": "",
+   "eval_parameters": {
+    "BEXHOMA_REPLICAS": 0,
+    "BEXHOMA_SHARDS": 0,
+    "BEXHOMA_WORKERS": 0,
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "ycsb",
+       "fixed_parallelism": false,
+       "name": "ycsb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BEXHOMA_DBMS_TYPE": "cassandra",
+        "BEXHOMA_REPLICAS": 0,
+        "BEXHOMA_SYNCH_LOAD": 1,
+        "PARALLEL": "1",
+        "SF": "1",
+        "YCSB_BATCHSIZE": "",
+        "YCSB_INSERTORDER": "hashed",
+        "YCSB_MAX_EXECUTION": 0,
+        "YCSB_OPERATIONS": 1000000,
+        "YCSB_ROWS": 1000000,
+        "YCSB_STATUS": 1,
+        "YCSB_STATUS_INTERVAL": 10,
+        "YCSB_TARGET": 16384,
+        "YCSB_THREADCOUNT": 1,
+        "YCSB_WORKLOAD": ""
+       },
+       "resetscript": [
+        "save-snapshot.sh"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-ycsb.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "ycsb",
+      "name": "ycsb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_DBMS_TYPE": "cassandra",
+       "BEXHOMA_REPLICAS": 0,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PARALLEL": "1",
+       "SF": "1",
+       "YCSB_BATCHSIZE": "",
+       "YCSB_INSERTORDER": "hashed",
+       "YCSB_MAX_EXECUTION": 0,
+       "YCSB_OPERATIONS": 1000000,
+       "YCSB_ROWS": 1000000,
+       "YCSB_STATUS": 1,
+       "YCSB_STATUS_INTERVAL": 10,
+       "YCSB_TARGET": 16384,
+       "YCSB_THREADCOUNT": 1,
+       "YCSB_WORKLOAD": ""
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ycsb.yml"
+     }
+    ]
+   },
+   "experiment_done": false,
+   "indexing": "Checks",
+   "indexscript": [],
+   "initscript": [],
+   "is_sut_ready": false,
+   "load_durability": "relaxed",
+   "load_durability_scripts": null,
+   "loading_active": true,
+   "loading_after_time": null,
+   "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
+   "loading_inherited": false,
+   "loading_metrics_fetched": {},
+   "loading_parameters": {
+    "BEXHOMA_DBMS_TYPE": "cassandra",
+    "BEXHOMA_REPLICAS": 0,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PARALLEL": "1",
+    "SF": "1",
+    "YCSB_BATCHSIZE": "",
+    "YCSB_INSERTORDER": "hashed",
+    "YCSB_MAX_EXECUTION": 0,
+    "YCSB_OPERATIONS": 1000000,
+    "YCSB_ROWS": 1000000,
+    "YCSB_STATUS": 1,
+    "YCSB_STATUS_INTERVAL": 10,
+    "YCSB_TARGET": 16384,
+    "YCSB_THREADCOUNT": 1,
+    "YCSB_WORKLOAD": ""
+   },
+   "loading_patch": "",
+   "loading_timespans": {},
+   "max_sut_dbms": null,
+   "monitor_app_active": false,
+   "monitor_loading": true,
+   "monitoring_active": false,
+   "monitoring_sut": true,
+   "nodes": {},
+   "num_experiment_to_apply": 1,
+   "num_experiment_to_apply_done": 0,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "Cassandra",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resetscript": [],
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "service": "",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "cassandra",
+    "storageSize": ""
+   },
+   "storage_label": "ycsb-1",
+   "storage_monitoring": null,
+   "storage_reused": false,
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {
+    "BEXHOMA_REPLICAS": 0,
+    "BEXHOMA_SHARDS": 0
+   },
+   "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_startup_args": [],
+   "sut_template": "deploymenttemplate-Cassandra.yml",
    "tenant_per": "",
    "tenant_ready_to_index": false,
    "tenant_ready_to_load": false,
@@ -2949,6 +2730,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -3023,6 +2806,7 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -3207,6 +2991,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -3281,268 +3067,11 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
    "sut_template": "deploymenttemplate-Garnet.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "ycsb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "",
-   "additional_labels": {
-    "experiment_design": "compare-scaleout",
-    "operations": 1000000,
-    "rows": 1000000,
-    "usecase": "ycsb",
-    "workload": ""
-   },
-   "alias": "Wide-Column-1",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "SF": "1",
-    "YCSB_BATCHSIZE": "",
-    "YCSB_INSERTORDER": "hashed",
-    "YCSB_MAX_EXECUTION": 0,
-    "YCSB_ROWS": 1000000,
-    "YCSB_STATUS": 1,
-    "YCSB_STATUS_INTERVAL": 10,
-    "YCSB_WORKLOAD": ""
-   },
-   "benchmarking_parameters_list": [
-    {
-     "BEXHOMA_DBMS_TYPE": "cassandra",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "1",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    }
-   ],
-   "benchmarking_parameters_list_template": [
-    {
-     "BEXHOMA_DBMS_TYPE": "cassandra",
-     "BEXHOMA_REPLICAS": 0,
-     "BEXHOMA_SYNCH_LOAD": 1,
-     "PARALLEL": "1",
-     "SF": "1",
-     "YCSB_BATCHSIZE": "",
-     "YCSB_INSERTORDER": "hashed",
-     "YCSB_MAX_EXECUTION": 0,
-     "YCSB_OPERATIONS": 1000000,
-     "YCSB_ROWS": 1000000,
-     "YCSB_STATUS": 1,
-     "YCSB_STATUS_INTERVAL": 10,
-     "YCSB_TARGET": 16384,
-     "YCSB_THREADCOUNT": 1,
-     "YCSB_WORKLOAD": ""
-    }
-   ],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "Cassandra-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "",
-   "docker": "Cassandra",
-   "dockerimage": "",
-   "eval_parameters": {
-    "BEXHOMA_REPLICAS": 0,
-    "BEXHOMA_SHARDS": 0,
-    "BEXHOMA_WORKERS": 0,
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "ycsb",
-       "fixed_parallelism": false,
-       "name": "ycsb",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "BEXHOMA_DBMS_TYPE": "cassandra",
-        "BEXHOMA_REPLICAS": 0,
-        "BEXHOMA_SYNCH_LOAD": 1,
-        "PARALLEL": "1",
-        "SF": "1",
-        "YCSB_BATCHSIZE": "",
-        "YCSB_INSERTORDER": "hashed",
-        "YCSB_MAX_EXECUTION": 0,
-        "YCSB_OPERATIONS": 1000000,
-        "YCSB_ROWS": 1000000,
-        "YCSB_STATUS": 1,
-        "YCSB_STATUS_INTERVAL": 10,
-        "YCSB_TARGET": 16384,
-        "YCSB_THREADCOUNT": 1,
-        "YCSB_WORKLOAD": ""
-       },
-       "resetscript": [
-        "save-snapshot.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-ycsb.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "ycsb",
-      "name": "ycsb-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BEXHOMA_DBMS_TYPE": "cassandra",
-       "BEXHOMA_REPLICAS": 0,
-       "BEXHOMA_SYNCH_LOAD": 1,
-       "PARALLEL": "1",
-       "SF": "1",
-       "YCSB_BATCHSIZE": "",
-       "YCSB_INSERTORDER": "hashed",
-       "YCSB_MAX_EXECUTION": 0,
-       "YCSB_OPERATIONS": 1000000,
-       "YCSB_ROWS": 1000000,
-       "YCSB_STATUS": 1,
-       "YCSB_STATUS_INTERVAL": 10,
-       "YCSB_TARGET": 16384,
-       "YCSB_THREADCOUNT": 1,
-       "YCSB_WORKLOAD": ""
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-ycsb.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": false,
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BEXHOMA_DBMS_TYPE": "cassandra",
-    "BEXHOMA_REPLICAS": 0,
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "PARALLEL": "1",
-    "SF": "1",
-    "YCSB_BATCHSIZE": "",
-    "YCSB_INSERTORDER": "hashed",
-    "YCSB_MAX_EXECUTION": 0,
-    "YCSB_OPERATIONS": 1000000,
-    "YCSB_ROWS": 1000000,
-    "YCSB_STATUS": 1,
-    "YCSB_STATUS_INTERVAL": 10,
-    "YCSB_TARGET": 16384,
-    "YCSB_THREADCOUNT": 1,
-    "YCSB_WORKLOAD": ""
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 0,
-   "path_experiment_docker": "Cassandra",
-   "prometheus_interval": "30s",
-   "prometheus_timeout": "30s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": true,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "sut",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "cassandra",
-    "storageSize": ""
-   },
-   "storage_label": "ycsb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {
-    "BEXHOMA_REPLICAS": 0,
-    "BEXHOMA_SHARDS": 0
-   },
-   "sut_pod_name": "",
-   "sut_role": "data",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-Cassandra.yml",
    "tenant_per": "",
    "tenant_ready_to_index": false,
    "tenant_ready_to_load": false,
@@ -3727,6 +3256,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -3802,10 +3333,524 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
    "sut_template": "deploymenttemplate-Citus.yml",
+   "tenant_per": "",
+   "tenant_ready_to_index": false,
+   "tenant_ready_to_load": false,
+   "tenant_started_to_index": false,
+   "tenant_started_to_load": false,
+   "times_scripts": {},
+   "tls_secret": "",
+   "use_distributed_datasource": false,
+   "volume": "ycsb",
+   "volume_check": {},
+   "volume_per_tenant": false,
+   "volumeid": "",
+   "worker_metric_strip_container": false,
+   "worker_startup_args": []
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "experiment_design": "compare-scaleout",
+    "operations": 1000000,
+    "rows": 1000000,
+    "usecase": "ycsb",
+    "workload": ""
+   },
+   "alias": "General-C",
+   "appname": "bexhoma",
+   "are_pool_ready": false,
+   "are_worker_ready": false,
+   "benchmark": null,
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "SF": "1",
+    "YCSB_BATCHSIZE": "",
+    "YCSB_INSERTORDER": "hashed",
+    "YCSB_MAX_EXECUTION": 0,
+    "YCSB_ROWS": 1000000,
+    "YCSB_STATUS": 1,
+    "YCSB_STATUS_INTERVAL": 10,
+    "YCSB_WORKLOAD": ""
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_REPLICAS": 0,
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "PARALLEL": "1",
+     "SF": "1",
+     "YCSB_BATCHSIZE": "",
+     "YCSB_INSERTORDER": "hashed",
+     "YCSB_MAX_EXECUTION": 0,
+     "YCSB_OPERATIONS": 1000000,
+     "YCSB_ROWS": 1000000,
+     "YCSB_STATUS": 1,
+     "YCSB_STATUS_INTERVAL": 10,
+     "YCSB_TARGET": 16384,
+     "YCSB_THREADCOUNT": 1,
+     "YCSB_WORKLOAD": ""
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_REPLICAS": 0,
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "PARALLEL": "1",
+     "SF": "1",
+     "YCSB_BATCHSIZE": "",
+     "YCSB_INSERTORDER": "hashed",
+     "YCSB_MAX_EXECUTION": 0,
+     "YCSB_OPERATIONS": 1000000,
+     "YCSB_ROWS": 1000000,
+     "YCSB_STATUS": 1,
+     "YCSB_STATUS_INTERVAL": 10,
+     "YCSB_TARGET": 16384,
+     "YCSB_THREADCOUNT": 1,
+     "YCSB_WORKLOAD": ""
+    }
+   ],
+   "benchmarking_patch": "",
+   "benchmarking_timespans": {},
+   "client": 1,
+   "configuration": "TiDB-1",
+   "connection": "",
+   "connection_management": {
+    "numProcesses": 1,
+    "runsPerConnection": 0,
+    "singleConnection": true,
+    "timeout": 1800
+   },
+   "connection_parameter": {},
+   "data_components": [
+    "tikv"
+   ],
+   "ddl_given": [],
+   "ddl_parameters": {},
+   "dialect": "MySQL",
+   "docker": "TiDB",
+   "dockerimage": "",
+   "eval_parameters": {
+    "BEXHOMA_REPLICAS": 0,
+    "BEXHOMA_SHARDS": 0,
+    "BEXHOMA_WORKERS": 0,
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "ycsb",
+       "fixed_parallelism": false,
+       "name": "ycsb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BEXHOMA_DBMS_TYPE": "jdbc",
+        "BEXHOMA_REPLICAS": 0,
+        "BEXHOMA_SYNCH_LOAD": 1,
+        "PARALLEL": "1",
+        "SF": "1",
+        "YCSB_BATCHSIZE": "",
+        "YCSB_INSERTORDER": "hashed",
+        "YCSB_MAX_EXECUTION": 0,
+        "YCSB_OPERATIONS": 1000000,
+        "YCSB_ROWS": 1000000,
+        "YCSB_STATUS": 1,
+        "YCSB_STATUS_INTERVAL": 10,
+        "YCSB_TARGET": 16384,
+        "YCSB_THREADCOUNT": 1,
+        "YCSB_WORKLOAD": ""
+       },
+       "resetscript": [
+        "reset-ycsb.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-ycsb.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "ycsb",
+      "name": "ycsb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_DBMS_TYPE": "jdbc",
+       "BEXHOMA_REPLICAS": 0,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PARALLEL": "1",
+       "SF": "1",
+       "YCSB_BATCHSIZE": "",
+       "YCSB_INSERTORDER": "hashed",
+       "YCSB_MAX_EXECUTION": 0,
+       "YCSB_OPERATIONS": 1000000,
+       "YCSB_ROWS": 1000000,
+       "YCSB_STATUS": 1,
+       "YCSB_STATUS_INTERVAL": 10,
+       "YCSB_TARGET": 16384,
+       "YCSB_THREADCOUNT": 1,
+       "YCSB_WORKLOAD": ""
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ycsb.yml"
+     }
+    ]
+   },
+   "experiment_done": false,
+   "indexing": "Checks",
+   "indexscript": [],
+   "initscript": [],
+   "is_sut_ready": false,
+   "load_durability": "relaxed",
+   "load_durability_scripts": null,
+   "loading_active": true,
+   "loading_after_time": null,
+   "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
+   "loading_inherited": false,
+   "loading_metrics_fetched": {},
+   "loading_parameters": {
+    "BEXHOMA_DBMS_TYPE": "jdbc",
+    "BEXHOMA_REPLICAS": 0,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PARALLEL": "1",
+    "SF": "1",
+    "YCSB_BATCHSIZE": "",
+    "YCSB_INSERTORDER": "hashed",
+    "YCSB_MAX_EXECUTION": 0,
+    "YCSB_OPERATIONS": 1000000,
+    "YCSB_ROWS": 1000000,
+    "YCSB_STATUS": 1,
+    "YCSB_STATUS_INTERVAL": 10,
+    "YCSB_TARGET": 16384,
+    "YCSB_THREADCOUNT": 1,
+    "YCSB_WORKLOAD": ""
+   },
+   "loading_patch": "",
+   "loading_timespans": {},
+   "max_sut_dbms": null,
+   "monitor_app_active": false,
+   "monitor_loading": true,
+   "monitoring_active": false,
+   "monitoring_sut": true,
+   "nodes": {},
+   "num_experiment_to_apply": 1,
+   "num_experiment_to_apply_done": 0,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "TiDB",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resetscript": [],
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "replicas_pd": 3,
+    "replicas_sut": 1,
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "service": "",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "tidb",
+    "storageSize": ""
+   },
+   "storage_label": "ycsb-1",
+   "storage_monitoring": null,
+   "storage_reused": false,
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {
+    "BEXHOMA_REPLICAS": 0,
+    "BEXHOMA_SHARDS": 0
+   },
+   "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_startup_args": [],
+   "sut_template": "deploymenttemplate-TiDB.yml",
+   "tenant_per": "",
+   "tenant_ready_to_index": false,
+   "tenant_ready_to_load": false,
+   "tenant_started_to_index": false,
+   "tenant_started_to_load": false,
+   "times_scripts": {},
+   "tls_secret": "",
+   "use_distributed_datasource": false,
+   "volume": "ycsb",
+   "volume_check": {},
+   "volume_per_tenant": false,
+   "volumeid": "",
+   "worker_metric_strip_container": false,
+   "worker_startup_args": []
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "experiment_design": "compare-scaleout",
+    "operations": 1000000,
+    "rows": 1000000,
+    "usecase": "ycsb",
+    "workload": ""
+   },
+   "alias": "General-B",
+   "appname": "bexhoma",
+   "are_pool_ready": false,
+   "are_worker_ready": false,
+   "benchmark": null,
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "SF": "1",
+    "YCSB_BATCHSIZE": "",
+    "YCSB_INSERTORDER": "hashed",
+    "YCSB_MAX_EXECUTION": 0,
+    "YCSB_ROWS": 1000000,
+    "YCSB_STATUS": 1,
+    "YCSB_STATUS_INTERVAL": 10,
+    "YCSB_WORKLOAD": ""
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "PARALLEL": "1",
+     "SF": "1",
+     "YCSB_BATCHSIZE": "",
+     "YCSB_INSERTORDER": "hashed",
+     "YCSB_MAX_EXECUTION": 0,
+     "YCSB_OPERATIONS": 1000000,
+     "YCSB_ROWS": 1000000,
+     "YCSB_STATUS": 1,
+     "YCSB_STATUS_INTERVAL": 10,
+     "YCSB_TARGET": 16384,
+     "YCSB_THREADCOUNT": 1,
+     "YCSB_WORKLOAD": ""
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "PARALLEL": "1",
+     "SF": "1",
+     "YCSB_BATCHSIZE": "",
+     "YCSB_INSERTORDER": "hashed",
+     "YCSB_MAX_EXECUTION": 0,
+     "YCSB_OPERATIONS": 1000000,
+     "YCSB_ROWS": 1000000,
+     "YCSB_STATUS": 1,
+     "YCSB_STATUS_INTERVAL": 10,
+     "YCSB_TARGET": 16384,
+     "YCSB_THREADCOUNT": 1,
+     "YCSB_WORKLOAD": ""
+    }
+   ],
+   "benchmarking_patch": "",
+   "benchmarking_timespans": {},
+   "client": 1,
+   "configuration": "DatabaseService-1",
+   "connection": "",
+   "connection_management": {
+    "numProcesses": 1,
+    "runsPerConnection": 0,
+    "singleConnection": true,
+    "timeout": 1800
+   },
+   "connection_parameter": {},
+   "data_components": null,
+   "ddl_given": [],
+   "ddl_parameters": {},
+   "dialect": "PostgreSQL",
+   "docker": "DatabaseService",
+   "dockerimage": "",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "ycsb",
+       "fixed_parallelism": false,
+       "name": "ycsb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BEXHOMA_DBMS_TYPE": "jdbc",
+        "BEXHOMA_SYNCH_LOAD": 1,
+        "PARALLEL": "1",
+        "SF": "1",
+        "YCSB_BATCHSIZE": "",
+        "YCSB_INSERTORDER": "hashed",
+        "YCSB_MAX_EXECUTION": 0,
+        "YCSB_OPERATIONS": 1000000,
+        "YCSB_ROWS": 1000000,
+        "YCSB_STATUS": 1,
+        "YCSB_STATUS_INTERVAL": 10,
+        "YCSB_TARGET": 16384,
+        "YCSB_THREADCOUNT": 1,
+        "YCSB_WORKLOAD": ""
+       },
+       "resetscript": [],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-ycsb.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "ycsb",
+      "name": "ycsb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_DBMS_TYPE": "jdbc",
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PARALLEL": "1",
+       "SF": "1",
+       "YCSB_BATCHSIZE": "",
+       "YCSB_INSERTORDER": "hashed",
+       "YCSB_MAX_EXECUTION": 0,
+       "YCSB_OPERATIONS": 1000000,
+       "YCSB_ROWS": 1000000,
+       "YCSB_STATUS": 1,
+       "YCSB_STATUS_INTERVAL": 10,
+       "YCSB_TARGET": 16384,
+       "YCSB_THREADCOUNT": 1,
+       "YCSB_WORKLOAD": ""
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ycsb.yml"
+     }
+    ]
+   },
+   "experiment_done": false,
+   "indexing": "Checks",
+   "indexscript": [],
+   "initscript": [],
+   "is_sut_ready": false,
+   "load_durability": "relaxed",
+   "load_durability_scripts": null,
+   "loading_active": true,
+   "loading_after_time": null,
+   "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
+   "loading_inherited": false,
+   "loading_metrics_fetched": {},
+   "loading_parameters": {
+    "BEXHOMA_DBMS_TYPE": "jdbc",
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PARALLEL": "1",
+    "SF": "1",
+    "YCSB_BATCHSIZE": "",
+    "YCSB_INSERTORDER": "hashed",
+    "YCSB_MAX_EXECUTION": 0,
+    "YCSB_OPERATIONS": 1000000,
+    "YCSB_ROWS": 1000000,
+    "YCSB_STATUS": 1,
+    "YCSB_STATUS_INTERVAL": 10,
+    "YCSB_TARGET": 16384,
+    "YCSB_THREADCOUNT": 1,
+    "YCSB_WORKLOAD": ""
+   },
+   "loading_patch": "",
+   "loading_timespans": {},
+   "max_sut_dbms": null,
+   "monitor_app_active": false,
+   "monitor_loading": true,
+   "monitoring_active": false,
+   "monitoring_sut": false,
+   "nodes": {},
+   "num_experiment_to_apply": 1,
+   "num_experiment_to_apply_done": 0,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "DatabaseService",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resetscript": [],
+   "resource_sweep": false,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "service": "",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "dbs",
+    "storageSize": ""
+   },
+   "storage_label": "ycsb-1",
+   "storage_monitoring": null,
+   "storage_reused": false,
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
+   "sut_role": "placeholder",
+   "sut_service_name": "",
+   "sut_startup_args": [],
+   "sut_template": "deploymenttemplate-DatabaseService.yml",
    "tenant_per": "",
    "tenant_ready_to_index": false,
    "tenant_ready_to_load": false,

@@ -165,6 +165,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -236,6 +238,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],

@@ -107,6 +107,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -172,6 +174,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -192,13 +195,13 @@
    "worker_startup_args": []
   },
   {
-   "_jobtemplate_loading": "jobtemplate-loading-tpcds-MonetDB.yml",
+   "_jobtemplate_loading": "jobtemplate-loading-tpcds-MySQL.yml",
    "additional_labels": {
     "SF": "1",
     "experiment_design": "parallel-loading",
     "usecase": "tpc-ds"
    },
-   "alias": "Columnwise",
+   "alias": "General-C",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -222,7 +225,7 @@
    "benchmarking_patch": "",
    "benchmarking_timespans": {},
    "client": 1,
-   "configuration": "MonetDB-1",
+   "configuration": "MySQL-1",
    "connection": "",
    "connection_management": {
     "numProcesses": 1,
@@ -234,8 +237,8 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "MonetDB",
-   "docker": "MonetDB",
+   "dialect": "MySQL",
+   "docker": "MySQL",
    "dockerimage": "",
    "eval_parameters": {
     "code": "<CODE>"
@@ -258,7 +261,8 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-tpcds.sql"
+        "reset-tpcds.sql",
+        "reset-flush.sh"
        ],
        "target": "sut",
        "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
@@ -274,6 +278,8 @@
       "parameters": {
        "BEXHOMA_SYNCH_GENERATE": 1,
        "BEXHOMA_SYNCH_LOAD": 1,
+       "MYSQL_LOADING_PARALLEL": 1,
+       "MYSQL_LOADING_THREADS": 1,
        "PODS_PARALLEL": "1",
        "PODS_TOTAL": "1",
        "SF": "1",
@@ -283,7 +289,7 @@
        "TRANSFORM_RAW_DATA": 1
       },
       "target": "sut",
-      "template": "jobtemplate-loading-tpcds-MonetDB.yml"
+      "template": "jobtemplate-loading-tpcds-MySQL.yml"
      }
     ]
    },
@@ -297,11 +303,15 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
     "BEXHOMA_SYNCH_GENERATE": 1,
     "BEXHOMA_SYNCH_LOAD": 1,
+    "MYSQL_LOADING_PARALLEL": 1,
+    "MYSQL_LOADING_THREADS": 1,
     "PODS_PARALLEL": "1",
     "PODS_TOTAL": "1",
     "SF": "1",
@@ -324,7 +334,7 @@
    "num_loading_pods": 1,
    "num_tenants": 0,
    "num_worker": 0,
-   "path_experiment_docker": "MonetDB",
+   "path_experiment_docker": "MySQL",
    "prometheus_interval": "30s",
    "prometheus_timeout": "30s",
    "pvc_selector": "",
@@ -352,7 +362,7 @@
    "storage": {
     "keep": true,
     "storageClassName": null,
-    "storageConfiguration": "monetdb",
+    "storageConfiguration": "mysql",
     "storageSize": ""
    },
    "storage_label": "tpcds-1",
@@ -362,10 +372,11 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-MonetDB.yml",
+   "sut_template": "deploymenttemplate-MySQL.yml",
    "tenant_per": "",
    "tenant_ready_to_index": false,
    "tenant_ready_to_load": false,
@@ -489,6 +500,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -557,6 +570,7 @@
     "MARIADB_DATABASE": "tpcds"
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -683,6 +697,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -751,6 +767,7 @@
     "MARIADB_DATABASE": "tpcds"
    },
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -771,13 +788,13 @@
    "worker_startup_args": []
   },
   {
-   "_jobtemplate_loading": "jobtemplate-loading-tpcds-MySQL.yml",
+   "_jobtemplate_loading": "jobtemplate-loading-tpcds-MonetDB.yml",
    "additional_labels": {
     "SF": "1",
     "experiment_design": "parallel-loading",
     "usecase": "tpc-ds"
    },
-   "alias": "General-C",
+   "alias": "Columnwise",
    "appname": "bexhoma",
    "are_pool_ready": false,
    "are_worker_ready": false,
@@ -801,7 +818,7 @@
    "benchmarking_patch": "",
    "benchmarking_timespans": {},
    "client": 1,
-   "configuration": "MySQL-1",
+   "configuration": "MonetDB-1",
    "connection": "",
    "connection_management": {
     "numProcesses": 1,
@@ -813,8 +830,8 @@
    "data_components": null,
    "ddl_given": [],
    "ddl_parameters": {},
-   "dialect": "MySQL",
-   "docker": "MySQL",
+   "dialect": "MonetDB",
+   "docker": "MonetDB",
    "dockerimage": "",
    "eval_parameters": {
     "code": "<CODE>"
@@ -837,8 +854,7 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-tpcds.sql",
-        "reset-flush.sh"
+        "reset-tpcds.sql"
        ],
        "target": "sut",
        "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
@@ -854,8 +870,6 @@
       "parameters": {
        "BEXHOMA_SYNCH_GENERATE": 1,
        "BEXHOMA_SYNCH_LOAD": 1,
-       "MYSQL_LOADING_PARALLEL": 1,
-       "MYSQL_LOADING_THREADS": 1,
        "PODS_PARALLEL": "1",
        "PODS_TOTAL": "1",
        "SF": "1",
@@ -865,7 +879,7 @@
        "TRANSFORM_RAW_DATA": 1
       },
       "target": "sut",
-      "template": "jobtemplate-loading-tpcds-MySQL.yml"
+      "template": "jobtemplate-loading-tpcds-MonetDB.yml"
      }
     ]
    },
@@ -879,13 +893,13 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
     "BEXHOMA_SYNCH_GENERATE": 1,
     "BEXHOMA_SYNCH_LOAD": 1,
-    "MYSQL_LOADING_PARALLEL": 1,
-    "MYSQL_LOADING_THREADS": 1,
     "PODS_PARALLEL": "1",
     "PODS_TOTAL": "1",
     "SF": "1",
@@ -908,7 +922,7 @@
    "num_loading_pods": 1,
    "num_tenants": 0,
    "num_worker": 0,
-   "path_experiment_docker": "MySQL",
+   "path_experiment_docker": "MonetDB",
    "prometheus_interval": "30s",
    "prometheus_timeout": "30s",
    "pvc_selector": "",
@@ -936,7 +950,7 @@
    "storage": {
     "keep": true,
     "storageClassName": null,
-    "storageConfiguration": "mysql",
+    "storageConfiguration": "monetdb",
     "storageSize": ""
    },
    "storage_label": "tpcds-1",
@@ -946,10 +960,11 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-MySQL.yml",
+   "sut_template": "deploymenttemplate-MonetDB.yml",
    "tenant_per": "",
    "tenant_ready_to_index": false,
    "tenant_ready_to_load": false,
@@ -1071,6 +1086,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -1136,6 +1153,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
@@ -1263,6 +1281,8 @@
    "loading_active": true,
    "loading_after_time": null,
    "loading_deactivated": false,
+   "loading_failed": [],
+   "loading_failed_fatal": "",
    "loading_inherited": false,
    "loading_metrics_fetched": {},
    "loading_parameters": {
@@ -1328,6 +1348,7 @@
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
+   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
    "sut_startup_args": [],
