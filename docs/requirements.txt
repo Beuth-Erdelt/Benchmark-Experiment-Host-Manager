@@ -9,5 +9,5 @@ requests==2.33.0
 pyasn1>=0.6.2 # not directly required, pinned by Snyk to avoid a vulnerability
 urllib3==2.8.0
 myst-parser
-pygments>=2.20.0 # not directly required, pinned by Snyk to avoid a vulnerability
+pygments>=2.21.0 # not directly required, pinned by Snyk to avoid a vulnerability
 zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
