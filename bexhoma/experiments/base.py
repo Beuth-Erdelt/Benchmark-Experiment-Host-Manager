@@ -370,7 +370,7 @@ class ExperimentBase():
             self.workload['duration'] = math.ceil(duration_experiment)
             self.evaluate_results()
             self.store_workflow_results()
-            self.show_summary(write_report=getattr(self.args, 'write_report', False))
+            self._show_summary_or_abort_note()
         elif self.args.mode == 'load':
             start = default_timer()
             start_datetime = str(datetime.now())
@@ -396,9 +396,9 @@ class ExperimentBase():
             self.workload['duration'] = math.ceil(duration_experiment)
             self.evaluate_results()
             self.store_workflow_results()
-            self.show_summary(write_report=getattr(self.args, 'write_report', False))
+            self._show_summary_or_abort_note()
         elif self.args.mode == 'summary':
-            self.show_summary(write_report=getattr(self.args, 'write_report', False))
+            self._show_summary_or_abort_note()
         else:
             # total time of experiment
             start = default_timer()
@@ -422,11 +422,45 @@ class ExperimentBase():
             self.evaluate_results()
             self.store_workflow_results()
             # zip() skipped: causes OOM (exit code 137) in large experiments
-            if test_result:
+            if test_result and self._has_result_files():
                 test_result_code = self.test_results()
                 if test_result_code == 0:
                     print("Test successful!")
+            self._show_summary_or_abort_note()
+    def _has_result_files(self) -> bool:
+        """Whether the result folder has the files a summary is built from.
+
+        ``queries.config`` and ``connections.config`` are written with the first
+        benchmarking round (or at the end of a load-only run); an experiment
+        aborted before that (e.g. a load that failed before it ran) has neither.
+
+        :rtype: bool
+        """
+        return all(os.path.isfile(self.result_filename_local(name))
+                   for name in ('queries.config', 'connections.config'))
+
+    def _show_summary_or_abort_note(self) -> None:
+        """Print the summary, or a short one when the experiment ended before its first result."""
+        if self._has_result_files():
             self.show_summary(write_report=getattr(self.args, 'write_report', False))
+        else:
+            self.show_summary_aborted()
+
+    def show_summary_aborted(self) -> None:
+        """Print what is known of an experiment that ended before any result was written.
+
+        The workload and the tests recorded while it ran (e.g. why loading
+        failed); there are no connections, loading or benchmarking results.
+        """
+        print("\n## Show Summary")
+        print("\n### Workload\n" + str(self.workload.get('name', '')))
+        print("* Code: " + str(self.code))
+        if self.workload.get('info'):
+            print("* " + self.workload['info'].replace('\n', '\n  * '))
+        print("* No results: the experiment ended before its first result was written, see the tests")
+        self._test_results = list(self._runtime_test_results)
+        self._print_test_summary()
+
     def benchmarking_is_active(self) -> bool:
         """
         Returns True, when this is a benchmarking experiment.

@@ -206,6 +206,32 @@ class LoadStatusTest(unittest.TestCase):
         cfg.check_volume_loaded('pvc', {'loaded': 'False', 'loading_failed': 'True'})
 
 
+class AbortedSummaryTest(unittest.TestCase):
+    """An experiment aborted before its first result gets a short summary, not a traceback."""
+
+    def test_summary_without_result_files(self) -> None:
+        import contextlib
+        import io
+        with tempfile.TemporaryDirectory() as folder:
+            e = experiment(folder)
+            e.args = SimpleNamespace(write_report=False)
+            e.workload = {'name': 'TPC-H Queries SF=1', 'info': 'This experiment ...\nLoad durability is unsafe.'}
+            e._runtime_test_results = [(False, 'Loading of PostgreSQL-1 failed: -xld unsafe cannot take effect')]
+            e.show_summary = mock.Mock()
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                e._show_summary_or_abort_note()
+            e.show_summary.assert_not_called()
+            self.assertIn('No results: the experiment ended before its first result was written', out.getvalue())
+            self.assertIn('TEST failed: Loading of PostgreSQL-1 failed', out.getvalue())
+            # with the result files the full summary runs
+            for name in ('queries.config', 'connections.config'):
+                with open(os.path.join(folder, name), 'w') as file:
+                    file.write('{}')
+            e._show_summary_or_abort_note()
+            e.show_summary.assert_called_once_with(write_report=False)
+
+
 class LoadDurabilityTest(unittest.TestCase):
     """-xld with --set: database-level synchronous_commit, server-wide conflicts refused."""
 
