@@ -65,7 +65,7 @@ A `mariadbcs-…` connection (MariaDB ColumnStore) matches the keys `MariaDB` an
 |-------|---------------|--------|
 | Q1 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`store_limit`) |
 | Q5 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround (MariaDB <10.4); `GROUP BY ROLLUP` syntax differences |
-| Q6 | ClickHouse, MariaDBCS | Correlated scalar subquery rewritten as a join with the per-category average; MariaDBCS: scalar subqueries as derived tables |
+| Q6 | ClickHouse, MariaDBCS, MySQL | Correlated scalar subquery rewritten as a join with the per-category average; MariaDBCS: scalar subqueries as derived tables; MySQL (and MariaDB, same dialect): the same text as MariaDBCS (MySQL runs the subquery for every joined row: 63 s at SF 1, 242 s at SF 3, timeout of 1200 s at SF 10; rewritten 11 s at SF 10) |
 | Q7 | MonetDB | Averages computed as `double` (MonetDB averages `DECIMAL` columns with two decimals) |
 | Q8 | MariaDBCS | `INTERSECT` as `GROUP BY ... HAVING count(*) = 2` |
 | Q9 | MariaDBCS | All buckets as conditional aggregates of one scan |
@@ -174,6 +174,7 @@ overrides above; the reasons are:
 | MonetDB | Q70 | `ROLLUP` emulated with three `UNION ALL` blocks (grand total rank 1, subtotal ranks across all states) |
 | MonetDB | Q7, Q18, Q26, Q44, Q58 | Averages and numerators as `double`, because MonetDB rounds `DECIMAL` averages and divisions to two decimals |
 | MySQL | Q51, Q97 | `FULL OUTER JOIN` rewritten with `UNION ALL` |
+| MySQL, MariaDB | Q6 | Correlated scalar subquery replaced by a join with the per-category average (derived table) and the month sequence as derived table: MySQL does not decorrelate it |
 | MariaDB | Q5, Q14, Q77, Q80 | Nested CTE workaround (MariaDB <10.4) |
 | all | Q12, Q20, Q36, Q98, Q78 | `(sum(x)+0.0e0)*100/…` and `ss_qty*1.0/…` instead of plain division: the same value, but ClickHouse no longer truncates `Decimal` division and PostgreSQL and MonetDB no longer divide integers |
 | all | Q5, Q12, Q15, Q18, Q20, Q21, Q22, Q27, Q35, Q36, Q51, Q62, Q65, Q67, Q68, Q70, Q72, Q74, Q76, Q79, Q80, Q86, Q93, Q99 | Explicit NULL ordering: `ORDER BY col IS NOT NULL, col` puts NULLs **first** on every system (MySQL, MariaDB and MonetDB do this by default; PostgreSQL and ClickHouse sort NULLs last) |

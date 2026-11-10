@@ -345,7 +345,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL monitoring  sf=3"
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
-# --set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=48Gi tmpdir of MySQL in RAM, larger than the template (32Gi): temporary files of large sorts and joins
+# --set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=72Gi tmpdir of MySQL in RAM, larger than the template (32Gi): a 48Gi tmpfs ran full with two clients (counts against the memory limit: 32G pool + 72Gi stays below 128Gi)
 # --set deployment[bexhoma-deployment-mysql].container[dbms].sort_buffer_size=32M sorts of TPC-DS stay in memory (default 256K: thousands of merge passes with temporary files)
 # --set deployment[bexhoma-deployment-mysql].container[dbms].join_buffer_size=64M hash joins stay in memory (default 256K)
 # --set deployment[bexhoma-deployment-mysql].container[dbms].tmp_table_size=1G internal temporary tables up to 1G in memory (default 16M)
@@ -375,7 +375,7 @@ bexhoma tpcds \
   -tr \
   -lr 128Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
-  --set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=48Gi \
+  --set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=72Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].sort_buffer_size=32M \
   --set deployment[bexhoma-deployment-mysql].container[dbms].join_buffer_size=64M \
   --set deployment[bexhoma-deployment-mysql].container[dbms].tmp_table_size=1G \

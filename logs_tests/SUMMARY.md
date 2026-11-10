@@ -4,11 +4,10 @@ Last recorded runs of the examples in `docs/`, one row per log in `logs_tests/`.
 Nothing is run to create this page: it is read from the committed logs by `scripts/demo-runs.py`,
 so it shows what the runs looked like when they were recorded, not whether the current code still passes.
 
-**306 passed, 1 failed, 1 warn, 5 unchecked** (313 runs)
+**307 passed, 0 failed, 1 warn, 5 unchecked** (313 runs)
 
 | Status | Log | Page | Date | Version | Duration | Failed tests / warnings |
 |---|---|---|---|---|---|---|
-| failed | docs_tpcds_mysql_storage.log | Example-MySQL.md | 2025-06-17 | 0.8.8 | 1381s | SQL warnings (result mismatch)<br>Ingestion Loader contains 0 or NaN in CPU [CPUs]<br>Execution SUT contains 0 or NaN in CPU [CPUs]<br>Execution Benchmarker contains 0 or NaN in CPU [CPUs] |
 | warn | docs_ycsb_dragonfly_cluster.log | Example-Dragonfly.md | 2026-11-07 | 0.11.13 | 416s | Monitoring metrics missing (Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] of workerloading: no activity seen, the pods were scraped; Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] of workerloading: no activity seen, the pods were scraped) |
 | unchecked | docs_benchbase_postgresql_start.log | Prepare-Testbeds.md | 2026-06-29 | 0.10.2 | 194s |  |
 | unchecked | docs_hammerdb_postgresql_start.log | Prepare-Testbeds.md | 2026-06-29 | 0.10.2 | 193s |  |
@@ -162,6 +161,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpcds_mysql.log | Example-MySQL.md | 2026-11-07 | 0.11.13 | 1204s |  |
 | passed | docs_tpcds_mysql_appmetrics.log | Example-Metrics.md | 2026-11-05 | 0.11.12 | 2757s |  |
 | passed | docs_tpcds_mysql_monitoring.log | Example-MySQL.md | 2026-11-07 | 0.11.13 | 2536s |  |
+| passed | docs_tpcds_mysql_storage.log | Example-MySQL.md | 2026-11-09 | 0.11.13 | 30839s |  |
 | passed | docs_tpcds_postgresql.log | Example-TPC-DS.md | 2026-10-22 | 0.11.8 | 644s |  |
 | passed | docs_tpcds_postgresql_appmetrics.log | Example-Metrics.md | 2026-10-18 | 0.11.6 | 1654s |  |
 | passed | docs_tpcds_postgresql_load.log | Prepare-Testbeds.md | 2026-06-29 | 0.10.2 | 464s |  |
