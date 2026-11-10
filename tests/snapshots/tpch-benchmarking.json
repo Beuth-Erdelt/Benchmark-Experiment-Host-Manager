@@ -8,7 +8,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "General-C",
+   "alias": "General-D",
    "benchmark_list": [
     1,
     2
@@ -170,7 +170,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "General-B",
+   "alias": "Cloud-Native-4",
    "benchmark_list": [
     1,
     2
@@ -671,7 +671,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "General-B",
+   "alias": "Service-A",
    "benchmark_list": [
     1,
     2
@@ -1165,7 +1165,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "Columnwise",
+   "alias": "Columnwise-A",
    "benchmark_list": [
     1,
     2
@@ -1495,7 +1495,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "General-B",
+   "alias": "General-F",
    "benchmark_list": [
     1,
     2

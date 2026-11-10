@@ -8,7 +8,7 @@
     "usecase": "hammerdb_tpcc",
     "warehouses": "1"
    },
-   "alias": "General-B",
+   "alias": "Cloud-Native-4",
    "benchmark_list": [
     2,
     4

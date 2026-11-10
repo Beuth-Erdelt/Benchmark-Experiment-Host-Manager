@@ -1664,7 +1664,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "General-B",
+   "alias": "Service-A",
    "benchmark_list": [
     1
    ],

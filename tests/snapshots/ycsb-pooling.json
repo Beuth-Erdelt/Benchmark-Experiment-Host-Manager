@@ -216,7 +216,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "General-C",
+   "alias": "General-D",
    "benchmark_list": [
     1
    ],
@@ -416,7 +416,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "General-B",
+   "alias": "Cloud-Native-4",
    "benchmark_list": [
     1
    ],
@@ -833,7 +833,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "General-B",
+   "alias": "Service-A",
    "benchmark_list": [
     1
    ],
@@ -1026,7 +1026,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "Key-Value-1",
+   "alias": "Key-Value-3",
    "benchmark_list": [
     1
    ],
@@ -1232,7 +1232,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "Key-Value-1",
+   "alias": "Key-Value-4",
    "benchmark_list": [
     1
    ],
@@ -1832,7 +1832,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "General-B",
+   "alias": "General-E",
    "benchmark_list": [
     1
    ],
@@ -2032,7 +2032,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "General-B",
+   "alias": "General-E",
    "benchmark_list": [
     1
    ],
@@ -2232,7 +2232,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "General-B",
+   "alias": "General-E",
    "benchmark_list": [
     1
    ],
@@ -2432,7 +2432,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "General-B",
+   "alias": "General-E",
    "benchmark_list": [
     1
    ],
@@ -3038,7 +3038,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "General-C",
+   "alias": "Cloud-Native-3",
    "benchmark_list": [
     1
    ],
@@ -3248,7 +3248,7 @@
     "usecase": "ycsb",
     "workload": ""
    },
-   "alias": "Key-Value-1",
+   "alias": "Key-Value-2",
    "benchmark_list": [
     1
    ],

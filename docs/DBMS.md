@@ -67,7 +67,7 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 | `workers` | no | `True` if the SUT takes `-nw` workers (shards) next to its coordinator |
 | `sut_attributes` | no | How the SUT is set up (placeholder pod, no monitoring, Helm-managed stateful sets, ...); see [Benchmarks of a DBMS](#how-the-sut-is-set-up-sut_attributes) |
 | `initial_cluster` | no | `{component, port, scheme, env}`: the members of this component are passed to the SUT pods as `env`, for a DBMS that bootstraps as a cluster (TiDB: the `pd` nodes) |
-| `template.alias` | yes | The name of the DBMS in the reports: one per DBMS, the same for every benchmark and experiment |
+| `template.alias` | yes | The name of the DBMS in the reports: one per DBMS, the same for every benchmark and experiment. It names the architecture, not the product (`General-A`, `Columnwise-B`, `Cloud-Native-1`, `Key-Value-2`, ...), and does not show whether a DBMS is built on another one. `template.alias` and the short `template.docker_alias` (used in the connection names of anonymized DBMSBenchmarker runs, e.g. `GP-B`, `CW-A`) must be unique across `dockers` (checked by `validate_descriptors`) |
 | `template.dialect` | no | SQL dialect of the DBMS: the key of its query variants in the query files (`MySQL`, `Clickhouse`, `CedarDB`, ...) |
 | `monitor.<component>.blackbox_database` | no | Database that the blackbox probe of the application monitoring connects to |
 

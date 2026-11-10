@@ -8,7 +8,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "General-C",
+   "alias": "General-D",
    "benchmark_list": [
     1
    ],
@@ -146,7 +146,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "General-B",
+   "alias": "Cloud-Native-4",
    "benchmark_list": [
     1
    ],
@@ -849,7 +849,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "Columnwise",
+   "alias": "Columnwise-A",
    "benchmark_list": [
     1
    ],
@@ -1126,7 +1126,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "General-B",
+   "alias": "General-F",
    "benchmark_list": [
     1
    ],

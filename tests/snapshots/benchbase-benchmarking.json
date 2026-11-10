@@ -7,7 +7,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "General-C",
+   "alias": "General-D",
    "benchmark_list": [
     2,
     4
@@ -260,7 +260,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "General-B",
+   "alias": "Cloud-Native-4",
    "benchmark_list": [
     2,
     4
@@ -748,7 +748,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "General-B",
+   "alias": "Service-A",
    "benchmark_list": [
     2,
     4
@@ -1490,7 +1490,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "General-B",
+   "alias": "General-E",
    "benchmark_list": [
     2,
     4
@@ -2012,7 +2012,7 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
-   "alias": "General-C",
+   "alias": "Cloud-Native-3",
    "benchmark_list": [
     2,
     4

@@ -1146,7 +1146,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-h"
    },
-   "alias": "General-B",
+   "alias": "Service-A",
    "benchmark_list": [
     1
    ],

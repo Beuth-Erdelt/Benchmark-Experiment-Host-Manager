@@ -1745,8 +1745,8 @@ In `cluster.config` there are two sections, `Dragonfly` for a single host and `D
     'attachWorker': '',
     'template': {
         'version': 'xxx',
-        'alias': 'Key-Value-1',
-        'docker_alias': 'KV1',
+        'alias': 'Key-Value-3',
+        'docker_alias': 'KV3',
         'auth': ["root", ""],
     },
     'logfile': '/var/log/redis/redis-server.log',

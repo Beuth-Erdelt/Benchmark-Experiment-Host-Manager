@@ -1171,8 +1171,8 @@ In `cluster.config` there is a section:
     'delay_prepare': 0,
     'template': {
         'version': 'v1.1.1',
-        'alias': 'General-B',
-        'docker_alias': 'GP-B-DUCK',
+        'alias': 'General-F',
+        'docker_alias': 'GP-F',
         'JDBC': {
             'driver': "org.postgresql.Driver",
             'auth': ["postgres", ""],

@@ -669,7 +669,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "tpc-ds"
    },
-   "alias": "Columnwise",
+   "alias": "Columnwise-A",
    "benchmark_list": [
     1,
     2
