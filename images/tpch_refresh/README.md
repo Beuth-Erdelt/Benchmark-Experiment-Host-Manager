@@ -76,7 +76,7 @@ or reload the database before repeating.
 | MySQL | `mysql LOAD DATA LOCAL INFILE` | column-mapped LOAD DATA per table | temp table + `DELETE l FROM lineitem l WHERE ...` |
 | MariaDB | `mysql LOAD DATA LOCAL INFILE` | column-mapped LOAD DATA per table | temp table + `DELETE l FROM lineitem l WHERE ...` |
 | MonetDB | `mclient COPY N RECORDS INTO ... FROM STDIN` | count lines, pipe file to mclient per table | all statements in one stdin pipeline; temp table persists within the session |
-| ClickHouse | `clickhouse-client` (native port) | `INSERT ... FORMAT CSV` (delimiter `|`) | lightweight `DELETE ... WHERE key IN (...)` in chunks of 10000 keys; `ClickHouseCluster`: on `orders_local` / `lineitem_local` `ON CLUSTER` |
+| ClickHouse | `clickhouse-client` (native port) | `INSERT ... FORMAT CSV` (delimiter `|`) | lightweight `DELETE ... WHERE key IN (...)` in chunks of 10000 keys; `ClickHouseCluster`: on `orders_local` / `lineitem_local` of every host listed in `system.clusters` (a Distributed table cannot be deleted from, and `ON CLUSTER` does not reach the shards from the coordinator) |
 
 CedarDB, Citus and DatabaseService speak the PostgreSQL protocol and use the PostgreSQL loader. The job template of
 every DBMS is its `refresh_template` in `cluster.config`; one run needs one job for all its DBMS.
