@@ -159,6 +159,41 @@ class ScriptFailedTest(unittest.TestCase):
         self.assertTrue(script_failed('', 'ERROR:  load durability: fsync is on, not off'))
         self.assertFalse(script_failed('ok', 'NOTICE:  table "x" does not exist, skipping'))
 
+    def test_clients_that_go_on_after_an_error(self) -> None:
+        """Real outputs (2026-11-10, Dec2025-SP3 / Cassandra 5.0.9) of a script with a failing statement.
+
+        Both clients run the rest of the script, but exit non-zero: mclient with 1 and a message
+        without ERROR, cqlsh -f with 2 and an 'Error from server' message.
+        """
+        from bexhoma.configurations.loading import script_failed
+        mclient = "SELECT: no such table 'bexhoma_no_such_table'\n"
+        self.assertFalse(script_failed('', mclient))
+        self.assertTrue(script_failed('', mclient + 'command terminated with exit code 1\n'))
+        cqlsh = ('/tmp/bx_fail.cql:3:InvalidRequest: Error from server: code=2200 [Invalid query] '
+                 'message="keyspace bexhoma_no_such_keyspace does not exist"\n')
+        self.assertTrue(script_failed('', cqlsh))
+        self.assertTrue(script_failed('', cqlsh + 'command terminated with exit code 2\n'))
+        # the restore check of the MySQL/MariaDB durability scripts
+        self.assertTrue(script_failed('', 'ERROR 1644 (45000) at line 64: load durability: '
+                                          'innodb_log_buffer_size is 1048576, not the saved 1048577\n'))
+
+    def test_restore_scripts_check_the_restored_values(self) -> None:
+        """Every MySQL/MariaDB restore checks the saved values before deleting them."""
+        import glob
+        files = [f for f in glob.glob('experiments/**/restoredurability-*.*', recursive=True)
+                 if 'saved_settings' in open(f, encoding='utf-8').read()
+                 and 'DELETE FROM bexhoma.saved_settings' in open(f, encoding='utf-8').read()]
+        self.assertTrue(files)
+        for path in files:
+            text = open(path, encoding='utf-8').read()
+            with self.subTest(script=path):
+                self.assertIn('CALL bexhoma.check_restored();', text)
+                self.assertLess(text.index('CALL bexhoma.check_restored();'),
+                                text.index('DELETE FROM bexhoma.saved_settings'))
+        for path in glob.glob('experiments/**/MySQL/restoredurability-unsafe.sql', recursive=True):
+            with self.subTest(script=path):
+                self.assertIn('CALL bexhoma.check_redo_log();', open(path, encoding='utf-8').read())
+
     def test_shell_scripts_run_with_errexit(self) -> None:
         import inspect
         from bexhoma.configurations import loading

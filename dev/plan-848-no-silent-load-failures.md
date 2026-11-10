@@ -1,8 +1,7 @@
 # Plan: no loading step fails silently (#848)
 
 Status: **done 2026-11-10: implemented (W1-W7) on branch no-silent-load-failures, verified on the cluster
-(section 4, results in 4b), images rebuilt.** Open: exit codes of `mclient` (stdin) and `cqlsh -f` on an
-error; MySQL/MariaDB restoredurability value check. Decisions (user): O1 `backoffLimit: 0`; O2 ClickHouse exit
+(section 4, results in 4b), images rebuilt.** The two last open points are done as well (section 4c). Decisions (user): O1 `backoffLimit: 0`; O2 ClickHouse exit
 code only; O3 P4 is included (section 3, W7); O4 fail on `Skipped > 0` only; O5 no `ON_ERROR_STOP`
 (default kept); O6 order W1+W5 (+W7), then W2/W3, then W4.
 
@@ -263,3 +262,19 @@ Not done / open:
 
 Also from the runs: the short summary of an aborted experiment judges its loader pods (07b8f1b0); no evaluation
 and no download for an experiment without results (b2ec2865).
+
+## 4c. Last open points (2026-11-10, local containers of the template images)
+
+- **Client exit codes** (`SELECT * FROM bexhoma_no_such_table` in the middle of a script, called as `loadData` does):
+  `mclient` (Dec2025-SP3) runs the rest of the script and exits 1, message `SELECT: no such table ...` without
+  ERROR; `cqlsh -f` (Cassandra 5.0.9) runs the rest and exits 2, message `...InvalidRequest: Error from server ...`.
+  Both are detected through the exit code (kubectl's `command terminated with exit code N`), cqlsh also through the
+  message. No code change; regression test with the real outputs.
+- **MySQL/MariaDB restore check:** every `restoredurability-durable|relaxed` script (MySQL `.sql`, MariaDB `.sh`)
+  calls a procedure `bexhoma.check_restored` before deleting the saved values: every row of
+  `bexhoma.saved_settings` must equal `@@GLOBAL.<name>`, else `SIGNAL` (ERROR 1644 "load durability: <name> is X,
+  not the saved Y"); MySQL `restoredurability-unsafe` also checks `Innodb_redo_log_enabled = ON`. On an error the
+  saved values (and the procedure) stay; the next run drops the procedure first.
+  Checked with mysql:9.7.2 and mariadb:12.3.3: durable/relaxed/unsafe sequences pass and leave nothing; a restore
+  missing one SET, a value the server adjusts with only a warning (innodb_log_buffer_size 1048577 -> 1048576), and a
+  redo log left disabled each end with the ERROR and exit 1.
