@@ -8,399 +8,7 @@
     "experiment_design": "parallel-loading",
     "usecase": "ssb"
    },
-   "alias": "General-B",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "DBMSBENCHMARKER_DEV": 0,
-    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-    "SF": "1"
-   },
-   "benchmarking_parameters_list": [],
-   "benchmarking_parameters_list_template": [],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "PostgreSQL-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "PostgreSQL",
-   "docker": "PostgreSQL",
-   "dockerimage": "",
-   "eval_parameters": {
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "dbmsbenchmarker",
-       "fixed_parallelism": false,
-       "name": "ssb",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "DBMSBENCHMARKER_DEV": 0,
-        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-ssb.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "dbmsbenchmarker",
-      "name": "ssb-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BEXHOMA_SYNCH_GENERATE": 1,
-       "BEXHOMA_SYNCH_LOAD": 1,
-       "PODS_PARALLEL": "1",
-       "PODS_TOTAL": "1",
-       "SF": "1",
-       "SSB_SCHEMA_VARIANT": "normal",
-       "SSB_TABLE": "",
-       "STORE_RAW_DATA": 1,
-       "STORE_RAW_DATA_RECREATE": 0
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-ssb-PostgreSQL.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": false,
-   "loading_failed": [],
-   "loading_failed_fatal": "",
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BEXHOMA_SYNCH_GENERATE": 1,
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "PODS_PARALLEL": "1",
-    "PODS_TOTAL": "1",
-    "SF": "1",
-    "SSB_SCHEMA_VARIANT": "normal",
-    "SSB_TABLE": "",
-    "STORE_RAW_DATA": 1,
-    "STORE_RAW_DATA_RECREATE": 0
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 0,
-   "path_experiment_docker": "PostgreSQL",
-   "prometheus_interval": "30s",
-   "prometheus_timeout": "30s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": true,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "sut",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "postgresql",
-    "storageSize": ""
-   },
-   "storage_label": "ssb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {},
-   "sut_pod_name": "",
-   "sut_restarts_at_loading_start": null,
-   "sut_role": "data",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-PostgreSQL.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "ssb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "jobtemplate-loading-ssb-PostgreSQL.yml",
-   "additional_labels": {
-    "SF": "1",
-    "experiment_design": "parallel-loading",
-    "usecase": "ssb"
-   },
-   "alias": "General-B",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "DBMSBENCHMARKER_DEV": 0,
-    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-    "SF": "1"
-   },
-   "benchmarking_parameters_list": [],
-   "benchmarking_parameters_list_template": [],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "PgDuckDB-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "PostgreSQL",
-   "docker": "PgDuckDB",
-   "dockerimage": "",
-   "eval_parameters": {
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "dbmsbenchmarker",
-       "fixed_parallelism": false,
-       "name": "ssb",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "DBMSBENCHMARKER_DEV": 0,
-        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-ssb.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "dbmsbenchmarker",
-      "name": "ssb-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BEXHOMA_SYNCH_GENERATE": 1,
-       "BEXHOMA_SYNCH_LOAD": 1,
-       "PODS_PARALLEL": "1",
-       "PODS_TOTAL": "1",
-       "SF": "1",
-       "SSB_SCHEMA_VARIANT": "normal",
-       "SSB_TABLE": "",
-       "STORE_RAW_DATA": 1,
-       "STORE_RAW_DATA_RECREATE": 0
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-ssb-PostgreSQL.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": false,
-   "loading_failed": [],
-   "loading_failed_fatal": "",
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BEXHOMA_SYNCH_GENERATE": 1,
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "PODS_PARALLEL": "1",
-    "PODS_TOTAL": "1",
-    "SF": "1",
-    "SSB_SCHEMA_VARIANT": "normal",
-    "SSB_TABLE": "",
-    "STORE_RAW_DATA": 1,
-    "STORE_RAW_DATA_RECREATE": 0
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 0,
-   "path_experiment_docker": "PostgreSQL",
-   "prometheus_interval": "30s",
-   "prometheus_timeout": "30s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": true,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "sut",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "PgDuckDB",
-    "storageSize": ""
-   },
-   "storage_label": "ssb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {
-    "DUCKDB_FORCE_EXECUTION": "false"
-   },
-   "sut_pod_name": "",
-   "sut_restarts_at_loading_start": null,
-   "sut_role": "data",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-PgDuckDB.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "ssb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "jobtemplate-loading-ssb-PostgreSQL.yml",
-   "additional_labels": {
-    "SF": "1",
-    "experiment_design": "parallel-loading",
-    "usecase": "ssb"
-   },
    "alias": "General-C",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
    "benchmark_list": [
     1
    ],
@@ -417,24 +25,10 @@
    },
    "benchmarking_parameters_list": [],
    "benchmarking_parameters_list_template": [],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
    "configuration": "CedarDB-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
    "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
    "dialect": "CedarDB",
    "docker": "CedarDB",
-   "dockerimage": "",
    "eval_parameters": {
     "code": "<CODE>"
    },
@@ -485,20 +79,8 @@
      }
     ]
    },
-   "experiment_done": false,
    "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
    "loading_deactivated": false,
-   "loading_failed": [],
-   "loading_failed_fatal": "",
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
    "loading_parameters": {
     "BEXHOMA_SYNCH_GENERATE": 1,
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -510,16 +92,8 @@
     "STORE_RAW_DATA": 1,
     "STORE_RAW_DATA_RECREATE": 0
    },
-   "loading_patch": "",
-   "loading_timespans": {},
    "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
    "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
    "num_loading": 1,
    "num_loading_pods": 1,
    "num_tenants": 0,
@@ -528,7 +102,6 @@
    "prometheus_interval": "30s",
    "prometheus_timeout": "30s",
    "pvc_selector": "",
-   "resetscript": [],
    "resource_sweep": true,
    "resources": {
     "limits": {
@@ -547,7 +120,6 @@
    },
    "script": "Schema",
    "script_target": "sut",
-   "service": "",
    "statefulset_name": "",
    "storage": {
     "keep": true,
@@ -556,1197 +128,16 @@
     "storageSize": ""
    },
    "storage_label": "ssb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
    "sut_container_name": "dbms",
    "sut_has_pool": false,
    "sut_parameters": {},
    "sut_pod_name": "",
-   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
-   "sut_startup_args": [],
    "sut_template": "deploymenttemplate-CedarDB.yml",
    "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
    "volume": "ssb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "jobtemplate-loading-ssb-MySQL.yml",
-   "additional_labels": {
-    "SF": "1",
-    "experiment_design": "parallel-loading",
-    "usecase": "ssb"
-   },
-   "alias": "General-C",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "DBMSBENCHMARKER_DEV": 0,
-    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-    "SF": "1"
-   },
-   "benchmarking_parameters_list": [],
-   "benchmarking_parameters_list_template": [],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "MySQL-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "MySQL",
-   "docker": "MySQL",
-   "dockerimage": "",
-   "eval_parameters": {
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "dbmsbenchmarker",
-       "fixed_parallelism": false,
-       "name": "ssb",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "DBMSBENCHMARKER_DEV": 0,
-        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-ssb.sql",
-        "reset-flush.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "dbmsbenchmarker",
-      "name": "ssb-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BEXHOMA_SYNCH_GENERATE": 1,
-       "BEXHOMA_SYNCH_LOAD": 1,
-       "PODS_PARALLEL": "1",
-       "PODS_TOTAL": "1",
-       "SF": "1",
-       "SSB_SCHEMA_VARIANT": "normal",
-       "SSB_TABLE": "",
-       "STORE_RAW_DATA": 1,
-       "STORE_RAW_DATA_RECREATE": 0
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-ssb-MySQL.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": false,
-   "loading_failed": [],
-   "loading_failed_fatal": "",
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BEXHOMA_SYNCH_GENERATE": 1,
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "PODS_PARALLEL": "1",
-    "PODS_TOTAL": "1",
-    "SF": "1",
-    "SSB_SCHEMA_VARIANT": "normal",
-    "SSB_TABLE": "",
-    "STORE_RAW_DATA": 1,
-    "STORE_RAW_DATA_RECREATE": 0
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 0,
-   "path_experiment_docker": "MySQL",
-   "prometheus_interval": "30s",
-   "prometheus_timeout": "30s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": true,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "sut",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "mysql",
-    "storageSize": ""
-   },
-   "storage_label": "ssb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {},
-   "sut_pod_name": "",
-   "sut_restarts_at_loading_start": null,
-   "sut_role": "data",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-MySQL.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "ssb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "jobtemplate-loading-ssb-MariaDB.yml",
-   "additional_labels": {
-    "SF": "1",
-    "experiment_design": "parallel-loading",
-    "usecase": "ssb"
-   },
-   "alias": "General-A",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "DBMSBENCHMARKER_DEV": 0,
-    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-    "SF": "1"
-   },
-   "benchmarking_parameters_list": [],
-   "benchmarking_parameters_list_template": [],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "MariaDB-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "MySQL",
-   "docker": "MariaDB",
-   "dockerimage": "",
-   "eval_parameters": {
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "dbmsbenchmarker",
-       "fixed_parallelism": false,
-       "name": "ssb",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "DBMSBENCHMARKER_DEV": 0,
-        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-ssb.sql",
-        "reset-flush.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "dbmsbenchmarker",
-      "name": "ssb-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BEXHOMA_SYNCH_GENERATE": 1,
-       "BEXHOMA_SYNCH_LOAD": 1,
-       "PODS_PARALLEL": "1",
-       "PODS_TOTAL": "1",
-       "SF": "1",
-       "SSB_SCHEMA_VARIANT": "normal",
-       "SSB_TABLE": "",
-       "STORE_RAW_DATA": 1,
-       "STORE_RAW_DATA_RECREATE": 0
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-ssb-MariaDB.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": false,
-   "loading_failed": [],
-   "loading_failed_fatal": "",
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BEXHOMA_SYNCH_GENERATE": 1,
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "PODS_PARALLEL": "1",
-    "PODS_TOTAL": "1",
-    "SF": "1",
-    "SSB_SCHEMA_VARIANT": "normal",
-    "SSB_TABLE": "",
-    "STORE_RAW_DATA": 1,
-    "STORE_RAW_DATA_RECREATE": 0
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 0,
-   "path_experiment_docker": "MariaDB",
-   "prometheus_interval": "30s",
-   "prometheus_timeout": "30s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": true,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "sut",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "mariadb",
-    "storageSize": ""
-   },
-   "storage_label": "ssb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {
-    "MARIADB_DATABASE": "ssb"
-   },
-   "sut_pod_name": "",
-   "sut_restarts_at_loading_start": null,
-   "sut_role": "data",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-MariaDB.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "ssb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "jobtemplate-loading-ssb-MariaDB.yml",
-   "additional_labels": {
-    "SF": "1",
-    "experiment_design": "parallel-loading",
-    "usecase": "ssb"
-   },
-   "alias": "Columnwise-C",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "DBMSBENCHMARKER_DEV": 0,
-    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-    "SF": "1"
-   },
-   "benchmarking_parameters_list": [],
-   "benchmarking_parameters_list_template": [],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "MariaDBCS-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "MySQL",
-   "docker": "MariaDBCS",
-   "dockerimage": "",
-   "eval_parameters": {
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "dbmsbenchmarker",
-       "fixed_parallelism": false,
-       "name": "ssb",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "DBMSBENCHMARKER_DEV": 0,
-        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-ssb.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "dbmsbenchmarker",
-      "name": "ssb-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BEXHOMA_SYNCH_GENERATE": 1,
-       "BEXHOMA_SYNCH_LOAD": 1,
-       "PODS_PARALLEL": "1",
-       "PODS_TOTAL": "1",
-       "SF": "1",
-       "SSB_SCHEMA_VARIANT": "normal",
-       "SSB_TABLE": "",
-       "STORE_RAW_DATA": 1,
-       "STORE_RAW_DATA_RECREATE": 0
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-ssb-MariaDB.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": false,
-   "loading_failed": [],
-   "loading_failed_fatal": "",
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BEXHOMA_SYNCH_GENERATE": 1,
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "PODS_PARALLEL": "1",
-    "PODS_TOTAL": "1",
-    "SF": "1",
-    "SSB_SCHEMA_VARIANT": "normal",
-    "SSB_TABLE": "",
-    "STORE_RAW_DATA": 1,
-    "STORE_RAW_DATA_RECREATE": 0
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 0,
-   "path_experiment_docker": "MariaDBCS",
-   "prometheus_interval": "30s",
-   "prometheus_timeout": "30s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": true,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "sut",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "mariadbcs",
-    "storageSize": ""
-   },
-   "storage_label": "ssb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {
-    "MARIADB_DATABASE": "ssb"
-   },
-   "sut_pod_name": "",
-   "sut_restarts_at_loading_start": null,
-   "sut_role": "data",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-MariaDBCS.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "ssb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "jobtemplate-loading-ssb-MonetDB.yml",
-   "additional_labels": {
-    "SF": "1",
-    "experiment_design": "parallel-loading",
-    "usecase": "ssb"
-   },
-   "alias": "Columnwise",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "DBMSBENCHMARKER_DEV": 0,
-    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-    "SF": "1"
-   },
-   "benchmarking_parameters_list": [],
-   "benchmarking_parameters_list_template": [],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "MonetDB-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "MonetDB",
-   "docker": "MonetDB",
-   "dockerimage": "",
-   "eval_parameters": {
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "dbmsbenchmarker",
-       "fixed_parallelism": false,
-       "name": "ssb",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "DBMSBENCHMARKER_DEV": 0,
-        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-ssb.sql"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "dbmsbenchmarker",
-      "name": "ssb-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BEXHOMA_SYNCH_GENERATE": 1,
-       "BEXHOMA_SYNCH_LOAD": 1,
-       "PODS_PARALLEL": "1",
-       "PODS_TOTAL": "1",
-       "SF": "1",
-       "SSB_SCHEMA_VARIANT": "normal",
-       "SSB_TABLE": "",
-       "STORE_RAW_DATA": 1,
-       "STORE_RAW_DATA_RECREATE": 0
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-ssb-MonetDB.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": false,
-   "loading_failed": [],
-   "loading_failed_fatal": "",
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BEXHOMA_SYNCH_GENERATE": 1,
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "PODS_PARALLEL": "1",
-    "PODS_TOTAL": "1",
-    "SF": "1",
-    "SSB_SCHEMA_VARIANT": "normal",
-    "SSB_TABLE": "",
-    "STORE_RAW_DATA": 1,
-    "STORE_RAW_DATA_RECREATE": 0
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 0,
-   "path_experiment_docker": "MonetDB",
-   "prometheus_interval": "30s",
-   "prometheus_timeout": "30s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": true,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "sut",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "monetdb",
-    "storageSize": ""
-   },
-   "storage_label": "ssb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {},
-   "sut_pod_name": "",
-   "sut_restarts_at_loading_start": null,
-   "sut_role": "data",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-MonetDB.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "ssb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "jobtemplate-loading-ssb-ClickHouse.yml",
-   "additional_labels": {
-    "SF": "1",
-    "experiment_design": "parallel-loading",
-    "usecase": "ssb"
-   },
-   "alias": "Columnwise-B",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "DBMSBENCHMARKER_DEV": 0,
-    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-    "SF": "1"
-   },
-   "benchmarking_parameters_list": [],
-   "benchmarking_parameters_list_template": [],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "ClickHouse-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "Clickhouse",
-   "docker": "ClickHouse",
-   "dockerimage": "",
-   "eval_parameters": {
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "dbmsbenchmarker",
-       "fixed_parallelism": false,
-       "name": "ssb",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "DBMSBENCHMARKER_DEV": 0,
-        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-flush.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "dbmsbenchmarker",
-      "name": "ssb-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BEXHOMA_SYNCH_GENERATE": 1,
-       "BEXHOMA_SYNCH_LOAD": 1,
-       "PODS_PARALLEL": "1",
-       "PODS_TOTAL": "1",
-       "SF": "1",
-       "SSB_SCHEMA_VARIANT": "normal",
-       "SSB_TABLE": "",
-       "STORE_RAW_DATA": 1,
-       "STORE_RAW_DATA_RECREATE": 0
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-ssb-ClickHouse.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": false,
-   "loading_failed": [],
-   "loading_failed_fatal": "",
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BEXHOMA_SYNCH_GENERATE": 1,
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "PODS_PARALLEL": "1",
-    "PODS_TOTAL": "1",
-    "SF": "1",
-    "SSB_SCHEMA_VARIANT": "normal",
-    "SSB_TABLE": "",
-    "STORE_RAW_DATA": 1,
-    "STORE_RAW_DATA_RECREATE": 0
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 0,
-   "path_experiment_docker": "ClickHouse",
-   "prometheus_interval": "30s",
-   "prometheus_timeout": "30s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": true,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "sut",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "clickhouse",
-    "storageSize": ""
-   },
-   "storage_label": "ssb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {},
-   "sut_pod_name": "",
-   "sut_restarts_at_loading_start": null,
-   "sut_role": "data",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-ClickHouse.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "ssb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
-  },
-  {
-   "_jobtemplate_loading": "jobtemplate-loading-ssb-ClickHouse.yml",
-   "additional_labels": {
-    "SF": "1",
-    "experiment_design": "parallel-loading",
-    "usecase": "ssb"
-   },
-   "alias": "Columnwise-Cluster-B",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
-   "benchmark_list": [
-    1
-   ],
-   "benchmark_list_template": [
-    1
-   ],
-   "benchmarking_parameters": {
-    "DBMSBENCHMARKER_DEV": 0,
-    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-    "SF": "1"
-   },
-   "benchmarking_parameters_list": [],
-   "benchmarking_parameters_list_template": [],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
-   "configuration": "ClickHouseCluster-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
-   "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
-   "dialect": "Clickhouse",
-   "docker": "ClickHouseCluster",
-   "dockerimage": "",
-   "eval_parameters": {
-    "BEXHOMA_WORKERS": 0,
-    "code": "<CODE>"
-   },
-   "experiment_dict": {
-    "benchmarker": [
-     [
-      {
-       "benchmarker": "dbmsbenchmarker",
-       "fixed_parallelism": false,
-       "name": "ssb",
-       "num_pods": 1,
-       "parallelism": 1,
-       "parameters": {
-        "DBMSBENCHMARKER_DEV": 0,
-        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
-        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
-        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
-        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
-       },
-       "resetscript": [
-        "reset-ssb.sql",
-        "reset-flush.sh"
-       ],
-       "target": "sut",
-       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
-      }
-     ]
-    ],
-    "loader": [
-     {
-      "benchmarker": "dbmsbenchmarker",
-      "name": "ssb-loader",
-      "num_pods": 1,
-      "parallelism": 1,
-      "parameters": {
-       "BEXHOMA_SYNCH_GENERATE": 1,
-       "BEXHOMA_SYNCH_LOAD": 1,
-       "PODS_PARALLEL": "1",
-       "PODS_TOTAL": "1",
-       "SF": "1",
-       "SSB_SCHEMA_VARIANT": "normal",
-       "SSB_TABLE": "",
-       "STORE_RAW_DATA": 1,
-       "STORE_RAW_DATA_RECREATE": 0
-      },
-      "target": "sut",
-      "template": "jobtemplate-loading-ssb-ClickHouse.yml"
-     }
-    ]
-   },
-   "experiment_done": false,
-   "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
-   "loading_deactivated": false,
-   "loading_failed": [],
-   "loading_failed_fatal": "",
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
-   "loading_parameters": {
-    "BEXHOMA_SYNCH_GENERATE": 1,
-    "BEXHOMA_SYNCH_LOAD": 1,
-    "PODS_PARALLEL": "1",
-    "PODS_TOTAL": "1",
-    "SF": "1",
-    "SSB_SCHEMA_VARIANT": "normal",
-    "SSB_TABLE": "",
-    "STORE_RAW_DATA": 1,
-    "STORE_RAW_DATA_RECREATE": 0
-   },
-   "loading_patch": "",
-   "loading_timespans": {},
-   "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
-   "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
-   "num_loading": 1,
-   "num_loading_pods": 1,
-   "num_tenants": 0,
-   "num_worker": 0,
-   "path_experiment_docker": "ClickHouseCluster",
-   "prometheus_interval": "30s",
-   "prometheus_timeout": "30s",
-   "pvc_selector": "",
-   "resetscript": [],
-   "resource_sweep": true,
-   "resources": {
-    "limits": {
-     "cpu": "0",
-     "memory": "0"
-    },
-    "nodeSelector": {
-     "cpu": "",
-     "gpu": ""
-    },
-    "requests": {
-     "cpu": "4",
-     "gpu": 0,
-     "memory": "16Gi"
-    }
-   },
-   "script": "Schema",
-   "script_target": "workers",
-   "service": "",
-   "statefulset_name": "",
-   "storage": {
-    "keep": true,
-    "storageClassName": null,
-    "storageConfiguration": "clickhousecluster",
-    "storageSize": ""
-   },
-   "storage_label": "ssb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
-   "sut_container_name": "dbms",
-   "sut_has_pool": false,
-   "sut_parameters": {},
-   "sut_pod_name": "",
-   "sut_restarts_at_loading_start": null,
-   "sut_role": "data",
-   "sut_service_name": "",
-   "sut_startup_args": [],
-   "sut_template": "deploymenttemplate-ClickHouseCluster.yml",
-   "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
-   "volume": "ssb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
+   "worker_metric_strip_container": false
   },
   {
    "_jobtemplate_loading": "jobtemplate-loading-ssb-PostgreSQL.yml",
@@ -1756,10 +147,6 @@
     "usecase": "ssb"
    },
    "alias": "General-B",
-   "appname": "bexhoma",
-   "are_pool_ready": false,
-   "are_worker_ready": false,
-   "benchmark": null,
    "benchmark_list": [
     1
    ],
@@ -1776,24 +163,10 @@
    },
    "benchmarking_parameters_list": [],
    "benchmarking_parameters_list_template": [],
-   "benchmarking_patch": "",
-   "benchmarking_timespans": {},
-   "client": 1,
    "configuration": "Citus-1",
-   "connection": "",
-   "connection_management": {
-    "numProcesses": 1,
-    "runsPerConnection": 0,
-    "singleConnection": true,
-    "timeout": 1800
-   },
-   "connection_parameter": {},
    "data_components": null,
-   "ddl_given": [],
-   "ddl_parameters": {},
    "dialect": "PostgreSQL",
    "docker": "Citus",
-   "dockerimage": "",
    "eval_parameters": {
     "BEXHOMA_REPLICAS": 0,
     "BEXHOMA_SHARDS": 0,
@@ -1847,20 +220,8 @@
      }
     ]
    },
-   "experiment_done": false,
    "indexing": "Checks",
-   "indexscript": [],
-   "initscript": [],
-   "is_sut_ready": false,
-   "load_durability": "relaxed",
-   "load_durability_scripts": null,
-   "loading_active": true,
-   "loading_after_time": null,
    "loading_deactivated": false,
-   "loading_failed": [],
-   "loading_failed_fatal": "",
-   "loading_inherited": false,
-   "loading_metrics_fetched": {},
    "loading_parameters": {
     "BEXHOMA_SYNCH_GENERATE": 1,
     "BEXHOMA_SYNCH_LOAD": 1,
@@ -1872,16 +233,8 @@
     "STORE_RAW_DATA": 1,
     "STORE_RAW_DATA_RECREATE": 0
    },
-   "loading_patch": "",
-   "loading_timespans": {},
    "max_sut_dbms": null,
-   "monitor_app_active": false,
-   "monitor_loading": true,
-   "monitoring_active": false,
    "monitoring_sut": true,
-   "nodes": {},
-   "num_experiment_to_apply": 1,
-   "num_experiment_to_apply_done": 0,
    "num_loading": 1,
    "num_loading_pods": 1,
    "num_tenants": 0,
@@ -1890,7 +243,6 @@
    "prometheus_interval": "30s",
    "prometheus_timeout": "30s",
    "pvc_selector": "",
-   "resetscript": [],
    "resource_sweep": true,
    "resources": {
     "limits": {
@@ -1909,7 +261,6 @@
    },
    "script": "Schema",
    "script_target": "sut",
-   "service": "",
    "statefulset_name": "",
    "storage": {
     "keep": true,
@@ -1918,8 +269,6 @@
     "storageSize": ""
    },
    "storage_label": "ssb-1",
-   "storage_monitoring": null,
-   "storage_reused": false,
    "sut_container_name": "dbms",
    "sut_has_pool": false,
    "sut_parameters": {
@@ -1927,25 +276,1126 @@
     "BEXHOMA_SHARDS": 0
    },
    "sut_pod_name": "",
-   "sut_restarts_at_loading_start": null,
    "sut_role": "data",
    "sut_service_name": "",
-   "sut_startup_args": [],
    "sut_template": "deploymenttemplate-Citus.yml",
    "tenant_per": "",
-   "tenant_ready_to_index": false,
-   "tenant_ready_to_load": false,
-   "tenant_started_to_index": false,
-   "tenant_started_to_load": false,
-   "times_scripts": {},
-   "tls_secret": "",
-   "use_distributed_datasource": false,
    "volume": "ssb",
-   "volume_check": {},
-   "volume_per_tenant": false,
-   "volumeid": "",
-   "worker_metric_strip_container": false,
-   "worker_startup_args": []
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "jobtemplate-loading-ssb-ClickHouse.yml",
+   "additional_labels": {
+    "SF": "1",
+    "experiment_design": "parallel-loading",
+    "usecase": "ssb"
+   },
+   "alias": "Columnwise-B",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "DBMSBENCHMARKER_DEV": 0,
+    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [],
+   "benchmarking_parameters_list_template": [],
+   "configuration": "ClickHouse-1",
+   "data_components": null,
+   "dialect": "Clickhouse",
+   "docker": "ClickHouse",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "dbmsbenchmarker",
+       "fixed_parallelism": false,
+       "name": "ssb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "DBMSBENCHMARKER_DEV": 0,
+        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-flush.sh"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "dbmsbenchmarker",
+      "name": "ssb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_SYNCH_GENERATE": 1,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PODS_PARALLEL": "1",
+       "PODS_TOTAL": "1",
+       "SF": "1",
+       "SSB_SCHEMA_VARIANT": "normal",
+       "SSB_TABLE": "",
+       "STORE_RAW_DATA": 1,
+       "STORE_RAW_DATA_RECREATE": 0
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ssb-ClickHouse.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_SYNCH_GENERATE": 1,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PODS_PARALLEL": "1",
+    "PODS_TOTAL": "1",
+    "SF": "1",
+    "SSB_SCHEMA_VARIANT": "normal",
+    "SSB_TABLE": "",
+    "STORE_RAW_DATA": 1,
+    "STORE_RAW_DATA_RECREATE": 0
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "ClickHouse",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "clickhouse",
+    "storageSize": ""
+   },
+   "storage_label": "ssb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-ClickHouse.yml",
+   "tenant_per": "",
+   "volume": "ssb",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "jobtemplate-loading-ssb-ClickHouse.yml",
+   "additional_labels": {
+    "SF": "1",
+    "experiment_design": "parallel-loading",
+    "usecase": "ssb"
+   },
+   "alias": "Columnwise-Cluster-B",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "DBMSBENCHMARKER_DEV": 0,
+    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [],
+   "benchmarking_parameters_list_template": [],
+   "configuration": "ClickHouseCluster-1",
+   "data_components": null,
+   "dialect": "Clickhouse",
+   "docker": "ClickHouseCluster",
+   "eval_parameters": {
+    "BEXHOMA_WORKERS": 0,
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "dbmsbenchmarker",
+       "fixed_parallelism": false,
+       "name": "ssb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "DBMSBENCHMARKER_DEV": 0,
+        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-ssb.sql",
+        "reset-flush.sh"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "dbmsbenchmarker",
+      "name": "ssb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_SYNCH_GENERATE": 1,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PODS_PARALLEL": "1",
+       "PODS_TOTAL": "1",
+       "SF": "1",
+       "SSB_SCHEMA_VARIANT": "normal",
+       "SSB_TABLE": "",
+       "STORE_RAW_DATA": 1,
+       "STORE_RAW_DATA_RECREATE": 0
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ssb-ClickHouse.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_SYNCH_GENERATE": 1,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PODS_PARALLEL": "1",
+    "PODS_TOTAL": "1",
+    "SF": "1",
+    "SSB_SCHEMA_VARIANT": "normal",
+    "SSB_TABLE": "",
+    "STORE_RAW_DATA": 1,
+    "STORE_RAW_DATA_RECREATE": 0
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "ClickHouseCluster",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "workers",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "clickhousecluster",
+    "storageSize": ""
+   },
+   "storage_label": "ssb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-ClickHouseCluster.yml",
+   "tenant_per": "",
+   "volume": "ssb",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "jobtemplate-loading-ssb-MariaDB.yml",
+   "additional_labels": {
+    "SF": "1",
+    "experiment_design": "parallel-loading",
+    "usecase": "ssb"
+   },
+   "alias": "General-A",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "DBMSBENCHMARKER_DEV": 0,
+    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [],
+   "benchmarking_parameters_list_template": [],
+   "configuration": "MariaDB-1",
+   "data_components": null,
+   "dialect": "MySQL",
+   "docker": "MariaDB",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "dbmsbenchmarker",
+       "fixed_parallelism": false,
+       "name": "ssb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "DBMSBENCHMARKER_DEV": 0,
+        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-ssb.sql",
+        "reset-flush.sh"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "dbmsbenchmarker",
+      "name": "ssb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_SYNCH_GENERATE": 1,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PODS_PARALLEL": "1",
+       "PODS_TOTAL": "1",
+       "SF": "1",
+       "SSB_SCHEMA_VARIANT": "normal",
+       "SSB_TABLE": "",
+       "STORE_RAW_DATA": 1,
+       "STORE_RAW_DATA_RECREATE": 0
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ssb-MariaDB.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_SYNCH_GENERATE": 1,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PODS_PARALLEL": "1",
+    "PODS_TOTAL": "1",
+    "SF": "1",
+    "SSB_SCHEMA_VARIANT": "normal",
+    "SSB_TABLE": "",
+    "STORE_RAW_DATA": 1,
+    "STORE_RAW_DATA_RECREATE": 0
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "MariaDB",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "mariadb",
+    "storageSize": ""
+   },
+   "storage_label": "ssb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {
+    "MARIADB_DATABASE": "ssb"
+   },
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-MariaDB.yml",
+   "tenant_per": "",
+   "volume": "ssb",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "jobtemplate-loading-ssb-MariaDB.yml",
+   "additional_labels": {
+    "SF": "1",
+    "experiment_design": "parallel-loading",
+    "usecase": "ssb"
+   },
+   "alias": "Columnwise-C",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "DBMSBENCHMARKER_DEV": 0,
+    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [],
+   "benchmarking_parameters_list_template": [],
+   "configuration": "MariaDBCS-1",
+   "data_components": null,
+   "dialect": "MySQL",
+   "docker": "MariaDBCS",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "dbmsbenchmarker",
+       "fixed_parallelism": false,
+       "name": "ssb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "DBMSBENCHMARKER_DEV": 0,
+        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-ssb.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "dbmsbenchmarker",
+      "name": "ssb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_SYNCH_GENERATE": 1,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PODS_PARALLEL": "1",
+       "PODS_TOTAL": "1",
+       "SF": "1",
+       "SSB_SCHEMA_VARIANT": "normal",
+       "SSB_TABLE": "",
+       "STORE_RAW_DATA": 1,
+       "STORE_RAW_DATA_RECREATE": 0
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ssb-MariaDB.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_SYNCH_GENERATE": 1,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PODS_PARALLEL": "1",
+    "PODS_TOTAL": "1",
+    "SF": "1",
+    "SSB_SCHEMA_VARIANT": "normal",
+    "SSB_TABLE": "",
+    "STORE_RAW_DATA": 1,
+    "STORE_RAW_DATA_RECREATE": 0
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "MariaDBCS",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "mariadbcs",
+    "storageSize": ""
+   },
+   "storage_label": "ssb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {
+    "MARIADB_DATABASE": "ssb"
+   },
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-MariaDBCS.yml",
+   "tenant_per": "",
+   "volume": "ssb",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "jobtemplate-loading-ssb-MonetDB.yml",
+   "additional_labels": {
+    "SF": "1",
+    "experiment_design": "parallel-loading",
+    "usecase": "ssb"
+   },
+   "alias": "Columnwise",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "DBMSBENCHMARKER_DEV": 0,
+    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [],
+   "benchmarking_parameters_list_template": [],
+   "configuration": "MonetDB-1",
+   "data_components": null,
+   "dialect": "MonetDB",
+   "docker": "MonetDB",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "dbmsbenchmarker",
+       "fixed_parallelism": false,
+       "name": "ssb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "DBMSBENCHMARKER_DEV": 0,
+        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-ssb.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "dbmsbenchmarker",
+      "name": "ssb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_SYNCH_GENERATE": 1,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PODS_PARALLEL": "1",
+       "PODS_TOTAL": "1",
+       "SF": "1",
+       "SSB_SCHEMA_VARIANT": "normal",
+       "SSB_TABLE": "",
+       "STORE_RAW_DATA": 1,
+       "STORE_RAW_DATA_RECREATE": 0
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ssb-MonetDB.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_SYNCH_GENERATE": 1,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PODS_PARALLEL": "1",
+    "PODS_TOTAL": "1",
+    "SF": "1",
+    "SSB_SCHEMA_VARIANT": "normal",
+    "SSB_TABLE": "",
+    "STORE_RAW_DATA": 1,
+    "STORE_RAW_DATA_RECREATE": 0
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "MonetDB",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "monetdb",
+    "storageSize": ""
+   },
+   "storage_label": "ssb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-MonetDB.yml",
+   "tenant_per": "",
+   "volume": "ssb",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "jobtemplate-loading-ssb-MySQL.yml",
+   "additional_labels": {
+    "SF": "1",
+    "experiment_design": "parallel-loading",
+    "usecase": "ssb"
+   },
+   "alias": "General-C",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "DBMSBENCHMARKER_DEV": 0,
+    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [],
+   "benchmarking_parameters_list_template": [],
+   "configuration": "MySQL-1",
+   "data_components": null,
+   "dialect": "MySQL",
+   "docker": "MySQL",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "dbmsbenchmarker",
+       "fixed_parallelism": false,
+       "name": "ssb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "DBMSBENCHMARKER_DEV": 0,
+        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-ssb.sql",
+        "reset-flush.sh"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "dbmsbenchmarker",
+      "name": "ssb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_SYNCH_GENERATE": 1,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PODS_PARALLEL": "1",
+       "PODS_TOTAL": "1",
+       "SF": "1",
+       "SSB_SCHEMA_VARIANT": "normal",
+       "SSB_TABLE": "",
+       "STORE_RAW_DATA": 1,
+       "STORE_RAW_DATA_RECREATE": 0
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ssb-MySQL.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_SYNCH_GENERATE": 1,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PODS_PARALLEL": "1",
+    "PODS_TOTAL": "1",
+    "SF": "1",
+    "SSB_SCHEMA_VARIANT": "normal",
+    "SSB_TABLE": "",
+    "STORE_RAW_DATA": 1,
+    "STORE_RAW_DATA_RECREATE": 0
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "MySQL",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "mysql",
+    "storageSize": ""
+   },
+   "storage_label": "ssb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-MySQL.yml",
+   "tenant_per": "",
+   "volume": "ssb",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "jobtemplate-loading-ssb-PostgreSQL.yml",
+   "additional_labels": {
+    "SF": "1",
+    "experiment_design": "parallel-loading",
+    "usecase": "ssb"
+   },
+   "alias": "General-B",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "DBMSBENCHMARKER_DEV": 0,
+    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [],
+   "benchmarking_parameters_list_template": [],
+   "configuration": "PgDuckDB-1",
+   "data_components": null,
+   "dialect": "PostgreSQL",
+   "docker": "PgDuckDB",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "dbmsbenchmarker",
+       "fixed_parallelism": false,
+       "name": "ssb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "DBMSBENCHMARKER_DEV": 0,
+        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-ssb.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "dbmsbenchmarker",
+      "name": "ssb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_SYNCH_GENERATE": 1,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PODS_PARALLEL": "1",
+       "PODS_TOTAL": "1",
+       "SF": "1",
+       "SSB_SCHEMA_VARIANT": "normal",
+       "SSB_TABLE": "",
+       "STORE_RAW_DATA": 1,
+       "STORE_RAW_DATA_RECREATE": 0
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ssb-PostgreSQL.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_SYNCH_GENERATE": 1,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PODS_PARALLEL": "1",
+    "PODS_TOTAL": "1",
+    "SF": "1",
+    "SSB_SCHEMA_VARIANT": "normal",
+    "SSB_TABLE": "",
+    "STORE_RAW_DATA": 1,
+    "STORE_RAW_DATA_RECREATE": 0
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "PostgreSQL",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "PgDuckDB",
+    "storageSize": ""
+   },
+   "storage_label": "ssb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {
+    "DUCKDB_FORCE_EXECUTION": "false"
+   },
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-PgDuckDB.yml",
+   "tenant_per": "",
+   "volume": "ssb",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "jobtemplate-loading-ssb-PostgreSQL.yml",
+   "additional_labels": {
+    "SF": "1",
+    "experiment_design": "parallel-loading",
+    "usecase": "ssb"
+   },
+   "alias": "General-B",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "DBMSBENCHMARKER_DEV": 0,
+    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [],
+   "benchmarking_parameters_list_template": [],
+   "configuration": "PostgreSQL-1",
+   "data_components": null,
+   "dialect": "PostgreSQL",
+   "docker": "PostgreSQL",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "dbmsbenchmarker",
+       "fixed_parallelism": false,
+       "name": "ssb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "DBMSBENCHMARKER_DEV": 0,
+        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-ssb.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "dbmsbenchmarker",
+      "name": "ssb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_SYNCH_GENERATE": 1,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PODS_PARALLEL": "1",
+       "PODS_TOTAL": "1",
+       "SF": "1",
+       "SSB_SCHEMA_VARIANT": "normal",
+       "SSB_TABLE": "",
+       "STORE_RAW_DATA": 1,
+       "STORE_RAW_DATA_RECREATE": 0
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ssb-PostgreSQL.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_SYNCH_GENERATE": 1,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PODS_PARALLEL": "1",
+    "PODS_TOTAL": "1",
+    "SF": "1",
+    "SSB_SCHEMA_VARIANT": "normal",
+    "SSB_TABLE": "",
+    "STORE_RAW_DATA": 1,
+    "STORE_RAW_DATA_RECREATE": 0
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "PostgreSQL",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "postgresql",
+    "storageSize": ""
+   },
+   "storage_label": "ssb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-PostgreSQL.yml",
+   "tenant_per": "",
+   "volume": "ssb",
+   "worker_metric_strip_container": false
   }
  ]
 }

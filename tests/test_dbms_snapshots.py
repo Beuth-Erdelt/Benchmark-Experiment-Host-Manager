@@ -100,6 +100,22 @@ _VOLATILE = {'path', 'code', 'experiment_name', 'deployment_infos', 'current_ben
              'dockertemplate'}
 _VOLATILE_PREFIXES = ('time_', 'loading_started', 'loading_finished')
 
+#: The attributes the entry scripts, the builder and the ``dockers:`` descriptors set
+#: (the ones that differ between DBMS or variants). Only these are dumped, so a new
+#: runtime attribute with a default value does not touch the snapshots. When the
+#: builder or a descriptor starts to set another attribute, add it here.
+SNAPSHOT_KEYS = frozenset({
+    '_jobtemplate_loading', 'additional_labels', 'alias', 'benchmark_list', 'benchmark_list_template',
+    'benchmarking_parameters', 'benchmarking_parameters_list', 'benchmarking_parameters_list_template',
+    'configuration', 'data_components', 'dialect', 'docker', 'eval_parameters', 'experiment_dict',
+    'indexing', 'loading_deactivated', 'loading_parameters', 'max_sut_dbms', 'monitoring_sut',
+    'num_loading', 'num_loading_pods', 'num_tenants', 'num_worker', 'path_experiment_docker',
+    'prometheus_interval', 'prometheus_timeout', 'pvc_selector', 'resource_sweep', 'resources',
+    'script', 'script_target', 'statefulset_name', 'storage', 'storage_label', 'sut_container_name',
+    'sut_has_pool', 'sut_parameters', 'sut_pod_name', 'sut_role', 'sut_service_name', 'sut_template',
+    'tenant_per', 'volume', 'worker_metric_strip_container',
+})
+
 
 def _is_json(value) -> bool:
     try:
@@ -121,10 +137,10 @@ def _plain(value):
 
 
 def dump_configuration(config) -> dict:
-    """All plain-data attributes of a configuration, minus volatile ones."""
+    """The plain-data attributes of :data:`SNAPSHOT_KEYS` of a configuration, minus volatile ones."""
     result = {}
     for key, value in sorted(vars(config).items()):
-        if key in _VOLATILE or key.startswith(_VOLATILE_PREFIXES):
+        if key not in SNAPSHOT_KEYS or key in _VOLATILE or key.startswith(_VOLATILE_PREFIXES):
             continue
         value = _plain(value)
         if _is_json(value):
@@ -168,7 +184,9 @@ def build_snapshot(script: str, extra_argv: list, dbms: list = None) -> dict:
         experiment = captured[0]
         text = json.dumps({
             'configfolder': cluster.experiments_configfolder,
-            'configurations': [dump_configuration(c) for c in experiment.configurations],
+            # sorted by name: the file then changes only where a configuration changes
+            'configurations': sorted((dump_configuration(c) for c in experiment.configurations),
+                                     key=lambda c: c.get('configuration', '')),
         }, indent=1, sort_keys=True)
         # mask what varies between runs
         text = text.replace(str(experiment.code), '<CODE>').replace(tmp_dir.replace('\\', '\\\\'), '<TMP>')
