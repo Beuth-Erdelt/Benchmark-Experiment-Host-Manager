@@ -1598,8 +1598,17 @@ class ExperimentBase():
                          pod_dashboard: str = '') -> None:
         """
         Let the dashboard pod build the evaluations.
+
+        An experiment that ended before its first result was written (see
+        :meth:`_has_result_files`) has nothing to evaluate or download: only the
+        local result folder (logs, descriptions) is uploaded.
         """
         self.cluster.logger.debug('base.evaluate_results()')
+        if not self._has_result_files():
+            print("{:30s}: no results to evaluate (the experiment ended before its first result)".format("Experiment"))
+            print("{:30s}: uploading full results".format("Experiment"))
+            self.upload_experiment_file(filename='')
+            return
         self.evaluator.evaluate_results(pod_dashboard)
         self.workload['workflow_errors'] = self.evaluator.workflow_errors
         if len(pod_dashboard) == 0:

@@ -2188,6 +2188,14 @@ class Kubernetes():
         os.makedirs(folder_local, exist_ok=True)
         archive_local = os.path.join(folder_local, archive_name)
         ok_marker = 'BEXHOMA_ARCHIVE_OK'
+        # a folder that was never written (e.g. no benchmarker pod ran) is nothing to download,
+        # not a failure of packing; only an explicit answer skips it (a failed exec goes on as before)
+        missing_marker = 'BEXHOMA_FOLDER_MISSING'
+        _, stdout, _ = self.execute_command_in_pod(
+            command=f"test -d {folder_remote} || echo {missing_marker}", pod=pod, container=container)
+        if missing_marker in (stdout or ''):
+            print(f"download_folder: {folder_remote} does not exist in pod {pod}, nothing to download")
+            return ''
         # The exit status of timeout is not read back: a $? in the command
         # would be expanded by the local shell on Linux but not on Windows.
         # Elapsed time tells a timeout apart from other failures instead.
