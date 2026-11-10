@@ -136,6 +136,32 @@ class BuildExperimentTest(unittest.TestCase):
         self.assertEqual(postgres.num_loading_pods, 1)
         self.assertEqual(postgres.benchmark_list_template, [1, 2])
 
+    def test_top_level_loading_pods_reach_every_configuration(self) -> None:
+        """loading.pods: [4] at the top used to stay in the info text only, the loader started 1 pod."""
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['loading'] = {'pods': [4], 'threads': [1], 'split': 2}
+        experiment = self._build(spec)
+        for config in experiment.configurations:
+            self.assertEqual((config.num_loading_pods, config.num_loading), (4, 2))
+            self.assertEqual(config.loading_parameters['PODS_TOTAL'], '4')
+            self.assertEqual(config.loading_parameters['PODS_PARALLEL'], '2')
+
+    def test_a_system_loading_block_wins_over_the_top_level_one(self) -> None:
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['loading'] = {'pods': [4]}
+        spec['systems'][1]['loading'] = {'pods': [2]}
+        postgres, pgduckdb = self._build(spec).configurations
+        self.assertEqual(postgres.num_loading_pods, 4)
+        self.assertEqual(pgduckdb.num_loading_pods, 2)
+
+    def test_loading_threads_reach_a_dbms_with_thread_variants(self) -> None:
+        """MySQL declares per_loading_threads: the YAML's threads fill MYSQL_LOADING_THREADS."""
+        spec = copy.deepcopy(_BASE_SPEC)
+        spec['loading'] = {'pods': [1], 'threads': [8]}
+        spec['systems'] = [{'dbms': 'MySQL'}]
+        mysql = self._build(spec).configurations[0]
+        self.assertEqual(str(mysql.loading_parameters['MYSQL_LOADING_THREADS']), '8')
+
     def test_unknown_dbms_raises_key_error(self) -> None:
         """A dbms with no tpch entry raises — validation is expected to have caught this earlier."""
         spec = copy.deepcopy(_BASE_SPEC)

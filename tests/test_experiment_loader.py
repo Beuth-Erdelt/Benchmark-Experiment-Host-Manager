@@ -63,6 +63,26 @@ class ValidateExperimentYamlTest(unittest.TestCase):
         with self.assertRaises(ExperimentYamlError):
             validate_experiment_yaml(spec)
 
+    def test_loading_counts_are_one_value(self) -> None:
+        """A number or a one-element list is accepted; a sweep or a non-positive count is not."""
+        for loading in ({'pods': 4}, {'pods': [4], 'threads': [8], 'split': [2]}, {}):
+            spec = copy.deepcopy(_VALID_SPEC)
+            spec['loading'] = loading
+            with self.subTest(loading):
+                validate_experiment_yaml(spec)
+        for loading in ({'pods': [1, 4]}, {'threads': [1, 8]}, {'pods': 0}, {'pods': 'four'},
+                        {'pods': 2, 'split': 4}):
+            spec = copy.deepcopy(_VALID_SPEC)
+            spec['loading'] = loading
+            with self.subTest(loading), self.assertRaises(ExperimentYamlError):
+                validate_experiment_yaml(spec)
+
+    def test_a_system_loading_block_is_checked_too(self) -> None:
+        spec = copy.deepcopy(_VALID_SPEC)
+        spec['systems'][0]['loading'] = {'pods': [2, 4]}
+        with self.assertRaises(ExperimentYamlError):
+            validate_experiment_yaml(spec)
+
     def test_rejects_empty_systems_list(self) -> None:
         """An empty 'systems' list is rejected."""
         spec = copy.deepcopy(_VALID_SPEC)
