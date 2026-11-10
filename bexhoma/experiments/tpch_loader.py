@@ -19,7 +19,7 @@ import yaml
 
 from bexhoma.system_descriptors import experiment_yaml_dockers, load_dockers
 
-__all__ = ["ExperimentYamlError", "load_experiment_yaml", "validate_experiment_yaml"]
+__all__ = ["ExperimentYamlError", "load_experiment_yaml", "validate_experiment_yaml", "loading_count", "merged_loading"]
 
 #: Top-level keys every ``experiment.yaml`` must carry, independent of workload.
 _REQUIRED_TOP_LEVEL_FIELDS = ("workload", "mode", "systems")
@@ -30,6 +30,46 @@ _SUPPORTED_WORKLOADS = ("tpch",)
 
 class ExperimentYamlError(Exception):
     """Raised when an ``experiment.yaml`` is malformed or fails validation."""
+
+
+#: Counts of a ``loading:`` block. Each system gets exactly one configuration, so each is one value.
+_LOADING_COUNTS = ("pods", "threads", "split")
+
+
+def merged_loading(spec: dict, system: dict) -> dict:
+    """The ``loading:`` block that applies to one system: the top-level one, the system's own on top.
+
+    :param spec: Parsed experiment spec.
+    :param system: One entry of ``spec['systems']``.
+    :return: Merged loading block.
+    :rtype: dict
+    """
+    return {**(spec.get("loading") or {}), **(system.get("loading") or {})}
+
+
+def loading_count(loading: dict, key: str) -> int:
+    """One count of a ``loading:`` block: a positive number, or a list holding exactly one.
+
+    A list form (``pods: [4]``) is accepted because the block mirrors the comma lists of ``tpch.py``
+    (``-nlp``, ``-nlt``, ``-xnls``), but the YAML path builds one configuration per system and
+    cannot sweep: a list with several values is refused, use ``tpch.py`` or a catalog-driven file.
+
+    :param loading: A (merged) ``loading:`` block.
+    :param key: ``pods``, ``threads`` or ``split``.
+    :return: The count; 1 when the key is absent.
+    :rtype: int
+    :raises ExperimentYamlError: For several values, or a value that is not a positive integer.
+    """
+    value = loading.get(key, 1)
+    if isinstance(value, list):
+        if len(value) != 1:
+            raise ExperimentYamlError(
+                f"loading.{key} must be one value, got {value!r}: experiment.yaml builds one configuration "
+                f"per system and cannot sweep (use tpch.py or a catalog-driven file for that)")
+        value = value[0]
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise ExperimentYamlError(f"loading.{key} must be a positive integer, got {value!r}")
+    return value
 
 
 def load_experiment_yaml(path: str) -> dict:
@@ -80,3 +120,11 @@ def validate_experiment_yaml(spec: dict, dockers: dict = None) -> None:
             raise ExperimentYamlError(f"systems entry is missing required field 'dbms': {system!r}")
         if dbms not in known:
             raise ExperimentYamlError(f"unknown dbms '{dbms}'; known values are {known}")
+        for block in (spec.get("loading"), system.get("loading")):
+            if block is not None and not isinstance(block, dict):
+                raise ExperimentYamlError(f"'loading' must be a mapping, got {block!r}")
+        loading = merged_loading(spec, system)
+        counts = {key: loading_count(loading, key) for key in _LOADING_COUNTS}
+        if counts["split"] > counts["pods"]:
+            raise ExperimentYamlError(
+                f"loading.split ({counts['split']}) must not exceed loading.pods ({counts['pods']}) for '{dbms}'")

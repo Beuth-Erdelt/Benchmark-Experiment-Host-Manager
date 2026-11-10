@@ -25,9 +25,9 @@ monitoring:
 rounds: [1, 2, 4]           # -ne sweep (list of client counts)
 
 loading:
-  pods: [1]                 # -nlp sweep
-  threads: [1]               # -nlt
-  split: 1                   # -xnls
+  pods: [1]                 # -nlp, one value (no sweep: one configuration per system)
+  threads: [1]               # -nlt, one value
+  split: 1                   # -xnls, one value, at most pods
 
 tpch:                        # TPC-H's own -x flags
   recreate_parameter: false
