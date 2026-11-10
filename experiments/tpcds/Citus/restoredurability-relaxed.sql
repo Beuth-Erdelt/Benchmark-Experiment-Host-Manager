@@ -17,7 +17,6 @@ BEGIN
     EXECUTE format('ALTER DATABASE %I RESET synchronous_commit', current_database());
 END
 $$;
-SELECT * FROM run_command_on_workers(format('ALTER DATABASE %I RESET synchronous_commit', current_database()));
 SELECT pg_sleep(1);
 -- SHOW synchronous_commit would show the load value: this session started with the
 -- database setting; new sessions get the configured value (no database setting left)
@@ -34,7 +33,7 @@ BEGIN
     END IF;
 END
 $$;
--- the same on every worker (whether Citus propagated the coordinator's ALTER DATABASE or not)
+-- the same on every worker: Citus propagates the coordinator's ALTER DATABASE (on a worker it is not allowed)
 DO $$
 DECLARE
     r record;

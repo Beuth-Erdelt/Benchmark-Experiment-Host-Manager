@@ -206,7 +206,7 @@ cannot change, so the old scripts silently loaded with `on`. Now:
 - Checked locally with `postgres:18 -c synchronous_commit=on` (Docker): old relaxed script → new sessions `on`
   (the silent case); new scripts → loader sessions `off`, after restore `on`; durable and relaxed+unsafe
   sequences end at the configured values; `-c fsync=on` + unsafe script → `ERROR: load durability: fsync is on, not off`.
-- Open: Citus (does Citus propagate `ALTER DATABASE ... SET`, and do coordinator→worker connections pick up the
+- Citus (cluster run 1794336270): `ALTER DATABASE` on a worker is refused ("operation is not allowed on this node"), Citus propagates the coordinator's; the worker statement was removed, the worker check stays. Open: coordinator→worker connections pick up the
   worker database setting); PGBouncer: server connections pooled before the durability script keep the old
   value (only with `--set synchronous_commit`).
 

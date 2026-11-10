@@ -22,7 +22,6 @@ BEGIN
     EXECUTE format('ALTER DATABASE %I SET synchronous_commit = off', current_database());
 END
 $$;
-SELECT * FROM run_command_on_workers(format('ALTER DATABASE %I SET synchronous_commit = off', current_database()));
 SELECT pg_sleep(1);
 SELECT d.datname, s.setconfig FROM pg_db_role_setting s JOIN pg_database d ON d.oid = s.setdatabase
     WHERE d.datname = current_database() AND s.setrole = 0;
@@ -38,7 +37,7 @@ BEGIN
     END IF;
 END
 $$;
--- the same on every worker (whether Citus propagated the coordinator's ALTER DATABASE or not)
+-- the same on every worker: Citus propagates the coordinator's ALTER DATABASE (on a worker it is not allowed)
 DO $$
 DECLARE
     r record;
