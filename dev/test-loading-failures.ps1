@@ -20,7 +20,7 @@
 #     setting left; no ERROR in the durability logs; Citus: the worker check passes.
 #   B3 unsafe + --set fsync=on: refused before loading ("-xld unsafe cannot take effect:
 #     fsync=on (--set), the load needs off"), experiment aborted, no loader job.
-# Part C - a load that fails (TPC-H PostgreSQL SF 2 on its own volume, no other run uses it):
+# Part C - a load that fails (TPC-H PostgreSQL SF 10 on its own volume, no other run uses it):
 #   C1 the SUT container is killed during the ingest: loader pods fail and are not retried
 #     (backoffLimit 0), the experiment aborts with diagnostics, TEST failed: Loader pods
 #     without errors / Loading completed ...; the volume keeps loaded=False.
@@ -30,6 +30,8 @@
 # Run from the repository root: .\dev\test-loading-failures.ps1
 # Resume at a step (all steps before it are skipped):
 #   .\dev\test-loading-failures.ps1 -StartAt A4-MariaDB
+# Only some steps:  -StartAt B3 -StopAfter B3
+# Logs: logs_tests\local\test_848_*.log (git-ignored)
 # Steps: A1 A2 A3 A4-PostgreSQL A4-MySQL A4-MariaDB A4-MonetDB A5 A6 A7 B1 B2 B3 C
 # (C1-C3 depend on each other and run as one step). Stopped in the middle of a run:
 # remove its leftovers first with  bexhoma stop -e <code>  (the code is in its log).
@@ -38,24 +40,34 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # See LICENSE for details.
 
-param([string]$StartAt = '')
+param([string]$StartAt = '', [string]$StopAfter = '')
 
 $STEPS = @('A1', 'A2', 'A3', 'A4-PostgreSQL', 'A4-MySQL', 'A4-MariaDB', 'A4-MonetDB',
            'A5', 'A6', 'A7', 'B1', 'B2', 'B3', 'C')
-if ($StartAt -and $STEPS -notcontains $StartAt) {
-    Write-Host "unknown step $StartAt (steps: $($STEPS -join ', '))"
-    exit 1
+foreach ($step in @($StartAt, $StopAfter)) {
+    if ($step -and $STEPS -notcontains $step) {
+        Write-Host "unknown step $step (steps: $($STEPS -join ', '))"
+        exit 1
+    }
 }
 $script:started = -not $StartAt
 
+$script:stopped = $false
+
 function Test-Step([string]$Name) {
-    # true from the step -StartAt names on (always without -StartAt)
+    # true from the step -StartAt names on (always without -StartAt), up to the step -StopAfter names
     if ($Name -eq $StartAt) { $script:started = $true }
-    if (-not $script:started) { Write-Host "skipping $Name" }
-    return $script:started
+    $run = $script:started -and -not $script:stopped
+    if ($Name -eq $StopAfter) { $script:stopped = $true }
+    if (-not $run) { Write-Host "skipping $Name" }
+    return $run
 }
 
 . .\scripts\testfunctions.ps1
+
+# logs of this check stay out of the repository (git-ignored)
+$LOG_DIR = Join-Path $LOG_DIR 'local'
+New-Item -ItemType Directory -Force $LOG_DIR | Out-Null
 
 # the installed bexhoma must have the #848 code
 python -c "import bexhoma.loading_checks" 2>$null
@@ -263,14 +275,16 @@ if (Test-Step 'B3') {
 ###########################################
 
 if (Test-Step 'C') {
-    # TPC-H PostgreSQL SF 2 on nvme: volume bexhoma-storage-postgresql-nvme-tpch-2, used by no other run
+    # TPC-H PostgreSQL SF 10 on nvme: volume bexhoma-storage-pg-nvme-tpch-10 (storage prefix pg),
+    # used by no other run; SF 10 so that the ingest lasts long enough to kill the SUT during it
+    $C_PVC = 'bexhoma-storage-pg-nvme-tpch-10'
     $C_ARGS = @(
       'tpch',
       '-dbms', 'PostgreSQL',
-      '-sf', '2',
+      '-sf', '10',
       '-nlp', '8',
       '-xii', '-xic', '-xis',
-      '-rst', $BEXHOMA_STORAGE_CLASS, '-rss', '20Gi',
+      '-rst', $BEXHOMA_STORAGE_CLASS, '-rss', '50Gi',
       '-ms', "$BEXHOMA_MS",
       '-rnn', $BEXHOMA_NODE_SUT, '-rnl', $BEXHOMA_NODE_LOAD, '-rnb', $BEXHOMA_NODE_BENCHMARK,
       '-ks', 'no'
@@ -287,19 +301,19 @@ if (Test-Step 'C') {
     # the experiment code from the log, so that only this run's SUT is killed
     $code = $null
     while (-not $code -and $job.State -eq 'Running') {
-        Start-Sleep -Seconds 10
+        Start-Sleep -Seconds 5
         if (Test-Path $log) {
             $m = Select-String -Path $log -Pattern 'has code (\d+)' | Select-Object -First 1
             if ($m) { $code = $m.Matches[0].Groups[1].Value }
         }
     }
-    # wait until its loader pods are ingesting, then kill the DBMS process of its SUT
+    # as soon as its loader containers ingest (pod phase Running: the generator init container
+    # is done), kill the DBMS process of its SUT
     $killed = $false
     while (-not $killed -and $job.State -eq 'Running') {
-        Start-Sleep -Seconds 10
+        Start-Sleep -Seconds 2
         $loaders = kubectl get pods -l "app=bexhoma,component=loading,experiment=$code" --field-selector=status.phase=Running -o name
         if ($loaders) {
-            Start-Sleep -Seconds 20
             $sut = kubectl get pods -l "app=bexhoma,component=sut,experiment=$code" -o name | Select-Object -First 1
             Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') killing the DBMS in $sut (experiment $code) during the ingest"
             kubectl exec $sut -c dbms -- bash -c "kill 1"
@@ -308,15 +322,19 @@ if (Test-Step 'C') {
     }
     Wait-Job $job | Out-Null
     Remove-Job $job
-    kubectl get pvc bexhoma-storage-postgresql-nvme-tpch-2 -L loaded,loading_failed
-    Write-Done "C1 SUT killed during the ingest (experiment $code; expected: aborted, tests failed, volume loaded=False)"
+    kubectl get pvc $C_PVC -L loaded,loading_failed
+    if (-not $killed) {
+        Write-Host "C1: the load of experiment $code ended before the SUT could be killed; C2 and C3 skipped"
+    } else {
+        Write-Done "C1 SUT killed during the ingest (experiment $code; expected: aborted, tests failed, volume loaded=False)"
 
-    #### C2 the same without -rsr: the unfinished volume is refused
-    & bexhoma @C_ARGS load 2>&1 | Out-File "$LOG_DIR\test_848_tpch_unfinished_volume_refused.log" -Encoding utf8
-    Write-Done "C2 unfinished volume (expected: refused, remove it (-rsr))"
+        #### C2 the same without -rsr: the unfinished volume is refused
+        & bexhoma @C_ARGS load 2>&1 | Out-File "$LOG_DIR\test_848_tpch_unfinished_volume_refused.log" -Encoding utf8
+        Write-Done "C2 unfinished volume (expected: refused, remove it (-rsr))"
 
-    #### C3 with -rsr: a clean load on a new volume
-    & bexhoma @C_ARGS -rsr load 2>&1 | Out-File "$LOG_DIR\test_848_tpch_reload_after_failure.log" -Encoding utf8
-    kubectl get pvc bexhoma-storage-postgresql-nvme-tpch-2 -L loaded,loading_failed
-    Write-Done "C3 reload with -rsr (expected: tests passed, volume loaded=True)"
+        #### C3 with -rsr: a clean load on a new volume
+        & bexhoma @C_ARGS -rsr load 2>&1 | Out-File "$LOG_DIR\test_848_tpch_reload_after_failure.log" -Encoding utf8
+        kubectl get pvc $C_PVC -L loaded,loading_failed
+        Write-Done "C3 reload with -rsr (expected: tests passed, volume loaded=True)"
+    }
 }
