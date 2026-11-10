@@ -224,6 +224,15 @@ class AbortedSummaryTest(unittest.TestCase):
             e.show_summary.assert_not_called()
             self.assertIn('No results: the experiment ended before its first result was written', out.getvalue())
             self.assertIn('TEST failed: Loading of PostgreSQL-1 failed', out.getvalue())
+            # the loader pods stored before the abort are judged as well
+            e.configurations = [SimpleNamespace(configuration='DBMS-1')]
+            with open(os.path.join(folder, 'bexhoma-loading-dbms-1-42-1-1-1-abcde.describe.log'), 'w') as file:
+                file.write(POD_FAILED)
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                e._show_summary_or_abort_note()
+            self.assertIn('TEST failed: Loader pods without errors (failed: DBMS-1: 1)', out.getvalue())
+            os.remove(os.path.join(folder, 'bexhoma-loading-dbms-1-42-1-1-1-abcde.describe.log'))
             # with the result files the full summary runs
             for name in ('queries.config', 'connections.config'):
                 with open(os.path.join(folder, name), 'w') as file:
