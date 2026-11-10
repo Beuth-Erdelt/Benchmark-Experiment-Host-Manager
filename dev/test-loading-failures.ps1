@@ -68,6 +68,8 @@ function Test-Step([string]$Name) {
 # logs of this check stay out of the repository (git-ignored)
 $LOG_DIR = Join-Path $LOG_DIR 'local'
 New-Item -ItemType Directory -Force $LOG_DIR | Out-Null
+# result folder of the experiments (benchmarker.resultfolder of cluster.config)
+$BEXHOMA_RESULTFOLDER = python -c "import ast; c = open('cluster.config', encoding='utf-8').read(); print(ast.literal_eval(c[c.index('{'):])['benchmarker']['resultfolder'])"
 
 # the installed bexhoma must have the #848 code
 python -c "import bexhoma.loading_checks" 2>$null
@@ -293,6 +295,8 @@ if (Test-Step 'C') {
     #### C1 kill the SUT container during the ingest
     $log = "$LOG_DIR\test_848_tpch_sut_killed_during_ingest.log"
     $logAbsolute = Join-Path (Resolve-Path $LOG_DIR).Path 'test_848_tpch_sut_killed_during_ingest.log'
+    # the code must come from this run's log, not from the log of an earlier pass
+    Remove-Item $log -ErrorAction SilentlyContinue
     $job = Start-Job -ScriptBlock {
         param($dir, $arguments, $logfile)
         Set-Location $dir
@@ -315,16 +319,24 @@ if (Test-Step 'C') {
         $loaders = kubectl get pods -l "app=bexhoma,component=loading,experiment=$code" --field-selector=status.phase=Running -o name
         if ($loaders) {
             $sut = kubectl get pods -l "app=bexhoma,component=sut,experiment=$code" -o name | Select-Object -First 1
-            Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') killing the DBMS in $sut (experiment $code) during the ingest"
-            kubectl exec $sut -c dbms -- bash -c "kill 1"
+            Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') stopping the DBMS in $sut (experiment $code) immediately during the ingest"
+            # a signal to PID 1 only asks for a smart shutdown (waits for the sessions);
+            # an immediate stop ends the server like a crash, so the container restarts
+            kubectl exec $sut -c dbms -- bash -c 'gosu postgres pg_ctl -D $PGDATA stop -m immediate'
             $killed = $true
         }
     }
     Wait-Job $job | Out-Null
     Remove-Job $job
     kubectl get pvc $C_PVC -L loaded,loading_failed
+    $restarts = $null
+    $restartsFile = Get-ChildItem "$BEXHOMA_RESULTFOLDER\$code" -Filter 'bexhoma-sut-*-restarts.json' -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($restartsFile) { $restarts = (Get-Content $restartsFile.FullName -Raw) }
+    Write-Host "C1: SUT restarts of experiment $code`: $restarts"
     if (-not $killed) {
-        Write-Host "C1: the load of experiment $code ended before the SUT could be killed; C2 and C3 skipped"
+        Write-Host "C1: the load of experiment $code ended before the SUT could be stopped; C2 and C3 skipped"
+    } elseif ($restarts -and $restarts -notmatch '"dbms": [1-9]') {
+        Write-Host "C1: the SUT of experiment $code did not restart, the stop had no effect; C2 and C3 skipped"
     } else {
         Write-Done "C1 SUT killed during the ingest (experiment $code; expected: aborted, tests failed, volume loaded=False)"
 
