@@ -2844,6 +2844,10 @@ class ExperimentBase():
                                     config.loader.start_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
                                 else:
                                     config.loader.start_exec()
+                # a load that ended before it ran (start_exec: refused -xld, failed upload) counts
+                # as finished, so abort here, before a benchmark starts against an empty database
+                if config.loading_failed_fatal and self._abort_loading_if_needed(config, datetime.utcnow()):
+                    return
                 _has_benchmarks = (
                     (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
                     or len(config.benchmark_list) > 0
