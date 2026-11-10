@@ -16,7 +16,14 @@ See LICENSE for details.
 """
 from __future__ import annotations
 
+import copy
+import os
+
+from bexhoma.system_descriptors import load_dockers
+
 __all__ = ["StubCluster"]
+
+_MAIN_CONFIG = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'k8s-cluster.config')
 
 
 class StubCluster:
@@ -54,12 +61,20 @@ class StubCluster:
                     'Index_and_Statistics': [],
                     'Constraints_and_Statistics': [],
                     'Index_and_Constraints_and_Statistics': [],
+                    'Schema_tenant': [],
+                    'Index_and_Constraints_and_Statistics_tenant': [],
                 },
             },
         }
-        self.dockers = {dbms: {} for dbms in (
-            'PostgreSQL', 'PgDuckDB', 'MonetDB', 'MariaDB', 'MariaDBCS', 'MySQL', 'CedarDB',
-        )}
+        # the real per-benchmark descriptors, nothing else of the DBMS entries
+        self.dockers = {name: {key: copy.deepcopy(value) for key, value in docker.items()
+                               if key in ('benchmarks', 'base_system', 'storage_prefix', 'workers',
+                                         'sut_attributes')}
+                        for name, docker in load_dockers(_MAIN_CONFIG).items()}
+        for name, docker in load_dockers(_MAIN_CONFIG).items():
+            template = {key: docker['template'][key] for key in ('alias', 'dialect') if (docker.get('template') or {}).get(key)}
+            if template:
+                self.dockers[name]['template'] = template
 
     def set_code(self, code) -> None:
         """Mirror ``Kubernetes.set_code`` without the ``experiments.config`` file check."""

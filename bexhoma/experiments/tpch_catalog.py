@@ -19,6 +19,7 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from bexhoma import spec
+from bexhoma import system_descriptors as descriptors
 from bexhoma.benchmarks.tpch import resolve_indexing_key
 from bexhoma.cli_args import format_metric_overrides, format_storage_types
 from bexhoma.spec import ResolvedSystem, SpecError
@@ -31,6 +32,7 @@ __all__ = [
     "append_resource_flags",
     "append_ddl_flags",
     "build_tpch_argv",
+    "option_flags",
 ]
 
 #: Divisor to format a byte count as whole megabytes for a PostgreSQL memory GUC.
@@ -39,10 +41,23 @@ _BYTES_PER_MEGABYTE = 1024 ** 2
 _DEFAULT_MODE = "run"
 _STORAGE_FORMAT_COLUMNAR = "columnar"
 
-#: An env-var knob that is a first-class tpch.py flag; every other env-var
-#: knob becomes ``--set ...container[dbms].env.NAME=VALUE``.
-_DUCKDB_FORCE_EXECUTION_ENV_VAR = "DUCKDB_FORCE_EXECUTION"
-_DUCKDB_FORCE_EXECUTION_FLAG = "-xdfe"
+def option_flags(system: str) -> dict:
+    """The env-var knobs of a system that are boolean options of ``tpch.py``, with their flags.
+
+    The DBMS's ``option_parameters`` in ``dockers.<system>.benchmarks.tpch`` of the cluster
+    configuration map an environment variable of the SUT to the option that sets it
+    (e.g. PgDuckDB's ``DUCKDB_FORCE_EXECUTION`` to ``duckdb_force_execution``). Such a knob
+    is passed as the option, so the run also knows it (workload info, evaluation); every
+    other env-var knob becomes ``--set ...container[dbms].env.NAME=VALUE``. The flag is the
+    long form of the option, ``--x`` and its name with dashes, as every script option is named.
+
+    :param system: Name of the system, a key of ``dockers``.
+    :return: Environment variable -> flag, empty when the system declares none.
+    :rtype: dict
+    """
+    entry = ((descriptors.load_dockers().get(system) or {}).get('benchmarks') or {}).get('tpch') or {}
+    return {env_var: '--x' + option.replace('_', '-')
+            for env_var, option in (entry.get('option_parameters') or {}).items()}
 
 
 def _env_set_arg(resolved: Any, scope: str, knob: Any) -> str:
@@ -386,6 +401,7 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
 
     for system_spec, resolved, configuration_name in resolved_cells:
         scope = f"@{configuration_name}" if configuration_name else ""
+        flags = option_flags(resolved.name)
         for knob in resolved.knobs.values():
             if knob.arg_style in spec.ARG_STYLES_VIA_SET:
                 argv.extend([
@@ -393,9 +409,10 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
                     f"deployment[{resolved.deployment}]{scope}.container[dbms].{knob.name}={knob.value}",
                 ])
             elif knob.arg_style == spec.ARG_STYLE_ENV_VAR:
-                if knob.env_var == _DUCKDB_FORCE_EXECUTION_ENV_VAR:
+                if knob.env_var in flags:
+                    # a boolean option of tpch.py: set when the knob is true
                     if knob.value:
-                        argv.append(_DUCKDB_FORCE_EXECUTION_FLAG)
+                        argv.append(flags[knob.env_var])
                 else:
                     argv.extend(["--set", _env_set_arg(resolved, scope, knob)])
             else:

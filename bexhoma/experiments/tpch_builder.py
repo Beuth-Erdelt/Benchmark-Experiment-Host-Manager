@@ -24,7 +24,9 @@ from pathlib import Path
 
 from bexhoma import clusters, configurations, experiments
 from bexhoma.cli_args import resolve_scaling_factor
-from bexhoma.experiments.tpch import DBMS_DEFAULTS, DEFAULT_REFRESH_TEMPLATE, TpchExperiment
+from bexhoma.experiments.tpch import TpchExperiment
+from bexhoma.experiments.system_builder import set_loading_template
+from bexhoma.system_descriptors import base_system, benchmark_entry, refresh_template, storage_prefix
 
 __all__ = ["build_experiment"]
 
@@ -120,38 +122,41 @@ def _build_prepare_testbed_parameter(spec: dict, tpch_module) -> dict:
     return parameter
 
 
-def _configure_system(experiment: TpchExperiment, system: dict, duckdb_force_execution_default: bool) -> None:
+def _configure_system(experiment: TpchExperiment, system: dict, tpch_cfg: dict) -> None:
     """
     Build and attach one :class:`~bexhoma.configurations.base.SutConfiguration`
     for one ``systems:`` entry, mirroring the setter sequence ``tpch.py``'s own
-    per-DBMS branches call.
+    per-DBMS branches call. Everything specific to the DBMS comes from its
+    ``tpch`` entry in the ``dockers:`` section of the cluster configuration
+    (:mod:`bexhoma.system_descriptors`).
 
     Phase 1 limitation: builds exactly one configuration per system (the
     single-cell path); resource sweeps and multiple parallel loading cells,
     like ``tpch.py``'s own ``-rr``/``-lr``/``-nlp``/``-xnls`` comma-list
-    sweeps, are follow-up work, same scoping as ``DBMS_DEFAULTS`` excluding
-    ``Citus``/container-tenancy.
+    sweeps, are follow-up work, same scoping as ``experiment_yaml`` excluding
+    the DBMS with workers or container-tenancy.
 
     :param experiment: The experiment these DBMS configurations are attached to.
     :param system: One entry of ``spec['systems']``.
-    :param duckdb_force_execution_default: Top-level ``tpch.duckdb_force_execution``
-        fallback, used for ``PgDuckDB`` systems that don't set their own
-        ``sut_parameters.DUCKDB_FORCE_EXECUTION`` override.
-    :raises KeyError: When ``system['dbms']`` is not a key of
-        :data:`~bexhoma.experiments.tpch.DBMS_DEFAULTS` (caught earlier by
+    :param tpch_cfg: The ``tpch:`` block of the spec; the options that a DBMS entry's
+        ``option_parameters`` name are read from it, unless the system sets the
+        environment variable itself in its ``sut_parameters``.
+    :raises IncompatibleBenchmark: When ``system['dbms']`` has no ``tpch`` entry in the cluster
+        configuration (caught earlier by
         :func:`bexhoma.experiments.tpch_loader.validate_experiment_yaml`).
     """
     dbms = system['dbms']
-    defaults = DBMS_DEFAULTS[dbms]
+    dockers = experiment.cluster.dockers
+    entry = benchmark_entry(dockers, dbms, 'tpch')
     configuration_name = system.get('configuration', '') or ''
-    alias = system.get('alias') or dbms
+    alias = system.get('alias')   # none: the DBMS's own alias of the cluster configuration
 
     config = configurations.default(
-        experiment=experiment, docker=defaults['docker'], dialect=defaults['dialect'],
+        experiment=experiment, docker=dbms,
         configuration=configuration_name, alias=alias,
     )
-    if 'path_experiment_docker' in defaults:
-        config.path_experiment_docker = defaults['path_experiment_docker']
+    if base_system(dockers, dbms) != dbms:
+        config.path_experiment_docker = base_system(dockers, dbms)
 
     resources = system.get('resources', {}) or {}
     cpu = resources.get('cpu', {}) or {}
@@ -162,7 +167,7 @@ def _configure_system(experiment: TpchExperiment, system: dict, duckdb_force_exe
     )
 
     storage_cfg = system.get('storage', {}) or {}
-    storage_kwargs = {'storageConfiguration': configuration_name or defaults['storage_prefix']}
+    storage_kwargs = {'storageConfiguration': configuration_name or storage_prefix(dockers, dbms)}
     if storage_cfg.get('class'):
         storage_kwargs['storageClassName'] = storage_cfg['class']
     if storage_cfg.get('size'):
@@ -175,15 +180,17 @@ def _configure_system(experiment: TpchExperiment, system: dict, duckdb_force_exe
     loading_cfg = system.get('loading', {}) or {}
     loading_pods_total = int(loading_cfg.get('pods', 1))
     loading_pods_split = int(loading_cfg.get('split', 1))
-    if dbms == 'MariaDBCS' and (loading_pods_total != 1 or loading_pods_split != 1):
-        # concurrent LOAD DATA into a ColumnStore table fails with error 1030 and the loader goes on,
-        # so rows would be missing; same as the single loader pod of tpch.py
-        print('MariaDBCS: loads with 1 pod, ignoring loading.pods=%d, loading.split=%d' % (loading_pods_total, loading_pods_split))
-        loading_pods_total = 1
-        loading_pods_split = 1
+    max_pods = entry.get('max_loading_pods')
+    if max_pods is not None and (loading_pods_total > max_pods or loading_pods_split > max_pods):
+        # e.g. concurrent LOAD DATA into a ColumnStore table fails and the loader goes on, so rows
+        # would be missing: the DBMS tolerates one loader pod only
+        print('%s: loads with %d pod, ignoring loading.pods=%d, loading.split=%d' % (
+            dbms, max_pods, loading_pods_total, loading_pods_split))
+        loading_pods_total = min(loading_pods_total, max_pods)
+        loading_pods_split = min(loading_pods_split, max_pods)
     split_portion = loading_pods_total // loading_pods_split
 
-    config.jobtemplate_loading = defaults['jobtemplate_loading']
+    set_loading_template(config, entry, dbms, 'tpch')
     config.set_loading_parameters(
         PODS_TOTAL=str(loading_pods_total),
         PODS_PARALLEL=str(split_portion),
@@ -193,11 +200,11 @@ def _configure_system(experiment: TpchExperiment, system: dict, duckdb_force_exe
     config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
 
     sut_parameters = dict(system.get('sut_parameters') or {})
-    if dbms == 'PgDuckDB' and 'DUCKDB_FORCE_EXECUTION' not in sut_parameters:
-        sut_parameters['DUCKDB_FORCE_EXECUTION'] = str(duckdb_force_execution_default).lower()
-    if dbms in ('MariaDB', 'MariaDBCS'):
-        # the loader and the schema scripts address tables as tpch.<table>
-        sut_parameters.setdefault('MARIADB_DATABASE', 'tpch')
+    for env_name, option in (entry.get('option_parameters') or {}).items():
+        if env_name not in sut_parameters:
+            sut_parameters[env_name] = str(tpch_cfg.get(option, False)).lower()
+    for env_name, value in (entry.get('sut_parameters') or {}).items():
+        sut_parameters.setdefault(env_name, value)
     if sut_parameters:
         config.set_sut_parameters(**sut_parameters)
 
@@ -288,17 +295,15 @@ def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
             TPCH_REFRESH_STREAM_OFFSET=tpch_cfg.get('refresh_stream_offset', 0),
             TRANSFORM_RAW_DATA=1, STORE_RAW_DATA=1,
         )
-        first_dbms = spec['systems'][0]['dbms']
         experiment.enable_refresh_stream(
-            template=DBMS_DEFAULTS[first_dbms].get('refresh_template', DEFAULT_REFRESH_TEMPLATE)
+            template=refresh_template(cluster.dockers, [system['dbms'] for system in spec['systems']], 'tpch')
         )
 
     parameter = _build_prepare_testbed_parameter(spec, tpch_module)
     experiment.prepare_testbed(parameter)
 
-    duckdb_force_execution_default = tpch_cfg.get('duckdb_force_execution', False)
     for system in spec['systems']:
-        _configure_system(experiment, system, duckdb_force_execution_default)
+        _configure_system(experiment, system, tpch_cfg)
 
     rounds = spec.get('rounds', [1])
     experiment.add_benchmark_list(rounds)

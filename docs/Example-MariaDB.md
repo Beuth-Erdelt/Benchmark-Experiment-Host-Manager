@@ -2930,72 +2930,94 @@ bexhoma hammerdb \
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 885s 
-* Code: 1780052904
+* Duration: 826s 
+* Code: 1794139955
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
-  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-  * Experiment uses bexhoma version 0.9.9.
+  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Ramp-up period is 2 minutes before measurements begin.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.13.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 1 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 50Gi.
   * Loading is tested with [8] threads, split into [1] pods.
   * Benchmarking is tested with [16] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mariadb', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size', 'target': 'container'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MariaDB-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:59776
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+* mariadb-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:807007
+  * datadisk:1674
+  * volume_size:1.8T
+  * volume_used:789G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780052904
+    * code:1794139955
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1794139955-76b5d4969f-jlcg7: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MariaDB-1 - Pods [[1]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: hammerdb (1 pods)
 
 #### Planned
 
-* DBMS MariaDB-1 - Pods [[1]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: hammerdb (1 pods)
 
 ### Loading
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:---------|:---------------|--------------:|:--------------|--------------------:|
-| MariaDB-1-1 |                1 |   16 |      190.00 |           1.00 |            0.00 |         80.00 |          109.00 |              1 |           8 |          | None           |             0 | False         |              303.16 |
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MariaDB-1-1 |                1 |   16 |       58.00 |           3.00 |            0.00 |         51.00 |            4.00 |              1 |           8 |             | None           |             0 | False         |              993.10 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS            |   experiment_run |   vusers |   client |   child |   NOPM |    TPM |   efficiency |   duration |   errors |
-|:----------------|-----------------:|---------:|---------:|--------:|-------:|-------:|-------------:|-----------:|---------:|
-| MariaDB-1-1-1-1 |                1 |       16 |        1 |       1 |  63390 | 147366 |         0.00 |          5 |        0 |
+| DBMS              | phase         | job             |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |
+|:------------------|:--------------|:----------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 165001 | 383789 |         0.00 |          5 |        0 |
 
 #### Per Phase
 
-| DBMS          |   experiment_run |   vusers |   client |   pod_count |   efficiency |     NOPM |       TPM |   duration |   errors |
-|:--------------|-----------------:|---------:|---------:|------------:|-------------:|---------:|----------:|-----------:|---------:|
-| MariaDB-1-1-1 |             1.00 |    16.00 |     1.00 |        1.00 |         0.00 | 63390.00 | 147366.00 |       5.00 |     0.00 |
+| DBMS          | phase         |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   efficiency |      NOPM |       TPM |   duration |   errors |
+|:--------------|:--------------|-----------------:|---------:|---------:|----------------:|------------:|-------------:|----------:|----------:|-----------:|---------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |       16 |        1 |               1 |           1 |         0.00 | 165001.00 | 383789.00 |          5 |        0 |
 
 ### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: NOPM contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey))
 * TEST passed: Workflow as planned
 ```
 
@@ -3034,106 +3056,135 @@ bexhoma hammerdb \
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 1155s 
-* Code: 1780053795
+* Duration: 881s 
+* Code: 1794140798
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
-  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes.
-  * Experiment uses bexhoma version 0.9.9.
+  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Ramp-up period is 2 minutes before measurements begin.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.13.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 1 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 30Gi. Persistent storage is removed at experiment start.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi. Persistent storage is removed at experiment start.
   * Loading is tested with [8] threads, split into [1] pods.
   * Benchmarking is tested with [16] threads, split into [1] pods.
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mariadb', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size', 'target': 'container'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MariaDB-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
-  * volume_size:30G
+* mariadb-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:805272
+  * datadisk:1694
+  * volume_size:49G
   * volume_used:1.7G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1780053795
+    * code:1794140798
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1794140798-6869c8fc94-9lknz: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MariaDB-1 - Pods [[1]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: hammerdb (1 pods)
 
 #### Planned
 
-* DBMS MariaDB-1 - Pods [[1]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: hammerdb (1 pods)
 
 ### Loading
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:---------|:---------------|--------------:|:--------------|--------------------:|
-| MariaDB-1-1 |                1 |   16 |      700.00 |           1.00 |            0.00 |        335.00 |          364.00 |              1 |           8 |          | None           |             0 | False         |               82.29 |
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MariaDB-1-1 |                1 |   16 |       75.00 |           5.00 |            0.00 |         65.00 |            5.00 |              1 |           8 |             | None           |             0 | False         |              768.00 | False               |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS            |   experiment_run |   vusers |   client |   child |   NOPM |   TPM |   efficiency |   duration |   errors |
-|:----------------|-----------------:|---------:|---------:|--------:|-------:|------:|-------------:|-----------:|---------:|
-| MariaDB-1-1-1-1 |                1 |       16 |        1 |       1 |   9805 | 22794 |         0.00 |          5 |        0 |
+| DBMS              | phase         | job             |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |
+|:------------------|:--------------|:----------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |       16 |        1 |               1 |       1 |  99225 | 230446 |         0.00 |          5 |        0 |
 
 #### Per Phase
 
-| DBMS          |   experiment_run |   vusers |   client |   pod_count |   efficiency |    NOPM |      TPM |   duration |   errors |
-|:--------------|-----------------:|---------:|---------:|------------:|-------------:|--------:|---------:|-----------:|---------:|
-| MariaDB-1-1-1 |             1.00 |    16.00 |     1.00 |        1.00 |         0.00 | 9805.00 | 22794.00 |       5.00 |     0.00 |
+| DBMS          | phase         |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   efficiency |     NOPM |       TPM |   duration |   errors |
+|:--------------|:--------------|-----------------:|---------:|---------:|----------------:|------------:|-------------:|---------:|----------:|-----------:|---------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |       16 |        1 |               1 |           1 |         0.00 | 99225.00 | 230446.00 |          5 |        0 |
 
 ### Monitoring
 
 ### Loading phase: SUT deployment
 
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1 |       845.08 |      3.35 |           7.06 |                  7.16 |
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 |        92.37 |      1.64 |           2.56 |                  2.57 |
 
 ### Loading phase: component loader
 
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1 |       271.99 |      1.16 |           0.10 |                  0.10 |
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 |       239.84 |      5.02 |           0.10 |                  0.10 |
 
-### Execution phase: SUT deployment
+### Benchmarking phase: SUT deployment
 
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1 |       947.62 |      3.68 |           7.16 |                  7.26 |
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 |      1717.30 |      4.53 |           3.30 |                  3.31 |
 
-### Execution phase: component benchmarker
+### Benchmarking phase: component benchmarker
 
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1 |        40.35 |      0.15 |           0.07 |                  0.07 |
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 |       657.08 |      1.68 |           0.08 |                  0.08 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-loading.log, expected: series exists only while non-zero)
 
 ### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: NOPM contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey))
 * TEST passed: Workflow as planned
 ```
 
@@ -3174,236 +3225,337 @@ bexhoma hammerdb \
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: tpcc
-* Duration: 3224s 
-* Code: 1780054976
+* Duration: 2808s 
+* Code: 1794141725
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
-  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes.
-  * Experiment uses bexhoma version 0.9.9.
+  * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes. Ramp-up period is 2 minutes before measurements begin.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.13.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 1 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
-  * SUT is fixed to cl-worker3.
-  * Database is persisted to disk of type shared and size 30Gi.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database is persisted to disk of type nvme and size 50Gi.
   * Loading is tested with [8] threads, split into [1] pods.
   * Benchmarking is tested with [16] threads, split into [1, 2] pods.
   * Benchmarking is run as [1, 2] times the number of benchmarking pods.
   * Experiment is run 2 times.
+  * Maximum DBMS across the whole cluster is 10.
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mariadb', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size', 'target': 'container'}, '32G')].
+  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
-* MariaDB-1-1-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
-  * volume_size:30G
-  * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+* mariadb-1-1-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:805270
+  * datadisk:2417
+  * volume_size:49G
+  * volume_used:2.4G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780054976
-* MariaDB-1-1-2 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
-  * volume_size:30G
-  * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1794141725
+* mariadb-1-1-2-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:805272
+  * datadisk:2876
+  * volume_size:49G
+  * volume_used:2.9G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780054976
-* MariaDB-1-1-3 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
-  * volume_size:30G
-  * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1794141725
+* mariadb-1-1-3-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:805275
+  * datadisk:3491
+  * volume_size:49G
+  * volume_used:3.5G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780054976
-* MariaDB-1-1-4 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
-  * volume_size:30G
-  * volume_used:1.8G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1794141725
+* mariadb-1-1-4-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:805277
+  * datadisk:3944
+  * volume_size:49G
+  * volume_used:3.9G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780054976
-* MariaDB-1-2-1 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
-  * volume_size:30G
-  * volume_used:1.9G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1794141725
+* mariadb-1-2-1-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:805280
+  * datadisk:4520
+  * volume_size:49G
+  * volume_used:4.5G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780054976
-* MariaDB-1-2-2 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
-  * volume_size:30G
-  * volume_used:1.9G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1794141725
+* mariadb-1-2-2-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:805099
+  * datadisk:4957
+  * volume_size:49G
+  * volume_used:4.9G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780054976
-* MariaDB-1-2-3 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
-  * volume_size:30G
-  * volume_used:1.9G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1794141725
+* mariadb-1-2-3-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:805450
+  * datadisk:5527
+  * volume_size:49G
+  * volume_used:5.4G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780054976
-* MariaDB-1-2-4 uses docker image mariadb:11.4.7
-  * RAM:541006622720
-  * CPU:AMD Opteron(tm) Processor 6378
-  * Cores:64
-  * host:6.8.0-111-generic
-  * node:cl-worker3
-  * disk:58089
-  * volume_size:30G
-  * volume_used:1.9G
-  * cpu_list:0-63
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=256G', '--innodb-buffer-pool-chunk-size=2G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--innodb-flush-log-at-trx-commit=2', '--sync-binlog=0', '--tmp-table-size=1G', '--max-heap-table-size=1G', '--innodb-doublewrite=0']
+    * code:1794141725
+* mariadb-1-2-4-1 uses docker image mariadb:12.3.3
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:805501
+  * datadisk:5920
+  * volume_size:49G
+  * volume_used:5.8G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
-  * requests_memory:16Gi
+  * requests_memory:64Gi
+  * limits_memory:64Gi
+  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1780054976
+    * code:1794141725
+
+### Reused Storage
+* loading skipped, loading times inherited from an earlier experiment: MariaDB-1
+
+### Data Parameters of Reused Volumes
+* MariaDB-1: loading values of the volume: script=Schema, indexing=Checks
+
+### SUT Container Restarts
+* bexhoma-sut-mariadb-1-1794141725-6f59c979cd-6wkf9: 0
+* bexhoma-sut-mariadb-1-1794141725-5dccfc64c5-v468k: 0
 
 ### Workflow
 
 #### Actual
 
-* DBMS MariaDB-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: hammerdb (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: hammerdb (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 3: hammerdb (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 4: hammerdb (4 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: hammerdb (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 2: hammerdb (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 3: hammerdb (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 4: hammerdb (4 pods)
 
 #### Planned
 
-* DBMS MariaDB-1 - Pods [[1, 2, 2, 4], [1, 2, 2, 4]]
+* DBMS MariaDB-1 - Experiment 1 Client 1: hammerdb (1 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 2: hammerdb (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 3: hammerdb (2 pods)
+* DBMS MariaDB-1 - Experiment 1 Client 4: hammerdb (4 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 1: hammerdb (1 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 2: hammerdb (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 3: hammerdb (2 pods)
+* DBMS MariaDB-1 - Experiment 2 Client 4: hammerdb (4 pods)
 
 ### Loading
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:---------|:---------------|--------------:|:--------------|--------------------:|
-| MariaDB-1-1 |                1 |   16 |      700.00 |           1.00 |            0.00 |        335.00 |          364.00 |              0 |           8 |          | None           |             0 | False         |               82.29 |
-| MariaDB-1-2 |                2 |   16 |      700.00 |           1.00 |            0.00 |        335.00 |          364.00 |              0 |           8 |          | None           |             0 | False         |               82.29 |
+|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MariaDB-1-1 |                1 |   16 |       75.00 |           5.00 |            0.00 |         65.00 |            5.00 |              0 |           8 |             | None           |             0 | False         |              768.00 | True                |
+| MariaDB-1-2 |                2 |   16 |       75.00 |           5.00 |            0.00 |         65.00 |            5.00 |              0 |           8 |             | None           |             0 | False         |              768.00 | True                |
 
-### Execution
+### Benchmarking
 
 #### Per Connection
 
-| DBMS            |   experiment_run |   vusers |   client |   child |   NOPM |   TPM |   efficiency |   duration |   errors |
-|:----------------|-----------------:|---------:|---------:|--------:|-------:|------:|-------------:|-----------:|---------:|
-| MariaDB-1-1-1-1 |                1 |       16 |        1 |       1 |  12123 | 28299 |         0.00 |          2 |        0 |
-| MariaDB-1-1-2-1 |                1 |       16 |        2 |       1 |   9914 | 22893 |         0.00 |          2 |        0 |
-| MariaDB-1-1-2-1 |                1 |       16 |        2 |       1 |  10146 | 23427 |         0.00 |          2 |        0 |
-| MariaDB-1-1-3-1 |                1 |        8 |        3 |       1 |   7436 | 17246 |         0.00 |          2 |        0 |
-| MariaDB-1-1-3-1 |                1 |        8 |        3 |       1 |   7440 | 17252 |         0.00 |          2 |        0 |
-| MariaDB-1-1-4-1 |                1 |        8 |        4 |       1 |   6528 | 15148 |         0.00 |          2 |        0 |
-| MariaDB-1-1-4-1 |                1 |        8 |        4 |       1 |   6591 | 15283 |         0.00 |          2 |        0 |
-| MariaDB-1-1-4-1 |                1 |        8 |        4 |       1 |   6535 | 15169 |         0.00 |          2 |        0 |
-| MariaDB-1-1-4-1 |                1 |        8 |        4 |       1 |   6560 | 15217 |         0.00 |          2 |        0 |
-| MariaDB-1-2-1-1 |                2 |       16 |        1 |       1 |   9101 | 21227 |         0.00 |          2 |        0 |
-| MariaDB-1-2-2-1 |                2 |       16 |        2 |       1 |   9011 | 20796 |         0.00 |          2 |        0 |
-| MariaDB-1-2-2-1 |                2 |       16 |        2 |       1 |   9077 | 20938 |         0.00 |          2 |        0 |
-| MariaDB-1-2-3-1 |                2 |        8 |        3 |       1 |   8350 | 19461 |         0.00 |          2 |        0 |
-| MariaDB-1-2-3-1 |                2 |        8 |        3 |       1 |   8295 | 19358 |         0.00 |          2 |        0 |
-| MariaDB-1-2-4-1 |                2 |        8 |        4 |       1 |   8527 | 19937 |         0.00 |          2 |        0 |
-| MariaDB-1-2-4-1 |                2 |        8 |        4 |       1 |   8431 | 19717 |         0.00 |          2 |        0 |
-| MariaDB-1-2-4-1 |                2 |        8 |        4 |       1 |   8498 | 19865 |         0.00 |          2 |        0 |
-| MariaDB-1-2-4-1 |                2 |        8 |        4 |       1 |   8431 | 19717 |         0.00 |          2 |        0 |
+| DBMS              | phase         | job             |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |
+|:------------------|:--------------|:----------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 113682 | 264347 |         0.00 |          2 |        0 |
+| mariadb-1-1-2-1-1 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |       16 |        2 |               1 |       1 | 151453 | 352201 |         0.00 |          2 |        0 |
+| mariadb-1-1-2-1-2 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |       16 |        2 |               1 |       2 | 151446 | 352161 |         0.00 |          2 |        0 |
+| mariadb-1-1-3-1-1 | mariadb-1-1-3 | mariadb-1-1-3-1 |                1 |        8 |        3 |               1 |       1 | 110665 | 256934 |         0.00 |          2 |        0 |
+| mariadb-1-1-3-1-2 | mariadb-1-1-3 | mariadb-1-1-3-1 |                1 |        8 |        3 |               1 |       2 | 110701 | 257077 |         0.00 |          2 |        0 |
+| mariadb-1-1-4-1-1 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        8 |        4 |               1 |       1 | 141212 | 327672 |         0.00 |          2 |        0 |
+| mariadb-1-1-4-1-2 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        8 |        4 |               1 |       2 | 141272 | 327803 |         0.00 |          2 |        0 |
+| mariadb-1-1-4-1-3 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        8 |        4 |               1 |       3 | 141356 | 327980 |         0.00 |          2 |        0 |
+| mariadb-1-1-4-1-4 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        8 |        4 |               1 |       4 | 141259 | 327792 |         0.00 |          2 |        0 |
+| mariadb-1-2-1-1-1 | mariadb-1-2-1 | mariadb-1-2-1-1 |                2 |       16 |        1 |               1 |       1 | 106493 | 247611 |         0.00 |          2 |        0 |
+| mariadb-1-2-2-1-1 | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |       16 |        2 |               1 |       1 | 142715 | 331550 |         0.00 |          2 |        0 |
+| mariadb-1-2-2-1-2 | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |       16 |        2 |               1 |       2 | 142765 | 331663 |         0.00 |          2 |        0 |
+| mariadb-1-2-3-1-1 | mariadb-1-2-3 | mariadb-1-2-3-1 |                2 |        8 |        3 |               1 |       1 |  97647 | 226790 |         0.00 |          2 |        0 |
+| mariadb-1-2-3-1-2 | mariadb-1-2-3 | mariadb-1-2-3-1 |                2 |        8 |        3 |               1 |       2 |  97463 | 226348 |         0.00 |          2 |        0 |
+| mariadb-1-2-4-1-1 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        8 |        4 |               1 |       1 | 145887 | 338205 |         0.00 |          2 |        0 |
+| mariadb-1-2-4-1-2 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        8 |        4 |               1 |       2 | 145894 | 338265 |         0.00 |          2 |        0 |
+| mariadb-1-2-4-1-3 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        8 |        4 |               1 |       3 | 145934 | 338335 |         0.00 |          2 |        0 |
+| mariadb-1-2-4-1-4 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        8 |        4 |               1 |       4 | 145907 | 338220 |         0.00 |          2 |        0 |
 
 #### Per Phase
 
-| DBMS          |   experiment_run |   vusers |   client |   pod_count |   efficiency |     NOPM |      TPM |   duration |   errors |
-|:--------------|-----------------:|---------:|---------:|------------:|-------------:|---------:|---------:|-----------:|---------:|
-| MariaDB-1-1-1 |             1.00 |    16.00 |     1.00 |        1.00 |         0.00 | 12123.00 | 28299.00 |       2.00 |     0.00 |
-| MariaDB-1-1-2 |             1.00 |    32.00 |     2.00 |        2.00 |         0.00 | 10030.00 | 23160.00 |       2.00 |     0.00 |
-| MariaDB-1-1-3 |             1.00 |    16.00 |     3.00 |        2.00 |         0.00 |  7438.00 | 17249.00 |       2.00 |     0.00 |
-| MariaDB-1-1-4 |             1.00 |    32.00 |     4.00 |        4.00 |         0.00 |  6553.50 | 15204.25 |       2.00 |     0.00 |
-| MariaDB-1-2-1 |             2.00 |    16.00 |     1.00 |        1.00 |         0.00 |  9101.00 | 21227.00 |       2.00 |     0.00 |
-| MariaDB-1-2-2 |             2.00 |    32.00 |     2.00 |        2.00 |         0.00 |  9044.00 | 20867.00 |       2.00 |     0.00 |
-| MariaDB-1-2-3 |             2.00 |    16.00 |     3.00 |        2.00 |         0.00 |  8322.50 | 19409.50 |       2.00 |     0.00 |
-| MariaDB-1-2-4 |             2.00 |    32.00 |     4.00 |        4.00 |         0.00 |  8471.75 | 19809.00 |       2.00 |     0.00 |
+| DBMS          | phase         |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   efficiency |      NOPM |       TPM |   duration |   errors |
+|:--------------|:--------------|-----------------:|---------:|---------:|----------------:|------------:|-------------:|----------:|----------:|-----------:|---------:|
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |       16 |        1 |               1 |           1 |         0.00 | 113682.00 | 264347.00 |          2 |        0 |
+| mariadb-1-1-2 | mariadb-1-1-2 |                1 |       32 |        2 |               1 |           2 |         0.00 | 151449.50 | 352181.00 |          2 |        0 |
+| mariadb-1-1-3 | mariadb-1-1-3 |                1 |       16 |        3 |               1 |           2 |         0.00 | 110683.00 | 257005.50 |          2 |        0 |
+| mariadb-1-1-4 | mariadb-1-1-4 |                1 |       32 |        4 |               1 |           4 |         0.00 | 141274.75 | 327811.75 |          2 |        0 |
+| mariadb-1-2-1 | mariadb-1-2-1 |                2 |       16 |        1 |               1 |           1 |         0.00 | 106493.00 | 247611.00 |          2 |        0 |
+| mariadb-1-2-2 | mariadb-1-2-2 |                2 |       32 |        2 |               1 |           2 |         0.00 | 142740.00 | 331606.50 |          2 |        0 |
+| mariadb-1-2-3 | mariadb-1-2-3 |                2 |       16 |        3 |               1 |           2 |         0.00 |  97555.00 | 226569.00 |          2 |        0 |
+| mariadb-1-2-4 | mariadb-1-2-4 |                2 |       32 |        4 |               1 |           4 |         0.00 | 145905.50 | 338256.25 |          2 |        0 |
 
 ### Monitoring
 
-### Execution phase: SUT deployment
+### Benchmarking phase: SUT deployment
 
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1 |       585.20 |      2.97 |           6.84 |                  6.94 |
-| MariaDB-1-1-2 |       871.45 |      6.59 |           6.95 |                  7.05 |
-| MariaDB-1-1-3 |       506.27 |      4.93 |           6.98 |                  7.08 |
-| MariaDB-1-1-4 |       940.30 |      5.49 |           7.06 |                  7.16 |
-| MariaDB-1-2-1 |      3027.35 |      2.36 |           7.06 |                  7.16 |
-| MariaDB-1-2-2 |       863.04 |      4.29 |           7.06 |                  7.16 |
-| MariaDB-1-2-3 |       418.66 |      2.17 |           7.09 |                  7.19 |
-| MariaDB-1-2-4 |       798.13 |      3.86 |           7.18 |                  7.28 |
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 |       847.64 |      4.12 |           3.30 |                  3.30 |
+| mariadb-1-1-2-1 |      1604.73 |      6.94 |           4.02 |                  4.02 |
+| mariadb-1-1-3-1 |      1005.82 |      4.40 |           4.44 |                  4.44 |
+| mariadb-1-1-4-1 |      1621.55 |      6.82 |           5.04 |                  5.05 |
+| mariadb-1-2-1-1 |      1007.64 |      4.79 |           5.33 |                  5.34 |
+| mariadb-1-2-2-1 |      1499.75 |      7.17 |           5.95 |                  5.95 |
+| mariadb-1-2-3-1 |      1035.64 |      4.65 |           6.37 |                  6.37 |
+| mariadb-1-2-4-1 |      1575.98 |      7.46 |           6.91 |                  6.91 |
 
-### Execution phase: component benchmarker
+### Benchmarking phase: component benchmarker
 
-| DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:--------------|-------------:|----------:|---------------:|----------------------:|
-| MariaDB-1-1-1 |        24.52 |      0.13 |           0.07 |                  0.07 |
-| MariaDB-1-1-2 |        24.52 |      0.34 |           0.07 |                  0.07 |
-| MariaDB-1-1-3 |        21.49 |      0.28 |           0.07 |                  0.07 |
-| MariaDB-1-1-4 |        16.11 |      0.25 |           0.04 |                  0.05 |
-| MariaDB-1-2-1 |        22.71 |      0.13 |           0.07 |                  0.07 |
-| MariaDB-1-2-2 |        22.71 |      0.27 |           0.07 |                  0.07 |
-| MariaDB-1-2-3 |        22.87 |      0.21 |           0.07 |                  0.07 |
-| MariaDB-1-2-4 |        18.35 |      0.26 |           0.04 |                  0.05 |
+| DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:----------------|-------------:|----------:|---------------:|----------------------:|
+| mariadb-1-1-1-1 |       360.85 |      1.60 |           0.08 |                  0.08 |
+| mariadb-1-1-2-1 |       459.24 |      2.13 |           0.08 |                  0.08 |
+| mariadb-1-1-3-1 |       363.96 |      1.59 |           0.05 |                  0.05 |
+| mariadb-1-1-4-1 |       435.64 |      1.97 |           0.05 |                  0.05 |
+| mariadb-1-2-1-1 |       346.55 |      1.69 |           0.08 |                  0.08 |
+| mariadb-1-2-2-1 |       398.65 |      1.80 |           0.08 |                  0.08 |
+| mariadb-1-2-3-1 |       358.84 |      1.68 |           0.05 |                  0.05 |
+| mariadb-1-2-4-1 |       460.80 |      2.03 |           0.05 |                  0.05 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-2-1 (bexhoma-metrics-mariadb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-2-1 (bexhoma-metrics-mariadb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-2-1 (bexhoma-metrics-mariadb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-2-1 (bexhoma-metrics-mariadb-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-3-1 (bexhoma-metrics-mariadb-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-3-1 (bexhoma-metrics-mariadb-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-3-1 (bexhoma-metrics-mariadb-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-3-1 (bexhoma-metrics-mariadb-1-1-3-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-4-1 (bexhoma-metrics-mariadb-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-4-1 (bexhoma-metrics-mariadb-1-1-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-1-4-1 (bexhoma-metrics-mariadb-1-1-4-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-1-4-1 (bexhoma-metrics-mariadb-1-1-4-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-2-1-1 (bexhoma-metrics-mariadb-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-2-1-1 (bexhoma-metrics-mariadb-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-2-1-1 (bexhoma-metrics-mariadb-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-2-1-1 (bexhoma-metrics-mariadb-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-2-2-1 (bexhoma-metrics-mariadb-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-2-2-1 (bexhoma-metrics-mariadb-1-2-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-2-2-1 (bexhoma-metrics-mariadb-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-2-2-1 (bexhoma-metrics-mariadb-1-2-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-2-3-1 (bexhoma-metrics-mariadb-1-2-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-2-3-1 (bexhoma-metrics-mariadb-1-2-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-2-3-1 (bexhoma-metrics-mariadb-1-2-3-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-2-3-1 (bexhoma-metrics-mariadb-1-2-3-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-2-4-1 (bexhoma-metrics-mariadb-1-2-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-2-4-1 (bexhoma-metrics-mariadb-1-2-4-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection mariadb-1-2-4-1 (bexhoma-metrics-mariadb-1-2-4-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mariadb-1-2-4-1 (bexhoma-metrics-mariadb-1-2-4-1-benchmarking.log, expected: series exists only while non-zero)
 
 ### Tests
-* TEST passed: Execution phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Execution phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MariaDB-1)
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: NOPM contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey))
 * TEST passed: Workflow as planned
 ```
 

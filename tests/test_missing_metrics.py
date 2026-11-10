@@ -135,6 +135,44 @@ class CollectMissingMetricsTest(unittest.TestCase):
             "benchmarking": "",
         })
 
+    def test_an_activity_dependent_gap_is_a_warning_when_the_pods_were_scraped(self) -> None:
+        """Filesystem I/O of a worker without disk I/O: CPU has data, so the pods were scraped."""
+        metrics = {
+            "cpu": {"title": "CPU", "active": True},
+            "fs_read": {"title": "FS Read", "activity_dependent": "cpu", "sparse_components": ["loader"]},
+        }
+        connections = [{"name": "kv", "monitoring": {"metrics": metrics, "metrics_worker": metrics}}]
+        def gap(title: str) -> str:
+            return f"ERROR:root:Metrics missing for {title} (sum(x)) for connection kv-1: {_URL}\n"
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result_dir = Path(tmp_dir)
+            (result_dir / "connections.config").write_text(repr(connections))
+            # scraped: only the filesystem metric is missing
+            (result_dir / missing_metrics.fetch_log_name("kv-1", "workerloading")).write_text(gap("FS Read"))
+            # not scraped: CPU is missing as well
+            (result_dir / missing_metrics.fetch_log_name("kv-1", "loading")).write_text(gap("FS Read") + gap("CPU"))
+            # a client: sparse for it, so expected, not a warning
+            (result_dir / missing_metrics.fetch_log_name("kv-1", "loader")).write_text(gap("FS Read"))
+            missing = missing_metrics.collect_missing_metrics(result_dir)
+        verdict = {(entry.component, entry.title): (entry.expected, entry.warning) for entry in missing}
+        self.assertEqual(verdict, {
+            ("workerloading", "FS Read"): ("", missing_metrics.WARNING_NO_ACTIVITY),
+            ("loading", "FS Read"): ("", ""),
+            ("loading", "CPU"): ("", ""),
+            ("loader", "FS Read"): (missing_metrics.EXPECTED_SPARSE, ""),
+        })
+
+    def test_an_inactive_reference_metric_does_not_excuse_a_gap(self) -> None:
+        metrics = {"cpu": {"title": "CPU", "active": False},
+                   "fs_read": {"title": "FS Read", "activity_dependent": "cpu"}}
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result_dir = Path(tmp_dir)
+            (result_dir / "connections.config").write_text(repr([{"name": "kv", "monitoring": {"metrics": metrics}}]))
+            (result_dir / missing_metrics.fetch_log_name("kv-1", "loading")).write_text(
+                f"ERROR:root:Metrics missing for FS Read (sum(x)) for connection kv-1: {_URL}\n")
+            missing = missing_metrics.collect_missing_metrics(result_dir)
+        self.assertEqual([entry.warning for entry in missing], [""])
+
     def test_gaps_in_short_windows_are_expected(self) -> None:
         """A gap is expected below the window the component needs at the scrape interval (30 s)."""
         windows = {("pg-1", "benchmarking"): 11, ("pg-2", "benchmarking"): 45,

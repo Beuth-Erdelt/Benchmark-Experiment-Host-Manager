@@ -35,6 +35,7 @@ $images = [ordered]@{
     'loader_tpch_refresh_mysql'        = 'images\tpch_refresh\loader_mysql\README.md'
     'loader_tpch_refresh_mariadb'      = 'images\tpch_refresh\loader_mariadb\README.md'
     'loader_tpch_refresh_monetdb'      = 'images\tpch_refresh\loader_monetdb\README.md'
+    'loader_tpch_refresh_clickhouse'   = 'images\tpch_refresh\loader_clickhouse\README.md'
     'generator_tpcds'            = 'images\tpcds\generator\README.md'
     'loader_tpcds_postgresql'    = 'images\tpcds\loader_postgresql\README.md'
     'loader_tpcds_mysql'         = 'images\tpcds\loader_mysql\README.md'

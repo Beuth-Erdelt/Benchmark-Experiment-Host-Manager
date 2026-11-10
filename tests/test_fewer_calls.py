@@ -539,7 +539,7 @@ class RedisTest(unittest.TestCase):
         self.values = {'q-config-1': {'SF': "1'0", 'NAME': 'a "b"'}, 'q-podcount': 2}
 
     def test_one_mset_for_all_keys(self) -> None:
-        self.cluster.set_redis_values(self.values)
+        self.cluster.set_messagequeue_values(self.values)
         command = self.cluster.execute_command_in_pod_api.call_args.kwargs['command']
         self.assertTrue(command.startswith('redis-cli mset q-config-1 '))
         self.assertTrue(command.endswith(" q-podcount '2'"))
@@ -548,14 +548,14 @@ class RedisTest(unittest.TestCase):
     def test_unconfirmed_mset_sets_every_key_on_its_own(self) -> None:
         self.cluster.execute_command_in_pod_api.return_value = ('', '', 'error')
         with mock.patch('builtins.print'):
-            self.cluster.set_redis_values(self.values)
+            self.cluster.set_messagequeue_values(self.values)
         commands = [call.kwargs['command'] for call in self.cluster.execute_command_in_pod.call_args_list]
         self.assertEqual(len(commands), 2)
         self.assertTrue(commands[0].startswith('redis-cli set q-config-1 '))
 
     @unittest.skipUnless(_SH, 'no sh found')
     def test_json_survives_the_quoting(self) -> None:
-        self.cluster.set_redis_values({'k': self.values['q-config-1']})
+        self.cluster.set_messagequeue_values({'k': self.values['q-config-1']})
         command = self.cluster.execute_command_in_pod_api.call_args.kwargs['command']
         argv = command.replace('redis-cli mset ', 'printf "%s\\n" ', 1)
         output = subprocess.run([_SH, '-c', argv], capture_output=True, text=True).stdout.splitlines()
@@ -734,6 +734,7 @@ class ParallelStepsTest(unittest.TestCase):
         cluster.get_jobs.return_value = ['job-done', 'job-running', 'job-gone']
         cluster.get_job_pods.return_value = []
         cluster.get_job_status.side_effect = lambda job: job == 'job-done'
+        cluster.get_job_failed.return_value = False
         experiment._ended_jobs().add('job-gone')
         config = SimpleNamespace(configuration='PostgreSQL-1', host=mock.Mock())
         uploads = []
@@ -742,6 +743,25 @@ class ParallelStepsTest(unittest.TestCase):
         experiment.end_benchmarking.assert_called_once_with('job-done', config, fetch_batch='batch', pending_uploads=uploads)
         cluster.delete_job.assert_called_once_with('job-done')
         self.assertIn('job-done', experiment._ended_jobs())
+
+    def test_a_failed_job_is_ended_and_recorded_instead_of_waited_for(self) -> None:
+        experiment = _experiment()
+        experiment.code = '42'
+        experiment.end_benchmarking = mock.Mock()
+        experiment._runtime_test_results = []
+        cluster = experiment.cluster
+        cluster.get_jobs.return_value = ['job-failed', 'job-running']
+        cluster.get_job_pods.return_value = []
+        cluster.get_job_status.return_value = False
+        cluster.get_job_failed.side_effect = lambda job: job == 'job-failed'
+        config = SimpleNamespace(configuration='PostgreSQL-1', host=mock.Mock())
+        with mock.patch('builtins.print'):
+            running, incomplete, ended = experiment._end_finished_jobs(config, 'batch', [])
+        self.assertEqual((running, incomplete, ended), (True, True, ['job-failed']))
+        cluster.delete_job.assert_called_once_with('job-failed')
+        self.assertEqual(len(experiment._runtime_test_results), 1)
+        self.assertFalse(experiment._runtime_test_results[0][0])
+        self.assertIn('job-failed', experiment._runtime_test_results[0][1])
 
     def test_submit_round_runs_every_entry_and_starts_the_timer(self) -> None:
         experiment = _experiment()

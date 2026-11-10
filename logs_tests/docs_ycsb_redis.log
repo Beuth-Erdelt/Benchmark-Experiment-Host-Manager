@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1793705444
-Experiment                    : starts at 2026-11-03 12:30:43.843435 (9644.256688073)
+Experiment                    : has code 1794003649
+Experiment                    : starts at 2026-11-06 23:20:49.297354 (226838.9175634)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -15,7 +15,7 @@ Factors for loading are [12].
 Factors for benchmarking are [4].
 Status is logged every 10s.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.12.
+Experiment uses bexhoma version 0.11.13.
 Experiment is limited to DBMS ['Redis'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker38.
@@ -33,54 +33,57 @@ Redis-1                       : will start now
 Redis-1                       : deployments ['sut']
 Redis-1                       : stateful sets []
 Redis-1                       : pvcs ['sut']
-Redis-1                       : name of SUT pods = bexhoma-sut-redis-1-1793705444
-Redis-1                       : name of SUT service = bexhoma-sut-redis-1-1793705444
-Loop pass                     : took 0.5s (1 kubectl calls 0.2s, 9 API requests 0.1s)
+Redis-1                       : name of SUT pods = bexhoma-sut-redis-1-1794003649
+Redis-1                       : name of SUT service = bexhoma-sut-redis-1-1794003649
+Loop pass                     : took 3.1s (1 kubectl calls 1.2s, 9 API requests 0.7s)
 - waiting 30s -               : done
 Redis-1                       : is not loaded yet
 Redis-1                       : load durability relaxed, scripts []
 Redis-1                       : loading scripts not in folder, skipped: initschema-ycsb.sql
-Redis-1                       : connect to pod bexhoma-sut-redis-1-1793705444-5fc9487b7-txhvr to load scripts
+Redis-1                       : connect to pod bexhoma-sut-redis-1-1794003649-755c87cfb6-f7kxh to load scripts
 Redis-1                       : start asynch loading scripts of type schema
 Redis-1                       : waits for the Schema scripts (schema=True) before starting the loading jobs
-Redis-1                       : Schema scripts done after 2s
+Redis-1                       : Schema scripts done after 4s
 Redis-1                       : is loading
-Loop pass                     : took 3.3s (1 kubectl calls 0.2s, 36 API requests 1.1s)
+Loop pass                     : took 8.2s (1 kubectl calls 1.2s, 37 API requests 2.8s)
 - waiting 30s -               : done
 Redis-1                       : is loading
-Loop pass                     : took 3.0s (16 kubectl calls 2.3s, 42 API requests 0.4s)
+Loop pass                     : took 15.7s (10 kubectl calls 13.0s, 39 API requests 1.6s)
 - waiting 30s -               : done
 Redis-1                       : showing loader times (ycsb-loader)
 Redis-1                       : generator times (start/end per pod and container) []
-Redis-1                       : loader times (start/end per pod and container) [(1793705486, 1793705499), (1793705485, 1793705499), (1793705485, 1793705498), (1793705486, 1793705499), (1793705486, 1793705500), (1793705486, 1793705497), (1793705485, 1793705495), (1793705486, 1793705499)]
-Redis-1                       : total times (start/end per pod and container) [(1793705486, 1793705499), (1793705485, 1793705499), (1793705485, 1793705498), (1793705486, 1793705499), (1793705486, 1793705500), (1793705486, 1793705497), (1793705485, 1793705495), (1793705486, 1793705499)]
-Redis-1                       : loader timespan (first to last [s]) = 15
+Redis-1                       : loader times (start/end per pod and container) [(1794003700, 1794003717), (1794003701, 1794003716), (1794003701, 1794003716), (1794003700, 1794003715), (1794003700, 1794003716), (1794003701, 1794003717), (1794003700, 1794003716), (1794003700, 1794003716)]
+Redis-1                       : total times (start/end per pod and container) [(1794003700, 1794003717), (1794003701, 1794003716), (1794003701, 1794003716), (1794003700, 1794003715), (1794003700, 1794003716), (1794003701, 1794003717), (1794003700, 1794003716), (1794003700, 1794003716)]
+Redis-1                       : loader timespan (first to last [s]) = 17
 Redis-1                       : loading scripts not in folder, skipped: checkschema-ycsb.sql
-Redis-1                       : connect to pod bexhoma-sut-redis-1-1793705444-5fc9487b7-txhvr to load scripts
+Redis-1                       : connect to pod bexhoma-sut-redis-1-1794003649-755c87cfb6-f7kxh to load scripts
 Redis-1                       : start asynch loading scripts of type index
 Redis-1                       : is loading
-Loop pass                     : took 1.7s (6 kubectl calls 1.1s, 46 API requests 0.5s)
+Loop pass                     : took 17.8s (12 kubectl calls 14.3s, 52 API requests 2.3s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Redis-1-1793705444 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Redis-1-1794003649 initialized to 1.
 Redis-1                       : benchmarks done 0 of 1. This will be client 1
 redis-1-1-1-1                 : start benchmarking (benchmark_run=1)
-Redis-1                       : benchmarking results in folder /data/benchmarks/1793705444
-Redis-1                       : submitted benchmarker job in 1.8s (4 kubectl calls 0.8s, 24 API requests 1.0s)
-Loop pass                     : took 2.4s (5 kubectl calls 0.9s, 44 API requests 1.2s)
+Redis-1                       : benchmarking results in folder C:\data\benchmarks/1794003649
+Redis-1                       : submitted benchmarker job in 11.2s (4 kubectl calls 5.2s, 24 API requests 4.0s)
+Loop pass                     : took 21.5s (5 kubectl calls 6.4s, 44 API requests 5.4s)
 - waiting 30s -               : done
-redis-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1793705444/redis-1-1-1-1.config
+Redis-1                       : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 20 API requests 1.2s)
+- waiting 30s -               : done
+redis-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1794003649/redis-1-1-1-1.config
 redis-1-1-1-1                 : showing benchmarker times
-redis-1-1-1-1                 : benchmarker timespan job from 1793705574 to 1793705605
-redis-1-1-1-1                 : benchmarker timespan pods from 1793705577 to 1793705593
-redis-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 16
-redis-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1793705577, 1793705593)]
-redis-1-1-1-1                 : found and updated times {'benchmarker': [(1793705577, 1793705593)]}
-Loop pass                     : took 1.4s (4 kubectl calls 1.0s, 24 API requests 0.4s)
+redis-1-1-1-1                 : benchmarker timespan job from 1794003834 to 1794003902
+redis-1-1-1-1                 : benchmarker timespan pods from 1794003841 to 1794003856
+redis-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 15
+redis-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1794003841, 1794003856)]
+redis-1-1-1-1                 : found and updated times {'benchmarker': [(1794003841, 1794003856)]}
+Loop pass                     : took 7.1s (4 kubectl calls 4.8s, 24 API requests 1.2s)
 Redis-1                       : can be stopped
-Redis-1                       : had 0 restarts at worker bexhoma-sut-redis-1-1793705444-5fc9487b7-txhvr
-Loop pass                     : took 0.9s (4 kubectl calls 0.5s, 29 API requests 0.2s)
-Experiment                    : ends at 2026-11-03 12:33:27.469442 (9807.882693751) - 163.63s total
+Redis-1                       : had 0 restarts at worker bexhoma-sut-redis-1-1794003649-755c87cfb6-f7kxh
+Loop pass                     : took 6.8s (4 kubectl calls 4.7s, 29 API requests 1.5s)
+Experiment                    : ends at 2026-11-06 23:25:12.146703 (227101.7578502) - 262.84s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -91,8 +94,8 @@ Result workflow complete
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 164s 
-* Code: 1793705444
+* Duration: 263s 
+* Code: 1794003649
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -105,7 +108,7 @@ YCSB SF=1
   * Factors for benchmarking are [4].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.13.
   * Experiment is limited to DBMS ['Redis'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -126,7 +129,7 @@ YCSB SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:791666
+  * disk:872236
   * datadisk:1095
   * cpu_list:0-223
   * args:['--maxclients', '10000', '--io-threads', '64']
@@ -137,13 +140,13 @@ YCSB SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793705444
+    * code:1794003649
 
 ### Init Scripts Not in Folder
 * Redis-1: skipped checkschema-ycsb.sql, initschema-ycsb.sql
 
 ### SUT Container Restarts
-* bexhoma-sut-redis-1-1793705444-5fc9487b7-txhvr: 0
+* bexhoma-sut-redis-1-1794003649-755c87cfb6-f7kxh: 0
 
 ### Workflow
 
@@ -161,20 +164,20 @@ YCSB SF=1
 
 | connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
 |:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| redis-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        12982.97 |                 9628.00 |            125000.00 |                              1614.00 | 1.00 |              373.91 |
-| redis-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8944.54 |                13975.00 |            125000.00 |                              1894.00 | 1.00 |              257.60 |
-| redis-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         9677.17 |                12917.00 |            125000.00 |                              1870.00 | 1.00 |              278.70 |
-| redis-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        11191.69 |                11169.00 |            125000.00 |                              1863.00 | 1.00 |              322.32 |
-| redis-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         9605.04 |                13014.00 |            125000.00 |                              1883.00 | 1.00 |              276.63 |
-| redis-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         9975.26 |                12531.00 |            125000.00 |                              1894.00 | 1.00 |              287.29 |
-| redis-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         9621.31 |                12992.00 |            125000.00 |                              1941.00 | 1.00 |              277.09 |
-| redis-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         9949.85 |                12563.00 |            125000.00 |                              1928.00 | 1.00 |              286.56 |
+| redis-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8063.48 |                15502.00 |            125000.00 |                              2027.00 | 1.00 |              232.23 |
+| redis-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8377.45 |                14921.00 |            125000.00 |                              2085.00 | 1.00 |              241.27 |
+| redis-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8499.35 |                14707.00 |            125000.00 |                              1979.00 | 1.00 |              244.78 |
+| redis-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8223.68 |                15200.00 |            125000.00 |                              2023.00 | 1.00 |              236.84 |
+| redis-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8595.20 |                14543.00 |            125000.00 |                              2031.00 | 1.00 |              247.54 |
+| redis-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8047.38 |                15533.00 |            125000.00 |                              2117.00 | 1.00 |              231.76 |
+| redis-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         7936.51 |                15750.00 |            125000.00 |                              2091.00 | 1.00 |              228.57 |
+| redis-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8007.69 |                15610.00 |            125000.00 |                              2101.00 | 1.00 |              230.62 |
 
 #### Per Run
 
 | DBMS      |   experiment_run |   threads |    target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:----------|-----------------:|----------:|----------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| Redis-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 1.00 |              257.60 |                        81947.83 |                13975.00 |           1000000.00 |                              1860.88 |
+| Redis-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 1.00 |              228.57 |                        65750.75 |                15750.00 |           1000000.00 |                              2056.75 |
 
 ### Benchmarking
 
@@ -182,13 +185,13 @@ YCSB SF=1
 
 | DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| redis-1-1-1-1-1 | redis-1-1-1 | redis-1-1-1-1 | Redis-1         |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        64981.48 |                15389.00 |             500798 |                             852.00 |               499202 |                               784.00 |
+| redis-1-1-1-1-1 | redis-1-1-1 | redis-1-1-1-1 | Redis-1         |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        64876.09 |                15414.00 |             500621 |                            3033.00 |               499379 |                              1123.00 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| redis-1-1-1 | redis-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        64981.48 |                15389.00 |             500798 |                             852.00 |               499202 |                               784.00 |
+| redis-1-1-1 | redis-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        64876.09 |                15414.00 |             500621 |                            3033.00 |               499379 |                              1123.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment

@@ -10,6 +10,7 @@ import pandas as pd
 from types import SimpleNamespace
 
 from bexhoma import evaluators
+from ..system_descriptors import notes
 from .base import Benchmark, Section, _key_metrics_section_from_columns
 
 __all__ = ["YCSB"]
@@ -72,8 +73,6 @@ class YCSB(Benchmark):
         batchsize = args.scaling_batchsize
         scaling_logging = int(args.scaling_logging)
         max_execution_time = int(args.max_execution_time)
-        num_sut_replicas = int(args.num_sut_replicas)
-        num_pd_nodes = int(args.num_pd_nodes)
         num_loading_target_factors = experiment.get_parameter_as_list('num_loading_target_factors')
         num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
@@ -120,8 +119,7 @@ class YCSB(Benchmark):
                 experiment.workload['info'] += f"\nBenchmarking is capped at {max_execution_time}s execution time."
         if experiment.loading_is_active() or experiment.benchmarking_is_active():
             experiment.workload['info'] += f"\nStatus is logged every {scaling_logging}s."
-        if "TiDB" in args.dbms or len(args.dbms) == 0:
-            experiment.workload['info'] += f"\nTiDB uses {num_sut_replicas} SUT replica(s) and {num_pd_nodes} PD node(s)."
+        experiment.workload['info'] += notes(experiment.cluster.dockers, 'ycsb', args)
 
     def _show_loading_sections(self, experiment, is_multitenant: bool) -> tuple[Section | None, pd.DataFrame]:
         """

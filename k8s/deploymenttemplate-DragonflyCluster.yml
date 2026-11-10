@@ -207,7 +207,7 @@ spec:
         - name: dbms
           image: python:3.11-slim
           env:
-            - name: BEXHOMA_STORE_LIST
+            - name: BEXHOMA_WORKER_LIST
               value: "dragonfly-0.dragonfly-cluster-headless,dragonfly-1.dragonfly-cluster-headless,dragonfly-2.dragonfly-cluster-headless"
             - name: NUM_MASTERS
               value: "3"          # number of master pods
@@ -230,9 +230,9 @@ spec:
               echo "Installing dependencies..."
               pip install --no-cache-dir redis requests
 
-              echo "Parsing BEXHOMA_STORE_LIST..."
+              echo "Parsing BEXHOMA_WORKER_LIST..."
               # Convert comma to space if needed
-              NODES_RAW=$(echo "$BEXHOMA_STORE_LIST" | tr ',' ' ')
+              NODES_RAW=$(echo "$BEXHOMA_WORKER_LIST" | tr ',' ' ')
               NODES=($NODES_RAW)
 
               echo "Waiting for Dragonfly pods..."

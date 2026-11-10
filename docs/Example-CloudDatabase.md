@@ -772,14 +772,14 @@ yields
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 937s 
-* Code: 1793619380
+* Duration: 1068s 
+* Code: 1794135868
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.13.
   * Experiment is limited to DBMS ['DatabaseService'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -801,10 +801,10 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741429
+  * disk:805362
   * datadisk:39
   * volume_size:1.8T
-  * volume_used:725G
+  * volume_used:787G
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
@@ -813,17 +813,17 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793619380
+    * code:1794135868
 * databaseservice-1-1-2-1 uses docker image postgres:16.1
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741441
+  * disk:805347
   * datadisk:39
   * volume_size:1.8T
-  * volume_used:725G
+  * volume_used:787G
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
@@ -832,13 +832,13 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793619380
+    * code:1794135868
 
 ### Init Scripts Not in Folder
 * DatabaseService-1: skipped checkschema-benchbase.sql, initschema-benchbase.sql
 
 ### SUT Container Restarts
-* bexhoma-sut-databaseservice-1-1793619380-965bfc4cb-fnhhc: 0
+* bexhoma-sut-databaseservice-1-1794135868-55dc766984-4lbf5: 0
 
 ### Workflow
 
@@ -858,7 +858,7 @@ Benchbase Workload tpcc SF=16
 
 |                     |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:--------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| DatabaseService-1-1 |                1 |   16 |        3.00 |           1.00 |            0.00 |          1.00 |            1.00 |              1 |           1 |             | None           |             0 | False         |            19200.00 | False               |
+| DatabaseService-1-1 |                1 |   16 |      122.00 |           1.00 |            0.00 |        120.00 |            1.00 |              1 |           1 |             | None           |             0 | False         |              472.13 | False               |
 
 ### Benchmarking
 
@@ -866,16 +866,16 @@ Benchbase Workload tpcc SF=16
 
 | DBMS                      | phase                 | job                     |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:--------------------------|:----------------------|:------------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| databaseservice-1-1-1-1-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                        7382.44 |                        0.00 |         0.00 |                                                       5255.00 |                                               2164.00 |
-| databaseservice-1-1-2-1-1 | databaseservice-1-1-2 | databaseservice-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                        8189.23 |                        0.00 |         0.00 |                                                       1886.00 |                                                779.00 |
-| databaseservice-1-1-2-1-2 | databaseservice-1-1-2 | databaseservice-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                        8062.64 |                        0.00 |         0.00 |                                                       2162.00 |                                                901.00 |
+| databaseservice-1-1-1-1-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                        3085.67 |                     3071.63 |         0.00 |                                                      15024.00 |                                               5180.00 |
+| databaseservice-1-1-2-1-1 | databaseservice-1-1-2 | databaseservice-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            3 |                        1296.05 |                     1284.21 |         0.00 |                                                      14320.00 |                                               6166.00 |
+| databaseservice-1-1-2-1-2 | databaseservice-1-1-2 | databaseservice-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            1 |                        1267.77 |                     1256.12 |         0.00 |                                                      14564.00 |                                               6303.00 |
 
 #### Per Phase
 
 | DBMS                  | phase                 |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------------|:----------------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                        7382.44 |                        0.00 |         0.00 |                                                       5255.00 |                                               2164.00 |
-| databaseservice-1-1-2 | databaseservice-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                       16251.87 |                        0.00 |         0.00 |                                                       2162.00 |                                                840.00 |
+| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                        3085.67 |                     3071.63 |         0.00 |                                                      15024.00 |                                               5180.00 |
+| databaseservice-1-1-2 | databaseservice-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            4 |                        2563.83 |                     2540.32 |         0.00 |                                                      14564.00 |                                               6234.50 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -932,14 +932,14 @@ yields
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 910s 
-* Code: 1793620326
+* Duration: 905s 
+* Code: 1794136954
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.13.
   * Experiment is limited to DBMS ['DatabaseService'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -962,10 +962,10 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741449
+  * disk:805351
   * datadisk:39
   * volume_size:1.8T
-  * volume_used:725G
+  * volume_used:787G
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
@@ -973,17 +973,17 @@ Benchbase Workload tpcc SF=16
   * resources_total: 1.0 CPU, 1.0 GiB RAM requested in 1 pods
     * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
   * eval_parameters
-    * code:1793620326
+    * code:1794136954
 * databaseservice-1-1-2-1 uses docker image postgres:16.1
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741453
+  * disk:805352
   * datadisk:39
   * volume_size:1.8T
-  * volume_used:725G
+  * volume_used:787G
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
@@ -991,56 +991,56 @@ Benchbase Workload tpcc SF=16
   * resources_total: 1.0 CPU, 1.0 GiB RAM requested in 1 pods
     * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
   * eval_parameters
-    * code:1793620326
+    * code:1794136954
 
 ### SUT Container Restarts
-* bexhoma-sut-databaseservice-1-1793620326-746b5686dd-r8fjj: 0
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\benchbase.py", line 942, in <module>
-    experiment.process()
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\experiments\base.py", line 384, in process
-    self.show_summary(write_report=getattr(self.args, 'write_report', False))
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\experiments\mixed.py", line 156, in show_summary
-    benchmark.show_summary(self, write_report=write_report)
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\benchmarks\base.py", line 502, in show_summary
-    loading_section, df_loading = self._show_loading_sections(experiment, is_multitenant)
-                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\benchmarks\base.py", line 279, in _show_loading_sections
-    df = self.evaluator.get_summary_loading_per_run()
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators\benchbase.py", line 559, in get_summary_loading_per_run
-    df = self.get_loading_per_run()
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators\base.py", line 815, in get_loading_per_run
-    df = self.get_loading_per_connection()
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\evaluators\base.py", line 791, in get_loading_per_connection
-    df_tpx = (df['SF'] * 3600.0)/df_load.sort_index()
-             ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\ops\common.py", line 76, in new_method
-    return method(self, other)
-           ^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\arraylike.py", line 210, in __truediv__
-    return self._arith_method(other, operator.truediv)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\series.py", line 6154, in _arith_method
-    return base.IndexOpsMixin._arith_method(self, other, op)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\base.py", line 1391, in _arith_method
-    result = ops.arithmetic_op(lvalues, rvalues, op)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\ops\array_ops.py", line 283, in arithmetic_op
-    res_values = _na_arithmetic_op(left, right, op)  # type: ignore[arg-type]
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\ops\array_ops.py", line 218, in _na_arithmetic_op
-    result = func(left, right)
-             ^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\computation\expressions.py", line 242, in evaluate
-    return _evaluate(op, op_str, a, b)  # type: ignore[misc]
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\Patrick\anaconda3\envs\bexhoma\Lib\site-packages\pandas\core\computation\expressions.py", line 73, in _evaluate_standard
-    return op(a, b)
-           ^^^^^^^^
-ZeroDivisionError: float division by zero
+* bexhoma-sut-databaseservice-1-1794136954-5f74f989d4-qfjgd: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS DatabaseService-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS DatabaseService-1 - Experiment 1 Client 2: benchbase (2 pods)
+
+#### Planned
+
+* DBMS DatabaseService-1 - Experiment 1 Client 1: benchbase (1 pods)
+* DBMS DatabaseService-1 - Experiment 1 Client 2: benchbase (2 pods)
+
+### Loading
+
+#### Per Run
+
+|                     |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:--------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| DatabaseService-1-1 |                1 |   16 |        0.00 |           0.00 |            0.00 |          0.00 |            0.00 |              0 |           1 |             | None           |             0 | False         |                 nan | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                      | phase                 | job                     |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:--------------------------|:----------------------|:------------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| databaseservice-1-1-1-1-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                        2904.88 |                     2892.06 |         0.00 |                                                      14209.00 |                                               5503.00 |
+| databaseservice-1-1-2-1-1 | databaseservice-1-1-2 | databaseservice-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                        1557.58 |                     1542.79 |         0.00 |                                                      13441.00 |                                               5132.00 |
+| databaseservice-1-1-2-1-2 | databaseservice-1-1-2 | databaseservice-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            2 |                        1395.73 |                     1382.40 |         0.00 |                                                      14536.00 |                                               5726.00 |
+
+#### Per Phase
+
+| DBMS                  | phase                 |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:----------------------|:----------------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                        2904.88 |                     2892.06 |         0.00 |                                                      14209.00 |                                               5503.00 |
+| databaseservice-1-1-2 | databaseservice-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            2 |                        2953.32 |                     2925.19 |         0.00 |                                                      14536.00 |                                               5429.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
 ```
 
 </details>
@@ -1874,6 +1874,228 @@ No warnings
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: No monitoring metrics missing
+* TEST passed: Geo Times [s] contains no 0 or NaN
+* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
+* TEST passed: Throughput@Size contains no 0 or NaN
+* TEST passed: No SQL errors
+* TEST passed: No SQL warnings
+* TEST passed: All active queries counted in the totals
+* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
+* TEST passed: Workflow as planned
+```
+
+</details>
+
+## Refresh Stream
+
+`-xrs N` runs the TPC-H refresh functions RF1 (insert new orders) and RF2 (delete old orders) as an additional job next to the query streams, see [TPC-H](Example-TPC-H.md#refresh-stream).
+For a PostgreSQL-compatible database service, the loader image of PostgreSQL is used: RF1 and RF2 run against the service.
+Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
+
+```bash
+bexhoma tpch \
+  -dbms DatabaseService \
+  -sf 1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii \
+  -xic \
+  -xis \
+  -ne 3 \
+  -xrs 3 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_tpch_databaseservice_refresh.log
+```
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_databaseservice_refresh_summary.md" target="_blank" rel="noopener">docs_tpch_databaseservice_refresh.log</a></summary>
+
+```markdown
+## Show Summary
+
+### Workload
+TPC-H Queries SF=1
+* Type: tpch
+* Duration: 494s 
+* Code: 1794045379
+* This includes the reading queries of TPC-H.
+* This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
+  * TPC-H (SF=1) data is loaded and benchmark is executed.
+  * Query ordering is Q1 - Q22.
+  * All instances use the same query parameters.
+  * Timeout per query is 1800.
+  * A TPC-H refresh stream (RF1+RF2) runs in parallel, with 3 pair(s) applied per round.
+  * Import sets indexes, constraints, statistics recomputation after loading.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.13.
+  * Experiment is limited to DBMS ['DatabaseService'].
+  * Import is handled by 8 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Loading is tested with [8] threads, split into [8] pods.
+  * Benchmarking is tested with [1] threads, split into [1] pods.
+  * Benchmarking is run as [3] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 2.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* databaseservice-1-1-1-1-1 uses docker image postgres:16.1
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:806783
+  * datadisk:39
+  * volume_size:1.8T
+  * volume_used:788G
+  * cpu_list:0-223
+  * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 1.0 CPU, 1.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1794045379
+* databaseservice-1-1-1-1-2 uses docker image postgres:16.1
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:806783
+  * datadisk:39
+  * volume_size:1.8T
+  * volume_used:788G
+  * cpu_list:0-223
+  * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 1.0 CPU, 1.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1794045379
+* databaseservice-1-1-1-1-3 uses docker image postgres:16.1
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:806783
+  * datadisk:39
+  * volume_size:1.8T
+  * volume_used:788G
+  * cpu_list:0-223
+  * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 1.0 CPU, 1.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1794045379
+
+### Init Scripts Not in Folder
+* DatabaseService-1: skipped checkschema-tpch.sql
+
+### SUT Container Restarts
+* bexhoma-sut-databaseservice-1-1794045379-55b9f4cbd8-fwh4q: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS DatabaseService-1 - Experiment 1 Client 1: tpch (3 pods), tpch_refresh (1 pods)
+
+#### Planned
+
+* DBMS DatabaseService-1 - Experiment 1 Client 1: tpch (3 pods), tpch_refresh (1 pods)
+
+### Loading
+
+#### Per Run
+
+|                     |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:--------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| DatabaseService-1-1 |                1 |    1 |       67.00 |           3.00 |           17.00 |          9.00 |           33.00 |              8 |           0 |             | None           |             0 | False         |               53.73 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| DBMS                      | configuration     | phase                 | job                     |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                       |
+|:--------------------------|:------------------|:----------------------|:------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:--------------------------|
+| databaseservice-1-1-1-1-1 | DatabaseService-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         17 |            0.37 |             9829.56 |           4658.82 |          -1 | databaseservice-1-1-1-1-1 |
+| databaseservice-1-1-1-1-2 | DatabaseService-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         16 |            0.39 |             9244.78 |           4950.00 |          -1 | databaseservice-1-1-1-1-2 |
+| databaseservice-1-1-1-1-3 | DatabaseService-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         17 |            0.38 |             9431.78 |           4658.82 |          -1 | databaseservice-1-1-1-1-3 |
+
+#### Per Phase
+
+|                       | phase                 |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:----------------------|:----------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |        1 |               1 |           3 | 1.00 |               66 |                  66 |         17 |            0.38 |             9498.93 |          13976.47 |          -1 |
+
+#### Query Completion per Phase
+
+| phase                 |   pods | Pricing Summary Report (TPC-H Q1)   | Minimum Cost Supplier Query (TPC-H Q2)   | Shipping Priority (TPC-H Q3)   | Order Priority Checking Query (TPC-H Q4)   | Local Supplier Volume (TPC-H Q5)   | Forecasting Revenue Change (TPC-H Q6)   | Volume Shipping Query (TPC-H Q7)   | National Market Share (TPC-H Q8)   | Product Type Profit Measure (TPC-H Q9)   | Returned Item Reporting Query (TPC-H Q10)   | Important Stock Identification (TPC-H Q11)   | Shipping Modes and Order Priority (TPC-H Q12)   | Customer Distribution (TPC-H Q13)   | Promotion Effect Query (TPC-H Q14)   | Top Supplier Query (TPC-H Q15)   | Parts/Supplier Relationship (TPC-H Q16)   | Small-Quantity-Order Revenue (TPC-H Q17)   | Large Volume Customer (TPC-H Q18)   | Discounted Revenue (TPC-H Q19)   | Potential Part Promotion (TPC-H Q20)   | Suppliers Who Kept Orders Waiting Query (TPC-H Q21)   | Global Sales Opportunity Query (TPC-H Q22)   | complete   |
+|:----------------------|-------:|:------------------------------------|:-----------------------------------------|:-------------------------------|:-------------------------------------------|:-----------------------------------|:----------------------------------------|:-----------------------------------|:-----------------------------------|:-----------------------------------------|:--------------------------------------------|:---------------------------------------------|:------------------------------------------------|:------------------------------------|:-------------------------------------|:---------------------------------|:------------------------------------------|:-------------------------------------------|:------------------------------------|:---------------------------------|:---------------------------------------|:------------------------------------------------------|:---------------------------------------------|:-----------|
+| databaseservice-1-1-1 |      3 | 3/3                                 | 3/3                                      | 3/3                            | 3/3                                        | 3/3                                | 3/3                                     | 3/3                                | 3/3                                | 3/3                                      | 3/3                                         | 3/3                                          | 3/3                                             | 3/3                                 | 3/3                                  | 3/3                              | 3/3                                       | 3/3                                        | 3/3                                 | 3/3                              | 3/3                                    | 3/3                                                   | 3/3                                          | yes        |
+
+Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
+
+### tpch_refresh
+
+| connection                | phase                 | job                     |   experiment_run |   client |   benchmark_run |   pod_count | benchmark_begin     | benchmark_end       |   benchmark_duration |
+|:--------------------------|:----------------------|:------------------------|-----------------:|---------:|----------------:|------------:|:--------------------|:--------------------|---------------------:|
+| databaseservice-1-1-1-2-1 | databaseservice-1-1-1 | databaseservice-1-1-1-2 |                1 |        1 |               2 |           1 | 2026-11-07 11:03:37 | 2026-11-07 11:03:40 |                    3 |
+
+### Latency of Timer Execution [ms]
+| Queries                                             |   databaseservice-1-1-1-1-1 |   databaseservice-1-1-1-1-2 |   databaseservice-1-1-1-1-3 |
+|:----------------------------------------------------|----------------------------:|----------------------------:|----------------------------:|
+| Pricing Summary Report (TPC-H Q1)                   |                     1852.31 |                     1505.41 |                     1645.94 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                      218.32 |                      237.02 |                      243.57 |
+| Shipping Priority (TPC-H Q3)                        |                      348.88 |                      345.59 |                      409.73 |
+| Order Priority Checking Query (TPC-H Q4)            |                      524.83 |                      600.17 |                      548.58 |
+| Local Supplier Volume (TPC-H Q5)                    |                      299.05 |                      313.92 |                      343.72 |
+| Forecasting Revenue Change (TPC-H Q6)               |                      252.09 |                      229.46 |                      243.00 |
+| Volume Shipping Query (TPC-H Q7)                    |                      325.53 |                      413.20 |                      336.64 |
+| National Market Share (TPC-H Q8)                    |                      277.15 |                      322.62 |                      277.39 |
+| Product Type Profit Measure (TPC-H Q9)              |                      503.02 |                      559.57 |                      539.99 |
+| Returned Item Reporting Query (TPC-H Q10)           |                      554.79 |                      558.90 |                      637.13 |
+| Important Stock Identification (TPC-H Q11)          |                      103.55 |                      122.51 |                      110.33 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                      403.38 |                      462.13 |                      388.44 |
+| Customer Distribution (TPC-H Q13)                   |                      679.13 |                      712.21 |                      745.35 |
+| Promotion Effect Query (TPC-H Q14)                  |                      216.60 |                      229.27 |                      209.80 |
+| Top Supplier Query (TPC-H Q15)                      |                      228.58 |                      227.80 |                      263.02 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                      278.33 |                      345.24 |                      211.24 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                      620.33 |                      623.98 |                      662.97 |
+| Large Volume Customer (TPC-H Q18)                   |                     3408.52 |                     2995.54 |                     4029.48 |
+| Discounted Revenue (TPC-H Q19)                      |                      289.82 |                      300.22 |                      303.27 |
+| Potential Part Promotion (TPC-H Q20)                |                      251.90 |                      262.57 |                      259.81 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                      347.46 |                      388.07 |                      302.72 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                       85.81 |                      105.50 |                      109.37 |
+
+### Errors (failed queries)
+
+No errors
+
+### Warnings (result mismatch)
+
+No warnings
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN

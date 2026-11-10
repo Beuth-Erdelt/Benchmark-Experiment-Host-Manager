@@ -1,0 +1,19 @@
+name: Demo runs
+# The demos need a Kubernetes cluster and run for hours, so they are not run here.
+# This checks that logs_tests/SUMMARY.md and the README badge file match the committed logs.
+on:
+  pull_request:
+  push:
+    branches: [master, dev]
+jobs:
+  summary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python scripts/demo-runs.py --check
+      - name: Show the summary on the run page
+        if: always()
+        run: head -n 12 logs_tests/SUMMARY.md >> "$GITHUB_STEP_SUMMARY"

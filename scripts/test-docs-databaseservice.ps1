@@ -317,6 +317,43 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseServi
 kubectl delete deployment bexhoma-deployment-postgres
 kubectl delete svc bexhoma-service
 
+Start-Sleep -Seconds 30
+
+# start database service placeholder
+kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
+
+Start-Sleep -Seconds 10
+
+
+####################################################
+#### Refresh Stream ################################
+####################################################
+
+
+#### TPC-H Refresh Stream (Example-CloudDatabase.md)
+# TPC-H with a refresh stream on a database service: the loader image of PostgreSQL applies RF1 and RF2 to the service
+bexhoma tpch `
+  -dbms DatabaseService         <# DBMS under test #> `
+  -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 8                        <# threads per loader pod #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -ne 3                         <# parallel query streams #> `
+  -xrs 3                        <# refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_refresh.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService refresh  sf=1  ne=3"
+
+
+# delete database service placeholder
+kubectl delete deployment bexhoma-deployment-postgres
+kubectl delete svc bexhoma-service
+
 
 ###########################################
 ############## Clean Folder ###############

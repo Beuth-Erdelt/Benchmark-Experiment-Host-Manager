@@ -3,8 +3,8 @@
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 400s 
-* Code: 1792953734
+* Duration: 358s 
+* Code: 1794004112
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -15,7 +15,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.9.
+  * Experiment uses bexhoma version 0.11.13.
   * Experiment is limited to DBMS ['MonetDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -32,13 +32,13 @@ SSB Queries SF=1
 
 ### Connections
 * monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:668740
-  * datadisk:2025
+  * disk:872024
+  * datadisk:2024
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
@@ -47,10 +47,10 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792953734
+    * code:1794004112
 
 ### SUT Container Restarts
-* bexhoma-sut-monetdb-1-1792953734-7f9ddf867f-m45j9: 0
+* bexhoma-sut-monetdb-1-1794004112-784cbf9487-s9x4s: 0
 
 ### Workflow
 
@@ -68,7 +68,7 @@ SSB Queries SF=1
 
 |             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MonetDB-1-1 |                1 |    1 |       66.00 |           5.00 |           21.00 |         16.00 |           16.00 |              8 |           0 |             | None           |             0 | False         |               54.55 | False               |
+| MonetDB-1-1 |                1 |    1 |       63.00 |           3.00 |           24.00 |         11.00 |           14.00 |              8 |           0 |             | None           |             0 | False         |               57.14 | False               |
 
 ### Benchmarking
 
@@ -76,13 +76,13 @@ SSB Queries SF=1
 
 | DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
 |:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| monetdb-1-1-1-1-1 | MonetDB-1       | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          2 |            0.03 |           130355.44 |          23400.00 |          -1 | monetdb-1-1-1-1-1 |
+| monetdb-1-1-1-1-1 | MonetDB-1       | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          3 |            0.03 |           147572.27 |          15600.00 |          -1 | monetdb-1-1-1-1-1 |
 
 #### Per Phase
 
 |               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          2 |            0.03 |           130355.44 |          23400.00 |          -1 |
+| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          3 |            0.03 |           147572.27 |          15600.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -95,19 +95,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   monetdb-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|--------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |               31.93 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |               31.68 |
 | Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               12.53 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |               11.72 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |               28.11 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |               32.46 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               27.83 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |               26.87 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |               28.30 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |               28.70 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |               38.69 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |               44.07 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |               35.93 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |               34.15 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |               12.57 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |               23.46 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |               33.09 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               30.27 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |               25.52 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |               26.38 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |               24.25 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |               24.62 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |               27.29 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |               28.93 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |               29.13 |
 
 ### Errors (failed queries)
 
@@ -119,6 +119,8 @@ No warnings
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

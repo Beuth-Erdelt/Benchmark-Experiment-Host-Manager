@@ -15,33 +15,31 @@ import pandas as pd
 from bexhoma import evaluators, failure_timeline
 
 __all__ = ["Benchmark", "DBMSBenchmarkerBenchmark", "Section", "render_stdout",
-           "DIMENSION_VARIANTS", "DIMENSION_DBMS", "dimension_folder", "dimension_info"]
+           "DIMENSION_VARIANTS", "dimension_folder", "dimension_info"]
 
 #: ``-xdim`` (TPC-H, SSB): placement of the dimensions on a multi-node DBMS: a full
 #: copy on every node (default), or spread over the nodes like the fact table.
 DIMENSION_VARIANTS = ('replicated', 'distributed')
 
-#: Multi-node DBMS that ``-xdim`` applies to; the others ignore it.
-DIMENSION_DBMS = ('ClickHouseCluster', 'Citus')
-
-
-def dimension_folder(docker: str, dimensions: str) -> str:
+def dimension_folder(docker: str, dimensions: str, applies_to: tuple) -> str:
     """Script folder (in ``experiments/<benchmark>``) of a DBMS for a dimension placement.
 
     The default placement's scripts are in the DBMS folder, the other's in its
-    subfolder ``distributed``; DBMS outside :data:`DIMENSION_DBMS` ignore it.
+    subfolder ``distributed``; DBMS outside ``applies_to`` ignore it.
 
     :param docker: DBMS name, e.g. ``ClickHouseCluster``.
     :param dimensions: One of :data:`DIMENSION_VARIANTS`.
+    :param applies_to: DBMS of the benchmark that ``-xdim`` applies to
+        (:func:`bexhoma.system_descriptors.dimension_dockers`).
     :return: Folder relative to ``experiments/<benchmark>``, e.g. ``ClickHouseCluster/distributed``.
     :rtype: str
     """
-    if docker in DIMENSION_DBMS and dimensions == 'distributed':
+    if docker in applies_to and dimensions == 'distributed':
         return docker + '/distributed'
     return docker
 
 
-def dimension_info(dbms: list, dimensions: str, fact: str, applies_to: tuple = DIMENSION_DBMS) -> str:
+def dimension_info(dbms: list, dimensions: str, fact: str, applies_to: tuple) -> str:
     """Workload info line on the dimension placement, empty without a DBMS it applies to.
 
     :param dbms: The ``-dbms`` list.

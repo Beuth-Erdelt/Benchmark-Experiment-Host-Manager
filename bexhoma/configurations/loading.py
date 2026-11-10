@@ -374,7 +374,7 @@ class LoadingCoordinator:
             # "only if there's more than one entry" branch to forget to add.
             benchmark_run = str(data_job)
             suffix = '-{}'.format(data_job)
-            redisQueue = '{}-{}-{}-{}-{}{}'.format(
+            queue_name = '{}-{}-{}-{}-{}{}'.format(
                 app, component, cfg.configuration, cfg.code, experiment_run, suffix)
             # Clear any leftover entries before repopulating, then verify the
             # queue ends up at exactly entry_parallelism items (retrying on a
@@ -382,10 +382,10 @@ class LoadingCoordinator:
             # pod's lpop come back empty further down the line (its
             # generator.sh then fails loudly instead of silently colliding
             # with another pod's chunk index).
-            cfg.experiment.cluster.fill_messagequeue(queue=redisQueue, length=entry_parallelism)
+            cfg.experiment.cluster.fill_messagequeue(queue=queue_name, length=entry_parallelism)
             if 'parameters' in loader_entry:
                 cfg._push_pod_configs(
-                    queue_key=redisQueue,
+                    queue_key=queue_name,
                     num_pods=entry_parallelism,
                     parameters=loader_entry.get('parameters', {}),
                     pod_parameters=loader_entry.get('pod_parameters', []),

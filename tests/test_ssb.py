@@ -36,7 +36,8 @@ from unittest import mock
 from dbmsbenchmarker import parameter
 
 from bexhoma import experiments
-from bexhoma.benchmarks.ssb import (DIMENSION_DBMS, QUERY_VARIANTS, SCHEMA_VARIANTS,
+from bexhoma.system_descriptors import dimension_dockers, load_dockers
+from bexhoma.benchmarks.ssb import (QUERY_VARIANTS, SCHEMA_VARIANTS,
                                     resolve_dimension_folder, resolve_indexing_key,
                                     resolve_queryfile)
 from bexhoma.experiments.base import ExperimentBase
@@ -45,6 +46,8 @@ from .test_resource_sweep import _AnyDockers, _SweepStubCluster
 
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _EXP = os.path.join(_REPO, 'experiments', 'ssb')
+#: DBMS that -xdim applies to in SSB (declared in k8s-cluster.config).
+DIMENSION_DBMS = tuple(dimension_dockers(load_dockers(os.path.join(_REPO, 'k8s-cluster.config')), 'ssb'))
 #: DBMS of the default -dbms set.
 _DBMS_FOLDERS = ('PostgreSQL', 'MonetDB', 'ClickHouse')
 #: Every script folder, including the -xdim distributed scripts.
@@ -375,10 +378,10 @@ class EntryScriptTest(unittest.TestCase):
 
     def test_dimension_folder(self):
         for docker in DIMENSION_DBMS:
-            self.assertEqual(resolve_dimension_folder(docker, 'normal', 'replicated'), docker)
-            self.assertEqual(resolve_dimension_folder(docker, 'normal', 'distributed'), docker + '/distributed')
-            self.assertEqual(resolve_dimension_folder(docker, 'flat', 'distributed'), docker)
-        self.assertEqual(resolve_dimension_folder('PostgreSQL', 'normal', 'distributed'), 'PostgreSQL')
+            self.assertEqual(resolve_dimension_folder(docker, 'normal', 'replicated', DIMENSION_DBMS), docker)
+            self.assertEqual(resolve_dimension_folder(docker, 'normal', 'distributed', DIMENSION_DBMS), docker + '/distributed')
+            self.assertEqual(resolve_dimension_folder(docker, 'flat', 'distributed', DIMENSION_DBMS), docker)
+        self.assertEqual(resolve_dimension_folder('PostgreSQL', 'normal', 'distributed', DIMENSION_DBMS), 'PostgreSQL')
         for folder in ('ClickHouseCluster', 'ClickHouseCluster/distributed'):
             for name in ('reset-ssb.sql', 'reset-flush.sh'):
                 self.assertTrue(os.path.isfile(os.path.join(_EXP, folder, name)), (folder, name))

@@ -17,6 +17,7 @@ scripts/
 ├── validate_collector_*.py  # unit-level validators for collector output
 ├── compare-commands.py      # cross-check flags between .sh, .ps1, and docs
 ├── scan-docs.py             # report experiment metadata for every doc log reference
+├── demo-runs.py             # summary of all recorded demo runs: logs_tests/SUMMARY.md and the README badge
 ├── replace-docs.py          # patch docs with fresh summary content from logs_tests/
 ├── convert-to-lf.ps1        # normalize line endings to LF + UTF-8 no-BOM (Windows)
 ├── _reorder_flags.py        # reorder bexhoma flags to canonical order in test scripts
@@ -136,6 +137,19 @@ are listed alphabetically except where noted:
 ---
 
 ## Python utility scripts
+
+### `demo-runs.py`
+
+Counts the recorded demo runs (every log referenced from `docs/`, once) as passed, failed, warn or unchecked, and writes
+`logs_tests/SUMMARY.md` (one row per run, failed first) and `logs_tests/demo-runs-badge.json` (the README badge).
+A run failed if a test failed or its evaluation crashed, and warns if only warnings are left.
+Nothing is run: the numbers describe the logs as committed. Run it after `Invoke-CleanLogs` and commit both files.
+`--check` exits with 1 if they are stale; the workflow `demo-runs.yml` does that on every pull request.
+
+```
+python scripts/demo-runs.py
+python scripts/demo-runs.py --check
+```
 
 ### `scan-docs.py`
 

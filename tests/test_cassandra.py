@@ -251,9 +251,17 @@ class CassandraImageScriptsTest(unittest.TestCase):
         self.assertIn('core_workload_insertion_retry_limit=10', branch)
 
     def test_type_is_set_in_loading_and_benchmarking(self):
-        source = _read('ycsb.py')
-        branch = source[source.index('if ("Cassandra" in args.dbms)'):source.index('if ("Citus" in args.dbms)')]
-        self.assertEqual(branch.count('BEXHOMA_DBMS_TYPE = "cassandra"'), 2)
+        from .test_reset_scripts import _run_script
+        for argv in ((), ('-nw', '2')):
+            with self.subTest(argv=argv):
+                _, configurations = _run_script('ycsb.py', '-dbms', 'Cassandra', *argv)
+                self.assertEqual(len(configurations), 1)
+                config = configurations[0]
+                self.assertEqual(config.loading_parameters['BEXHOMA_DBMS_TYPE'], 'cassandra')
+                rounds = [entry for client_round in config.experiment_dict['benchmarker'] for entry in client_round]
+                self.assertTrue(rounds)
+                for entry in rounds:
+                    self.assertEqual(entry['parameters']['BEXHOMA_DBMS_TYPE'], 'cassandra')
 
 
 if __name__ == '__main__':

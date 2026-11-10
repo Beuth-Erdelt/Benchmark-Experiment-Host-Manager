@@ -7,6 +7,9 @@
 --          for the benchbase TPC-C schema on MySQL.
 
 
+-- The script runs against the default database `mysql`, benchbase loads into `benchbase`
+USE benchbase;
+
 -- ANALYZE: Update table statistics for the optimizer
 ANALYZE TABLE customer;
 ANALYZE TABLE district;

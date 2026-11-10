@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import yaml
 
-from bexhoma.experiments.tpch import DBMS_DEFAULTS
+from bexhoma.system_descriptors import experiment_yaml_dockers, load_dockers
 
 __all__ = ["ExperimentYamlError", "load_experiment_yaml", "validate_experiment_yaml"]
 
@@ -44,16 +44,19 @@ def load_experiment_yaml(path: str) -> dict:
         return yaml.safe_load(experiment_file)
 
 
-def validate_experiment_yaml(spec: dict) -> None:
+def validate_experiment_yaml(spec: dict, dockers: dict = None) -> None:
     """
     Validate a parsed ``experiment.yaml`` before it is handed to :mod:`bexhoma.experiments.tpch_builder`.
 
     Checks, in order: every field in :data:`_REQUIRED_TOP_LEVEL_FIELDS` is present;
     ``workload`` is one of :data:`_SUPPORTED_WORKLOADS` (only ``tpch`` today, per
     the plan's scope decisions); ``systems`` is a non-empty list; and every
-    ``systems[].dbms`` names a key in :data:`bexhoma.experiments.tpch.DBMS_DEFAULTS`.
+    ``systems[].dbms`` names a DBMS whose ``tpch`` entry in the cluster configuration is
+    marked ``experiment_yaml``.
 
     :param spec: Parsed experiment spec, as returned by :func:`load_experiment_yaml`.
+    :param dockers: The ``dockers`` section of the cluster configuration; read from
+        ``cluster.config`` when not given.
     :raises ExperimentYamlError: On any validation failure.
     """
     for field_name in _REQUIRED_TOP_LEVEL_FIELDS:
@@ -70,11 +73,10 @@ def validate_experiment_yaml(spec: dict) -> None:
     if not isinstance(systems, list) or not systems:
         raise ExperimentYamlError("'systems' must be a non-empty list")
 
+    known = sorted(experiment_yaml_dockers(dockers if dockers is not None else load_dockers(), "tpch"))
     for system in systems:
         dbms = system.get("dbms")
         if dbms is None:
             raise ExperimentYamlError(f"systems entry is missing required field 'dbms': {system!r}")
-        if dbms not in DBMS_DEFAULTS:
-            raise ExperimentYamlError(
-                f"unknown dbms '{dbms}'; known values are {sorted(DBMS_DEFAULTS)}"
-            )
+        if dbms not in known:
+            raise ExperimentYamlError(f"unknown dbms '{dbms}'; known values are {known}")

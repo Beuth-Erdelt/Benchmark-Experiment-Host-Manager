@@ -6,7 +6,7 @@
 # not comments. Design rationale and provenance (not needed to read this
 # file): contracts/contract_result_comments.md
 
-result_contract_version: "1.12.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.13.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -180,15 +180,17 @@ validity:
   - id: no_monitoring_metrics_missing
     kind: absolute
     label: "No monitoring metrics missing"
-    checks: "no `Metrics missing for` line in provenance.monitoring's bexhoma-metrics-*.log or provenance.benchmarking's bexhoma-benchmarker-*.log (DBMSBenchmarker fetching per-stream metrics itself), counting a gap both logs report once; SKIPPED (not failed) when every gap is expected"
+    checks: "no `Metrics missing for` line in provenance.monitoring's bexhoma-metrics-*.log or provenance.benchmarking's bexhoma-benchmarker-*.log (DBMSBenchmarker fetching per-stream metrics itself), counting a gap both logs report once; SKIPPED (not failed) when every gap is expected; WARNING (not failed) when every remaining gap has a warning reason"
     why: "dbmsbenchmarker fills a metric Prometheus returned no data for with zeros and only logs it, so the zeros otherwise read as a measured idle component"
     expected_gaps:
       "data pre-existing": "an optional component (the data generator) had nothing to do and exited before the first scrape"
       "series exists only while non-zero": "the metric is marked sparse in cluster.config (e.g. backends waiting on locks, CPU throttling of a container without a CPU limit); no data means 0"
       "phase shorter than scrape interval": "the fetch's window (Interval length in its bexhoma-metrics-*.log) was shorter than the component needs at the scrape interval (see monitoring_component_cpu_nonzero), so no scrape may have landed inside it; its CPU [CPUs] is n/a"
+    warning_gaps:
+      "no activity seen, the pods were scraped": "the metric is marked activity_dependent in cluster.config (filesystem read/write: cAdvisor reports a device only after I/O on it) and the metric it names (CPU utilization) has data for the same connection and component, so the pods were scraped but did no such activity; plausible for an in-memory DBMS, a reason to check the setup for one that stores its data on disk. Without that data the gap stays unexpected"
     reports:
-      where: "report/index.md Health Summary (count and titles of unexpected gaps; a separate line for expected ones), report/monitoring.md Missing Metrics (source, title, connection, query, component, expected)"
-    scopes: "the listed metrics' values in monitoring.md where `expected` is empty; expected gaps' zeros are correct; other metrics stay valid"
+      where: "report/index.md Health Summary (count and titles of unexpected gaps; separate lines for expected ones and for those that need judgement), report/monitoring.md Missing Metrics (source, title, connection, query, component, expected, warning)"
+    scopes: "the listed metrics' values in monitoring.md where `expected` and `warning` are empty; expected gaps' zeros are correct; warning gaps' zeros are probably correct and need judgement; other metrics stay valid"
   - id: explain_captured_for_all_queries
     kind: absolute
     scope: dbmsbenchmarker_family_only
@@ -205,9 +207,10 @@ validity:
       change while authoring a follow-up, but still interprets each result independently"
 
 verdict_shape:
-  fields: {passed: int, failed: int, skipped: int}
+  fields: {passed: int, failed: int, skipped: int, warning: int}
   source: "report/index.md frontmatter's overall_status"
-  rule: "only a FAILED row scopes/invalidates metrics below it in report/index.md; a SKIPPED row never does"
+  rule: "only a FAILED row scopes/invalidates metrics below it in report/index.md; a SKIPPED row never does; a WARNING row does not either, but its label names what was not seen and needs judgement before a conclusion relies on it"
+  since: "warning since 1.13.0; a report of an earlier version has no warning field (count it as 0)"
 
 agent_summary_contract:
   version: "1.0.0"

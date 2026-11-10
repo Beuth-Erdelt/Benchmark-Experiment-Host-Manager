@@ -11,6 +11,9 @@ See LICENSE for details.
 """
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
+from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, pooling_variants,
+                                                selected_dockers, tenancy_error, tenant_ids)
+from bexhoma.system_descriptors import benchmark_entry, dbms_choices, expand, storage_prefix
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -19,6 +22,45 @@ import argparse
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
+
+
+def tenant_parameters(experiment, entry: dict, tenant, prefix: str) -> dict:
+    """
+    What the multi-tenant variants add to a DBMS's configuration in Benchbase.
+
+    The parameter names a DBMS passes to the jobs are its ``tenant_parameters`` in ``cluster.config``;
+    the rest (storage name, number of loading pods, script collections) is the same for all DBMS.
+
+    :param experiment: The experiment (``tenant_per``, ``num_tenants``, ``multi_tenant_volume``).
+    :param entry: The DBMS's entry for the benchmark.
+    :param tenant: The tenant id from :func:`~bexhoma.experiments.system_builder.tenant_ids`, ``None`` without container-tenancy.
+    :param prefix: The ``storage_prefix`` of the DBMS.
+    :return: ``loading`` and ``benchmarking`` parameters, ``eval`` parameters, ``storage`` (name of the storage),
+        ``tenants_per_job`` (loading pods per configuration) and ``experiment`` (scripts) as far as they apply;
+        empty for a DBMS without ``multi_tenancy``.
+    :rtype: dict
+    """
+    if not entry.get('multi_tenancy'):
+        return {}
+    by, number = experiment.tenant_per, experiment.num_tenants
+    context = {'tenant_by': by, 'num_tenants': number, 'tenant_id': 0 if tenant is None else tenant}
+    declared = entry.get('tenant_parameters') or {}
+    result = {
+        'loading': expand(declared.get('loading') or {}, context),
+        'benchmarking': expand(declared.get('benchmarking') or {}, context),
+        'eval': {'TENANT_BY': by, 'TENANT_NUM': number, 'TENANT_VOL': experiment.multi_tenant_volume},
+    }
+    if tenant is not None:
+        result['storage'] = f'{prefix}-{tenant}-{number}'
+        result['eval']['TENANT'] = tenant
+    else:
+        if by:
+            result['storage'] = f'{prefix}-{by}-{number}'
+        if number > 0:
+            result['tenants_per_job'] = number   # every tenant is loaded by the loading pods
+        if by == 'schema':
+            result['experiment'] = {'script': 'Schema_tenant', 'indexing': 'Checks_tenant'}
+    return result
 
 
 def target_per_pod(target, pods):
@@ -43,7 +85,7 @@ if __name__ == '__main__':
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: start SUT only, load data, run the full benchmark, or summarize results', choices=['run', 'start', 'load', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MySQL', 'MariaDB', 'YugabyteDB', 'CockroachDB', 'TiDB', 'DatabaseService', 'Citus', 'PGBouncer', 'CedarDB'], default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=dbms_choices('benchbase'), default=[], nargs='*')
     parser.add_argument('-xnsr',  '--xnum-sut-replicas', help='number of SUT replicas per configuration', default=1, dest='num_sut_replicas')
     parser.add_argument('-xnpd',  '--xnum-pd-nodes', help='number of PD (Placement Driver) nodes, independent of -nw (TiDB only; keep odd)', default=3, dest='num_pd_nodes')
     parser.add_argument('-xnbf',  '--xnum-benchmarking-target-factors', help='comma-separated multipliers for the benchmarking ops target (target = -xtb × factor)', default="1", dest='num_benchmarking_target_factors')
@@ -62,9 +104,9 @@ if __name__ == '__main__':
     parser.set_defaults(num_worker=1)
     # evaluate args
     args = parser.parse_args()
-    if args.multi_tenant_by == 'schema' and ('MySQL' in args.dbms or len(args.dbms) == 0):
-        # only the PostgreSQL folder has -schema scripts; a MySQL schema is a database
-        parser.error('-mtb schema is not supported for MySQL in Benchbase, use -mtb database')
+    reason = tenancy_error('benchbase', args)
+    if reason:
+        parser.error(reason)
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
     if args.debug:
@@ -97,14 +139,6 @@ if __name__ == '__main__':
         list_clients = [int(x) for x in list_clients if len(x) > 0]
     else:
         list_clients = []
-    # do not ingest, start benchmarking immediately
-    skip_loading = args.skip_loading
-    # how many workers (for distributed dbms)
-    num_worker = int(args.num_worker)
-    num_worker_replicas = int(args.num_worker_replicas)
-    num_worker_shards = int(args.num_worker_shards)
-    num_sut_replicas = int(args.num_sut_replicas)
-    num_pd_nodes = int(args.num_pd_nodes)
     ##############
     ### specific to: Benchbase
     ##############
@@ -125,6 +159,8 @@ if __name__ == '__main__':
     else:
         BENCHBASE_NEWCONNPERTXN = "false"
     workload = args.workload                              # workload for ycsb (a, ..., f)
+    # what the descriptors of cluster.config need besides the command line
+    context = {'newconn': BENCHBASE_NEWCONNPERTXN}
     ##############
     ### set cluster
     ##############
@@ -140,7 +176,6 @@ if __name__ == '__main__':
         #cluster.scale_nodegroups(node_sizes)
     else:
         cluster = clusters.Kubernetes(context=args.context)
-    cluster_name = cluster.contextdata['clustername']
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
     # set experiment
@@ -210,726 +245,47 @@ if __name__ == '__main__':
     ##############
     for loading_threads in [1]:                 # always maximum
         for loading_pods in [1]:                # always only 1 pod
-            for factor_loading in [1]:          # always maximum
-                loading_target = target_base*factor_loading#4*4096*t
-                loading_threads_per_pod = int(loading_threads/loading_pods)
-                loading_target_per_pod = int(loading_target/loading_pods)
-                if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
-                    # PostgreSQL
-                    if experiment.tenant_per == 'container':
-                        for tenant in range(experiment.num_tenants):
-                            name_format = 'PostgreSQL-{threads}-{pods}-{target}-{tenant}'
-                            #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
-                            config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
-                            # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before
-                            # each benchmarking round, in each tenant's own container
-                            config.set_benchmark_resetscript(['reset-benchbase.sql'])
-                            config.set_storage(
-                                storageConfiguration = f'postgresql-{tenant}'+"-"+str(config.num_tenants)
-                                )
-                            config.set_loading_parameters(
-                                BENCHBASE_PROFILE = 'postgres',
-                                BENCHBASE_TERMINALS = loading_threads_per_pod,
-                                BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
-                                BENCHBASE_YCSB_WORKLOAD = workload,
-                                BEXHOMA_TENANT_BY = config.tenant_per,
-                                BEXHOMA_TENANT_NUM = config.num_tenants,
-                                BEXHOMA_TENANT_ID = tenant,
-                                )
-                            config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                            config.set_eval_parameters(
-                                TENANT_BY = config.tenant_per,
-                                TENANT_NUM = config.num_tenants,
-                                TENANT_VOL = config.experiment.multi_tenant_volume,
-                                TENANT = tenant,
-                                )
-                            executor_list = []
-                            for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                                benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                                for benchmarking_threads in num_benchmarking_threads:
-                                    for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                        for num_executor in list_clients:
-                                            benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                            benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                            benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                            """
-                                            print("benchmarking_target", benchmarking_target)
-                                            print("benchmarking_pods", benchmarking_pods)
-                                            print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                            print("benchmarking_threads", benchmarking_threads)
-                                            print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                            print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                            """
-                                            executor_list.append(benchmarking_pods_scaled)
-                                            config.add_benchmarking_parameters(
-                                                BENCHBASE_PROFILE = 'postgres',
-                                                BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                                BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                                BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
-                                                BENCHBASE_YCSB_WORKLOAD = workload,
-                                                BEXHOMA_TENANT_BY = config.tenant_per,
-                                                BEXHOMA_TENANT_NUM = config.num_tenants,
-                                                BEXHOMA_TENANT_ID = tenant,
-                                                )
-                            #print(executor_list)
-                            config.add_benchmark_list(executor_list)
-                    else:
-                        name_format = 'PostgreSQL-{threads}-{pods}-{target}'
-                        #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                        config = configurations.default(experiment=experiment, docker='PostgreSQL', alias='DBMS A')
-                        # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before
-                        # each benchmarking round (caches stay warm).
-                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
-                        if config.tenant_per:
-                            config.set_storage(
-                                storageConfiguration = 'postgresql-'+config.tenant_per+"-"+str(config.num_tenants)
-                                )
-                        else:
-                            config.set_storage(
-                                storageConfiguration = 'postgresql'
-                                )
-                        config.set_loading_parameters(
-                            BENCHBASE_PROFILE = 'postgres',
-                            BENCHBASE_TERMINALS = loading_threads_per_pod,
-                            BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
-                            BENCHBASE_YCSB_WORKLOAD = workload,
-                            BEXHOMA_TENANT_BY = config.tenant_per,
-                            BEXHOMA_TENANT_NUM = config.num_tenants,
-                            BEXHOMA_TENANT_ID = 0,
-                            )
-                        if config.num_tenants > 0:
-                            config.set_loading(parallel=loading_pods*config.num_tenants, num_pods=loading_pods*config.num_tenants)
-                        else:
-                            config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                        if config.tenant_per == 'schema':
-                            config.set_experiment(script='Schema_tenant')
-                            config.set_experiment(indexing='Checks_tenant')
-                        config.set_eval_parameters(
-                            TENANT_BY = config.tenant_per,
-                            TENANT_NUM = config.num_tenants,
-                            TENANT_VOL = config.experiment.multi_tenant_volume,
-                            #TENANT = tenant, # not defined here
-                            )
+            loading_threads_per_pod = int(loading_threads/loading_pods)
+            # every DBMS that can run Benchbase (or the ones named by -dbms), as declared in cluster.config
+            for docker in selected_dockers(cluster.dockers, 'benchbase', args.dbms, args):
+                entry = benchmark_entry(cluster.dockers, docker, 'benchbase')
+                # a DBMS behind a connection pooler gets a configuration per pooler setting
+                for pooling in pooling_variants(entry, num_pooling_pods,
+                                                num_pooling_in or [int(loading_threads)],
+                                                num_pooling_out or [int(loading_threads)]):
+                    # a DBMS in the multi-tenant variants gets one configuration per tenant (container-tenancy)
+                    for tenant in tenant_ids(experiment, entry):
+                        tenants = tenant_parameters(experiment, entry, tenant, storage_prefix(cluster.dockers, docker))
+                        config = build_configuration(
+                            experiment, docker, 'benchbase', args,
+                            loading_parameters={'BENCHBASE_TERMINALS': loading_threads_per_pod, **tenants.get('loading', {})},
+                            storage_configuration=tenants.get('storage'),
+                            context=context, pooling=pooling or None)
+                        pods = loading_pods * tenants.get('tenants_per_job', 1)
+                        config.set_loading(parallel=pods, num_pods=pods)
+                        if tenants.get('eval'):
+                            config.set_eval_parameters(**tenants['eval'])
+                        if tenants.get('experiment'):
+                            config.set_experiment(**tenants['experiment'])
+                        benchmarking_parameters = entry_parameters(
+                            cluster.dockers, docker, 'benchbase', 'benchmarking_parameters', args, context)
                         executor_list = []
-                        for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                            benchmarking_target = target_base*factor_benchmarking#4*4096*t
+                        for factor_benchmarking in num_benchmarking_target_factors:
+                            benchmarking_target = target_base*factor_benchmarking
                             for benchmarking_threads in num_benchmarking_threads:
-                                for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
+                                for benchmarking_pods in num_benchmarking_pods:
                                     for num_executor in list_clients:
                                         benchmarking_pods_scaled = num_executor*benchmarking_pods
                                         benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
                                         benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                        """
-                                        print("benchmarking_target", benchmarking_target)
-                                        print("benchmarking_pods", benchmarking_pods)
-                                        print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                        print("benchmarking_threads", benchmarking_threads)
-                                        print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                        print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                        """
                                         executor_list.append(benchmarking_pods_scaled)
                                         config.add_benchmarking_parameters(
-                                            BENCHBASE_PROFILE = 'postgres',
+                                            **benchmarking_parameters,
                                             BENCHBASE_TARGET = benchmarking_target_per_pod,
                                             BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                            BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
-                                            BENCHBASE_YCSB_WORKLOAD = workload,
-                                            BEXHOMA_TENANT_BY = config.tenant_per,
-                                            BEXHOMA_TENANT_NUM = config.num_tenants,
-                                            BEXHOMA_TENANT_ID = 0,
+                                            **tenants.get('benchmarking', {}),
                                             )
-                        #print(executor_list)
                         config.add_benchmark_list(executor_list)
-                if ("CedarDB" in args.dbms):
-                    # PostgreSQL
-                    name_format = 'CedarDB-{threads}-{pods}-{target}'
-                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='CedarDB', alias='DBMS A')
-                    # With -ar: ANALYZE before each round; no CHECKPOINT and no counters to reset
-                    config.set_benchmark_resetscript(['reset-benchbase.sql'])
-                    config.set_storage(
-                        storageConfiguration = 'cedardb'
-                        )
-                    config.set_loading_parameters(
-                        BENCHBASE_PROFILE = 'postgres',
-                        BEXHOMA_DATABASE = 'postgres',
-                        BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
-                        BENCHBASE_YCSB_WORKLOAD = workload,
-                        )
-                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                    executor_list = []
-                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                        for benchmarking_threads in num_benchmarking_threads:
-                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                for num_executor in list_clients:
-                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
-                                    executor_list.append(benchmarking_pods_scaled)
-                                    config.add_benchmarking_parameters(
-                                        BENCHBASE_PROFILE = 'postgres',
-                                        BEXHOMA_DATABASE = 'postgres',
-                                        BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                        BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
-                                        BENCHBASE_YCSB_WORKLOAD = workload,
-                                        )
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
-                if ("PGBouncer" in args.dbms or len(args.dbms) == 0):
-                    # PGBouncer
-                    if len(num_pooling_in) == 0:
-                        num_pooling_in = [int(loading_threads)]
-                    if len(num_pooling_out) == 0:
-                        num_pooling_out = [int(loading_threads)]
-                    for num_c_pods in num_pooling_pods:
-                        for num_c_in in num_pooling_in:
-                            for num_c_out in num_pooling_out:
-                                if len(num_pooling_pods) > 0:
-                                    name_format = 'pgb-{threads}-{pooling_pods}-{c_in}-{c_out}'
-                                else:
-                                    name_format = 'pgb-{threads}-{loading_pods}-{c_in}-{c_out}'
-                                # this is too long
-                                #name_format = 'PGBouncer-{threads}-{pods}-{target}-{c_in}-{c_out}'
-                                #, configuration=name_format.format(threads=loading_threads, loading_pods=loading_pods, pooling_pods=num_c_pods, target=loading_target, c_in=num_c_in, c_out=num_c_out)
-                                config = configurations.default(experiment=experiment, docker='PGBouncer', alias='DBMS A')
-                                config.path_experiment_docker = 'PostgreSQL'                              # take init scripts of PostgreSQL
-                                config.set_benchmark_resetscript(['reset-benchbase.sql'])                 # reset of PostgreSQL, through the pooler
-                                config.sut_has_pool = True                                                # in particular monitor pool component
-                                config.sut_parameters = {
-                                    # do not split connections between pool pods:
-                                    'DEFAULT_POOL_SIZE': int(num_c_out),                       # max connections to PostgreSQL
-                                    'MIN_POOL_SIZE': int(num_c_out),                           # min connections to PostgreSQL
-                                    'MAX_CLIENT_CONN': int(num_c_in),                          # max connections to PGBouncer
-                                    # split connections between pool pods:
-                                    #'DEFAULT_POOL_SIZE': int(num_c_out/num_c_pods),           # max connections to PostgreSQL
-                                    #'MIN_POOL_SIZE': int(num_c_out/num_c_pods),               # min connections to PostgreSQL
-                                    #'MAX_CLIENT_CONN': int(num_c_in/num_c_pods),              # max connections to PGBouncer
-                                }
-                                config.set_resources(
-                                    replicas_pooling = num_c_pods,
-                                )
-                                config.set_storage(
-                                    storageConfiguration = 'postgresql'
-                                    )
-                                config.set_loading_parameters(
-                                    BENCHBASE_PROFILE = 'postgres',
-                                    BEXHOMA_DATABASE = 'postgres',
-                                    BENCHBASE_TERMINALS = loading_threads_per_pod,
-                                    BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
-                                    )
-                                config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                                executor_list = []
-                                for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                                    benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                                    for benchmarking_threads in num_benchmarking_threads:
-                                        for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                            for num_executor in list_clients:
-                                                benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                                benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                                benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                                """
-                                                print("benchmarking_target", benchmarking_target)
-                                                print("benchmarking_pods", benchmarking_pods)
-                                                print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                                print("benchmarking_threads", benchmarking_threads)
-                                                print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                                print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                                """
-                                                executor_list.append(benchmarking_pods_scaled)
-                                                config.add_benchmarking_parameters(
-                                                    BENCHBASE_PROFILE = 'postgres',
-                                                    BEXHOMA_DATABASE = 'postgres',
-                                                    BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                                    BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                                    BENCHBASE_NEWCONNPERTXN = BENCHBASE_NEWCONNPERTXN,
-                                                    )
-                                #print(executor_list)
-                                config.add_benchmark_list(executor_list)
-                if ("MySQL" in args.dbms or len(args.dbms) == 0):
-                    # MySQL
-                    if experiment.tenant_per == 'container':
-                        for tenant in range(experiment.num_tenants):
-                            name_format = 'MySQL-{threads}-{pods}-{target}-{tenant}'
-                            #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target, tenant=tenant)
-                            config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS A')
-                            if type_of_benchmark == 'tpcc':
-                                # With -ar: ANALYZE TABLE, then flush of the dirty pages and
-                                # FLUSH STATUS before each round, in each tenant's own container
-                                config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-flush.sh'])
-                            config.set_storage(
-                                storageConfiguration = f'mysql-{tenant}'+"-"+str(config.num_tenants)
-                                )
-                            config.set_sut_parameters(
-                                MYSQL_DATABASE = 'benchbase',
-                                )
-                            config.set_loading_parameters(
-                                BENCHBASE_PROFILE = 'mysql',
-                                BEXHOMA_DATABASE = 'benchbase',
-                                BENCHBASE_TERMINALS = loading_threads_per_pod,
-                                BEXHOMA_TENANT_BY = config.tenant_per,
-                                BEXHOMA_TENANT_NUM = config.num_tenants,
-                                )
-                            config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                            config.set_eval_parameters(
-                                TENANT_BY = config.tenant_per,
-                                TENANT_NUM = config.num_tenants,
-                                TENANT = tenant,
-                                TENANT_VOL = config.experiment.multi_tenant_volume,
-                                )
-                            executor_list = []
-                            for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                                benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                                for benchmarking_threads in num_benchmarking_threads:
-                                    for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                        for num_executor in list_clients:
-                                            benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                            benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                            benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                            """
-                                            print("benchmarking_target", benchmarking_target)
-                                            print("benchmarking_pods", benchmarking_pods)
-                                            print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                            print("benchmarking_threads", benchmarking_threads)
-                                            print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                            print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                            """
-                                            executor_list.append(benchmarking_pods_scaled)
-                                            config.add_benchmarking_parameters(
-                                                BENCHBASE_PROFILE = 'mysql',
-                                                BEXHOMA_DATABASE = 'benchbase',
-                                                BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                                BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                                BEXHOMA_TENANT_BY = config.tenant_per,
-                                                BEXHOMA_TENANT_NUM = config.num_tenants,
-                                                )
-                            #print(executor_list)
-                            config.add_benchmark_list(executor_list)
-                    else:
-                        name_format = 'MySQL-{threads}-{pods}-{target}'
-                        #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                        config = configurations.default(experiment=experiment, docker='MySQL', alias='DBMS A')
-                        if type_of_benchmark == 'tpcc':
-                            # With -ar: ANALYZE TABLE, then flush of the dirty pages and
-                            # FLUSH STATUS before each benchmarking round.
-                            config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-flush.sh'])
-                        if config.tenant_per:
-                            config.set_storage(
-                                storageConfiguration = 'mysql-'+config.tenant_per+"-"+str(config.num_tenants)
-                                )
-                        else:
-                            config.set_storage(
-                                storageConfiguration = 'mysql'
-                                )
-                        config.set_sut_parameters(
-                            MYSQL_DATABASE = 'benchbase',
-                            )
-                        config.set_loading_parameters(
-                            BENCHBASE_PROFILE = 'mysql',
-                            BEXHOMA_DATABASE = 'benchbase',
-                            BENCHBASE_TERMINALS = loading_threads_per_pod,
-                            BEXHOMA_TENANT_BY = config.tenant_per,
-                            BEXHOMA_TENANT_NUM = config.num_tenants,
-                            )
-                        if config.num_tenants > 0:
-                            config.set_loading(parallel=loading_pods*config.num_tenants, num_pods=loading_pods*config.num_tenants)
-                        else:
-                            config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                        config.set_eval_parameters(
-                            TENANT_BY = config.tenant_per,
-                            TENANT_NUM = config.num_tenants,
-                            TENANT_VOL = config.experiment.multi_tenant_volume,
-                            #TENANT = tenant, # not defined here
-                            )
-                        executor_list = []
-                        for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                            benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                            for benchmarking_threads in num_benchmarking_threads:
-                                for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                    for num_executor in list_clients:
-                                        benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                        benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                        benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                        """
-                                        print("benchmarking_target", benchmarking_target)
-                                        print("benchmarking_pods", benchmarking_pods)
-                                        print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                        print("benchmarking_threads", benchmarking_threads)
-                                        print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                        print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                        """
-                                        executor_list.append(benchmarking_pods_scaled)
-                                        config.add_benchmarking_parameters(
-                                            BENCHBASE_PROFILE = 'mysql',
-                                            BEXHOMA_DATABASE = 'benchbase',
-                                            BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                            BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                            BEXHOMA_TENANT_BY = config.tenant_per,
-                                            BEXHOMA_TENANT_NUM = config.num_tenants,
-                                            )
-                        #print(executor_list)
-                        config.add_benchmark_list(executor_list)
-                if ("MariaDB" in args.dbms or len(args.dbms) == 0):
-                    # MariaDB
-                    name_format = 'MariaDB-{threads}-{pods}-{target}'
-                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='MariaDB', alias='DBMS A')
-                    if type_of_benchmark == 'tpcc':
-                        # With -ar: ANALYZE TABLE, then flush of the dirty pages and
-                        # FLUSH STATUS before each benchmarking round.
-                        config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-flush.sh'])
-                    config.set_storage(
-                        storageConfiguration = 'mariadb'
-                        )
-                    config.set_loading_parameters(
-                        BENCHBASE_PROFILE = 'mariadb',
-                        BEXHOMA_DATABASE = 'benchbase',
-                        BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        )
-                    config.set_sut_parameters(
-                        MARIADB_DATABASE = "benchbase",
-                        )
-                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                    executor_list = []
-                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                        for benchmarking_threads in num_benchmarking_threads:
-                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                for num_executor in list_clients:
-                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
-                                    executor_list.append(benchmarking_pods_scaled)
-                                    config.add_benchmarking_parameters(
-                                        BENCHBASE_PROFILE = 'mariadb',
-                                        BEXHOMA_DATABASE = 'benchbase',
-                                        BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                        BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        )
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
-                if ("YugabyteDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
-                    # YugabyteDB
-                    name_format = 'YugabyteDB-{threads}-{pods}-{target}'
-                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='YugabyteDB', alias='DBMS D')
-                    config.set_sut_role('placeholder') # helper pod; data lives in the Helm-managed tservers
-                    config.set_pvc_selector('app=yb-tserver') # storage metrics of the tserver volumes
-                    create_schema = "true"
-                    yugabyte_database = 'yugabyte'
-                    if type_of_benchmark == "tpcc":
-                        create_schema = "false"
-                        # initschema-benchbase.sql creates the database of the tables
-                        yugabyte_database = 'benchbase'
-                        # With -ar: ANALYZE, then a stats reset on every tserver before
-                        # each round; YSQL has no CHECKPOINT.
-                        config.set_benchmark_resetscript(['reset-benchbase.sql', 'reset-counters.sh'])
-                    config.monitoring_sut = False # should not be monitored since only dummy
-                    config.set_storage(
-                        storageConfiguration = 'yugabytedb'
-                        )
-                    if skip_loading:
-                        config.loading_deactivated = True
-                    config.sut_service_name = "yb-tserver-service"      # fix service name of SUT, because it is not managed by bexhoma
-                    config.sut_pod_name = "yb-tserver-"                 # fix pod name of SUT, because it is not managed by bexhoma
-                    config.statefulset_name = 'yb-tserver'              # name of the stateful set of DBMS pods
-                    config.sut_container_name = ''                      # fix container name of SUT
-                    stateful_set = "yb-tserver"
-                    config.deployment_infos['statefulset'] = {}
-                    config.deployment_infos['statefulset'][stateful_set] = {}
-                    config.deployment_infos['statefulset'][stateful_set]['name'] = stateful_set
-                    #config.deployment_infos['statefulset'][stateful_set]['name_service'] = config.get_worker_name(component=stateful_set)
-                    config.deployment_infos['statefulset'][stateful_set]['pods'] = [f"{stateful_set}-{i}" for i in range(3)] # self.num_worker
-                    config.deployment_infos['statefulset'][stateful_set]['containers'] = []
-                    stateful_set = "yb-master"
-                    config.deployment_infos['statefulset'][stateful_set] = {}
-                    config.deployment_infos['statefulset'][stateful_set]['name'] = stateful_set
-                    #config.deployment_infos['statefulset'][stateful_set]['name_service'] = config.get_worker_name(component=stateful_set)
-                    config.deployment_infos['statefulset'][stateful_set]['pods'] = [f"{stateful_set}-{i}" for i in range(3)] # self.num_worker
-                    config.deployment_infos['statefulset'][stateful_set]['containers'] = []
-                    # YugabyteDB: get_worker_pods/endpoints/set_metric_of_config use statefulset_name
-                    # and strip the container filter — handled by SutConfiguration branching.
-                    config.worker_metric_strip_container = True
-                    config.set_loading_parameters(
-                        BENCHBASE_PROFILE = 'postgres',
-                        BEXHOMA_PORT = 5433,
-                        BEXHOMA_DATABASE = yugabyte_database,
-                        BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        BENCHBASE_CREATE_SCHEMA = create_schema,
-                        )
-                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                    executor_list = []
-                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                        for benchmarking_threads in num_benchmarking_threads:
-                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                for num_executor in list_clients:
-                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
-                                    executor_list.append(benchmarking_pods_scaled)
-                                    config.add_benchmarking_parameters(
-                                        BENCHBASE_PROFILE = 'postgres',
-                                        BEXHOMA_PORT = 5433,
-                                        BEXHOMA_DATABASE = yugabyte_database,
-                                        BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                        BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        )
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
-                    config.max_sut_dbms = 1
-                if ("CockroachDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
-                    # CockroachDB
-                    name_format = 'CockroachDB-{threads}-{pods}-{target}'
-                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='CockroachDB', alias='DBMS D', worker=num_worker)
-                    config.monitoring_sut = False # should not be monitored since only dummy
-                    config.set_sut_role('placeholder') # client pod; data lives in the worker StatefulSet
-                    if type_of_benchmark == 'tpcc':
-                        # With -ar: ANALYZE and a SQL stats reset before each round;
-                        # Pebble has no user-invokable checkpoint.
-                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
-                    if skip_loading:
-                        config.loading_deactivated = True
-                    config.set_storage(
-                        storageConfiguration = 'cockroachdb'
-                        )
-                    config.set_sut_parameters(
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        BEXHOMA_SHARDS = num_worker_shards,
-                        )
-                    config.set_eval_parameters(
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        BEXHOMA_SHARDS = num_worker_shards,
-                        BEXHOMA_WORKERS = num_worker
-                        )
-                    config.set_loading_parameters(
-                        BENCHBASE_PROFILE = 'cockroachdb',
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        )
-                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                    executor_list = []
-                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                        for benchmarking_threads in num_benchmarking_threads:
-                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                for num_executor in list_clients:
-                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
-                                    executor_list.append(benchmarking_pods_scaled)
-                                    config.add_benchmarking_parameters(
-                                        BENCHBASE_PROFILE = 'cockroachdb',
-                                        BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                        BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BEXHOMA_REPLICAS = num_worker_replicas,
-                                        )
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
-                    config.max_sut_dbms = 1
-                if ("TiDB" in args.dbms):# or len(args.dbms) == 0): # not included per default
-                    # TiDB
-                    name_format = 'TiDB-{threads}-{pods}-{target}'
-                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='TiDB', alias='DBMS D', worker=num_worker)
-                    config.set_data_components(['tikv']) # PD keeps its template resources and volume size
-                    if type_of_benchmark == 'tpcc':
-                        # With -ar: ANALYZE TABLE and FLUSH STATUS before each round;
-                        # TiKV has no user-invokable checkpoint.
-                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
-                    if skip_loading:
-                        config.loading_deactivated = True
-                    config.set_storage(
-                        storageConfiguration = 'tidb'
-                        )
-                    config.set_resources(
-                        replicas_sut = num_sut_replicas,
-                        replicas_pd = num_pd_nodes
-                    )
-                    config.set_sut_parameters(
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        BEXHOMA_SHARDS = num_worker_shards,
-                        )
-                    config.set_eval_parameters(
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        BEXHOMA_SHARDS = num_worker_shards,
-                        BEXHOMA_WORKERS = num_worker
-                        )
-                    config.set_loading_parameters(
-                        BENCHBASE_PROFILE = 'mysql',
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        )
-                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                    executor_list = []
-                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                        for benchmarking_threads in num_benchmarking_threads:
-                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                for num_executor in list_clients:
-                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
-                                    executor_list.append(benchmarking_pods_scaled)
-                                    config.add_benchmarking_parameters(
-                                        BENCHBASE_PROFILE = 'mysql',
-                                        BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                        BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BEXHOMA_REPLICAS = num_worker_replicas,
-                                        )
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
-                    #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
-                if ("DatabaseService" in args.dbms):# or len(args.dbms) == 0): # not included per default
-                    # DatabaseService
-                    name_format = 'DBS-{threads}-{pods}-{target}'
-                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='DatabaseService', alias='DatabaseService')
-                    config.monitoring_sut = False # cannot be monitored since outside of K8s
-                    config.set_sut_role('placeholder') # the pod is only a client; the DBMS is outside of K8s
-                    config.resource_sweep = False # resources and storage are not set by bexhoma
-                    if skip_loading:
-                        config.loading_deactivated = True
-                    config.set_storage(
-                        storageConfiguration = 'dbs'
-                        )
-                    config.set_loading_parameters(
-                        BENCHBASE_PROFILE = 'postgres',
-                        BEXHOMA_DATABASE = 'postgres',
-                        BEXHOMA_HOST = 'bexhoma-service',
-                        BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        )
-                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                    executor_list = []
-                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                        for benchmarking_threads in num_benchmarking_threads:
-                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                for num_executor in list_clients:
-                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
-                                    executor_list.append(benchmarking_pods_scaled)
-                                    config.add_benchmarking_parameters(
-                                        BENCHBASE_PROFILE = 'postgres',
-                                        BEXHOMA_DATABASE = 'postgres',
-                                        BEXHOMA_HOST = 'bexhoma-service',
-                                        BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                        BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        )
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
-                    #cluster.max_sut = 1 # can only run 1 in same cluster because of fixed service
-                if ("Citus" in args.dbms):# or len(args.dbms) == 0): # not included per default
-                    # Citus
-                    name_format = 'Citus-{threads}-{pods}-{target}'
-                    #, configuration=name_format.format(threads=loading_threads, pods=loading_pods, target=loading_target)
-                    config = configurations.default(experiment=experiment, docker='Citus', alias='DBMS F', worker=num_worker)
-                    create_schema = "true"
-                    if type_of_benchmark == "tpcc":
-                        create_schema = "false"
-                        # With -ar: VACUUM ANALYZE, then CHECKPOINT and a stats reset
-                        # on the coordinator and every worker before each round.
-                        config.set_benchmark_resetscript(['reset-benchbase.sql'])
-                    if skip_loading:
-                        config.loading_deactivated = True
-                    config.set_storage(
-                        storageConfiguration = 'citus'
-                        )
-                    config.set_sut_parameters(
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        BEXHOMA_SHARDS = num_worker_shards,
-                        )
-                    config.set_eval_parameters(
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        BEXHOMA_SHARDS = num_worker_shards,
-                        BEXHOMA_WORKERS = num_worker
-                        )
-                    config.set_loading_parameters(
-                        BENCHBASE_PROFILE = 'postgres',
-                        BENCHBASE_TERMINALS = loading_threads_per_pod,
-                        BEXHOMA_REPLICAS = num_worker_replicas,
-                        BENCHBASE_CREATE_SCHEMA = create_schema,
-                        )
-                    config.set_loading(parallel=loading_pods, num_pods=loading_pods)
-                    executor_list = []
-                    for factor_benchmarking in num_benchmarking_target_factors:#range(1, 9):#range(1, 2):#range(1, 15):
-                        benchmarking_target = target_base*factor_benchmarking#4*4096*t
-                        for benchmarking_threads in num_benchmarking_threads:
-                            for benchmarking_pods in num_benchmarking_pods:#[1,2]:#[1,8]:#range(2,5):
-                                for num_executor in list_clients:
-                                    benchmarking_pods_scaled = num_executor*benchmarking_pods
-                                    benchmarking_threads_per_pod = int(benchmarking_threads/benchmarking_pods)
-                                    benchmarking_target_per_pod = target_per_pod(benchmarking_target, benchmarking_pods)
-                                    """
-                                    print("benchmarking_target", benchmarking_target)
-                                    print("benchmarking_pods", benchmarking_pods)
-                                    print("benchmarking_pods_scaled", benchmarking_pods_scaled)
-                                    print("benchmarking_threads", benchmarking_threads)
-                                    print("benchmarking_threads_per_pod", benchmarking_threads_per_pod)
-                                    print("benchmarking_target_per_pod", benchmarking_target_per_pod)
-                                    """
-                                    executor_list.append(benchmarking_pods_scaled)
-                                    config.add_benchmarking_parameters(
-                                        BENCHBASE_PROFILE = 'postgres',
-                                        BENCHBASE_TARGET = benchmarking_target_per_pod,
-                                        BENCHBASE_TERMINALS = benchmarking_threads_per_pod,
-                                        BEXHOMA_REPLICAS = num_worker_replicas,
-                                        )
-                    #print(executor_list)
-                    config.add_benchmark_list(executor_list)
-                    config.max_sut_dbms = 1
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############
@@ -940,4 +296,4 @@ if __name__ == '__main__':
     ### branch for workflows
     ##############
     experiment.process()
-exit()
+    exit()

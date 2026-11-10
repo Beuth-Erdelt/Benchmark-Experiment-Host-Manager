@@ -107,8 +107,8 @@ class CedarDBScriptsTest(unittest.TestCase):
                 self.assertEqual(query['DBMS']['CedarDB'], re.sub(r"date\('([^']+)'\)", r"date '\1'", postgresql))
 
     def test_tpch_uses_the_cedardb_dialect(self):
-        from bexhoma.experiments.tpch import DBMS_DEFAULTS
-        self.assertEqual(DBMS_DEFAULTS['CedarDB']['dialect'], 'CedarDB')
+        from bexhoma.system_descriptors import dialect, load_dockers
+        self.assertEqual(dialect(load_dockers('k8s-cluster.config'), 'CedarDB'), 'CedarDB')
 
 
 if __name__ == '__main__':

@@ -13,6 +13,8 @@ See LICENSE for details.
 """
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
+from bexhoma.experiments.system_builder import build_configuration, entry_parameters, loading_layouts, tenancy_error
+from bexhoma.system_descriptors import dbms_choices
 from dbmsbenchmarker import *
 import logging
 import urllib3
@@ -32,7 +34,7 @@ if __name__ == '__main__':
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: profile import, run queries, start SUT only, load data, empty tables, or summarize results', choices=['profiling', 'run', 'start', 'load', 'empty', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=['PostgreSQL', 'MonetDB', 'MySQL', 'MariaDB', 'MariaDBCS', 'ClickHouse', 'ClickHouseCluster'], default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=dbms_choices('tpcds'), default=[], nargs='*')
     parser.add_argument('-xlit',  '--xlimit-import-table', help='import only this table (useful for partial re-loads)', default='', dest='limit_import_table')
     parser.add_argument('-xdt',   '--xdata-transfer', help='also measure data transfer volume per query', action='store_true', default=False, dest='datatransfer')
     parser.add_argument('-xqr',   '--xnum-query-runs', help='number of times to repeat each query', default=1, dest='num_run')
@@ -48,6 +50,9 @@ if __name__ == '__main__':
     parser.add_argument('-xse',   '--xstore-explain', help='run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='store_explain')
     # evaluate args
     args = parser.parse_args()
+    reason = tenancy_error('tpcds', args)
+    if reason:
+        parser.error(reason)
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
     debugging = int(args.debug)
@@ -81,8 +86,6 @@ if __name__ == '__main__':
         list_clients = [int(x) for x in list_clients if len(x) > 0]
     else:
         list_clients = []
-    # do not ingest, start benchmarking immediately
-    skip_loading = args.skip_loading
     ##############
     ### specific to: dbmsbenchmarker TPC-DS
     ##############
@@ -95,8 +98,6 @@ if __name__ == '__main__':
     store_explain = args.store_explain
     # limit to one table
     limit_import_table = args.limit_import_table
-    # columnar storage
-    init_columns = args.init_columns
     # restrict to a subset of queries by 1-based query number
     active_queries = [int(x) for x in args.active_queries.split(",") if len(x) > 0] or None
     ##############
@@ -114,7 +115,6 @@ if __name__ == '__main__':
         #cluster.scale_nodegroups(node_sizes)
     else:
         cluster = clusters.Kubernetes(context=args.context)
-    cluster_name = cluster.contextdata['clustername']
     # limit number of sut
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
@@ -175,150 +175,14 @@ if __name__ == '__main__':
     ##############
     ### add configs of dbms to be tested
     ##############
-    for loading_pods_split in num_loading_split: # should be a number of splits, e.g. 4 for 1/4th of all pods
-        for loading_pods_total in num_loading_pods: # number of loading pods in total
-            # split number of loading pods into parallel potions
-            if loading_pods_total < loading_pods_split:
-                # thats not possible
-                continue
-            # how many in parallel?
-            split_portion = int(loading_pods_total/loading_pods_split)
-            if ("PostgreSQL" in args.dbms or len(args.dbms) == 0):
-                # PostgreSQL
-                name_format = 'PostgreSQL-{cluster}-{pods}'
-                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='PostgreSQL', dialect='PostgreSQL', alias='DBMS A2')
-                # With -ar: VACUUM ANALYZE, CHECKPOINT and a stats reset before each round
-                config.set_benchmark_resetscript(['reset-tpcds.sql'])
-                config.set_storage(
-                    storageConfiguration = 'postgresql'
-                    )
-                config.jobtemplate_loading = "jobtemplate-loading-tpcds-PostgreSQL.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    )
-                config.set_benchmarking_parameters()
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("MonetDB" in args.dbms or len(args.dbms) == 0):
-                # MonetDB
-                name_format = 'MonetDB-{cluster}-{pods}'
-                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='MonetDB', dialect='MonetDB', alias='DBMS A1')
-                # With -ar: ANALYZE and flush of the write-ahead log before each round
-                config.set_benchmark_resetscript(['reset-tpcds.sql'])
-                config.set_storage(
-                    storageConfiguration = 'monetdb'
-                    )
-                config.jobtemplate_loading = "jobtemplate-loading-tpcds-MonetDB.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    )
-                config.set_benchmarking_parameters()
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("MariaDB" in args.dbms or len(args.dbms) == 0):
-                # MariaDB
-                name_format = 'MariaDB-{cluster}-{pods}'
-                #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion)
-                config = configurations.default(experiment=experiment, docker='MariaDB', dialect='MySQL', alias='DBMS A1')
-                # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
-                config.set_benchmark_resetscript(['reset-tpcds.sql', 'reset-flush.sh'])
-                config.set_storage(
-                    storageConfiguration = 'mariadb'
-                    )
-                config.jobtemplate_loading = "jobtemplate-loading-tpcds-MariaDB.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    MYSQL_LOADING_FROM = "LOCAL",
-                    )
-                config.set_benchmarking_parameters()
-                config.set_sut_parameters(
-                    MARIADB_DATABASE = "tpcds",
-                    )
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("MariaDBCS" in args.dbms):
-                # MariaDB ColumnStore (reuses MariaDB's loading job; own scripts)
-                # one loader pod, whatever -nlp says: concurrent LOAD DATA into a table fails with
-                # error 1030 and the loader goes on, so rows would be missing (cpimport works in parallel)
-                if int(loading_pods_total) > 1:
-                    print('MariaDBCS: loads with 1 pod, ignoring -nlp ' + str(loading_pods_total))
-                config = configurations.default(experiment=experiment, docker='MariaDBCS', dialect='MySQL', alias='DBMS A8')
-                # With -ar: ANALYZE TABLE before each round; no dirty pages and no counters to reset
-                config.set_benchmark_resetscript(['reset-tpcds.sql'])
-                config.set_storage(
-                    storageConfiguration = 'mariadbcs'
-                    )
-                config.jobtemplate_loading = "jobtemplate-loading-tpcds-MariaDB.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = "1",
-                    PODS_PARALLEL = "1",
-                    MYSQL_LOADING_FROM = "LOCAL",
-                    )
-                config.set_benchmarking_parameters()
-                config.set_sut_parameters(
-                    MARIADB_DATABASE = "tpcds",
-                    )
-                config.set_loading(parallel=1, num_pods=1)
-            if ("MySQL" in args.dbms or len(args.dbms) == 0):
-            #if ("MySQL" in args.dbms): # must be chosen explicitly
-                # MySQL
-                for threads in num_loading_threads:
-                    pods_times_threads=int(loading_pods_total)*int(threads)
-                    name_format = 'MySQL-{cluster}-{pods_times_threads}'
-                    #, configuration=name_format.format(cluster=cluster_name, pods=loading_pods_total, split=split_portion, threads=threads, pods_times_threads=pods_times_threads)
-                    config = configurations.default(experiment=experiment, docker='MySQL', dialect='MySQL', alias='DBMS A1')
-                    # With -ar: ANALYZE TABLE, then flush of the dirty pages and FLUSH STATUS before each round
-                    config.set_benchmark_resetscript(['reset-tpcds.sql', 'reset-flush.sh'])
-                    config.set_storage(
-                        storageConfiguration = 'mysql'
-                        )
-                    config.jobtemplate_loading = "jobtemplate-loading-tpcds-MySQL.yml"
-                    config.set_loading_parameters(
-                        PODS_TOTAL = str(loading_pods_total),
-                        PODS_PARALLEL = str(split_portion),
-                        MYSQL_LOADING_THREADS = int(threads),#int(num_loading_threads),#int(loading_pods_total),
-                        MYSQL_LOADING_PARALLEL = 1, # not possible from RAM disk, only filesystem
-                        )
-                    config.set_benchmarking_parameters()
-                    config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("ClickHouse" in args.dbms):
-                # ClickHouse
-                config = configurations.default(experiment=experiment, docker='ClickHouse', dialect='Clickhouse', alias='DBMS A1')
-                # With -ar: sync of the loaded parts to disk before each round
-                config.set_benchmark_resetscript(['reset-flush.sh'])
-                config.set_storage(
-                    storageConfiguration = 'clickhouse'
-                    )
-                config.jobtemplate_loading = "jobtemplate-loading-tpcds-ClickHouse.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    )
-                config.set_benchmarking_parameters()
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
-            if ("ClickHouseCluster" in args.dbms):
-                # ClickHouse cluster: coordinator (SUT) and num_worker shards
-                num_worker = int(args.num_worker)
-                config = configurations.default(experiment=experiment, docker='ClickHouseCluster', dialect='Clickhouse', alias='DBMS C1', worker=num_worker)
-                # With -ar: rows held by the Distributed tables are sent to the shards
-                # (coordinator), then the loaded parts are synced to disk (every worker)
-                config.set_benchmark_resetscript(['reset-tpcds.sql', 'reset-flush.sh'])
-                config.set_script_target('workers')
-                config.set_storage(
-                    storageConfiguration = 'clickhousecluster'
-                    )
-                config.set_eval_parameters(
-                    BEXHOMA_WORKERS = num_worker,
-                    )
-                config.jobtemplate_loading = "jobtemplate-loading-tpcds-ClickHouse.yml"
-                config.set_loading_parameters(
-                    PODS_TOTAL = str(loading_pods_total),
-                    PODS_PARALLEL = str(split_portion),
-                    )
-                config.set_benchmarking_parameters()
-                config.set_loading(parallel=split_portion, num_pods=loading_pods_total)
+    # every DBMS that can run TPC-DS (or the ones named by -dbms), as declared in cluster.config,
+    # once per way to load it (-nls, -nlp, -nlt)
+    for docker, entry, pods_total, pods_parallel, loading_parameters in loading_layouts(
+            cluster.dockers, 'tpcds', args, num_loading_split, num_loading_pods, num_loading_threads):
+        config = build_configuration(experiment, docker, 'tpcds', args, loading_parameters=loading_parameters)
+        config.set_benchmarking_parameters(
+            **entry_parameters(cluster.dockers, docker, 'tpcds', 'benchmarking_parameters', args))
+        config.set_loading(parallel=pods_parallel, num_pods=pods_total)
     ##############
     ### wait for necessary nodegroups to have planned size
     ##############

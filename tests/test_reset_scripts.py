@@ -209,11 +209,26 @@ class ResetCompletenessTest(unittest.TestCase):
 
     def test_tpch_refresh_stream_gets_no_second_reset(self):
         """The reset runs once per round, before the query stream, not again before the refresh stream."""
-        _, configurations = _run_script('tpch.py', '-xrs', '1')
-        for config in configurations:
-            resets = _resets(config)
-            self.assertIn('tpch_refresh', resets)
-            self.assertEqual(resets['tpch_refresh'], [], config.configuration)
+        # one refresh job serves all DBMS of a run: run the groups that share one
+        for group in (['PostgreSQL', 'PgDuckDB'], ['MySQL'], ['MariaDB', 'MariaDBCS'], ['MonetDB']):
+            _, configurations = _run_script('tpch.py', '-xrs', '1', '-dbms', *group)
+            self.assertEqual({c.docker for c in configurations}, set(group))
+            for config in configurations:
+                resets = _resets(config)
+                self.assertIn('tpch_refresh', resets)
+                self.assertEqual(resets['tpch_refresh'], [], config.configuration)
+
+    def test_tpch_refresh_stream_runs_for_the_postgresql_protocol_systems_together(self):
+        group = ['PostgreSQL', 'CedarDB', 'Citus', 'DatabaseService']
+        _, configurations = _run_script('tpch.py', '-xrs', '1', '-dbms', *group)
+        self.assertEqual({c.docker for c in configurations}, set(group))
+
+    def test_tpch_refresh_stream_is_refused_when_the_dbms_need_different_jobs(self):
+        from bexhoma.system_descriptors import IncompatibleBenchmark
+        with self.assertRaisesRegex(IncompatibleBenchmark, 'need different ones'):
+            _run_script('tpch.py', '-xrs', '1', '-dbms', 'PostgreSQL', 'MySQL')
+        with self.assertRaisesRegex(IncompatibleBenchmark, 'need different ones'):
+            _run_script('tpch.py', '-xrs', '1', '-dbms', 'PostgreSQL', 'ClickHouse')
 
 
 class ResetScriptContentTest(unittest.TestCase):
@@ -385,7 +400,8 @@ class SchemaTenancyScriptsTest(unittest.TestCase):
         self.assertEqual(positions, sorted(positions))
 
     def test_benchbase_mysql_refused(self):
-        """Only the PostgreSQL folder has -schema scripts; no -dbms includes MySQL."""
+        """Only PostgreSQL lists schema tenancy in Benchbase (only its folder has -schema scripts); no -dbms
+        names MySQL, but the default set includes it."""
         for dbms in (['-dbms', 'MySQL'], ['-dbms', 'PostgreSQL', 'MySQL'], []):
             stderr = io.StringIO()
             with (
@@ -397,7 +413,9 @@ class SchemaTenancyScriptsTest(unittest.TestCase):
             ):
                 runpy.run_path(os.path.join(_REPO, 'benchbase.py'), run_name='__main__')
             self.assertEqual(exit_.exception.code, 2)
-            self.assertIn('-mtb schema is not supported for MySQL', stderr.getvalue())
+            self.assertIn('MySQL', stderr.getvalue())
+            self.assertIn('not support this tenancy in benchbase', stderr.getvalue())
+            self.assertIn('supported: PostgreSQL: container, schema, database', stderr.getvalue())
 
 
 class ScriptFailedTest(unittest.TestCase):

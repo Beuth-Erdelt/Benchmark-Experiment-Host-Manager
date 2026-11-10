@@ -478,6 +478,51 @@ bexhoma benchbase \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB chbenchmark  sf=10"
 
 
+####################################################
+#### Refresh Stream ################################
+####################################################
+
+
+#### TPC-H Refresh Stream (Example-TPC-H.md)
+# TPC-H with a refresh stream on CedarDB: the loader image of PostgreSQL applies RF1 and RF2, since CedarDB speaks the PostgreSQL protocol
+# -dbms CedarDB                 DBMS under test
+# -sf 1                         scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -ne 3                         parallel query streams
+# -xrs 3                        refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnn/-rnl/-rnb $BEXHOMA_NODE_* schedule SUT, loader and benchmarker pods on these nodes
+# -ks no                        remove the SUT at the end
+bexhoma tpch \
+  -dbms CedarDB \
+  -sf 1 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii \
+  -xic \
+  -xis \
+  -ne 3 \
+  -xrs 3 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ks no \
+  run &>$LOG_DIR/docs_tpch_cedardb_refresh.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H CedarDB refresh  sf=1  ne=3"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################
