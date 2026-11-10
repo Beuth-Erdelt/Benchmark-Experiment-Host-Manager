@@ -221,7 +221,7 @@ Not done / open:
 - MySQL/MariaDB restoredurability: no check that `@@GLOBAL` equals the saved value (plain MySQL SQL cannot raise an error outside a stored program; needs a `.sh` wrapper). Citus durability check covers the coordinator only.
 - Benchbase has no row counts (marker with empty counts).
 
-## 4. Verification on the cluster (by the user; images must be rebuilt)
+## 4. Verification on the cluster (script: dev/test-loading-failures.ps1; images rebuilt 2026-11-10)
 
 1. One clean run per DBMS × benchmark that W2/W3 touches (pg, mysql, mariadb, monetdb, clickhouse × tpch/tpcds/ssb;
    tpch `-xrs`; ycsb; hammerdb; benchbase): no failed unit, `expected = reported`.
