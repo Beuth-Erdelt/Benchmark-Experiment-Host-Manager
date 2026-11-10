@@ -23,11 +23,12 @@ from unittest import mock
 
 from bexhoma import ddl_parameters
 from bexhoma.benchmarks.base import dimension_folder
-from bexhoma.benchmarks.tpch import DIMENSION_DBMS
+from bexhoma.system_descriptors import dimension_dockers, load_dockers
 
 from .test_reset_scripts import _run_script
 
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DIMENSION_DBMS = dimension_dockers(load_dockers(os.path.join(_REPO, 'k8s-cluster.config')), 'tpch')
 _EXP = os.path.join(_REPO, 'experiments', 'tpch')
 #: Files of <DBMS>/distributed that depend on the placement.
 _OWN = {
@@ -87,9 +88,9 @@ class ScriptFolderTest(unittest.TestCase):
     """The ``distributed`` folder holds every script, and copies where the placement does not matter."""
 
     def test_dimension_folder(self):
-        self.assertEqual(dimension_folder('ClickHouseCluster', 'replicated'), 'ClickHouseCluster')
-        self.assertEqual(dimension_folder('ClickHouseCluster', 'distributed'), 'ClickHouseCluster/distributed')
-        self.assertEqual(dimension_folder('PostgreSQL', 'distributed'), 'PostgreSQL')
+        self.assertEqual(dimension_folder('ClickHouseCluster', 'replicated', DIMENSION_DBMS), 'ClickHouseCluster')
+        self.assertEqual(dimension_folder('ClickHouseCluster', 'distributed', DIMENSION_DBMS), 'ClickHouseCluster/distributed')
+        self.assertEqual(dimension_folder('PostgreSQL', 'distributed', DIMENSION_DBMS), 'PostgreSQL')
 
     def test_same_scripts(self):
         self.assertEqual(set(_OWN), set(DIMENSION_DBMS))

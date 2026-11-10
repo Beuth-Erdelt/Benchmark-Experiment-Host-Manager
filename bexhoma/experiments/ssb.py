@@ -76,7 +76,7 @@ class SsbExperiment(DbmsBenchmarkerExperiment):
                 {
                     "name":        "ssb-loader",
                     "benchmarker": "dbmsbenchmarker",
-                    "template":    "jobtemplate-loading-ssb-PostgreSQL.yml",
+                    "template":    "",   # every configuration sets its DBMS's loading_template from cluster.config
                     "parallelism": 1,
                     "num_pods":    1,
                     "target":      "sut",

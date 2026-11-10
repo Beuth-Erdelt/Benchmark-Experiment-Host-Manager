@@ -219,10 +219,10 @@ implied by `arg_style` at the system level, with per-knob overrides for the
 3. **PGBouncer** — models as *one component of a two-component system*, not
    two independent `systems:` entries composed together: the JDBC URL points
    at the pooler port while `datadir`/`logfile` still describe the
-   underlying PostgreSQL paths (`docs/DBMS.md:336-373`). `ycsb.py:275-305`
-   builds a dedicated `configurations.default(docker='PGBouncer', ...)`
-   with its own knob namespace (`MAX_CLIENT_CONN`, pool replica count)
-   layered on top of the real PostgreSQL SUT.
+   underlying PostgreSQL paths (see [DBMS](DBMS.md)). Its `pooling` entry in
+   `dockers.PGBouncer.benchmarks` of `cluster.config` (YCSB, Benchbase) gives one
+   configuration per pooler setting, with its own knob namespace
+   (`MAX_CLIENT_CONN`, pool replica count) layered on top of the real PostgreSQL SUT.
    **Verdict: `systems:` entries need an optional secondary
    `pool_component:` block (own image, own knobs, own replica count) rather
    than a generic multi-entry composition.**

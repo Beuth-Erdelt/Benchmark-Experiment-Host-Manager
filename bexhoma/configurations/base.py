@@ -63,11 +63,13 @@ class SutConfiguration:
         :param docker: Name of the Docker image (used as SUT template key).
         :param configuration: Human-readable configuration name; defaults to docker + counter suffix.
         :param script: Key of the init script to use for loading; defaults to experiment's script.
-        :param alias: Optional display alias shown in result reports.
+        :param alias: Optional display alias shown in result reports; by default the
+            ``template.alias`` of the DBMS in ``cluster.config``.
         :param num_experiment_to_apply: Number of benchmark runs to perform; defaults to
             experiment setting.
         :param clients: Unused legacy parameter.
-        :param dialect: SQL dialect string forwarded to dbmsbenchmarker.
+        :param dialect: SQL dialect string forwarded to dbmsbenchmarker; by default the
+            ``template.dialect`` of the DBMS in ``cluster.config``.
         :param worker: Number of worker pods to co-deploy alongside the SUT.
         :param dockerimage: Docker image name of the SUT.
         """
@@ -105,7 +107,9 @@ class SutConfiguration:
         self.resetscript = []                                                    #: Scripts exec'd synchronously before each round on the legacy (non experiment_dict) benchmark_list path.
         self.load_durability = getattr(experiment, 'load_durability', DEFAULT_LEVEL)  #: Requested import durability (-xld): durable, relaxed or unsafe.
         self.load_durability_scripts = None                                      #: Durability scripts included in the loading phase; None until loading starts.
-        self.alias = alias                                                       #: Human-readable alias for this configuration in result reports.
+        if alias is None and docker is not None:
+            alias = (self.dockertemplate.get('template') or {}).get('alias')     # one alias per DBMS: template.alias in cluster.config
+        self.alias = alias                                                       #: Human-readable alias for this configuration in result reports; default: ``template.alias`` of the DBMS.
         if num_experiment_to_apply is not None:
             self.num_experiment_to_apply = num_experiment_to_apply              #: Number of benchmarking runs to perform.
         else:
@@ -145,7 +149,9 @@ class SutConfiguration:
         self.set_additional_labels(**self.experiment.additional_labels)
         self.experiment.add_configuration(self)
         self.experiment_name = self.code                                         #: Identifier of experiment.
-        self.dialect = dialect                                                   #: SQL dialect string forwarded to dbmsbenchmarker.
+        if not dialect and docker is not None:
+            dialect = (self.dockertemplate.get('template') or {}).get('dialect', '')   # one dialect per DBMS: template.dialect in cluster.config
+        self.dialect = dialect                                                   #: SQL dialect string forwarded to dbmsbenchmarker; default: ``template.dialect`` of the DBMS.
         self.use_distributed_datasource = False                                  #: True iff the SUT should mount 'benchmark-data-volume' as source of non-generated data.
         # scaling
         self.num_worker = worker                                                 #: Number of worker pods to deploy alongside the SUT.
@@ -750,7 +756,7 @@ class SutConfiguration:
         :param parameters: Default parameter dict shared by all pods.
         :param pod_parameters: Per-pod override dicts.
         """
-        self.experiment.cluster.set_redis_values(self._pod_configs(queue_key, num_pods, parameters, pod_parameters))
+        self.experiment.cluster.set_messagequeue_values(self._pod_configs(queue_key, num_pods, parameters, pod_parameters))
 
     @staticmethod
     def _pod_configs(queue_key: str, num_pods: int, parameters: dict, pod_parameters: list) -> dict:

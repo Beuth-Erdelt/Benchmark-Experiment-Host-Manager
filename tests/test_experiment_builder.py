@@ -23,6 +23,7 @@ import yaml
 
 from bexhoma.experiments import tpch_builder as experiment_builder
 from bexhoma.experiments.tpch import TpchExperiment
+from bexhoma.system_descriptors import IncompatibleBenchmark
 
 from .stubs import StubCluster
 
@@ -86,7 +87,7 @@ class BuildExperimentTest(unittest.TestCase):
         self.assertEqual(experiment.configurations[1].docker, 'PgDuckDB')
 
     def test_dbms_defaults_applied(self) -> None:
-        """dialect, jobtemplate_loading, and path_experiment_docker come from DBMS_DEFAULTS."""
+        """dialect, jobtemplate_loading, and path_experiment_docker come from the DBMS's tpch entry and template in the cluster config."""
         experiment = self._build(copy.deepcopy(_BASE_SPEC))
         postgres, pgduckdb = experiment.configurations
         self.assertEqual(postgres.dialect, 'PostgreSQL')
@@ -103,7 +104,7 @@ class BuildExperimentTest(unittest.TestCase):
         self.assertEqual(postgres.resources['limits']['memory'], '16Gi')
 
     def test_storage_configuration_falls_back_to_storage_prefix(self) -> None:
-        """No 'configuration:' override means storageConfiguration uses DBMS_DEFAULTS' storage_prefix."""
+        """No 'configuration:' override means storageConfiguration uses the DBMS's storage_prefix of the cluster config."""
         experiment = self._build(copy.deepcopy(_BASE_SPEC))
         postgres, pgduckdb = experiment.configurations
         self.assertEqual(postgres.storage['storageConfiguration'], 'postgresql')
@@ -136,10 +137,10 @@ class BuildExperimentTest(unittest.TestCase):
         self.assertEqual(postgres.benchmark_list_template, [1, 2])
 
     def test_unknown_dbms_raises_key_error(self) -> None:
-        """A dbms absent from DBMS_DEFAULTS raises — validation is expected to have caught this earlier."""
+        """A dbms with no tpch entry raises — validation is expected to have caught this earlier."""
         spec = copy.deepcopy(_BASE_SPEC)
         spec['systems'][0]['dbms'] = 'Oracle'
-        with self.assertRaises(KeyError):
+        with self.assertRaises(IncompatibleBenchmark):
             self._build(spec)
 
     def test_provenance_experiment_yaml_copied(self) -> None:

@@ -3,6 +3,13 @@
 > Status: **planned, not implemented**. This document is the full plan agreed
 > with the user on 2026-07-27; hand it to Claude Code on any machine and say
 > "implement this plan" to pick up the work.
+>
+> Update: the entry script `experiment.py` exists. The per-workload registry of section 2
+> (`DBMS_DEFAULTS`, `DEFAULT_REFRESH_TEMPLATE`) no longer exists as a Python table: what it held
+> (docker entry, SQL dialect, job templates, storage prefix) is part of the `dockers` section of
+> `cluster.config` now, see [Benchmarks of a DBMS](DBMS.md#benchmarks-of-a-dbms). A DBMS may be named
+> in `experiment.yaml` if its `tpch` entry has `experiment_yaml: True`, and the default `alias` of a system is
+> the `template.alias` of its DBMS.
 
 ## Goal
 
@@ -68,7 +75,7 @@ hand-copying ~20 dest names and defaults a second time — which is the wart
 `dev/spec_prototype_demo.py` already has today (it duplicates `tpch.py`'s
 parser by hand) and should not be repeated.
 
-### 2. `bexhoma/experiments/tpch.py` — add `DBMS_DEFAULTS`
+### 2. `bexhoma/experiments/tpch.py` — add `DBMS_DEFAULTS` (superseded, see the update at the top)
 
 A new, data-only module-level dict, values extracted from (not duplicating
 the logic of) `tpch.py`'s existing per-DBMS branches:
@@ -238,7 +245,7 @@ tpch:                        # TPC-H's own -x flags
 systems:
   - dbms: PostgreSQL
     configuration: ""          # optional override of configuration name
-    alias: "DBMS A2"
+    alias: "PG"                # optional; default: the template.alias of the DBMS
     resources:
       cpu: {request: "4", limit: "4"}
       memory: {request: "16Gi", limit: "16Gi"}

@@ -36,6 +36,7 @@ from typing import TYPE_CHECKING, List, Tuple, Optional
 
 from bexhoma import evaluators
 from bexhoma import missing_metrics
+from bexhoma import test_status
 from bexhoma.monitoring_math import (counter_total, job_lifetime, min_measurable_window, read_connections,
                                      scoped_job_connections, DEFAULT_SCRAPE_INTERVAL_SECONDS)
 from bexhoma.cli_args import split_storage_types, resource_cells, set_cell_storage, resolve_keep_sut, split_worker_nodes, check_tenant_loading_pods
@@ -328,7 +329,7 @@ class ExperimentBase():
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
         self.benchmarks: list = []                                        # ordered Benchmark objects; index+1 = benchmark_index
         self.evaluators: dict = {}                                        # benchmark.name → evaluator instance
-        self._test_results: list[tuple[bool, str]] = []                  # collected (passed, label) pairs for show_summary
+        self._test_results: list[tuple[bool, str]] = []                  # collected (passed, label) pairs for show_summary; passed: True/False/None/test_status.WARNING
         self._runtime_test_results: list[tuple[bool, str]] = []          # failures detected before show_summary rebuilds its test list
         self._benchmark_rounds_starting: dict[str, tuple[str, datetime]] = {}  # configuration → (round counter key, submission time) until all round pods started
         self._image_pull_waits_seen: set[str] = set()                    # loading pods already reported as waiting for their image
@@ -1832,6 +1833,18 @@ class ExperimentBase():
         :type label: str
         """
         self._test_results.append((None, label))
+    def _record_warning_test(self, label: str) -> None:
+        """
+        Append a test whose result needs judgement (``* TEST warning:``).
+
+        Use when a check is neither shown to be wrong nor shown to be right, e.g.
+        a metric that is missing because the component did no disk I/O. A warning
+        does not count as a failure (see :mod:`bexhoma.test_status`).
+
+        :param label: Human-readable description, with what needs judgement.
+        :type label: str
+        """
+        self._test_results.append((test_status.WARNING, label))
     def _show_loading_provenance(self, connections_sorted: list) -> None:
         """
         Print which configurations did not load in this experiment, and record the loading test.
@@ -2055,13 +2068,7 @@ class ExperimentBase():
         """Print all results collected in _test_results as a single summary block."""
         print("\n### Tests")
         for passed, label in self._test_results:
-            if passed is None:
-                status = "skipped"
-            elif passed:
-                status = "passed"
-            else:
-                status = "failed"
-            print(f"* TEST {status}: {label}")
+            print(f"* TEST {test_status.status_of(passed)}: {label}")
     def update_workload(self):
         """
         Updates query.config locally and remotely via dashboard pod.
@@ -2530,8 +2537,14 @@ class ExperimentBase():
             success = self.cluster.get_job_status(job)
             self.cluster.logger.debug('job {} has success status {}'.format(job, success))
             if not success:
-                incomplete = True
-                continue
+                # a job in Kubernetes' terminal Failed condition (e.g. backoffLimit 0) never succeeds:
+                # it is ended like a finished one, so the run goes on instead of waiting for it forever
+                if not self.cluster.get_job_failed(job):
+                    incomplete = True
+                    continue
+                reason = f"Benchmarking job {job} for {configuration} reached Kubernetes' terminal Failed condition"
+                print(f"{'Experiment':30s}: {reason}")
+                self._runtime_test_results.append((False, reason))
             # status per pod
             for p in pods:
                 status = self.cluster.get_pod_status(p)
@@ -4021,10 +4034,17 @@ class ExperimentBase():
             for entry in missing:
                 connection = f" for connection {entry.connection}" if entry.connection else ""
                 expected = f", expected: {entry.expected}" if entry.expected else ""
-                print(f"* {entry.title}{connection} ({entry.source}{expected})")
-        unexpected = [entry for entry in missing if not entry.expected]
+                warning = f", warning: {entry.warning}" if entry.warning else ""
+                print(f"* {entry.title}{connection} ({entry.source}{expected}{warning})")
+        unexpected = [entry for entry in missing if not entry.expected and not entry.warning]
+        warned = [entry for entry in missing if entry.warning]
         if unexpected:
             self._record_test(False, "Monitoring metrics missing")
+        elif warned:
+            # e.g. a DBMS component that did no disk I/O: its pods were scraped, but whether
+            # no I/O is plausible (an in-memory DBMS) or a problem depends on the DBMS
+            details = "; ".join(sorted({f"{entry.title} of {entry.component}: {entry.warning}" for entry in warned}))
+            self._record_warning_test(f"Monitoring metrics missing ({details})")
         elif missing:
             # Every gap has a harmless reason, e.g. a data generator that exited
             # before the first scrape, or a series that only exists while non-zero.

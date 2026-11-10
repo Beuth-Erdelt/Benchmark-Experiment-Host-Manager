@@ -132,20 +132,24 @@ class MariaDBCSScriptsTest(unittest.TestCase):
                             self.assertTrue(os.path.isfile(os.path.join(_REPO, 'experiments', benchmark, 'MariaDBCS', script)))
 
     def test_query_variants_come_on_top_of_the_mysql_dialect(self):
-        from bexhoma.experiments.tpch import DBMS_DEFAULTS
-        self.assertEqual(DBMS_DEFAULTS['MariaDBCS']['dialect'], 'MySQL')
+        from bexhoma.system_descriptors import dialect, load_dockers
+        self.assertEqual(dialect(load_dockers('k8s-cluster.config'), 'MariaDBCS'), 'MySQL')
         with open(os.path.join(_REPO, 'experiments', 'tpch', 'queries-tpch.config'), encoding='utf-8') as f:
             queries = ast.literal_eval(f.read())['queries']
         self.assertEqual(len([q for q in queries if 'MariaDBCS' in q.get('DBMS', {})]), 4)
 
     def test_loads_with_one_pod(self):
         """Concurrent LOAD DATA into a table fails and the loader goes on, so rows would be missing."""
+        from .test_reset_scripts import _run_script
         for script in ('tpch.py', 'tpcds.py', 'ssb.py'):
-            with self.subTest(script=script), open(os.path.join(_REPO, script), encoding='utf-8') as f:
-                block = f.read().split('if ("MariaDBCS" in args.dbms):')[1].split('if ("')[0]
-            self.assertIn('config.set_loading(parallel=1, num_pods=1)', block)
-            self.assertIn('PODS_TOTAL = "1"', block)
-            self.assertIn('PODS_PARALLEL = "1"', block)
+            with self.subTest(script=script):
+                _, configurations = _run_script(script, '-dbms', 'MariaDBCS', '-nlp', '4')
+                self.assertTrue(configurations)
+                for config in configurations:
+                    self.assertEqual(config.docker, 'MariaDBCS')
+                    self.assertEqual((config.num_loading, config.num_loading_pods), (1, 1))
+                    self.assertEqual(config.loading_parameters['PODS_TOTAL'], '1')
+                    self.assertEqual(config.loading_parameters['PODS_PARALLEL'], '1')
 
     def test_rollup_queries_of_tpcds_are_emulated(self):
         """WITH ROLLUP kills PrimProc on a table and gives wrong results on a derived table."""
@@ -195,9 +199,12 @@ class MariaDBCSScriptsTest(unittest.TestCase):
             self.assertEqual(list(queries[title]['DBMS'])[-1], 'MariaDBCS')
 
     def test_not_part_of_the_default_runs(self):
-        for script in ('tpch.py', 'tpcds.py', 'ssb.py'):
-            with self.subTest(script=script), open(os.path.join(_REPO, script), encoding='utf-8') as f:
-                self.assertIn('if ("MariaDBCS" in args.dbms):', f.read())
+        from bexhoma.system_descriptors import compatible_dockers, default_dockers, load_dockers
+        dockers = load_dockers(os.path.join(_REPO, 'k8s-cluster.config'))
+        for benchmark in ('tpch', 'tpcds', 'ssb'):
+            with self.subTest(benchmark=benchmark):
+                self.assertIn('MariaDBCS', compatible_dockers(dockers, benchmark))
+                self.assertNotIn('MariaDBCS', default_dockers(dockers, benchmark))
 
 
 if __name__ == '__main__':

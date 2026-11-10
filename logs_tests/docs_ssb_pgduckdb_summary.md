@@ -3,8 +3,8 @@
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 625s 
-* Code: 1793202264
+* Duration: 437s 
+* Code: 1794008315
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -16,7 +16,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.9.
+  * Experiment uses bexhoma version 0.11.13.
   * Experiment is limited to DBMS ['PgDuckDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -38,10 +38,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:624990
-  * datadisk:1582
+  * disk:869175
+  * datadisk:1581
   * volume_size:1.8T
-  * volume_used:611G
+  * volume_used:849G
   * cpu_list:0-223
   * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -51,10 +51,10 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793202264
+    * code:1794008315
 
 ### SUT Container Restarts
-* bexhoma-sut-pgduckdb-1-1793202264-6fd988c8bc-88qpb: 0
+* bexhoma-sut-pgduckdb-1-1794008315-6d67cbf5cc-9nxm4: 0
 
 ### Workflow
 
@@ -72,7 +72,7 @@ SSB Queries SF=1
 
 |              |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:-------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PgDuckDB-1-1 |                1 |    1 |       86.00 |          15.00 |           21.00 |          6.00 |           30.00 |              8 |           0 |             | None           |             0 | False         |               41.86 | False               |
+| PgDuckDB-1-1 |                1 |    1 |       56.00 |           5.00 |           22.00 |          4.00 |           17.00 |              8 |           0 |             | None           |             0 | False         |               64.29 | False               |
 
 ### Benchmarking
 
@@ -80,13 +80,13 @@ SSB Queries SF=1
 
 | DBMS               | configuration   | phase          | job              |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                |
 |:-------------------|:----------------|:---------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:-------------------|
-| pgduckdb-1-1-1-1-1 | PgDuckDB-1      | pgduckdb-1-1-1 | pgduckdb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          7 |            0.34 |            10822.15 |           6685.71 |          -1 | pgduckdb-1-1-1-1-1 |
+| pgduckdb-1-1-1-1-1 | PgDuckDB-1      | pgduckdb-1-1-1 | pgduckdb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          7 |            0.35 |            10358.37 |           6685.71 |          -1 | pgduckdb-1-1-1-1-1 |
 
 #### Per Phase
 
 |                | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| pgduckdb-1-1-1 | pgduckdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          7 |            0.34 |            10822.15 |           6685.71 |          -1 |
+| pgduckdb-1-1-1 | pgduckdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          7 |            0.35 |            10358.37 |           6685.71 |          -1 |
 
 #### Query Completion per Phase
 
@@ -99,19 +99,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   pgduckdb-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|---------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |               283.04 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                91.52 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                50.80 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |               682.42 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |               862.99 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               642.35 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |               652.89 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |               612.41 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |               169.18 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                83.41 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |               942.41 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |               502.63 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |               459.07 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |               373.16 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               134.45 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                67.94 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |               670.37 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |               684.89 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               671.79 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |               615.87 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |               579.38 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |               188.06 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |               105.13 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |               731.98 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |               466.94 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |               425.74 |
 
 ### Errors (failed queries)
 
@@ -123,6 +123,8 @@ No warnings
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -132,4 +134,6 @@ No warnings
 * TEST passed: No SQL warnings
 * TEST passed: All active queries counted in the totals
 * TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
+* TEST passed: Workflow as planned
+red for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned

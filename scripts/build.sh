@@ -388,6 +388,13 @@ build_and_push_tpch_refresh() {
     docker push "bexhoma/loader_tpch_refresh_monetdb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_monetdb:$version"
+  (
+    set -e
+    cd images/tpch_refresh/loader_clickhouse
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_clickhouse:$version" .
+    docker push "bexhoma/loader_tpch_refresh_clickhouse:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_refresh_clickhouse:$version"
 }
 
 ###########
@@ -445,7 +452,7 @@ build_and_push_benchbase() {
 
 _any_failed=0
 
-dbmsbenchmarker="v0.15.5"
+dbmsbenchmarker="v0.15.6"
 version=$(python -m pip show bexhoma | awk '/^Version:/ {print $2}')
 echo "$version"
 

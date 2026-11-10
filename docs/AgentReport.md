@@ -23,12 +23,14 @@ bexhoma summary -e <code> -rp         # regenerate from local files, no cluster 
 In order:
 
 1. Frontmatter: `schema_version`, code, workload type, active phases,
-   pass/fail/skip counts, written sections.
+   pass/fail/skip/warning counts, written sections.
 2. Workload: what ran, with which parameters.
 3. How to read the report, the tier table, and the naming rule.
 4. Validity-first rules: which failed test restricts which metric, and where
    to check.
-5. Tests: every check with passed, failed or skipped.
+5. Tests: every check with passed, failed, skipped or warning. A warning is
+   no failure, but needs judgement: its label says what was not seen (e.g. no
+   disk I/O of a DBMS component, plausible for an in-memory DBMS).
 6. Key Metrics: the benchmark's headline columns per phase.
 7. Monitoring: peak CPU and RAM per component.
 8. Health Summary: restarts with reason and data loss, SQL errors and

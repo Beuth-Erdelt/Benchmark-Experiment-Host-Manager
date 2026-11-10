@@ -15,7 +15,7 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
-from bexhoma import report_writer
+from bexhoma import report_writer, test_status
 from bexhoma.__version__ import __version__ as BEXHOMA_VERSION
 
 
@@ -204,7 +204,7 @@ class ExperimentDictNameTest(unittest.TestCase):
 class _FakeExperiment:
     code = '1784910886'
     workload = {'type': 'tpch'}
-    _test_results = [(True, 'ok'), (False, 'bad'), (None, 'skipped')]
+    _test_results = [(True, 'ok'), (False, 'bad'), (None, 'skipped'), (test_status.WARNING, 'judge')]
 
     def benchmarking_is_active(self) -> bool:
         return True
@@ -230,6 +230,27 @@ class IndexMdFrontmatterTest(unittest.TestCase):
         frontmatter = yaml.safe_load(frontmatter_text)
         self.assertEqual(frontmatter['bexhoma_version'], BEXHOMA_VERSION)
         self.assertEqual(frontmatter['schema_version'], report_writer.SCHEMA_VERSION)
+
+    def test_each_status_is_counted_and_shown(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            report_dir = Path(tmp_dir) / 'report'
+            report_dir.mkdir()
+            report_writer._write_index_md(
+                report_dir, _FakeExperiment(), total_restarts=0, extra_context={},
+                written_sections=[], key_metrics_lines=[], monitoring_summary_lines=[],
+            )
+            text = (report_dir / 'index.md').read_text(encoding='utf-8')
+        frontmatter = yaml.safe_load(text.split('---\n')[1])
+        self.assertEqual(frontmatter['overall_status'], {'passed': 1, 'failed': 1, 'skipped': 1, 'warning': 1})
+        self.assertIn('| warning | judge |', text)
+        self.assertIn('| failed | bad |', text)
+
+
+class TestStatusTest(unittest.TestCase):
+
+    def test_status_words(self) -> None:
+        self.assertEqual([test_status.status_of(p) for p in (True, False, None, test_status.WARNING)],
+                         ['passed', 'failed', 'skipped', 'warning'])
 
 
 if __name__ == '__main__':

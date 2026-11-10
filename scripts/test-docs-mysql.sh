@@ -141,6 +141,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL monitoring  sf=10"
 # -t 1200                       query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 128Gi                     RAM requested for the SUT container
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 150Gi                    size of the persistent volume claim
@@ -164,6 +165,7 @@ bexhoma tpch \
   -t 1200 \
   -tr \
   -lr 128Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 128Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rss 150Gi \
@@ -342,6 +344,13 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL monitoring  sf=3"
 # -t 1200                       query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
+# --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
+# --set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=72Gi tmpdir of MySQL in RAM, larger than the template (32Gi): a 48Gi tmpfs ran full with two clients (counts against the memory limit: 32G pool + 72Gi stays below 128Gi)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].sort_buffer_size=32M sorts of TPC-DS stay in memory (default 256K: thousands of merge passes with temporary files)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].join_buffer_size=64M hash joins stay in memory (default 256K)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].tmp_table_size=1G internal temporary tables up to 1G in memory (default 16M)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].max_heap_table_size=1G MEMORY tables up to 1G (default 16M)
+# --set deployment[bexhoma-deployment-mysql].container[dbms].temptable_max_ram=4G RAM of the TempTable engine (default 1G)
 # -rr 128Gi                     RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -365,6 +374,13 @@ bexhoma tpcds \
   -t 1200 \
   -tr \
   -lr 128Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
+  --set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=72Gi \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].sort_buffer_size=32M \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].join_buffer_size=64M \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].tmp_table_size=1G \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].max_heap_table_size=1G \
+  --set deployment[bexhoma-deployment-mysql].container[dbms].temptable_max_ram=4G \
   -rr 128Gi \
   -rsr \
   -rst $BEXHOMA_STORAGE_CLASS \

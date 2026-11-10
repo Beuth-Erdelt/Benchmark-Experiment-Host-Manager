@@ -7,6 +7,9 @@
 --          for the benchbase TPC-C schema on MySQL.
 
 
+-- No USE: bexhoma runs the script in the benchmark's database (BEXHOMA_DATABASE,
+-- `benchbase`), or in `tenant_<n>` with database tenancy
+
 -- ANALYZE: Update table statistics for the optimizer
 ANALYZE TABLE customer;
 ANALYZE TABLE district;

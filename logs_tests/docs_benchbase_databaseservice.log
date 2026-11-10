@@ -2,13 +2,13 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1793619380
-Experiment                    : starts at 2026-11-02 12:36:20.946687 (166304.7073556)
+Experiment                    : has code 1794135868
+Experiment                    : starts at 2026-11-08 12:04:30.429745 (359056.9592417)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
 Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.12.
+Experiment uses bexhoma version 0.11.13.
 Experiment is limited to DBMS ['DatabaseService'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker38.
@@ -27,142 +27,150 @@ DatabaseService-1             : will start now
 DatabaseService-1             : deployments ['sut']
 DatabaseService-1             : stateful sets []
 DatabaseService-1             : pvcs ['sut']
-DatabaseService-1             : name of SUT pods = bexhoma-sut-databaseservice-1-1793619380
-DatabaseService-1             : name of SUT service = bexhoma-sut-databaseservice-1-1793619380
-Loop pass                     : took 1.5s (1 kubectl calls 0.6s, 9 API requests 0.4s)
+DatabaseService-1             : name of SUT pods = bexhoma-sut-databaseservice-1-1794135868
+DatabaseService-1             : name of SUT service = bexhoma-sut-databaseservice-1-1794135868
+Loop pass                     : took 6.4s (1 kubectl calls 1.2s, 9 API requests 0.4s)
+- waiting 30s -               : done
+DatabaseService-1             : waits for health check to succeed
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+- waiting 30s -               : done
+DatabaseService-1             : waits for health check to succeed
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+- waiting 30s -               : done
+DatabaseService-1             : waits for health check to succeed
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 DatabaseService-1             : waits for health check to succeed
 Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
-DatabaseService-1             : waits for health check to succeed
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.7s)
-- waiting 30s -               : done
-DatabaseService-1             : waits for health check to succeed
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
-- waiting 30s -               : done
-DatabaseService-1             : waits for health check to succeed
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+DatabaseService-1             : is not loaded yet
+DatabaseService-1             : will start loading but not before 2026-11-08 11:08:15 (that is in 60 secs)
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 16 API requests 0.8s)
 - waiting 30s -               : done
 DatabaseService-1             : is not loaded yet
-DatabaseService-1             : will start loading but not before 2026-11-02 11:39:56 (that is in 60 secs)
-Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.5s)
-- waiting 30s -               : done
-DatabaseService-1             : is not loaded yet
-DatabaseService-1             : will start loading but not before 2026-11-02 11:39:56
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 13 API requests 0.5s)
+DatabaseService-1             : will start loading but not before 2026-11-08 11:08:15
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 13 API requests 0.5s)
 - waiting 30s -               : done
 DatabaseService-1             : is not loaded yet
 DatabaseService-1             : load durability relaxed, scripts []
 DatabaseService-1             : loading scripts not in folder, skipped: initschema-benchbase.sql
-DatabaseService-1             : connect to pod bexhoma-sut-databaseservice-1-1793619380-965bfc4cb-fnhhc to load scripts
+DatabaseService-1             : connect to pod bexhoma-sut-databaseservice-1-1794135868-55dc766984-4lbf5 to load scripts
 DatabaseService-1             : start asynch loading scripts of type schema
 DatabaseService-1             : waits for the Schema scripts (schema=True) before starting the loading jobs
-DatabaseService-1             : Schema scripts done after 2s
+DatabaseService-1             : Schema scripts done after 4s
 DatabaseService-1             : is loading
-Loop pass                     : took 8.2s (1 kubectl calls 0.5s, 33 API requests 2.0s)
+Loop pass                     : took 8.8s (1 kubectl calls 1.2s, 34 API requests 2.5s)
+- waiting 30s -               : done
+DatabaseService-1             : is loading
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+- waiting 30s -               : done
+DatabaseService-1             : is loading
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+- waiting 30s -               : done
+DatabaseService-1             : is loading
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 20 API requests 0.6s)
 - waiting 30s -               : done
 DatabaseService-1             : showing loader times (benchbase-loader)
 DatabaseService-1             : generator times (start/end per pod and container) []
-DatabaseService-1             : loader times (start/end per pod and container) [(1793619607, 1793619608)]
-DatabaseService-1             : total times (start/end per pod and container) [(1793619607, 1793619608)]
-DatabaseService-1             : loader timespan (first to last [s]) = 1
+DatabaseService-1             : loader times (start/end per pod and container) [(1794136106, 1794136226)]
+DatabaseService-1             : total times (start/end per pod and container) [(1794136106, 1794136226)]
+DatabaseService-1             : loader timespan (first to last [s]) = 120
 DatabaseService-1             : loading scripts not in folder, skipped: checkschema-benchbase.sql
-DatabaseService-1             : connect to pod bexhoma-sut-databaseservice-1-1793619380-965bfc4cb-fnhhc to load scripts
+DatabaseService-1             : connect to pod bexhoma-sut-databaseservice-1-1794135868-55dc766984-4lbf5 to load scripts
 DatabaseService-1             : start asynch loading scripts of type index
 DatabaseService-1             : is loading
-Loop pass                     : took 3.3s (4 kubectl calls 2.0s, 27 API requests 1.2s)
+Loop pass                     : took 5.5s (4 kubectl calls 4.5s, 27 API requests 1.0s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-DatabaseService-1-1793619380 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-DatabaseService-1-1794135868 initialized to 1.
 DatabaseService-1             : benchmarks done 0 of 1. This will be client 1
 databaseservice-1-1-1-1       : start benchmarking (benchmark_run=1)
-DatabaseService-1             : benchmarking results in folder C:\data\benchmarks/1793619380
-DatabaseService-1             : submitted benchmarker job in 4.6s (4 kubectl calls 2.3s, 24 API requests 2.2s)
-Loop pass                     : took 6.6s (5 kubectl calls 2.8s, 44 API requests 3.3s)
+DatabaseService-1             : benchmarking results in folder C:\data\benchmarks/1794135868
+DatabaseService-1             : submitted benchmarker job in 6.9s (4 kubectl calls 4.8s, 24 API requests 2.1s)
+Loop pass                     : took 10.4s (5 kubectl calls 5.9s, 45 API requests 3.5s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 21 API requests 0.8s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 18 API requests 0.6s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 4.0s (0 kubectl calls 0.0s, 18 API requests 0.6s)
+Loop pass                     : took 5.9s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 18 API requests 0.9s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 18 API requests 1.1s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
-databaseservice-1-1-1-1       : wrote benchmarking_timespans to /data/benchmarks/1793619380/databaseservice-1-1-1-1.config
+databaseservice-1-1-1-1       : wrote benchmarking_timespans to /data/benchmarks/1794135868/databaseservice-1-1-1-1.config
 databaseservice-1-1-1-1       : showing benchmarker times
-databaseservice-1-1-1-1       : benchmarker timespan job from 1793619675 to 1793619991
-databaseservice-1-1-1-1       : benchmarker timespan pods from 1793619676 to 1793619983
-databaseservice-1-1-1-1       : benchmarker timespan (start to end single container [s]) = 307
-databaseservice-1-1-1-1       : benchmarker times (start/end per pod and container) = [(1793619676, 1793619983)]
-databaseservice-1-1-1-1       : found and updated times {'benchmarker': [(1793619676, 1793619983)]}
-Loop pass                     : took 4.0s (4 kubectl calls 2.3s, 24 API requests 1.3s)
+databaseservice-1-1-1-1       : benchmarker timespan job from 1794136273 to 1794136594
+databaseservice-1-1-1-1       : benchmarker timespan pods from 1794136276 to 1794136580
+databaseservice-1-1-1-1       : benchmarker timespan (start to end single container [s]) = 304
+databaseservice-1-1-1-1       : benchmarker times (start/end per pod and container) = [(1794136276, 1794136580)]
+databaseservice-1-1-1-1       : found and updated times {'benchmarker': [(1794136276, 1794136580)]}
+Loop pass                     : took 5.8s (4 kubectl calls 4.9s, 24 API requests 0.8s)
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-DatabaseService-1-1793619380 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-DatabaseService-1-1794135868 initialized to 2.
 DatabaseService-1             : benchmarks done 0 of 1. This will be client 2
 databaseservice-1-1-2-1       : start benchmarking (benchmark_run=1)
-DatabaseService-1             : benchmarking results in folder C:\data\benchmarks/1793619380
-DatabaseService-1             : submitted benchmarker job in 3.5s (3 kubectl calls 2.3s, 13 API requests 1.1s)
-Loop pass                     : took 5.0s (3 kubectl calls 2.3s, 34 API requests 2.6s)
+DatabaseService-1             : benchmarking results in folder C:\data\benchmarks/1794135868
+DatabaseService-1             : submitted benchmarker job in 4.8s (3 kubectl calls 3.8s, 13 API requests 1.0s)
+Loop pass                     : took 6.1s (3 kubectl calls 3.8s, 35 API requests 2.2s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 21 API requests 1.0s)
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 22 API requests 0.8s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 19 API requests 1.0s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 20 API requests 0.7s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 19 API requests 1.0s)
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 20 API requests 0.8s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 19 API requests 1.0s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 20 API requests 0.9s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 19 API requests 1.1s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 20 API requests 0.8s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 19 API requests 0.9s)
+Loop pass                     : took 8.1s (0 kubectl calls 0.0s, 20 API requests 0.8s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.7s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 19 API requests 0.9s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 20 API requests 0.8s)
 - waiting 30s -               : done
 DatabaseService-1             : has running benchmarks
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 20 API requests 1.0s)
 - waiting 30s -               : done
-DatabaseService-1             : has running benchmarks
-databaseservice-1-1-2-1       : wrote benchmarking_timespans to /data/benchmarks/1793619380/databaseservice-1-1-2-1.config
+databaseservice-1-1-2-1       : wrote benchmarking_timespans to /data/benchmarks/1794135868/databaseservice-1-1-2-1.config
 databaseservice-1-1-2-1       : showing benchmarker times
-databaseservice-1-1-2-1       : benchmarker timespan job from 1793619997 to 1793620312
-databaseservice-1-1-2-1       : benchmarker timespan pods from 1793620000 to 1793620308
-databaseservice-1-1-2-1       : benchmarker timespan (start to end single container [s]) = 308
-databaseservice-1-1-2-1       : benchmarker times (start/end per pod and container) = [(1793620000, 1793620308), (1793620000, 1793620307)]
-databaseservice-1-1-2-1       : found and updated times {'benchmarker': [(1793620000, 1793620308), (1793620000, 1793620307)]}
-Loop pass                     : took 4.7s (6 kubectl calls 3.5s, 28 API requests 1.2s)
+databaseservice-1-1-2-1       : benchmarker timespan job from 1794136602 to 1794136930
+databaseservice-1-1-2-1       : benchmarker timespan pods from 1794136606 to 1794136909
+databaseservice-1-1-2-1       : benchmarker timespan (start to end single container [s]) = 303
+databaseservice-1-1-2-1       : benchmarker times (start/end per pod and container) = [(1794136606, 1794136909), (1794136606, 1794136908)]
+databaseservice-1-1-2-1       : found and updated times {'benchmarker': [(1794136606, 1794136909), (1794136606, 1794136908)]}
+Loop pass                     : took 9.4s (6 kubectl calls 7.0s, 28 API requests 1.3s)
 DatabaseService-1             : can be stopped
-DatabaseService-1             : had 0 restarts at worker bexhoma-sut-databaseservice-1-1793619380-965bfc4cb-fnhhc
-Loop pass                     : took 3.0s (3 kubectl calls 1.6s, 29 API requests 1.2s)
-Experiment                    : ends at 2026-11-02 12:51:57.378937 (167241.1228428) - 936.42s total
+DatabaseService-1             : had 0 restarts at worker bexhoma-sut-databaseservice-1-1794135868-55dc766984-4lbf5
+Loop pass                     : took 5.6s (3 kubectl calls 3.8s, 29 API requests 1.2s)
+Experiment                    : ends at 2026-11-08 12:22:18.328184 (360124.8289884) - 1067.87s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -173,14 +181,14 @@ Result workflow complete
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 937s 
-* Code: 1793619380
+* Duration: 1068s 
+* Code: 1794135868
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.13.
   * Experiment is limited to DBMS ['DatabaseService'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -202,10 +210,10 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741429
+  * disk:805362
   * datadisk:39
   * volume_size:1.8T
-  * volume_used:725G
+  * volume_used:787G
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
@@ -214,17 +222,17 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793619380
+    * code:1794135868
 * databaseservice-1-1-2-1 uses docker image postgres:16.1
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741441
+  * disk:805347
   * datadisk:39
   * volume_size:1.8T
-  * volume_used:725G
+  * volume_used:787G
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
@@ -233,13 +241,13 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793619380
+    * code:1794135868
 
 ### Init Scripts Not in Folder
 * DatabaseService-1: skipped checkschema-benchbase.sql, initschema-benchbase.sql
 
 ### SUT Container Restarts
-* bexhoma-sut-databaseservice-1-1793619380-965bfc4cb-fnhhc: 0
+* bexhoma-sut-databaseservice-1-1794135868-55dc766984-4lbf5: 0
 
 ### Workflow
 
@@ -259,7 +267,7 @@ Benchbase Workload tpcc SF=16
 
 |                     |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:--------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| DatabaseService-1-1 |                1 |   16 |        3.00 |           1.00 |            0.00 |          1.00 |            1.00 |              1 |           1 |             | None           |             0 | False         |            19200.00 | False               |
+| DatabaseService-1-1 |                1 |   16 |      122.00 |           1.00 |            0.00 |        120.00 |            1.00 |              1 |           1 |             | None           |             0 | False         |              472.13 | False               |
 
 ### Benchmarking
 
@@ -267,16 +275,16 @@ Benchbase Workload tpcc SF=16
 
 | DBMS                      | phase                 | job                     |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:--------------------------|:----------------------|:------------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| databaseservice-1-1-1-1-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                        7382.44 |                        0.00 |         0.00 |                                                       5255.00 |                                               2164.00 |
-| databaseservice-1-1-2-1-1 | databaseservice-1-1-2 | databaseservice-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            0 |                        8189.23 |                        0.00 |         0.00 |                                                       1886.00 |                                                779.00 |
-| databaseservice-1-1-2-1-2 | databaseservice-1-1-2 | databaseservice-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            0 |                        8062.64 |                        0.00 |         0.00 |                                                       2162.00 |                                                901.00 |
+| databaseservice-1-1-1-1-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |          16 |    16384 |        1 |               1 |       1 |          -1 | 300.00 |            0 |                        3085.67 |                     3071.63 |         0.00 |                                                      15024.00 |                                               5180.00 |
+| databaseservice-1-1-2-1-1 | databaseservice-1-1-2 | databaseservice-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       1 |          -1 | 300.00 |            3 |                        1296.05 |                     1284.21 |         0.00 |                                                      14320.00 |                                               6166.00 |
+| databaseservice-1-1-2-1-2 | databaseservice-1-1-2 | databaseservice-1-1-2-1 |                1 |           8 |     8192 |        2 |               1 |       2 |          -1 | 300.00 |            1 |                        1267.77 |                     1256.12 |         0.00 |                                                      14564.00 |                                               6303.00 |
 
 #### Per Phase
 
 | DBMS                  | phase                 |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------------|:----------------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                        7382.44 |                        0.00 |         0.00 |                                                       5255.00 |                                               2164.00 |
-| databaseservice-1-1-2 | databaseservice-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            0 |                       16251.87 |                        0.00 |         0.00 |                                                       2162.00 |                                                840.00 |
+| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |          16 |    16384 |               1 |           1 |          -1 | 300.00 |            0 |                        3085.67 |                     3071.63 |         0.00 |                                                      15024.00 |                                               5180.00 |
+| databaseservice-1-1-2 | databaseservice-1-1-2 |                1 |          16 |    16384 |               1 |           2 |          -1 | 300.00 |            4 |                        2563.83 |                     2540.32 |         0.00 |                                                      14564.00 |                                               6234.50 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment

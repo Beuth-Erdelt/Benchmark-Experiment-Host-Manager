@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1792720409
-Experiment                    : starts at 2026-10-23 03:53:32.200396 (45755.0794297)
+Experiment                    : has code 1794042705
+Experiment                    : starts at 2026-11-07 10:11:47.441074 (265896.1300115)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 10000000.
@@ -15,7 +15,7 @@ Factors for loading are [12].
 Factors for benchmarking are [4]. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
 Status is logged every 10s.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.8.
+Experiment uses bexhoma version 0.11.13.
 System metrics are monitored by a cluster-wide installation.
 Application metrics are monitored by sidecar containers.
 Experiment is limited to DBMS ['Dragonfly'].
@@ -30,7 +30,7 @@ Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Maximum DBMS across the whole cluster is 10.
 Results are validated against basic correctness requirements.
-Deployment parameter overrides: [({'kind': 'statefulset', 'workload': 'bexhoma-worker', 'config': '', 'container': 'dbms', 'param': 'env.DFLY_proactor_threads'}, '8')].
+Deployment parameter overrides: [({'kind': 'statefulset', 'workload': 'bexhoma-worker', 'config': '', 'container': 'dbms', 'param': 'env.DFLY_proactor_threads', 'target': 'container'}, '8')].
 Distributed DBMS uses 3 worker nodes, 0 replicas and 0 shards per node.
 SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 Cluster monitoring            : is running
@@ -38,138 +38,143 @@ DragonflyCluster-1            : will start now
 DragonflyCluster-1            : deployments ['sut']
 DragonflyCluster-1            : stateful sets ['worker']
 DragonflyCluster-1            : pvcs ['sut']
-DragonflyCluster-1            : name of SUT pods = bexhoma-sut-dragonflycluster-1-1792720409
-DragonflyCluster-1            : name of SUT service = bexhoma-sut-dragonflycluster-1-1792720409
-DragonflyCluster-1            : name of worker pods = bx-w-dragonfly-ycsb-10
-DragonflyCluster-1            : name of worker service headless = bx-w-dragonfly-ycsb-10
+DragonflyCluster-1            : name of SUT pods = bexhoma-sut-dragonflycluster-1-1794042705
+DragonflyCluster-1            : name of SUT service = bexhoma-sut-dragonflycluster-1-1794042705
+DragonflyCluster-1            : name of worker pods = bx-w-dragonflycluster-1-1794042705
+DragonflyCluster-1            : name of worker service headless = bx-w-dragonflycluster-1-1794042705
 DragonflyCluster-1            : updated statefulset[bexhoma-worker].container[dbms].env.DFLY_proactor_threads = 8
-Loop pass                     : took 4.4s (1 kubectl calls 2.1s, 9 API requests 1.3s)
+Loop pass                     : took 2.8s (1 kubectl calls 1.3s, 9 API requests 0.4s)
 - waiting 30s -               : done
 DragonflyCluster-1            : waits for monitoring
 DragonflyCluster-1            : wants to monitor all components in cluster
 DragonflyCluster-1            : starts monitoring with prometheus pod
 DragonflyCluster-1            : need application monitoring for worker
-DragonflyCluster-1            : worker pods found: ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
-DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
-DragonflyCluster-1            : worker endpoint: bx-w-dragonfly-ycsb-10-0.bx-w-dragonfly-ycsb-10
-DragonflyCluster-1            : worker endpoint: bx-w-dragonfly-ycsb-10-1.bx-w-dragonfly-ycsb-10
-DragonflyCluster-1            : worker endpoint: bx-w-dragonfly-ycsb-10-2.bx-w-dragonfly-ycsb-10
-DragonflyCluster-1            : found worker endpoint (cAdvisor) for monitoring GPUs of bx-w-dragonfly-ycsb-10-0.bx-w-dragonfly-ycsb-10 (added to Prometheus) of sidecar container
-DragonflyCluster-1            : found worker endpoint (cAdvisor) for monitoring GPUs of bx-w-dragonfly-ycsb-10-1.bx-w-dragonfly-ycsb-10 (added to Prometheus) of sidecar container
-DragonflyCluster-1            : found worker endpoint (cAdvisor) for monitoring GPUs of bx-w-dragonfly-ycsb-10-2.bx-w-dragonfly-ycsb-10 (added to Prometheus) of sidecar container
-Loop pass                     : took 5.5s (2 kubectl calls 3.5s, 14 API requests 1.9s)
+DragonflyCluster-1            : worker pods found: ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
+DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
+DragonflyCluster-1            : worker endpoint: bx-w-dragonflycluster-1-1794042705-0.bx-w-dragonflycluster-1-1794042705
+DragonflyCluster-1            : worker endpoint: bx-w-dragonflycluster-1-1794042705-1.bx-w-dragonflycluster-1-1794042705
+DragonflyCluster-1            : worker endpoint: bx-w-dragonflycluster-1-1794042705-2.bx-w-dragonflycluster-1-1794042705
+DragonflyCluster-1            : found worker endpoint (cAdvisor) for monitoring GPUs of bx-w-dragonflycluster-1-1794042705-0.bx-w-dragonflycluster-1-1794042705 (added to Prometheus) of sidecar container
+DragonflyCluster-1            : found worker endpoint (cAdvisor) for monitoring GPUs of bx-w-dragonflycluster-1-1794042705-1.bx-w-dragonflycluster-1-1794042705 (added to Prometheus) of sidecar container
+DragonflyCluster-1            : found worker endpoint (cAdvisor) for monitoring GPUs of bx-w-dragonflycluster-1-1794042705-2.bx-w-dragonflycluster-1-1794042705 (added to Prometheus) of sidecar container
+Loop pass                     : took 9.5s (2 kubectl calls 2.2s, 14 API requests 0.5s)
 - waiting 30s -               : done
-DragonflyCluster-1            : worker pods found: ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
-DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
+DragonflyCluster-1            : worker pods found: ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
+DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
 DragonflyCluster-1            : found 3 / 3 running workers (component worker)
 DragonflyCluster-1            : is not loaded yet
 DragonflyCluster-1            : load durability relaxed, scripts []
-DragonflyCluster-1            : connect to pod bexhoma-sut-dragonflycluster-1-1792720409-7f6bbc7bf5-f8hf9 to load scripts
+DragonflyCluster-1            : loading scripts not in folder, skipped: initschema-ycsb.sql
+DragonflyCluster-1            : connect to pod bexhoma-sut-dragonflycluster-1-1794042705-6d8c6c9fcc-vngvq to load scripts
 DragonflyCluster-1            : start asynch loading scripts of type schema
 DragonflyCluster-1            : waits for the Schema scripts (schema=True) before starting the loading jobs
-DragonflyCluster-1            : Schema scripts done after 6s
+DragonflyCluster-1            : Schema scripts done after 4s
 DragonflyCluster-1            : is loading
-Loop pass                     : took 19.2s (3 kubectl calls 5.8s, 48 API requests 6.1s)
+Loop pass                     : took 11.3s (3 kubectl calls 3.4s, 47 API requests 2.5s)
 - waiting 30s -               : done
 DragonflyCluster-1            : is loading
-Loop pass                     : took 3.6s (0 kubectl calls 0.0s, 35 API requests 3.4s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 35 API requests 1.2s)
 - waiting 30s -               : done
 DragonflyCluster-1            : is loading
-Loop pass                     : took 4.9s (0 kubectl calls 0.0s, 35 API requests 3.5s)
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 35 API requests 1.2s)
 - waiting 30s -               : done
 DragonflyCluster-1            : is loading
-Loop pass                     : took 32.9s (14 kubectl calls 26.1s, 42 API requests 4.9s)
+Loop pass                     : took 9.9s (6 kubectl calls 8.5s, 38 API requests 1.4s)
 - waiting 30s -               : done
 DragonflyCluster-1            : showing loader times (ycsb-loader)
 DragonflyCluster-1            : generator times (start/end per pod and container) []
-DragonflyCluster-1            : loader times (start/end per pod and container) [(1792720511, 1792720593), (1792720511, 1792720593), (1792720511, 1792720593), (1792720511, 1792720593), (1792720511, 1792720593), (1792720510, 1792720592), (1792720510, 1792720593), (1792720511, 1792720594)]
-DragonflyCluster-1            : total times (start/end per pod and container) [(1792720511, 1792720593), (1792720511, 1792720593), (1792720511, 1792720593), (1792720511, 1792720593), (1792720511, 1792720593), (1792720510, 1792720592), (1792720510, 1792720593), (1792720511, 1792720594)]
-DragonflyCluster-1            : loader timespan (first to last [s]) = 84
-DragonflyCluster-1            : worker pods found: ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
-DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
-DragonflyCluster-1            : scripts ['save-snapshot.sh'] ran on 3 worker pods in 68s
-DragonflyCluster-1            : connect to pod bexhoma-sut-dragonflycluster-1-1792720409-7f6bbc7bf5-f8hf9 to load scripts
+DragonflyCluster-1            : loader times (start/end per pod and container) [(1794042798, 1794042886), (1794042797, 1794042884), (1794042797, 1794042884), (1794042797, 1794042888), (1794042797, 1794042888), (1794042798, 1794042890), (1794042797, 1794042883), (1794042797, 1794042886)]
+DragonflyCluster-1            : total times (start/end per pod and container) [(1794042798, 1794042886), (1794042797, 1794042884), (1794042797, 1794042884), (1794042797, 1794042888), (1794042797, 1794042888), (1794042798, 1794042890), (1794042797, 1794042883), (1794042797, 1794042886)]
+DragonflyCluster-1            : loader timespan (first to last [s]) = 93
+DragonflyCluster-1            : worker pods found: ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
+DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
+DragonflyCluster-1            : scripts ['save-snapshot.sh'] ran on 3 worker pods in 73s
+DragonflyCluster-1            : loading scripts not in folder, skipped: checkschema-ycsb.sql
+DragonflyCluster-1            : connect to pod bexhoma-sut-dragonflycluster-1-1794042705-6d8c6c9fcc-vngvq to load scripts
 DragonflyCluster-1            : start asynch loading scripts of type index
 DragonflyCluster-1            : is loading
-Loop pass                     : took 85.1s (19 kubectl calls 180.2s, 50 API requests 5.8s)
+Loop pass                     : took 92.7s (27 kubectl calls 184.1s, 58 API requests 2.4s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-DragonflyCluster-1-1792720409 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-DragonflyCluster-1-1794042705 initialized to 1.
 DragonflyCluster-1            : benchmarks done 0 of 1. This will be client 1
 dragonflycluster-1-1-1-1      : start benchmarking (benchmark_run=1)
-DragonflyCluster-1            : worker pods found: ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
-DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
-DragonflyCluster-1            : scripts ['save-snapshot.sh'] ran on 3 worker pods in 63s
-DragonflyCluster-1            : reset (reset_1_1_1) completed in 63s
-DragonflyCluster-1            : worker pods found: ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
-DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
-DragonflyCluster-1            : distributed system - get host info for worker bx-w-dragonfly-ycsb-10-0
-DragonflyCluster-1            : distributed system - get host info for worker bx-w-dragonfly-ycsb-10-1
-DragonflyCluster-1            : distributed system - get host info for worker bx-w-dragonfly-ycsb-10-2
+DragonflyCluster-1            : worker pods found: ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
+DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
+DragonflyCluster-1            : scripts ['save-snapshot.sh'] ran on 3 worker pods in 72s
+DragonflyCluster-1            : reset (reset_1_1_1) completed in 72s
+DragonflyCluster-1            : worker pods found: ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
+DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
+DragonflyCluster-1            : distributed system - get host info for worker bx-w-dragonflycluster-1-1794042705-0
+DragonflyCluster-1            : distributed system - get host info for worker bx-w-dragonflycluster-1-1794042705-1
+DragonflyCluster-1            : distributed system - get host info for worker bx-w-dragonflycluster-1-1794042705-2
 dragonflycluster-1-1-1-1      : needs monitoring (common metrics) for deployment sut
 dragonflycluster-1-1-1-1      : needs monitoring (custom metrics) for stateful set worker
 DragonflyCluster-1            : need application metrics for worker
 DragonflyCluster-1            : load application metrics of type dragonfly
-DragonflyCluster-1            : benchmarking results in folder C:\data\benchmarks/1792720409
-DragonflyCluster-1            : submitted benchmarker job in 31.1s (4 kubectl calls 8.2s, 70 API requests 22.5s)
+DragonflyCluster-1            : benchmarking results in folder C:\data\benchmarks/1794042705
+DragonflyCluster-1            : submitted benchmarker job in 13.6s (4 kubectl calls 5.0s, 70 API requests 8.5s)
 dragonflycluster-1-1-1-1      : needs monitoring (common metrics) for deployment sut
 dragonflycluster-1-1-1-1      : needs monitoring (custom metrics) for stateful set worker
 dragonflycluster-1-1-1-1      : collecting metrics of data injector at connection dragonflycluster-1-1-1-1
-dragonflycluster-1-1-1-1      : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-dragonfly-ycsb-10-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-dragonfly-ycsb-10-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-dragonflycluster-1-1-1-1      : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-dragonflycluster-1-1792720409-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-dragonflycluster-1-1792720409-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+dragonflycluster-1-1-1-1      : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-dragonflycluster-1-1794042705-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-dragonflycluster-1-1794042705-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+dragonflycluster-1-1-1-1      : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-dragonflycluster-1-1794042705-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-dragonflycluster-1-1794042705-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 dragonflycluster-1-1-1-1      : WARNING metric missing for workerloading: CPU Throttling Rate [s/s]
 dragonflycluster-1-1-1-1      : WARNING metric missing for workerloading: CPU Throttled Time [s]
 dragonflycluster-1-1-1-1      : WARNING metric missing for workerloading: Replica Lag [records]
-dragonflycluster-1-1-1-1      : WARNING metric missing for workerloading: Replication Streaming Memory [GiB]
 dragonflycluster-1-1-1-1      : WARNING metric missing for workerloading: Full Sync Replication Memory [GiB]
+dragonflycluster-1-1-1-1      : WARNING metric missing for workerloading: Replication Streaming Memory [GiB]
 dragonflycluster-1-1-1-1      : WARNING metric missing for loader: CPU Throttling Rate [s/s]
 dragonflycluster-1-1-1-1      : WARNING metric missing for loader: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 9s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 13.2s, 0 API requests 0.0s)
-Loop pass                     : took 114.0s (23 kubectl calls 183.1s, 96 API requests 26.4s)
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.0s, 0 API requests 0.0s)
+Loop pass                     : took 98.0s (23 kubectl calls 184.3s, 97 API requests 10.1s)
 - waiting 30s -               : done
 DragonflyCluster-1            : has running benchmarks
-Loop pass                     : took 3.9s (0 kubectl calls 0.0s, 24 API requests 3.4s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 25 API requests 0.8s)
 - waiting 30s -               : done
 DragonflyCluster-1            : has running benchmarks
-Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 22 API requests 2.4s)
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 23 API requests 0.7s)
 - waiting 30s -               : done
 DragonflyCluster-1            : has running benchmarks
-Loop pass                     : took 14.0s (0 kubectl calls 0.0s, 22 API requests 3.0s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 23 API requests 1.0s)
 - waiting 30s -               : done
 DragonflyCluster-1            : has running benchmarks
-Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 22 API requests 2.1s)
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 23 API requests 1.0s)
 - waiting 30s -               : done
-dragonflycluster-1-1-1-1      : wrote benchmarking_timespans to /data/benchmarks/1792720409/dragonflycluster-1-1-1-1.config
+DragonflyCluster-1            : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 23 API requests 1.2s)
+- waiting 30s -               : done
+dragonflycluster-1-1-1-1      : wrote benchmarking_timespans to /data/benchmarks/1794042705/dragonflycluster-1-1-1-1.config
 dragonflycluster-1-1-1-1      : showing benchmarker times
-dragonflycluster-1-1-1-1      : benchmarker timespan job from 1792720879 to 1792721075
-dragonflycluster-1-1-1-1      : benchmarker timespan pods from 1792720885 to 1792721040
-dragonflycluster-1-1-1-1      : benchmarker timespan (start to end single container [s]) = 155
-dragonflycluster-1-1-1-1      : benchmarker times (start/end per pod and container) = [(1792720885, 1792721040)]
-dragonflycluster-1-1-1-1      : found and updated times {'benchmarker': [(1792720885, 1792721040)]}
+dragonflycluster-1-1-1-1      : benchmarker timespan job from 1794043137 to 1794043338
+dragonflycluster-1-1-1-1      : benchmarker timespan pods from 1794043140 to 1794043303
+dragonflycluster-1-1-1-1      : benchmarker timespan (start to end single container [s]) = 163
+dragonflycluster-1-1-1-1      : benchmarker times (start/end per pod and container) = [(1794043140, 1794043303)]
+dragonflycluster-1-1-1-1      : found and updated times {'benchmarker': [(1794043140, 1794043303)]}
 dragonflycluster-1-1-1-1      : needs monitoring (common metrics) for deployment sut
 dragonflycluster-1-1-1-1      : needs monitoring (custom metrics) for stateful set worker
 dragonflycluster-1-1-1-1      : collecting execution metrics of worker at connection dragonflycluster-1-1-1-1
 dragonflycluster-1-1-1-1      : collecting metrics of benchmarker at connection dragonflycluster-1-1-1-1
-dragonflycluster-1-1-1-1      : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-dragonfly-ycsb-10-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-dragonfly-ycsb-10-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-dragonflycluster-1-1-1-1      : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-dragonflycluster-1-1792720409-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-dragonflycluster-1-1792720409-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-dragonflycluster-1-1-1-1      : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
-dragonflycluster-1-1-1-1      : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+dragonflycluster-1-1-1-1      : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-dragonflycluster-1-1794042705-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-dragonflycluster-1-1794042705-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+dragonflycluster-1-1-1-1      : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-dragonflycluster-1-1794042705-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-dragonflycluster-1-1794042705-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 dragonflycluster-1-1-1-1      : WARNING metric missing for workerbenchmarking: CPU Throttling Rate [s/s]
 dragonflycluster-1-1-1-1      : WARNING metric missing for workerbenchmarking: CPU Throttled Time [s]
 dragonflycluster-1-1-1-1      : WARNING metric missing for workerbenchmarking: Replica Lag [records]
 dragonflycluster-1-1-1-1      : WARNING metric missing for workerbenchmarking: Replication Streaming Memory [GiB]
 dragonflycluster-1-1-1-1      : WARNING metric missing for workerbenchmarking: Full Sync Replication Memory [GiB]
-Experiment                    : fetched 2 metric sets in 8s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 12.2s, 0 API requests 0.0s)
-Loop pass                     : took 21.2s (9 kubectl calls 20.6s, 28 API requests 3.5s)
+dragonflycluster-1-1-1-1      : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+dragonflycluster-1-1-1-1      : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.0s, 0 API requests 0.0s)
+Loop pass                     : took 14.2s (9 kubectl calls 15.0s, 28 API requests 1.4s)
 DragonflyCluster-1            : can be stopped
-DragonflyCluster-1            : had 0 restarts at worker bexhoma-sut-dragonflycluster-1-1792720409-7f6bbc7bf5-f8hf9
-DragonflyCluster-1            : worker pods found: ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
-DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonfly-ycsb-10-0', 'bx-w-dragonfly-ycsb-10-1', 'bx-w-dragonfly-ycsb-10-2']
-DragonflyCluster-1            : had 0 restarts at worker bx-w-dragonfly-ycsb-10-0
-DragonflyCluster-1            : had 0 restarts at worker bx-w-dragonfly-ycsb-10-1
-DragonflyCluster-1            : had 0 restarts at worker bx-w-dragonfly-ycsb-10-2
-Loop pass                     : took 26.2s (10 kubectl calls 20.2s, 46 API requests 5.4s)
-Experiment                    : ends at 2026-10-23 04:05:15.687271 (46458.5656728) - 703.49s total
+DragonflyCluster-1            : had 0 restarts at worker bexhoma-sut-dragonflycluster-1-1794042705-6d8c6c9fcc-vngvq
+DragonflyCluster-1            : worker pods found: ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
+DragonflyCluster-1            : worker pods found (only stateful set pods): ['bx-w-dragonflycluster-1-1794042705-0', 'bx-w-dragonflycluster-1-1794042705-1', 'bx-w-dragonflycluster-1-1794042705-2']
+DragonflyCluster-1            : had 0 restarts at worker bx-w-dragonflycluster-1-1794042705-0
+DragonflyCluster-1            : had 0 restarts at worker bx-w-dragonflycluster-1-1794042705-1
+DragonflyCluster-1            : had 0 restarts at worker bx-w-dragonflycluster-1-1794042705-2
+Loop pass                     : took 14.1s (10 kubectl calls 11.3s, 46 API requests 2.2s)
+Experiment                    : ends at 2026-11-07 10:22:41.959924 (266550.6369965) - 654.51s total
 Experiment                    : transforming metrics for loading
 Experiment                    : transforming metrics for loading completed
 Experiment                    : transforming metrics for benchmarking
@@ -196,8 +201,8 @@ Result workflow complete
 ### Workload
 YCSB SF=10
 * Type: ycsb
-* Duration: 704s 
-* Code: 1792720409
+* Duration: 655s 
+* Code: 1794042705
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -210,7 +215,7 @@ YCSB SF=10
   * Factors for benchmarking are [4]. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.8.
+  * Experiment uses bexhoma version 0.11.13.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['Dragonfly'].
@@ -225,71 +230,74 @@ YCSB SF=10
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
   * Results are validated against basic correctness requirements.
-  * Deployment parameter overrides: [({'kind': 'statefulset', 'workload': 'bexhoma-worker', 'config': '', 'container': 'dbms', 'param': 'env.DFLY_proactor_threads'}, '8')].
+  * Deployment parameter overrides: [({'kind': 'statefulset', 'workload': 'bexhoma-worker', 'config': '', 'container': 'dbms', 'param': 'env.DFLY_proactor_threads', 'target': 'container'}, '8')].
   * Distributed DBMS uses 3 worker nodes, 0 replicas and 0 shards per node.
   * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
 * dragonflycluster-1-1-1-1 uses docker image docker.dragonflydb.io/dragonflydb/dragonfly:v2.0.2
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:950859
+  * disk:808027
   * datadisk:1
   * volume_size:1.8T
-  * volume_used:929G
+  * volume_used:790G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:540590800896
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-146-generic
-    * node:cl-worker24
-    * disk:153556
-    * datadisk:3549
-    * volume_size:219G
-    * volume_used:150G
-    * cpu_list:0-95
-  * worker 1
-    * RAM:540590792704
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-146-generic
-    * node:cl-worker25
-    * disk:159393
-    * datadisk:3753
-    * volume_size:219G
-    * volume_used:156G
-    * cpu_list:0-95
-  * worker 2
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:406533
+    * disk:207850
     * datadisk:3549
     * volume_size:879G
-    * volume_used:398G
+    * volume_used:203G
     * cpu_list:0-127
+  * worker 1
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:720739
+    * datadisk:3753
+    * volume_size:1.8T
+    * volume_used:704G
+    * cpu_list:0-127
+  * worker 2
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:666553
+    * datadisk:3549
+    * volume_size:1.8T
+    * volume_used:651G
+    * cpu_list:0-255
   * resources_total: 12.25 CPU, 192.5 GiB RAM requested in 4 pods
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792720409
+    * code:1794042705
     * BEXHOMA_WORKERS:3
 
+### Init Scripts Not in Folder
+* DragonflyCluster-1: skipped checkschema-ycsb.sql, initschema-ycsb.sql
+
 ### SUT Container Restarts
-* bexhoma-sut-dragonflycluster-1-1792720409-7f6bbc7bf5-f8hf9: 0
-* bx-w-dragonfly-ycsb-10-0: 0
-* bx-w-dragonfly-ycsb-10-1: 0
-* bx-w-dragonfly-ycsb-10-2: 0
+* bexhoma-sut-dragonflycluster-1-1794042705-6d8c6c9fcc-vngvq: 0
+* bx-w-dragonflycluster-1-1794042705-0: 0
+* bx-w-dragonflycluster-1-1794042705-1: 0
+* bx-w-dragonflycluster-1-1794042705-2: 0
 
 ### Workflow
 
@@ -307,20 +315,20 @@ YCSB SF=10
 
 | connection                 |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |    sf |   Throughput [SF/h] |
 |:---------------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|------:|--------------------:|
-| dragonflycluster-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        15285.85 |                81775.00 |           1250000.00 |                              1166.00 | 10.00 |              440.23 |
-| dragonflycluster-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        15361.74 |                81371.00 |           1250000.00 |                              1165.00 | 10.00 |              442.42 |
-| dragonflycluster-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        15307.00 |                81662.00 |           1250000.00 |                              1166.00 | 10.00 |              440.84 |
-| dragonflycluster-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        15268.48 |                81868.00 |           1250000.00 |                              1163.00 | 10.00 |              439.73 |
-| dragonflycluster-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        15250.60 |                81964.00 |           1250000.00 |                              1169.00 | 10.00 |              439.22 |
-| dragonflycluster-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        15166.04 |                82421.00 |           1250000.00 |                              1164.00 | 10.00 |              436.78 |
-| dragonflycluster-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        15296.13 |                81720.00 |           1250000.00 |                              1165.00 | 10.00 |              440.53 |
-| dragonflycluster-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        15307.18 |                81661.00 |           1250000.00 |                              1165.00 | 10.00 |              440.85 |
+| dragonflycluster-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        14424.35 |                86659.00 |           1250000.00 |                              1310.00 | 10.00 |              415.42 |
+| dragonflycluster-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        14498.47 |                86216.00 |           1250000.00 |                              1314.00 | 10.00 |              417.56 |
+| dragonflycluster-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        13667.77 |                91456.00 |           1250000.00 |                              1305.00 | 10.00 |              393.63 |
+| dragonflycluster-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        14141.55 |                88392.00 |           1250000.00 |                              1313.00 | 10.00 |              407.28 |
+| dragonflycluster-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        13780.94 |                90705.00 |           1250000.00 |                              1308.00 | 10.00 |              396.89 |
+| dragonflycluster-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        14217.31 |                87921.00 |           1250000.00 |                              1307.00 | 10.00 |              409.46 |
+| dragonflycluster-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        13914.71 |                89833.00 |           1250000.00 |                              1310.00 | 10.00 |              400.74 |
+| dragonflycluster-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        14543.68 |                85948.00 |           1250000.00 |                              1307.00 | 10.00 |              418.86 |
 
 #### Per Run
 
 | DBMS                 |   experiment_run |   threads |    target |   pod_count |   exceptions |    sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:---------------------|-----------------:|----------:|----------:|------------:|-------------:|------:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| DragonflyCluster-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 10.00 |              436.78 |                       122243.01 |                82421.00 |          10000000.00 |                              1165.38 |
+| DragonflyCluster-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 10.00 |              393.63 |                       113188.78 |                91456.00 |          10000000.00 |                              1309.25 |
 
 ### Benchmarking
 
@@ -328,19 +336,19 @@ YCSB SF=10
 
 | DBMS                       | phase                  | job                      | configuration      |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:---------------------------|:-----------------------|:-------------------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| dragonflycluster-1-1-1-1-1 | dragonflycluster-1-1-1 | dragonflycluster-1-1-1-1 | DragonflyCluster-1 |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        64364.98 |               155364.00 |            5000658 |                             226.00 |              4999342 |                               214.00 |
+| dragonflycluster-1-1-1-1-1 | dragonflycluster-1-1-1 | dragonflycluster-1-1-1-1 | DragonflyCluster-1 |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        61546.79 |               162478.00 |            5003327 |                             267.00 |              4996673 |                               251.00 |
 
 #### Per Phase
 
 | DBMS                   | phase                  |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:-----------------------|:-----------------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| dragonflycluster-1-1-1 | dragonflycluster-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        64364.98 |               155364.00 |            5000658 |                             226.00 |              4999342 |                               214.00 |
+| dragonflycluster-1-1-1 | dragonflycluster-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        61546.79 |               162478.00 |            5003327 |                             267.00 |              4996673 |                               251.00 |
 
 #### Reset
 
 | phase                  | job                      |   experiment_run |   client |   benchmark_run |   time_reset | reset_failed   |
 |:-----------------------|:-------------------------|-----------------:|---------:|----------------:|-------------:|:---------------|
-| dragonflycluster-1-1-1 | dragonflycluster-1-1-1-1 |                1 |        1 |               1 |        63.00 |                |
+| dragonflycluster-1-1-1 | dragonflycluster-1-1-1-1 |                1 |        1 |               1 |        72.00 |                |
 
 ### Monitoring
 
@@ -348,25 +356,25 @@ YCSB SF=10
 
 | DBMS                     |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------------|-------------:|----------:|---------------:|----------------------:|
-| dragonflycluster-1-1-1-1 |      1036.54 |     11.33 |          15.53 |                 15.53 |
+| dragonflycluster-1-1-1-1 |      1082.14 |     10.44 |          15.71 |                 22.40 |
 
 ### Loading phase: component loader
 
 | DBMS                     |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------------|-------------:|----------:|---------------:|----------------------:|
-| dragonflycluster-1-1-1-1 |       637.88 |     10.18 |           1.34 |                  1.35 |
+| dragonflycluster-1-1-1-1 |       638.30 |      9.04 |           1.33 |                  1.34 |
 
 ### Benchmarking phase: component worker
 
 | DBMS                     |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------------|-------------:|----------:|---------------:|----------------------:|
-| dragonflycluster-1-1-1-1 |       487.56 |      3.54 |          15.48 |                 15.48 |
+| dragonflycluster-1-1-1-1 |       432.45 |      3.34 |          15.59 |                 19.05 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS                     |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------------|-------------:|----------:|---------------:|----------------------:|
-| dragonflycluster-1-1-1-1 |       449.63 |      3.02 |           1.46 |                  1.46 |
+| dragonflycluster-1-1-1-1 |       723.43 |      4.84 |           1.50 |                  1.50 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -381,8 +389,8 @@ YCSB SF=10
 * CPU Throttling Rate [s/s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
 * Replica Lag [records] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
-* Replication Streaming Memory [GiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
 * Full Sync Replication Memory [GiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
+* Replication Streaming Memory [GiB] for connection dragonflycluster-1-1-1-1 (bexhoma-metrics-dragonflycluster-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
@@ -390,16 +398,18 @@ YCSB SF=10
 
 | DBMS                     |   Replies Sent [count] |   Memory Usage [GiB] |   Processed Commands [ops/s] |   Network Input [MiB/s] |   Replica Lag [records] |
 |:-------------------------|-----------------------:|---------------------:|-----------------------------:|------------------------:|------------------------:|
-| dragonflycluster-1-1-1-1 |            20001601.00 |                15.25 |                     79384.43 |                   49.91 |                    0.00 |
+| dragonflycluster-1-1-1-1 |            20001603.00 |                15.25 |                     81357.06 |                   51.80 |                    0.00 |
 
 #### Benchmarking phase: component worker
 
 | DBMS                     |   Replies Sent [count] |   Memory Usage [GiB] |   Processed Commands [ops/s] |   Network Input [MiB/s] |   Replica Lag [records] |
 |:-------------------------|-----------------------:|---------------------:|-----------------------------:|------------------------:|------------------------:|
-| dragonflycluster-1-1-1-1 |             9200775.00 |                15.25 |                     31953.21 |                    3.23 |                    0.00 |
+| dragonflycluster-1-1-1-1 |             8564923.00 |                15.25 |                     31325.90 |                    4.48 |                    0.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
@@ -408,6 +418,7 @@ YCSB SF=10
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 * TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column

@@ -701,6 +701,55 @@ bexhoma tpch \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus columnar  sf=10  ne=1,1  nc=2"
 
 
+####################################################
+#### Refresh Stream ################################
+####################################################
+
+
+#### TPC-H Refresh Stream (Example-TPC-H.md)
+# TPC-H with a refresh stream on Citus: the loader image of PostgreSQL applies RF1 and RF2 on the coordinator
+# -dbms Citus                   DBMS under test
+# -sf 1                         scaling factor (controls database size in GB)
+# -nlp 8                        number of data loader pods
+# -nw 4                         number of worker nodes
+# -nwr 1                        number of replicas per shard
+# -nws 48                       number of shards
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -ne 3                         parallel query streams
+# -xrs 3                        refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnn/-rnl/-rnb $BEXHOMA_NODE_* schedule SUT, loader and benchmarker pods on these nodes
+# -rnw $BEXHOMA_NODES_WORKER_4  schedule worker pods on these nodes (joined by '+')
+bexhoma tpch \
+  -dbms Citus \
+  -sf 1 \
+  -nlp 8 \
+  -nw 4 \
+  -nwr 1 \
+  -nws 48 \
+  -xii \
+  -xic \
+  -xis \
+  -ne 3 \
+  -xrs 3 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
+  run &>$LOG_DIR/docs_tpch_citus_refresh.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus refresh  sf=1  nw=4  ne=3"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################

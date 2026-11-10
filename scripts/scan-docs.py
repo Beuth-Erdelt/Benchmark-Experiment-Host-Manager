@@ -7,7 +7,7 @@ corresponding log / summary file in logs_tests/ and display:
   - experiment code
   - duration
   - bexhoma version
-  - TEST-failed lines
+  - TEST-failed and TEST-warning lines
 
 Run from the repo root:
     python scripts/scan-docs.py
@@ -28,13 +28,15 @@ LOG_REF_PATTERN = re.compile(
     r'(?:\s*```markdown\n(?P<embedded>.*?)\n```)?',
     re.DOTALL,
 )
+# Any link to a log, e.g. "Result: <a ...>NAME.log</a>" outside a <summary> block.
+LOG_LINK_PATTERN = re.compile(r'<a [^>\n]*>([\w\-.\/]+\.log)</a>')
 
 # Both "* Code: 123" (summary/log format) and "    Code: 123" (doc embedded format).
 _RE_CODE = re.compile(r'(?:^\s*\*\s+|^\s{2,})Code:\s+(\d+)', re.MULTILINE)
 _RE_DURATION = re.compile(r'(?:^\s*\*\s+|^\s{2,})Duration:\s+([\d]+s)', re.MULTILINE)
 _RE_VERSION = re.compile(r'bexhoma version (\d+(?:\.\d+)*)')
 # Newer logs prefix the line with "* ", older summaries do not.
-_RE_TEST = re.compile(r'^(?:\*\s+)?(TEST (?:passed|failed):[^\n]+)', re.MULTILINE)
+_RE_TEST = re.compile(r'^(?:\*\s+)?(TEST (?:passed|failed|warning):[^\n]+)', re.MULTILINE)
 
 
 def extract_metadata(text: str) -> dict:
@@ -71,9 +73,13 @@ def scan_doc(md_path: Path) -> list[dict]:
     """Return a list of reference records found in *md_path*."""
     text = md_path.read_text(encoding="utf-8")
     records = []
-    for match in LOG_REF_PATTERN.finditer(text):
-        logfile_name = match.group("logfile")
-        embedded = match.group("embedded")
+    references = [(match.group("logfile"), match.group("embedded"))
+                  for match in LOG_REF_PATTERN.finditer(text)]
+    # plain links (e.g. Test-Reset.md, Test-Durability.md) are runs too, without an embedded copy
+    in_summaries = {name for name, _ in references}
+    references += [(name, None) for name in dict.fromkeys(LOG_LINK_PATTERN.findall(text))
+                   if name not in in_summaries]
+    for logfile_name, embedded in references:
         content, source = load_source(logfile_name)
         if content is None and embedded:
             content, source = embedded, "doc"
@@ -114,15 +120,17 @@ def print_table(rows: list[tuple], col_widths: list[int], header: list[str]) -> 
 
 
 def print_report(all_records: list[dict]) -> None:
-    """Print a formatted table of all log references, then failed-test details."""
-    HEADERS = ["Doc", "Log file", "Code", "Duration", "Version", "OK", "FAIL", "St"]
+    """Print a formatted table of all log references, then failed-test and warning details."""
+    HEADERS = ["Doc", "Log file", "Code", "Duration", "Version", "OK", "FAIL", "WARN", "St"]
 
     table_rows: list[tuple] = []
     failures: list[dict] = []
+    warnings: list[dict] = []
 
     for rec in all_records:
         failed = [t for t in rec["tests"] if t.startswith("TEST failed")]
         passed = [t for t in rec["tests"] if t.startswith("TEST passed")]
+        warned = [t for t in rec["tests"] if t.startswith("TEST warning")]
         table_rows.append((
             rec["doc"],
             rec["logfile"],
@@ -131,12 +139,15 @@ def print_report(all_records: list[dict]) -> None:
             rec["version"] or "—",
             str(len(passed)) if passed else "—",
             str(len(failed) + (1 if rec.get("crashed") else 0)) if (failed or rec.get("crashed")) else "",
+            str(len(warned)) if warned else "",
             _status_flags(rec),
         ))
         if rec.get("crashed"):
             failed = failed + ["log contains a Python traceback (evaluation crashed)"]
         if failed:
             failures.append({"logfile": rec["logfile"], "doc": rec["doc"], "failed": failed})
+        if warned:
+            warnings.append({"logfile": rec["logfile"], "doc": rec["doc"], "warned": warned})
 
     col_widths = [
         max(len(HEADERS[i]), max(len(str(row[i])) for row in table_rows))
@@ -153,6 +164,14 @@ def print_report(all_records: list[dict]) -> None:
             for msg in entry["failed"]:
                 print(f"    ✗ {msg}")
 
+    if warnings:
+        print(f"\n\nTests with warnings (need judgement, not failures)")
+        print("-" * 70)
+        for entry in warnings:
+            print(f"\n  {entry['logfile']}  ({entry['doc']})")
+            for msg in entry["warned"]:
+                print(f"    ! {msg}")
+
     missing = sorted({rec["logfile"] for rec in all_records if not rec["log_exists"]})
     if missing:
         print(f"\n\nMissing log files")
@@ -161,10 +180,6 @@ def print_report(all_records: list[dict]) -> None:
             print(f"  {name}")
 
     referenced = {rec["logfile"] for rec in all_records}
-    # Pages also link logs outside <summary> blocks, e.g. "Result: <a ...>NAME.log</a>"
-    for md_file in DOCS_DIR.glob("*.md"):
-        referenced.update(re.findall(
-            r'<a [^>\n]*>([\w\-.\/]+\.log)</a>', md_file.read_text(encoding="utf-8")))
     unreferenced = sorted(
         p.name for p in LOGS_DIR.glob("*.log") if p.name not in referenced
     )

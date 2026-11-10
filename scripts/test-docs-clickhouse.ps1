@@ -205,6 +205,59 @@ bexhoma tpcds `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS ClickHouseCluster  sf=3  nw=3"
 
 
+####################################################
+#### Refresh Stream ################################
+####################################################
+
+
+#### TPC-H Refresh Stream (Example-ClickHouse.md)
+# TPC-H with a refresh stream on ClickHouse: 3 query streams and one RF1/RF2 stream in parallel
+bexhoma tpch `
+  -dbms ClickHouse              <# DBMS under test #> `
+  -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -ne 3                         <# parallel query streams #> `
+  -xrs 3                        <# refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lc 16                        <# CPU limit for the SUT container #> `
+  -rc 16                        <# CPU requested for the SUT container #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
+  -ks no                        <# remove the SUT at the end #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_clickhouse_refresh.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H ClickHouse refresh  sf=1  ne=3"
+
+
+#### TPC-H Refresh Stream on ClickHouseCluster (Example-ClickHouse.md)
+# TPC-H with a refresh stream on ClickHouseCluster with 3 shards: RF1 inserts through the Distributed tables, RF2 deletes on the shards
+bexhoma tpch `
+  -dbms ClickHouseCluster       <# DBMS under test #> `
+  -nw 3                         <# number of worker nodes (shards) #> `
+  -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -ne 3                         <# parallel query streams #> `
+  -xrs 3                        <# refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lc 16                        <# CPU limit for the SUT container and each worker #> `
+  -rc 16                        <# CPU requested for the SUT container and each worker #> `
+  -lr 64Gi                      <# RAM limit for the SUT container and each worker #> `
+  -rr 64Gi                      <# RAM requested for the SUT container and each worker #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
+  -rss 50Gi                     <# size of the persistent volume claims #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
+  -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
+  -ks no                        <# remove the SUT at the end #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_clickhouse_cluster_refresh.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H ClickHouseCluster refresh  sf=1  nw=3  ne=3"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################

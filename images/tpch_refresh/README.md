@@ -31,6 +31,10 @@ images/tpch_refresh/
 │   ├── Dockerfile         — MonetDB loader image (monetdb/monetdb:Dec2025 + redis + yum)
 │   ├── loader.sh          — applies RF1 via mclient COPY FROM STDIN, RF2 via piped session
 │   └── README.md          — environment variable reference + execution flow
+├── loader_clickhouse/
+│   ├── Dockerfile         — ClickHouse loader image (clickhouse-server base, client only, + redis-cli)
+│   ├── loader.sh          — applies RF1 via INSERT ... FORMAT CSV, RF2 via lightweight DELETE by order key
+│   └── README.md          — environment variable reference + execution flow
 └── README.md              — this file
 ```
 
@@ -72,3 +76,7 @@ or reload the database before repeating.
 | MySQL | `mysql LOAD DATA LOCAL INFILE` | column-mapped LOAD DATA per table | temp table + `DELETE l FROM lineitem l WHERE ...` |
 | MariaDB | `mysql LOAD DATA LOCAL INFILE` | column-mapped LOAD DATA per table | temp table + `DELETE l FROM lineitem l WHERE ...` |
 | MonetDB | `mclient COPY N RECORDS INTO ... FROM STDIN` | count lines, pipe file to mclient per table | all statements in one stdin pipeline; temp table persists within the session |
+| ClickHouse | `clickhouse-client` (native port) | `INSERT ... FORMAT CSV` (delimiter `|`) | lightweight `DELETE ... WHERE key IN (...)` in chunks of 10000 keys; `ClickHouseCluster`: on `orders_local` / `lineitem_local` `ON CLUSTER` |
+
+CedarDB, Citus and DatabaseService speak the PostgreSQL protocol and use the PostgreSQL loader. The job template of
+every DBMS is its `refresh_template` in `cluster.config`; one run needs one job for all its DBMS.

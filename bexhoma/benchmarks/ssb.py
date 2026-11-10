@@ -8,9 +8,10 @@ See LICENSE for details.
 """
 from types import SimpleNamespace
 
-from .base import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, DIMENSION_DBMS, dimension_folder, dimension_info
+from ..system_descriptors import dimension_dockers, notes
+from .base import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, dimension_folder, dimension_info
 
-__all__ = ["SSB", "SCHEMA_VARIANTS", "QUERY_VARIANTS", "DIMENSION_VARIANTS", "DIMENSION_DBMS",
+__all__ = ["SSB", "SCHEMA_VARIANTS", "QUERY_VARIANTS", "DIMENSION_VARIANTS",
            "resolve_indexing_key", "resolve_queryfile", "resolve_dimension_folder"]
 
 #: ``-xsv``: star schema (4 dimensions + lineorder) or the denormalized lineorder_flat.
@@ -20,7 +21,7 @@ SCHEMA_VARIANTS = ('normal', 'flat')
 QUERY_VARIANTS = ('spec', 'random')
 
 
-def resolve_dimension_folder(docker: str, schema_variant: str, dimensions: str) -> str:
+def resolve_dimension_folder(docker: str, schema_variant: str, dimensions: str, applies_to: tuple) -> str:
     """Script folder (in ``experiments/ssb``) of a DBMS for a dimension placement.
 
     As :func:`~bexhoma.benchmarks.base.dimension_folder`; the flat schema has no
@@ -29,12 +30,13 @@ def resolve_dimension_folder(docker: str, schema_variant: str, dimensions: str) 
     :param docker: DBMS name, e.g. ``ClickHouseCluster``.
     :param schema_variant: One of :data:`SCHEMA_VARIANTS`.
     :param dimensions: One of :data:`DIMENSION_VARIANTS`.
+    :param applies_to: DBMS that ``-xdim`` applies to in SSB.
     :return: Folder relative to ``experiments/ssb``, e.g. ``ClickHouseCluster/distributed``.
     :rtype: str
     """
     if schema_variant != 'normal':
         return docker
-    return dimension_folder(docker, dimensions)
+    return dimension_folder(docker, dimensions, applies_to)
 
 #: Maps every (indexes, constraints, statistics) combination to the ssb volume's
 #: ``initscripts`` key in the cluster config (``volumes.ssb.initscripts``). Every
@@ -180,7 +182,8 @@ class SSB(DBMSBenchmarkerBenchmark):
         experiment.workload['info'] += f"\nSchema is the {schema_name} (-xsv {schema_variant})."
         dimensions = getattr(args, 'dimensions', DIMENSION_VARIANTS[0])
         if schema_variant == 'normal':
-            experiment.workload['info'] += dimension_info(getattr(args, 'dbms', None), dimensions, 'lineorder')
+            experiment.workload['info'] += dimension_info(getattr(args, 'dbms', None), dimensions, 'lineorder',
+                                                          dimension_dockers(experiment.cluster.dockers, 'ssb'))
         if experiment.loading_is_active():
             if experiment.benchmarking_is_active():
                 experiment.workload['info'] += f"\nSSB (SF={SF}) data is loaded and benchmark is executed."
@@ -207,8 +210,7 @@ class SSB(DBMSBenchmarkerBenchmark):
             experiment.workload['info'] += f"\nTimeout per query is {timeout}."
             if getattr(args, 'activate_reset', False):
                 experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
-            if getattr(args, 'duckdb_force_execution', False):
-                experiment.workload['info'] += "\nPgDuckDB queries are forced through the DuckDB execution engine."
+            experiment.workload['info'] += notes(experiment.cluster.dockers, 'ssb', args)
             if datatransfer:
                 experiment.workload['info'] += "\nData transfer volume per query is also measured."
             if verbose_explain:

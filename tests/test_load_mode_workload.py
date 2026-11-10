@@ -12,12 +12,15 @@ import unittest
 
 from bexhoma.benchmarks.tpch import TPCH
 
+from .stubs import StubCluster
+
 
 class _FakeExperiment:
     """The parts of an experiment that ``TPCH.configure_workload()`` touches."""
 
     def __init__(self) -> None:
         self.workload = {}
+        self.cluster = StubCluster(resultfolder='')
         self.benchmarking_active = True
         self.loading_active = False
         self.active_queries = None

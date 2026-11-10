@@ -41,7 +41,7 @@ class _SweepStubCluster(StubCluster):
         self.storage_classes = ['cephcsi', 'shared']
         self.volumes['ycsb'] = {'id': 'ycsb', 'initscripts': {'Schema': [], 'SchemaTenant': [], 'Checks': []}}
         for dbms in ('DatabaseService', 'PGBouncer', 'Dragonfly', 'Redis'):
-            self.dockers[dbms] = {}
+            self.dockers.setdefault(dbms, {})
 
 
 class _SweepTestBase(unittest.TestCase):
@@ -237,7 +237,12 @@ def _dbms_choices(script: str) -> list:
     for node in ast.walk(tree):
         if (isinstance(node, ast.Call) and getattr(node.func, 'attr', '') == 'add_argument'
                 and any(isinstance(arg, ast.Constant) and arg.value == '-dbms' for arg in node.args)):
-            return next(ast.literal_eval(kw.value) for kw in node.keywords if kw.arg == 'choices')
+            value = next(kw.value for kw in node.keywords if kw.arg == 'choices')
+            if isinstance(value, ast.Call) and getattr(value.func, 'id', '') == 'dbms_choices':
+                # derived from the descriptors of the cluster configuration
+                from bexhoma.system_descriptors import dbms_choices
+                return dbms_choices(ast.literal_eval(value.args[0]), 'k8s-cluster.config')
+            return ast.literal_eval(value)
     raise AssertionError(f'{script} has no -dbms choices')
 
 

@@ -374,7 +374,7 @@ class LoadingCoordinator:
             # "only if there's more than one entry" branch to forget to add.
             benchmark_run = str(data_job)
             suffix = '-{}'.format(data_job)
-            redisQueue = '{}-{}-{}-{}-{}{}'.format(
+            queue_name = '{}-{}-{}-{}-{}{}'.format(
                 app, component, cfg.configuration, cfg.code, experiment_run, suffix)
             # Clear any leftover entries before repopulating, then verify the
             # queue ends up at exactly entry_parallelism items (retrying on a
@@ -382,10 +382,10 @@ class LoadingCoordinator:
             # pod's lpop come back empty further down the line (its
             # generator.sh then fails loudly instead of silently colliding
             # with another pod's chunk index).
-            cfg.experiment.cluster.fill_messagequeue(queue=redisQueue, length=entry_parallelism)
+            cfg.experiment.cluster.fill_messagequeue(queue=queue_name, length=entry_parallelism)
             if 'parameters' in loader_entry:
                 cfg._push_pod_configs(
-                    queue_key=redisQueue,
+                    queue_key=queue_name,
                     num_pods=entry_parallelism,
                     parameters=loader_entry.get('parameters', {}),
                     pod_parameters=loader_entry.get('pod_parameters', []),
@@ -539,6 +539,27 @@ class LoadingCoordinator:
                         + ' /data/' + str(cfg.code) + '/' + cfg.configuration + '.log')
             cfg.execute_command_in_pod_sut(command=cmd_save)
 
+    def script_database(self) -> str:
+        """Database the scripts run in the SUT pod connect to, without database tenancy.
+
+        The benchmark's own database when its loading parameters declare one
+        (``BEXHOMA_DATABASE``, e.g. ``benchbase`` for Benchbase on MySQL, whose JDBC
+        database ``mysql`` holds no benchmark tables), else the connection's JDBC
+        database, else the experiment's volume. With database tenancy the scripts
+        run in ``tenant_<n>`` instead, so a script must not select a database itself.
+
+        :return: Database name filled into the DBMS's ``loadData`` command.
+        :rtype: str
+        """
+        cfg = self._config
+        parameters = getattr(cfg, 'loading_parameters', None)
+        if isinstance(parameters, dict) and parameters.get('BEXHOMA_DATABASE'):
+            return str(parameters['BEXHOMA_DATABASE'])
+        c = cfg.dockertemplate['template']
+        if 'JDBC' in c and 'database' in c['JDBC']:
+            return c['JDBC']['database']
+        return cfg.experiment.volume
+
     def ddl_fill_values(self) -> dict:
         """Text per placeholder of this configuration's DDL parameters.
 
@@ -598,8 +619,7 @@ class LoadingCoordinator:
             component='sut', configuration=cfg.configuration, experiment=cfg.code)
         cfg.pod_sut = pods[0]
         scriptfolder = '/tmp/'
-        c = cfg.dockertemplate['template']
-        database = c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC'] else cfg.experiment.volume
+        database = self.script_database()
         values = self.ddl_fill_values()
         if cfg.num_tenants > 0 and cfg.tenant_per == 'schema':
             for tenant in range(cfg.num_tenants):
@@ -1151,9 +1171,7 @@ class LoadingCoordinator:
             component='sut', configuration=cfg.configuration, experiment=cfg.code)
         cfg.pod_sut = pods[0]
         service_name = cfg.get_service_sut(configuration=cfg.configuration)
-        c = cfg.dockertemplate['template']
-        default_database = (c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC']
-                             else cfg.experiment.volume)
+        default_database = self.script_database()
         scriptfolder = '/tmp/'
         shellcommand = 'if [ -f {s} ]; then sh {s}; else exit 0; fi'
         # (script, script-as-uploaded-in-pod, target database, tenant tag for log naming)
@@ -1256,9 +1274,7 @@ class LoadingCoordinator:
         print("{:30s}: connect to pod {} to load scripts".format(cfg.configuration, cfg.pod_sut))
         scriptfolder = '/tmp/'
         commands = scripts.copy()
-        c = cfg.dockertemplate['template']
-        database = (c['JDBC']['database'] if 'JDBC' in c and 'database' in c['JDBC']
-                    else cfg.experiment.volume)
+        database = self.script_database()
         databases = [database]
         use_storage = cfg.use_storage()
         use_ramdisk = cfg.use_ramdisk()

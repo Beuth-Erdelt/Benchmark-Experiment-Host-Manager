@@ -1544,7 +1544,8 @@ bexhoma tpch \
 Use `-xrso N` to skip the first N already-applied refresh sets and continue from where a previous run stopped.
 
 The refresh stream has a loader image per SQL dialect and runs for these DBMS, with examples on their pages:
-[MySQL](Example-MySQL.md#refresh-stream), [MariaDB](Example-MariaDB.md#refresh-stream), [MonetDB](Example-MonetDB.md#refresh-stream), [MariaDB ColumnStore](Example-MariaDBCS.md#refresh-stream), [PgDuckDB](Example-PgDuckDB.md#refresh-stream).
+[MySQL](Example-MySQL.md#refresh-stream), [MariaDB](Example-MariaDB.md#refresh-stream), [MonetDB](Example-MonetDB.md#refresh-stream), [MariaDB ColumnStore](Example-MariaDBCS.md#refresh-stream), [PgDuckDB](Example-PgDuckDB.md#refresh-stream), [ClickHouse](Example-ClickHouse.md#refresh-stream), [Citus](Example-Citus.md#tpc-h-refresh-stream), [DatabaseService](Example-CloudDatabase.md#refresh-stream).
+Which job a DBMS uses is its `refresh_template` in `cluster.config` (see [DBMS](DBMS.md#benchmarks-of-a-dbms)); CedarDB, Citus and DatabaseService use the one of PostgreSQL.
 
 <details>
 <summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_postgresql_refresh_summary.md" target="_blank" rel="noopener">docs_tpch_postgresql_refresh.log</a></summary>

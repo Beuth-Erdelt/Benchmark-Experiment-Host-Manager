@@ -10,6 +10,7 @@ import pandas as pd
 from types import SimpleNamespace
 
 from bexhoma import evaluators
+from ..system_descriptors import notes
 from .base import Benchmark, Section, _key_metrics_section_from_columns
 
 __all__ = ["Benchbase"]
@@ -84,8 +85,6 @@ class Benchbase(Benchmark):
         extra_new_connection = int(args.extra_new_connection)
         scaling_logging = int(args.scaling_logging)
         extra_batchsize = int(args.extra_batchsize)
-        num_sut_replicas = int(args.num_sut_replicas)
-        num_pd_nodes = int(args.num_pd_nodes)
         num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
         if mode == 'run':
             experiment.set_workload(
@@ -141,6 +140,5 @@ class Benchbase(Benchmark):
                 experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
         if scaling_logging > 0:
             experiment.workload['info'] += f"\nStatus is logged every {scaling_logging}ms."
-        if "TiDB" in args.dbms or len(args.dbms) == 0:
-            experiment.workload['info'] += f"\nTiDB uses {num_sut_replicas} SUT replica(s) and {num_pd_nodes} PD node(s)."
+        experiment.workload['info'] += notes(experiment.cluster.dockers, 'benchbase', args)
 

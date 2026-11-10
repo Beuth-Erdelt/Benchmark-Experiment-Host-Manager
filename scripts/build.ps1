@@ -156,6 +156,7 @@ function Build-AndPush-TpchRefresh {
     _BgDockerJob "bexhoma/loader_tpch_refresh_mysql:$Version"      "images/tpch_refresh/loader_mysql"      "loader_tpch_refresh_mysql"      $Version
     _BgDockerJob "bexhoma/loader_tpch_refresh_mariadb:$Version"    "images/tpch_refresh/loader_mariadb"    "loader_tpch_refresh_mariadb"    $Version
     _BgDockerJob "bexhoma/loader_tpch_refresh_monetdb:$Version"    "images/tpch_refresh/loader_monetdb"    "loader_tpch_refresh_monetdb"    $Version
+    _BgDockerJob "bexhoma/loader_tpch_refresh_clickhouse:$Version" "images/tpch_refresh/loader_clickhouse" "loader_tpch_refresh_clickhouse" $Version
 }
 
 function Build-AndPush-Monitoring {
@@ -195,7 +196,7 @@ function Build-AndPush-Hardware {
 
 #### Main ####
 
-$dbmsbenchmarker = "v0.15.5"
+$dbmsbenchmarker = "v0.15.6"
 $version = (pip show bexhoma | Select-String "^Version:" | ForEach-Object { ($_ -split '\s+')[1] })
 Write-Output $version
 

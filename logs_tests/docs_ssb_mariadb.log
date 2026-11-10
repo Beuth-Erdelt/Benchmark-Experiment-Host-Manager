@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1793208774
-Experiment                    : starts at 2026-10-28 18:32:55.129630 (62501.5119218)
+Experiment                    : has code 1794010597
+Experiment                    : starts at 2026-11-07 01:16:37.395512 (233786.8526951)
 Experiment                    : This experiment compares run time and resource consumption of SSB queries in different DBMS.
 Schema is the star schema (-xsv normal).
 SSB (SF=1) data is loaded and benchmark is executed.
@@ -13,7 +13,7 @@ Timeout per query is 1200.
 Data transfer volume per query is also measured.
 Import sets indexes, constraints, statistics recomputation after loading.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.9.
+Experiment uses bexhoma version 0.11.13.
 Experiment is limited to DBMS ['MariaDB'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker38.
@@ -32,80 +32,83 @@ MariaDB-1                     : will start now
 MariaDB-1                     : deployments ['sut']
 MariaDB-1                     : stateful sets []
 MariaDB-1                     : pvcs ['sut']
-MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1793208774
-MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1793208774
-Loop pass                     : took 3.2s (1 kubectl calls 1.8s, 9 API requests 0.5s)
+MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1794010597
+MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1794010597
+Loop pass                     : took 2.7s (1 kubectl calls 1.2s, 9 API requests 0.5s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 1.0s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 16 API requests 0.8s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 0.9s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MariaDB-1                     : is not loaded yet
-MariaDB-1                     : will start loading but not before 2026-10-28 17:36:35 (that is in 60 secs)
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+MariaDB-1                     : will start loading but not before 2026-11-07 00:20:23 (that is in 60 secs)
+Loop pass                     : took 8.7s (0 kubectl calls 0.0s, 16 API requests 0.4s)
 - waiting 30s -               : done
 MariaDB-1                     : is not loaded yet
-MariaDB-1                     : will start loading but not before 2026-10-28 17:36:35
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 13 API requests 0.7s)
+MariaDB-1                     : will start loading but not before 2026-11-07 00:20:23
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 13 API requests 0.5s)
 - waiting 30s -               : done
 MariaDB-1                     : is not loaded yet
 MariaDB-1                     : load durability relaxed, scripts ['durability-relaxed.sh', 'restoredurability-relaxed.sh']
-MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1793208774-85ddf99d79-vs78r to load scripts
+MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1794010597-794c9b57f8-sml8d to load scripts
 MariaDB-1                     : start asynch loading scripts of type schema
 MariaDB-1                     : waits for the Schema scripts (schema=True) before starting the loading jobs
-MariaDB-1                     : Schema scripts done after 5s
+MariaDB-1                     : Schema scripts done after 6s
 MariaDB-1                     : is loading
-Loop pass                     : took 26.8s (8 kubectl calls 10.5s, 34 API requests 4.4s)
+Loop pass                     : took 19.7s (8 kubectl calls 10.1s, 35 API requests 2.4s)
 - waiting 30s -               : done
 MariaDB-1                     : is loading
-Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 34 API requests 1.6s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 34 API requests 1.4s)
 - waiting 30s -               : done
 MariaDB-1                     : is loading
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 34 API requests 1.7s)
+Loop pass                     : took 21.0s (15 kubectl calls 18.3s, 39 API requests 1.5s)
 - waiting 30s -               : done
 MariaDB-1                     : showing loader times (ssb-loader)
-MariaDB-1                     : generator times (start/end per pod and container) [(1793209047, 1793209058), (1793209058, 1793209058), (1793209055, 1793209058), (1793209037, 1793209058), (1793209049, 1793209058), (1793209057, 1793209059), (1793209035, 1793209058), (1793209043, 1793209058)]
-MariaDB-1                     : loader times (start/end per pod and container) [(1793209070, 1793209078), (1793209070, 1793209078), (1793209069, 1793209078), (1793209069, 1793209077), (1793209069, 1793209077), (1793209070, 1793209078), (1793209070, 1793209079), (1793209070, 1793209078)]
-MariaDB-1                     : total times (start/end per pod and container) [(1793209047, 1793209058), (1793209058, 1793209058), (1793209055, 1793209058), (1793209037, 1793209058), (1793209049, 1793209058), (1793209057, 1793209059), (1793209035, 1793209058), (1793209043, 1793209058), (1793209070, 1793209078), (1793209070, 1793209078), (1793209069, 1793209078), (1793209069, 1793209077), (1793209069, 1793209077), (1793209070, 1793209078), (1793209070, 1793209079), (1793209070, 1793209078)]
-MariaDB-1                     : generator timespan (first to last [s]) = 24
+MariaDB-1                     : generator times (start/end per pod and container) [(1794010858, 1794010878), (1794010873, 1794010878), (1794010867, 1794010877), (1794010861, 1794010878), (1794010865, 1794010878), (1794010877, 1794010877), (1794010871, 1794010878), (1794010857, 1794010878)]
+MariaDB-1                     : loader times (start/end per pod and container) [(1794010889, 1794010896), (1794010890, 1794010897), (1794010889, 1794010896), (1794010889, 1794010899), (1794010889, 1794010898), (1794010889, 1794010898), (1794010889, 1794010899), (1794010889, 1794010898)]
+MariaDB-1                     : total times (start/end per pod and container) [(1794010858, 1794010878), (1794010873, 1794010878), (1794010867, 1794010877), (1794010861, 1794010878), (1794010865, 1794010878), (1794010877, 1794010877), (1794010871, 1794010878), (1794010857, 1794010878), (1794010889, 1794010896), (1794010890, 1794010897), (1794010889, 1794010896), (1794010889, 1794010899), (1794010889, 1794010898), (1794010889, 1794010898), (1794010889, 1794010899), (1794010889, 1794010898)]
+MariaDB-1                     : generator timespan (first to last [s]) = 21
 MariaDB-1                     : loader timespan (first to last [s]) = 10
-MariaDB-1                     : total timespan (first to last [s]) = 44
-MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1793208774-85ddf99d79-vs78r to load scripts
+MariaDB-1                     : total timespan (first to last [s]) = 42
+MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1794010597-794c9b57f8-sml8d to load scripts
 MariaDB-1                     : start asynch loading scripts of type index
 MariaDB-1                     : is loading
-Loop pass                     : took 58.3s (41 kubectl calls 53.7s, 62 API requests 3.3s)
+Loop pass                     : took 34.5s (26 kubectl calls 31.5s, 52 API requests 1.8s)
 - waiting 30s -               : done
 MariaDB-1                     : is loading
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 14 API requests 0.6s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 14 API requests 0.6s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1793208774 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1794010597 initialized to 1.
 MariaDB-1                     : benchmarks done 0 of 1. This will be client 1
 mariadb-1-1-1-1               : start benchmarking (benchmark_run=1)
-MariaDB-1                     : benchmarking results in folder C:\data\benchmarks/1793208774
-MariaDB-1                     : submitted benchmarker job in 8.9s (4 kubectl calls 5.3s, 24 API requests 3.2s)
-Loop pass                     : took 11.9s (5 kubectl calls 6.7s, 44 API requests 4.8s)
+MariaDB-1                     : benchmarking results in folder C:\data\benchmarks/1794010597
+MariaDB-1                     : submitted benchmarker job in 9.6s (4 kubectl calls 5.0s, 24 API requests 2.7s)
+Loop pass                     : took 19.7s (5 kubectl calls 6.1s, 44 API requests 3.9s)
 - waiting 30s -               : done
-mariadb-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1793208774/mariadb-1-1-1-1.config
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 20 API requests 1.1s)
+- waiting 30s -               : done
+mariadb-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1794010597/mariadb-1-1-1-1.config
 mariadb-1-1-1-1               : showing benchmarker times
-mariadb-1-1-1-1               : benchmarker timespan job from 1793209249 to 1793209285
-mariadb-1-1-1-1               : benchmarker timespan pods from 1793209253 to 1793209266
-mariadb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 13
-mariadb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1793209253, 1793209266)]
-mariadb-1-1-1-1               : found and updated times {'benchmarker': [(1793209253, 1793209266)]}
-Loop pass                     : took 7.1s (4 kubectl calls 5.0s, 24 API requests 1.1s)
+mariadb-1-1-1-1               : benchmarker timespan job from 1794011070 to 1794011137
+mariadb-1-1-1-1               : benchmarker timespan pods from 1794011093 to 1794011109
+mariadb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 16
+mariadb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1794011093, 1794011109)]
+mariadb-1-1-1-1               : found and updated times {'benchmarker': [(1794011093, 1794011109)]}
+Loop pass                     : took 7.6s (4 kubectl calls 5.3s, 24 API requests 1.3s)
 MariaDB-1                     : can be stopped
-MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1793208774-85ddf99d79-vs78r
-Loop pass                     : took 5.9s (3 kubectl calls 4.1s, 29 API requests 1.2s)
-Experiment                    : ends at 2026-10-28 18:41:33.843102 (63020.2228507) - 518.71s total
+MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1794010597-794c9b57f8-sml8d
+Loop pass                     : took 5.4s (3 kubectl calls 3.5s, 29 API requests 1.3s)
+Experiment                    : ends at 2026-11-07 01:25:46.439351 (234335.8864454) - 549.03s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
@@ -118,8 +121,8 @@ Result workflow complete
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 519s 
-* Code: 1793208774
+* Duration: 550s 
+* Code: 1794010597
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -130,7 +133,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.9.
+  * Experiment uses bexhoma version 0.11.13.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -152,12 +155,12 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:628165
-  * datadisk:1568
+  * disk:869164
+  * datadisk:1552
   * volume_size:1.8T
-  * volume_used:614G
+  * volume_used:849G
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
@@ -165,10 +168,10 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793208774
+    * code:1794010597
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1793208774-85ddf99d79-vs78r: 0
+* bexhoma-sut-mariadb-1-1794010597-794c9b57f8-sml8d: 0
 
 ### Workflow
 
@@ -186,7 +189,7 @@ SSB Queries SF=1
 
 |             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MariaDB-1-1 |                1 |    1 |       85.00 |           5.00 |           24.00 |         10.00 |           36.00 |              8 |           0 |             | None           |             0 | False         |               42.35 | False               |
+| MariaDB-1-1 |                1 |    1 |       80.00 |           4.00 |           21.00 |         10.00 |           34.00 |              8 |           0 |             | None           |             0 | False         |               45.00 | False               |
 
 ### Benchmarking
 
@@ -194,13 +197,13 @@ SSB Queries SF=1
 
 | DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
 |:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| mariadb-1-1-1-1-1 | MariaDB-1       | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         13 |            0.31 |            11824.30 |           3600.00 |          -1 | mariadb-1-1-1-1-1 |
+| mariadb-1-1-1-1-1 | MariaDB-1       | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         16 |            0.34 |            10878.71 |           2925.00 |          -1 | mariadb-1-1-1-1-1 |
 
 #### Per Phase
 
 |               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         13 |            0.31 |            11824.30 |           3600.00 |          -1 |
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         16 |            0.34 |            10878.71 |           2925.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -213,19 +216,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   mariadb-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|--------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |              732.99 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               61.52 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |               14.74 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |              589.33 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |              116.02 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               15.21 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |             2713.97 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |              877.67 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |              345.48 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |               98.40 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |             3348.39 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |             2215.52 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |              465.01 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |             1302.29 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               79.71 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |               17.72 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |              664.93 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |              146.03 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               17.26 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |             3494.09 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |              440.96 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |              140.20 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |               97.24 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |             4013.46 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |             2505.25 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |              876.39 |
 
 ### Errors (failed queries)
 
@@ -237,6 +240,8 @@ No warnings
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

@@ -358,11 +358,16 @@ bexhoma benchbase \
   -nbp 4,8 \
   -nbt 160 \
   -xli 10 \
-  -m -ma -mc \
+  -m \
+  -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -lr 64Gi -rr 64Gi \
-  -rsr -rss 100Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 100Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_2.log
 ```
@@ -668,10 +673,21 @@ Benchbase Workload tpcc SF=16
 ```bash
 bexhoma benchbase \
   -dbms PostgreSQL \
-  -sf 16 -xsd 5 -xtb 1024 -xnbf 20 -nc 2 -nbp 4,8 -nbt 160 -xli 10 \
-  -m -ma -mc \
-  -ms $BEXHOMA_MS -tr \
-  -lr 64Gi -rr 64Gi \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 20 \
+  -nc 2 \
+  -nbp 4,8 \
+  -nbt 160 \
+  -xli 10 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_3.log
@@ -990,14 +1006,24 @@ Multi-tenant tests use `BEXHOMA_NUM_TENANTS=2` and the `-mtb` / `-mtn` flags to 
 ```bash
 bexhoma benchbase \
   -dbms PostgreSQL \
-  -sf 1 -xsd 5 -nc 2 \
+  -sf 1 \
+  -xsd 5 \
+  -nc 2 \
   -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" \
-  -nlp 1 -nbp 1 -nbt 10 \
+  -nlp 1 \
+  -nbp 1 \
+  -nbt 10 \
   -xkey \
-  -m -ma -mc \
-  -lr 64Gi -rr 64Gi \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
-  -mtb schema -mtn $BEXHOMA_NUM_TENANTS \
+  -m \
+  -ma \
+  -mc \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -mtb schema \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_schema.log
 ```
@@ -1330,14 +1356,24 @@ Benchbase Workload tpcc SF=1
 ```bash
 bexhoma benchbase \
   -dbms PostgreSQL \
-  -sf 1 -xsd 5 -nc 2 \
+  -sf 1 \
+  -xsd 5 \
+  -nc 2 \
   -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" \
-  -nlp 1 -nbp 1 -nbt 10 \
+  -nlp 1 \
+  -nbp 1 \
+  -nbt 10 \
   -xkey \
-  -m -ma -mc \
-  -lr 64Gi -rr 64Gi \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
-  -mtb database -mtn $BEXHOMA_NUM_TENANTS \
+  -m \
+  -ma \
+  -mc \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -mtb database \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_database.log
 ```
@@ -1667,14 +1703,24 @@ Benchbase Workload tpcc SF=1
 ```bash
 bexhoma benchbase \
   -dbms PostgreSQL \
-  -sf 1 -xsd 5 -nc 2 \
+  -sf 1 \
+  -xsd 5 \
+  -nc 2 \
   -ne "1,1" \
-  -nlp 1 -nbp 1 -nbt 10 \
+  -nlp 1 \
+  -nbp 1 \
+  -nbt 10 \
   -xkey \
-  -m -ma -mc \
-  -lr 64Gi -rr 64Gi \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
-  -mtb container -mtn $BEXHOMA_NUM_TENANTS \
+  -m \
+  -ma \
+  -mc \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -mtb container \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_container.log
 ```
@@ -2190,13 +2236,22 @@ Benchbase Workload tpcc SF=1
 ```bash
 bexhoma tpch \
   -dbms PostgreSQL \
-  -sf 3 -xqr 3 -nc 2 -ne 1,2 \
-  -nlp 8 -nbp 1 \
+  -sf 3 \
+  -xqr 3 \
+  -nc 2 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nbp 1 \
   -xii -xic -xis \
-  -m -ma -mc \
+  -m \
+  -ma \
+  -mc \
   -tr \
-  -lr 64Gi -rr 64Gi \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_1.log
 ```
@@ -2611,13 +2666,21 @@ No warnings
 ```bash
 bexhoma tpch \
   -dbms PostgreSQL \
-  -sf 6 -nc 2 -ne 1,2 \
-  -nlp 8 -nbp 1 \
+  -sf 6 \
+  -nc 2 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nbp 1 \
   -xii -xic -xis \
-  -m -ma -mc \
+  -m \
+  -ma \
+  -mc \
   -tr \
-  -lr 64Gi -rr 64Gi \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_2.log
 ```
@@ -3020,12 +3083,18 @@ No warnings
 ```bash
 bexhoma tpch \
   -dbms PostgreSQL \
-  -sf 6 -nc 2 -ne 1,2 \
-  -nlp 8 -nbp 1 \
+  -sf 6 \
+  -nc 2 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nbp 1 \
   -xii -xic -xis \
-  -m -ma -mc \
+  -m \
+  -ma \
+  -mc \
   -tr \
-  -lr 64Gi -rr 64Gi \
+  -lr 64Gi \
+  -rr 64Gi \
   -rss 60Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_3.log
@@ -3450,16 +3519,25 @@ No warnings
 ```bash
 bexhoma tpch \
   -dbms PostgreSQL \
-  -sf 3 -nc 2 \
+  -sf 3 \
+  -nc 2 \
   -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" \
-  -nlp $BEXHOMA_NUM_TENANTS -nlt 1 \
-  -nbp 1 -nbt 64 \
+  -nlp $BEXHOMA_NUM_TENANTS \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
   -xii -xic -xis \
-  -m -ma -mc \
+  -m \
+  -ma \
+  -mc \
   -tr \
-  -lr 64Gi -rr 64Gi \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
-  -mtb schema -mtn $BEXHOMA_NUM_TENANTS \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -mtb schema \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_schema.log
 ```
@@ -3945,16 +4023,25 @@ No warnings
 ```bash
 bexhoma tpch \
   -dbms PostgreSQL \
-  -sf 3 -nc 2 \
+  -sf 3 \
+  -nc 2 \
   -ne "$BEXHOMA_NUM_TENANTS,$BEXHOMA_NUM_TENANTS" \
-  -nlp $BEXHOMA_NUM_TENANTS -nlt 1 \
-  -nbp 1 -nbt 64 \
+  -nlp $BEXHOMA_NUM_TENANTS \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
   -xii -xic -xis \
-  -m -ma -mc \
+  -m \
+  -ma \
+  -mc \
   -tr \
-  -lr 64Gi -rr 64Gi \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
-  -mtb database -mtn $BEXHOMA_NUM_TENANTS \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -mtb database \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_database.log
 ```
@@ -4434,16 +4521,26 @@ No warnings
 ```bash
 bexhoma tpch \
   -dbms PostgreSQL \
-  -sf 3 -xqr 3 -nc 2 \
+  -sf 3 \
+  -xqr 3 \
+  -nc 2 \
   -ne "1,1" \
-  -nlp 1 -nlt 1 \
-  -nbp 1 -nbt 64 \
+  -nlp 1 \
+  -nlt 1 \
+  -nbp 1 \
+  -nbt 64 \
   -xii -xic -xis \
-  -m -ma -mc \
+  -m \
+  -ma \
+  -mc \
   -tr \
-  -lr 64Gi -rr 64Gi \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
-  -mtb container -mtn $BEXHOMA_NUM_TENANTS \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -mtb container \
+  -mtn $BEXHOMA_NUM_TENANTS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_container.log
 ```
@@ -5012,15 +5109,26 @@ No warnings
 ```bash
 bexhoma ycsb \
   -dbms PostgreSQL \
-  -sf 3 -xwl a \
-  -xtb 16384 -xnbf 2 -xnlf 4 \
-  -nc 2 -ne 1 \
-  -nlp 8 -nlt 64 \
-  -nbp 1,8 -nbt 64 \
+  -sf 3 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 2 \
+  -xnlf 4 \
+  -nc 2 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1,8 \
+  -nbt 64 \
   -xop 1 \
-  -m -ma -mc \
-  -ms $BEXHOMA_MS -tr \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_1.log
 ```
@@ -5345,15 +5453,26 @@ YCSB SF=3
 ```bash
 bexhoma ycsb \
   -dbms PostgreSQL \
-  -sf 3 -xwl a \
-  -xtb 16384 -xnbf 3 -xnlf 4 \
-  -nc 2 -ne 1 \
-  -nlp 8 -nlt 64 \
-  -nbp 1,8 -nbt 64 \
+  -sf 3 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 3 \
+  -xnlf 4 \
+  -nc 2 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1,8 \
+  -nbt 64 \
   -xop 1 \
-  -m -ma -mc \
-  -ms $BEXHOMA_MS -tr \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_2.log
 ```
@@ -5677,14 +5796,23 @@ YCSB SF=3
 ```bash
 bexhoma ycsb \
   -dbms PostgreSQL \
-  -sf 3 -xwl a \
-  -xtb 16384 -xnbf 3 -xnlf 4 \
-  -nc 2 -ne 1 \
-  -nlp 8 -nlt 64 \
-  -nbp 1,8 -nbt 64 \
+  -sf 3 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 3 \
+  -xnlf 4 \
+  -nc 2 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1,8 \
+  -nbt 64 \
   -xop 8 \
-  -m -ma -mc \
-  -ms $BEXHOMA_MS -tr \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_3.log
@@ -6021,12 +6149,21 @@ YCSB SF=3
 ```bash
 bexhoma hammerdb \
   -dbms PostgreSQL \
-  -sf 16 -xsd 5 -nc 2 \
-  -nlt 16 -nbp 1,2 -nbt 16 \
+  -sf 16 \
+  -xsd 5 \
+  -nc 2 \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 16 \
   -xlat \
-  -m -ma -mc \
-  -ms $BEXHOMA_MS -tr \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_collector_1.log
 ```
@@ -6307,12 +6444,21 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 ```bash
 bexhoma hammerdb \
   -dbms PostgreSQL \
-  -sf 16 -xsd 5 -nc 2 \
-  -nlt 16 -nbp 1,2 -nbt 32 \
+  -sf 16 \
+  -xsd 5 \
+  -nc 2 \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 32 \
   -xlat \
-  -m -ma -mc \
-  -ms $BEXHOMA_MS -tr \
-  -rsr -rss 50Gi -rst $BEXHOMA_STORAGE_CLASS \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_collector_2.log
 ```
@@ -6592,11 +6738,18 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 ```bash
 bexhoma hammerdb \
   -dbms PostgreSQL \
-  -sf 16 -xsd 5 -nc 2 \
-  -nlt 16 -nbp 1,2 -nbt 32 \
+  -sf 16 \
+  -xsd 5 \
+  -nc 2 \
+  -nlt 16 \
+  -nbp 1,2 \
+  -nbt 32 \
   -xlat \
-  -m -ma -mc \
-  -ms $BEXHOMA_MS -tr \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_collector_3.log

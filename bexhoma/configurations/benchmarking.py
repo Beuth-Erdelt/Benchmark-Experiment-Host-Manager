@@ -238,28 +238,28 @@ class BenchmarkRunner:
             # merged with the uploads of configurations submitting at the same time
             cfg.experiment.upload_result_files(
                 ['queries.config', c['name'] + '.config', 'connections.config', 'protocol.json'])
-        redisQueue = '{}-{}-{}-{}'.format(app, component, connection, cfg.code)
-        cfg.experiment.cluster.fill_messagequeue(queue=redisQueue, length=parallelism)
+        queue_name = '{}-{}-{}-{}'.format(app, component, connection, cfg.code)
+        cfg.experiment.cluster.fill_messagequeue(queue=queue_name, length=parallelism)
         round_index = int(client) - 1
         benchmark_run_index = (int(benchmark_run) - 1) if benchmark_run else 0
         benchmarker_rounds = cfg.experiment_dict.get('benchmarker', [])
         bm_entry = {}
         # per-pod configs and the job counter in one MSET
-        redis_values = {}
+        queue_values = {}
         if round_index < len(benchmarker_rounds):
             round_entries = benchmarker_rounds[round_index]
             if benchmark_run_index < len(round_entries):
                 bm_entry = round_entries[benchmark_run_index]
-                redis_values.update(cfg._pod_configs(
-                    queue_key=redisQueue,
+                queue_values.update(cfg._pod_configs(
+                    queue_key=queue_name,
                     num_pods=parallelism,
                     parameters=bm_entry.get('parameters', {}),
                     pod_parameters=bm_entry.get('pod_parameters', []),
                 ))
         job_counter_key = '{}-{}-podcount-job-{}-{}'.format(
             app, component, connection, cfg.code)
-        redis_values[job_counter_key] = parallelism
-        cfg.experiment.cluster.set_redis_values(redis_values)
+        queue_values[job_counter_key] = parallelism
+        cfg.experiment.cluster.set_messagequeue_values(queue_values)
         if not only_prepare:
             yamlfile = cfg.manifest.create_manifest_benchmarking(
                 connection=connection, component=component,

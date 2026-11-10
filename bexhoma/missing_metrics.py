@@ -32,6 +32,15 @@ generator, benchmarker) the time its pods ran counts when it is shorter than
 the window (:func:`bexhoma.monitoring_math.job_lifetime`): the loading window
 also holds schema, index and waiting for the loader pods.
 
+Some gaps need judgement and carry the reason in ``warning`` instead: a metric
+that ``cluster.config`` marks ``activity_dependent`` has a series only once the
+component did something, e.g. the filesystem I/O of a container (cAdvisor reports a
+device only after I/O on it). Its gap is a warning, not a failure, when the metric
+that ``activity_dependent`` names (CPU utilization) has data for the same connection
+and component: the pods were scraped, they just did no disk I/O. That is plausible
+for an in-memory DBMS and suspicious for one that stores its data on disk. When the
+reference metric is missing too, the pods were not scraped and the gap stays a failure.
+
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
@@ -50,7 +59,7 @@ from .monitoring_math import job_lifetime, min_measurable_window, read_connectio
 __all__ = [
     "MissingMetric", "parse_missing_metrics", "collect_missing_metrics", "fetch_log_name",
     "fetch_window", "EXPECTED_DATA_PREEXISTING", "EXPECTED_SPARSE", "EXPECTED_SHORT_PHASE",
-    "EXPECTED_SHORT_JOB",
+    "EXPECTED_SHORT_JOB", "WARNING_NO_ACTIVITY",
 ]
 
 #: Log files that can carry the message, relative to the result folder.
@@ -70,6 +79,8 @@ EXPECTED_SPARSE = "series exists only while non-zero"
 EXPECTED_SHORT_PHASE = "phase shorter than scrape interval"
 #: ``expected`` reason for a gap of a job whose pods ran too short to be scraped.
 EXPECTED_SHORT_JOB = "job pods ran shorter than scrape interval"
+#: ``warning`` reason for a gap in an ``activity_dependent`` metric of pods that were scraped.
+WARNING_NO_ACTIVITY = "no activity seen, the pods were scraped"
 
 
 @dataclass(frozen=True)
@@ -78,7 +89,8 @@ class MissingMetric:
 
     ``component`` is the monitoring component type the log reports on
     (``benchmarking`` for a DBMSBenchmarker pod log). ``expected`` names why the gap is
-    harmless, or is empty when the zero-filled values hide a real gap.
+    harmless, ``warning`` why it may be harmless (it needs judgement); both are empty
+    when the zero-filled values hide a real gap.
     """
 
     source: str
@@ -87,6 +99,7 @@ class MissingMetric:
     query: str = ""
     component: str = ""
     expected: str = ""
+    warning: str = ""
 
 
 def _component_of(source: str) -> str:
@@ -198,24 +211,30 @@ def parse_missing_metrics(text: str, source: str = "") -> list[MissingMetric]:
     return list(found)
 
 
-def _sparse_titles(result_dir: Path) -> tuple[set[str], set[tuple[str, str]]]:
-    """Metrics the run's ``connections.config`` marks sparse.
+def _sparse_titles(result_dir: Path) -> tuple[set[str], set[tuple[str, str]], dict[str, str]]:
+    """Metrics the run's ``connections.config`` marks sparse or activity dependent.
 
     ``sparse`` marks a metric sparse for every component, ``sparse_components``
     only for the listed component types (e.g. client containers whose
-    filesystem series only appears once they do disk I/O).
+    filesystem series only appears once they do disk I/O). ``activity_dependent``
+    names the metric (its key) whose data shows that the pods were scraped.
 
     :param result_dir: The experiment's result folder.
-    :return: Titles sparse everywhere, and ``(title, component)`` pairs sparse
-        only for that component; both empty when the file is missing or unreadable.
-    :rtype: tuple[set[str], set[tuple[str, str]]]
+    :return: Titles sparse everywhere, ``(title, component)`` pairs sparse
+        only for that component, and title of an activity dependent metric ->
+        title of its reference metric; all empty when the file is missing or unreadable.
+    :rtype: tuple[set[str], set[tuple[str, str]], dict[str, str]]
     """
     try:
         connections = ast.literal_eval((Path(result_dir) / "connections.config").read_text(encoding="utf-8"))
     except (OSError, SyntaxError, ValueError):
-        return set(), set()
+        return set(), set(), {}
     titles = set()
     pairs = set()
+    activity = {}
+    # The map is by title, not per connection and metric set: a reference that is
+    # inactive or absent in any of them would excuse a gap without evidence there.
+    unreferenced = set()
     for connection in connections if isinstance(connections, list) else []:
         for key, metrics in connection.get("monitoring", {}).items():
             if key.startswith("metrics") and isinstance(metrics, dict):
@@ -226,7 +245,16 @@ def _sparse_titles(result_dir: Path) -> tuple[set[str], set[tuple[str, str]]]:
                         titles.add(metric.get("title"))
                     pairs.update((metric.get("title"), component)
                                  for component in metric.get("sparse_components") or ())
-    return titles, pairs
+                    if not metric.get("activity_dependent"):
+                        continue
+                    reference = metrics.get(metric["activity_dependent"])
+                    if isinstance(reference, dict) and reference.get("active", True):
+                        activity.setdefault(metric.get("title"), reference.get("title"))
+                    else:
+                        unreferenced.add(metric.get("title"))
+    for title in unreferenced:
+        activity.pop(title, None)
+    return titles, pairs, activity
 
 
 def collect_missing_metrics(
@@ -258,7 +286,7 @@ def collect_missing_metrics(
     """
     files = sorted({path for pattern in _LOG_PATTERNS for path in Path(result_dir).glob(pattern)})
     optional = set(optional_components)
-    sparse, sparse_components = _sparse_titles(result_dir)
+    sparse, sparse_components, activity = _sparse_titles(result_dir)
     missing: dict[tuple[str, str, str], MissingMetric] = {}
     scoped_by_component: dict[str, set] = {}
     connections = read_connections(result_dir)
@@ -300,9 +328,27 @@ def collect_missing_metrics(
     fetched = {(title, connection, query, component)
                for (title, connection, query, component), entry in missing.items()
                if _FETCH_LOG.match(entry.source)}
-    return [
+    found = [
         entry for entry in missing.values()
         if _FETCH_LOG.match(entry.source) or not any(
             (entry.title, entry.connection.rsplit("-", 1)[0], entry.query, entry.component) == key
             for key in fetched)
+    ]
+    # an activity dependent metric without data is a warning when its reference metric has data
+    # for the same connection and component: the pods were scraped, they did not do that activity
+    # A benchmarker copy of the reference gap may have been dropped above in favour of the
+    # dashboard pod's entry under the parent connection name, so a benchmarker entry also
+    # looks up its parent name.
+    missing_pairs = {(entry.title, entry.connection, entry.component) for entry in found}
+
+    def reference_missing(entry: MissingMetric) -> bool:
+        names = {entry.connection}
+        if not _FETCH_LOG.match(entry.source):
+            names.add(entry.connection.rsplit("-", 1)[0])
+        return any((activity[entry.title], name, entry.component) in missing_pairs for name in names)
+    return [
+        replace(entry, warning=WARNING_NO_ACTIVITY)
+        if not entry.expected and entry.title in activity and not reference_missing(entry)
+        else entry
+        for entry in found
     ]
