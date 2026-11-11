@@ -73,6 +73,7 @@ Pods always synchronise before starting: each pod increments the Redis counter
 * `HAMMERDB_VUSERS`: Space-separated list of virtual-user counts to run in sequence (e.g. `1 2 4 8`).
 * `HAMMERDB_NUM_VU`: Number of virtual users used during the setup phase.
 * `HAMMERDB_MYSQL_ENGINE`: Storage engine for MySQL/MariaDB (default `innodb`).
+* `TMP`: Directory for temporary files of HammerDB (default `/tmp`); the SQL Server schema build writes its bcp files there and fails without it.
 * `HAMMERDB_TIMEPROFILE`: When `true`, per-transaction latency profiles are written to `/tmp/hdbxtprofile.log`.
 * `HAMMERDB_ALLWAREHOUSES`: When `true`, virtual users are not pinned to a fixed warehouse at startup.
 * `HAMMERDB_KEYANDTHINK`: When `true`, key-and-think time is added between transactions.

@@ -51,6 +51,7 @@ warehouse set without pod coordination.
 * `HAMMERDB_VUSERS`: Number of virtual users (threads) for the load phase.
 * `HAMMERDB_NUM_VU`: Number of virtual users used during setup. Echoed to the log.
 * `HAMMERDB_MYSQL_ENGINE`: Storage engine for MySQL/MariaDB (default `innodb`).
+* `TMP`: Directory for temporary files of HammerDB (default `/tmp`); the SQL Server schema build writes its bcp files there and fails without it.
 * `HAMMERDB_RAMPUP`: Echoed to the log. Not used during loading.
 * `HAMMERDB_DURATION`: Echoed to the log. Not used during loading.
 * `HAMMERDB_ITERATIONS`: Echoed to the log. Not used during loading.

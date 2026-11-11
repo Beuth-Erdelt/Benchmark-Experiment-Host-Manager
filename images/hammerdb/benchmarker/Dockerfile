@@ -47,6 +47,10 @@ ENV BEXHOMA_CLIENT=1
 ENV BEXHOMA_TIME_START=0
 ENV BEXHOMA_TIME_NOW=0
 
+# Directory for temporary files of HammerDB: the SQL Server build writes the bcp files of
+# the stock, customer and order tables there and fails without it (can't read "::env(TMP)")
+ENV TMP=/tmp
+
 # HammerDB workload parameters
 ENV HAMMERDB_TYPE=postgresql
 ENV HAMMERDB_RAMPUP=2
