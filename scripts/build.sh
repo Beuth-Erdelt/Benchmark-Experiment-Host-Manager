@@ -279,6 +279,14 @@ build_and_push_tpch() {
     docker push "bexhoma/loader_tpch_sqlserver:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_sqlserver:$version"
+
+  (
+    set -e
+    cd images/tpch/loader_oracle
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_oracle:$version" .
+    docker push "bexhoma/loader_tpch_oracle:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_oracle:$version"
 }
 
 
@@ -411,6 +419,14 @@ build_and_push_tpch_refresh() {
     docker push "bexhoma/loader_tpch_refresh_sqlserver:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_sqlserver:$version"
+
+  (
+    set -e
+    cd images/tpch_refresh/loader_oracle
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_oracle:$version" .
+    docker push "bexhoma/loader_tpch_refresh_oracle:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_refresh_oracle:$version"
 }
 
 ###########

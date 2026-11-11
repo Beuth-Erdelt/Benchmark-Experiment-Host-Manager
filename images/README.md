@@ -83,6 +83,7 @@ The `dsdgen` binary and `tpcds.idx` index file must be present in
 | [`tpch/loader_monetdb/`](tpch/loader_monetdb/) | Loader | Loads TPC-H flat files into MonetDB. |
 | [`tpch/loader_clickhouse/`](tpch/loader_clickhouse/) | Loader | Loads TPC-H flat files into ClickHouse (also ClickHouseCluster) via `clickhouse-client INSERT ... FORMAT CSV`. |
 | [`tpch/loader_sqlserver/`](tpch/loader_sqlserver/) | Loader | Loads TPC-H flat files into SQL Server via `bcp`. |
+| [`tpch/loader_oracle/`](tpch/loader_oracle/) | Loader | Loads TPC-H flat files into Oracle Database via SQL*Loader (`sqlldr`). |
 
 The `dbgen` binary and `dists.dss` file must be present in `tpch/generator/`
 before building the image (not included due to TPC licensing).

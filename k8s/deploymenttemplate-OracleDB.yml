@@ -1,0 +1,212 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+  storageClassName: shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 1521}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment-oracle
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      terminationGracePeriodSeconds: 180
+      # the image runs as user oracle (UID 54321, group oinstall 54321): the volumes must be writable for this group
+      securityContext:
+        fsGroup: 54321
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+      - name: dbms
+        # Oracle AI Database 26ai Free (23.26.3); Oracle Free Use Terms and Conditions. The edition uses at most
+        # 2 CPU threads, 2 GB of memory (SGA + PGA) and 12 GB of user data (see docs/DBMS.md)
+        image: container-registry.oracle.com/database/free:23.26.3.0
+        # Before the entrypoint of the image (runOracle.sh):
+        # 1. Storage: the image holds a prebuilt database in /opt/oracle/oradata. With the storage volume of
+        #    bexhoma (mounted at /opt/oracle/bexhoma-oradata), a new volume gets a copy of it, and oradata
+        #    becomes a link to the volume; a loaded volume keeps its database. Without the volume (no -rst),
+        #    the database lives in the container.
+        # 2. /tmp/bexhoma-startup.sh, run by the image once the database is open (scripts/startup, at every
+        #    start): switches the database to NOARCHIVELOG and NO FORCE LOGGING (the image enables both, the
+        #    archived redo of loading and benchmarking would fill the recovery area) and creates the user
+        #    bexhoma in FREEPDB1 if missing, whom all clients log in as (JDBC auth of cluster.config).
+        # 3. /tmp/bexhoma-session.sql, which loadData runs in front of every script (sqlplus @session schema
+        #    script): stops at the first error with exit code 1, switches to FREEPDB1 and to the schema of
+        #    the benchmark (the user of the same name, if it exists, e.g. BEXHOMA or TPCC of HammerDB).
+        command:
+        - bash
+        - -c
+        - |
+          if [ -d /opt/oracle/bexhoma-oradata ]; then
+            if [ ! -f /opt/oracle/bexhoma-oradata/.FREE.created ]; then
+              echo "bexhoma: copying the prebuilt database to the storage volume"
+              cp -a /opt/oracle/oradata/. /opt/oracle/bexhoma-oradata/
+            fi
+            rm -rf /opt/oracle/oradata
+            ln -s /opt/oracle/bexhoma-oradata /opt/oracle/oradata
+          fi
+          cat > /tmp/bexhoma-session.sql <<'SQL'
+          WHENEVER OSERROR EXIT FAILURE
+          WHENEVER SQLERROR EXIT FAILURE
+          SET FEEDBACK ON
+          SET VERIFY OFF
+          SET LINESIZE 250
+          SET PAGESIZE 1000
+          SET TRIMOUT ON
+          SET TAB OFF
+          ALTER SESSION SET CONTAINER = FREEPDB1;
+          SET SERVEROUTPUT ON
+          BEGIN
+              FOR u IN (SELECT username FROM dba_users WHERE username = UPPER('&1')) LOOP
+                  EXECUTE IMMEDIATE 'ALTER SESSION SET CURRENT_SCHEMA = ' || u.username;
+              END LOOP;
+          END;
+          /
+          @&2
+          EXIT
+          SQL
+          cat > /tmp/bexhoma-startup.sh <<'SH'
+          echo "bexhoma: logging mode"
+          if sqlplus -S / as sysdba <<< "SET HEADING OFF FEEDBACK OFF
+          SELECT log_mode FROM v\$database;" | grep -q '^ARCHIVELOG'; then
+            echo "bexhoma: switching to NOARCHIVELOG (restarts the database)"
+            sqlplus -S / as sysdba <<'SQL'
+          WHENEVER SQLERROR EXIT FAILURE
+          SHUTDOWN IMMEDIATE
+          STARTUP MOUNT
+          ALTER DATABASE NOARCHIVELOG;
+          ALTER DATABASE OPEN;
+          ALTER PLUGGABLE DATABASE ALL OPEN;
+          SQL
+          fi
+          sqlplus -S / as sysdba <<SQL
+          WHENEVER SQLERROR EXIT FAILURE
+          BEGIN
+              FOR d IN (SELECT 1 FROM v\$database WHERE force_logging = 'YES') LOOP
+                  EXECUTE IMMEDIATE 'ALTER DATABASE NO FORCE LOGGING';
+              END LOOP;
+          END;
+          /
+          SELECT log_mode, force_logging FROM v\$database;
+          ALTER SESSION SET CONTAINER = FREEPDB1;
+          CREATE USER IF NOT EXISTS bexhoma IDENTIFIED BY "$ORACLE_PWD" DEFAULT TABLESPACE users QUOTA UNLIMITED ON users;
+          ALTER USER bexhoma IDENTIFIED BY "$ORACLE_PWD";
+          GRANT CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE SEQUENCE, CREATE PROCEDURE, CREATE TRIGGER, CREATE TYPE, CREATE SYNONYM TO bexhoma;
+          GRANT SELECT_CATALOG_ROLE TO bexhoma;
+          SQL
+          SH
+          echo 'bash /tmp/bexhoma-startup.sh || echo "bexhoma: startup script failed"' > /opt/oracle/scripts/startup/01-bexhoma.sh
+          exec /opt/oracle/runOracle.sh
+        env:
+        # password of SYS, SYSTEM, PDBADMIN and bexhoma; = JDBC auth of cluster.config, letters and digits only
+        # (it goes through sed in the YCSB and Benchbase images)
+        - {name: ORACLE_PWD, value: 'BexhomaBenchmark2026'}
+        - {name: ORACLE_CHARACTERSET, value: 'AL32UTF8'}
+        # only used when the image creates a new database (it holds a prebuilt one); the startup script
+        # switches an existing database to NOARCHIVELOG and NO FORCE LOGGING
+        - {name: ENABLE_ARCHIVELOG, value: 'false'}
+        - {name: ENABLE_FORCE_LOGGING, value: 'false'}
+        readinessProbe:
+          # ready when the user bexhoma can log in to FREEPDB1 (after the startup script)
+          exec:
+            command: ["bash", "-c", "echo 'SELECT 1 FROM dual;' | sqlplus -S -L bexhoma/$ORACLE_PWD@//localhost:1521/FREEPDB1 | grep -q '^[[:space:]]*1$'"]
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 20
+        ports:
+        - {containerPort: 1521}
+        securityContext:
+          allowPrivilegeEscalation: false
+        resources:
+          # Free uses at most 2 CPU threads and 2 GB of memory (SGA + PGA); the container needs at least 2 GB
+          limits: {cpu: 4000m, memory: 8Gi}
+          requests: {cpu: 2000m, memory: 4Gi}
+        volumeMounts:
+        - {mountPath: /data, name: benchmark-data-volume}
+        - {mountPath: /dev/shm, name: dshm}
+        # database files (datafiles, redo, control files, configuration of the database)
+        - {mountPath: /opt/oracle/bexhoma-oradata, name: benchmark-storage-volume}
+      - name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:v0.47.0
+        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
+        ports:
+        - containerPort: 9300
+          #hostPort: 9300
+          name: http
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+        resources:
+          requests: {cpu: 150m, memory: 200Mi}
+          limits: {cpu: 16000m, memory: 128Gi}
+        volumeMounts:
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+        - name: var-run
+          mountPath: /var/run
+          readOnly: true
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: docker
+          mountPath: /var/lib/docker
+          readOnly: true
+        - name: disk
+          mountPath: /dev/disk
+          readOnly: true
+      volumes:
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: bexhoma-data}
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk
+      - name: dshm
+        emptyDir:
+          medium: Memory

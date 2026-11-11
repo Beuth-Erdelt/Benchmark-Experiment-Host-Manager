@@ -284,7 +284,7 @@ folder declares.
 | Exasol | varies | SQL | PK + FK | |
 | Kinetica | varies | SQL | PK; replicated variant | |
 | MemSQL / SingleStore | varies | SQL | PK + FK | |
-| OracleDB | varies | SQL | PK + FK | |
+| OracleDB | `BEXHOMA` (user `bexhoma`) | SQL*Loader | PK + FK | dialect `Oracle`; scripts run as SYSDBA via `/tmp/bexhoma-session.sql` |
 | SAPHANA | varies | SQL | PK only | No `initindexes` file |
 | SQLServer | varies | SQL | PK + FK | T-SQL dialect |
 | Citus | `public` | SQL | PK + FK; columnar variant | Extends PostgreSQL |

@@ -23,6 +23,7 @@ Each supported DBMS has a short section below; configuration, deployment, script
 | Relational / SQL | [ClickHouse](#clickhouse) | `ClickHouse`, `ClickHouseCluster` | TPC-H, TPC-DS, SSB | [Example-ClickHouse](Example-ClickHouse.md) |
 | Relational / SQL | [CedarDB](#cedardb) | `CedarDB` | TPC-H, SSB, YCSB, Benchbase | [Example-Other-DBMS](Example-Other-DBMS.md#cedardb) |
 | Relational / SQL | [SQL Server](#sql-server) | `SQLServer` | TPC-H, YCSB, Benchbase (TPC-C), HammerDB | [Example-Other-DBMS](Example-Other-DBMS.md#sql-server) (no results, [license](#sql-server)) |
+| Relational / SQL | [Oracle Database Free](#oracle-database-free) | `OracleDB` | TPC-H, YCSB, Benchbase (TPC-C), HammerDB | [Example-Other-DBMS](Example-Other-DBMS.md#oracle-database-free) (no results) |
 | Distributed SQL | [Citus](#citus) | `Citus` | TPC-H, SSB, YCSB, Benchbase, HammerDB | [Example-Citus](Example-Citus.md) |
 | Distributed SQL | [YugabyteDB](#yugabytedb) | `YugabyteDB` | YCSB, Benchbase | [Example-YugaByteDB](Example-YugaByteDB.md) |
 | Distributed SQL | [CockroachDB](#cockroachdb) | `CockroachDB` | YCSB, Benchbase | [Example-CockroachDB](Example-CockroachDB.md) |
@@ -422,6 +423,7 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | MariaDBCS | `ANALYZE TABLE` | n/a (no dirty pages to flush) | n/a (the check scripts read no ColumnStore counter) |
 | CedarDB | `VACUUM VERBOSE ANALYZE` | n/a (no `CHECKPOINT`) | n/a (no `pg_stat_reset()`) |
 | SQL Server | `sp_updatestats` | `CHECKPOINT` | `DBCC SQLPERF(... CLEAR)` for `sys.dm_os_wait_stats` and `sys.dm_os_latch_stats` (the I/O and query DMVs cannot be reset) |
+| Oracle Database Free | `DBMS_STATS.GATHER_SCHEMA_STATS` (`GATHER AUTO`: missing or stale statistics) | `ALTER SYSTEM CHECKPOINT` (pluggable database) | n/a (`v$sysstat` and the other statistics views cannot be reset) |
 | MonetDB | `ANALYZE` | n/a (the write-ahead log is applied in the background; no call to force it) | n/a |
 | ClickHouse | n/a (no optimizer statistics unless declared per column) | `reset-flush.sh`: `sync` (an `INSERT` writes its parts without fsync) | n/a (`system.events` cannot be reset) |
 | ClickHouseCluster | n/a | `SYSTEM FLUSH DISTRIBUTED` on every Distributed table and `SYSTEM SYNC REPLICA ON CLUSTER` on every replicated table (`reset-<benchmark>.sql`, coordinator), then `reset-flush.sh` (`sync`) in every worker | n/a |
@@ -462,6 +464,7 @@ Commands and logs of the test runs: [Test: Load Durability](Test-Durability.md).
 | MySQL | flush 1 | flush 2 (TPC-C/YCSB 0), key checks off | also redo log off, doublewrite `DETECT_ONLY` |
 | MariaDB (`.sh`, root) | flush 1, doublewrite on | flush 2 | also doublewrite off |
 | SQL Server | `DELAYED_DURABILITY = DISABLED` | `DELAYED_DURABILITY = FORCED` | - (= relaxed) |
+| Oracle Database Free | `COMMIT_WAIT = WAIT`, `COMMIT_LOGGING = IMMEDIATE` | `COMMIT_WAIT = NOWAIT`, `COMMIT_LOGGING = BATCH` (pluggable database, in memory) | - (= relaxed) |
 | others | - | - | - |
 
 For a new DBMS: put `durability-<level>.sql`/`.sh` and `restoredurability-<level>.sql`/`.sh` next to its init scripts; the restore must return to the startup values, not to the defaults (MySQL/MariaDB save them in `bexhoma.saved_settings`; their restore scripts end with an `ERROR` if a value is not back at its saved one, e.g. adjusted by the server with only a warning, and MySQL `unsafe` if the redo log is still disabled). A value that can only be set server-wide, so a `--set` value wins over the script, is declared in a header line `-- server-wide: name=value ...`; bexhoma then refuses a conflicting `--set` before loading.
@@ -733,6 +736,67 @@ bexhoma tpch -dbms SQLServer -sf 1 -xii -xic -xis -tr run
 ```
 
 See [Example: Other DBMS](Example-Other-DBMS.md#sql-server) for the workloads and the test script; its logs stay in the git-ignored `logs_tests/local`.
+
+---
+
+## Oracle Database Free
+
+`OracleDB` is the configuration key for Oracle AI Database 26ai Free (release 23.26.3), the free edition of Oracle Database, a single Deployment without operator (TPC-H, YCSB, Benchbase TPC-C, HammerDB TPC-C).
+
+**License:** Oracle Free Use Terms and Conditions; the terms of the database have no benchmark clause (the only one in the image belongs to the bundled XDK, which the benchmarks do not use).
+The grant covers developing, testing, prototyping and demonstrating applications; bexhoma uses it for research tests.
+The results of Oracle are kept internal: its test script writes to `logs_tests/local`, and `tests/test_unpublished_results.py` fails on results of it in `docs/` or `logs_tests/`.
+No separately licensed option (Partitioning, Diagnostics and Tuning Pack) is used.
+
+**Limits of the edition:** at most 2 CPU threads, 2 GB of memory (SGA and PGA) and 12 GB of user data, whatever the container gets.
+TPC-H is about 1.7 GB per scale factor including indexes, so SF 5 fits and SF 10 does not; TPC-C of HammerDB needs about 140 MB per warehouse, so about 80 warehouses fit.
+The database allows 200 processes, which bounds the sessions of all loader and benchmarker threads together.
+
+**Deployment template:** [`k8s/deploymenttemplate-OracleDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OracleDB.yml)
+
+The template pins `container-registry.oracle.com/database/free:23.26.3.0` (public, no login); the image holds a prebuilt database (CDB `FREE`, pluggable database `FREEPDB1`) and runs as user `oracle` (UID 54321).
+Before the entrypoint of the image (`runOracle.sh`), the container command prepares:
+
+| Point | Handling | Without it |
+|---|---|---|
+| Storage | the storage volume is mounted at `/opt/oracle/bexhoma-oradata`; a new volume gets a copy of the prebuilt database (4 GB), and `/opt/oracle/oradata` becomes a link to it; the pod has `fsGroup: 54321`. Without `-rst` the database lives in the container | a volume mounted at `/opt/oracle/oradata` hides the prebuilt database, and the image creates a new one with DBCA (several minutes) |
+| Logging | a startup script of the image (`scripts/startup`, run at every start once the database is open) switches the database to `NOARCHIVELOG` (one restart of the instance, the first time) and `NO FORCE LOGGING`; `ENABLE_ARCHIVELOG=false` and `ENABLE_FORCE_LOGGING=false` are set for a newly created database | the image enables both: the archived redo of loading and benchmarking fills the recovery area, and the database stops |
+| User | the same startup script creates the user `bexhoma` in `FREEPDB1` if missing (password `ORACLE_PWD`, quota on `USERS`, `CREATE SESSION/TABLE/VIEW/SEQUENCE/PROCEDURE/TRIGGER/TYPE/SYNONYM`, `SELECT_CATALOG_ROLE`); all JDBC clients log in as `bexhoma` | - |
+| Readiness | the readiness probe logs in as `bexhoma` to `FREEPDB1` and runs `SELECT 1 FROM dual` | the pod is ready before the user exists |
+| `loadData` | `sqlplus -S -L / as sysdba @/tmp/bexhoma-session.sql {database} {scriptname}`: the session file written by the container command stops at the first error with exit code 1 (`WHENEVER SQLERROR EXIT FAILURE`), switches to `FREEPDB1` and to the schema `{database}` if that user exists (`CURRENT_SCHEMA`), then runs the script; no password on the command line | errors would not fail the script; scripts would run in the root container |
+| Password | `ORACLE_PWD` (SYS, SYSTEM, PDBADMIN, `bexhoma`) is the JDBC `auth` of `cluster.config`; letters and digits only, it goes through `sed` in the YCSB and Benchbase images | - |
+
+The schema of TPC-H, YCSB and Benchbase is `BEXHOMA`, the user the clients log in as (JDBC `database: bexhoma`); HammerDB creates its own user `TPCC` (`BEXHOMA_DATABASE` of its parameters), so its scripts run in that schema.
+The JDBC URL is `jdbc:oracle:thin:@//{serverip}:9091/FREEPDB1`.
+There is no exporter (`-ma`); only cAdvisor metrics are collected.
+The template does not tune the database (SGA, PGA, redo log size are those of the image).
+
+**Clients and images:**
+
+| Benchmark | Client | Image |
+|---|---|---|
+| TPC-H loading | SQL*Loader (`sqlldr`, Instant Client tools), conventional path, control files per table | `bexhoma/loader_tpch_oracle` ([`images/tpch/loader_oracle`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/tpch/loader_oracle)) |
+| TPC-H refresh stream (`-xrs`) | `sqlldr`, staging table and `sqlplus` for RF2 | `bexhoma/loader_tpch_refresh_oracle` |
+| TPC-H queries | JDBC `ojdbc8-23.26.3.0.0.jar` | `bexhoma/benchmarker_dbmsbenchmarker` |
+| YCSB | JDBC binding, `ojdbc8-23.26.3.0.0.jar` (YCSB runs on Java 8); workload E fails, as the binding scans with `LIMIT` | `bexhoma/generator_ycsb`, `bexhoma/benchmarker_ycsb` |
+| Benchbase | profile `oracle` of the Benchbase image; only `tpcc` has a config (`images/benchbase/config/oracle`) | `bexhoma/generator_benchbase`, `bexhoma/benchmarker_benchbase` |
+| HammerDB | `HAMMERDB_TYPE=oracle` (`dbset db ora`, Instant Client of the HammerDB image, `instance //host:port/FREEPDB1`, user `tpcc` created by HammerDB as `system`) | `bexhoma/generator_hammerdb`, `bexhoma/benchmarker_hammerdb` |
+
+**Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/OracleDB), [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/OracleDB)):
+TPC-H with primary keys in `initschema-tpch.sql` (as MySQL and SQL Server), keys `NUMBER(10)`, order keys `NUMBER(12)`, amounts `NUMBER(15,2)`; `-xii` adds the indexes of MySQL, `-xic` the foreign keys (validated), `-xis` runs `DBMS_STATS.GATHER_SCHEMA_STATS` with `estimate_percent 100`.
+TPC-H uses dialect `Oracle` of the query file: Q1 (`number(19)` instead of `bigint`), Q2, Q3, Q8 (`double precision`), Q10, Q15 (`date '...'`), Q18, Q21 and Q22 have a variant; the other queries are the main text.
+YCSB `usertable` has `VARCHAR2(4000)` fields; Benchbase and HammerDB create their tables themselves.
+`checkschema-<benchmark>.sql` reports the version and logging mode, writes a checkpoint and reports exact row counts, the sizes of tables and indexes, the user data, the redo written and the non-default parameters.
+
+Benchbase TPC-C runs with `TRANSACTION_SERIALIZABLE` (the default of bexhoma): Oracle refuses concurrent changes of the same rows with `ORA-08177: can't serialize access`, which Benchbase counts as errors.
+
+TPC-DS and SSB are not supported: the query files have no `Oracle` variants (`LIMIT`, intervals).
+
+```bash
+bexhoma tpch -dbms OracleDB -sf 1 -nlp 4 -xii -xic -xis -lr 8Gi -rr 8Gi -tr run
+```
+
+See [Example: Other DBMS](Example-Other-DBMS.md#oracle-database-free) for the workloads and the test script; its logs stay in the git-ignored `logs_tests/local`.
 
 ---
 

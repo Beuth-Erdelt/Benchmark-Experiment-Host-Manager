@@ -168,6 +168,36 @@ wait_to_complete
 vwait forever" > load.tcl
 fi
 
+######################## Generate workflow file (Oracle) ########################
+# Instant Client of the image; the instance is an EZConnect string of the pluggable database.
+# HammerDB creates the user tpcc_user ($BEXHOMA_DATABASE) as system_user and builds the schema in it;
+# both have the password of the JDBC auth (ORACLE_PWD of the SUT)
+
+if [ "$HAMMERDB_TYPE" = "oracle" ]; then
+    echo "puts \"SETTING CONFIGURATION\"
+global complete
+proc wait_to_complete {} {
+global complete
+set complete [vucomplete]
+if {!\$complete} { after 5000 wait_to_complete } else { exit }
+}
+dbset db ora
+diset connection system_user system
+diset connection system_password $BEXHOMA_PASSWORD
+diset connection instance //$BEXHOMA_HOST:$BEXHOMA_PORT/${ORACLE_SERVICE:-FREEPDB1}
+diset tpcc tpcc_user $BEXHOMA_DATABASE
+diset tpcc tpcc_pass $BEXHOMA_PASSWORD
+diset tpcc tpcc_def_tab users
+diset tpcc tpcc_ol_tab users
+diset tpcc tpcc_def_temp temp
+diset tpcc count_ware $SF
+diset tpcc num_vu $HAMMERDB_VUSERS
+print dict
+buildschema
+wait_to_complete
+vwait forever" > load.tcl
+fi
+
 ######################## Show workflow file ########################
 cat load.tcl
 

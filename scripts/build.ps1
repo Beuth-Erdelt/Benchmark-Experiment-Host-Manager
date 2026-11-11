@@ -137,6 +137,7 @@ function Build-AndPush-Tpch {
     _BgDockerJob "bexhoma/loader_tpch_monetdb:$Version"     "images/tpch/loader_monetdb"    "loader_tpch_monetdb"     $Version
     _BgDockerJob "bexhoma/loader_tpch_clickhouse:$Version"  "images/tpch/loader_clickhouse" "loader_tpch_clickhouse"  $Version
     _BgDockerJob "bexhoma/loader_tpch_sqlserver:$Version"   "images/tpch/loader_sqlserver"  "loader_tpch_sqlserver"   $Version
+    _BgDockerJob "bexhoma/loader_tpch_oracle:$Version"      "images/tpch/loader_oracle"     "loader_tpch_oracle"      $Version
 }
 
 function Build-AndPush-TpchRefresh {
@@ -159,6 +160,7 @@ function Build-AndPush-TpchRefresh {
     _BgDockerJob "bexhoma/loader_tpch_refresh_monetdb:$Version"    "images/tpch_refresh/loader_monetdb"    "loader_tpch_refresh_monetdb"    $Version
     _BgDockerJob "bexhoma/loader_tpch_refresh_clickhouse:$Version" "images/tpch_refresh/loader_clickhouse" "loader_tpch_refresh_clickhouse" $Version
     _BgDockerJob "bexhoma/loader_tpch_refresh_sqlserver:$Version"  "images/tpch_refresh/loader_sqlserver"  "loader_tpch_refresh_sqlserver"  $Version
+    _BgDockerJob "bexhoma/loader_tpch_refresh_oracle:$Version"     "images/tpch_refresh/loader_oracle"     "loader_tpch_refresh_oracle"     $Version
 }
 
 function Build-AndPush-Monitoring {

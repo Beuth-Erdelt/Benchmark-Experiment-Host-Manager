@@ -14,7 +14,7 @@ Supported benchmarks: `tpcc`, `twitter`, `chbenchmark`, `ycsb`, `auctionmark`, `
 `tpch` and `tpcds` are not supported (no timed workload, `tpcds` has no config).
 
 Supported profiles (config subdirectory / DBMS): `postgres`, `mysql`, `mariadb`,
-`cockroachdb`, `noisepage`, `spanner`, `sqlite`, `sqlserver`, `phoenix`.
+`cockroachdb`, `noisepage`, `spanner`, `sqlite`, `sqlserver`, `oracle`, `phoenix`. The `oracle` profile has a config for `tpcc` only (service `FREEPDB1` of Oracle Database Free in the URL; the tables are in the schema of `BEXHOMA_USER`).
 
 ## Directory layout
 
@@ -33,6 +33,7 @@ images/benchbase/
 │   ├── spanner/
 │   ├── sqlite/
 │   ├── sqlserver/
+│   ├── oracle/
 │   └── phoenix/
 └── README.md                — environment variable reference for both images
 ```
