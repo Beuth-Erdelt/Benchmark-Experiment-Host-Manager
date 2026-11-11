@@ -150,7 +150,26 @@ bexhoma_start_epoch=$(date -u +%s)
 # libpq (PostgreSQL, Citus) takes this as application_name, so the sessions show up
 # in the "Number of Active Application Sessions" metric; other DBMS ignore it
 export PGAPPNAME=hammerdb
-./hammerdbcli auto load.tcl
+./hammerdbcli auto load.tcl 2>&1 | tee /tmp/hammerdb_load.txt
+HAMMERDB_RC=${PIPESTATUS[0]}
+
+######################## Check the load (#848) ###################
+# HammerDB exits 0 even when a virtual user failed: the schema build must report
+# SCHEMA COMPLETE and ALL VIRTUAL USERS COMPLETE, no virtual user FINISHED FAILED,
+# and the virtual users together must have loaded SF warehouses
+WAREHOUSES=$(grep -oE 'Loading [0-9]+ Warehouses? start' /tmp/hammerdb_load.txt | awk '{s+=$2} END {print s+0}')
+SCHEMA_COMPLETE=$(grep -c "SCHEMA COMPLETE" /tmp/hammerdb_load.txt)
+ALL_COMPLETE=$(grep -c "ALL VIRTUAL USERS COMPLETE" /tmp/hammerdb_load.txt)
+VUSERS_FAILED=$(grep -c "FINISHED FAILED" /tmp/hammerdb_load.txt)
+echo "HammerDB load: exit code ${HAMMERDB_RC:-?}, warehouses $WAREHOUSES of $SF, schema complete $SCHEMA_COMPLETE, all complete $ALL_COMPLETE, failed vusers $VUSERS_FAILED"
+if [ "${HAMMERDB_RC:-1}" -eq 0 ] && [ "$SCHEMA_COMPLETE" -gt 0 ] && [ "$ALL_COMPLETE" -gt 0 ] && [ "$VUSERS_FAILED" -eq 0 ] && [ "$WAREHOUSES" == "$SF" ]
+then
+    echo "BEXHOMA_INGEST:warehouses:$SF:$WAREHOUSES:ok"
+    LOAD_FAILED=0
+else
+    echo "BEXHOMA_INGEST:warehouses:$SF:$WAREHOUSES:failed"
+    LOAD_FAILED=1
+fi
 
 ######################## End time measurement ###################
 SECONDS_END=$SECONDS
@@ -191,5 +210,10 @@ echo "HAMMERDB_DURATION:$HAMMERDB_DURATION"
 echo "HAMMERDB_RAMPUP:$HAMMERDB_RAMPUP"
 echo "HAMMERDB_VUSERS:$HAMMERDB_VUSERS"
 
-######################## Exit successfully ###################
+######################## Exit ###################
+if test $LOAD_FAILED -ne 0
+then
+    echo "Loading failed"
+    exit 1
+fi
 exit 0

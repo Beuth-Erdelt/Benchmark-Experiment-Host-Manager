@@ -720,6 +720,7 @@ scrape_configs:
                     check_storage_class_of_existing_pvc(volume)
                     pvc_labels = pvcs_labels[0]
                     cfg.check_volume_shape(volume, pvc_labels)
+                    cfg.check_volume_loaded(volume, pvc_labels)
                     # all labels: DDL and loading values for apply_volume_parameters()
                     cfg.volume_labels = dict(pvc_labels)
                     copy_labels = [

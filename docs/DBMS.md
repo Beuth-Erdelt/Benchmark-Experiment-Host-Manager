@@ -67,7 +67,7 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 | `workers` | no | `True` if the SUT takes `-nw` workers (shards) next to its coordinator |
 | `sut_attributes` | no | How the SUT is set up (placeholder pod, no monitoring, Helm-managed stateful sets, ...); see [Benchmarks of a DBMS](#how-the-sut-is-set-up-sut_attributes) |
 | `initial_cluster` | no | `{component, port, scheme, env}`: the members of this component are passed to the SUT pods as `env`, for a DBMS that bootstraps as a cluster (TiDB: the `pd` nodes) |
-| `template.alias` | yes | The name of the DBMS in the reports: one per DBMS, the same for every benchmark and experiment |
+| `template.alias` | yes | The name of the DBMS in the reports: one per DBMS, the same for every benchmark and experiment. It names the architecture, not the product (`General-A`, `Columnwise-B`, `Cloud-Native-1`, `Key-Value-2`, ...), and does not show whether a DBMS is built on another one. `template.alias` and the short `template.docker_alias` (used in the connection names of anonymized DBMSBenchmarker runs, e.g. `GP-B`, `CW-A`) must be unique across `dockers` (checked by `validate_descriptors`) |
 | `template.dialect` | no | SQL dialect of the DBMS: the key of its query variants in the query files (`MySQL`, `Clickhouse`, `CedarDB`, ...) |
 | `monitor.<component>.blackbox_database` | no | Database that the blackbox probe of the application monitoring connects to |
 
@@ -461,8 +461,17 @@ Commands and logs of the test runs: [Test: Load Durability](Test-Durability.md).
 | MariaDB (`.sh`, root) | flush 1, doublewrite on | flush 2 | also doublewrite off |
 | others | - | - | - |
 
-For a new DBMS: put `durability-<level>.sql`/`.sh` and `restoredurability-<level>.sql`/`.sh` next to its init scripts; the restore must return to the startup values, not to the defaults (MySQL/MariaDB save them in `bexhoma.saved_settings`).
-PostgreSQL: a parameter set on the command line (`-c`, also from `--set`) cannot be changed by `ALTER SYSTEM`, so `-xld` has no effect on it.
+For a new DBMS: put `durability-<level>.sql`/`.sh` and `restoredurability-<level>.sql`/`.sh` next to its init scripts; the restore must return to the startup values, not to the defaults (MySQL/MariaDB save them in `bexhoma.saved_settings`; their restore scripts end with an `ERROR` if a value is not back at its saved one, e.g. adjusted by the server with only a warning, and MySQL `unsafe` if the redo log is still disabled). A value that can only be set server-wide, so a `--set` value wins over the script, is declared in a header line `-- server-wide: name=value ...`; bexhoma then refuses a conflicting `--set` before loading.
+PostgreSQL: `--set` passes a value as `-c` on the command line, which `ALTER SYSTEM` cannot change. `synchronous_commit` is therefore also set per database (`ALTER DATABASE ... SET`, which wins over the command line, for new sessions; Citus also on every worker) and reset after the load: `-xld relaxed --set synchronous_commit=on` loads with `off` and benchmarks with `on`. `fsync` and `full_page_writes` are server-wide only: when `--set` fixes them differently from what the level needs (e.g. `-xld unsafe --set ...fsync=on`), bexhoma refuses to load and aborts the experiment with the reason (test `Loading completed without failures`); the durability scripts also check the values they set and end with an `ERROR` otherwise.
+
+### Failed loads
+
+Nothing reads the loaded tables to check a load. A load counts as failed if
+- a loader pod fails: a loader exits with 1 when the reply of a load statement is an error or reports fewer rows than the file has (`BEXHOMA_INGEST:...:failed` in its log); test `Loader pods without errors`,
+- a loading script fails (schema, durability, indexes, constraints, statistics, checks; shell scripts run with `sh -e`); test `Init scripts without errors`,
+- the SUT restarts during loading, or scripts cannot be uploaded; test `Loading completed without failures`.
+
+A failed loading job aborts the experiment (with diagnostics). A failed load never labels its volume `loaded=True`; such a volume is not reused, remove it with `-rsr`.
 
 ### DDL parameters (`-xddl`)
 

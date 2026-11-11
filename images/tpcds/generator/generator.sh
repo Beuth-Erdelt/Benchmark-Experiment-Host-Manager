@@ -148,11 +148,23 @@ if test $BEXHOMA_NUM_PODS -gt 1
 then
 	echo "./dsdgen -dir $destination_raw -scale $SF -parallel $BEXHOMA_NUM_PODS -child $BEXHOMA_CHILD -RNGSEED $RNGSEED"
 	time ./dsdgen -dir $destination_raw -scale $SF -parallel $BEXHOMA_NUM_PODS -child $BEXHOMA_CHILD -RNGSEED $RNGSEED
+	DSDGEN_RC=$?
 else
 	echo "./dsdgen -dir $destination_raw -scale $SF -RNGSEED $RNGSEED"
 	time ./dsdgen -dir $destination_raw -scale $SF -RNGSEED $RNGSEED
+	DSDGEN_RC=$?
 fi
 # -verbose
+
+######################## Fail if generation failed (#848) ###################
+# Only reached when generating: existing data exits above
+shopt -s nullglob
+generated_dat_files=("$destination_raw"/*.dat)
+shopt -u nullglob
+if [ $DSDGEN_RC -ne 0 ] || [ ${#generated_dat_files[@]} -eq 0 ]; then
+	echo "FATAL: dsdgen failed (exit code $DSDGEN_RC, ${#generated_dat_files[@]} files in $destination_raw)"
+	exit 1
+fi
 
 ######################## Show generated files ###################
 #echo "Move generated files:"

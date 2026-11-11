@@ -1236,7 +1236,7 @@ In `cluster.config` there is a section:
     'template': {
         'version': '26.8',
         'alias': 'Columnwise-B',
-        'docker_alias': 'Columnwise-B',
+        'docker_alias': 'CW-B',
         'dialect': 'Clickhouse',
         'JDBC': {
             'auth': ['default', ''],

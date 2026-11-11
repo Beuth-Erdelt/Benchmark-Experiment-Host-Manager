@@ -82,28 +82,45 @@ echo "Start $SECONDS_START seconds"
 MCLIENT_OPTS="--host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -E UTF-8"
 
 ######################## Apply RF1 and RF2 for each refresh set ########################
+######################## Result per unit (#848) ########################
+# one BEXHOMA_INGEST line per statement; a failed one fails the pod at the end
+FAILED_UNITS=""
+ingest_result() {
+    # $1 unit, $2 expected rows (empty: not known), $3 reported rows, $4 exit code of the client
+    if [ "$4" -eq 0 ] && { [ -z "$2" ] || [ "$2" == "$3" ]; }
+    then
+        echo "BEXHOMA_INGEST:$1:$2:$3:ok"
+    else
+        echo "Refresh failed at $1 (exit code $4, expected ${2:-?} rows, reported ${3:-none})"
+        echo "BEXHOMA_INGEST:$1:$2:$3:failed"
+        FAILED_UNITS="$FAILED_UNITS $1"
+    fi
+}
+
 for K in $(seq $FIRST_SET $LAST_SET); do
     echo "============================"
     echo "Applying refresh set $K"
 
     #### RF1: insert new orders and lineitems ####
-    echo "RF1: inserting orders.tbl.u$K"
-    orders_count=$(wc -l < "$destination_raw/orders.tbl.u$K")
-    mclient $MCLIENT_OPTS \
-        -s "COPY $orders_count RECORDS INTO orders FROM STDIN USING DELIMITERS '|' NULL AS ''" \
-        - < "$destination_raw/orders.tbl.u$K"
-
-    echo "RF1: inserting lineitem.tbl.u$K"
-    lineitem_count=$(wc -l < "$destination_raw/lineitem.tbl.u$K")
-    mclient $MCLIENT_OPTS \
-        -s "COPY $lineitem_count RECORDS INTO lineitem FROM STDIN USING DELIMITERS '|' NULL AS ''" \
-        - < "$destination_raw/lineitem.tbl.u$K"
+    for TABLE in orders lineitem; do
+        echo "RF1: inserting $TABLE.tbl.u$K"
+        expected=$(wc -l < "$destination_raw/$TABLE.tbl.u$K")
+        mclient $MCLIENT_OPTS \
+            -s "COPY $expected RECORDS INTO $TABLE FROM STDIN USING DELIMITERS '|' NULL AS ''" \
+            - < "$destination_raw/$TABLE.tbl.u$K" &> /tmp/OUTPUT.txt
+        RC=$?
+        cat /tmp/OUTPUT.txt
+        reported=$(grep -oE '[0-9]+ affected rows?' /tmp/OUTPUT.txt | head -1 | cut -d' ' -f1)
+        ingest_result "rf1-$TABLE-$K" "$expected" "$reported" $RC
+    done
 
     #### RF2: delete orders identified in delete file ####
     # Feed CREATE + COPY + DELETE + DROP as one mclient session so the
     # temporary table survives across statements.  mclient reads N records
     # from stdin immediately after the COPY statement, then continues with
     # the remaining SQL lines from the same stdin stream.
+    # Checked: the COPY of the keys (first "affected rows"); the deletes have no
+    # expected count (a set applied again on a reused volume deletes nothing).
     echo "RF2: deleting rows from delete.$K"
     delete_count=$(wc -l < "$destination_raw/delete.$K")
     {
@@ -113,7 +130,11 @@ for K in $(seq $FIRST_SET $LAST_SET); do
         echo "DELETE FROM lineitem WHERE l_orderkey IN (SELECT orderkey FROM _tpch_refresh_delete);"
         echo "DELETE FROM orders WHERE o_orderkey IN (SELECT orderkey FROM _tpch_refresh_delete);"
         echo "DROP TABLE _tpch_refresh_delete;"
-    } | mclient $MCLIENT_OPTS -
+    } | mclient $MCLIENT_OPTS - &> /tmp/OUTPUT.txt
+    RC=$?
+    cat /tmp/OUTPUT.txt
+    reported=$(grep -oE '[0-9]+ affected rows?' /tmp/OUTPUT.txt | head -1 | cut -d' ' -f1)
+    ingest_result "rf2-$K" "$delete_count" "$reported" $RC
 
     echo "Refresh set $K done"
 done
@@ -146,5 +167,10 @@ echo "TPCH_REFRESH_STREAMS:$TPCH_REFRESH_STREAMS"
 echo "TPCH_REFRESH_STREAM_OFFSET:$TPCH_REFRESH_STREAM_OFFSET"
 echo "destination_raw:$destination_raw"
 
-######################## Exit successfully ########################
+######################## Exit ########################
+if test -n "$FAILED_UNITS"
+then
+    echo "Refresh stream failed:$FAILED_UNITS"
+    exit 1
+fi
 exit 0

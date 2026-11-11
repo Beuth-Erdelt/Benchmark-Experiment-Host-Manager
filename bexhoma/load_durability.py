@@ -25,8 +25,10 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 import os
+import re
 
-__all__ = ["LEVELS", "DEFAULT_LEVEL", "PLACEHOLDERS", "expand_durability_placeholders"]
+__all__ = ["LEVELS", "DEFAULT_LEVEL", "PLACEHOLDERS", "expand_durability_placeholders",
+           "server_wide_settings", "conflicting_set_args"]
 
 #: Levels of ``-xld/--load-durability``.
 LEVELS = ('durable', 'relaxed', 'unsafe')
@@ -69,3 +71,64 @@ def expand_durability_placeholders(scripts: list, level: str, folder: str) -> li
         else:
             expanded.append(script)
     return expanded
+
+
+#: Header line of a durability script naming the server-wide values it needs, e.g.
+#: ``-- server-wide: fsync=off full_page_writes=off``. Such a parameter cannot be set
+#: per database or session, so a ``--set`` value for it (on the command line) wins.
+_SERVER_WIDE = re.compile(r'^--\s*server-wide:\s*(.+?)\s*$', re.M)
+
+_ON = {'on', 'true', 'yes', '1'}
+_OFF = {'off', 'false', 'no', '0'}
+
+
+def _normalize(value: str) -> str:
+    value = str(value).strip().strip('"\'').lower()
+    if value in _ON:
+        return 'on'
+    if value in _OFF:
+        return 'off'
+    return value
+
+
+def server_wide_settings(scripts: list, folder: str) -> dict:
+    """Server-wide values the given durability scripts need (their ``-- server-wide:`` lines).
+
+    :param scripts: Script filenames (e.g. the expanded durability scripts).
+    :param folder: The configuration's DBMS script folder.
+    :return: Parameter name to the value the load needs.
+    :rtype: dict[str, str]
+    """
+    required = {}
+    for script in scripts:
+        path = os.path.join(folder, script)
+        if not os.path.isfile(path):
+            continue
+        with open(path, encoding='utf-8', errors='replace') as file:
+            for line in _SERVER_WIDE.findall(file.read()):
+                for item in line.split():
+                    if '=' in item:
+                        name, value = item.split('=', 1)
+                        required[name] = value
+    return required
+
+
+def conflicting_set_args(required: dict, set_args: list, configuration: str) -> list:
+    """``--set`` operations that fix a server-wide value the load needs differently.
+
+    :param required: Result of :func:`server_wide_settings`.
+    :param set_args: Parsed ``--set`` operations, ``(selector, value)`` pairs.
+    :param configuration: Name of the configuration; operations scoped to another one are ignored.
+    :return: One message per conflict, e.g. ``"fsync=on (--set), the load needs off"``.
+    :rtype: list[str]
+    """
+    conflicts = []
+    for selector, value in set_args or []:
+        if selector.get('target', 'container') != 'container':
+            continue
+        if selector.get('config') and selector['config'] != configuration:
+            continue
+        name = selector.get('param', '')
+        if name in required and _normalize(value) != _normalize(required[name]):
+            conflicts.append('{}={} (--set), the load needs {}'.format(name, value, required[name]))
+    return conflicts

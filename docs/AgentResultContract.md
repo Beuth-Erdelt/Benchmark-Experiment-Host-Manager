@@ -112,8 +112,10 @@ of its ancestors, never their reports.
 
 - Image tags are recorded, digests are not; dbmsbenchmarker's own version is not.
 - No check compares experiments; compare only within one code.
-- Nothing verifies that data loaded completely. A table that failed to load
-  shows only in tier 3: each loader pod's `*.sensor.log` and the statistics
+- Nothing reads the loaded tables. Completeness rests on the loaders' own
+  replies (`BEXHOMA_INGEST` lines, test `Loader pods without errors`) where a
+  loader image prints them; older images and results show a table that failed
+  to load only in tier 3: each loader pod's `*.sensor.log` and the statistics
   script's row counts.
 - `no_sql_warnings` compares result sets only within one driver process; a
   pass says nothing about agreement between systems or runs.

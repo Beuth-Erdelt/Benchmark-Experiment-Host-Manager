@@ -935,8 +935,8 @@ In `cluster.config` there is a section:
     'loadData': "cd /home/monetdb;printf 'user=monetdb\npassword=monetdb\n' > .monetdb;mclient demo < {scriptname}",
     'template': {
         'version': '11.37.11',
-        'alias': 'Columnwise',
-        'docker_alias': 'Columnwise',
+        'alias': 'Columnwise-A',
+        'docker_alias': 'CW-A',
         'JDBC': {
             'auth': ['monetdb', 'monetdb'],
             'driver': 'org.monetdb.jdbc.MonetDriver',

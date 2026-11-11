@@ -462,7 +462,9 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
     has a ``storage_prefix`` and a ``template.alias``. Per benchmark entry and per variant: the
     benchmark exists, every key is known and has its type (:data:`ENTRY_KEYS`), notes have a text,
     ``when`` expressions are allowed (:func:`evaluate`), tenancy modes are known, and the job
-    templates exist in ``template_folder``.
+    templates exist in ``template_folder``. Across all DBMS: ``template.alias`` and
+    ``template.docker_alias`` are unique (equal ones merge in reports, and the
+    anonymized connection names of DBMSBenchmarker become equal).
 
     :param dockers: The ``dockers`` section of the cluster configuration.
     :param benchmarks: The benchmark keys that exist (the keys of ``volumes``).
@@ -482,6 +484,15 @@ def validate_descriptors(dockers: dict, benchmarks: set, template_folder: str = 
                 problems.append(f"{where}: must be a dict")
                 continue
             problems += _entry_problems(where, entry, template_folder)
+    for field in ('alias', 'docker_alias'):
+        owners = {}
+        for name, docker in dockers.items():
+            value = (docker.get('template') or {}).get(field)
+            if value:
+                owners.setdefault(value, []).append(name)
+        for value, names in sorted(owners.items()):
+            if len(names) > 1:
+                problems.append(f"template.{field} {value!r} is used by several DBMS: {', '.join(names)}")
     return problems
 
 

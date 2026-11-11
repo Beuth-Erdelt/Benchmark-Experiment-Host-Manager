@@ -680,8 +680,8 @@ In `cluster.config` there is a section:
     'loadData': 'psql -U postgres --host bexhoma-service.{namespace}.svc.cluster.local --port 9091 < {scriptname}',
     'template': {
         'version': 'v11.4',
-        'alias': 'General-B',
-        'docker_alias': 'GP-B',
+        'alias': 'Service-A',
+        'docker_alias': 'SVC-A',
         'JDBC': {
             'driver': "org.postgresql.Driver",
             'auth': ["postgres", ""],

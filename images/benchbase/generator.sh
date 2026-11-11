@@ -169,8 +169,9 @@ case "$BENCHBASE_BENCH" in
         BENCHBASE_BENCH="tpcc,chbenchmark"
         ;;
     *)
+        # #848: nothing is loaded, the load is incomplete
         echo "Unknown benchmark"
-        exit 0
+        exit 1
         ;;
 esac
 
@@ -224,12 +225,30 @@ pwd
 ######################## Execute workload ###################
 if echo "$BENCHBASE_STATUS_INTERVAL" | grep -qE '^[0-9]+$'; then
     echo "Benchbase dump status"
-	time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=$BENCHBASE_CREATE_SCHEMA --load=true --execute=false  --interval-monitor $BENCHBASE_STATUS_INTERVAL
+	time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=$BENCHBASE_CREATE_SCHEMA --load=true --execute=false  --interval-monitor $BENCHBASE_STATUS_INTERVAL 2>&1 | tee -a /tmp/benchbase_load.txt
+	BENCHBASE_RC=${PIPESTATUS[0]}
 else
-	time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=$BENCHBASE_CREATE_SCHEMA --load=true --execute=false
+	time sh ./entrypoint.sh run --bench $BENCHBASE_BENCH -c $FILENAME --create=$BENCHBASE_CREATE_SCHEMA --load=true --execute=false 2>&1 | tee -a /tmp/benchbase_load.txt
+	BENCHBASE_RC=${PIPESTATUS[0]}
 fi
 
 
+
+######################## Check the load (#848) ###################
+# Benchbase prints no row counts: the load succeeded if the client exited 0, logged
+# that it finished loading, and logged no ERROR line (e.g. a failed loader thread)
+FINISHED=$(grep -c "Finished loading data into" /tmp/benchbase_load.txt)
+ERRORS=$(grep -cE '^\[ERROR' /tmp/benchbase_load.txt)
+echo "Benchbase load: exit code ${BENCHBASE_RC:-?}, finished lines $FINISHED, error lines $ERRORS"
+if [ "${BENCHBASE_RC:-1}" -eq 0 ] && [ "$FINISHED" -gt 0 ] && [ "$ERRORS" -eq 0 ]
+then
+    echo "BEXHOMA_INGEST:$BENCHBASE_BENCH-$BEXHOMA_CHILD:::ok"
+    LOAD_FAILED=0
+else
+    grep -E '^\[ERROR' /tmp/benchbase_load.txt | head -20
+    echo "BEXHOMA_INGEST:$BENCHBASE_BENCH-$BEXHOMA_CHILD:::failed"
+    LOAD_FAILED=1
+fi
 
 ######################## End time measurement ###################
 SECONDS_END=$SECONDS
@@ -288,5 +307,10 @@ echo "BENCHBASE_NEWCONNPERTXN:$BENCHBASE_NEWCONNPERTXN"
 echo "BEXHOMA_TENANT_ID:$BEXHOMA_TENANT_ID"
 echo "FILENAME:$FILENAME"
 
-######################## Exit successfully ###################
+######################## Exit ###################
+if test $LOAD_FAILED -ne 0
+then
+    echo "Loading failed"
+    exit 1
+fi
 exit 0

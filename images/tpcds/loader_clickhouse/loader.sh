@@ -140,9 +140,12 @@ for i in *.dat; do
     if test $EXITCODE -eq 0
     then
         echo "Import ok"
+        # #848: the client prints no row count, the exit code is all there is
+        echo "BEXHOMA_INGEST:$i:$lines::ok"
     else
         # no retry: a failed INSERT may have written some blocks already
         echo "Import failed at $basename (exit code $EXITCODE)"
+        echo "BEXHOMA_INGEST:$i:$lines::failed"
         FAILED_TABLES="$FAILED_TABLES $basename"
     fi
 done

@@ -212,6 +212,16 @@ class ConfigFilesTest(unittest.TestCase):
             for key in ('benchmarks', 'base_system'):
                 with self.subTest(docker=name, key=key):
                     self.assertEqual(main[name].get(key), local.get(name, {}).get(key))
+            for key in ('alias', 'docker_alias'):
+                with self.subTest(docker=name, key=key):
+                    self.assertEqual(main[name]['template'].get(key),
+                                     local.get(name, {}).get('template', {}).get(key))
+
+    def test_aliases_are_unique(self) -> None:
+        dockers = {'A': {'template': {'alias': 'General-A', 'docker_alias': 'GP-A'}},
+                   'B': {'template': {'alias': 'General-A', 'docker_alias': 'GP-B'}}}
+        self.assertEqual(sd.validate_descriptors(dockers, set()),
+                         ["template.alias 'General-A' is used by several DBMS: A, B"])
 
 
 class DescriptorsMatchScriptsTest(unittest.TestCase):

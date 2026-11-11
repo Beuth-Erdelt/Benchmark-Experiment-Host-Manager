@@ -123,6 +123,7 @@ mysql --version
 # shuffled
 #for i in `ls *.dat | shuf`; do
 # ordered
+FAILED_TABLES=""
 for i in *.dat; do
     if test $BEXHOMA_NUM_PODS -gt 1
     then
@@ -274,40 +275,38 @@ for i in *.dat; do
     echo "$COMMAND"
     #OUTPUT="$(mclient --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -s \"COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|' NULL AS ''\" - < $i)"
 
-    #FAILED=0 # everything ok
-    #FAILED=1 # known error
-    #FAILED=2 # unknown error
+    # #848: retry only on known transient errors; any other answer (error, fewer rows)
+    # fails this file, the pod exits 1 at the end; one BEXHOMA_INGEST line per file
+    # ROW_COUNT() is the number of rows LOAD DATA inserted: skipped rows (duplicate keys
+    # with LOCAL) lower it, warnings do not; COMMIT for autocommit off (-xld relaxed)
+    COMMAND="${COMMAND%;COMMIT;}; SELECT ROW_COUNT(); COMMIT;"
     FAILED=1
-    while [ $FAILED == 1 ]
+    ATTEMPTS=0
+    while [ $FAILED == 1 ] && [ $ATTEMPTS -lt 10 ]
     do
         FAILED=2
-        SECONDS_START=$SECONDS
-        echo "=========="
-        time mysql --skip-ssl --local-infile=1 --user=$BEXHOMA_USER --password=$BEXHOMA_PASSWORD --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
-        echo "Start $SECONDS_START seconds"
-        SECONDS_END=$SECONDS
-        echo "End $SECONDS_END seconds"
-        DURATION=$((SECONDS_END-SECONDS_START))
+        ATTEMPTS=$((ATTEMPTS+1))
+        SECONDS_START_FILE=$SECONDS
+        echo "========== attempt $ATTEMPTS"
+        time mysql --batch --skip-column-names --skip-ssl --local-infile=1 --user=$BEXHOMA_USER --password=$BEXHOMA_PASSWORD --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -e "$COMMAND" &> /tmp/OUTPUT.txt
+        DURATION=$((SECONDS-SECONDS_START_FILE))
         echo "Duration $DURATION seconds"
-        #mclient --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -E UTF-8 -L import.log -s "$COMMAND" - < $i &>OUTPUT.txt
-        #mclient --host $BEXHOMA_HOST --database $BEXHOMA_DATABASE --port $BEXHOMA_PORT -s "COPY $lines RECORDS INTO $basename FROM STDIN USING DELIMITERS '|','\\n','\"' NULL AS ''" - < $i &>OUTPUT.txt
-        #cat import.log
         OUTPUT=$(cat /tmp/OUTPUT.txt )
         echo "$OUTPUT"
-        FAILED=0
-        # everything worked well ("row" and "rows" string checked)
-        if [[ $OUTPUT == *"$lines affected row"* ]]; then echo "Import ok"; FAILED=0; fi
-        # rollback, we have to do it again (?)
+        REPORTED=$(grep -xE '[0-9]+' /tmp/OUTPUT.txt | head -1)
+        if [[ "$REPORTED" == "$lines" ]]; then echo "Import ok"; FAILED=0; fi
+        # rolled back as a whole, so it can be done again
         if [[ $OUTPUT == *"ROLLBACK"* ]]; then echo "ROLLBACK occured"; FAILED=1; fi
-        # no thread left, we have to do it again (?)
-        #if [[ $OUTPUT == *"failed to start worker thread"* ]]; then echo "No worker thread"; FAILED=1; fi
-        #if [[ $OUTPUT == *"failed to start producer thread"* ]]; then echo "No producer thread"; FAILED=1; fi
-        #if [[ $OUTPUT == *"Challenge string is not valid, it is empty"* ]]; then echo "No Login possible"; FAILED=1; fi
-        # something else - what?
-        if [[ $OUTPUT == 2 ]]; then echo "Something unexpected happend"; fi
-        echo "FAILED = $FAILED at $basename"
-        if [[ $FAILED != 0 ]]; then echo "Wait 1s before retrying"; sleep 1; fi
+        if [[ $FAILED == 1 ]]; then echo "Wait 1s before retrying"; sleep 1; fi
     done
+    if [[ $FAILED == 0 ]]
+    then
+        echo "BEXHOMA_INGEST:$i:$lines:$lines:ok"
+    else
+        echo "Import failed at $basename ($i, expected $lines rows, reported ${REPORTED:-none})"
+        echo "BEXHOMA_INGEST:$i:$lines:$REPORTED:failed"
+        FAILED_TABLES="$FAILED_TABLES $i"
+    fi
     #echo "COPY $lines RECORDS INTO $basename FROM '/tmp/$i' ON CLIENT DELIMITERS '|' NULL AS '';" >> load.sql
 done
 
@@ -343,6 +342,11 @@ echo "BEXHOMA_NUM_PODS:$BEXHOMA_NUM_PODS"
 echo "SF:$SF"
 echo "destination_raw:$destination_raw"
 
-######################## Exit successfully ###################
-# while true; do sleep 2; done
+######################## Exit ###################
+# #848: a file that failed fails the pod (and the loading job, backoffLimit 0)
+if [ -n "$FAILED_TABLES" ]
+then
+    echo "Failed tables:$FAILED_TABLES"
+    exit 1
+fi
 exit 0
