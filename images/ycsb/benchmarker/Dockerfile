@@ -167,7 +167,8 @@ RUN wget https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/9.4.1
 
 # Oracle Database 23.26.3 (ojdbc8 runs on the Java 8 of YCSB); scans of the JDBC binding use LIMIT,
 # which Oracle does not have, so workload E does not run
-RUN wget https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/23.26.3.0.0/ojdbc8-23.26.3.0.0.jar && \n    cp ojdbc8-23.26.3.0.0.jar jars/
+RUN wget https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/23.26.3.0.0/ojdbc8-23.26.3.0.0.jar && \
+    cp ojdbc8-23.26.3.0.0.jar jars/
 
 ######################################################################################
 # Copy workload templates and entrypoint script
