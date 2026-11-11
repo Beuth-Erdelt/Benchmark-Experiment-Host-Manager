@@ -19,6 +19,9 @@ metadata:
 spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 1433}
+  # HammerDB loads with bcp, which ignores mssqls_port and always connects to the default port 1433;
+  # name port-sut-*, so bexhoma keeps the port when monitoring is off
+  - {port: 1433, protocol: TCP, name: port-sut-default, targetPort: 1433}
   - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---

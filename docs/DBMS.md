@@ -701,6 +701,7 @@ The template pins `mcr.microsoft.com/mssql/server:2022-CU27-ubuntu-22.04` with `
 | Database | the container command writes `/tmp/bexhoma-database.sql`; `loadData` runs it in front of every script (`sqlcmd -v database={database} -i /tmp/bexhoma-database.sql,{scriptname}`, one session): it creates the database of the benchmark if missing, with recovery model `SIMPLE`, and switches to it | a durability script, which runs before `initschema`, would have no database; with `FULL` and no log backups the log grows without bound |
 | Errors | `sqlcmd -b -r0`: an error ends the script with exit code 1 and goes to stderr | errors would not fail the script |
 | Certificate | the ODBC Driver 18 tools encrypt by default: `-C` (sqlcmd), `-u` (bcp), `mssqls_trust_server_cert` (HammerDB); JDBC uses `encrypt=false` | the self-signed certificate of the server is refused |
+| Port 1433 | the Service also exposes the default port 1433 (`port-sut-default`; `port-sut-*` names are kept when monitoring is off): HammerDB loads with `bcp`, which ignores `mssqls_port` | the HammerDB workers fail with `Login timeout expired` after loading the stock |
 
 The database of each benchmark is `BEXHOMA_DATABASE` of its `loading_parameters` (`tpch`, `ycsb`, `benchbase`, `tpcc`); the JDBC database is `master`.
 SQL Server uses 80% of the memory limit of the container by default; it needs at least 2 GB.
