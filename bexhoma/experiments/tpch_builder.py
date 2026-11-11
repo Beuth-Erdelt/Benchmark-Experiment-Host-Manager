@@ -25,7 +25,8 @@ from pathlib import Path
 from bexhoma import clusters, configurations, experiments
 from bexhoma.cli_args import resolve_scaling_factor
 from bexhoma.experiments.tpch import TpchExperiment
-from bexhoma.experiments.system_builder import set_loading_template
+from bexhoma.experiments.system_builder import loading_variants, set_loading_template
+from bexhoma.experiments.tpch_loader import loading_count, merged_loading
 from bexhoma.system_descriptors import base_system, benchmark_entry, refresh_template, storage_prefix
 
 __all__ = ["build_experiment"]
@@ -122,7 +123,7 @@ def _build_prepare_testbed_parameter(spec: dict, tpch_module) -> dict:
     return parameter
 
 
-def _configure_system(experiment: TpchExperiment, system: dict, tpch_cfg: dict) -> None:
+def _configure_system(experiment: TpchExperiment, spec: dict, system: dict, tpch_cfg: dict) -> None:
     """
     Build and attach one :class:`~bexhoma.configurations.base.SutConfiguration`
     for one ``systems:`` entry, mirroring the setter sequence ``tpch.py``'s own
@@ -132,11 +133,14 @@ def _configure_system(experiment: TpchExperiment, system: dict, tpch_cfg: dict) 
 
     Phase 1 limitation: builds exactly one configuration per system (the
     single-cell path); resource sweeps and multiple parallel loading cells,
-    like ``tpch.py``'s own ``-rr``/``-lr``/``-nlp``/``-xnls`` comma-list
+    like ``tpch.py``'s own ``-rr``/``-lr``/``-nlp``/``-nlt``/``-xnls`` comma-list
     sweeps, are follow-up work, same scoping as ``experiment_yaml`` excluding
-    the DBMS with workers or container-tenancy.
+    the DBMS with workers or container-tenancy. So ``loading.pods``, ``threads``
+    and ``split`` are one value each (:func:`~bexhoma.experiments.tpch_loader.loading_count`),
+    from the top-level ``loading:`` block with the system's own on top.
 
     :param experiment: The experiment these DBMS configurations are attached to.
+    :param spec: The whole parsed spec (its top-level ``loading:`` block).
     :param system: One entry of ``spec['systems']``.
     :param tpch_cfg: The ``tpch:`` block of the spec; the options that a DBMS entry's
         ``option_parameters`` name are read from it, unless the system sets the
@@ -177,9 +181,11 @@ def _configure_system(experiment: TpchExperiment, system: dict, tpch_cfg: dict) 
     if system.get('skip_loading', False):
         config.loading_deactivated = True
 
-    loading_cfg = system.get('loading', {}) or {}
-    loading_pods_total = int(loading_cfg.get('pods', 1))
-    loading_pods_split = int(loading_cfg.get('split', 1))
+    # the top-level loading: block applies to every system, a system's own loading: wins
+    loading_cfg = merged_loading(spec, system)
+    loading_pods_total = loading_count(loading_cfg, 'pods')
+    loading_pods_split = loading_count(loading_cfg, 'split')
+    loading_threads = loading_count(loading_cfg, 'threads')
     max_pods = entry.get('max_loading_pods')
     if max_pods is not None and (loading_pods_total > max_pods or loading_pods_split > max_pods):
         # e.g. concurrent LOAD DATA into a ColumnStore table fails and the loader goes on, so rows
@@ -194,6 +200,8 @@ def _configure_system(experiment: TpchExperiment, system: dict, tpch_cfg: dict) 
     config.set_loading_parameters(
         PODS_TOTAL=str(loading_pods_total),
         PODS_PARALLEL=str(split_portion),
+        # threads only matter for a DBMS whose entry declares per_loading_threads (e.g. MySQL)
+        **loading_variants(entry, [loading_threads])[0],
         **(system.get('loading_parameters') or {}),
     )
     config.set_benchmarking_parameters(**(system.get('benchmarking_parameters') or {}))
@@ -303,7 +311,7 @@ def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
     experiment.prepare_testbed(parameter)
 
     for system in spec['systems']:
-        _configure_system(experiment, system, tpch_cfg)
+        _configure_system(experiment, spec, system, tpch_cfg)
 
     rounds = spec.get('rounds', [1])
     experiment.add_benchmark_list(rounds)

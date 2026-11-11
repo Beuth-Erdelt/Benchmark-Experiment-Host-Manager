@@ -152,7 +152,10 @@ for i in *tbl*; do
     if [[ $FAILED != 0 ]]
     then
         echo "Import failed at $table (expected $lines affected rows)"
+        echo "BEXHOMA_INGEST:$i:$lines:$(grep -oE '[0-9]+ affected rows?' /tmp/OUTPUT.txt | head -1 | cut -d' ' -f1):failed"
         FAILED_TABLES="$FAILED_TABLES $table"
+    else
+        echo "BEXHOMA_INGEST:$i:$lines:$lines:ok"
     fi
 done
 

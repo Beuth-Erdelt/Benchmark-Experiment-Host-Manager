@@ -215,7 +215,7 @@ for i in *.dat; do
         echo "$OUTPUT"
         FAILED=0
         # everything worked well ("row" and "rows" string checked)
-        if [[ $OUTPUT == *"Total rows affected in tpch.$basename: Records: $lines"* ]]; then echo "Import ok"; FAILED=0; fi
+        if [[ $OUTPUT == *"Total rows affected in tpcds.$basename: Records: $lines"* ]]; then echo "Import ok"; FAILED=0; fi
         # rollback, we have to do it again (?)
         if [[ $OUTPUT == *"ROLLBACK"* ]]; then echo "ROLLBACK occured"; FAILED=1; fi
         # no thread left, we have to do it again (?)

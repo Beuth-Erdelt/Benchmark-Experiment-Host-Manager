@@ -1587,8 +1587,8 @@ In `cluster.config` there is a section:
     'attachWorker': '',
     'template': {
         'version': 'xxx',
-        'alias': 'Key-Value-1',
-        'docker_alias': 'KV1',
+        'alias': 'Key-Value-4',
+        'docker_alias': 'KV4',
         'auth': ["root", ""],
     },
     'logfile': '/var/log/garnet/garnet.log',

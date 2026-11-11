@@ -81,13 +81,30 @@ SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 
 ######################## Apply RF1 and RF2 for each refresh set ########################
+######################## Result per unit (#848) ########################
+# one BEXHOMA_INGEST line per statement; a failed one fails the pod at the end
+FAILED_UNITS=""
+ingest_result() {
+    # $1 unit, $2 expected rows (empty: not known), $3 reported rows, $4 exit code of the client
+    if [ "$4" -eq 0 ] && { [ -z "$2" ] || [ "$2" == "$3" ]; }
+    then
+        echo "BEXHOMA_INGEST:$1:$2:$3:ok"
+    else
+        echo "Refresh failed at $1 (exit code $4, expected ${2:-?} rows, reported ${3:-none})"
+        echo "BEXHOMA_INGEST:$1:$2:$3:failed"
+        FAILED_UNITS="$FAILED_UNITS $1"
+    fi
+}
+
 for K in $(seq $FIRST_SET $LAST_SET); do
     echo "============================"
     echo "Applying refresh set $K"
 
     #### RF1: insert new orders and lineitems ####
+    # ROW_COUNT() is the number of rows LOAD DATA inserted (skipped rows lower it)
     echo "RF1: inserting orders.tbl.u$K"
-    mysql $MYSQL_OPTS $BEXHOMA_DATABASE -e \
+    expected=$(wc -l < "$destination_raw/orders.tbl.u$K")
+    mysql $MYSQL_OPTS --batch --skip-column-names $BEXHOMA_DATABASE -e \
         "LOAD DATA LOCAL INFILE '$destination_raw/orders.tbl.u$K'
          INTO TABLE orders FIELDS TERMINATED BY '|'
          (@o_orderkey, @o_custkey, @o_orderstatus, @o_totalprice, @o_orderdate,
@@ -96,10 +113,16 @@ for K in $(seq $FIRST_SET $LAST_SET); do
              o_orderstatus=NULLIF(@o_orderstatus,''), o_totalprice=NULLIF(@o_totalprice,''),
              o_orderdate=NULLIF(@o_orderdate,''), o_orderpriority=NULLIF(@o_orderpriority,''),
              o_clerk=NULLIF(@o_clerk,''), o_shippriority=NULLIF(@o_shippriority,''),
-             o_comment=NULLIF(@o_comment,'')"
+             o_comment=NULLIF(@o_comment,'');
+         SELECT ROW_COUNT();" &> /tmp/OUTPUT.txt
+    RC=$?
+    cat /tmp/OUTPUT.txt
+    reported=$(grep -xE '[0-9]+' /tmp/OUTPUT.txt | head -1)
+    ingest_result "rf1-orders-$K" "$expected" "$reported" $RC
 
     echo "RF1: inserting lineitem.tbl.u$K"
-    mysql $MYSQL_OPTS $BEXHOMA_DATABASE -e \
+    expected=$(wc -l < "$destination_raw/lineitem.tbl.u$K")
+    mysql $MYSQL_OPTS --batch --skip-column-names $BEXHOMA_DATABASE -e \
         "LOAD DATA LOCAL INFILE '$destination_raw/lineitem.tbl.u$K'
          INTO TABLE lineitem FIELDS TERMINATED BY '|'
          (@l_orderkey, @l_partkey, @l_suppkey, @l_linenumber, @l_quantity,
@@ -113,11 +136,18 @@ for K in $(seq $FIRST_SET $LAST_SET); do
              l_returnflag=NULLIF(@l_returnflag,''), l_linestatus=NULLIF(@l_linestatus,''),
              l_shipdate=NULLIF(@l_shipdate,''), l_commitdate=NULLIF(@l_commitdate,''),
              l_receiptdate=NULLIF(@l_receiptdate,''), l_shipinstruct=NULLIF(@l_shipinstruct,''),
-             l_shipmode=NULLIF(@l_shipmode,''), l_comment=NULLIF(@l_comment,'')"
+             l_shipmode=NULLIF(@l_shipmode,''), l_comment=NULLIF(@l_comment,'');
+         SELECT ROW_COUNT();" &> /tmp/OUTPUT.txt
+    RC=$?
+    cat /tmp/OUTPUT.txt
+    reported=$(grep -xE '[0-9]+' /tmp/OUTPUT.txt | head -1)
+    ingest_result "rf1-lineitem-$K" "$expected" "$reported" $RC
 
     #### RF2: delete orders identified in delete file ####
+    # no expected count: a set applied again (reused volume) deletes nothing;
+    # the client stops at the first error and exits 1
     echo "RF2: deleting rows from delete.$K"
-    mysql $MYSQL_OPTS $BEXHOMA_DATABASE <<SQL
+    mysql $MYSQL_OPTS $BEXHOMA_DATABASE &> /tmp/OUTPUT.txt <<SQL
 CREATE TEMPORARY TABLE _tpch_refresh_delete (orderkey BIGINT);
 LOAD DATA LOCAL INFILE '$destination_raw/delete.$K'
     INTO TABLE _tpch_refresh_delete FIELDS TERMINATED BY '\n';
@@ -125,6 +155,9 @@ DELETE l FROM lineitem l WHERE l.l_orderkey IN (SELECT orderkey FROM _tpch_refre
 DELETE o FROM orders o WHERE o.o_orderkey IN (SELECT orderkey FROM _tpch_refresh_delete);
 DROP TEMPORARY TABLE _tpch_refresh_delete;
 SQL
+    RC=$?
+    cat /tmp/OUTPUT.txt
+    ingest_result "rf2-$K" "" "" $RC
 
     echo "Refresh set $K done"
 done
@@ -158,5 +191,10 @@ echo "TPCH_REFRESH_STREAMS:$TPCH_REFRESH_STREAMS"
 echo "TPCH_REFRESH_STREAM_OFFSET:$TPCH_REFRESH_STREAM_OFFSET"
 echo "destination_raw:$destination_raw"
 
-######################## Exit successfully ########################
+######################## Exit ########################
+if test -n "$FAILED_UNITS"
+then
+    echo "Refresh stream failed:$FAILED_UNITS"
+    exit 1
+fi
 exit 0

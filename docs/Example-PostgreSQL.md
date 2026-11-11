@@ -1236,7 +1236,7 @@ The `database` and `schema` fields support multi-tenant mode: bexhoma substitute
 * [deploymenttemplate-PostgreSQL.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PostgreSQL.yml): one SUT pod.
 * The default deployment uses a minimal, near-standard PostgreSQL configuration. The only active startup argument is `max_connections=640`; all other parameters use PostgreSQL defaults.
 * The template includes an extensive set of commented-out tuning knobs (memory, parallelism, WAL, autovacuum, planner cost constants) as a reference — uncomment or override individual parameters at experiment time using `--set`.
-* A parameter set on the command line (`-c`, also from `--set`) cannot be changed by `ALTER SYSTEM`, so `-xld` has no effect on it.
+* A parameter set on the command line (`-c`, also from `--set`) cannot be changed by `ALTER SYSTEM`. `-xld` therefore also sets `synchronous_commit` per database during the load (`-xld relaxed --set synchronous_commit=on`: load with `off`, benchmark with `on`); `fsync` and `full_page_writes` given with `--set` cannot be changed by `-xld`: bexhoma refuses such a combination (e.g. `-xld unsafe --set ...fsync=on`) before loading.
 
 ### Schema and Scripts
 

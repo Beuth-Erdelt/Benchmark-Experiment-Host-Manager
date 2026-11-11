@@ -958,8 +958,8 @@ In `cluster.config` there is a section:
     'worker_port': 5432,
     'template': {
         'version': '10.0.2',
-        'alias': 'General-B',
-        'docker_alias': 'GP-B',
+        'alias': 'Cloud-Native-4',
+        'docker_alias': 'CN4',
         'JDBC': {
             'driver': "org.postgresql.Driver",
             'auth': ["postgres", "postgres"],

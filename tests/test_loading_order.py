@@ -87,6 +87,7 @@ class WaitForSchemaTest(unittest.TestCase):
         cfg = mock.Mock()
         cfg.appname, cfg.code, cfg.configuration = 'bexhoma', '1', 'MySQL-1'
         cfg.num_experiment_to_apply_done = 0
+        cfg.loading_failed_fatal = ''
         cfg.experiment_dict = {'loader': [{'parallelism': 1, 'num_pods': 1}]}
         cfg.manifest.create_manifest_loading.return_value = 'loading-job.yml'
         cfg.experiment.cluster.set_pod_counter.side_effect = lambda **kw: order.append('counter')

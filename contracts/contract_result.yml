@@ -6,7 +6,7 @@
 # not comments. Design rationale and provenance (not needed to read this
 # file): contracts/contract_result_comments.md
 
-result_contract_version: "1.13.0"  # == bexhoma.report_writer.SCHEMA_VERSION
+result_contract_version: "1.14.0"  # == bexhoma.report_writer.SCHEMA_VERSION
 
 entry_point:
   with_report: "report/index.md"
@@ -195,10 +195,26 @@ validity:
     kind: absolute
     scope: dbmsbenchmarker_family_only
     checks: "every active query has an EXPLAIN captured for at least one connection; SKIPPED (not failed) when -se/--store-explain was not used, so nothing was captured at all"
+  - id: loader_pods_without_errors
+    kind: absolute
+    label: "Loader pods without errors"
+    since: "1.14.0"
+    checks: "no loader pod of this experiment ended Failed or with a container exit code != 0 (provenance.loading *.describe.log), no loading job counted failed pods (*.describe.job.log 'Pods Statuses'), and no BEXHOMA_INGEST:<unit>:<expected>:<reported>:failed line in a loader container log; loading jobs never retry a pod (backoffLimit 0)"
+    skipped_when: "not recorded at all when no loader pod of this experiment was stored (loading by scripts only, or a reused volume)"
+    reports:
+      where: "summary sections Loader Pods with Errors and Ingestion (units ok per configuration)"
+    scopes: "every metric of the listed configurations: their data may be incomplete"
+  - id: loading_completed_without_failures
+    kind: absolute
+    label: "Loading completed without failures"
+    since: "1.14.0"
+    checks: "connections.config's loading_failed is empty for every connection: no SUT container restart between the start and the end of loading, no failed script upload; absent from results written before loading_failed was recorded"
+    why: "a failed load (this, failed loading scripts, or failed loader pods) never labels its volume loaded=True; bexhoma refuses to reuse a volume with loaded=False or loading_failed=True before an experiment's first repetition (remove it with -rsr)"
+    scopes: "every metric of the listed configurations"
   - id: loaded_data_complete
     kind: absolute
-    implemented: false
-    why: "nothing verifies that the data landed — a loading phase counts as successful when its Kubernetes Job exits 0. A partially loaded database passes every implemented check above; see known_gaps for the tier-3 evidence that exposes one"
+    implemented: partial
+    why: "nothing reads the loaded tables (by design: no COUNT(*), nothing that changes the database's state). Completeness rests on the loaders' own replies (BEXHOMA_INGEST lines, checked by loader_pods_without_errors) where a loader image prints them; loaders without them are judged by their exit code only; see known_gaps"
   - id: cross_experiment_comparison
     kind: comparative
     implemented: false
@@ -277,6 +293,6 @@ known_gaps:
   - "no sha256 image digest is recorded (a re-pushed tag is invisible to this contract)"
   - "dbmsbenchmarker's own package version is not recorded separately from bexhoma's"
   - "no comparative/historical (cross-experiment) validity check exists in a result folder; 'compare only within one experiment code' remains the interpretation rule. contract_catalog.yml's follow_up_of field records the intended prior-run lineage when an experiment.yml sets it. After one-result interpretation, the optional agent harness writes agent_summary.yml and supplies compact ancestor summaries only to follow-up authoring; it does not treat them as evidence or synthesize their metrics. The harness also validates that a newly authored follow-up names the current result code and changes at least one execution-relevant field, but BeXhoma itself does not enforce these conditions"
-  - "loading is verified only by the loading Job exiting successfully — no row count, table size or ingested-volume check exists in tier 1 or 2, and the per-table loader scripts report success unconditionally (they inspect neither the client's exit status nor its output). A database missing whole tables — e.g. because a node or service blip refused new connections part-way through the load — therefore passes every check: metric columns stay non-zero, a query over an empty table returns an empty result quickly instead of erroring, and no_sql_warnings cannot see it. Detect it in tier-3 provenance.loading: every loading pod's *.sensor.log records what the client returned for each table — a row count on success, an error otherwise — and, where the workload runs a post-load statistics step, that script's *.stderr.log carries the engine's live row count per table (0 = empty table) and its *.stdout.log prints the reference-table counts the script already selects (TPC-H on PostgreSQL expects nation=25, region=5). Corroborate in benchmarking.md: a repetition whose per-query latency collapses by orders of magnitude on exactly the queries touching the missing tables, while queries that avoid them keep their usual timings"
+  - "since 1.14.0 every loader image checks the reply of its own load statements and exits 1 on an error or a short count (BEXHOMA_INGEST lines, test loader_pods_without_errors; ClickHouse: exit code only, Benchbase: no counts); nothing reads the loaded tables. Results of older loader images: loading is verified only by the loading Job exiting successfully — the per-table loader scripts reported success unconditionally. A database missing whole tables — e.g. because a node or service blip refused new connections part-way through the load — therefore passes every check: metric columns stay non-zero, a query over an empty table returns an empty result quickly instead of erroring, and no_sql_warnings cannot see it. Detect it in tier-3 provenance.loading: every loading pod's *.sensor.log records what the client returned for each table — a row count on success, an error otherwise — and, where the workload runs a post-load statistics step, that script's *.stderr.log carries the engine's live row count per table (0 = empty table) and its *.stdout.log prints the reference-table counts the script already selects (TPC-H on PostgreSQL expects nation=25, region=5). Corroborate in benchmarking.md: a repetition whose per-query latency collapses by orders of magnitude on exactly the queries touching the missing tables, while queries that avoid them keep their usual timings"
   - "no_sql_warnings compares result sets only inside one driver process (see validity.no_sql_warnings), and bexhoma runs one process per benchmarking pod with a single connection; nothing in the result folder certifies that two configurations, two phases or two experiment_runs returned the same rows"
   - "per-system post_load selection (indexes/constraints/statistics, chosen via contract_catalog.yml's systems[].post_load) is not surfaced as a tier-1/2 field anywhere — connections.config/queries.config record which SUT ran, not which post-load steps it received; reconstruct it from tier-3 provenance.loading's *-loading-*.sql.log (rendered DDL source) per configuration"

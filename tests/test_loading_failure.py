@@ -184,6 +184,7 @@ class LoadingFailureTest(unittest.TestCase):
         config.code = "42"
         config.configuration = "PgDuckDB-3"
         config.num_experiment_to_apply_done = 0
+        config.loading_failed_fatal = ""
         config.experiment_dict = {"loader": [{"parallelism": 2, "num_pods": 2}]}
         config.experiment.cluster = cluster
         config.manifest.create_manifest_loading.return_value = "loading-job.yml"

@@ -1512,8 +1512,8 @@ In `cluster.config` there is a section:
     'delay_prepare': 60,
     'template': {
         'version': 'CE 8.0.22',
-        'alias': 'General-C',
-        'docker_alias': 'GP-C',
+        'alias': 'Cloud-Native-3',
+        'docker_alias': 'CN3',
         'dialect': 'MySQL',
         'JDBC': {
             'driver': "com.mysql.cj.jdbc.Driver",

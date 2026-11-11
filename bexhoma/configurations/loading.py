@@ -21,12 +21,16 @@ from .. import ddl_parameters
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
-__all__ = ['LoadingCoordinator', 'load_data_asynch', 'script_failed']
+__all__ = ['LoadingCoordinator', 'load_data_asynch', 'loading_script_errors', 'script_failed']
 
 # kubectl exec reports a non-zero exit of the command on stderr; psql/ysqlsh go on
 # after a failed statement and exit 0, so their error lines count too
 # ("psql:/tmp/x.sql:14: ERROR:", mysql "ERROR 1146 ...", cockroach "ERROR: ...")
-_SCRIPT_ERROR_STDERR = re.compile(r'command terminated with exit code [1-9]|(^|:\s)(ERROR|FATAL|PANIC)\b', re.M)
+# Client errors in other formats (#848): a client's own "<client>: error: ..." (e.g. a
+# connection failure), "Code: 60. DB::Exception: ...", "InvalidRequest: Error from server: ..."
+_SCRIPT_ERROR_STDERR = re.compile(
+    r'command terminated with exit code [1-9]|(^|:\s)(ERROR|FATAL|PANIC)\b'
+    r'|^[\w.-]+: error:|\bDB::Exception\b|\bError from server\b', re.M)
 # redis-cli prints error replies on stdout and exits 0
 _SCRIPT_ERROR_STDOUT = re.compile(r'^(\(error\) )?(ERR|WRONGTYPE|NOAUTH|NOPERM)\b', re.M)
 
@@ -43,6 +47,17 @@ def script_failed(stdout: str, stderr: str) -> bool:
     :rtype: bool
     """
     return bool(_SCRIPT_ERROR_STDERR.search(stderr or '') or _SCRIPT_ERROR_STDOUT.search(stdout or ''))
+
+
+def loading_script_errors(labels: dict) -> dict:
+    """Failed loading scripts per phase, from the ``errors_<phase>`` labels of a SUT pod or volume.
+
+    :param labels: Labels of the pod or PVC.
+    :return: Phase to number of failed scripts, only phases with failures.
+    :rtype: dict[str, int]
+    """
+    return {key[len('errors_'):]: int(value) for key, value in labels.items()
+            if key.startswith('errors_') and str(value).isdigit() and int(value) > 0}
 
 
 def load_data_asynch(
@@ -154,7 +169,9 @@ def load_data_asynch(
     # execute scripts
     times_script = dict()
     num_failed = 0                                                          # scripts with errors (script_failed), labelled errors_<script_type>
-    shellcommand ='if [ -f {scriptname} ]; then sh {scriptname}; else exit 0; fi'
+    # sh -e: the first failing command ends the script with its exit code, which kubectl
+    # reports (script_failed); without it only the last command's exit code counts
+    shellcommand = 'if [ -f {scriptname} ]; then sh -e {scriptname}; else exit 0; fi'
     for db in database:
         for c in commands:
             time_scrip_start = default_timer()
@@ -350,6 +367,9 @@ class LoadingCoordinator:
         cfg.logger.debug("LoadingCoordinator.start_pod({})".format(configuration))
         if not self.wait_for_schema(app=app, experiment=experiment, configuration=configuration):
             return
+        if getattr(cfg, 'loading_failed_fatal', ''):
+            # start_exec() ended the load (see fail_loading_fatally): no loading jobs
+            return
         loader_entries = cfg.experiment_dict['loader'] or [
             {'parallelism': parallelism, 'num_pods': num_pods}]
         num_data_jobs = len(loader_entries)
@@ -475,14 +495,24 @@ class LoadingCoordinator:
             cfg.logger.debug("check if {} is running".format(pod_sut))
             self.check()
             if not cfg.loading_started:
+                # restarts during the load make it a failed load (see check())
+                cfg.sut_restarts_at_loading_start = sum(
+                    cfg.experiment.cluster.get_pod_restart_counts(pod_sut).values())
                 cfg.apply_load_durability()
+                conflicts = cfg.load_durability_conflicts()
+                if conflicts:
+                    # nothing loaded yet: the experiment aborts with diagnostics
+                    # (ExperimentBase._loading_abort_reason), no load time is spent
+                    reason = "-xld {} cannot take effect: {}".format(cfg.load_durability, "; ".join(conflicts))
+                    print("{:30s}: {}".format(cfg.configuration, reason))
+                    self.fail_loading_fatally(reason)
+                    return False
                 try:
                     self.load_data(scripts=cfg.initscript)
                 except RuntimeError as exc:
-                    print("{:30s}: init script upload failed: {}".format(cfg.configuration, exc))
-                    cfg.loading_started = True
-                    cfg.loading_finished = True
-                    cfg.loading_active = False
+                    reason = "init scripts could not be uploaded: {}".format(exc)
+                    print("{:30s}: {}".format(cfg.configuration, reason))
+                    self.fail_loading_fatally(reason)
                     return False
             if delay > 0:
                 cfg.wait(delay)
@@ -927,11 +957,19 @@ class LoadingCoordinator:
                         if cfg.tenant_per == 'container' and not cfg.loading_finished:
                             cfg.tenant_ready_to_index = True
                         else:
-                            self.load_data(
-                                scripts=cfg.indexscript,
-                                time_offset=cfg.time_loading,
-                                time_start_int=cfg.time_loading_start,
-                                script_type='index')
+                            try:
+                                self.load_data(
+                                    scripts=cfg.indexscript,
+                                    time_offset=cfg.time_loading,
+                                    time_start_int=cfg.time_loading_start,
+                                    script_type='index')
+                            except RuntimeError as exc:
+                                # no 'index' label will come: the experiment aborts
+                                # with diagnostics (see ExperimentBase._loading_abort_reason)
+                                reason = "index scripts could not be uploaded: {}".format(exc)
+                                print("{:30s}: {}".format(cfg.configuration, reason))
+                                cfg.loading_failed.append(reason)
+                                cfg.loading_failed_fatal = reason
         else:
             loading_pods_active = False
         pod_labels = cfg.experiment.cluster.get_pods_labels(
@@ -965,19 +1003,34 @@ class LoadingCoordinator:
                 cfg.loading_finished = False
             # Write loaded=True once the terminal phase is done.
             if cfg.loading_finished and pod_labels[pod].get('loaded') != 'True':
+                # the phase is over for the pod either way; the volume is marked
+                # loaded only after a clean load, so a failed one is never reused
                 cfg.experiment.cluster.kubectl(
                     'label pod {} --overwrite loaded=True'.format(pod))
+                self.check_sut_restarts_during_loading(pod)
+                script_errors = loading_script_errors(pod_labels[pod])
+                failed = bool(cfg.loading_failed or script_errors)
+                if failed:
+                    print("{:30s}: loading failed ({}), the volume is not marked as loaded".format(
+                        cfg.configuration, "; ".join(
+                            cfg.loading_failed
+                            + ["failed {} scripts: {}".format(phase, count)
+                               for phase, count in script_errors.items()])))
+                    cfg.experiment.cluster.kubectl(
+                        'label pod {} --overwrite loading_failed=True'.format(pod))
                 use_storage = cfg.use_storage()
                 use_ramdisk = cfg.use_ramdisk()
-                if use_storage and not use_ramdisk:
+                # an inherited volume keeps the labels of the load that filled it
+                if use_storage and not use_ramdisk and not cfg.loading_inherited:
                     volume = self.get_volume_to_label()
                     if volume:
                         # what the volume holds: DDL and loading values, shape (see
                         # SutConfiguration.volume_parameter_labels); a reuse reads them
                         labels = ''.join(' {}={}'.format(key, value)
                                          for key, value in cfg.volume_parameter_labels().items())
+                        status = 'loaded=False loading_failed=True' if failed else 'loaded=True'
                         cfg.experiment.cluster.kubectl(
-                            'label pvc {} --overwrite loaded=True{}'.format(volume, labels))
+                            'label pvc {} --overwrite {}{}'.format(volume, status, labels))
             if 'time_loading_start' in pod_labels[pod]:
                 cfg.time_loading_start = int(pod_labels[pod]['time_loading_start'])
             if 'time_loading_end' in pod_labels[pod]:
@@ -996,6 +1049,43 @@ class LoadingCoordinator:
                 if key.startswith("time_"):
                     time_type = key[len("time_"):]
                     cfg.times_scripts[time_type] = float(value)
+
+    def fail_loading_fatally(self, reason: str) -> None:
+        """End this configuration's load before it ran, so the experiment aborts.
+
+        Loading counts as started and finished (nothing waits for a label that
+        will not come, no loading job is created), and the reason is recorded as
+        fatal: the experiment loop aborts with diagnostics in its next pass
+        (:meth:`ExperimentBase._loading_abort_reason`), instead of benchmarking
+        an unloaded SUT.
+
+        :param reason: Why loading cannot run.
+        """
+        cfg = self._config
+        cfg.loading_failed.append(reason)
+        cfg.loading_failed_fatal = reason
+        cfg.loading_started = True
+        cfg.loading_finished = True
+        cfg.loading_active = False
+
+    def check_sut_restarts_during_loading(self, pod: str) -> None:
+        """Add a loading failure if the SUT pod's containers restarted since loading started.
+
+        A restart during the load (e.g. an OOM kill at the end of the ingest) can
+        lose data or make later scripts fail; the load is not trusted then. Nothing
+        is checked when the count at loading start is unknown (storage reused,
+        loading by an earlier bexhoma process).
+
+        :param pod: Name of the SUT pod.
+        """
+        cfg = self._config
+        before = getattr(cfg, 'sut_restarts_at_loading_start', None)
+        if before is None:
+            return
+        after = sum(cfg.experiment.cluster.get_pod_restart_counts(pod).values())
+        if after > before:
+            cfg.loading_failed.append("SUT restarted {} time{} during loading".format(
+                after - before, '' if after - before == 1 else 's'))
 
     def split_worker_scripts(self, scripts: list) -> tuple:
         """Split a script list into the part for the SUT pod and the part for the workers.
@@ -1057,7 +1147,7 @@ class LoadingCoordinator:
                 cfg.experiment.cluster.execute_command_in_pod(
                     "sed -i 's/\\r$//' {}".format(target), pod=pod, container='dbms')
                 _, stdout, stderr = cfg.experiment.cluster.execute_command_in_pod(
-                    'sh {}'.format(target), pod=pod, container='dbms', retry_interrupted=False)
+                    'sh -e {}'.format(target), pod=pod, container='dbms', retry_interrupted=False)
                 if script_failed(stdout, stderr):
                     self.workers_failed.append('{} ({})'.format(script, pod))
                 filename, file_extension = os.path.splitext(script)
@@ -1173,7 +1263,8 @@ class LoadingCoordinator:
         service_name = cfg.get_service_sut(configuration=cfg.configuration)
         default_database = self.script_database()
         scriptfolder = '/tmp/'
-        shellcommand = 'if [ -f {s} ]; then sh {s}; else exit 0; fi'
+        # sh -e as in load_data_asynch: the first failing command fails the script
+        shellcommand = 'if [ -f {s} ]; then sh -e {s}; else exit 0; fi'
         # (script, script-as-uploaded-in-pod, target database, tenant tag for log naming)
         targets = []
         if cfg.num_tenants > 0 and cfg.tenant_per == 'schema':

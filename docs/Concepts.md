@@ -142,6 +142,8 @@ A repetition that skipped loading carries `loading_inherited = True` in its conn
 
 Loader pods generate and import benchmark data into the SUT.
 Multiple loader pods can work in parallel, splitting the work by partition or table, to reduce import time at large scale factors.
+Each loader checks the reply of its own load statements (no `COUNT(*)`, nothing that reads or changes the loaded data), prints one `BEXHOMA_INGEST:<unit>:<expected>:<reported>:<ok|failed>` line per file or table, and exits with code 1 if a unit failed.
+Loading jobs never retry a pod (`backoffLimit: 0`): a retry on a half-loaded table would load rows twice.
 
 ### Benchmarkers
 
@@ -173,13 +175,14 @@ An experiment proceeds through the following stages:
 1. **Prepare** — Bexhoma creates Kubernetes deployments, services, and PVCs for the chosen DBMS and resource profile.
 2. **Start SUT** — The DBMS container starts and becomes ready to accept connections.
 3. **Initialize** — Pre-loading init scripts run inside the SUT (e.g., schema creation, extension installation).
-4. **Load Data** — Loader pods generate and import benchmark data; the volume is marked as loaded when complete.
+4. **Load Data** — Loader pods generate and import benchmark data; the volume is marked as loaded (`loaded=True`) only when the load completed without failures: no failed loader pod, no failed loading script, no SUT restart during loading.
 5. **Post-Load Init** — Post-loading scripts run (e.g., index creation, statistics gathering).
 6. **Benchmark** — Benchmarker pods execute the workload for each configured phase; metrics and logs are collected.
 7. **Evaluate** — Results are written to the result folder; a summary is printed.
 8. **Stop & Clean** — All ephemeral components (SUT, loaders, benchmarkers, monitoring) are removed from the cluster; the data volume is retained.
 
 Steps 1–5 are skipped when the data volume already exists for the chosen DBMS/scale combination.
+A volume whose load did not finish or failed (`loaded=False`, `loading_failed=True`) is not reused: the experiment stops with "remove it (-rsr)".
 
 ---
 

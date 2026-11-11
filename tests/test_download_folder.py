@@ -67,8 +67,9 @@ class DownloadFolderTest(unittest.TestCase):
             result = self.cluster.download_folder('/results/1791653201/.', self.local, pod='dashboard-pod')
 
         self.assertEqual(result, 'copied')
+        self.assertEqual(self.commands[0], 'test -d /results/1791653201 || echo BEXHOMA_FOLDER_MISSING')
         self.assertEqual(
-            self.commands[0],
+            self.commands[1],
             'timeout -s KILL 600 tar czf /tmp/bexhoma-download-1791653201.tar.gz -C /results/1791653201 .'
             ' && echo BEXHOMA_ARCHIVE_OK')
         self.assertEqual(self.commands[-1], 'rm -f /tmp/bexhoma-download-1791653201.tar.gz')
@@ -76,6 +77,29 @@ class DownloadFolderTest(unittest.TestCase):
             with open(os.path.join(self.local, name)) as f:
                 self.assertEqual(f.read(), content)
         self.assertEqual(sorted(os.listdir(self.local)), ['pgduckdb-1-1-1-1-1', 'query_1_execution.csv'])
+
+    def test_missing_folder_is_nothing_to_download(self):
+        """A folder never written (no benchmarker pod ran) is skipped, without packing or copying."""
+        def execute_command_in_pod(command, pod='', container='', params='', retry_interrupted=True):
+            self.commands.append(command)
+            return "", "BEXHOMA_FOLDER_MISSING\n", ""
+        download_file = mock.Mock()
+        with mock.patch.object(self.cluster, 'execute_command_in_pod', side_effect=execute_command_in_pod), \
+                mock.patch.object(self.cluster, 'download_file', download_file):
+            result = self.cluster.download_folder('/results/1791653201/.', self.local, pod='dashboard-pod')
+        self.assertEqual(result, '')
+        self.assertEqual(len(self.commands), 1)
+        download_file.assert_not_called()
+
+    def test_failed_check_goes_on_as_before(self):
+        """No answer to the check (e.g. a failed exec) is not taken for a missing folder."""
+        def download_file(filename_remote, filename_local, pod, container='dashboard', max_retries=3):
+            _write_archive(filename_local, {'a.csv': 'a'})
+            return 'copied'
+        with mock.patch.object(self.cluster, 'execute_command_in_pod', side_effect=self._exec()), \
+                mock.patch.object(self.cluster, 'download_file', side_effect=download_file):
+            result = self.cluster.download_folder('/results/1791653201/.', self.local, pod='dashboard-pod')
+        self.assertEqual(result, 'copied')
 
     def test_failed_copy_still_removes_remote_archive(self):
         def download_file(filename_remote, filename_local, pod, container='dashboard', max_retries=3):

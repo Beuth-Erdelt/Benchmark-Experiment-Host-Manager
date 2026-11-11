@@ -147,6 +147,8 @@ class MetricsCollector:
         c['volume_check'] = getattr(cfg, 'volume_check', {})
         # listed loading scripts that are not in the script folder (not run)
         c['loading_skipped'] = getattr(cfg, 'loading_skipped', [])
+        # why this repetition's load counts as failed (empty: it did not fail)
+        c['loading_failed'] = list(getattr(cfg, 'loading_failed', []))
         # collect worker information
         c['worker'] = {}
         components = list(cfg.deployment_infos['statefulset'].keys())

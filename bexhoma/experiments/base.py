@@ -370,7 +370,7 @@ class ExperimentBase():
             self.workload['duration'] = math.ceil(duration_experiment)
             self.evaluate_results()
             self.store_workflow_results()
-            self.show_summary(write_report=getattr(self.args, 'write_report', False))
+            self._show_summary_or_abort_note()
         elif self.args.mode == 'load':
             start = default_timer()
             start_datetime = str(datetime.now())
@@ -396,9 +396,9 @@ class ExperimentBase():
             self.workload['duration'] = math.ceil(duration_experiment)
             self.evaluate_results()
             self.store_workflow_results()
-            self.show_summary(write_report=getattr(self.args, 'write_report', False))
+            self._show_summary_or_abort_note()
         elif self.args.mode == 'summary':
-            self.show_summary(write_report=getattr(self.args, 'write_report', False))
+            self._show_summary_or_abort_note()
         else:
             # total time of experiment
             start = default_timer()
@@ -422,11 +422,48 @@ class ExperimentBase():
             self.evaluate_results()
             self.store_workflow_results()
             # zip() skipped: causes OOM (exit code 137) in large experiments
-            if test_result:
+            if test_result and self._has_result_files():
                 test_result_code = self.test_results()
                 if test_result_code == 0:
                     print("Test successful!")
+            self._show_summary_or_abort_note()
+    def _has_result_files(self) -> bool:
+        """Whether the result folder has the files a summary is built from.
+
+        ``queries.config`` and ``connections.config`` are written with the first
+        benchmarking round (or at the end of a load-only run); an experiment
+        aborted before that (e.g. a load that failed before it ran) has neither.
+
+        :rtype: bool
+        """
+        return all(os.path.isfile(self.result_filename_local(name))
+                   for name in ('queries.config', 'connections.config'))
+
+    def _show_summary_or_abort_note(self) -> None:
+        """Print the summary, or a short one when the experiment ended before its first result."""
+        if self._has_result_files():
             self.show_summary(write_report=getattr(self.args, 'write_report', False))
+        else:
+            self.show_summary_aborted()
+
+    def show_summary_aborted(self) -> None:
+        """Print what is known of an experiment that ended before any result was written.
+
+        The workload and the tests recorded while it ran (e.g. why loading
+        failed); there are no connections, loading or benchmarking results.
+        """
+        print("\n## Show Summary")
+        print("\n### Workload\n" + str(self.workload.get('name', '')))
+        print("* Code: " + str(self.code))
+        if self.workload.get('info'):
+            print("* " + self.workload['info'].replace('\n', '\n  * '))
+        print("* No results: the experiment ended before its first result was written, see the tests")
+        self._test_results = list(self._runtime_test_results)
+        # the loader pods' logs and descriptions are in the result folder even then
+        self._show_loader_pod_checks([{'name': c.configuration, 'configuration': c.configuration}
+                                      for c in getattr(self, 'configurations', [])])
+        self._print_test_summary()
+
     def benchmarking_is_active(self) -> bool:
         """
         Returns True, when this is a benchmarking experiment.
@@ -1561,8 +1598,17 @@ class ExperimentBase():
                          pod_dashboard: str = '') -> None:
         """
         Let the dashboard pod build the evaluations.
+
+        An experiment that ended before its first result was written (see
+        :meth:`_has_result_files`) has nothing to evaluate or download: only the
+        local result folder (logs, descriptions) is uploaded.
         """
         self.cluster.logger.debug('base.evaluate_results()')
+        if not self._has_result_files():
+            print("{:30s}: no results to evaluate (the experiment ended before its first result)".format("Experiment"))
+            print("{:30s}: uploading full results".format("Experiment"))
+            self.upload_experiment_file(filename='')
+            return
         self.evaluator.evaluate_results(pod_dashboard)
         self.workload['workflow_errors'] = self.evaluator.workflow_errors
         if len(pod_dashboard) == 0:
@@ -1879,6 +1925,74 @@ class ExperimentBase():
             print("* loading skipped, loading times copied from an earlier repetition: {}".format(", ".join(inherited)))
         self._show_volume_checks(connections_sorted)
         self._show_init_script_checks(connections_sorted)
+        self._show_loader_pod_checks(connections_sorted)
+        self._show_loading_failures(connections_sorted)
+
+    def _show_loader_pod_checks(self, connections_sorted: list) -> None:
+        """
+        Print failed loader pods and failed ingestion units, and record the test ``Loader pods without errors``.
+
+        Judged from the result folder only (:func:`bexhoma.loading_checks.check_loader_pods`):
+        stored pod and job descriptions of the loading jobs and the
+        ``BEXHOMA_INGEST`` lines of the loader container logs. Records nothing
+        when no loader pod of this experiment was stored (loading by scripts
+        only, or a reused volume).
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        from bexhoma.loading_checks import check_loader_pods
+        configurations = sorted({c.get('configuration', c['name']) for c in connections_sorted})
+        checks = check_loader_pods(getattr(self, 'path', ''), getattr(self, 'appname', 'bexhoma'),
+                                   getattr(self, 'code', ''), configurations)
+        if not checks:
+            return
+        units = [u for check in checks.values() for u in check.units]
+        if units:
+            print("\n### Ingestion")
+            for configuration, check in sorted(checks.items()):
+                if check.units:
+                    num_ok = sum(1 for u in check.units if u.ok)
+                    print("* {}: {} of {} units ok".format(configuration, num_ok, len(check.units)))
+        failed = {configuration: check.failures for configuration, check in checks.items() if check.failures}
+        if failed:
+            print("\n### Loader Pods with Errors")
+            for configuration, failures in sorted(failed.items()):
+                for failure in failures:
+                    print("* {}: {}".format(configuration, failure))
+            self._record_test(False, "Loader pods without errors (failed: {})".format("; ".join(
+                "{}: {}".format(configuration, len(failures)) for configuration, failures in sorted(failed.items()))))
+        else:
+            self._record_test(True, "Loader pods without errors")
+
+    def _show_loading_failures(self, connections_sorted: list) -> None:
+        """
+        Print why a load counts as failed, and record the test ``Loading completed without failures``.
+
+        The reasons are collected while loading (``loading_failed`` of the
+        connection, e.g. a SUT restart during the load or a script upload that
+        failed). A volume of a failed load is never labelled ``loaded=True``.
+        Results written before ``loading_failed`` was recorded record nothing.
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        recorded = [c for c in connections_sorted if 'loading_failed' in c]
+        if not recorded:
+            return
+        failed = {}
+        for c in recorded:
+            for reason in c['loading_failed'] or []:
+                reasons = failed.setdefault(c.get('configuration', c['name']), [])
+                if reason not in reasons:
+                    reasons.append(reason)
+        if failed:
+            print("\n### Failed Loading")
+            for configuration, reasons in sorted(failed.items()):
+                for reason in reasons:
+                    print("* {}: {}".format(configuration, reason))
+            self._record_test(False, "Loading completed without failures (failed: {})".format("; ".join(
+                "{}: {}".format(configuration, ", ".join(reasons)) for configuration, reasons in sorted(failed.items()))))
+        else:
+            self._record_test(True, "Loading completed without failures")
 
     def _init_script_errors(self, configurations: list) -> dict:
         """
@@ -2106,6 +2220,9 @@ class ExperimentBase():
         now: datetime,
     ) -> Optional[str]:
         """Return why an active load must abort, or ``None`` while it may continue."""
+        fatal = getattr(config, 'loading_failed_fatal', '')
+        if fatal:
+            return f"Loading of {config.configuration} failed: {fatal}"
         if not config.loading_started or config.loading_finished:
             config.loading_started_at = None
             return None
@@ -2132,6 +2249,33 @@ class ExperimentBase():
                 f"{self.max_loading_minutes} minute timeout"
             )
         return None
+
+    def _start_sut_or_abort(self, config: "SutConfiguration") -> bool:
+        """Start the SUT of a configuration; abort the experiment when it is refused.
+
+        :meth:`LifecycleManager.start_sut` refuses with a :class:`ValueError` before
+        anything of the configuration exists, e.g. for a volume that holds an
+        unfinished or failed load or is on another storage class. The refusal is
+        handled like a load that failed before it ran: a failed test with the
+        reason, diagnostics, and every component of the experiment removed, instead
+        of a traceback that leaves the other configurations running.
+
+        :param config: The configuration whose SUT starts.
+        :return: False if the experiment was aborted.
+        :rtype: bool
+        """
+        try:
+            config.lifecycle.start_sut()
+            return True
+        except ValueError as exc:
+            reason = str(exc)
+            prefix = config.configuration + ': '
+            if reason.startswith(prefix):
+                reason = reason[len(prefix):]
+            print("{:30s}: SUT not started: {}".format(config.configuration, reason))
+            config.loader.fail_loading_fatally(reason)
+            self._abort_loading_if_needed(config, datetime.utcnow())
+            return False
 
     def _abort_loading_if_needed(
         self,
@@ -2700,7 +2844,8 @@ class ExperimentBase():
                                     we_can_start_new_sut = False
                             if we_can_start_new_sut:
                                 print("{:30s}: will start now".format(config.configuration))
-                                config.lifecycle.start_sut()
+                                if not self._start_sut_or_abort(config):
+                                    return
                                 num_pods_pending_experiment += 1
                                 num_pods_pending_cluster += 1
                                 if config.max_sut_dbms is not None:
@@ -2773,6 +2918,10 @@ class ExperimentBase():
                                     config.loader.start_pod(parallelism=config.num_loading, num_pods=config.num_loading_pods)
                                 else:
                                     config.loader.start_exec()
+                # a load that ended before it ran (start_exec: refused -xld, failed upload) counts
+                # as finished, so abort here, before a benchmark starts against an empty database
+                if config.loading_failed_fatal and self._abort_loading_if_needed(config, datetime.utcnow()):
+                    return
                 _has_benchmarks = (
                     (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
                     or len(config.benchmark_list) > 0

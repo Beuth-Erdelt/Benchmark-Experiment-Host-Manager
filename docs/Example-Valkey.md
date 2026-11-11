@@ -1780,8 +1780,8 @@ In `cluster.config` there is a section:
     'attachWorker': '',
     'template': {
         'version': 'xxx',
-        'alias': 'Key-Value-1',
-        'docker_alias': 'KV1',
+        'alias': 'Key-Value-2',
+        'docker_alias': 'KV2',
         'auth': ["root", ""],
     },
     'logfile': '/var/log/valkey/valkey-server.log',

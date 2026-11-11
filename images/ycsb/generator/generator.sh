@@ -36,8 +36,9 @@ then
 
     if test $sleep_seconds -lt 0
     then
+        # #848: this pod loads nothing, so the load is incomplete
         echo "start time has already passed"
-        exit 0
+        exit 1
     fi
 
     sleep $sleep_seconds
@@ -271,34 +272,59 @@ if [[ "$BEXHOMA_DBMS_TYPE" == "redis" ]]; then
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG -s
+        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG -s 2>&1 | tee -a /tmp/ycsb_load.txt
+        YCSB_RC=${PIPESTATUS[0]}
     else
-        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG
+        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG 2>&1 | tee -a /tmp/ycsb_load.txt
+        YCSB_RC=${PIPESTATUS[0]}
     fi
 elif [[ "$BEXHOMA_DBMS_TYPE" == "redis-cluster" ]]; then
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true $YCSB_MAXEXECTIME_FLAG -s
+        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true $YCSB_MAXEXECTIME_FLAG -s 2>&1 | tee -a /tmp/ycsb_load.txt
+        YCSB_RC=${PIPESTATUS[0]}
     else
-        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true $YCSB_MAXEXECTIME_FLAG
+        time bin/ycsb load redis -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR -p redis.cluster=true $YCSB_MAXEXECTIME_FLAG 2>&1 | tee -a /tmp/ycsb_load.txt
+        YCSB_RC=${PIPESTATUS[0]}
     fi
 elif [[ "$BEXHOMA_DBMS_TYPE" == "cassandra" ]]; then
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb load cassandra-cql -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG -s
+        time bin/ycsb load cassandra-cql -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG -s 2>&1 | tee -a /tmp/ycsb_load.txt
+        YCSB_RC=${PIPESTATUS[0]}
     else
-        time bin/ycsb load cassandra-cql -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG
+        time bin/ycsb load cassandra-cql -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG 2>&1 | tee -a /tmp/ycsb_load.txt
+        YCSB_RC=${PIPESTATUS[0]}
     fi
 else
     if test $YCSB_STATUS -ne 0
     then
         # report status
-        time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG -s
+        time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG -s 2>&1 | tee -a /tmp/ycsb_load.txt
+        YCSB_RC=${PIPESTATUS[0]}
     else
-        time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG
+        time bin/ycsb load jdbc -P $FILENAME -P db.properties -cp jars/$BEXHOMA_JAR $YCSB_MAXEXECTIME_FLAG 2>&1 | tee -a /tmp/ycsb_load.txt
+        YCSB_RC=${PIPESTATUS[0]}
     fi
+fi
+
+######################## Check the load (#848) ###################
+# YCSB exits 0 even when inserts failed: every insert of this pod (insertcount of the
+# workload file) must come back OK (BATCHED_OK with -xbs), none may fail
+EXPECTED=$(grep -E '^insertcount=[0-9]+' $FILENAME | head -1 | cut -d= -f2)
+INSERTED=$(grep -E '^\[INSERT\], Return=(OK|BATCHED_OK), ' /tmp/ycsb_load.txt | awk -F', ' '{s+=$3} END {print s+0}')
+NOT_OK=$(grep -E '^\[INSERT(-FAILED)?\], Return=' /tmp/ycsb_load.txt | grep -vE 'Return=(OK|BATCHED_OK), ' | awk -F', ' '{s+=$3} END {print s+0}')
+FAILED_OPS=$(grep -E '^\[INSERT-FAILED\], Operations, ' /tmp/ycsb_load.txt | awk -F', ' '{s+=$3} END {print s+0}')
+echo "YCSB load: exit code ${YCSB_RC:-?}, expected ${EXPECTED:-?}, inserted $INSERTED, not ok $NOT_OK, failed $FAILED_OPS"
+if [ "${YCSB_RC:-1}" -eq 0 ] && [ "$NOT_OK" -eq 0 ] && [ "$FAILED_OPS" -eq 0 ] && { [ -z "$EXPECTED" ] || [ "$INSERTED" == "$EXPECTED" ]; }
+then
+    echo "BEXHOMA_INGEST:usertable-$BEXHOMA_CHILD:$EXPECTED:$INSERTED:ok"
+    LOAD_FAILED=0
+else
+    echo "BEXHOMA_INGEST:usertable-$BEXHOMA_CHILD:$EXPECTED:$INSERTED:failed"
+    LOAD_FAILED=1
 fi
 
 ######################## End time measurement ###################
@@ -354,5 +380,10 @@ echo "YCSB_MAX_EXECUTION:$YCSB_MAX_EXECUTION"
 echo "FILENAME:$FILENAME"
 echo "FILENAME_TEMPLATE:$FILENAME_TEMPLATE"
 
-######################## Exit successfully ###################
+######################## Exit ###################
+if test $LOAD_FAILED -ne 0
+then
+    echo "Loading failed"
+    exit 1
+fi
 exit 0
