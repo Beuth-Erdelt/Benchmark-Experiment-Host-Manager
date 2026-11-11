@@ -32,7 +32,7 @@ This file covers the shared design and decisions that apply across both.
 |---|---|
 | Benchmarker always synchronises | All parallel pods must start at the same time to measure concurrent throughput correctly; there is no `BEXHOMA_SYNCH_LOAD` skip flag |
 | Generator has no Redis dependency | The TPC-C load is single-pod only; no key-space partitioning is needed |
-| `runtimer` proc only in mysql/mariadb/citus/mssqlserver | PostgreSQL's HammerDB driver does not require the explicit timer proc |
+| `runtimer` proc only in mysql/mariadb/citus/mssqlserver/oracle | PostgreSQL's HammerDB driver does not require the explicit timer proc |
 | `HAMMERDB_TIMEPROFILE=true` by default | The evaluator reads `/tmp/hdbxtprofile.log` to extract per-transaction latency statistics |
 
 ## Supported backends
@@ -44,6 +44,7 @@ This file covers the shared design and decisions that apply across both.
 | `mariadb` | `maria` | Same schema as MySQL |
 | `citus` | `pg` | PostgreSQL + `pg_cituscompat true`, `pg_storedprocs false` |
 | `mssqlserver` | `mssqls` | SQL Server over ODBC Driver 18 (`mssqls_linux_odbc`), SQL authentication, `mssqls_trust_server_cert true` for the self-signed certificate; database `mssqls_dbase` = `BEXHOMA_DATABASE` |
+| `oracle` | `ora` | Oracle over the Instant Client of the image; `instance` = `//BEXHOMA_HOST:BEXHOMA_PORT/ORACLE_SERVICE` (default `FREEPDB1`); HammerDB creates the user `tpcc_user` = `BEXHOMA_DATABASE` (`tpcc`) as `system`, both with `BEXHOMA_PASSWORD`; tablespaces `users`/`temp` |
 
 ## Style conventions
 

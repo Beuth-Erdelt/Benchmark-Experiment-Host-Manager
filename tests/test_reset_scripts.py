@@ -53,6 +53,7 @@ EXPECTED = {
         'Citus': ['reset-ycsb.sql'],
         'CedarDB': ['reset-ycsb.sql'],
         'SQLServer': ['reset-ycsb.sql'],
+        'OracleDB': ['reset-ycsb.sql'],
         'Dragonfly': ['save-snapshot.sh'],
         'Redis': ['save-snapshot.sh'],
         'Valkey': ['save-snapshot.sh'],
@@ -70,6 +71,7 @@ EXPECTED = {
         'Citus': ['reset-benchbase.sql'],
         'CedarDB': ['reset-benchbase.sql'],
         'SQLServer': ['reset-benchbase.sql'],
+        'OracleDB': ['reset-benchbase.sql'],
     },
     'hammerdb.py': {
         'PostgreSQL': ['reset-tpcc.sql'],
@@ -77,6 +79,7 @@ EXPECTED = {
         'MariaDB': ['reset-tpcc.sql', _FLUSH],
         'Citus': ['reset-tpcc.sql'],
         'SQLServer': ['reset-tpcc.sql'],
+        'OracleDB': ['reset-tpcc.sql'],
     },
     'tpch.py': {
         'PostgreSQL': ['reset-tpch.sql'],
@@ -88,6 +91,7 @@ EXPECTED = {
         'Citus': ['reset-tpch.sql'],
         'CedarDB': ['reset-tpch.sql'],
         'SQLServer': ['reset-tpch.sql'],
+        'OracleDB': ['reset-tpch.sql'],
         'ClickHouse': [_FLUSH],
         'ClickHouseCluster': ['reset-tpch.sql', _FLUSH],
     },

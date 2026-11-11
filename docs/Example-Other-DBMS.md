@@ -85,6 +85,48 @@ bexhoma tpch \
 
 `-xii`, `-xic` and `-xis` create the indexes, add the foreign keys and update the statistics after loading.
 
+## Oracle Database Free
+
+Oracle Database Free is the free edition of Oracle Database, the successor of Express Edition (XE) [3].
+Bexhoma runs Oracle AI Database 26ai Free 23.26.3 from the image `container-registry.oracle.com/database/free` with the template [deploymenttemplate-OracleDB.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OracleDB.yml).
+The edition uses at most 2 CPU threads, 2 GB of memory and 12 GB of user data, so scale factors stay small (TPC-H SF 1 is about 1.7 GB with indexes).
+
+The results of Oracle are kept internal: there are no results of it on this page, in the documentation or in the repository.
+
+| Workload | Runs | Note |
+|---|---|---|
+| TPC-H | yes | dialect `Oracle` of the query file; also with a refresh stream (`-xrs`) |
+| YCSB | yes, except workload E | JDBC binding; its scans use `LIMIT`, which Oracle does not have |
+| Benchbase `tpcc` | yes | the only Benchbase benchmark with an Oracle config |
+| HammerDB TPC-C | yes | Oracle Instant Client of the HammerDB image |
+| TPC-DS, SSB | no | the query files have no `Oracle` variants |
+
+See [DBMS](DBMS.html#oracle-database-free) for the deployment, the loaders and the scripts.
+
+The test scripts [`scripts/test-docs-oracledb.sh`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-oracledb.sh) and [`scripts/test-docs-oracledb.ps1`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-oracledb.ps1) run all these workloads, one after the other.
+They write their logs to `logs_tests/local`, which is not part of the repository; the logs must not be passed on.
+
+An example call, TPC-H at SF 1 on a persistent volume:
+
+```bash
+bexhoma tpch \
+  -dbms OracleDB \
+  -sf 1 \
+  -nlp 4 \
+  -xii -xic -xis \
+  -lr 8Gi -rr 8Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
+  -nc 2 \
+  -ar \
+  -ks no \
+  -tr \
+  run
+```
+
+`-xii`, `-xic` and `-xis` create the indexes, add the foreign keys and gather the optimizer statistics after loading.
+
 [1] https://cedardb.com
 
 [2] https://www.microsoft.com/sql-server
+
+[3] https://www.oracle.com/database/free/

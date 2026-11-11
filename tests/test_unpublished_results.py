@@ -3,7 +3,8 @@ Guard for DBMS whose benchmark results must not be published.
 
 SQL Server: the license terms of the Developer edition (section "Benchmark
 testing") require Microsoft's prior written approval to disclose benchmark
-results (issue #834). CedarDB: its results are kept internal as well.
+results (issue #834). CedarDB and Oracle Database Free (#828): their results
+are kept internal as well.
 For these DBMS the repository may describe how to deploy and run them, but
 holds no results:
 
@@ -37,6 +38,7 @@ _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UNPUBLISHED = {
     'SQLServer': ('sqlserver', 'license: results need Microsoft\'s prior written approval (#834)'),
     'CedarDB': ('cedardb', 'results are kept internal'),
+    'OracleDB': ('oracledb', 'results are kept internal (#828)'),
 }
 
 #: Directory of the logs of these DBMS (git-ignored), as the scripts write it.

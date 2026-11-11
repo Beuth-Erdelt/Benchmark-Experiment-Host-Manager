@@ -1271,6 +1271,144 @@
    "worker_metric_strip_container": false
   },
   {
+   "_jobtemplate_loading": "jobtemplate-loading-tpch-OracleDB.yml",
+   "additional_labels": {
+    "SF": "1",
+    "experiment_design": "parallel-loading",
+    "usecase": "tpc-h"
+   },
+   "alias": "General-H",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "DBMSBENCHMARKER_DEV": 0,
+    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [],
+   "benchmarking_parameters_list_template": [],
+   "configuration": "OracleDB-1",
+   "data_components": null,
+   "dialect": "Oracle",
+   "docker": "OracleDB",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "dbmsbenchmarker",
+       "fixed_parallelism": false,
+       "name": "tpch",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "DBMSBENCHMARKER_DEV": 0,
+        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-tpch.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "dbmsbenchmarker",
+      "name": "tpch-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_SYNCH_GENERATE": 1,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PODS_PARALLEL": "1",
+       "PODS_TOTAL": "1",
+       "SF": "1",
+       "STORE_RAW_DATA": 1,
+       "STORE_RAW_DATA_RECREATE": 0,
+       "TPCH_TABLE": "",
+       "TRANSFORM_RAW_DATA": 1
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-tpch-OracleDB.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_SYNCH_GENERATE": 1,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PODS_PARALLEL": "1",
+    "PODS_TOTAL": "1",
+    "SF": "1",
+    "STORE_RAW_DATA": 1,
+    "STORE_RAW_DATA_RECREATE": 0,
+    "TPCH_TABLE": "",
+    "TRANSFORM_RAW_DATA": 1
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "OracleDB",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": "shared",
+    "storageConfiguration": "oracledb",
+    "storageSize": "10Gi"
+   },
+   "storage_label": "tpch-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-OracleDB.yml",
+   "tenant_per": "",
+   "volume": "tpch",
+   "worker_metric_strip_container": false
+  },
+  {
    "_jobtemplate_loading": "jobtemplate-loading-tpch-PostgreSQL.yml",
    "additional_labels": {
     "SF": "1",

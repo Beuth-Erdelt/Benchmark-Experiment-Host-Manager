@@ -532,6 +532,174 @@
     "usecase": "hammerdb_tpcc",
     "warehouses": "1"
    },
+   "alias": "General-H",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "HAMMERDB_DURATION": "5",
+    "HAMMERDB_KEYANDTHINK": "false",
+    "HAMMERDB_RAMPUP": "2",
+    "HAMMERDB_TIMEPROFILE": "false",
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BEXHOMA_DATABASE": "tpcc",
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "HAMMERDB_DURATION": "5",
+     "HAMMERDB_KEYANDTHINK": "false",
+     "HAMMERDB_NUM_VU": "1",
+     "HAMMERDB_RAMPUP": "2",
+     "HAMMERDB_TIMEPROFILE": "false",
+     "HAMMERDB_TYPE": "oracle",
+     "HAMMERDB_VUSERS": 1,
+     "SF": "1"
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BEXHOMA_DATABASE": "tpcc",
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "HAMMERDB_DURATION": "5",
+     "HAMMERDB_KEYANDTHINK": "false",
+     "HAMMERDB_NUM_VU": "1",
+     "HAMMERDB_RAMPUP": "2",
+     "HAMMERDB_TIMEPROFILE": "false",
+     "HAMMERDB_TYPE": "oracle",
+     "HAMMERDB_VUSERS": 1,
+     "SF": "1"
+    }
+   ],
+   "configuration": "OracleDB-1",
+   "data_components": null,
+   "dialect": "Oracle",
+   "docker": "OracleDB",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "hammerdb",
+       "fixed_parallelism": false,
+       "name": "hammerdb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BEXHOMA_DATABASE": "tpcc",
+        "BEXHOMA_SYNCH_LOAD": 1,
+        "HAMMERDB_DURATION": "5",
+        "HAMMERDB_KEYANDTHINK": "false",
+        "HAMMERDB_NUM_VU": "1",
+        "HAMMERDB_RAMPUP": "2",
+        "HAMMERDB_TIMEPROFILE": "false",
+        "HAMMERDB_TYPE": "oracle",
+        "HAMMERDB_VUSERS": 1,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-tpcc.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-hammerdb.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "hammerdb",
+      "name": "tpcc-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_DATABASE": "tpcc",
+       "HAMMERDB_DURATION": "5",
+       "HAMMERDB_KEYANDTHINK": "false",
+       "HAMMERDB_NUM_VU": 1,
+       "HAMMERDB_RAMPUP": "2",
+       "HAMMERDB_TIMEPROFILE": "false",
+       "HAMMERDB_TYPE": "oracle",
+       "HAMMERDB_VUSERS": 1,
+       "SF": "1"
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-hammerdb.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_DATABASE": "tpcc",
+    "HAMMERDB_DURATION": "5",
+    "HAMMERDB_KEYANDTHINK": "false",
+    "HAMMERDB_NUM_VU": 1,
+    "HAMMERDB_RAMPUP": "2",
+    "HAMMERDB_TIMEPROFILE": "false",
+    "HAMMERDB_TYPE": "oracle",
+    "HAMMERDB_VUSERS": 1,
+    "SF": "1"
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "OracleDB",
+   "prometheus_interval": "10s",
+   "prometheus_timeout": "10s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "oracledb",
+    "storageSize": ""
+   },
+   "storage_label": "hammerdb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-OracleDB.yml",
+   "tenant_per": "",
+   "volume": "tpcc",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "experiment_design": "4",
+    "usecase": "hammerdb_tpcc",
+    "warehouses": "1"
+   },
    "alias": "General-B",
    "benchmark_list": [
     1
