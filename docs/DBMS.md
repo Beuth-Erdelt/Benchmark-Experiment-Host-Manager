@@ -713,7 +713,7 @@ There is no exporter (`-ma`); only cAdvisor metrics are collected.
 | TPC-H loading | `bcp` (mssql-tools18), one transaction per file, `TABLOCK` | `bexhoma/loader_tpch_sqlserver` ([`images/tpch/loader_sqlserver`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/tpch/loader_sqlserver)) |
 | TPC-H refresh stream (`-xrs`) | `bcp`, staging table for RF2 | `bexhoma/loader_tpch_refresh_sqlserver` |
 | TPC-H queries | JDBC `mssql-jdbc-12.8.1.jre8.jar` | `bexhoma/benchmarker_dbmsbenchmarker` |
-| YCSB | JDBC binding (`SELECT TOP` for scans), `mssql-jdbc-12.8.1.jre8.jar` | `bexhoma/generator_ycsb`, `bexhoma/benchmarker_ycsb` |
+| YCSB | JDBC binding (`SELECT TOP` for scans), `mssql-jdbc-9.4.1.jre8.jar` (`BEXHOMA_JAR`): the binding splits `db.url` at `;` into shards, so the URL keeps no options; 9.4.1 is the last driver that does not encrypt by default, and the database is the default database of `sa` (`initschema-ycsb.sql`) | `bexhoma/generator_ycsb`, `bexhoma/benchmarker_ycsb` |
 | Benchbase | profile `sqlserver` of the Benchbase image; only `tpcc` has a config (`images/benchbase/config/sqlserver`) | `bexhoma/generator_benchbase`, `bexhoma/benchmarker_benchbase` |
 | HammerDB | `HAMMERDB_TYPE=mssqlserver` (`dbset db mssqls`, ODBC Driver 18 for SQL Server) | `bexhoma/generator_hammerdb`, `bexhoma/benchmarker_hammerdb` |
 

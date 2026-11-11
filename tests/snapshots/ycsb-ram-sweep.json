@@ -4717,6 +4717,7 @@
     {
      "BEXHOMA_DATABASE": "ycsb",
      "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_JAR": "mssql-jdbc-9.4.1.jre8.jar",
      "BEXHOMA_SYNCH_LOAD": 1,
      "PARALLEL": "1",
      "SF": "1",
@@ -4736,6 +4737,7 @@
     {
      "BEXHOMA_DATABASE": "ycsb",
      "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_JAR": "mssql-jdbc-9.4.1.jre8.jar",
      "BEXHOMA_SYNCH_LOAD": 1,
      "PARALLEL": "1",
      "SF": "1",
@@ -4770,6 +4772,7 @@
        "parameters": {
         "BEXHOMA_DATABASE": "ycsb",
         "BEXHOMA_DBMS_TYPE": "jdbc",
+        "BEXHOMA_JAR": "mssql-jdbc-9.4.1.jre8.jar",
         "BEXHOMA_SYNCH_LOAD": 1,
         "PARALLEL": "1",
         "SF": "1",
@@ -4801,6 +4804,7 @@
       "parameters": {
        "BEXHOMA_DATABASE": "ycsb",
        "BEXHOMA_DBMS_TYPE": "jdbc",
+       "BEXHOMA_JAR": "mssql-jdbc-9.4.1.jre8.jar",
        "BEXHOMA_SYNCH_LOAD": 1,
        "PARALLEL": "1",
        "SF": "1",
@@ -4825,6 +4829,7 @@
    "loading_parameters": {
     "BEXHOMA_DATABASE": "ycsb",
     "BEXHOMA_DBMS_TYPE": "jdbc",
+    "BEXHOMA_JAR": "mssql-jdbc-9.4.1.jre8.jar",
     "BEXHOMA_SYNCH_LOAD": 1,
     "PARALLEL": "1",
     "SF": "1",
@@ -4918,6 +4923,7 @@
     {
      "BEXHOMA_DATABASE": "ycsb",
      "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_JAR": "mssql-jdbc-9.4.1.jre8.jar",
      "BEXHOMA_SYNCH_LOAD": 1,
      "PARALLEL": "1",
      "SF": "1",
@@ -4937,6 +4943,7 @@
     {
      "BEXHOMA_DATABASE": "ycsb",
      "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_JAR": "mssql-jdbc-9.4.1.jre8.jar",
      "BEXHOMA_SYNCH_LOAD": 1,
      "PARALLEL": "1",
      "SF": "1",
@@ -4971,6 +4978,7 @@
        "parameters": {
         "BEXHOMA_DATABASE": "ycsb",
         "BEXHOMA_DBMS_TYPE": "jdbc",
+        "BEXHOMA_JAR": "mssql-jdbc-9.4.1.jre8.jar",
         "BEXHOMA_SYNCH_LOAD": 1,
         "PARALLEL": "1",
         "SF": "1",
@@ -5002,6 +5010,7 @@
       "parameters": {
        "BEXHOMA_DATABASE": "ycsb",
        "BEXHOMA_DBMS_TYPE": "jdbc",
+       "BEXHOMA_JAR": "mssql-jdbc-9.4.1.jre8.jar",
        "BEXHOMA_SYNCH_LOAD": 1,
        "PARALLEL": "1",
        "SF": "1",
@@ -5026,6 +5035,7 @@
    "loading_parameters": {
     "BEXHOMA_DATABASE": "ycsb",
     "BEXHOMA_DBMS_TYPE": "jdbc",
+    "BEXHOMA_JAR": "mssql-jdbc-9.4.1.jre8.jar",
     "BEXHOMA_SYNCH_LOAD": 1,
     "PARALLEL": "1",
     "SF": "1",

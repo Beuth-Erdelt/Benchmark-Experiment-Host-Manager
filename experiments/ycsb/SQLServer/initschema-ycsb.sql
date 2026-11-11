@@ -9,7 +9,14 @@
 --          (/tmp/bexhoma-database.sql of the template), which also switches to it.
 --          The fields are VARCHAR(MAX): the field length is set by the workload;
 --          values up to 8000 bytes stay in the row.
+--          The JDBC binding of YCSB splits db.url at ';' into shard URLs, so the
+--          URL cannot name the database: the database (sqlcmd variable database)
+--          becomes the default database of the login sa. The SUT runs only this
+--          benchmark, and the setting is kept in master on the volume.
 --          No curly braces in this file: bexhoma may fill it with str.format().
+
+ALTER LOGIN sa WITH DEFAULT_DATABASE = [$(database)];
+GO
 
 CREATE TABLE dbo.usertable (
     YCSB_KEY    VARCHAR(255)    NOT NULL,
