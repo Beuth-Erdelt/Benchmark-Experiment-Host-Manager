@@ -39,6 +39,11 @@ images/tpch/
 │   ├── loader.sh          — loads .tbl via SQL*Loader
 │   ├── ctl/               — SQL*Loader control files, one per table
 │   └── README.md          — environment variable reference + execution flow
+├── loader_db2/
+│   ├── Dockerfile         — Db2 loader image (python:3.12-slim + ibm_db)
+│   ├── loader.sh          — loads .tbl via load.py
+│   ├── load.py            — remote external table insert, one transaction per chunk
+│   └── README.md          — environment variable reference + execution flow
 └── README.md              — this file
 ```
 
@@ -69,6 +74,7 @@ of them.
 | MonetDB | `mclient COPY N RECORDS INTO ... FROM STDIN` | Writes `.monetdb` credentials file; retries on worker thread errors |
 | SQL Server | `bcp ... in` (mssql-tools18) | One transaction per file, `TABLOCK`; schema `dbo` unless `BEXHOMA_SCHEMA`; retries only on connection errors |
 | Oracle | `sqlldr` (Instant Client tools) | Conventional path, one commit per 50000 rows, `errors=0`; schema `BEXHOMA_DATABASE` unless `BEXHOMA_SCHEMA`; retries only on connection errors |
+| Db2 | `load.py` (`ibm_db`, IBM Data Server Driver for ODBC and CLI) | Remote external table (`INSERT ... SELECT * FROM EXTERNAL ... REMOTESOURCE 'YES'`), one transaction per chunk of 200000 lines, `MAXERRORS 1`; default schema of the user unless `BEXHOMA_SCHEMA`; retries a chunk only on connection errors |
 
 ## Style conventions
 

@@ -58,7 +58,7 @@ Files whose names contain `filled` are generated variants with Bexhoma placehold
 | `Clickhouse` | `tpch` | `cat … \| clickhouse-client --format_csv_delimiter="\|"` | None | `ENGINE = MergeTree() ORDER BY …`; `Int32` / `Float64` types |
 | `CockroachDB` | varies | `COPY` / `INSERT` | PK + FK | PostgreSQL-compatible SQL |
 | `YugabyteDB` | varies | `COPY` | PK + FK | PostgreSQL-compatible SQL |
-| `DB2` | varies | SQL | PK + FK | IBM DB2 dialect |
+| `DB2` | `DB2INST1` | remote external table (`INSERT … SELECT * FROM EXTERNAL … REMOTESOURCE 'YES'`) of the loader `loader_tpch_db2` | PK (inline) + FK | IBM Db2 Community Edition; scripts run as `db2inst1` in the database `BEXHOMA` (`/tmp/bexhoma-run.sh`); `INTEGER`/`BIGINT` keys, `DECIMAL(15,2)`; statistics with `RUNSTATS`; dialect `DB2` |
 | `MonetDB` | varies | `COPY … INTO … FROM … USING DELIMITERS '\|'` | PK (FK optional) | `initschemadummy` variant used for loading |
 | `CedarDB` | `public` | `COPY … FROM … DELIMITER '\|' NULL ''` | PK + FK | `\COPY` of the PostgreSQL loader with the plain schema; no SF100 (64 GiB limit) |
 | `DatabaseService` | `public` | `COPY … FROM … DELIMITER '\|' NULL ''` | PK + FK | `\COPY` of the PostgreSQL loader with the plain schema; no SF100 (64 GiB limit) |

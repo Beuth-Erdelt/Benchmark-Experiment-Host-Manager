@@ -125,8 +125,51 @@ bexhoma tpch \
 
 `-xii`, `-xic` and `-xis` create the indexes, add the foreign keys and gather the optimizer statistics after loading.
 
+## IBM Db2 Community Edition
+
+IBM Db2 Community Edition is the free edition of Db2 for Linux, UNIX and Windows [4].
+Bexhoma runs Db2 12.1.5 from the image `icr.io/db2_community/db2` with the template [deploymenttemplate-DB2.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-DB2.yml).
+The edition uses at most 4 cores and 8 GB of instance memory; the container needs the capability `IPC_OWNER`, not privileged mode.
+The template switches off the AI query optimizer, which the image ships as Technology Preview Code.
+
+The results of Db2 are kept internal: there are no results of it on this page, in the documentation or in the repository.
+
+| Workload | Runs | Note |
+|---|---|---|
+| TPC-H | yes | dialect `DB2` of the query file; also with a refresh stream (`-xrs`) |
+| TPC-DS | yes | dialect `DB2` of the query file (19 variants) |
+| YCSB | yes | JDBC binding, all workloads (Db2 has `LIMIT`) |
+| SSB | no | not ported |
+| Benchbase, HammerDB TPC-C | no | the images have no Db2 profile or client |
+
+See [DBMS](DBMS.html#ibm-db2-community-edition) for the deployment, the loaders and the scripts.
+
+The test scripts [`scripts/test-docs-db2.sh`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-db2.sh) and [`scripts/test-docs-db2.ps1`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-db2.ps1) run all these workloads, one after the other.
+They write their logs to `logs_tests/local`, which is not part of the repository; the logs must not be passed on.
+
+An example call, TPC-H at SF 1 on a persistent volume:
+
+```bash
+bexhoma tpch \
+  -dbms DB2 \
+  -sf 1 \
+  -nlp 4 \
+  -xii -xic -xis \
+  -lr 12Gi -rr 12Gi \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 30Gi \
+  -nc 2 \
+  -ar \
+  -ks no \
+  -tr \
+  run
+```
+
+`-xii`, `-xic` and `-xis` create the indexes, add the foreign keys and collect the optimizer statistics (`RUNSTATS`) after loading.
+
 [1] https://cedardb.com
 
 [2] https://www.microsoft.com/sql-server
 
 [3] https://www.oracle.com/database/free/
+
+[4] https://www.ibm.com/products/db2/developers

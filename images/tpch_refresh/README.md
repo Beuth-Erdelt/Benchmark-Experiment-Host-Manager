@@ -44,6 +44,12 @@ images/tpch_refresh/
 │   ├── loader.sh          — applies RF1 via SQL*Loader, RF2 via staging table + DELETE
 │   ├── ctl/               — SQL*Loader control files (orders, lineitem, delete keys)
 │   └── README.md          — environment variable reference + execution flow
+├── loader_db2/
+│   ├── Dockerfile         — Db2 loader image (python:3.12-slim + ibm_db + redis-cli)
+│   ├── loader.sh          — applies RF1 via load.py, RF2 via rf2.py
+│   ├── load.py            — copy of images/tpch/loader_db2/load.py
+│   ├── rf2.py             — both DELETEs in one transaction, delete file as remote external table
+│   └── README.md          — environment variable reference + execution flow
 └── README.md              — this file
 ```
 
@@ -88,6 +94,7 @@ or reload the database before repeating.
 | ClickHouse | `clickhouse-client` (native port) | `INSERT ... FORMAT CSV` (delimiter `|`) | lightweight `DELETE ... WHERE key IN (...)` in chunks of 10000 keys; `ClickHouseCluster`: on `orders_local` / `lineitem_local` of every host listed in `system.clusters` (a Distributed table cannot be deleted from, and `ON CLUSTER` does not reach the shards from the coordinator) |
 | SQL Server | `bcp`, `sqlcmd` (mssql-tools18) | `bcp ... in` per table, one transaction per file | staging table `tpch_refresh_delete_<K>` (bcp), both DELETEs in one transaction, table dropped |
 | Oracle | `sqlldr`, `sqlplus` (Instant Client) | `sqlldr` per table, conventional path | staging table `tpch_refresh_delete_<K>` (sqlldr), both DELETEs in one transaction, table dropped |
+| Db2 | `load.py`, `rf2.py` (`ibm_db`) | `load.py` per table, remote external table, one transaction per chunk | both DELETEs in one transaction, the delete file read as a remote external table (no staging table) |
 
 CedarDB, Citus and DatabaseService speak the PostgreSQL protocol and use the PostgreSQL loader. The job template of
 every DBMS is its `refresh_template` in `cluster.config`; one run needs one job for all its DBMS.

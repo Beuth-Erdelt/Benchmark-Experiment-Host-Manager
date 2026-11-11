@@ -1664,6 +1664,398 @@
     "usecase": "ycsb",
     "workload": ""
    },
+   "alias": "DB2@1",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "SF": "1",
+    "YCSB_BATCHSIZE": "",
+    "YCSB_INSERTORDER": "hashed",
+    "YCSB_MAX_EXECUTION": 0,
+    "YCSB_ROWS": 1000000,
+    "YCSB_STATUS": 1,
+    "YCSB_STATUS_INTERVAL": 10,
+    "YCSB_WORKLOAD": ""
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "PARALLEL": "1",
+     "SF": "1",
+     "YCSB_BATCHSIZE": "",
+     "YCSB_INSERTORDER": "hashed",
+     "YCSB_MAX_EXECUTION": 0,
+     "YCSB_OPERATIONS": 1000000,
+     "YCSB_ROWS": 1000000,
+     "YCSB_STATUS": 1,
+     "YCSB_STATUS_INTERVAL": 10,
+     "YCSB_TARGET": 16384,
+     "YCSB_THREADCOUNT": 1,
+     "YCSB_WORKLOAD": ""
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "PARALLEL": "1",
+     "SF": "1",
+     "YCSB_BATCHSIZE": "",
+     "YCSB_INSERTORDER": "hashed",
+     "YCSB_MAX_EXECUTION": 0,
+     "YCSB_OPERATIONS": 1000000,
+     "YCSB_ROWS": 1000000,
+     "YCSB_STATUS": 1,
+     "YCSB_STATUS_INTERVAL": 10,
+     "YCSB_TARGET": 16384,
+     "YCSB_THREADCOUNT": 1,
+     "YCSB_WORKLOAD": ""
+    }
+   ],
+   "configuration": "DB2-1",
+   "data_components": null,
+   "dialect": "DB2",
+   "docker": "DB2",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "ycsb",
+       "fixed_parallelism": false,
+       "name": "ycsb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BEXHOMA_DBMS_TYPE": "jdbc",
+        "BEXHOMA_SYNCH_LOAD": 1,
+        "PARALLEL": "1",
+        "SF": "1",
+        "YCSB_BATCHSIZE": "",
+        "YCSB_INSERTORDER": "hashed",
+        "YCSB_MAX_EXECUTION": 0,
+        "YCSB_OPERATIONS": 1000000,
+        "YCSB_ROWS": 1000000,
+        "YCSB_STATUS": 1,
+        "YCSB_STATUS_INTERVAL": 10,
+        "YCSB_TARGET": 16384,
+        "YCSB_THREADCOUNT": 1,
+        "YCSB_WORKLOAD": ""
+       },
+       "resetscript": [
+        "reset-ycsb.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-ycsb.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "ycsb",
+      "name": "ycsb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_DBMS_TYPE": "jdbc",
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PARALLEL": "1",
+       "SF": "1",
+       "YCSB_BATCHSIZE": "",
+       "YCSB_INSERTORDER": "hashed",
+       "YCSB_MAX_EXECUTION": 0,
+       "YCSB_OPERATIONS": 1000000,
+       "YCSB_ROWS": 1000000,
+       "YCSB_STATUS": 1,
+       "YCSB_STATUS_INTERVAL": 10,
+       "YCSB_TARGET": 16384,
+       "YCSB_THREADCOUNT": 1,
+       "YCSB_WORKLOAD": ""
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ycsb.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_DBMS_TYPE": "jdbc",
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PARALLEL": "1",
+    "SF": "1",
+    "YCSB_BATCHSIZE": "",
+    "YCSB_INSERTORDER": "hashed",
+    "YCSB_MAX_EXECUTION": 0,
+    "YCSB_OPERATIONS": 1000000,
+    "YCSB_ROWS": 1000000,
+    "YCSB_STATUS": 1,
+    "YCSB_STATUS_INTERVAL": 10,
+    "YCSB_TARGET": 16384,
+    "YCSB_THREADCOUNT": 1,
+    "YCSB_WORKLOAD": ""
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "DB2",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "nodes_worker": null,
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "db2-1",
+    "storageSize": ""
+   },
+   "storage_label": "ycsb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-DB2.yml",
+   "tenant_per": "",
+   "volume": "ycsb",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "experiment_design": "compare-scaleout",
+    "operations": 1000000,
+    "rows": 1000000,
+    "usecase": "ycsb",
+    "workload": ""
+   },
+   "alias": "DB2@2",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "SF": "1",
+    "YCSB_BATCHSIZE": "",
+    "YCSB_INSERTORDER": "hashed",
+    "YCSB_MAX_EXECUTION": 0,
+    "YCSB_ROWS": 1000000,
+    "YCSB_STATUS": 1,
+    "YCSB_STATUS_INTERVAL": 10,
+    "YCSB_WORKLOAD": ""
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "PARALLEL": "1",
+     "SF": "1",
+     "YCSB_BATCHSIZE": "",
+     "YCSB_INSERTORDER": "hashed",
+     "YCSB_MAX_EXECUTION": 0,
+     "YCSB_OPERATIONS": 1000000,
+     "YCSB_ROWS": 1000000,
+     "YCSB_STATUS": 1,
+     "YCSB_STATUS_INTERVAL": 10,
+     "YCSB_TARGET": 16384,
+     "YCSB_THREADCOUNT": 1,
+     "YCSB_WORKLOAD": ""
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_SYNCH_LOAD": 1,
+     "PARALLEL": "1",
+     "SF": "1",
+     "YCSB_BATCHSIZE": "",
+     "YCSB_INSERTORDER": "hashed",
+     "YCSB_MAX_EXECUTION": 0,
+     "YCSB_OPERATIONS": 1000000,
+     "YCSB_ROWS": 1000000,
+     "YCSB_STATUS": 1,
+     "YCSB_STATUS_INTERVAL": 10,
+     "YCSB_TARGET": 16384,
+     "YCSB_THREADCOUNT": 1,
+     "YCSB_WORKLOAD": ""
+    }
+   ],
+   "configuration": "DB2-2",
+   "data_components": null,
+   "dialect": "DB2",
+   "docker": "DB2",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "ycsb",
+       "fixed_parallelism": false,
+       "name": "ycsb",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BEXHOMA_DBMS_TYPE": "jdbc",
+        "BEXHOMA_SYNCH_LOAD": 1,
+        "PARALLEL": "1",
+        "SF": "1",
+        "YCSB_BATCHSIZE": "",
+        "YCSB_INSERTORDER": "hashed",
+        "YCSB_MAX_EXECUTION": 0,
+        "YCSB_OPERATIONS": 1000000,
+        "YCSB_ROWS": 1000000,
+        "YCSB_STATUS": 1,
+        "YCSB_STATUS_INTERVAL": 10,
+        "YCSB_TARGET": 16384,
+        "YCSB_THREADCOUNT": 1,
+        "YCSB_WORKLOAD": ""
+       },
+       "resetscript": [
+        "reset-ycsb.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-ycsb.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "ycsb",
+      "name": "ycsb-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_DBMS_TYPE": "jdbc",
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PARALLEL": "1",
+       "SF": "1",
+       "YCSB_BATCHSIZE": "",
+       "YCSB_INSERTORDER": "hashed",
+       "YCSB_MAX_EXECUTION": 0,
+       "YCSB_OPERATIONS": 1000000,
+       "YCSB_ROWS": 1000000,
+       "YCSB_STATUS": 1,
+       "YCSB_STATUS_INTERVAL": 10,
+       "YCSB_TARGET": 16384,
+       "YCSB_THREADCOUNT": 1,
+       "YCSB_WORKLOAD": ""
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-ycsb.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_DBMS_TYPE": "jdbc",
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PARALLEL": "1",
+    "SF": "1",
+    "YCSB_BATCHSIZE": "",
+    "YCSB_INSERTORDER": "hashed",
+    "YCSB_MAX_EXECUTION": 0,
+    "YCSB_OPERATIONS": 1000000,
+    "YCSB_ROWS": 1000000,
+    "YCSB_STATUS": 1,
+    "YCSB_STATUS_INTERVAL": 10,
+    "YCSB_TARGET": 16384,
+    "YCSB_THREADCOUNT": 1,
+    "YCSB_WORKLOAD": ""
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "DB2",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "nodes_worker": null,
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "32Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "db2-2",
+    "storageSize": ""
+   },
+   "storage_label": "ycsb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-DB2.yml",
+   "tenant_per": "",
+   "volume": "ycsb",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "experiment_design": "compare-scaleout",
+    "operations": 1000000,
+    "rows": 1000000,
+    "usecase": "ycsb",
+    "workload": ""
+   },
    "alias": "Service-A",
    "benchmark_list": [
     1
