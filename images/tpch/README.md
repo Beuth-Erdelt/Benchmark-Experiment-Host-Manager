@@ -30,6 +30,10 @@ images/tpch/
 │   ├── Dockerfile         — MonetDB loader image
 │   ├── loader.sh          — loads .tbl via mclient COPY FROM STDIN
 │   └── README.md          — environment variable reference + execution flow
+├── loader_sqlserver/
+│   ├── Dockerfile         — SQL Server loader image
+│   ├── loader.sh          — loads .tbl via bcp
+│   └── README.md          — environment variable reference + execution flow
 └── README.md              — this file
 ```
 
@@ -58,6 +62,7 @@ of them.
 | MySQL | `mysql LOAD DATA LOCAL INFILE` | BEXHOMA_DATABASE=$BEXHOMA_VOLUME; per-table column mapping with NULLIF |
 | MariaDB | `mysql LOAD DATA LOCAL INFILE` | BEXHOMA_DATABASE=$BEXHOMA_VOLUME; same column mapping |
 | MonetDB | `mclient COPY N RECORDS INTO ... FROM STDIN` | Writes `.monetdb` credentials file; retries on worker thread errors |
+| SQL Server | `bcp ... in` (mssql-tools18) | One transaction per file, `TABLOCK`; schema `dbo` unless `BEXHOMA_SCHEMA`; retries only on connection errors |
 
 ## Style conventions
 

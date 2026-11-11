@@ -2861,6 +2861,366 @@
     "usecase": "benchbase_tpcc",
     "warehouses": "1"
    },
+   "alias": "SQLServer@1",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "tpcc",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "tpcc",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "sqlserver",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "BEXHOMA_DATABASE": "benchbase",
+     "SF": "1"
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "tpcc",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "sqlserver",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "BEXHOMA_DATABASE": "benchbase",
+     "SF": "1"
+    }
+   ],
+   "configuration": "SQLServer-1",
+   "data_components": null,
+   "dialect": "TSQL",
+   "docker": "SQLServer",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "benchbase",
+       "fixed_parallelism": false,
+       "name": "benchbase",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BENCHBASE_BATCHSIZE": 128,
+        "BENCHBASE_BENCH": "tpcc",
+        "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+        "BENCHBASE_KEY_AND_THINK": "false",
+        "BENCHBASE_PROFILE": "sqlserver",
+        "BENCHBASE_STATUS_INTERVAL": 0,
+        "BENCHBASE_TARGET": 1024,
+        "BENCHBASE_TERMINALS": 1,
+        "BENCHBASE_TIME": 300,
+        "BENCHBASE_WARMUP": 0,
+        "BEXHOMA_DATABASE": "benchbase",
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-benchbase.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-benchbase.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "benchbase",
+      "name": "benchbase-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BENCHBASE_BATCHSIZE": 128,
+       "BENCHBASE_BENCH": "tpcc",
+       "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+       "BENCHBASE_KEY_AND_THINK": "false",
+       "BENCHBASE_PROFILE": "sqlserver",
+       "BENCHBASE_STATUS_INTERVAL": 0,
+       "BENCHBASE_TERMINALS": 1,
+       "BENCHBASE_TIME": 300,
+       "BENCHBASE_WARMUP": 0,
+       "BEXHOMA_DATABASE": "benchbase",
+       "SF": "1"
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-benchbase.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "tpcc",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_PROFILE": "sqlserver",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TERMINALS": 1,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "BEXHOMA_DATABASE": "benchbase",
+    "SF": "1"
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "SQLServer",
+   "prometheus_interval": "10s",
+   "prometheus_timeout": "10s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "nodes_worker": null,
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "sqlserver-1",
+    "storageSize": ""
+   },
+   "storage_label": "benchbase-tpcc-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-SQLServer.yml",
+   "tenant_per": "",
+   "volume": "benchbase",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "usecase": "benchbase_tpcc",
+    "warehouses": "1"
+   },
+   "alias": "SQLServer@2",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "tpcc",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "tpcc",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "sqlserver",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "BEXHOMA_DATABASE": "benchbase",
+     "SF": "1"
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "tpcc",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "sqlserver",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "BEXHOMA_DATABASE": "benchbase",
+     "SF": "1"
+    }
+   ],
+   "configuration": "SQLServer-2",
+   "data_components": null,
+   "dialect": "TSQL",
+   "docker": "SQLServer",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "benchbase",
+       "fixed_parallelism": false,
+       "name": "benchbase",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BENCHBASE_BATCHSIZE": 128,
+        "BENCHBASE_BENCH": "tpcc",
+        "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+        "BENCHBASE_KEY_AND_THINK": "false",
+        "BENCHBASE_PROFILE": "sqlserver",
+        "BENCHBASE_STATUS_INTERVAL": 0,
+        "BENCHBASE_TARGET": 1024,
+        "BENCHBASE_TERMINALS": 1,
+        "BENCHBASE_TIME": 300,
+        "BENCHBASE_WARMUP": 0,
+        "BEXHOMA_DATABASE": "benchbase",
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-benchbase.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-benchbase.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "benchbase",
+      "name": "benchbase-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BENCHBASE_BATCHSIZE": 128,
+       "BENCHBASE_BENCH": "tpcc",
+       "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+       "BENCHBASE_KEY_AND_THINK": "false",
+       "BENCHBASE_PROFILE": "sqlserver",
+       "BENCHBASE_STATUS_INTERVAL": 0,
+       "BENCHBASE_TERMINALS": 1,
+       "BENCHBASE_TIME": 300,
+       "BENCHBASE_WARMUP": 0,
+       "BEXHOMA_DATABASE": "benchbase",
+       "SF": "1"
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-benchbase.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "tpcc",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_PROFILE": "sqlserver",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TERMINALS": 1,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "BEXHOMA_DATABASE": "benchbase",
+    "SF": "1"
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "SQLServer",
+   "prometheus_interval": "10s",
+   "prometheus_timeout": "10s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "nodes_worker": null,
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "32Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "sqlserver-2",
+    "storageSize": ""
+   },
+   "storage_label": "benchbase-tpcc-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-SQLServer.yml",
+   "tenant_per": "",
+   "volume": "benchbase",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "usecase": "benchbase_tpcc",
+    "warehouses": "1"
+   },
    "alias": "TiDB@1",
    "benchmark_list": [
     1

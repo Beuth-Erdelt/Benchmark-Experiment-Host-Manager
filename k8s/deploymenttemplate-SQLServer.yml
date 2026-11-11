@@ -1,0 +1,170 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  storageClassName: shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 1433}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment-sqlserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      terminationGracePeriodSeconds: 180
+      # the image runs as user mssql (UID 10001): the volumes must be writable for this group
+      securityContext:
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+      - name: dbms
+        # SQL Server 2022 Developer edition; license: no publication of benchmark results without
+        # Microsoft's prior written approval (internal tests only, see docs/DBMS.md)
+        image: mcr.microsoft.com/mssql/server:2022-CU27-ubuntu-22.04
+        # loadData runs /tmp/bexhoma-database.sql in front of every script (sqlcmd -i a,b, one session):
+        # it creates the database of the benchmark (sqlcmd variable database) if missing, with recovery
+        # model SIMPLE (FULL without log backups grows the log without bound), and switches to it, so
+        # the durability scripts may run before initschema and no script names its database
+        command:
+        - bash
+        - -c
+        - |
+          cat > /tmp/bexhoma-database.sql <<'SQL'
+          IF DB_ID(N'$(database)') IS NULL
+          BEGIN
+              CREATE DATABASE [$(database)];
+              ALTER DATABASE [$(database)] SET RECOVERY SIMPLE;
+          END
+          GO
+          USE [$(database)];
+          GO
+          SQL
+          # the entrypoint and command of the image (permissions_check.sh only prints a message)
+          if [ -x /opt/mssql/bin/launch_sqlservr.sh ]; then exec /opt/mssql/bin/launch_sqlservr.sh /opt/mssql/bin/sqlservr; fi
+          exec /opt/mssql/bin/sqlservr
+        env:
+        # "Yes", not "Y": bexhoma writes the manifest with PyYAML, which leaves Y unquoted,
+        # and Kubernetes (YAML 1.1) reads a bare Y as a boolean, so the Deployment is refused
+        - name: ACCEPT_EULA
+          value: "Yes"
+        - name: MSSQL_PID
+          value: Developer
+        # complexity rule of SQL Server (8+ characters, 3 of 4 categories); = JDBC auth of cluster.config,
+        # letters and digits only, it goes through sed in the YCSB and Benchbase images
+        - name: MSSQL_SA_PASSWORD
+          value: BexhomaBenchmarkPassword2026
+        # read by sqlcmd of loadData and the readiness probe (no -P on the command line)
+        - name: SQLCMDPASSWORD
+          value: BexhomaBenchmarkPassword2026
+        # SQL Server Agent is not needed
+        - name: MSSQL_AGENT_ENABLED
+          value: "false"
+        readinessProbe:
+          exec:
+            command: ["/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-C", "-b", "-l", "5", "-Q", "SELECT 1"]
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 10
+        ports:
+        - {containerPort: 1433}
+        securityContext:
+          allowPrivilegeEscalation: false
+          #runAsNonRoot: true
+          #runAsUser: 10001
+          #capabilities:
+          #  drop:
+          #    - ALL
+          #readOnlyRootFilesystem: true # writes to /var/opt/mssql and /tmp
+        resources:
+          # SQL Server needs at least 2 GB of memory; it uses 80% of the memory limit by default
+          limits: {cpu: 16000m, memory: 128Gi}
+          requests: {cpu: 1000m, memory: 4Gi}
+        volumeMounts:
+        - {mountPath: /data, name: benchmark-data-volume}
+        - {mountPath: /dev/shm, name: dshm}
+        # data, log and secrets of SQL Server
+        - {mountPath: /var/opt/mssql, name: benchmark-storage-volume}
+      - name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:v0.47.0
+        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
+        ports:
+        - containerPort: 9300
+          #hostPort: 9300
+          name: http
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+        resources:
+          requests: {cpu: 150m, memory: 200Mi}
+          limits: {cpu: 16000m, memory: 128Gi}
+        volumeMounts:
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+        - name: var-run
+          mountPath: /var/run
+          readOnly: true
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: docker
+          mountPath: /var/lib/docker
+          readOnly: true
+        - name: disk
+          mountPath: /dev/disk
+          readOnly: true
+      volumes:
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: bexhoma-data}
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk
+      - name: dshm
+        emptyDir:
+          medium: Memory

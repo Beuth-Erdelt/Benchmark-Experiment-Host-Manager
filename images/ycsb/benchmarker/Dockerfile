@@ -160,6 +160,10 @@ RUN wget https://github.com/kineticadb/kinetica-client-jdbc/archive/refs/tags/v7
 RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar && \
     cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/
 
+# SQL Server 12.8.1 (jre8)
+RUN wget https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.8.1.jre8/mssql-jdbc-12.8.1.jre8.jar && \
+    cp mssql-jdbc-12.8.1.jre8.jar jars/
+
 ######################################################################################
 # Copy workload templates and entrypoint script
 ######################################################################################

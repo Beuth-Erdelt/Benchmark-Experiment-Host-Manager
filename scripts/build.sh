@@ -271,6 +271,14 @@ build_and_push_tpch() {
     docker push "bexhoma/loader_tpch_clickhouse:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_clickhouse:$version"
+
+  (
+    set -e
+    cd images/tpch/loader_sqlserver
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_sqlserver:$version" .
+    docker push "bexhoma/loader_tpch_sqlserver:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_sqlserver:$version"
 }
 
 
@@ -395,6 +403,14 @@ build_and_push_tpch_refresh() {
     docker push "bexhoma/loader_tpch_refresh_clickhouse:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_clickhouse:$version"
+
+  (
+    set -e
+    cd images/tpch_refresh/loader_sqlserver
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_sqlserver:$version" .
+    docker push "bexhoma/loader_tpch_refresh_sqlserver:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_refresh_sqlserver:$version"
 }
 
 ###########

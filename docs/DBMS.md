@@ -22,6 +22,7 @@ Each supported DBMS has a short section below; configuration, deployment, script
 | Relational / SQL | [MonetDB](#monetdb) | `MonetDB` | TPC-H, TPC-DS, SSB | [Example-MonetDB](Example-MonetDB.md) |
 | Relational / SQL | [ClickHouse](#clickhouse) | `ClickHouse`, `ClickHouseCluster` | TPC-H, TPC-DS, SSB | [Example-ClickHouse](Example-ClickHouse.md) |
 | Relational / SQL | [CedarDB](#cedardb) | `CedarDB` | TPC-H, SSB, YCSB, Benchbase | [Example-Other-DBMS](Example-Other-DBMS.md#cedardb) |
+| Relational / SQL | [SQL Server](#sql-server) | `SQLServer` | TPC-H, YCSB, Benchbase (TPC-C), HammerDB | [Example-Other-DBMS](Example-Other-DBMS.md#sql-server) (no results, [license](#sql-server)) |
 | Distributed SQL | [Citus](#citus) | `Citus` | TPC-H, SSB, YCSB, Benchbase, HammerDB | [Example-Citus](Example-Citus.md) |
 | Distributed SQL | [YugabyteDB](#yugabytedb) | `YugabyteDB` | YCSB, Benchbase | [Example-YugaByteDB](Example-YugaByteDB.md) |
 | Distributed SQL | [CockroachDB](#cockroachdb) | `CockroachDB` | YCSB, Benchbase | [Example-CockroachDB](Example-CockroachDB.md) |
@@ -420,6 +421,7 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | MySQL, MariaDB | `ANALYZE TABLE` (`reset-<benchmark>.sql`) | `reset-flush.sh`: `innodb_max_dirty_pages_pct = 0`, wait until no dirty pages are left (at most 600 s), restore the old value | `FLUSH STATUS` (in `reset-flush.sh`) |
 | MariaDBCS | `ANALYZE TABLE` | n/a (no dirty pages to flush) | n/a (the check scripts read no ColumnStore counter) |
 | CedarDB | `VACUUM VERBOSE ANALYZE` | n/a (no `CHECKPOINT`) | n/a (no `pg_stat_reset()`) |
+| SQL Server | `sp_updatestats` | `CHECKPOINT` | `DBCC SQLPERF(... CLEAR)` for `sys.dm_os_wait_stats` and `sys.dm_os_latch_stats` (the I/O and query DMVs cannot be reset) |
 | MonetDB | `ANALYZE` | n/a (the write-ahead log is applied in the background; no call to force it) | n/a |
 | ClickHouse | n/a (no optimizer statistics unless declared per column) | `reset-flush.sh`: `sync` (an `INSERT` writes its parts without fsync) | n/a (`system.events` cannot be reset) |
 | ClickHouseCluster | n/a | `SYSTEM FLUSH DISTRIBUTED` on every Distributed table and `SYSTEM SYNC REPLICA ON CLUSTER` on every replicated table (`reset-<benchmark>.sql`, coordinator), then `reset-flush.sh` (`sync`) in every worker | n/a |
@@ -459,6 +461,7 @@ Commands and logs of the test runs: [Test: Load Durability](Test-Durability.md).
 | Citus (coordinator + workers) | as PostgreSQL | `synchronous_commit=off` | - (= relaxed) |
 | MySQL | flush 1 | flush 2 (TPC-C/YCSB 0), key checks off | also redo log off, doublewrite `DETECT_ONLY` |
 | MariaDB (`.sh`, root) | flush 1, doublewrite on | flush 2 | also doublewrite off |
+| SQL Server | `DELAYED_DURABILITY = DISABLED` | `DELAYED_DURABILITY = FORCED` | - (= relaxed) |
 | others | - | - | - |
 
 For a new DBMS: put `durability-<level>.sql`/`.sh` and `restoredurability-<level>.sql`/`.sh` next to its init scripts; the restore must return to the startup values, not to the defaults (MySQL/MariaDB save them in `bexhoma.saved_settings`; their restore scripts end with an `ERROR` if a value is not back at its saved one, e.g. adjusted by the server with only a warning, and MySQL `unsafe` if the redo log is still disabled). A value that can only be set server-wide, so a `--set` value wins over the script, is declared in a header line `-- server-wide: name=value ...`; bexhoma then refuses a conflicting `--set` before loading.
@@ -675,6 +678,58 @@ bexhoma tpch -dbms CedarDB -sf 1 -nlp 8 -xii -xic -xis -tr run
 ```
 
 See [Example: Other DBMS](Example-Other-DBMS.md#cedardb) for the workloads and the test script.
+
+---
+
+## SQL Server
+
+`SQLServer` is the configuration key for Microsoft SQL Server 2022, Developer edition, a single Deployment without operator (TPC-H, YCSB, Benchbase TPC-C, HammerDB TPC-C).
+
+**License:** the license terms of SQL Server 2022 Developer edition (also Express and Evaluation), section "Benchmark testing", require Microsoft's prior written approval to disclose the results of any benchmark test to a third party.
+Bexhoma therefore runs SQL Server for **internal tests only**: there are no results, summaries or logs of it in the repository or in the documentation.
+The Developer edition must not be used in a production environment; benchmarking is not production use.
+
+**Deployment template:** [`k8s/deploymenttemplate-SQLServer.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-SQLServer.yml)
+
+The template pins `mcr.microsoft.com/mssql/server:2022-CU27-ubuntu-22.04` with `ACCEPT_EULA=Yes` (a bare `Y` in the written manifest is a boolean for Kubernetes) and `MSSQL_PID=Developer`.
+
+| Point | Handling | Without it |
+|---|---|---|
+| Password | `MSSQL_SA_PASSWORD` has the complexity SQL Server requires (8+ characters, 3 of 4 categories), as the JDBC `auth` of `cluster.config`; letters and digits only, it goes through `sed` in the YCSB and Benchbase images | the server refuses to start |
+| Non-root | the image runs as user `mssql` (UID 10001): the pod has `fsGroup: 10001`, the storage volume is mounted at `/var/opt/mssql` (data, log, secrets) | the server cannot write its files on a new volume |
+| `sqlcmd` | `/opt/mssql-tools18/bin/sqlcmd` of the image; the password comes from `SQLCMDPASSWORD` of the container, so `loadData` holds no `$` (which the shell of the host would expand) | - |
+| Database | the container command writes `/tmp/bexhoma-database.sql`; `loadData` runs it in front of every script (`sqlcmd -v database={database} -i /tmp/bexhoma-database.sql,{scriptname}`, one session): it creates the database of the benchmark if missing, with recovery model `SIMPLE`, and switches to it | a durability script, which runs before `initschema`, would have no database; with `FULL` and no log backups the log grows without bound |
+| Errors | `sqlcmd -b -r0`: an error ends the script with exit code 1 and goes to stderr | errors would not fail the script |
+| Certificate | the ODBC Driver 18 tools encrypt by default: `-C` (sqlcmd), `-u` (bcp), `mssqls_trust_server_cert` (HammerDB); JDBC uses `encrypt=false` | the self-signed certificate of the server is refused |
+
+The database of each benchmark is `BEXHOMA_DATABASE` of its `loading_parameters` (`tpch`, `ycsb`, `benchbase`, `tpcc`); the JDBC database is `master`.
+SQL Server uses 80% of the memory limit of the container by default; it needs at least 2 GB.
+There is no exporter (`-ma`); only cAdvisor metrics are collected.
+
+**Clients and images:**
+
+| Benchmark | Client | Image |
+|---|---|---|
+| TPC-H loading | `bcp` (mssql-tools18), one transaction per file, `TABLOCK` | `bexhoma/loader_tpch_sqlserver` ([`images/tpch/loader_sqlserver`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/tpch/loader_sqlserver)) |
+| TPC-H refresh stream (`-xrs`) | `bcp`, staging table for RF2 | `bexhoma/loader_tpch_refresh_sqlserver` |
+| TPC-H queries | JDBC `mssql-jdbc-12.8.1.jre8.jar` | `bexhoma/benchmarker_dbmsbenchmarker` |
+| YCSB | JDBC binding (`SELECT TOP` for scans), `mssql-jdbc-12.8.1.jre8.jar` | `bexhoma/generator_ycsb`, `bexhoma/benchmarker_ycsb` |
+| Benchbase | profile `sqlserver` of the Benchbase image; only `tpcc` has a config (`images/benchbase/config/sqlserver`) | `bexhoma/generator_benchbase`, `bexhoma/benchmarker_benchbase` |
+| HammerDB | `HAMMERDB_TYPE=mssqlserver` (`dbset db mssqls`, ODBC Driver 18 for SQL Server) | `bexhoma/generator_hammerdb`, `bexhoma/benchmarker_hammerdb` |
+
+**Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/SQLServer), [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/SQLServer)):
+TPC-H in schema `dbo` with clustered primary keys (as MySQL), keys `INT`, order keys `BIGINT`; `-xii` adds the indexes of MySQL, `-xic` the foreign keys (`WITH CHECK`, trusted), `-xis` runs `UPDATE STATISTICS ... WITH FULLSCAN`.
+TPC-H uses dialect `TSQL` of the query file.
+YCSB `usertable` has `VARCHAR(MAX)` fields; Benchbase and HammerDB create their tables themselves.
+`checkschema-<benchmark>.sql` writes a checkpoint and reports the settings, row counts, sizes, the data and log written and the memory and parallelism configuration.
+
+TPC-DS and SSB are not supported: the query files have no `TSQL` variants (`LIMIT`, intervals).
+
+```bash
+bexhoma tpch -dbms SQLServer -sf 1 -xii -xic -xis -tr run
+```
+
+See [Example: Other DBMS](Example-Other-DBMS.md#sql-server) for the workloads and the test script; its logs stay in the git-ignored `logs_tests/local`.
 
 ---
 

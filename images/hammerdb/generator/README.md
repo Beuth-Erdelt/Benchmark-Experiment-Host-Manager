@@ -4,7 +4,7 @@ The image is based on https://hub.docker.com/r/tpcorg/hammerdb
 
 This folder contains the Dockerfile for a data generator that loads TPC-C data
 into a DBMS using HammerDB's `buildschema` command.
-Supported backends: `postgresql`, `mysql`, `mariadb`, `citus`.
+Supported backends: `postgresql`, `mysql`, `mariadb`, `citus`, `mssqlserver`.
 
 See [images/hammerdb/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/hammerdb/README.md) for shared design decisions and the full
 supported-backend table.
@@ -33,7 +33,7 @@ warehouse set without pod coordination.
 * `BEXHOMA_PORT`: Port of the target DBMS.
 * `BEXHOMA_USER`: Database user.
 * `BEXHOMA_PASSWORD`: Database password.
-* `BEXHOMA_DATABASE`: Database name (used for PostgreSQL and Citus; the JDBC database of the DBMS, `postgres`).
+* `BEXHOMA_DATABASE`: Database name (used for PostgreSQL and Citus, the JDBC database of the DBMS, `postgres`; for SQL Server the TPC-C database, `tpcc`).
 
 ### Bexhoma experiment identity
 
@@ -47,7 +47,7 @@ warehouse set without pod coordination.
 
 ### HammerDB workload parameters
 
-* `HAMMERDB_TYPE`: Backend type — `postgresql`, `mysql`, `mariadb`, or `citus`.
+* `HAMMERDB_TYPE`: Backend type — `postgresql`, `mysql`, `mariadb`, `citus` or `mssqlserver`.
 * `HAMMERDB_VUSERS`: Number of virtual users (threads) for the load phase.
 * `HAMMERDB_NUM_VU`: Number of virtual users used during setup. Echoed to the log.
 * `HAMMERDB_MYSQL_ENGINE`: Storage engine for MySQL/MariaDB (default `innodb`).

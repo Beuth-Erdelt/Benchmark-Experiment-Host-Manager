@@ -3,144 +3,114 @@
 -- Copyright (C) 2020 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Create the tpch database and all TPC-H tables in SQL Server.
---          Tables use square-bracket identifiers and SQL Server types (int,
---          bigint, decimal(16,2), varchar, char). Primary keys are declared
---          inline as CLUSTERED with standard index storage options. Foreign key
---          constraints are not added in this configuration.
+-- Purpose: Create the TPC-H tables in SQL Server, schema dbo.
+--          The database is created by loadData (/tmp/bexhoma-database.sql of the
+--          template, recovery model SIMPLE), which also switches to it.
+--          Primary keys are clustered and declared inline (as for MySQL); the
+--          loader (bcp, TABLOCK) loads into them. Keys are INT, the order keys
+--          BIGINT (more than 2^31 orders above SF 300); foreign keys have the
+--          type of the key they reference (initconstraints-tpch.sql).
+--          No curly braces in this file: bexhoma may fill it with str.format().
 
-CREATE DATABASE [tpch]
+SET ANSI_NULLS ON;
+SET QUOTED_IDENTIFIER ON;
 GO
 
-USE [tpch]
+CREATE TABLE dbo.nation (
+    n_nationkey     INT             NOT NULL,
+    n_name          CHAR(25)        NOT NULL,
+    n_regionkey     INT             NOT NULL,
+    n_comment       VARCHAR(152),
+    CONSTRAINT pk_nation PRIMARY KEY CLUSTERED (n_nationkey)
+);
+
+CREATE TABLE dbo.region (
+    r_regionkey     INT             NOT NULL,
+    r_name          CHAR(25)        NOT NULL,
+    r_comment       VARCHAR(152),
+    CONSTRAINT pk_region PRIMARY KEY CLUSTERED (r_regionkey)
+);
+
+CREATE TABLE dbo.part (
+    p_partkey       INT             NOT NULL,
+    p_name          VARCHAR(55)     NOT NULL,
+    p_mfgr          CHAR(25)        NOT NULL,
+    p_brand         CHAR(10)        NOT NULL,
+    p_type          VARCHAR(25)     NOT NULL,
+    p_size          INT             NOT NULL,
+    p_container     CHAR(10)        NOT NULL,
+    p_retailprice   DECIMAL(15,2)   NOT NULL,
+    p_comment       VARCHAR(23)     NOT NULL,
+    CONSTRAINT pk_part PRIMARY KEY CLUSTERED (p_partkey)
+);
+
+CREATE TABLE dbo.supplier (
+    s_suppkey       INT             NOT NULL,
+    s_name          CHAR(25)        NOT NULL,
+    s_address       VARCHAR(40)     NOT NULL,
+    s_nationkey     INT             NOT NULL,
+    s_phone         CHAR(15)        NOT NULL,
+    s_acctbal       DECIMAL(15,2)   NOT NULL,
+    s_comment       VARCHAR(101)    NOT NULL,
+    CONSTRAINT pk_supplier PRIMARY KEY CLUSTERED (s_suppkey)
+);
+
+CREATE TABLE dbo.partsupp (
+    ps_partkey      INT             NOT NULL,
+    ps_suppkey      INT             NOT NULL,
+    ps_availqty     INT             NOT NULL,
+    ps_supplycost   DECIMAL(15,2)   NOT NULL,
+    ps_comment      VARCHAR(199)    NOT NULL,
+    CONSTRAINT pk_partsupp PRIMARY KEY CLUSTERED (ps_partkey, ps_suppkey)
+);
+
+CREATE TABLE dbo.customer (
+    c_custkey       INT             NOT NULL,
+    c_name          VARCHAR(25)     NOT NULL,
+    c_address       VARCHAR(40)     NOT NULL,
+    c_nationkey     INT             NOT NULL,
+    c_phone         CHAR(15)        NOT NULL,
+    c_acctbal       DECIMAL(15,2)   NOT NULL,
+    c_mktsegment    CHAR(10)        NOT NULL,
+    c_comment       VARCHAR(117)    NOT NULL,
+    CONSTRAINT pk_customer PRIMARY KEY CLUSTERED (c_custkey)
+);
+
+CREATE TABLE dbo.orders (
+    o_orderkey      BIGINT          NOT NULL,
+    o_custkey       INT             NOT NULL,
+    o_orderstatus   CHAR(1)         NOT NULL,
+    o_totalprice    DECIMAL(15,2)   NOT NULL,
+    o_orderdate     DATE            NOT NULL,
+    o_orderpriority CHAR(15)        NOT NULL,
+    o_clerk         CHAR(15)        NOT NULL,
+    o_shippriority  INT             NOT NULL,
+    o_comment       VARCHAR(79)     NOT NULL,
+    CONSTRAINT pk_orders PRIMARY KEY CLUSTERED (o_orderkey)
+);
+
+CREATE TABLE dbo.lineitem (
+    l_orderkey      BIGINT          NOT NULL,
+    l_partkey       INT             NOT NULL,
+    l_suppkey       INT             NOT NULL,
+    l_linenumber    INT             NOT NULL,
+    l_quantity      DECIMAL(15,2)   NOT NULL,
+    l_extendedprice DECIMAL(15,2)   NOT NULL,
+    l_discount      DECIMAL(15,2)   NOT NULL,
+    l_tax           DECIMAL(15,2)   NOT NULL,
+    l_returnflag    CHAR(1)         NOT NULL,
+    l_linestatus    CHAR(1)         NOT NULL,
+    l_shipdate      DATE            NOT NULL,
+    l_commitdate    DATE            NOT NULL,
+    l_receiptdate   DATE            NOT NULL,
+    l_shipinstruct  CHAR(25)        NOT NULL,
+    l_shipmode      CHAR(10)        NOT NULL,
+    l_comment       VARCHAR(44)     NOT NULL,
+    CONSTRAINT pk_lineitem PRIMARY KEY CLUSTERED (l_orderkey, l_linenumber)
+);
 GO
 
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[CUSTOMER] (
-    [C_CUSTKEY]    [int]          NOT NULL,
-    [C_NAME]       [varchar](25)  NULL,
-    [C_ADDRESS]    [varchar](40)  NULL,
-    [C_NATIONKEY]  [bigint]       NOT NULL,
-    [C_PHONE]      [char](15)     NULL,
-    [C_ACCTBAL]    [decimal](16, 2) NULL,
-    [C_MKTSEGMENT] [char](10)     NULL,
-    [C_COMMENT]    [varchar](117) NULL,
-    PRIMARY KEY CLUSTERED ([C_CUSTKEY] ASC)
-        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF,
-              ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF)
-        ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-CREATE TABLE [dbo].[LINEITEM] (
-    [L_ORDERKEY]      [bigint]         NOT NULL,
-    [L_PARTKEY]       [bigint]         NOT NULL,
-    [L_SUPPKEY]       [bigint]         NOT NULL,
-    [L_LINENUMBER]    [int]            NOT NULL,
-    [L_QUANTITY]      [decimal](16, 2) NULL,
-    [L_EXTENDEDPRICE] [decimal](16, 2) NULL,
-    [L_DISCOUNT]      [decimal](16, 2) NULL,
-    [L_TAX]           [decimal](16, 2) NULL,
-    [L_RETURNFLAG]    [char](1)        NULL,
-    [L_LINESTATUS]    [char](1)        NULL,
-    [L_SHIPDATE]      [date]           NULL,
-    [L_COMMITDATE]    [date]           NULL,
-    [L_RECEIPTDATE]   [date]           NULL,
-    [L_SHIPINSTRUCT]  [char](25)       NULL,
-    [L_SHIPMODE]      [char](10)       NULL,
-    [L_COMMENT]       [varchar](44)    NULL,
-    PRIMARY KEY CLUSTERED ([L_ORDERKEY] ASC, [L_LINENUMBER] ASC)
-        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF,
-              ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF)
-        ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-CREATE TABLE [dbo].[NATION] (
-    [N_NATIONKEY] [int]          NOT NULL,
-    [N_NAME]      [char](25)     NULL,
-    [N_REGIONKEY] [bigint]       NOT NULL,
-    [N_COMMENT]   [varchar](152) NULL,
-    PRIMARY KEY CLUSTERED ([N_NATIONKEY] ASC)
-        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF,
-              ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF)
-        ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-CREATE TABLE [dbo].[ORDERS] (
-    [O_ORDERKEY]      [int]            NOT NULL,
-    [O_CUSTKEY]       [bigint]         NOT NULL,
-    [O_ORDERSTATUS]   [char](1)        NULL,
-    [O_TOTALPRICE]    [decimal](16, 2) NULL,
-    [O_ORDERDATE]     [date]           NULL,
-    [O_ORDERPRIORITY] [char](15)       NULL,
-    [O_CLERK]         [char](15)       NULL,
-    [O_SHIPPRIORITY]  [int]            NULL,
-    [O_COMMENT]       [varchar](79)    NULL,
-    PRIMARY KEY CLUSTERED ([O_ORDERKEY] ASC)
-        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF,
-              ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF)
-        ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-CREATE TABLE [dbo].[PART] (
-    [P_PARTKEY]     [int]            NOT NULL,
-    [P_NAME]        [varchar](55)    NULL,
-    [P_MFGR]        [char](25)       NULL,
-    [P_BRAND]       [char](10)       NULL,
-    [P_TYPE]        [varchar](25)    NULL,
-    [P_SIZE]        [int]            NULL,
-    [P_CONTAINER]   [char](10)       NULL,
-    [P_RETAILPRICE] [decimal](16, 2) NULL,
-    [P_COMMENT]     [varchar](23)    NULL,
-    PRIMARY KEY CLUSTERED ([P_PARTKEY] ASC)
-        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF,
-              ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF)
-        ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-CREATE TABLE [dbo].[PARTSUPP] (
-    [PS_PARTKEY]    [bigint]         NOT NULL,
-    [PS_SUPPKEY]    [bigint]         NOT NULL,
-    [PS_AVAILQTY]   [int]            NULL,
-    [PS_SUPPLYCOST] [decimal](16, 2) NULL,
-    [PS_COMMENT]    [varchar](199)   NULL,
-    PRIMARY KEY CLUSTERED ([PS_PARTKEY] ASC, [PS_SUPPKEY] ASC)
-        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF,
-              ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF)
-        ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-CREATE TABLE [dbo].[REGION] (
-    [R_REGIONKEY] [int]          NOT NULL,
-    [R_NAME]      [char](25)     NULL,
-    [R_COMMENT]   [varchar](152) NULL,
-    PRIMARY KEY CLUSTERED ([R_REGIONKEY] ASC)
-        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF,
-              ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF)
-        ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-CREATE TABLE [dbo].[SUPPLIER] (
-    [S_SUPPKEY]   [int]            NOT NULL,
-    [S_NAME]      [char](25)       NULL,
-    [S_ADDRESS]   [varchar](40)    NULL,
-    [S_NATIONKEY] [bigint]         NOT NULL,
-    [S_PHONE]     [char](15)       NULL,
-    [S_ACCTBAL]   [decimal](16, 2) NULL,
-    [S_COMMENT]   [varchar](101)   NULL,
-    PRIMARY KEY CLUSTERED ([S_SUPPKEY] ASC)
-        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF,
-              ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF)
-        ON [PRIMARY]
-) ON [PRIMARY]
+SELECT name, recovery_model_desc, delayed_durability_desc, compatibility_level, collation_name
+FROM sys.databases
+WHERE name = DB_NAME();
 GO
