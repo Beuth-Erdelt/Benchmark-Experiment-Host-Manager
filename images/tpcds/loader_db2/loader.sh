@@ -5,6 +5,10 @@ DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
 echo "NOW: $DATEANDTIME"
 SECONDS_START_SCRIPT=$SECONDS
 
+######################## Db2 client (not part of the image) ########################
+# installs ibm_db from PyPI into the cache on the data volume, exports PYTHONPATH
+source /tmp/install-driver.sh
+
 ######################## Show general parameters ########################
 echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
 echo "BEXHOMA_EXPERIMENT_RUN:$BEXHOMA_EXPERIMENT_RUN"

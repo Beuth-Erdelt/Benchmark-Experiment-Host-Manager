@@ -33,7 +33,8 @@ images/tpcds/
 │   ├── loader.sh          — loads .dat via mclient COPY FROM STDIN
 │   └── README.md          — environment variable reference + execution flow
 ├── loader_db2/
-│   ├── Dockerfile         — Db2 loader image (python:3.12-slim + ibm_db)
+│   ├── Dockerfile         — Db2 loader image (python:3.12-slim, no IBM software)
+│   ├── install-driver.sh  — copy of images/tpch/loader_db2/install-driver.sh
 │   ├── loader.sh          — loads .dat via load.py (empty field = NULL)
 │   ├── load.py            — copy of images/tpch/loader_db2/load.py
 │   └── README.md          — environment variable reference + execution flow

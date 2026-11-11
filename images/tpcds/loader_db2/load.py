@@ -9,10 +9,16 @@ IBM Data Server Driver of ibm_db): INSERT INTO <table> SELECT * FROM EXTERNAL
 (autocommit) per chunk, so the transaction log of the server needs room for
 one chunk per loader only. Db2 rejects a statement whose file has a bad row
 (MaxErrors 1), so a chunk is either loaded completely or not at all.
+A chunk holds one row lock per row until its commit: with several loader pods
+on the same table, large chunks fill the lock list, Db2 escalates to table
+locks and the loaders deadlock (SQL0911N, reason code 2). The default of
+20000 lines keeps four loaders far below the lock list of the template.
 
-A chunk is retried (DB2_LOAD_RETRIES times, 5 s apart) only on errors that mean
-no connection (communication errors, database not yet active); a chunk that
-fails otherwise ends the file. The last line of the output is
+A chunk is retried (DB2_LOAD_RETRIES times, 5 s apart) only on errors after
+which nothing of it is in the table: no connection (communication errors,
+database not yet active) or the chunk was rolled back (SQLSTATE 40001,
+deadlock or lock timeout, SQL0911N); a chunk that fails otherwise ends the
+file. The last line of the output is
 "BEXHOMA_LOADED:<rows>" with the number of rows Db2 reports as inserted; the
 exit code is 0 if all chunks were loaded, 1 otherwise.
 
@@ -20,7 +26,7 @@ Environment: BEXHOMA_HOST, BEXHOMA_PORT, BEXHOMA_DATABASE, BEXHOMA_USER,
 BEXHOMA_PASSWORD, BEXHOMA_SCHEMA (optional, else the default schema of the
 user), DB2_DELIMITER (default '|'), DB2_EMPTY_AS_NULL (1: an empty field is
 NULL, as in TPC-DS; default 0: an empty field of a character column is an empty
-string), DB2_LOAD_CHUNK_ROWS (default 200000), DB2_LOAD_RETRIES (default 10).
+string), DB2_LOAD_CHUNK_ROWS (default 20000), DB2_LOAD_RETRIES (default 10).
 
 Author: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -32,9 +38,12 @@ import time
 
 import ibm_db
 
-# SQLSTATE classes of errors after which a retry may succeed: 08 connection
-# exception, 57019/57011/57033 database not started or resources unavailable
-TRANSIENT_SQLSTATES = ('08', '57019', '57011', '57033', '40003')
+# SQLSTATEs after which a retry may succeed: 08 connection exception,
+# 57019/57011/57033 database not started or resources unavailable, 40001 the
+# transaction was rolled back (deadlock or lock timeout, SQL0911N), 40003 statement
+# completion unknown (connection lost; if the chunk was committed after all, the
+# retry fails on the primary key and ends the file, nothing is loaded twice)
+TRANSIENT_SQLSTATES = ('08', '57019', '57011', '57033', '40003', '40001')
 
 
 def connection_string():
@@ -94,7 +103,7 @@ def chunks(path, size, tmpdir):
 def main():
     table, path = sys.argv[1], sys.argv[2]
     delimiter = os.environ.get('DB2_DELIMITER', '|')
-    size = int(os.environ.get('DB2_LOAD_CHUNK_ROWS', '200000'))
+    size = int(os.environ.get('DB2_LOAD_CHUNK_ROWS', '20000'))
     retries = int(os.environ.get('DB2_LOAD_RETRIES', '10'))
     tmpdir = os.path.dirname(os.path.abspath(path))
     loaded = 0

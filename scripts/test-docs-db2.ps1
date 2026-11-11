@@ -164,6 +164,34 @@ bexhoma ycsb `
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DB2 workload e  sf=1"
 
 
+#### Benchbase tpcc (profile db2 of the bexhoma image, the only Benchbase benchmark with a Db2 config)
+bexhoma benchbase `
+  -dbms DB2                     <# DBMS under test #> `
+  -sf 16                        <# scaling factor (controls database size) #> `
+  -xbt tpcc                     <# Benchbase benchmark type #> `
+  -xsd 5                        <# benchmark duration in minutes #> `
+  -xtb 16384                    <# base ops/s used to compute the throughput target #> `
+  -xnbf 1                       <# throughput target as a multiple of the base ops/s #> `
+  -nc 2                         <# two runs, the second restarts the SUT on the same data #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 16                       <# threads per benchmarking pod #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 12Gi                      <# RAM limit for the SUT container (Db2 uses at most 8 GB) #> `
+  -rr 12Gi                      <# RAM requested for the SUT container #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
+  -rss 30Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class of the persistent volume #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -ar                           <# run the reset scripts before each round #> `
+  -ks no                        <# remove the SUT at the end #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tpcc_db2_storage.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DB2 tpcc  sf=16"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################

@@ -854,6 +854,8 @@
    "benchmarking_parameters_list": [
     {
      "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_JAR_SHA256": "04150111a29370247d162c3f05b8e938bf1314f19a63ad9a5302d88dd478e8e8",
+     "BEXHOMA_JAR_URL": "https://repo1.maven.org/maven2/com/ibm/db2/jcc/12.1.5.0/jcc-12.1.5.0.jar",
      "BEXHOMA_SYNCH_LOAD": 1,
      "PARALLEL": "1",
      "SF": "1",
@@ -872,6 +874,8 @@
    "benchmarking_parameters_list_template": [
     {
      "BEXHOMA_DBMS_TYPE": "jdbc",
+     "BEXHOMA_JAR_SHA256": "04150111a29370247d162c3f05b8e938bf1314f19a63ad9a5302d88dd478e8e8",
+     "BEXHOMA_JAR_URL": "https://repo1.maven.org/maven2/com/ibm/db2/jcc/12.1.5.0/jcc-12.1.5.0.jar",
      "BEXHOMA_SYNCH_LOAD": 1,
      "PARALLEL": "1",
      "SF": "1",
@@ -905,6 +909,8 @@
        "parallelism": 1,
        "parameters": {
         "BEXHOMA_DBMS_TYPE": "jdbc",
+        "BEXHOMA_JAR_SHA256": "04150111a29370247d162c3f05b8e938bf1314f19a63ad9a5302d88dd478e8e8",
+        "BEXHOMA_JAR_URL": "https://repo1.maven.org/maven2/com/ibm/db2/jcc/12.1.5.0/jcc-12.1.5.0.jar",
         "BEXHOMA_SYNCH_LOAD": 1,
         "PARALLEL": "1",
         "SF": "1",
@@ -935,6 +941,8 @@
       "parallelism": 2,
       "parameters": {
        "BEXHOMA_DBMS_TYPE": "jdbc",
+       "BEXHOMA_JAR_SHA256": "04150111a29370247d162c3f05b8e938bf1314f19a63ad9a5302d88dd478e8e8",
+       "BEXHOMA_JAR_URL": "https://repo1.maven.org/maven2/com/ibm/db2/jcc/12.1.5.0/jcc-12.1.5.0.jar",
        "BEXHOMA_SYNCH_LOAD": 1,
        "PARALLEL": "2",
        "SF": "1",
@@ -958,6 +966,8 @@
    "loading_deactivated": false,
    "loading_parameters": {
     "BEXHOMA_DBMS_TYPE": "jdbc",
+    "BEXHOMA_JAR_SHA256": "04150111a29370247d162c3f05b8e938bf1314f19a63ad9a5302d88dd478e8e8",
+    "BEXHOMA_JAR_URL": "https://repo1.maven.org/maven2/com/ibm/db2/jcc/12.1.5.0/jcc-12.1.5.0.jar",
     "BEXHOMA_SYNCH_LOAD": 1,
     "PARALLEL": "2",
     "SF": "1",

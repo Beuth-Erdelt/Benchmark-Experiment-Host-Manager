@@ -24,7 +24,7 @@ Each supported DBMS has a short section below; configuration, deployment, script
 | Relational / SQL | [CedarDB](#cedardb) | `CedarDB` | TPC-H, SSB, YCSB, Benchbase | [Example-Other-DBMS](Example-Other-DBMS.md#cedardb) |
 | Relational / SQL | [SQL Server](#sql-server) | `SQLServer` | TPC-H, YCSB, Benchbase (TPC-C), HammerDB | [Example-Other-DBMS](Example-Other-DBMS.md#sql-server) (no results, [license](#sql-server)) |
 | Relational / SQL | [Oracle Database Free](#oracle-database-free) | `OracleDB` | TPC-H, YCSB, Benchbase (TPC-C), HammerDB | [Example-Other-DBMS](Example-Other-DBMS.md#oracle-database-free) (no results) |
-| Relational / SQL | [IBM Db2 Community Edition](#ibm-db2-community-edition) | `DB2` | TPC-H, TPC-DS, YCSB | [Example-Other-DBMS](Example-Other-DBMS.md#ibm-db2-community-edition) (no results) |
+| Relational / SQL | [IBM Db2 Community Edition](#ibm-db2-community-edition) | `DB2` | TPC-H, TPC-DS, YCSB, Benchbase (TPC-C) | [Example-Other-DBMS](Example-Other-DBMS.md#ibm-db2-community-edition) (no results) |
 | Distributed SQL | [Citus](#citus) | `Citus` | TPC-H, SSB, YCSB, Benchbase, HammerDB | [Example-Citus](Example-Citus.md) |
 | Distributed SQL | [YugabyteDB](#yugabytedb) | `YugabyteDB` | YCSB, Benchbase | [Example-YugaByteDB](Example-YugaByteDB.md) |
 | Distributed SQL | [CockroachDB](#cockroachdb) | `CockroachDB` | YCSB, Benchbase | [Example-CockroachDB](Example-CockroachDB.md) |
@@ -804,13 +804,24 @@ See [Example: Other DBMS](Example-Other-DBMS.md#oracle-database-free) for the wo
 
 ## IBM Db2 Community Edition
 
-`DB2` is the configuration key for IBM Db2 Community Edition 12.1.5 (container format), a single Deployment without operator (TPC-H, TPC-DS, YCSB).
+`DB2` is the configuration key for IBM Db2 Community Edition 12.1.5 (container format), a single Deployment without operator (TPC-H, TPC-DS, YCSB, Benchbase TPC-C).
 
 **License:** the License Information in the image (`L-KHAI-C8GJZN`, International License Agreement for Non-Warranted Programs) has no benchmark clause.
 The notices of the image list the "Machine Learning Optimizer" (the AI query optimizer of Db2 12.1) as Technology Preview Code: it is not part of the licensed program, may be used for internal evaluation only, and information about it, including benchmarks, is IBM confidential.
 It is on by default in new databases; the template switches it off (`AI_OPTIMIZER`, `AUTO_AI_OPTIMIZER`, `AUTO_AI_MAINT` = `OFF`), the pod becomes ready only when it is off, and `checkschema-<benchmark>.sql` reports it.
 The License Information file in the image names version 11.5.7.0, and the online License Information of 12.1 has not been read yet.
 The results of Db2 are therefore kept internal: its test script writes to `logs_tests/local`, and `tests/test_unpublished_results.py` fails on results of it in `docs/` or `logs_tests/`.
+
+**Drivers:** the images of bexhoma contain no IBM software.
+IBM allows passing on its drivers (JDBC driver `jcc`, Data Server Driver for ODBC and CLI) only as part of an application whose end-user license protects IBM as much as IBM's own; the public, AGPL-licensed images cannot give that.
+So every pod downloads the driver itself at the start:
+
+| Driver | Downloaded by | From | Cache |
+|---|---|---|---|
+| `ibm_db` 3.2.6 with the Data Server Driver for ODBC and CLI | `install-driver.sh` of the loaders (`IBM_DB_VERSION`) | PyPI | data volume, `/data/drivers` (once per version; else `/tmp`) |
+| `jcc-12.1.5.0.jar` | the scripts of DBMSBenchmarker, YCSB and Benchbase, when `BEXHOMA_JAR_URL` is set (`benchmarking_parameters`/`loading_parameters` of `cluster.config`); `BEXHOMA_JAR_SHA256` is checked | Maven Central | none (6.6 MB per pod) |
+
+A pod that cannot download its driver ends with exit code 1.
 
 **Limits of the edition:** at most 4 cores and 8 GB of instance memory (`db2licm -l` of 12.1.5: `Max amount of memory (GB): 8`, `Max number of cores: 4`, enforcement "Soft Stop"); Db2 lowers `INSTANCE_MEMORY` to 8 GB at the start.
 
@@ -840,16 +851,22 @@ There are no durability scripts: Db2 has no setting for asynchronous commit, so 
 
 | Benchmark | Client | Image |
 |---|---|---|
-| TPC-H loading | remote external tables (`INSERT ... SELECT * FROM EXTERNAL '<file>' USING (... REMOTESOURCE 'YES')`) of `ibm_db` (IBM Data Server Driver for ODBC and CLI), one transaction per 200000 lines | `bexhoma/loader_tpch_db2` ([`images/tpch/loader_db2`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/tpch/loader_db2)) |
+| TPC-H loading | remote external tables (`INSERT ... SELECT * FROM EXTERNAL '<file>' USING (... REMOTESOURCE 'YES')`) of `ibm_db` (IBM Data Server Driver for ODBC and CLI), one transaction per 20000 lines; a chunk rolled back by a deadlock (`SQL0911N`, SQLSTATE `40001`) is retried | `bexhoma/loader_tpch_db2` ([`images/tpch/loader_db2`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/tpch/loader_db2)) |
 | TPC-H refresh stream (`-xrs`) | RF1 as the loader; RF2 deletes with the delete file as a remote external table | `bexhoma/loader_tpch_refresh_db2` |
 | TPC-DS loading | as TPC-H; an empty field is `NULL` (`NULLVALUE ''`) | `bexhoma/loader_tpcds_db2` |
 | TPC-H, TPC-DS queries | JDBC `jcc-12.1.5.0.jar` | `bexhoma/benchmarker_dbmsbenchmarker` |
 | YCSB | JDBC binding, `jcc-12.1.5.0.jar`; workload E runs (Db2 has `LIMIT`) | `bexhoma/generator_ycsb`, `bexhoma/benchmarker_ycsb` |
+| Benchbase | profile `db2` of the bexhoma image (the profile `postgres` without its driver, `jcc-12.1.5.0.jar` in its `lib`); Benchbase's own type `DB2` with `ddl-db2.sql` and `dialect-db2.xml` of `tpcc`; only `tpcc` has a config (`images/benchbase/config/db2`) | `bexhoma/generator_benchbase`, `bexhoma/benchmarker_benchbase` |
+
+The loaders insert into the same table from several pods: each chunk holds one row lock per row until its commit.
+With chunks of 200000 lines, four TPC-H loaders filled the lock list, Db2 escalated to table locks and the loaders deadlocked on `lineitem`; 20000 lines keep them far below it.
 
 **Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/DB2), [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/DB2), [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/DB2)):
 row-organized tables in the default table space (4 KiB pages).
 TPC-H with primary keys in `initschema-tpch.sql`, keys `INTEGER`, order keys `BIGINT`, amounts `DECIMAL(15,2)`; `-xii` adds the indexes of MySQL, `-xic` the foreign keys (enforced, checked against the loaded rows), `-xis` runs `RUNSTATS ... WITH DISTRIBUTION AND DETAILED INDEXES ALL` on every table.
 TPC-DS uses the statements of PostgreSQL.
+Benchbase creates its TPC-C tables itself ([scripts](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/benchbase/tpcc/DB2) for checks and reset).
+Benchbase runs TPC-C with `TRANSACTION_SERIALIZABLE` (the default of bexhoma, Repeatable Read in Db2): some transactions deadlock (`SQL0911N`, reason code 2), which Benchbase counts as errors.
 YCSB `usertable` has `VARCHAR(3000)` fields in a table space of 32 KiB pages (`ts32k`, buffer pool `bp32k`), since a row in 4 KiB pages holds about 4 KB.
 `checkschema-<benchmark>.sql` reports the version and license, writes the dirty pages to disk (`FLUSH BUFFERPOOLS ALL`) and reports exact row counts, the sizes of tables and indexes, the log written and the configuration, including the AI optimizer.
 
@@ -857,7 +874,7 @@ Queries use dialect `DB2` of the query files.
 TPC-H: Q1, Q4, Q5, Q6, Q10, Q11, Q12, Q14, Q15 and Q20 have a variant (`N days` instead of `interval`; Q15 as a view per stream).
 TPC-DS: Q5, Q12, Q16, Q20, Q21, Q32, Q37, Q40, Q72, Q77, Q80, Q82, Q92, Q94, Q95 and Q98 have a variant with `N days` instead of `interval 'N' day`; Q66 and Q84 use `||` instead of `CONCAT` with three arguments; Q3 groups by the columns instead of their aliases; Q32 and Q92 average `DECIMAL(15,2)`, since `1.3 * AVG` of `DECIMAL(7,2)` overflows.
 
-Not supported: SSB (not ported), Benchbase (the Benchbase image has no Db2 profile) and HammerDB TPC-C (the HammerDB image has no Db2 client and no `db2tcl`).
+Not supported: SSB (not ported), the other Benchbase benchmarks (no config) and HammerDB TPC-C (the HammerDB image has no Db2 client and no `db2tcl`).
 
 ```bash
 bexhoma tpch -dbms DB2 -sf 1 -nlp 4 -xii -xic -xis -tr run

@@ -131,6 +131,7 @@ IBM Db2 Community Edition is the free edition of Db2 for Linux, UNIX and Windows
 Bexhoma runs Db2 12.1.5 from the image `icr.io/db2_community/db2` with the template [deploymenttemplate-DB2.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-DB2.yml).
 The edition uses at most 4 cores and 8 GB of instance memory; the container needs the capability `IPC_OWNER`, not privileged mode.
 The template switches off the AI query optimizer, which the image ships as Technology Preview Code.
+The images of bexhoma contain no IBM driver: the pods download it at the start (Db2 client from PyPI, JDBC driver from Maven Central).
 
 The results of Db2 are kept internal: there are no results of it on this page, in the documentation or in the repository.
 
@@ -139,8 +140,9 @@ The results of Db2 are kept internal: there are no results of it on this page, i
 | TPC-H | yes | dialect `DB2` of the query file; also with a refresh stream (`-xrs`) |
 | TPC-DS | yes | dialect `DB2` of the query file (19 variants) |
 | YCSB | yes | JDBC binding, all workloads (Db2 has `LIMIT`) |
+| Benchbase `tpcc` | yes | profile `db2` of the bexhoma image; the only Benchbase benchmark with a Db2 config |
 | SSB | no | not ported |
-| Benchbase, HammerDB TPC-C | no | the images have no Db2 profile or client |
+| HammerDB TPC-C | no | the HammerDB image has no Db2 client |
 
 See [DBMS](DBMS.html#ibm-db2-community-edition) for the deployment, the loaders and the scripts.
 

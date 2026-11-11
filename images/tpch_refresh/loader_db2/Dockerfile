@@ -16,7 +16,8 @@
 # TPCH_REFRESH_STREAM_OFFSET+1. RF1 with load.py (the same as in
 # images/tpch/loader_db2: remote external tables, one transaction per chunk),
 # RF2 with rf2.py (one transaction, the delete file as a remote external table).
-# ibm_db installs the IBM Data Server Driver for ODBC and CLI (redistributable).
+# The image contains no IBM software: install-driver.sh installs ibm_db (with
+# IBM's Data Server Driver for ODBC and CLI) from PyPI at the start.
 # Synchronises with the query-stream benchmarker via Redis round counter.
 # Emits BEXHOMA_DURATION/START/END.
 ######################################################################################
@@ -25,10 +26,11 @@ FROM python:3.12-slim
 ######################################################################################
 # Install dependencies
 ######################################################################################
+# ibm_db (with IBM's Data Server Driver for ODBC and CLI) is not part of the image:
+# install-driver.sh installs it from PyPI at the start of the container
 RUN apt-get update \
     && apt-get install -y --no-install-recommends redis-tools libxml2 \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir ibm_db==3.2.6
+    && rm -rf /var/lib/apt/lists/*
 
 ######################################################################################
 # Environment variables — runtime configuration
@@ -49,8 +51,11 @@ ENV BEXHOMA_SCHEMA=""
 
 # Loading: column delimiter, lines per transaction of RF1, attempts per chunk on connection errors
 ENV DB2_DELIMITER="|"
-ENV DB2_LOAD_CHUNK_ROWS=200000
+ENV DB2_LOAD_CHUNK_ROWS=20000
 ENV DB2_LOAD_RETRIES=10
+# Db2 client installed at the start: version of ibm_db, cache on the data volume
+ENV IBM_DB_VERSION=3.2.6
+ENV DB2_DRIVER_CACHE=/data/drivers
 
 # Bexhoma experiment identity
 ENV BEXHOMA_CONNECTION=db2
@@ -66,6 +71,7 @@ ENV BEXHOMA_BENCHMARK_RUN=2
 WORKDIR /tmp
 COPY ./loader.sh /tmp/loader.sh
 COPY ./load.py /tmp/load.py
+COPY ./install-driver.sh /tmp/install-driver.sh
 COPY ./rf2.py /tmp/rf2.py
 RUN chmod +x /tmp/loader.sh
 

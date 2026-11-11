@@ -45,7 +45,8 @@ images/tpch_refresh/
 │   ├── ctl/               — SQL*Loader control files (orders, lineitem, delete keys)
 │   └── README.md          — environment variable reference + execution flow
 ├── loader_db2/
-│   ├── Dockerfile         — Db2 loader image (python:3.12-slim + ibm_db + redis-cli)
+│   ├── Dockerfile         — Db2 loader image (python:3.12-slim + redis-cli, no IBM software)
+│   ├── install-driver.sh  — copy of images/tpch/loader_db2/install-driver.sh
 │   ├── loader.sh          — applies RF1 via load.py, RF2 via rf2.py
 │   ├── load.py            — copy of images/tpch/loader_db2/load.py
 │   ├── rf2.py             — both DELETEs in one transaction, delete file as remote external table

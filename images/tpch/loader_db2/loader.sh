@@ -9,6 +9,10 @@ SECONDS_START_SCRIPT=$SECONDS
 BEXHOMA_CHILD=${BEXHOMA_CHILD//[^0-9]/}
 BEXHOMA_TENANT_NUM=${BEXHOMA_TENANT_NUM//[^0-9]/}
 
+######################## Db2 client (not part of the image) ########################
+# installs ibm_db from PyPI into the cache on the data volume, exports PYTHONPATH
+source /tmp/install-driver.sh
+
 ######################## Show general parameters ########################
 BEXHOMA_DATABASE_INITIAL="$BEXHOMA_DATABASE"
 BEXHOMA_SCHEMA_INITIAL="$BEXHOMA_SCHEMA"

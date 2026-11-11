@@ -6,6 +6,10 @@ echo "NOW: $DATEANDTIME"
 SECONDS_START_SCRIPT=$SECONDS
 bexhoma_start_epoch=$(date -u +%s)
 
+######################## Db2 client (not part of the image) ########################
+# installs ibm_db from PyPI into the cache on the data volume, exports PYTHONPATH
+source /tmp/install-driver.sh
+
 ######################## Show general parameters ########################
 echo "BEXHOMA_CONNECTION:$BEXHOMA_CONNECTION"
 echo "BEXHOMA_EXPERIMENT:$BEXHOMA_EXPERIMENT"

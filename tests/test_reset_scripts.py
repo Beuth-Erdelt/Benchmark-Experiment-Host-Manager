@@ -73,6 +73,7 @@ EXPECTED = {
         'CedarDB': ['reset-benchbase.sql'],
         'SQLServer': ['reset-benchbase.sql'],
         'OracleDB': ['reset-benchbase.sql'],
+        'DB2': ['reset-benchbase.sql'],
     },
     'hammerdb.py': {
         'PostgreSQL': ['reset-tpcc.sql'],

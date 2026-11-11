@@ -15,19 +15,20 @@
 # remote external tables (INSERT ... SELECT * FROM EXTERNAL ... REMOTESOURCE 'YES',
 # load.py). The child index is read from /tmp/tpch/BEXHOMA_CHILD written by the
 # generator pod. nation and region are only loaded by pod 1.
-# ibm_db installs the IBM Data Server Driver for ODBC and CLI (clidriver, a
-# redistributable driver of IBM, see clidriver/license in the image); redis-tools
-# is installed for the synchronisation counters (redis-cli).
+# The image contains no IBM software: install-driver.sh installs ibm_db (with
+# IBM's Data Server Driver for ODBC and CLI) from PyPI at the start, cached on the
+# data volume. redis-tools is installed for the synchronisation counters.
 ######################################################################################
 FROM python:3.12-slim
 
 ######################################################################################
 # Install dependencies
 ######################################################################################
+# ibm_db (with IBM's Data Server Driver for ODBC and CLI) is not part of the image:
+# install-driver.sh installs it from PyPI at the start of the container
 RUN apt-get update \
     && apt-get install -y --no-install-recommends redis-tools libxml2 \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir ibm_db==3.2.6
+    && rm -rf /var/lib/apt/lists/*
 
 ######################################################################################
 # Environment variables — runtime configuration
@@ -54,8 +55,11 @@ ENV BEXHOMA_DRIVER=com.ibm.db2.jcc.DB2Driver
 
 # Loading: column delimiter, lines per transaction, attempts per chunk on connection errors
 ENV DB2_DELIMITER="|"
-ENV DB2_LOAD_CHUNK_ROWS=200000
+ENV DB2_LOAD_CHUNK_ROWS=20000
 ENV DB2_LOAD_RETRIES=10
+# Db2 client installed at the start: version of ibm_db, cache on the data volume
+ENV IBM_DB_VERSION=3.2.6
+ENV DB2_DRIVER_CACHE=/data/drivers
 
 # Bexhoma experiment identity
 ENV BEXHOMA_CONNECTION=db2
@@ -85,6 +89,7 @@ RUN mkdir -p /tmp/tpch
 ######################################################################################
 COPY ./loader.sh /tmp/loader.sh
 COPY ./load.py /tmp/load.py
+COPY ./install-driver.sh /tmp/install-driver.sh
 RUN chmod +x /tmp/loader.sh
 
 ######################################################################################

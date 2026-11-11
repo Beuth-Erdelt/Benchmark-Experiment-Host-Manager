@@ -23,4 +23,7 @@ As the [Oracle refresh loader](../loader_oracle/README.md), with these defaults:
 
 ## Image
 
-Base `python:3.12-slim`; `ibm_db` 3.2.6 from PyPI, which downloads IBM's redistributable `clidriver`, and `redis-tools` for `redis-cli`.
+Base `python:3.12-slim` and `redis-tools` for `redis-cli`; the image contains no IBM software.
+[`install-driver.sh`](install-driver.sh) (a copy of [`images/tpch/loader_db2/install-driver.sh`](../../tpch/loader_db2/install-driver.sh), keep both the same), sourced at the start of `loader.sh`, installs `ibm_db` (`IBM_DB_VERSION`, default 3.2.6, with IBM's Data Server Driver for ODBC and CLI) from PyPI into `DB2_DRIVER_CACHE` (default `/data/drivers` on the data volume, once per version; `/tmp/drivers` if that is not writable) and sets `PYTHONPATH`.
+Several pods starting at the same time install into their own folders, the first one is kept. A pod that cannot install the driver exits with 1.
+IBM allows passing on the driver only together with an end-user license that protects IBM as much as IBM's own, which the public images cannot give.

@@ -170,9 +170,6 @@ RUN wget https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/9.4.1
 RUN wget https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/23.26.3.0.0/ojdbc8-23.26.3.0.0.jar && \
     cp ojdbc8-23.26.3.0.0.jar jars/
 
-# IBM Db2 12.1.5 (JCC driver, Java 8 bytecode); the binding's scans with LIMIT run on Db2
-RUN wget https://repo1.maven.org/maven2/com/ibm/db2/jcc/12.1.5.0/jcc-12.1.5.0.jar &&     cp jcc-12.1.5.0.jar jars/
-
 ######################################################################################
 # Copy workload templates and entrypoint script
 ######################################################################################

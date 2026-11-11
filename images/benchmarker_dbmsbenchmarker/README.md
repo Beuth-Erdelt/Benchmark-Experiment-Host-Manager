@@ -114,6 +114,7 @@ the wait loop).
 * `BEXHOMA_HOST`: Hostname of the target DBMS.
 * `BEXHOMA_PORT`: Port of the target DBMS.
 * `BEXHOMA_JAR`: JDBC driver jar file name (must exist in `jars/` inside the image — see Dockerfile for bundled drivers).
+* `BEXHOMA_JAR_URL`, `BEXHOMA_JAR_SHA256`: a JDBC driver that is not part of the image (its license does not allow bexhoma to ship it, IBM Db2) is downloaded into `jars/` at the start; the checksum is checked if set. Default: empty.
 * `BEXHOMA_DRIVER`: JDBC driver class name (e.g. `com.mysql.cj.jdbc.Driver`).
 * `BEXHOMA_USER`: Database username.
 * `BEXHOMA_PASSWORD`: Database password.

@@ -87,6 +87,22 @@ ENV BENCHBASE_YCSB_WEIGHTS=100,0,0,0,0,0
 RUN apt-get update && apt-get install -y --no-install-recommends redis-tools && rm -rf /var/lib/apt/lists/*
 
 ######################################################################################
+# Profile db2: Benchbase supports Db2 (database type DB2, DDL and dialect of tpcc),
+# but the image has no profile with the Db2 driver. The profile is the postgres one
+# without its driver; the Db2 driver (IBM license, not part of the image) is
+# downloaded into profiles/db2/lib at the start (BEXHOMA_JAR_URL).
+# Every profile is started with benchbase.jar and all jars of its lib folder on the
+# class path instead of "java -jar": the class path in the manifest of every profile
+# is exactly lib/*, so nothing changes for the other profiles, and the downloaded
+# driver is found.
+######################################################################################
+RUN cp -a /benchbase/profiles/postgres /benchbase/profiles/db2 \
+    && rm -f /benchbase/profiles/db2/lib/postgresql-*.jar \
+    && chown -R containeruser:containergroup /benchbase/profiles/db2 \
+    && sed -i 's#^exec java -jar benchbase.jar \$\*$#exec java -cp "benchbase.jar:lib/*" com.oltpbenchmark.DBWorkload $*#' /benchbase/entrypoint.sh \
+    && grep -q '^exec java -cp "benchbase.jar:lib/\*" com.oltpbenchmark.DBWorkload \$\*$' /benchbase/entrypoint.sh
+
+######################################################################################
 # Copy entrypoint script
 ######################################################################################
 COPY ./benchmarker.sh /benchbase/benchmarker.sh
