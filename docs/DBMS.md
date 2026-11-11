@@ -646,6 +646,7 @@ CedarDB warns that the `memlock` limit is too low for its `io_uring` buffers (pe
 **Community Edition:** free, at most 64 GiB of data; above that the database is read-only.
 TPC-H is about 1.3 GiB per scale factor including indexes, so SF30 fits and SF100 does not (there is no SF100 script).
 The [terms](https://cedardb.com/legal/agreements/community_tcs.pdf) allow no passing on of the software, so bexhoma does not build a derived image.
+The results of CedarDB are kept internal: its test script writes to `logs_tests/local`, and `tests/test_unpublished_results.py` fails on results of it in `docs/` or `logs_tests/`.
 
 **Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/CedarDB), [SSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ssb/CedarDB), [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/CedarDB)):
 the statements of PostgreSQL, in schema `public`.
@@ -687,6 +688,7 @@ See [Example: Other DBMS](Example-Other-DBMS.md#cedardb) for the workloads and t
 
 **License:** the license terms of SQL Server 2022 Developer edition (also Express and Evaluation), section "Benchmark testing", require Microsoft's prior written approval to disclose the results of any benchmark test to a third party.
 Bexhoma therefore runs SQL Server for **internal tests only**: there are no results, summaries or logs of it in the repository or in the documentation.
+`tests/test_unpublished_results.py` fails on results of it in `docs/` or `logs_tests/`, and on a test script that runs it without writing to `logs_tests/local`.
 The Developer edition must not be used in a production environment; benchmarking is not production use.
 
 **Deployment template:** [`k8s/deploymenttemplate-SQLServer.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-SQLServer.yml)

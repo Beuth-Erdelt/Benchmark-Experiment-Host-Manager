@@ -4,7 +4,7 @@ Last recorded runs of the examples in `docs/`, one row per log in `logs_tests/`.
 Nothing is run to create this page: it is read from the committed logs by `scripts/demo-runs.py`,
 so it shows what the runs looked like when they were recorded, not whether the current code still passes.
 
-**373 passed, 0 failed, 1 warn, 5 unchecked** (379 runs)
+**372 passed, 0 failed, 1 warn, 5 unchecked** (378 runs)
 
 | Status | Log | Page | Date | Version | Duration | Failed tests / warnings |
 |---|---|---|---|---|---|---|
@@ -193,7 +193,6 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_reset_ycsb_redis_cluster.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 606s |  |
 | passed | docs_reset_ycsb_tidb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 732s |  |
 | passed | docs_reset_ycsb_yugabytedb.log | Test-Reset.md | 2026-10-22 | 0.11.7 | 725s |  |
-| passed | docs_ssb_cedardb.log | Example-SSB.md | 2026-11-06 | 0.11.13 | 290s |  |
 | passed | docs_ssb_citus.log | Example-SSB.md | 2026-11-06 | 0.11.13 | 818s |  |
 | passed | docs_ssb_clickhouse.log | Example-SSB.md | 2026-11-06 | 0.11.13 | 328s |  |
 | passed | docs_ssb_clickhousecluster.log | Example-SSB.md | 2026-11-06 | 0.11.13 | 317s |  |
