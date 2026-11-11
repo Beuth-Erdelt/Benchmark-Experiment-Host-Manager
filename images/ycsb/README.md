@@ -50,6 +50,10 @@ This file covers the shared design and decisions that apply across both.
 | Kinetica | 7.1.8.7 | `kinetica-jdbc-7.1.8.7-jar-with-dependencies.jar` |
 | YugabyteDB | 42.3.5-yb-2 | `jdbc-yugabytedb-42.3.5-yb-2.jar` |
 | YugabyteDB | 42.7.3-yb-3 | `jdbc-yugabytedb-42.7.3-yb-3.jar` (generator only) |
+| SQL Server | 9.4.1 (jre8) | `mssql-jdbc-9.4.1.jre8.jar` |
+
+The JDBC binding of YCSB splits `db.url` at `;` into shard URLs, so a SQL Server URL keeps only `jdbc:sqlserver://host:port` and cannot set `encrypt`, `trustServerCertificate` or `databaseName`.
+Driver 9.4.1 is the last one that does not encrypt by default (10.1 and newer refuse the self-signed certificate of the server); the database is the default database of the login (`initschema-ycsb.sql` of SQL Server sets it).
 
 ## Workload template placeholders
 

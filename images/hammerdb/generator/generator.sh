@@ -138,6 +138,36 @@ wait_to_complete
 vwait forever" > load.tcl
 fi
 
+######################## Generate workflow file (SQL Server) ########################
+# ODBC Driver 18 encrypts by default; the server has a self-signed certificate
+
+if [ "$HAMMERDB_TYPE" = "mssqlserver" ]; then
+    echo "puts \"SETTING CONFIGURATION\"
+global complete
+proc wait_to_complete {} {
+global complete
+set complete [vucomplete]
+if {!\$complete} { after 5000 wait_to_complete } else { exit }
+}
+dbset db mssqls
+diset connection mssqls_linux_server $BEXHOMA_HOST
+diset connection mssqls_tcp true
+diset connection mssqls_port $BEXHOMA_PORT
+diset connection mssqls_linux_authent sql
+diset connection mssqls_linux_odbc {ODBC Driver 18 for SQL Server}
+diset connection mssqls_uid $BEXHOMA_USER
+diset connection mssqls_pass $BEXHOMA_PASSWORD
+diset connection mssqls_encrypt_connection true
+diset connection mssqls_trust_server_cert true
+diset tpcc mssqls_dbase $BEXHOMA_DATABASE
+diset tpcc mssqls_count_ware $SF
+diset tpcc mssqls_num_vu $HAMMERDB_VUSERS
+print dict
+buildschema
+wait_to_complete
+vwait forever" > load.tcl
+fi
+
 ######################## Show workflow file ########################
 cat load.tcl
 

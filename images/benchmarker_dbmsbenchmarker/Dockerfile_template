@@ -136,6 +136,10 @@ RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
 RUN wget https://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc/0.11.0/clickhouse-jdbc-0.11.0-all-dependencies.jar
 RUN cp clickhouse-jdbc-0.11.0-all-dependencies.jar jars/clickhouse-jdbc-0.11.0-all-dependencies.jar
 
+# SQL Server 12.8.1 (jre8)
+RUN wget https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/12.8.1.jre8/mssql-jdbc-12.8.1.jre8.jar
+RUN cp mssql-jdbc-12.8.1.jre8.jar jars/mssql-jdbc-12.8.1.jre8.jar
+
 ######################################################################################
 # Build and install redis-cli from source
 ######################################################################################

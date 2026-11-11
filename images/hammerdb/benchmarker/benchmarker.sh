@@ -357,6 +357,65 @@ after 5000
 puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
 fi
 
+######################## Generate workflow file (SQL Server) ########################
+# ODBC Driver 18 encrypts by default; the server has a self-signed certificate
+
+if [ "$HAMMERDB_TYPE" = "mssqlserver" ]; then
+    echo "#!/bin/tclsh
+proc runtimer { seconds } {
+set x 0
+set timerstop 0
+while {!\$timerstop} {
+incr x
+after 1000
+  if { ![ expr {\$x % 60} ] } {
+          set y [ expr \$x / 60 ]
+          puts \"Timer: \$y minutes elapsed\"
+  }
+update
+if {  [ vucomplete ] || \$x eq \$seconds } { set timerstop 1 }
+    }
+return
+}
+puts \"SETTING CONFIGURATION\"
+dbset db mssqls
+diset connection mssqls_linux_server $BEXHOMA_HOST
+diset connection mssqls_tcp true
+diset connection mssqls_port $BEXHOMA_PORT
+diset connection mssqls_linux_authent sql
+diset connection mssqls_linux_odbc {ODBC Driver 18 for SQL Server}
+diset connection mssqls_uid $BEXHOMA_USER
+diset connection mssqls_pass $BEXHOMA_PASSWORD
+diset connection mssqls_encrypt_connection true
+diset connection mssqls_trust_server_cert true
+diset tpcc mssqls_dbase $BEXHOMA_DATABASE
+diset tpcc mssqls_count_ware $SF
+diset tpcc mssqls_num_vu $HAMMERDB_NUM_VU
+diset tpcc mssqls_driver timed
+diset tpcc mssqls_rampup $HAMMERDB_RAMPUP
+diset tpcc mssqls_duration $HAMMERDB_DURATION
+diset tpcc mssqls_total_iterations $HAMMERDB_ITERATIONS
+diset tpcc mssqls_timeprofile $HAMMERDB_TIMEPROFILE
+diset tpcc mssqls_allwarehouse $HAMMERDB_ALLWAREHOUSES
+diset tpcc mssqls_keyandthink $HAMMERDB_KEYANDTHINK
+vuset logtotemp 1
+$TCOUNT_CONFIG
+loadscript
+puts \"SEQUENCE STARTED\"
+foreach z { $HAMMERDB_VUSERS } {
+puts \"\$z VU TEST\"
+vuset vu \$z
+vucreate
+tcstart
+vurun
+runtimer 600
+vudestroy
+tcstop
+after 5000
+        }
+puts \"TEST SEQUENCE COMPLETE\"" > benchmark.tcl
+fi
+
 ######################## Show workflow file ########################
 cat benchmark.tcl
 

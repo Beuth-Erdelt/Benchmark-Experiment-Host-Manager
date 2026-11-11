@@ -3012,6 +3012,288 @@
    "tenant_per": "",
    "volume": "tpch",
    "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "jobtemplate-loading-tpch-SQLServer.yml",
+   "additional_labels": {
+    "SF": "1",
+    "experiment_design": "parallel-loading",
+    "usecase": "tpc-h"
+   },
+   "alias": "SQLServer@1",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "DBMSBENCHMARKER_DEV": 0,
+    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [],
+   "benchmarking_parameters_list_template": [],
+   "configuration": "SQLServer-1",
+   "data_components": null,
+   "dialect": "TSQL",
+   "docker": "SQLServer",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "dbmsbenchmarker",
+       "fixed_parallelism": false,
+       "name": "tpch",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "DBMSBENCHMARKER_DEV": 0,
+        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-tpch.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "dbmsbenchmarker",
+      "name": "tpch-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_DATABASE": "tpch",
+       "BEXHOMA_SYNCH_GENERATE": 1,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PODS_PARALLEL": "1",
+       "PODS_TOTAL": "1",
+       "SF": "1",
+       "STORE_RAW_DATA": 1,
+       "STORE_RAW_DATA_RECREATE": 0,
+       "TPCH_TABLE": "",
+       "TRANSFORM_RAW_DATA": 1
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-tpch-SQLServer.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_DATABASE": "tpch",
+    "BEXHOMA_SYNCH_GENERATE": 1,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PODS_PARALLEL": "1",
+    "PODS_TOTAL": "1",
+    "SF": "1",
+    "STORE_RAW_DATA": 1,
+    "STORE_RAW_DATA_RECREATE": 0,
+    "TPCH_TABLE": "",
+    "TRANSFORM_RAW_DATA": 1
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "SQLServer",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "nodes_worker": null,
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "sqlserver-1",
+    "storageSize": ""
+   },
+   "storage_label": "tpch-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-SQLServer.yml",
+   "tenant_per": "",
+   "volume": "tpch",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "jobtemplate-loading-tpch-SQLServer.yml",
+   "additional_labels": {
+    "SF": "1",
+    "experiment_design": "parallel-loading",
+    "usecase": "tpc-h"
+   },
+   "alias": "SQLServer@2",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "DBMSBENCHMARKER_DEV": 0,
+    "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+    "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+    "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+    "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [],
+   "benchmarking_parameters_list_template": [],
+   "configuration": "SQLServer-2",
+   "data_components": null,
+   "dialect": "TSQL",
+   "docker": "SQLServer",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "dbmsbenchmarker",
+       "fixed_parallelism": false,
+       "name": "tpch",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "DBMSBENCHMARKER_DEV": 0,
+        "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
+        "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
+        "DBMSBENCHMARKER_STORE_EXPLAIN": false,
+        "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
+        "SF": "1"
+       },
+       "resetscript": [
+        "reset-tpch.sql"
+       ],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "dbmsbenchmarker",
+      "name": "tpch-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BEXHOMA_DATABASE": "tpch",
+       "BEXHOMA_SYNCH_GENERATE": 1,
+       "BEXHOMA_SYNCH_LOAD": 1,
+       "PODS_PARALLEL": "1",
+       "PODS_TOTAL": "1",
+       "SF": "1",
+       "STORE_RAW_DATA": 1,
+       "STORE_RAW_DATA_RECREATE": 0,
+       "TPCH_TABLE": "",
+       "TRANSFORM_RAW_DATA": 1
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-tpch-SQLServer.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BEXHOMA_DATABASE": "tpch",
+    "BEXHOMA_SYNCH_GENERATE": 1,
+    "BEXHOMA_SYNCH_LOAD": 1,
+    "PODS_PARALLEL": "1",
+    "PODS_TOTAL": "1",
+    "SF": "1",
+    "STORE_RAW_DATA": 1,
+    "STORE_RAW_DATA_RECREATE": 0,
+    "TPCH_TABLE": "",
+    "TRANSFORM_RAW_DATA": 1
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "SQLServer",
+   "prometheus_interval": "30s",
+   "prometheus_timeout": "30s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "nodes_worker": null,
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "32Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "sqlserver-2",
+    "storageSize": ""
+   },
+   "storage_label": "tpch-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-SQLServer.yml",
+   "tenant_per": "",
+   "volume": "tpch",
+   "worker_metric_strip_container": false
   }
  ]
 }
