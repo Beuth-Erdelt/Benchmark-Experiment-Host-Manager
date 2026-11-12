@@ -30,9 +30,9 @@ class Hardware(Benchmark):
         :param code: Experiment identifier.
         :param path: Root result path.
         :param benchmark_run: 1-based benchmark position.
-        :return: :class:`evaluators.hardware` instance.
+        :return: :class:`evaluators.HardwareEvaluator` instance.
         """
-        return evaluators.hardware(
+        return evaluators.HardwareEvaluator(
             code=code,
             path=path,
             include_loading=False,

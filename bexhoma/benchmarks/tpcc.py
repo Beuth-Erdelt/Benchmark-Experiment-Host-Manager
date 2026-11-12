@@ -35,9 +35,9 @@ class TPCC(Benchmark):
         :param code: Experiment identifier.
         :param path: Root result path.
         :param benchmark_run: 1-based benchmark position.
-        :return: :class:`evaluators.tpcc` instance.
+        :return: :class:`evaluators.TpccEvaluator` instance.
         """
-        return evaluators.tpcc(
+        return evaluators.TpccEvaluator(
             code=code,
             path=path,
             include_loading=False,

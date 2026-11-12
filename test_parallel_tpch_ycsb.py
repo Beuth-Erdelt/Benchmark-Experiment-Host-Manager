@@ -258,7 +258,7 @@ if __name__ == '__main__':
         # (possibly fractional, e.g. "0.1") SF -- same reasoning as the SF
         # override on the "ycsb" benchmarker entry above. Without this, the
         # YCSB loader would silently load using TPC-H's SF/row count instead
-        # of its own, and evaluators.ycsb's per-connection SF (parsed from
+        # of its own, and evaluators.YcsbEvaluator's per-connection SF (parsed from
         # this loader's own log header) would misreport YCSB's loading
         # Throughput [SF/h].
         SF=str(ycsb_rows // 1000000 or 1),

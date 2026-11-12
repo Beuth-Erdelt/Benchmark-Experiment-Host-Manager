@@ -124,7 +124,7 @@ class EvaluatorOverwriteTest(unittest.TestCase):
     )
 
     def parse(self, overwrite_line: str):
-        evaluator = evaluators.hardware(code='1', path='/nonexistent', include_loading=False,
+        evaluator = evaluators.HardwareEvaluator(code='1', path='/nonexistent', include_loading=False,
                                         include_benchmarking=True, benchmark_run=1, name='hardware')
         with tempfile.TemporaryDirectory() as tmp_dir:
             filename = os.path.join(tmp_dir, 'bexhoma-benchmarker-hardware-1-1-1-1-abcde.log')

@@ -23,22 +23,8 @@ from .tpcc import TpccExperiment
 from .ycsb import YcsbExperiment
 from .hardware import HardwareExperiment
 
-# backward-compat aliases
-base = ExperimentBase
-mixed = MixedExperiment
-dbmsbenchmarker = DbmsBenchmarkerExperiment
-tpch = TpchExperiment
-tpcds = TpcdsExperiment
-ssb = SsbExperiment
-benchbase = BenchbaseExperiment
-tpcc = TpccExperiment
-ycsb = YcsbExperiment
-hardware = HardwareExperiment
-
 __all__ = [
     "ExperimentBase", "MixedExperiment", "DbmsBenchmarkerExperiment",
     "TpchExperiment", "TpcdsExperiment", "SsbExperiment", "YcsbExperiment", "TpccExperiment",
     "BenchbaseExperiment", "HardwareExperiment",
-    # backward-compat aliases
-    "base", "mixed", "dbmsbenchmarker", "tpch", "tpcds", "ssb", "ycsb", "tpcc", "benchbase", "hardware",
 ]

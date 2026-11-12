@@ -203,14 +203,6 @@ def init(self, *args, **kwargs):
     self.config['benchmarker']['resultfolder'] = copy_root
     self.resultfolder = copy_root.replace("\\", "/").replace("C:", "")
 clusters.Kubernetes.__init__ = init
-# "bexhoma summary" picks the experiment class by workload type only where the class allows it;
-# the hardware experiment does not, so its summary falls back to the base class and fails.
-# Allowed here, so that the hardware summary is covered. Obsolete once the class sets it itself.
-try:
-    from bexhoma import experiments
-    experiments.HardwareExperiment.summary_from_type = True
-except Exception:
-    pass
 from bexhoma.scripts.experimentsmanager import manage
 manage()
 '''

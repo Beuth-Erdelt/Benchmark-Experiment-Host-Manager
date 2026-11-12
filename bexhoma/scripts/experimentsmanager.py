@@ -11,6 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from bexhoma import *
+from bexhoma.benchmarks import registry
 from bexhoma.scripts.cli import EXPERIMENT_MODES
 from dbmsbenchmarker import *
 import logging
@@ -174,7 +175,7 @@ def manage():
             #cluster.kubectl('delete all -l experiment='+cluster.code)
             # kubectl delete all -l experiment=1742207308
         else:
-            experiment = experiments.base(cluster=cluster, code=args.experiment)
+            experiment = experiments.ExperimentBase(cluster=cluster, code=args.experiment)
             experiment.stop_sut()
             experiment.stop_monitoring()
             experiment.stop_loading()
@@ -201,15 +202,13 @@ def manage():
                 sf_kwargs = {}
                 if 'SF' in workload_properties.get('defaultParameters', {}):
                     sf_kwargs['SF'] = workload_properties['defaultParameters']['SF']
-                # the workload type names the experiment class alias in bexhoma.experiments
-                # (e.g. 'tpch' -> experiments.tpch); classes without summary_from_type fall
-                # back to the base class
-                experiment_class = getattr(experiments, str(workload_properties['type']), None)
-                if (isinstance(experiment_class, type) and issubclass(experiment_class, experiments.ExperimentBase)
-                        and experiment_class.summary_from_type):
-                    experiment = experiment_class(cluster=cluster, code=code, **sf_kwargs)
+                # the benchmark registered for the workload type names the experiment class;
+                # a type no benchmark claims (or one without a class of its own) uses the base class
+                descriptor = registry.descriptor_for_type(workload_properties['type'])
+                if descriptor is not None and descriptor.experiment is not None:
+                    experiment = descriptor.experiment(cluster=cluster, code=code, **sf_kwargs)
                 else:
-                    experiment = experiments.base(cluster=cluster, code=code)
+                    experiment = experiments.ExperimentBase(cluster=cluster, code=code)
                 # Reconstructing from just type/SF leaves experiment.workload at its
                 # __init__ defaults (e.g. monitoring_components={}). evaluate_results()
                 # uses self.workload['monitoring_components'] to decide which extra

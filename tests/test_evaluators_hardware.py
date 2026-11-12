@@ -23,9 +23,9 @@ import pandas as pd
 from bexhoma import evaluators
 
 
-def _make_evaluator() -> evaluators.hardware:
+def _make_evaluator() -> evaluators.HardwareEvaluator:
     """Build a HardwareEvaluator with no disk access needed for these tests."""
-    return evaluators.hardware(code='test-code', path='/nonexistent', include_loading=False,
+    return evaluators.HardwareEvaluator(code='test-code', path='/nonexistent', include_loading=False,
                                 include_benchmarking=True, benchmark_run=1, name='hardware')
 
 
@@ -48,14 +48,14 @@ class RowsOfHardwareTypeTest(unittest.TestCase):
             {'hardware_type': 'fio', 'value': 2},
             {'hardware_type': 'sysbench', 'value': 3},
         ])
-        selected = evaluators.hardware._rows_of_hardware_type(df, 'sysbench', 'sysbench')
+        selected = evaluators.HardwareEvaluator._rows_of_hardware_type(df, 'sysbench', 'sysbench')
         self.assertEqual(sorted(selected['value']), [1, 3])
 
     def test_falls_back_to_experiment_wide_type_when_column_absent(self) -> None:
         df = pd.DataFrame([{'value': 1}, {'value': 2}])
-        matching = evaluators.hardware._rows_of_hardware_type(df, 'sysbench', 'sysbench')
+        matching = evaluators.HardwareEvaluator._rows_of_hardware_type(df, 'sysbench', 'sysbench')
         self.assertEqual(len(matching), 2)
-        not_matching = evaluators.hardware._rows_of_hardware_type(df, 'fio', 'sysbench')
+        not_matching = evaluators.HardwareEvaluator._rows_of_hardware_type(df, 'fio', 'sysbench')
         self.assertEqual(len(not_matching), 0)
 
 

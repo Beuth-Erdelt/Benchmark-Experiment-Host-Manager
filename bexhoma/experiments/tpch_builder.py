@@ -271,7 +271,7 @@ def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
         code = cluster.code
     SF = resolve_scaling_factor(cluster, code, mode, experiment_cfg.get('scaling_factor', 1))
 
-    experiment = experiments.tpch(
+    experiment = experiments.TpchExperiment(
         cluster=cluster, SF=SF, timeout=int(experiment_cfg.get('timeout', 600)),
         code=code, num_experiment_to_apply=int(experiment_cfg.get('num_config', 1)),
     )

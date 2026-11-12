@@ -855,16 +855,16 @@ class CollectorBase:
         Returns a benchmarking evaluator for the given experiment code.
 
         Subclasses override this method to return the appropriate evaluator type.
-        The base implementation returns a :class:`evaluators.dbmsbenchmarker` instance.
+        The base implementation returns a :class:`evaluators.DbmsBenchmarkerEvaluator` instance.
 
         :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
         :type code: str
         :return: Evaluator instance for the specified experiment.
-        :rtype: evaluators.dbmsbenchmarker
+        :rtype: evaluators.DbmsBenchmarkerEvaluator
         """
         if code == '':
             code = self.codes[0]
-        return evaluators.dbmsbenchmarker(code=code, path=self.path)
+        return evaluators.DbmsBenchmarkerEvaluator(code=code, path=self.path)
 
     def get_loading_per_pod(self):
         """

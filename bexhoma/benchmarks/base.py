@@ -614,7 +614,7 @@ class DBMSBenchmarkerBenchmark(Benchmark):
     Shared base for benchmarks that use the DBMSBenchmarker tool
     (TPC-H, TPC-DS).
 
-    Provides :meth:`create_evaluator` wired to ``evaluators.dbmsbenchmarker``.
+    Provides :meth:`create_evaluator` wired to ``evaluators.DbmsBenchmarkerEvaluator``.
     """
 
     def __init__(self, name: str, SF: str = '1') -> None:
@@ -820,9 +820,9 @@ class DBMSBenchmarkerBenchmark(Benchmark):
         :param code: Experiment identifier.
         :param path: Root result path.
         :param benchmark_run: 1-based benchmark position.
-        :return: :class:`evaluators.dbmsbenchmarker` instance.
+        :return: :class:`evaluators.DbmsBenchmarkerEvaluator` instance.
         """
-        return evaluators.dbmsbenchmarker(
+        return evaluators.DbmsBenchmarkerEvaluator(
             code=code,
             path=path,
             include_loading=True,

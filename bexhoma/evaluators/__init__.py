@@ -19,18 +19,7 @@ from .tpcc import TpccEvaluator
 from .ycsb import YcsbEvaluator
 from .hardware import HardwareEvaluator
 
-# backward-compat aliases
-base = EvaluatorBase
-logger = LogEvaluator
-dbmsbenchmarker = DbmsBenchmarkerEvaluator
-benchbase = BenchbaseEvaluator
-tpcc = TpccEvaluator
-ycsb = YcsbEvaluator
-hardware = HardwareEvaluator
-
 __all__ = [
     "EvaluatorBase", "LogEvaluator", "DbmsBenchmarkerEvaluator",
     "BenchbaseEvaluator", "TpccEvaluator", "YcsbEvaluator", "HardwareEvaluator", "natural_sort",
-    # backward-compat aliases
-    "base", "logger", "dbmsbenchmarker", "tpcc", "benchbase", "ycsb", "hardware",
 ]

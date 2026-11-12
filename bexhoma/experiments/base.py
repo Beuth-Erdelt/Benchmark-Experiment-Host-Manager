@@ -215,11 +215,6 @@ class ExperimentBase():
     #: (``-nlp 1``, counted per tenant) instead of a multiple of ``-mtn`` (see
     #: :func:`bexhoma.cli_args.check_tenant_loading_pods`).
     tenant_loading_one_pod_per_tenant = False
-    #: Whether ``bexhoma summary`` rebuilds a finished experiment of this class from
-    #: the workload ``type`` in its ``queries.config`` (the type names the class alias
-    #: in :mod:`bexhoma.experiments`, constructed with ``cluster``, ``code`` and ``SF``);
-    #: otherwise the summary uses :class:`ExperimentBase`.
-    summary_from_type = False
 
     def __init__(self,
                  cluster,
@@ -3828,7 +3823,7 @@ class ExperimentBase():
             which delegates to the :mod:`bexhoma.benchmarks` pipeline.
             This implementation is only reachable for legacy result folders whose
             ``queries.config`` still contains ``type='dbmsbenchmarker'`` — a value
-            written by ``experiments.base`` before the named experiment subclasses
+            written by ``experiments.ExperimentBase`` before the named experiment subclasses
             existed.
 
         :param write_report: Accepted for signature parity with the

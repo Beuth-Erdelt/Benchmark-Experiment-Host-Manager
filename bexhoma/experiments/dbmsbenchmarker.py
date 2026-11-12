@@ -52,7 +52,7 @@ class DbmsBenchmarkerExperiment(MixedExperiment):
         :param timeout: Per-query timeout in seconds.
         """
         MixedExperiment.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)
-        self.evaluator = evaluators.dbmsbenchmarker(
+        self.evaluator = evaluators.DbmsBenchmarkerEvaluator(
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
         self.active_queries: list[int] | None = None
     def set_active_queries(self,

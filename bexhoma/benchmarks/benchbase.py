@@ -36,9 +36,9 @@ class Benchbase(Benchmark):
         :param code: Experiment identifier.
         :param path: Root result path.
         :param benchmark_run: 1-based benchmark position.
-        :return: :class:`evaluators.benchbase` instance.
+        :return: :class:`evaluators.BenchbaseEvaluator` instance.
         """
-        return evaluators.benchbase(
+        return evaluators.BenchbaseEvaluator(
             code=code,
             path=path,
             include_loading=False,

@@ -1,6 +1,6 @@
 #!C:\Users\Patrick\anaconda3\envs\bexhoma\python.exe
 """
-Validator for collectors.tpcc / HammerDB (Collector-HammerDB.ipynb).
+Validator for collectors.TpccCollector / HammerDB (Collector-HammerDB.ipynb).
 Checks: no exceptions, non-empty DataFrames, important columns present.
 Shows head() for every DataFrame and prints a bottom-line summary.
 """
@@ -98,9 +98,9 @@ def check_df(df, label, required_cols=None):
 
 
 # ── SETUP ─────────────────────────────────────────────────────────────────────
-sep("Setup: collectors.tpcc (HammerDB)")
+sep("Setup: collectors.TpccCollector (HammerDB)")
 try:
-    collect = collectors.tpcc(path, codes)
+    collect = collectors.TpccCollector(path, codes)
     print("  OK    collector created")
 except Exception:
     traceback.print_exc()

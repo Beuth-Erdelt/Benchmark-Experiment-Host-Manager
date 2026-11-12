@@ -1,6 +1,6 @@
 #!C:\Users\Patrick\anaconda3\envs\bexhoma\python.exe
 """
-Validator for collectors.dbmsbenchmarker / TPC-H (Collector-TPC-H.ipynb).
+Validator for collectors.DbmsBenchmarkerCollector / TPC-H (Collector-TPC-H.ipynb).
 Checks: no exceptions, non-empty DataFrames, important columns present.
 Shows head() for every DataFrame and prints a bottom-line summary.
 """
@@ -100,9 +100,9 @@ def check_df(df, label, required_cols=None):
 
 
 # ── SETUP ─────────────────────────────────────────────────────────────────────
-sep("Setup: collectors.dbmsbenchmarker (TPC-H)")
+sep("Setup: collectors.DbmsBenchmarkerCollector (TPC-H)")
 try:
-    collect = collectors.dbmsbenchmarker(path, codes)
+    collect = collectors.DbmsBenchmarkerCollector(path, codes)
     print("  OK    collector created")
 except Exception:
     traceback.print_exc()

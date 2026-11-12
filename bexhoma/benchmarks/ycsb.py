@@ -36,9 +36,9 @@ class YCSB(Benchmark):
         :param code: Experiment identifier.
         :param path: Root result path.
         :param benchmark_run: 1-based benchmark position.
-        :return: :class:`evaluators.ycsb` instance.
+        :return: :class:`evaluators.YcsbEvaluator` instance.
         """
-        return evaluators.ycsb(
+        return evaluators.YcsbEvaluator(
             code=code,
             path=path,
             include_loading=False,

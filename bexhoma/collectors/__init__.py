@@ -23,18 +23,8 @@ from .tpcc import TpccCollector
 from .ycsb import YcsbCollector
 from .mixed import MixedCollector
 
-# backward-compat aliases
-base = CollectorBase
-dbmsbenchmarker = DbmsBenchmarkerCollector
-benchbase = BenchbaseCollector
-hardware = HardwareCollector
-tpcc = TpccCollector
-ycsb = YcsbCollector
-mixed = MixedCollector
-
 __all__ = [
     "CollectorBase", "DbmsBenchmarkerCollector", "HardwareCollector", "MixedCollector",
     "TpccCollector", "BenchbaseCollector", "YcsbCollector",
     "get_non_constant", "map_index_to_queryname",
-    "base", "dbmsbenchmarker", "hardware", "mixed", "tpcc", "benchbase", "ycsb",
 ]

@@ -1,6 +1,6 @@
 #!C:\Users\Patrick\anaconda3\envs\bexhoma\python.exe
 """
-Validator for collectors.benchbase (Collector-Benchbase.ipynb).
+Validator for collectors.BenchbaseCollector (Collector-Benchbase.ipynb).
 Checks: no exceptions, non-empty DataFrames, important columns present.
 Shows head() for every DataFrame and prints a bottom-line summary.
 """
@@ -101,9 +101,9 @@ def check_df(df, label, required_cols=None):
 
 
 # ── SETUP ─────────────────────────────────────────────────────────────────────
-sep("Setup: collectors.benchbase")
+sep("Setup: collectors.BenchbaseCollector")
 try:
-    collect = collectors.benchbase(path, codes)
+    collect = collectors.BenchbaseCollector(path, codes)
     print("  OK    collector created")
 except Exception:
     traceback.print_exc()

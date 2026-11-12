@@ -2,7 +2,7 @@
 Collector for Benchbase experiments.
 
 Provides :class:`BenchbaseCollector`, a thin subclass of :class:`CollectorBase` that wires up
-:class:`evaluators.benchbase` as the evaluator. All data collection and
+:class:`evaluators.BenchbaseEvaluator` as the evaluator. All data collection and
 aggregation logic is inherited from :class:`CollectorBase`.
 
 Authors: Patrick K. Erdelt
@@ -34,7 +34,7 @@ class BenchbaseCollector(CollectorBase):
     """
     Collector for Benchbase experiments.
 
-    Overrides :meth:`get_evaluator` to return a :class:`evaluators.benchbase` instance.
+    Overrides :meth:`get_evaluator` to return a :class:`evaluators.BenchbaseEvaluator` instance.
     All data collection and aggregation methods are inherited from :class:`CollectorBase`.
     """
     def __init__(self, path, codes, benchmark_run: int = 0):
@@ -51,23 +51,23 @@ class BenchbaseCollector(CollectorBase):
 
     def get_evaluator(self, code=''):
         """
-        Returns a :class:`evaluators.benchbase` instance for the given experiment code.
+        Returns a :class:`evaluators.BenchbaseEvaluator` instance for the given experiment code.
 
         :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
         :type code: str
         :return: Benchbase evaluator for the specified experiment.
-        :rtype: evaluators.benchbase
+        :rtype: evaluators.BenchbaseEvaluator
         """
         if code == '':
             code = self.codes[0]
-        return evaluators.benchbase(code=code, path=self.path, benchmark_run=self.benchmark_run)
+        return evaluators.BenchbaseEvaluator(code=code, path=self.path, benchmark_run=self.benchmark_run)
 
     def get_benchmark_timeseries_per_phase(self, metric="throughput"):
         """
         Combines aggregated Benchbase time-series per phase from all experiment codes into a wide-format DataFrame.
 
         For each code and each unique ``(configuration, client, experiment_run, benchmark_run)``
-        combination, calls :meth:`evaluators.benchbase.get_benchmark_logs_timeseries_df_aggregated`
+        combination, calls :meth:`evaluators.BenchbaseEvaluator.get_benchmark_logs_timeseries_df_aggregated`
         and places the metric column as one column in the result.  Each column is labelled
         ``{code}-{configuration}-{client}-{experiment_run}-{benchmark_run}``.
 
@@ -103,7 +103,7 @@ class BenchbaseCollector(CollectorBase):
         Collects long-format Benchbase time-series data for a given metric across all experiment codes.
 
         For each code and each unique ``(configuration, client, experiment_run)`` combination,
-        calls :meth:`evaluators.benchbase.get_benchmark_logs_timeseries_df_aggregated`, reshapes
+        calls :meth:`evaluators.BenchbaseEvaluator.get_benchmark_logs_timeseries_df_aggregated`, reshapes
         the result to long format, and annotates each row with its identifying fields.
         Connection metadata (e.g. ``type_tenants``, ``num_tenants``, ``vol_tenants``) is joined
         in from :meth:`get_connections` for each code.

@@ -67,6 +67,8 @@ _HARDWARE_BENCHMARK = re.compile(r'Hardware(?:Experiment|Evaluator|Collector)|HA
 #: Files of the layer packages that belong to one benchmark or to one benchmarking tool.
 #: They are moved to ``bexhoma/benchmarks/<name>/``; delete an entry when its file has moved.
 _BENCHMARK_FILES = {
+    # the descriptors of all benchmarks, until each benchmark has a folder of its own
+    'bexhoma/benchmarks/registered.py',
     'bexhoma/benchmarks/benchbase.py', 'bexhoma/benchmarks/hardware.py', 'bexhoma/benchmarks/refresh.py',
     'bexhoma/benchmarks/ssb.py', 'bexhoma/benchmarks/tpcc.py', 'bexhoma/benchmarks/tpcds.py',
     'bexhoma/benchmarks/tpch.py', 'bexhoma/benchmarks/ycsb.py',
@@ -177,7 +179,7 @@ class NoBenchmarkInGenericTest(unittest.TestCase):
         self.assertEqual(count_names(text), {})
 
     def test_hardware_benchmark_is_found(self) -> None:
-        text = 'HardwareEvaluator experiments.hardware(cluster) HARDWARE_TYPE refresh_template fio\n'
+        text = 'HardwareEvaluator experiments.HardwareExperiment(cluster) HARDWARE_TYPE refresh_template fio\n'
         self.assertEqual(count_names(text), {'fio': 1, 'hardware': 3, 'refresh_stream': 1})
 
     def test_benchmark_folders_are_exempt(self) -> None:

@@ -403,7 +403,7 @@ def run_hardware_baseline(
         network_targets = {node: [] for node in node_names}
 
     args = _build_parsed_args(timeout_minutes=timeout_minutes, hardware_duration=hardware_duration)
-    experiment = experiments.hardware(
+    experiment = experiments.HardwareExperiment(
         cluster=cluster, timeout=int(args.timeout), code=None, num_experiment_to_apply=1)
     experiment.prometheus_interval = "10s"
     experiment.prometheus_timeout = "10s"

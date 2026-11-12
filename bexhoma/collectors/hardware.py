@@ -2,7 +2,7 @@
 Collector for Hardware (fio/sysbench/sockperf/netperf) experiments.
 
 Provides :class:`HardwareCollector`, a subclass of :class:`CollectorBase` that wires up
-:class:`evaluators.hardware` as the evaluator and overrides the performance aggregation
+:class:`evaluators.HardwareEvaluator` as the evaluator and overrides the performance aggregation
 methods to handle the hardware evaluator's column layout.
 
 Authors: Patrick K. Erdelt
@@ -19,7 +19,7 @@ __all__ = ["HardwareCollector"]
 
 #: fio, sysbench, sockperf and netperf result columns shown in the default
 #: summary view. A given phase only ever populates one type's columns (see
-#: evaluators.hardware); the rest are absent/NaN, and this list is filtered
+#: evaluators.HardwareEvaluator); the rest are absent/NaN, and this list is filtered
 #: down to whatever the aggregated result actually contains in get_summary().
 _SUMMARY_COLS = [
     'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
@@ -45,24 +45,24 @@ class HardwareCollector(CollectorBase):
     """
     Collector for Hardware (fio/sysbench/sockperf/netperf) experiments.
 
-    Overrides :meth:`get_evaluator` to return a :class:`evaluators.hardware` instance and
+    Overrides :meth:`get_evaluator` to return a :class:`evaluators.HardwareEvaluator` instance and
     overrides the performance aggregation methods because the hardware evaluator's
     :meth:`~bexhoma.evaluators.hardware.HardwareEvaluator.benchmarking_aggregate_by_parallel_pods`
     does not produce a ``connection`` column (unlike the base class expectation).
     """
 
-    def get_evaluator(self, code: str = '') -> evaluators.hardware:
+    def get_evaluator(self, code: str = '') -> evaluators.HardwareEvaluator:
         """
-        Returns a :class:`evaluators.hardware` instance for the given experiment code.
+        Returns a :class:`evaluators.HardwareEvaluator` instance for the given experiment code.
 
         :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
         :type code: str
         :return: Hardware evaluator for the specified experiment.
-        :rtype: evaluators.hardware
+        :rtype: evaluators.HardwareEvaluator
         """
         if code == '':
             code = self.codes[0]
-        return evaluators.hardware(code=code, path=self.path)
+        return evaluators.HardwareEvaluator(code=code, path=self.path)
 
     def get_performance_aggregated_per_phase(self) -> pd.DataFrame:
         """

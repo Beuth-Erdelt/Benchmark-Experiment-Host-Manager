@@ -58,7 +58,7 @@ class DbmsBenchmarkerCollector(CollectorBase):
 
     Extends :class:`CollectorBase` with query-level aggregation methods for warnings,
     errors, and latencies. Overrides :meth:`get_evaluator` to return a
-    :class:`evaluators.dbmsbenchmarker` instance.
+    :class:`evaluators.DbmsBenchmarkerEvaluator` instance.
     """
     def __init__(self, path, codes, benchmark_run: int = 0):
         """
@@ -74,16 +74,16 @@ class DbmsBenchmarkerCollector(CollectorBase):
 
     def get_evaluator(self, code=''):
         """
-        Returns a :class:`evaluators.dbmsbenchmarker` instance for the given experiment code.
+        Returns a :class:`evaluators.DbmsBenchmarkerEvaluator` instance for the given experiment code.
 
         :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
         :type code: str
         :return: DBMSBenchmarker evaluator for the specified experiment.
-        :rtype: evaluators.dbmsbenchmarker
+        :rtype: evaluators.DbmsBenchmarkerEvaluator
         """
         if code == '':
             code = self.codes[0]
-        return evaluators.dbmsbenchmarker(code=code, path=self.path, benchmark_run=self.benchmark_run)
+        return evaluators.DbmsBenchmarkerEvaluator(code=code, path=self.path, benchmark_run=self.benchmark_run)
 
     def get_total_warnings(self, query_titles=False):
         """

@@ -57,9 +57,9 @@ class RefreshStreamBenchmark(Benchmark):
         :param code: Experiment identifier.
         :param path: Root result path.
         :param benchmark_run: 1-based benchmark position.
-        :return: :class:`evaluators.base` instance.
+        :return: :class:`evaluators.EvaluatorBase` instance.
         """
-        return evaluators.base(
+        return evaluators.EvaluatorBase(
             code=code,
             path=path,
             include_loading=False,
