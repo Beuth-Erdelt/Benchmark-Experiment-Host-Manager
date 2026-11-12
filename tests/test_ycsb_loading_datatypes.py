@@ -12,7 +12,7 @@ class LoadingSetDatatypesTest(unittest.TestCase):
         df = pd.DataFrame([{
             'code': 1, 'connection': 'a', 'configuration': 'c', 'experiment_run': 1, 'client': 1,
             'pod': 'p', 'pod_count': 1, 'threads': 2, 'target': 0, 'SF': 1, 'workload': 'a',
-            'operations': 10, 'exceptions': 0,
+            'operations': 10, 'errors': 0,
             '[OVERALL].RunTime(ms)': 5, '[OVERALL].Throughput(ops/sec)': 2.0,
             '[INSERT].Operations': 10, '[INSERT].AverageLatency(us)': 1.0,
             '[INSERT].MinLatency(us)': 1.0, '[INSERT].MaxLatency(us)': 1.0,

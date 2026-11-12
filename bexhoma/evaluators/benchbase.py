@@ -47,7 +47,7 @@ class BenchbaseEvaluator(LogEvaluator):
     :param include_benchmarking: Whether benchmarking-phase results are expected.
     """
     #: Benchbase's names for the common columns.
-    column_names = {'terminals': 'threads'}
+    column_names = {'terminals': 'threads', 'num_errors': 'errors'}
 
     def get_threads(self, loading_parameters):
         """
@@ -215,7 +215,7 @@ class BenchbaseEvaluator(LogEvaluator):
             'warmup':'float',
             'batchsize':'int',
             'sf':'int',
-            'num_errors':'int',
+            'errors':'int',
             'scalefactor':'int',
             'Current Timestamp (milliseconds)':'str',
             'Benchmark Type':'str',
@@ -280,7 +280,7 @@ class BenchbaseEvaluator(LogEvaluator):
                 'warmup':'max',
                 'batchsize':'mean',
                 'sf':'max',
-                'num_errors':'sum',
+                'errors':'sum',
                 'scalefactor':'max',
                 'Current Timestamp (milliseconds)':'max',
                 'Benchmark Type':'max',
@@ -482,7 +482,7 @@ class BenchbaseEvaluator(LogEvaluator):
         df = self.drop_rows_without_results(self.get_df_benchmarking())
         if df.empty:
             return pd.DataFrame()
-        columns = ["phase", "job", "experiment_run","threads","target","client","benchmark_run", "child", "tenant_id", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+        columns = ["phase", "job", "experiment_run","threads","target","client","benchmark_run", "child", "tenant_id", "time", "errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
         df = df.fillna(0)
         df_plot = self.benchmarking_set_datatypes(df)
         df_plot_filtered = pd.DataFrame()
@@ -514,7 +514,7 @@ class BenchbaseEvaluator(LogEvaluator):
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
             df_aggregated_reduced = df_aggregated[['phase', 'experiment_run',"threads","target","benchmark_run","pod_count","tenant_id"]].copy()
-            columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+            columns = ["time", "errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
@@ -540,7 +540,7 @@ class BenchbaseEvaluator(LogEvaluator):
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
             df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'target', 'pod_count']).round(2)
             df_aggregated_reduced = df_aggregated[['phase', 'experiment_run', "threads", "target", "benchmark_run", "pod_count", "tenant_id"]].copy()
-            columns = ["time", "num_errors", "Throughput (requests/second)", "Goodput (requests/second)", "efficiency", "Latency Distribution.95th Percentile Latency (microseconds)", "Latency Distribution.Average Latency (microseconds)"]
+            columns = ["time", "errors", "Throughput (requests/second)", "Goodput (requests/second)", "efficiency", "Latency Distribution.95th Percentile Latency (microseconds)", "Latency Distribution.Average Latency (microseconds)"]
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:, col]

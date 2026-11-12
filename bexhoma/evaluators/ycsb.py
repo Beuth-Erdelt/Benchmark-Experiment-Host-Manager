@@ -46,6 +46,9 @@ class YcsbEvaluator(LogEvaluator):
     :param include_loading: Ignored; loading is always enabled for this evaluator.
     :param include_benchmarking: Ignored; benchmarking is always enabled.
     """
+    #: YCSB's names for the common columns.
+    column_names = {'exceptions': 'errors'}
+
     def __init__(self, code, path, include_loading=False, include_benchmarking=True, benchmark_run: int = 0, name: str = ''):
         """
         :param code: Experiment identifier — also the name of the result sub-folder.
@@ -156,7 +159,7 @@ class YcsbEvaluator(LogEvaluator):
                 'SF':'int',
                 'workload':'str',
                 'operations':'int',
-                'exceptions':'int',
+                'errors':'int',
                 '[OVERALL].RunTime(ms)':'float',
                 '[OVERALL].Throughput(ops/sec)':'float',
             })
@@ -313,7 +316,7 @@ class YcsbEvaluator(LogEvaluator):
                 'SF':'max',
                 'workload':'max',
                 'operations':'sum',
-                'exceptions':'sum',
+                'errors':'sum',
                 '[OVERALL].RunTime(ms)':'max',
                 '[OVERALL].Throughput(ops/sec)':'sum',
                 'tenant_id': 'min',
@@ -464,7 +467,7 @@ class YcsbEvaluator(LogEvaluator):
             'SF':'int',
             'workload':'str',
             'operations':'int',
-            'exceptions':'int',
+            'errors':'int',
             '[OVERALL].RunTime(ms)':'float',
             '[OVERALL].Throughput(ops/sec)':'float',
             '[CLEANUP].Operations':'int',
@@ -516,7 +519,7 @@ class YcsbEvaluator(LogEvaluator):
                 'SF':'max',
                 'workload':'max',
                 'operations':'sum',
-                'exceptions':'sum',
+                'errors':'sum',
                 '[OVERALL].RunTime(ms)':'max',
                 '[OVERALL].Throughput(ops/sec)':'sum',
                 '[CLEANUP].Operations':'sum',
@@ -933,7 +936,7 @@ class YcsbEvaluator(LogEvaluator):
         df = self.get_df_benchmarking()
         if not df.empty:
             columns = [
-            'phase', 'job', 'configuration', 'experiment_run', 'client', 'benchmark_run', 'child',"threads","target","pod_count","exceptions",
+            'phase', 'job', 'configuration', 'experiment_run', 'client', 'benchmark_run', 'child',"threads","target","pod_count","errors",
             "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
             "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
             "[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)",
@@ -977,7 +980,7 @@ class YcsbEvaluator(LogEvaluator):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['phase', 'experiment_run',"threads","target","benchmark_run","pod_count","exceptions"]].copy()
+            df_aggregated_reduced = df_aggregated[['phase', 'experiment_run',"threads","target","benchmark_run","pod_count","errors"]].copy()
             columns = [
             "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
             "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
@@ -1015,7 +1018,7 @@ class YcsbEvaluator(LogEvaluator):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
             df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'target', 'pod_count']).round(2)
-            base_cols = ['phase', 'experiment_run', "threads", "target", "benchmark_run", "pod_count", "tenant_id", "exceptions"]
+            base_cols = ['phase', 'experiment_run', "threads", "target", "benchmark_run", "pod_count", "tenant_id", "errors"]
             df_aggregated_reduced = df_aggregated[[c for c in base_cols if c in df_aggregated.columns]].copy()
             columns = [
                 "[OVERALL].Throughput(ops/sec)", "[OVERALL].RunTime(ms)",
@@ -1050,7 +1053,7 @@ class YcsbEvaluator(LogEvaluator):
         """
         df = self.get_df_loading()
         if not df.empty:
-            columns = ['experiment_run','connection', "threads","target","pod_count","exceptions","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]
+            columns = ['experiment_run','connection', "threads","target","pod_count","errors","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]
             df.fillna(0, inplace=True)
             df_plot = self.loading_set_datatypes(df)
             df_plot_filtered = pd.DataFrame()
@@ -1088,7 +1091,7 @@ class YcsbEvaluator(LogEvaluator):
             if 'SF' in df_aggregated.columns and '[OVERALL].RunTime(ms)' in df_aggregated.columns:
                 df_aggregated['sf'] = df_aggregated['SF']
                 df_aggregated['Throughput [SF/h]'] = df_aggregated['SF'] * 3_600_000.0 / df_aggregated['[OVERALL].RunTime(ms)']
-            select_cols = ['experiment_run',"threads","target","pod_count","exceptions","sf","Throughput [SF/h]","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]
+            select_cols = ['experiment_run',"threads","target","pod_count","errors","sf","Throughput [SF/h]","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]
             df_plot_filtered = df_aggregated[[c for c in select_cols if c in df_aggregated.columns]]
             df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run'], key=natural_sort) #sort_values(['experiment_run'])
             df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
