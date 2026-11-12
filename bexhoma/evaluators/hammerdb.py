@@ -80,7 +80,7 @@ class HammerdbEvaluator(LogEvaluator):
     :param include_benchmarking: Whether benchmarking-phase results are expected.
     """
     #: HammerDB's names (virtual users) for the common columns.
-    column_names = {'vusers': 'threads', 'vusers_loading': 'threads_loading'}
+    column_names = {'vusers': 'threads', 'vusers_loading': 'threads_loading', 'sf': 'SF'}
 
     def get_threads(self, loading_parameters):
         """
@@ -238,7 +238,7 @@ class HammerdbEvaluator(LogEvaluator):
                 'iterations':'int',
                 'duration':'int',
                 'rampup':'int',
-                'sf':'int',
+                'SF':'int',
                 'run':'int',
                 'errors':'int',
                 'threads_loading':'int',
@@ -271,7 +271,7 @@ class HammerdbEvaluator(LogEvaluator):
                 'iterations':'int',
                 'duration':'int',
                 'rampup':'int',
-                'sf':'int',
+                'SF':'int',
                 'run':'int',
                 'errors':'int',
                 'threads_loading':'int',
@@ -319,7 +319,7 @@ class HammerdbEvaluator(LogEvaluator):
                     'pod_count':'count',
                     'iterations':'max',
                     'duration':'max',
-                    'sf':'max',
+                    'SF':'max',
                     'run':'max',
                     'errors':'sum',
                     'threads_loading':'max',
@@ -348,7 +348,7 @@ class HammerdbEvaluator(LogEvaluator):
                     'pod_count':'count',
                     'iterations':'max',
                     'duration':'max',
-                    'sf':'max',
+                    'SF':'max',
                     'run':'max',
                     'errors':'sum',
                     'threads_loading':'max',
@@ -372,11 +372,11 @@ class HammerdbEvaluator(LogEvaluator):
             df_aggregated = pd.concat([df_aggregated, df_grp])
         # efficiency is only valid with key-and-think time and vusers == 10 × SF (standard TPC-C convention)
         df_aggregated['efficiency'] = 0.
-        tpcc_mask = df_aggregated['sf'] * 10 == df_aggregated['threads']
+        tpcc_mask = df_aggregated['SF'] * 10 == df_aggregated['threads']
         if 'keyandthink' in df_aggregated:
             tpcc_mask &= df_aggregated['keyandthink'] == "true"
         df_aggregated.loc[tpcc_mask, 'efficiency'] = (
-            100. * df_aggregated['NOPM'] / 12.86 / df_aggregated['sf']
+            100. * df_aggregated['NOPM'] / 12.86 / df_aggregated['SF']
         )
         return df_aggregated
     def parse_log_file(self, file_path):

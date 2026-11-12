@@ -884,7 +884,6 @@ class YcsbEvaluator(LogEvaluator):
             result['SF'] = pd.to_numeric(result['SF'], errors='coerce').fillna(default_sf)
         else:
             result['SF'] = float(self.get_workload()['defaultParameters']['SF'])
-        result['sf'] = result['SF']
         result['Throughput [SF/h]'] = result['SF'] * 3_600_000.0 / result['[OVERALL].RunTime(ms)']
         return result
 
@@ -1061,7 +1060,7 @@ class YcsbEvaluator(LogEvaluator):
                 if col in df_plot.columns:
                     df_plot_filtered[col] = df_plot.loc[:,col]
             if 'SF' in df_plot.columns and '[OVERALL].RunTime(ms)' in df_plot.columns:
-                df_plot_filtered['sf'] = df_plot['SF']
+                df_plot_filtered['SF'] = df_plot['SF']
                 df_plot_filtered['Throughput [SF/h]'] = df_plot['SF'] * 3_600_000.0 / df_plot['[OVERALL].RunTime(ms)']
             #df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run'], key=natural_sort) #sort_values(['experiment_run'])
             df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
@@ -1089,9 +1088,8 @@ class YcsbEvaluator(LogEvaluator):
             df_aggregated = self.loading_aggregate_by_parallel_pods(df_plot, columns=['configuration', 'experiment_run'])
             df_aggregated.sort_values(['experiment_run','target','pod_count'], inplace=True)
             if 'SF' in df_aggregated.columns and '[OVERALL].RunTime(ms)' in df_aggregated.columns:
-                df_aggregated['sf'] = df_aggregated['SF']
                 df_aggregated['Throughput [SF/h]'] = df_aggregated['SF'] * 3_600_000.0 / df_aggregated['[OVERALL].RunTime(ms)']
-            select_cols = ['experiment_run',"threads","target","pod_count","errors","sf","Throughput [SF/h]","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]
+            select_cols = ['experiment_run',"threads","target","pod_count","errors","SF","Throughput [SF/h]","[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)","[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)"]
             df_plot_filtered = df_aggregated[[c for c in select_cols if c in df_aggregated.columns]]
             df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS").sort_values(by=['DBMS', 'experiment_run'], key=natural_sort) #sort_values(['experiment_run'])
             df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
@@ -1155,10 +1153,10 @@ class YcsbEvaluator(LogEvaluator):
         :param experiment: The owning experiment object.
         :param df_loading: Per-run loading DataFrame.
         """
-        columns = {'sf', 'pod_count', '[INSERT].Return=OK'}
+        columns = {'SF', 'pod_count', '[INSERT].Return=OK'}
         if getattr(experiment, 'num_tenants', 0) > 0 or not columns.issubset(df_loading.columns):
             return
-        rows = df_loading['sf'].astype(int) * 1000000
+        rows = df_loading['SF'].astype(int) * 1000000
         expected = rows // df_loading['pod_count'].astype(int) * df_loading['pod_count'].astype(int)
         missing = (expected - df_loading['[INSERT].Return=OK'].astype(int)).clip(lower=0)
         experiment._record_test(

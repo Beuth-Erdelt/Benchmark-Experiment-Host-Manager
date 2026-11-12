@@ -47,7 +47,7 @@ class BenchbaseEvaluator(LogEvaluator):
     :param include_benchmarking: Whether benchmarking-phase results are expected.
     """
     #: Benchbase's names for the common columns.
-    column_names = {'terminals': 'threads', 'num_errors': 'errors'}
+    column_names = {'terminals': 'threads', 'num_errors': 'errors', 'sf': 'SF'}
 
     def get_threads(self, loading_parameters):
         """
@@ -214,7 +214,7 @@ class BenchbaseEvaluator(LogEvaluator):
             'time':'float',
             'warmup':'float',
             'batchsize':'int',
-            'sf':'int',
+            'SF':'int',
             'errors':'int',
             'scalefactor':'int',
             'Current Timestamp (milliseconds)':'str',
@@ -279,7 +279,7 @@ class BenchbaseEvaluator(LogEvaluator):
                 'time':'max',
                 'warmup':'max',
                 'batchsize':'mean',
-                'sf':'max',
+                'SF':'max',
                 'errors':'sum',
                 'scalefactor':'max',
                 'Current Timestamp (milliseconds)':'max',
@@ -313,10 +313,10 @@ class BenchbaseEvaluator(LogEvaluator):
             df_grp = pd.DataFrame(dict_grp, index=[key_index])
             df_aggregated = pd.concat([df_aggregated, df_grp])
         # efficiency is only valid for TPC-C runs where vusers == 10 × SF
-        tpcc_mask = (df_aggregated['sf'] * 10 == df_aggregated['threads']) & (df_aggregated['efficiency'] != 0.) & (df_aggregated['bench'] == "tpcc")
+        tpcc_mask = (df_aggregated['SF'] * 10 == df_aggregated['threads']) & (df_aggregated['efficiency'] != 0.) & (df_aggregated['bench'] == "tpcc")
         df_aggregated['efficiency'] = 0.
         df_aggregated.loc[tpcc_mask, 'efficiency'] = (
-            0.45 * 60. * 100. * df_aggregated['Goodput (requests/second)'] / 12.86 / df_aggregated['sf']
+            0.45 * 60. * 100. * df_aggregated['Goodput (requests/second)'] / 12.86 / df_aggregated['SF']
         )
         return df_aggregated
     def parse_log_file(self, file_path):

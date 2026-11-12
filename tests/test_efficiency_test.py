@@ -108,7 +108,7 @@ def _hammerdb_pods(keyandthink=None, vusers=(20, 20), sf=4, nopm=500):
         row = {'connection': f'mysql-1-1-1-{child}', 'phase': 'mysql-1-1', 'job': 'mysql-1-1-1',
                'configuration': 'MySQL-1', 'experiment_run': 1, 'code': 1, 'client': 1,
                'benchmark_run': 1, 'pod': str(child), 'pod_count': len(vusers), 'iterations': 1,
-               'duration': 2, 'rampup': 0, 'sf': sf, 'run': 0, 'errors': 0, 'threads_loading': 1,
+               'duration': 2, 'rampup': 0, 'SF': sf, 'run': 0, 'errors': 0, 'threads_loading': 1,
                'threads': vuser, 'NOPM': nopm, 'TPM': 2 * nopm, 'efficiency': 0.0, 'dbms': 'MySQL',
                'tenant_id': -1}
         if keyandthink is not None:

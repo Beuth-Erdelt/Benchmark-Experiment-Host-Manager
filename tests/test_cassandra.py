@@ -203,10 +203,10 @@ class RowsLoadedTest(unittest.TestCase):
     """A YCSB load can end with rows missing and no other sign of it (first seen with Cassandra)."""
 
     @staticmethod
-    def _results(inserted, pods=8, num_tenants=0, columns=('sf', 'pod_count', '[INSERT].Return=OK')):
+    def _results(inserted, pods=8, num_tenants=0, columns=('SF', 'pod_count', '[INSERT].Return=OK')):
         experiment = types.SimpleNamespace(num_tenants=num_tenants, results=[])
         experiment._record_test = lambda passed, title: experiment.results.append((passed, title))
-        df_loading = pd.DataFrame({'sf': [1], 'pod_count': [pods], '[INSERT].Return=OK': [inserted]})
+        df_loading = pd.DataFrame({'SF': [1], 'pod_count': [pods], '[INSERT].Return=OK': [inserted]})
         YcsbEvaluator._test_rows_loaded(None, experiment, df_loading[list(columns)])
         return experiment.results
 
@@ -225,7 +225,7 @@ class RowsLoadedTest(unittest.TestCase):
         self.assertEqual(self._results(10, num_tenants=2), [])
 
     def test_summary_without_the_columns_is_left_out(self):
-        self.assertEqual(self._results(10, columns=('sf', 'pod_count')), [])
+        self.assertEqual(self._results(10, columns=('SF', 'pod_count')), [])
 
 
 class CassandraImageScriptsTest(unittest.TestCase):
