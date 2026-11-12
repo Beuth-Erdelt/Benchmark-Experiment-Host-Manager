@@ -11,7 +11,7 @@ the entry script of that benchmark needs to configure the DBMS:
     ``True`` when the DBMS runs if ``-dbms`` is not given (absent: ``False``).
 ``loading_template``
     Name of the loading job template in ``k8s/``. There is no default: without it, a DBMS is refused
-    when loading is on, unless the benchmark brings a loading job of its own (HammerDB, Benchbase, YCSB).
+    when loading is on, unless the benchmark brings a loading job of its own.
 ``dimensions``
     ``True`` when ``-xdim`` (placement of the dimension tables of a star or snowflake
     schema on a multi-node DBMS) applies to this DBMS: its ``distributed`` variant has
@@ -394,8 +394,8 @@ def expand(value, context: dict):
     so numbers stay numbers; other strings are formatted; dicts and lists are expanded
     recursively; everything else is returned unchanged.
 
-    A dict with the key ``'$by'`` is a selector: ``{'$by': 'benchmark', 'tpcc': A, '*': B}`` becomes
-    ``A`` if ``context['benchmark']`` is ``'tpcc'``, else ``B``; without a matching key and without
+    A dict with the key ``'$by'`` is a selector: ``{'$by': 'benchmark', 'x': A, '*': B}`` becomes
+    ``A`` if ``context['benchmark']`` is ``'x'``, else ``B``; without a matching key and without
     ``'*'`` it becomes ``None`` (the caller leaves the value out).
 
     :param value: A value of a descriptor.

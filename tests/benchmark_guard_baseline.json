@@ -44,11 +44,5 @@
  },
  "bexhoma/spec.py": {
   "tpch": 1
- },
- "bexhoma/system_descriptors.py": {
-  "benchbase": 1,
-  "hammerdb": 1,
-  "tpcc": 2,
-  "ycsb": 1
  }
 }
