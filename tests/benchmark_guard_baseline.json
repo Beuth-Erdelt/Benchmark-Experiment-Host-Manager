@@ -2,7 +2,6 @@
  "bexhoma/benchmarks/__init__.py": {
   "benchbase": 3,
   "hammerdb": 3,
-  "refresh_stream": 2,
   "ssb": 3,
   "tpcds": 3,
   "tpch": 3,
@@ -36,16 +35,6 @@
   "tpch": 4,
   "ycsb": 4
  },
- "bexhoma/experiments/base.py": {
-  "tpch": 1
- },
- "bexhoma/hardware_baseline.py": {
-  "fio": 55,
-  "hardware": 25,
-  "netperf": 5,
-  "sockperf": 18,
-  "sysbench": 16
- },
  "bexhoma/report_writer.py": {
   "tpcds": 1,
   "tpch": 1
@@ -59,9 +48,7 @@
  "bexhoma/system_descriptors.py": {
   "benchbase": 1,
   "hammerdb": 1,
-  "refresh_stream": 11,
   "tpcc": 2,
-  "tpch": 1,
   "ycsb": 1
  }
 }

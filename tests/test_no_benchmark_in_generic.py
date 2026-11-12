@@ -56,8 +56,6 @@ NAMES = {
     'sysbench': ('sysbench', 'Sysbench', 'SYSBENCH'),
     'sockperf': ('sockperf', 'Sockperf', 'SOCKPERF'),
     'netperf': ('netperf', 'Netperf', 'NETPERF'),
-    # "refresh" alone is a generic word (token refresh); these name the TPC-H refresh stream
-    'refresh_stream': ('refresh_stream', 'refresh stream', 'refresh-stream', 'RefreshStream', 'refresh_template'),
 }
 
 #: "hardware" alone is a generic word (hardware metrics of the monitoring); these name the hardware benchmark.
@@ -69,7 +67,10 @@ _HARDWARE_BENCHMARK = re.compile(r'Hardware(?:Experiment|Evaluator|Collector)|HA
 _BENCHMARK_FILES = {
     # the descriptors of all benchmarks, until each benchmark has a folder of its own
     'bexhoma/benchmarks/registered.py',
-    'bexhoma/benchmarks/benchbase.py', 'bexhoma/benchmarks/hardware.py', 'bexhoma/benchmarks/refresh.py',
+    'bexhoma/benchmarks/benchbase.py', 'bexhoma/benchmarks/hardware.py',
+    # the baseline of the cluster's hardware is a use of the hardware benchmark; bexhoma.environment
+    # imports it, the one place where a generic module depends on a benchmark
+    'bexhoma/hardware_baseline.py',
     'bexhoma/benchmarks/ssb.py', 'bexhoma/benchmarks/hammerdb.py', 'bexhoma/benchmarks/tpcds.py',
     'bexhoma/benchmarks/tpch.py', 'bexhoma/benchmarks/ycsb.py',
     'bexhoma/collectors/benchbase.py', 'bexhoma/collectors/dbmsbenchmarker.py', 'bexhoma/collectors/hardware.py',
@@ -175,12 +176,12 @@ class NoBenchmarkInGenericTest(unittest.TestCase):
         self.assertEqual(count_names("TPC-H tpch TpchExperiment tpch_builder 'tpc-h'"), {'tpch': 5})
 
     def test_generic_words_do_not_match(self) -> None:
-        text = 'hardware metrics, refresh the token, profiorm, config, ssbar, Hardware\n'
+        text = 'hardware metrics, refresh the token, refresh stream, refresh_template, profiorm, config, ssbar, Hardware\n'
         self.assertEqual(count_names(text), {})
 
     def test_hardware_benchmark_is_found(self) -> None:
-        text = 'HardwareEvaluator experiments.HardwareExperiment(cluster) HARDWARE_TYPE refresh_template fio\n'
-        self.assertEqual(count_names(text), {'fio': 1, 'hardware': 3, 'refresh_stream': 1})
+        text = 'HardwareEvaluator experiments.HardwareExperiment(cluster) HARDWARE_TYPE fio\n'
+        self.assertEqual(count_names(text), {'fio': 1, 'hardware': 3})
 
     def test_benchmark_folders_are_exempt(self) -> None:
         self.assertTrue(is_benchmark_file('bexhoma/benchmarks/ycsb/evaluator.py'))

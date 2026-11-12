@@ -24,7 +24,7 @@ the entry script of that benchmark needs to configure the DBMS:
     (the DBMS is in ``-dbms``, or ``-dbms`` is not given) or the name of a boolean argument
     that has to be set; without ``when`` the line is always shown.
 ``refresh_template``
-    Name of the job template in ``k8s/`` that runs the TPC-H refresh stream against this DBMS.
+    Name of the job template in ``k8s/`` that runs the benchmark's refresh stream against this DBMS.
 ``max_loading_pods``
     Number of loading pods the DBMS tolerates (e.g. ``1`` when parallel loads lose rows).
 ``sut_parameters``
