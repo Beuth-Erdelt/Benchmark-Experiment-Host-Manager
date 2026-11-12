@@ -106,6 +106,36 @@ ROWS_AFTER_BENCHMARK=$((ROW_START_AFTER_LOADING+ROW_PART_AFTER_LOADING))
 ROW_PART=$YCSB_ROWS
 ROW_START=0
 
+######################## JDBC driver that is not part of the image ########################
+# BEXHOMA_JAR_URL (from the parameters of the DBMS in cluster.config): the driver is
+# downloaded at the start, for drivers whose license does not allow bexhoma to ship them
+# in its public images (IBM Db2). BEXHOMA_JAR_SHA256 is checked if set.
+if [ -n "$BEXHOMA_JAR_URL" ]
+then
+    JAR_TARGET="jars/$(basename "$BEXHOMA_JAR_URL")"
+    if [ ! -s "$JAR_TARGET" ]
+    then
+        echo "Downloading JDBC driver $BEXHOMA_JAR_URL to $JAR_TARGET"
+        for JAR_ATTEMPT in 1 2 3 4 5
+        do
+            wget -q -O "$JAR_TARGET" "$BEXHOMA_JAR_URL" && break
+            rm -f "$JAR_TARGET"
+            sleep 5
+        done
+    fi
+    if [ ! -s "$JAR_TARGET" ]
+    then
+        echo "ERROR: cannot download JDBC driver $BEXHOMA_JAR_URL"
+        exit 1
+    fi
+    if [ -n "$BEXHOMA_JAR_SHA256" ] && ! echo "$BEXHOMA_JAR_SHA256  $JAR_TARGET" | sha256sum -c -
+    then
+        echo "ERROR: checksum of $JAR_TARGET does not match BEXHOMA_JAR_SHA256"
+        rm -f "$JAR_TARGET"
+        exit 1
+    fi
+fi
+
 ######################## Wait until all pods of job are ready ########################
 echo "Decrementing job counter bexhoma-benchmarker-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 redis-cli -h 'bexhoma-messagequeue' decr "bexhoma-benchmarker-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"

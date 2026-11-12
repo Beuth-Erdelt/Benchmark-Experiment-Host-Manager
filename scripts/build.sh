@@ -125,6 +125,14 @@ build_and_push_tpcds() {
 
   (
     set -e
+    cd images/tpcds/loader_db2
+    docker build -f Dockerfile -t "bexhoma/loader_tpcds_db2:$version" .
+    docker push "bexhoma/loader_tpcds_db2:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpcds_db2:$version"
+
+  (
+    set -e
     cd images/tpcds/loader_mysql
     docker build -f Dockerfile -t "bexhoma/loader_tpcds_mysql:$version" .
     docker push "bexhoma/loader_tpcds_mysql:$version"
@@ -287,6 +295,14 @@ build_and_push_tpch() {
     docker push "bexhoma/loader_tpch_oracle:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_oracle:$version"
+
+  (
+    set -e
+    cd images/tpch/loader_db2
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_db2:$version" .
+    docker push "bexhoma/loader_tpch_db2:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_db2:$version"
 }
 
 
@@ -427,6 +443,14 @@ build_and_push_tpch_refresh() {
     docker push "bexhoma/loader_tpch_refresh_oracle:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_oracle:$version"
+
+  (
+    set -e
+    cd images/tpch_refresh/loader_db2
+    docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_db2:$version" .
+    docker push "bexhoma/loader_tpch_refresh_db2:$version"
+  ) >"$(_next_log)" 2>&1 &
+  _bg "bexhoma/loader_tpch_refresh_db2:$version"
 }
 
 ###########
