@@ -30,7 +30,7 @@ _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _SNAPSHOT_DIR = os.path.join(_REPO, 'tests', 'snapshots')
 
 #: Entry script -> benchmark key of ``dockers.<x>.benchmarks`` (the key of ``volumes``).
-BENCHMARK_OF_SCRIPT = {'hammerdb.py': 'tpcc', 'tpch.py': 'tpch', 'tpcds.py': 'tpcds',
+BENCHMARK_OF_SCRIPT = {'hammerdb.py': 'hammerdb', 'tpch.py': 'tpch', 'tpcds.py': 'tpcds',
                        'ssb.py': 'ssb', 'benchbase.py': 'benchbase', 'ycsb.py': 'ycsb'}
 
 

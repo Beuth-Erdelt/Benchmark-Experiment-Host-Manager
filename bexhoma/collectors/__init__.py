@@ -3,7 +3,7 @@ Public API of the bexhoma.collectors package.
 
 Exports the collector classes (:class:`CollectorBase`, :class:`BenchbaseCollector`,
 :class:`DbmsBenchmarkerCollector`, :class:`HardwareCollector`, :class:`MixedCollector`,
-:class:`TpccCollector`, :class:`YcsbCollector`) and the utility functions
+:class:`HammerdbCollector`, :class:`YcsbCollector`) and the utility functions
 :func:`get_non_constant` and :func:`map_index_to_queryname`.
 
 Backward-compatible aliases (``base``, ``benchbase``, ``dbmsbenchmarker``, ``hardware``,
@@ -19,12 +19,12 @@ from .base import CollectorBase, get_non_constant
 from .dbmsbenchmarker import DbmsBenchmarkerCollector, map_index_to_queryname
 from .benchbase import BenchbaseCollector
 from .hardware import HardwareCollector
-from .tpcc import TpccCollector
+from .hammerdb import HammerdbCollector
 from .ycsb import YcsbCollector
 from .mixed import MixedCollector
 
 __all__ = [
     "CollectorBase", "DbmsBenchmarkerCollector", "HardwareCollector", "MixedCollector",
-    "TpccCollector", "BenchbaseCollector", "YcsbCollector",
+    "HammerdbCollector", "BenchbaseCollector", "YcsbCollector",
     "get_non_constant", "map_index_to_queryname",
 ]

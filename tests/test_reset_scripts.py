@@ -76,12 +76,12 @@ EXPECTED = {
         'DB2': ['reset-benchbase.sql'],
     },
     'hammerdb.py': {
-        'PostgreSQL': ['reset-tpcc.sql'],
-        'MySQL': ['reset-tpcc.sql', _FLUSH],
-        'MariaDB': ['reset-tpcc.sql', _FLUSH],
-        'Citus': ['reset-tpcc.sql'],
-        'SQLServer': ['reset-tpcc.sql'],
-        'OracleDB': ['reset-tpcc.sql'],
+        'PostgreSQL': ['reset-hammerdb.sql'],
+        'MySQL': ['reset-hammerdb.sql', _FLUSH],
+        'MariaDB': ['reset-hammerdb.sql', _FLUSH],
+        'Citus': ['reset-hammerdb.sql'],
+        'SQLServer': ['reset-hammerdb.sql'],
+        'OracleDB': ['reset-hammerdb.sql'],
     },
     'tpch.py': {
         'PostgreSQL': ['reset-tpch.sql'],

@@ -394,7 +394,7 @@ class SummaryDispatchTest(unittest.TestCase):
     def test_types_with_an_experiment_class(self):
         types = {type_name for descriptor in registry.descriptors() if descriptor.experiment is not None
                  for type_name in descriptor.types}
-        self.assertEqual(types, {'tpch', 'tpcds', 'ssb', 'ycsb', 'tpcc', 'hammerdb', 'benchbase', 'hardware'})
+        self.assertEqual(types, {'tpch', 'tpcds', 'ssb', 'ycsb', 'hammerdb', 'benchbase', 'hardware'})
 
     def test_workload_type_names_the_class(self):
         self.assertIs(registry.descriptor_for_type('ssb').experiment, experiments.SsbExperiment)

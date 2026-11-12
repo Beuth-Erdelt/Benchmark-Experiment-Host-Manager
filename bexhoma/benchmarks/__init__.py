@@ -13,7 +13,7 @@ See LICENSE for details.
 """
 from .base import Benchmark, DBMSBenchmarkerBenchmark
 from .ycsb import YCSB
-from .tpcc import TPCC
+from .hammerdb import HammerDB
 from .tpch import TPCH
 from .tpcds import TPCDS
 from .ssb import SSB
@@ -25,7 +25,7 @@ __all__ = [
     "Benchmark",
     "DBMSBenchmarkerBenchmark",
     "YCSB",
-    "TPCC",
+    "HammerDB",
     "TPCH",
     "TPCDS",
     "SSB",

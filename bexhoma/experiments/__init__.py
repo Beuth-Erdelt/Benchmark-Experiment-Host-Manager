@@ -4,7 +4,7 @@ Public API of the bexhoma.experiments package.
 Exports :class:`ExperimentBase`, :class:`MixedExperiment`,
 :class:`DbmsBenchmarkerExperiment`, :class:`TpchExperiment`,
 :class:`TpcdsExperiment`, :class:`SsbExperiment`, :class:`BenchbaseExperiment`,
-:class:`TpccExperiment`, :class:`YcsbExperiment`, and
+:class:`HammerdbExperiment`, :class:`YcsbExperiment`, and
 :class:`HardwareExperiment` experiment classes.
 
 Authors: Patrick K. Erdelt
@@ -19,12 +19,12 @@ from .tpch import TpchExperiment
 from .tpcds import TpcdsExperiment
 from .ssb import SsbExperiment
 from .benchbase import BenchbaseExperiment
-from .tpcc import TpccExperiment
+from .hammerdb import HammerdbExperiment
 from .ycsb import YcsbExperiment
 from .hardware import HardwareExperiment
 
 __all__ = [
     "ExperimentBase", "MixedExperiment", "DbmsBenchmarkerExperiment",
-    "TpchExperiment", "TpcdsExperiment", "SsbExperiment", "YcsbExperiment", "TpccExperiment",
+    "TpchExperiment", "TpcdsExperiment", "SsbExperiment", "YcsbExperiment", "HammerdbExperiment",
     "BenchbaseExperiment", "HardwareExperiment",
 ]

@@ -17,7 +17,7 @@ import pandas as pd
 
 from bexhoma.evaluators.base import EvaluatorBase
 from bexhoma.evaluators.benchbase import BenchbaseEvaluator
-from bexhoma.evaluators.tpcc import TpccEvaluator
+from bexhoma.evaluators.hammerdb import HammerdbEvaluator
 from bexhoma.experiments.base import ExperimentBase
 
 __all__ = []
@@ -91,13 +91,13 @@ class EvaluatorRecordTestsTest(unittest.TestCase):
     def test_hammerdb_without_keying_skips(self):
         exp = _experiment(HAMMERDB_KEYANDTHINK="false")
         df = pd.DataFrame({'vusers': [40], 'NOPM': [1000], 'efficiency': [50.0]})
-        TpccEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
+        HammerdbEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp)[0][0], None)
 
     def test_hammerdb_with_keying_tests(self):
         exp = _experiment(HAMMERDB_KEYANDTHINK="true")
         df = pd.DataFrame({'vusers': [40], 'NOPM': [500], 'efficiency': [97.2]})
-        TpccEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
+        HammerdbEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp), [(True, "efficiency contains no 0 or NaN")])
 
 
@@ -121,7 +121,7 @@ class HammerdbPhaseEfficiencyTest(unittest.TestCase):
     """The per-phase efficiency of HammerDB needs key-and-think time, like the per-pod one."""
 
     def _phase_efficiency(self, df):
-        return float(TpccEvaluator.benchmarking_aggregate_by_parallel_pods(None, df)['efficiency'].iloc[0])
+        return float(HammerdbEvaluator.benchmarking_aggregate_by_parallel_pods(None, df)['efficiency'].iloc[0])
 
     def test_with_keying_and_ten_times_sf(self):
         self.assertAlmostEqual(self._phase_efficiency(_hammerdb_pods("true")), 100. * 500 / 12.86 / 4)

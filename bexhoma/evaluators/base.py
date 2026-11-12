@@ -228,9 +228,9 @@ class EvaluatorBase:
         matches it against :attr:`name`. Unlike benchmarker entries (whose ``name``
         directly matches the owning benchmark's own name, e.g. ``'ycsb'``), loader
         entries name themselves after the experiment type with a conventional
-        ``'-loader'`` suffix (e.g. ``'tpcc-loader'``), which does not always equal
+        ``'-loader'`` suffix (e.g. ``'ycsb-loader'``), which need not equal
         the benchmark's name (e.g. TPC-C's own benchmark is named ``'hammerdb'``,
-        see :class:`~bexhoma.benchmarks.tpcc.TPCC`). So a match is accepted either
+        see :class:`~bexhoma.benchmarks.hammerdb.HammerDB`). So a match is accepted either
         via the entry's ``name`` with that suffix stripped, or via its
         ``benchmarker`` field (the tool identifier, e.g. ``'hammerdb'``).
 

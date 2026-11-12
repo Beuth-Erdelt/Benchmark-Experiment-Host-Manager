@@ -70,14 +70,14 @@ _BENCHMARK_FILES = {
     # the descriptors of all benchmarks, until each benchmark has a folder of its own
     'bexhoma/benchmarks/registered.py',
     'bexhoma/benchmarks/benchbase.py', 'bexhoma/benchmarks/hardware.py', 'bexhoma/benchmarks/refresh.py',
-    'bexhoma/benchmarks/ssb.py', 'bexhoma/benchmarks/tpcc.py', 'bexhoma/benchmarks/tpcds.py',
+    'bexhoma/benchmarks/ssb.py', 'bexhoma/benchmarks/hammerdb.py', 'bexhoma/benchmarks/tpcds.py',
     'bexhoma/benchmarks/tpch.py', 'bexhoma/benchmarks/ycsb.py',
     'bexhoma/collectors/benchbase.py', 'bexhoma/collectors/dbmsbenchmarker.py', 'bexhoma/collectors/hardware.py',
-    'bexhoma/collectors/tpcc.py', 'bexhoma/collectors/ycsb.py',
+    'bexhoma/collectors/hammerdb.py', 'bexhoma/collectors/ycsb.py',
     'bexhoma/evaluators/benchbase.py', 'bexhoma/evaluators/dbmsbenchmarker.py', 'bexhoma/evaluators/hardware.py',
-    'bexhoma/evaluators/tpcc.py', 'bexhoma/evaluators/ycsb.py',
+    'bexhoma/evaluators/hammerdb.py', 'bexhoma/evaluators/ycsb.py',
     'bexhoma/experiments/benchbase.py', 'bexhoma/experiments/dbmsbenchmarker.py', 'bexhoma/experiments/hardware.py',
-    'bexhoma/experiments/ssb.py', 'bexhoma/experiments/tpcc.py', 'bexhoma/experiments/tpcds.py',
+    'bexhoma/experiments/ssb.py', 'bexhoma/experiments/hammerdb.py', 'bexhoma/experiments/tpcds.py',
     'bexhoma/experiments/tpch.py', 'bexhoma/experiments/tpch_builder.py', 'bexhoma/experiments/tpch_catalog.py',
     'bexhoma/experiments/tpch_loader.py', 'bexhoma/experiments/ycsb.py', 'bexhoma/experiments/ycsb_catalog.py',
 }

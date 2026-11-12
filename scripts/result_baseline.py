@@ -218,6 +218,26 @@ def _normalize(text: str, copy_root: str) -> str:
     return text.replace('\r\n', '\n')
 
 
+#: Workload types that were renamed since the result folders were written. bexhoma itself keeps
+#: no alias for an old name; the copy that is summarized gets the new one.
+_RENAMED_WORKLOAD_TYPES = {'tpcc': 'hammerdb'}
+
+
+def _rename_workload_types(folder: str) -> None:
+    """Replace renamed workload types in the ``queries.config`` of a copied result folder."""
+    path = os.path.join(folder, 'queries.config')
+    if not os.path.isfile(path):
+        return
+    with open(path, encoding='utf-8', newline='') as file:
+        text = file.read()
+    changed = text
+    for old, new in _RENAMED_WORKLOAD_TYPES.items():
+        changed = changed.replace(f"'type': '{old}'", f"'type': '{new}'")
+    if changed != text:
+        with open(path, 'w', encoding='utf-8', newline='') as file:
+            file.write(changed)
+
+
 def summarize(code: str, mode: str, source_root: str, target: str) -> dict:
     """Summarize a copy of the result folder of ``code`` and write what comes out to ``target``.
 
@@ -231,6 +251,7 @@ def summarize(code: str, mode: str, source_root: str, target: str) -> dict:
         shutil.copytree(os.path.join(source_root, code), folder)
         # a report of an earlier summary is output, not input
         shutil.rmtree(os.path.join(folder, 'report'), ignore_errors=True)
+        _rename_workload_types(folder)
         if mode == 'recompute':
             for name in os.listdir(folder):
                 if name.endswith('.df.pickle'):

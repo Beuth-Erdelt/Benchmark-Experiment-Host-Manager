@@ -3,7 +3,7 @@ Public API of the bexhoma.evaluators package.
 
 Exports :class:`EvaluatorBase`, :class:`LogEvaluator`,
 :class:`DbmsBenchmarkerEvaluator`, :class:`BenchbaseEvaluator`,
-:class:`TpccEvaluator`, :class:`YcsbEvaluator`, and :class:`HardwareEvaluator`
+:class:`HammerdbEvaluator`, :class:`YcsbEvaluator`, and :class:`HardwareEvaluator`
 evaluator classes, plus the :func:`natural_sort` utility from :mod:`base`.
 
 Authors: Patrick K. Erdelt
@@ -15,11 +15,11 @@ from .base import EvaluatorBase, natural_sort
 from .logger import LogEvaluator
 from .dbmsbenchmarker import DbmsBenchmarkerEvaluator
 from .benchbase import BenchbaseEvaluator
-from .tpcc import TpccEvaluator
+from .hammerdb import HammerdbEvaluator
 from .ycsb import YcsbEvaluator
 from .hardware import HardwareEvaluator
 
 __all__ = [
     "EvaluatorBase", "LogEvaluator", "DbmsBenchmarkerEvaluator",
-    "BenchbaseEvaluator", "TpccEvaluator", "YcsbEvaluator", "HardwareEvaluator", "natural_sort",
+    "BenchbaseEvaluator", "HammerdbEvaluator", "YcsbEvaluator", "HardwareEvaluator", "natural_sort",
 ]

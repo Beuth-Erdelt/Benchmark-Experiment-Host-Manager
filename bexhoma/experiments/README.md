@@ -367,7 +367,7 @@ is computed relative to the first matching line.
 
 ---
 
-### 7d. HammerDB TPC-C (`evaluators/tpcc.py`)
+### 7d. HammerDB TPC-C (`evaluators/hammerdb.py`)
 
 **Used by**: `hammerdb.py`.
 
@@ -616,7 +616,7 @@ the pieces that differ:
 | `_show_loading_sections(experiment, is_multitenant)` → `(Section \| None, df_loading)` | builds `### Loading → Per Run` when `loading_is_active()` | `YCSB` → also builds `#### Per Connection` first; guards on `df_loading.empty` |
 | `_show_extra_sections(experiment, df_aggregated_reduced)` → `(list[Section], dict, Section \| None)` | no-op, returns `([], {}, None)` | `DBMSBenchmarkerBenchmark` → runs the secondary-benchmark loop (see §9d), then builds `Latency`/`Errors`/`Warnings` sections; returns `{"num_errors": N, "num_warnings": N, "num_active_queries": N, "num_queries_with_explain": N}` plus a report-only `EXPLAIN` section (or `None` when `-se`/`--store-explain` captured nothing) — the full per-query/per-connection EXPLAIN dump is never rendered to stdout, only into `benchmarking.md`; `show_summary()` only shows a pass/fail/skipped Tests-table row for it |
 | `_build_key_metrics_section(df_aggregated_reduced)` → `Section \| None` | no-op, returns `None` | `DBMSBenchmarkerBenchmark`/`YCSB`/`TPCC`/`Benchbase` → surface the exact column(s) their own `record_tests()` tests (Geo Times/Power@Size/Throughput@Size, `[OVERALL].Throughput(ops/sec)`, `NOPM`, `Throughput (requests/second)` respectively), via the shared `_key_metrics_section_from_columns()` helper. Report-only (§9h) — never rendered to stdout. |
-| `evaluator.record_tests(experiment, df_loading, df_reduced, workflow_actual, workflow_planned, **extra)` | `evaluators/logger.py` default: tests workflow only | `evaluators/dbmsbenchmarker.py` → also tests Geo Times, Power@Size, Throughput@Size, SQL errors/warnings, and EXPLAIN coverage (from `extra`; skipped rather than failed when `-se`/`--store-explain` was not used); `evaluators/ycsb.py`, `evaluators/tpcc.py`, `evaluators/benchbase.py` → test their own metric columns plus workflow |
+| `evaluator.record_tests(experiment, df_loading, df_reduced, workflow_actual, workflow_planned, **extra)` | `evaluators/logger.py` default: tests workflow only | `evaluators/dbmsbenchmarker.py` → also tests Geo Times, Power@Size, Throughput@Size, SQL errors/warnings, and EXPLAIN coverage (from `extra`; skipped rather than failed when `-se`/`--store-explain` was not used); `evaluators/ycsb.py`, `evaluators/hammerdb.py`, `evaluators/benchbase.py` → test their own metric columns plus workflow |
 
 `record_tests()` lives on the **evaluator**, not the `Benchmark`, because the metric
 columns it checks (`df_reduced`) are evaluator-specific; the `extra` kwargs bridge
@@ -766,7 +766,7 @@ benchmark types.
 | Log-to-pickle pipeline | `evaluators/logger.py` | `end_benchmarking()`, `_collect_dfs()`, `transform_all_logs_benchmarking()` |
 | YCSB metrics | `evaluators/ycsb.py` | `log_to_df()`, `benchmarking_aggregate_by_parallel_pods()` |
 | Benchbase metrics | `evaluators/benchbase.py` | `log_to_df()`, `benchmarking_aggregate_by_parallel_pods()` |
-| HammerDB metrics | `evaluators/tpcc.py` | `log_to_df()`, `benchmarking_aggregate_by_parallel_pods()` |
+| HammerDB metrics | `evaluators/hammerdb.py` | `log_to_df()`, `benchmarking_aggregate_by_parallel_pods()` |
 | DBMSBenchmarker metrics | `evaluators/dbmsbenchmarker.py` | `get_df_benchmarking()` |
 | Refresh stream timing in summary | `benchmarks/refresh.py` | `RefreshStreamBenchmark.show_summary_section()` |
 | Connection metadata (incl. duration) | `evaluators/base.py` | `add_connection_to_result()`, `get_connections_of_experiment()` |

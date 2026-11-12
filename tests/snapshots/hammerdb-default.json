@@ -1,5 +1,5 @@
 {
- "configfolder": "experiments/tpcc",
+ "configfolder": "experiments/hammerdb",
  "configurations": [
   {
    "_jobtemplate_loading": "",
@@ -89,7 +89,7 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-tpcc.sql"
+        "reset-hammerdb.sql"
        ],
        "target": "sut",
        "template": "jobtemplate-benchmarking-hammerdb.yml"
@@ -99,7 +99,7 @@
     "loader": [
      {
       "benchmarker": "hammerdb",
-      "name": "tpcc-loader",
+      "name": "hammerdb-loader",
       "num_pods": 1,
       "parallelism": 1,
       "parameters": {
@@ -182,7 +182,7 @@
    "sut_service_name": "",
    "sut_template": "deploymenttemplate-Citus.yml",
    "tenant_per": "",
-   "volume": "tpcc",
+   "volume": "hammerdb",
    "worker_metric_strip_container": false
   },
   {
@@ -264,7 +264,7 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-tpcc.sql",
+        "reset-hammerdb.sql",
         "reset-flush.sh"
        ],
        "target": "sut",
@@ -275,7 +275,7 @@
     "loader": [
      {
       "benchmarker": "hammerdb",
-      "name": "tpcc-loader",
+      "name": "hammerdb-loader",
       "num_pods": 1,
       "parallelism": 1,
       "parameters": {
@@ -353,7 +353,7 @@
    "sut_service_name": "",
    "sut_template": "deploymenttemplate-MariaDB.yml",
    "tenant_per": "",
-   "volume": "tpcc",
+   "volume": "hammerdb",
    "worker_metric_strip_container": false
   },
   {
@@ -435,7 +435,7 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-tpcc.sql",
+        "reset-hammerdb.sql",
         "reset-flush.sh"
        ],
        "target": "sut",
@@ -446,7 +446,7 @@
     "loader": [
      {
       "benchmarker": "hammerdb",
-      "name": "tpcc-loader",
+      "name": "hammerdb-loader",
       "num_pods": 1,
       "parallelism": 1,
       "parameters": {
@@ -522,7 +522,7 @@
    "sut_service_name": "",
    "sut_template": "deploymenttemplate-MySQL.yml",
    "tenant_per": "",
-   "volume": "tpcc",
+   "volume": "hammerdb",
    "worker_metric_strip_container": false
   },
   {
@@ -604,7 +604,7 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-tpcc.sql"
+        "reset-hammerdb.sql"
        ],
        "target": "sut",
        "template": "jobtemplate-benchmarking-hammerdb.yml"
@@ -614,7 +614,7 @@
     "loader": [
      {
       "benchmarker": "hammerdb",
-      "name": "tpcc-loader",
+      "name": "hammerdb-loader",
       "num_pods": 1,
       "parallelism": 1,
       "parameters": {
@@ -690,7 +690,7 @@
    "sut_service_name": "",
    "sut_template": "deploymenttemplate-OracleDB.yml",
    "tenant_per": "",
-   "volume": "tpcc",
+   "volume": "hammerdb",
    "worker_metric_strip_container": false
   },
   {
@@ -769,7 +769,7 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-tpcc.sql"
+        "reset-hammerdb.sql"
        ],
        "target": "sut",
        "template": "jobtemplate-benchmarking-hammerdb.yml"
@@ -779,7 +779,7 @@
     "loader": [
      {
       "benchmarker": "hammerdb",
-      "name": "tpcc-loader",
+      "name": "hammerdb-loader",
       "num_pods": 1,
       "parallelism": 1,
       "parameters": {
@@ -853,7 +853,7 @@
    "sut_service_name": "",
    "sut_template": "deploymenttemplate-PostgreSQL.yml",
    "tenant_per": "",
-   "volume": "tpcc",
+   "volume": "hammerdb",
    "worker_metric_strip_container": false
   },
   {
@@ -935,7 +935,7 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-tpcc.sql"
+        "reset-hammerdb.sql"
        ],
        "target": "sut",
        "template": "jobtemplate-benchmarking-hammerdb.yml"
@@ -945,7 +945,7 @@
     "loader": [
      {
       "benchmarker": "hammerdb",
-      "name": "tpcc-loader",
+      "name": "hammerdb-loader",
       "num_pods": 1,
       "parallelism": 1,
       "parameters": {
@@ -1021,7 +1021,7 @@
    "sut_service_name": "",
    "sut_template": "deploymenttemplate-SQLServer.yml",
    "tenant_per": "",
-   "volume": "tpcc",
+   "volume": "hammerdb",
    "worker_metric_strip_container": false
   }
  ]

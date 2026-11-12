@@ -8,7 +8,7 @@ delegation of workload configuration, summary display, and result validation to
 the individual benchmark objects.
 
 All named single-benchmark experiment classes (``YcsbExperiment``,
-``TpccExperiment``, ``TpchExperiment``, ``TpcdsExperiment``,
+``HammerdbExperiment``, ``TpchExperiment``, ``TpcdsExperiment``,
 ``BenchbaseExperiment``) are subclasses of :class:`MixedExperiment`.
 
 Authors: Patrick K. Erdelt

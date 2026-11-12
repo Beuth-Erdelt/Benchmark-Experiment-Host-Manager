@@ -1,9 +1,9 @@
 {
  "bexhoma/benchmarks/__init__.py": {
   "benchbase": 3,
+  "hammerdb": 3,
   "refresh_stream": 2,
   "ssb": 3,
-  "tpcc": 3,
   "tpcds": 3,
   "tpch": 3,
   "ycsb": 3
@@ -29,8 +29,9 @@
  },
  "bexhoma/collectors/__init__.py": {
   "benchbase": 5,
+  "hammerdb": 4,
   "hardware": 3,
-  "tpcc": 5,
+  "tpcc": 1,
   "ycsb": 5
  },
  "bexhoma/configurations/base.py": {
@@ -59,17 +60,17 @@
  },
  "bexhoma/evaluators/__init__.py": {
   "benchbase": 4,
+  "hammerdb": 4,
   "hardware": 3,
-  "tpcc": 4,
   "ycsb": 4
  },
  "bexhoma/evaluators/base.py": {
   "benchbase": 1,
-  "hammerdb": 3,
+  "hammerdb": 5,
   "refresh_stream": 1,
-  "tpcc": 4,
+  "tpcc": 1,
   "tpch": 3,
-  "ycsb": 3
+  "ycsb": 4
  },
  "bexhoma/evaluators/logger.py": {
   "benchbase": 1,
@@ -78,9 +79,9 @@
  },
  "bexhoma/experiments/__init__.py": {
   "benchbase": 4,
+  "hammerdb": 4,
   "hardware": 3,
   "ssb": 4,
-  "tpcc": 4,
   "tpcds": 4,
   "tpch": 4,
   "ycsb": 4
@@ -96,7 +97,8 @@
  },
  "bexhoma/experiments/mixed.py": {
   "benchbase": 2,
-  "tpcc": 2,
+  "hammerdb": 1,
+  "tpcc": 1,
   "tpcds": 2,
   "tpch": 3,
   "ycsb": 3

@@ -33,7 +33,7 @@ if __name__ == '__main__':
     # argparse
     parser = argparse.ArgumentParser(description=description, parents=[make_base_parser()])
     parser.add_argument('mode', help='experiment phase: start SUT only, load data, run the full benchmark, or summarize results', choices=['run', 'start', 'load', 'summary'])
-    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=dbms_choices('tpcc'), default=[], nargs='*')
+    parser.add_argument('-dbms', '--dbms', help='one or more DBMS engines to test', choices=dbms_choices('hammerdb'), default=[], nargs='*')
     parser.add_argument('-xdt',   '--xdata-transfer', help='also measure data transfer volume per query (not just execution time)', action='store_true', default=False, dest='datatransfer')
     parser.add_argument('-xqr',   '--xnum-query-runs', help='number of times to repeat each query', default=1, dest='num_run')
     parser.add_argument('-xrt',   '--xrampup-time', help='ramp-up period in minutes before measurements begin', default=2, dest='num_rampup_time')
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     parser.add_argument('-xkey',  '--extra-keying', help='simulate TPC-C keying and think times between transactions', action='store_true', default=False)
     # evaluate args
     args = parser.parse_args()
-    reason = tenancy_error('tpcc', args)
+    reason = tenancy_error('hammerdb', args)
     if reason:
         parser.error(reason)
     if args.debug:
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     ##############
     ### prepare and configure experiment
     ##############
-    experiment = experiments.TpccExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    experiment = experiments.HammerdbExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
     if args.max_sut_experiment is not None:
         experiment.max_sut = int(args.max_sut_experiment)
     experiment.prometheus_interval = "10s"
@@ -172,12 +172,12 @@ if __name__ == '__main__':
         for loading_pods in [1]:
             loading_threads_per_pod = int(loading_threads/loading_pods)
             # every DBMS that can run TPC-C (or the ones named by -dbms), as declared in cluster.config
-            for docker in selected_dockers(cluster.dockers, 'tpcc', args.dbms, args):
+            for docker in selected_dockers(cluster.dockers, 'hammerdb', args.dbms, args):
                 config = build_configuration(
-                    experiment, docker, 'tpcc', args,
+                    experiment, docker, 'hammerdb', args,
                     loading_parameters={'HAMMERDB_VUSERS': loading_threads_per_pod})
                 config.set_loading(parallel=1, num_pods=1)
-                benchmarking_parameters = entry_parameters(cluster.dockers, docker, 'tpcc', 'benchmarking_parameters', args)
+                benchmarking_parameters = entry_parameters(cluster.dockers, docker, 'hammerdb', 'benchmarking_parameters', args)
                 executor_list = []
                 for benchmarking_threads in num_benchmarking_threads:
                     for benchmarking_pods in num_benchmarking_pods:

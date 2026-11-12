@@ -17,12 +17,12 @@ from bexhoma.benchmarks.registry import BenchmarkDescriptor, register
 from bexhoma.collectors.benchbase import BenchbaseCollector
 from bexhoma.collectors.dbmsbenchmarker import DbmsBenchmarkerCollector
 from bexhoma.collectors.hardware import HardwareCollector
-from bexhoma.collectors.tpcc import TpccCollector
+from bexhoma.collectors.hammerdb import HammerdbCollector
 from bexhoma.collectors.ycsb import YcsbCollector
 from bexhoma.experiments.benchbase import BenchbaseExperiment
 from bexhoma.experiments.hardware import HardwareExperiment
 from bexhoma.experiments.ssb import SsbExperiment
-from bexhoma.experiments.tpcc import TpccExperiment
+from bexhoma.experiments.hammerdb import HammerdbExperiment
 from bexhoma.experiments.tpcds import TpcdsExperiment
 from bexhoma.experiments.tpch import TpchExperiment
 from bexhoma.experiments.tpch_catalog import build_tpch_argv
@@ -46,9 +46,8 @@ register(BenchmarkDescriptor(
 register(BenchmarkDescriptor(
     name='benchbase', types=('benchbase',), experiment=BenchbaseExperiment, collector=BenchbaseCollector,
     entry_script='benchbase.py'))
-# 'tpcc' is the workload type and the asset folder, 'hammerdb' the name of its benchmark runs
 register(BenchmarkDescriptor(
-    name='tpcc', types=('tpcc', 'hammerdb'), experiment=TpccExperiment, collector=TpccCollector,
+    name='hammerdb', types=('hammerdb',), experiment=HammerdbExperiment, collector=HammerdbCollector,
     entry_script='hammerdb.py'))
 register(BenchmarkDescriptor(
     name='hardware', types=('hardware',), experiment=HardwareExperiment, collector=HardwareCollector,
