@@ -68,6 +68,7 @@ MODES = ('cached', 'recompute')
 #: several DBMS, the reset and durability cases and the variants only that benchmark has.
 RUNS = {
     'benchbase': [
+        'docs_benchbase_postgresql_run', 'docs_benchbase_postgresql_load',
         'docs_benchbase_postgresql_start',
         'docs_benchbase_postgresql_monitoring', 'docs_benchbase_postgresql_scale', 'docs_benchbase_postgresql_storage',
         'docs_benchbase_postgresql_appmetrics', 'docs_benchbase_postgresql_keytime',
@@ -79,6 +80,7 @@ RUNS = {
         'docs_durability_benchbase_postgresql_relaxed',
     ],
     'hammerdb': [
+        'docs_hammerdb_postgresql_load',
         'docs_hammerdb_postgresql_run', 'docs_hammerdb_postgresql_start',
         'docs_hammerdb_postgresql_monitoring', 'docs_hammerdb_postgresql_scale', 'docs_hammerdb_postgresql_storage',
         'docs_hammerdb_postgresql_appmetrics', 'docs_hammerdb_postgresql_keytime', 'docs_hammerdb_postgresql_timeseries',
@@ -86,7 +88,7 @@ RUNS = {
         'docs_durability_hammerdb_postgresql_relaxed',
     ],
     'tpch': [
-        'docs_tpch_postgresql', 'docs_tpch_postgresql_run', 'docs_tpch_postgresql_start',
+        'docs_tpch_postgresql', 'docs_tpch_postgresql_run', 'docs_tpch_postgresql_load', 'docs_tpch_postgresql_start',
         'docs_tpch_postgresql_monitoring', 'docs_tpch_postgresql_storage', 'docs_tpch_postgresql_appmetrics',
         'docs_tpch_postgresql_refresh', 'docs_tpch_postgresql_throughput', 'docs_tpch_postgresql_tenants_container',
         'docs_tpch_postgresql_tenants_database', 'docs_tpch_postgresql_tenants_schema',
@@ -96,7 +98,7 @@ RUNS = {
         'docs_reset_tpch_postgresql', 'docs_reset_tpch_refresh_postgresql', 'docs_durability_tpch_postgresql_relaxed',
     ],
     'tpcds': [
-        'docs_tpcds_postgresql', 'docs_tpcds_postgresql_start',
+        'docs_tpcds_postgresql', 'docs_tpcds_postgresql_run', 'docs_tpcds_postgresql_load', 'docs_tpcds_postgresql_start',
         'docs_tpcds_postgresql_monitoring', 'docs_tpcds_postgresql_storage', 'docs_tpcds_postgresql_throughput',
         'docs_tpcds_postgresql_profiling', 'docs_tpcds_compare', 'docs_tpcds_mariadb', 'docs_reset_tpcds_postgresql',
         'docs_durability_tpcds_postgresql_relaxed',
@@ -106,6 +108,7 @@ RUNS = {
         'docs_ssb_profiling', 'docs_ssb_random', 'docs_ssb_clickhousecluster_distributed', 'docs_ssb_monetdb',
     ],
     'ycsb': [
+        'docs_ycsb_postgresql_run',
         'docs_ycsb_postgresql_load', 'docs_ycsb_postgresql_start',
         'docs_ycsb_postgresql_monitoring', 'docs_ycsb_postgresql_storage', 'docs_ycsb_postgresql_appmetrics',
         'docs_ycsb_postgresql_loading', 'docs_ycsb_postgresql_benchmarking', 'docs_ycsb_postgresql_reset',
@@ -411,13 +414,19 @@ def command_compare(args) -> int:
         raise SystemExit('no baseline; run "record" first')
     with open(manifest_path, encoding='utf-8') as file:
         manifest = json.load(file)
-    changed = 0
+    changed, stale = 0, 0
     with tempfile.TemporaryDirectory() as current:
         with contextlib.redirect_stdout(io.StringIO()) if args.quiet else contextlib.nullcontext():
             results = _run_all(args, current)
         for key in sorted(results):
             if key not in manifest:
                 print(f'NOT IN BASELINE {key}')
+                continue
+            if manifest[key]['code'] != results[key]['code']:
+                # the test was run again and its log committed: another experiment, nothing to compare
+                stale += 1
+                print(f'STALE {key}: baseline is of experiment {manifest[key]["code"]}, the log now names '
+                      f'{results[key]["code"]}; record it again')
                 continue
             found = differences(os.path.join(_BASELINE, key), os.path.join(current, key))
             if results[key]['returncode'] != manifest[key]['returncode']:
@@ -429,8 +438,8 @@ def command_compare(args) -> int:
                     print('    ' + line)
                 if args.keep:
                     shutil.copytree(os.path.join(current, key), os.path.join(args.keep, key), dirs_exist_ok=True)
-    print(f'{len(results)} summaries compared, {changed} changed')
-    return 1 if changed else 0
+    print(f'{len(results)} summaries compared, {changed} changed, {stale} stale')
+    return 1 if changed or stale else 0
 
 
 def main() -> int:
