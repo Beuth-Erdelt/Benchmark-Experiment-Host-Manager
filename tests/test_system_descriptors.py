@@ -23,7 +23,7 @@ import unittest
 
 from bexhoma import system_descriptors as sd
 
-from .test_dbms_snapshots import SCRIPTS, build_snapshot
+from .test_dbms_snapshots import build_snapshot
 from .test_resource_sweep import _dbms_choices
 
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -244,7 +244,8 @@ class DescriptorsMatchScriptsTest(unittest.TestCase):
                 self.assertEqual(set(sd.default_dockers(self.dockers, benchmark)), ran)
 
     def test_storage_prefix_is_what_the_scripts_set(self) -> None:
-        for script in SCRIPTS:
+        # the scripts that build from the descriptors (hardware.py sets its storage itself)
+        for script in BENCHMARK_OF_SCRIPT:
             with open(os.path.join(_SNAPSHOT_DIR, f'{script[:-3]}-default.json'), encoding='utf-8') as file:
                 snapshot = json.load(file)
             for config in snapshot['configurations']:
@@ -295,8 +296,8 @@ class DescriptorsMatchScriptsTest(unittest.TestCase):
         self.assertNotIn('option_parameters', entry('PostgreSQL'))
 
     def test_entries_equal_the_configurations_the_scripts_build(self) -> None:
-        for script in SCRIPTS:
-            benchmark = BENCHMARK_OF_SCRIPT[script]
+        # the scripts that build from the descriptors (hardware.py has no dockers.<x>.benchmarks entry)
+        for script, benchmark in BENCHMARK_OF_SCRIPT.items():
             with open(os.path.join(_SNAPSHOT_DIR, f'{script[:-3]}-default.json'), encoding='utf-8') as file:
                 snapshot = json.load(file)
             for config in snapshot['configurations']:
