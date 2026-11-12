@@ -363,6 +363,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('job', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced = self.identity_first(df_aggregated_reduced, self.IDENTITY_PER_PHASE, source=df_aggregated)
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
     def get_df_benchmarking(self, dbms_filter=None):
@@ -681,7 +682,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         """
         Returns benchmarking results with one row per pod.
 
-        Drops the ``code`` and ``connection`` columns, then naturally sorts by
+        Keeps the identity of the pod and what it measured, then naturally sorts by
         the connection name.
 
         :return: DataFrame indexed as ``"connection"`` with one row per pod, or an
@@ -689,8 +690,14 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         :rtype: pandas.DataFrame
         """
         df = self.get_df_benchmarking()
-        df.drop('code', axis=1, inplace=True, errors='ignore')
-        df.drop('connection', axis=1, inplace=True, errors='ignore')
+        if not df.empty:
+            # the number of the pod within its job: the last part of the connection name
+            df['child'] = [int(name.rsplit('-', 1)[-1]) if str(name).rsplit('-', 1)[-1].isdigit() else 1
+                           for name in df.index]
+        # the label of the row is the connection; configuration and pod count belong to the phase
+        for column in ('code', 'connection', 'configuration', 'pod_count', 'pod'):
+            df.drop(column, axis=1, inplace=True, errors='ignore')
+        df = self.identity_first(df, self.IDENTITY_PER_CONNECTION)
         df = df.rename_axis(index="connection")
         df = df.reindex(index=natural_sort(df.index))
         return df

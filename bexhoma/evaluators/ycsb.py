@@ -935,7 +935,7 @@ class YcsbEvaluator(LogEvaluator):
         df = self.get_df_benchmarking()
         if not df.empty:
             columns = [
-            'phase', 'job', 'configuration', 'experiment_run', 'client', 'benchmark_run', 'child',"threads","target","pod_count","errors",
+            'phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'child',"threads","target","errors",
             "[OVERALL].Throughput(ops/sec)","[OVERALL].RunTime(ms)",
             "[INSERT].Return=OK","[INSERT].99thPercentileLatency(us)","[INSERT].99thPercentileLatency(us)",
             "[READ].Return=OK","[READ].99thPercentileLatency(us)","[READ].99thPercentileLatency(us)",
@@ -954,6 +954,7 @@ class YcsbEvaluator(LogEvaluator):
             for col in columns:
                 if col in df_plot.columns:
                     df_plot_filtered[col] = df_plot.loc[:,col]
+            df_plot_filtered = self.identity_first(df_plot_filtered, self.IDENTITY_PER_CONNECTION, source=df_plot)
             df_plot_filtered = df_plot_filtered.rename_axis(index="connection")
             df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
             return df_plot_filtered
@@ -997,6 +998,7 @@ class YcsbEvaluator(LogEvaluator):
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:,col]
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = self.identity_first(df_aggregated_reduced, self.IDENTITY_PER_PHASE, source=df_aggregated)
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
     def get_summary_benchmark_per_phase_multitenant(self):
@@ -1036,6 +1038,7 @@ class YcsbEvaluator(LogEvaluator):
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:, col]
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=natural_sort(df_aggregated_reduced.index))
+            df_aggregated_reduced = self.identity_first(df_aggregated_reduced, self.IDENTITY_PER_PHASE, source=df_aggregated)
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
     def get_summary_loading_per_connection(self):

@@ -47,6 +47,38 @@ class LogEvaluator(EvaluatorBase):
     #: ``threads`` (client threads of a pod), ``errors`` and ``SF``.
     column_names: dict = {}
 
+    #: The columns that identify a row of ``#### Per Connection``, in the order every benchmark shows them.
+    IDENTITY_PER_CONNECTION = ('phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'child')
+    #: The columns that identify a row of ``#### Per Phase``, in the order every benchmark shows them.
+    IDENTITY_PER_PHASE = ('phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count')
+
+    @staticmethod
+    def identity_first(df: pd.DataFrame, identity: tuple, source: pd.DataFrame = None) -> pd.DataFrame:
+        """
+        Put the identity columns of a summary table first, in their common order.
+
+        Every benchmark calls this at the end of its
+        :meth:`get_summary_benchmark_per_connection` (with
+        :attr:`IDENTITY_PER_CONNECTION`) and :meth:`get_summary_benchmark_per_phase`
+        (with :attr:`IDENTITY_PER_PHASE`), so that the tables of all benchmarks
+        start alike and the benchmark's own columns follow.
+
+        :param df: The table.
+        :param identity: The identity columns, in order.
+        :param source: DataFrame with the same index that the table was selected
+            from; an identity column the table lacks is taken from it.
+        :return: The table with the identity columns first; the other columns keep their order.
+        :rtype: pandas.DataFrame
+        """
+        if df.empty:
+            return df
+        if source is not None:
+            for column in identity:
+                if column not in df.columns and column in source.columns:
+                    df[column] = source[column]
+        first = [column for column in identity if column in df.columns]
+        return df[first + [column for column in df.columns if column not in first]]
+
     def unify_columns(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Rename the tool's columns to the common names of :attr:`column_names`.
@@ -297,9 +329,8 @@ class LogEvaluator(EvaluatorBase):
         """
         The table of ``#### Per Connection``: one row per benchmarking pod.
 
-        Required. Starts with the identity of the pod (``phase``, ``job``,
-        ``experiment_run``, ``client``, ``benchmark_run``, ``child``), followed
-        by what the benchmark measures.
+        Required. Starts with the identity of the pod (:attr:`IDENTITY_PER_CONNECTION`,
+        put first by :meth:`identity_first`), followed by what the benchmark measures.
 
         :return: DataFrame indexed by connection, the index named ``"connection"``.
         :rtype: pandas.DataFrame
@@ -310,7 +341,9 @@ class LogEvaluator(EvaluatorBase):
         """
         The table of ``#### Per Phase``: the pods of a phase aggregated to one row.
 
-        Required. The result is also what :meth:`record_tests` gets as ``df_reduced``.
+        Required. Starts with the identity of the phase (:attr:`IDENTITY_PER_PHASE`,
+        put first by :meth:`identity_first`). The result is also what
+        :meth:`record_tests` gets as ``df_reduced``.
 
         :return: DataFrame indexed by phase, the index named ``"DBMS"``.
         :rtype: pandas.DataFrame

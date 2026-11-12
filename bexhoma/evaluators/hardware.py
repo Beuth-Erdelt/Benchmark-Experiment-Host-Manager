@@ -386,6 +386,7 @@ class HardwareEvaluator(LogEvaluator):
         for col in columns:
             if col in df_plot.columns:
                 df_plot_filtered[col] = df_plot.loc[:, col]
+        df_plot_filtered = self.identity_first(df_plot_filtered, self.IDENTITY_PER_CONNECTION, source=df_plot)
         df_plot_filtered = df_plot_filtered.rename_axis(index="connection")
         # index (connection, e.g. "Hardware-1-1-2-1-1") already encodes
         # configuration-experiment_run-client-benchmark_run-child in that
@@ -438,6 +439,7 @@ class HardwareEvaluator(LogEvaluator):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:, col]
+            df_aggregated_reduced = self.identity_first(df_aggregated_reduced, self.IDENTITY_PER_PHASE, source=df_aggregated)
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
 
@@ -488,6 +490,7 @@ class HardwareEvaluator(LogEvaluator):
             for col in columns:
                 if col in df_aggregated.columns:
                     df_aggregated_reduced[col] = df_aggregated.loc[:, col]
+            df_aggregated_reduced = self.identity_first(df_aggregated_reduced, self.IDENTITY_PER_PHASE, source=df_aggregated)
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
 
