@@ -517,7 +517,7 @@ class HammerdbEvaluator(LogEvaluator):
         client, child, time, errors, throughput, goodput, efficiency, and
         latency percentiles), then naturally sorts by the connection name.
 
-        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or an
+        :return: DataFrame indexed as ``"connection"`` with one row per pod, or an
                  empty DataFrame if there are no benchmarking results.
         :rtype: pandas.DataFrame
         """
@@ -535,7 +535,7 @@ class HammerdbEvaluator(LogEvaluator):
         for col in columns:
             if col in df_plot.columns:
                 df_plot_filtered[col] = df_plot.loc[:,col]
-        df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS")
+        df_plot_filtered = df_plot_filtered.rename_axis(index="connection")
         df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
         return df_plot_filtered
     def get_summary_benchmark_per_phase(self):

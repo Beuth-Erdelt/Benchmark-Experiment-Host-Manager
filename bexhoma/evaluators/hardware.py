@@ -352,7 +352,7 @@ class HardwareEvaluator(LogEvaluator):
         Returns benchmarking results with one row per pod, filtered to the key
         display columns.
 
-        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or an
+        :return: DataFrame indexed as ``"connection"`` with one row per pod, or an
                  empty DataFrame if there are no benchmarking results.
         :rtype: pandas.DataFrame
         """
@@ -386,7 +386,7 @@ class HardwareEvaluator(LogEvaluator):
         for col in columns:
             if col in df_plot.columns:
                 df_plot_filtered[col] = df_plot.loc[:, col]
-        df_plot_filtered = df_plot_filtered.rename_axis(index="DBMS")
+        df_plot_filtered = df_plot_filtered.rename_axis(index="connection")
         # index (connection, e.g. "Hardware-1-1-2-1-1") already encodes
         # configuration-experiment_run-client-benchmark_run-child in that
         # positional order, so natural-sorting it (like get_summary_benchmark_per_phase

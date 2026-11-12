@@ -301,7 +301,7 @@ class LogEvaluator(EvaluatorBase):
         ``experiment_run``, ``client``, ``benchmark_run``, ``child``), followed
         by what the benchmark measures.
 
-        :return: DataFrame indexed by connection.
+        :return: DataFrame indexed by connection, the index named ``"connection"``.
         :rtype: pandas.DataFrame
         """
         raise NotImplementedError(f"{type(self).__name__} must implement get_summary_benchmark_per_connection()")
@@ -312,7 +312,7 @@ class LogEvaluator(EvaluatorBase):
 
         Required. The result is also what :meth:`record_tests` gets as ``df_reduced``.
 
-        :return: DataFrame indexed by phase.
+        :return: DataFrame indexed by phase, the index named ``"DBMS"``.
         :rtype: pandas.DataFrame
         """
         raise NotImplementedError(f"{type(self).__name__} must implement get_summary_benchmark_per_phase()")
@@ -338,13 +338,13 @@ class LogEvaluator(EvaluatorBase):
         the same for the whole experiment. Override for a benchmark whose loader
         reports metrics of its own.
 
-        :return: DataFrame with one row per configuration and experiment run.
+        :return: DataFrame with one row per configuration and experiment run, indexed as ``"DBMS"``.
         :rtype: pandas.DataFrame
         """
         df = self.get_loading_per_run()
         df.drop('code', axis=1, inplace=True, errors='ignore')
         df.drop('configuration', axis=1, inplace=True, errors='ignore')
-        return df
+        return df.rename_axis(index="DBMS")
 
     def benchmarking_set_datatypes(self, df: pd.DataFrame) -> pd.DataFrame:
         """

@@ -363,6 +363,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
             df_aggregated_reduced.drop('configuration', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('job', axis=1, inplace=True, errors='ignore')
             df_aggregated_reduced.drop('pod', axis=1, inplace=True, errors='ignore')
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
     def get_df_benchmarking(self, dbms_filter=None):
         """
@@ -683,14 +684,14 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         Drops the ``code`` and ``connection`` columns, then naturally sorts by
         the connection name.
 
-        :return: DataFrame indexed as ``"DBMS"`` with one row per pod, or an
+        :return: DataFrame indexed as ``"connection"`` with one row per pod, or an
                  empty DataFrame if there are no benchmarking results.
         :rtype: pandas.DataFrame
         """
         df = self.get_df_benchmarking()
         df.drop('code', axis=1, inplace=True, errors='ignore')
         df.drop('connection', axis=1, inplace=True, errors='ignore')
-        df = df.rename_axis(index="DBMS")
+        df = df.rename_axis(index="connection")
         df = df.reindex(index=natural_sort(df.index))
         return df
     def get_summary_loading_per_run(self):
@@ -711,7 +712,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         df.drop('configuration', axis=1, inplace=True, errors='ignore')
         df.drop('phase', axis=1, inplace=True, errors='ignore')
         df.drop('pod', axis=1, inplace=True, errors='ignore')
-        return df
+        return df.rename_axis(index="DBMS")
 
     def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
                      workflow_actual: dict, workflow_planned: dict, **extra) -> None:
