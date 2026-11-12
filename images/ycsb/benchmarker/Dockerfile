@@ -160,6 +160,16 @@ RUN wget https://github.com/kineticadb/kinetica-client-jdbc/archive/refs/tags/v7
 RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar && \
     cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/
 
+# SQL Server 9.4.1 (jre8): the last driver with encrypt=false by default; the JDBC binding of YCSB
+# splits db.url at ";" (shards), so a SQL Server URL cannot carry encrypt or trustServerCertificate
+RUN wget https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/9.4.1.jre8/mssql-jdbc-9.4.1.jre8.jar && \
+    cp mssql-jdbc-9.4.1.jre8.jar jars/
+
+# Oracle Database 23.26.3 (ojdbc8 runs on the Java 8 of YCSB); scans of the JDBC binding use LIMIT,
+# which Oracle does not have, so workload E does not run
+RUN wget https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/23.26.3.0.0/ojdbc8-23.26.3.0.0.jar && \
+    cp ojdbc8-23.26.3.0.0.jar jars/
+
 ######################################################################################
 # Copy workload templates and entrypoint script
 ######################################################################################

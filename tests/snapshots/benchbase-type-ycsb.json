@@ -564,6 +564,188 @@
     "usecase": "benchbase_ycsb",
     "warehouses": "1"
    },
+   "alias": "General-I",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "ycsb",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "ycsb",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "db2",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "BEXHOMA_JAR_SHA256": "04150111a29370247d162c3f05b8e938bf1314f19a63ad9a5302d88dd478e8e8",
+     "BEXHOMA_JAR_URL": "https://repo1.maven.org/maven2/com/ibm/db2/jcc/12.1.5.0/jcc-12.1.5.0.jar",
+     "SF": "1"
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "ycsb",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "db2",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "BEXHOMA_JAR_SHA256": "04150111a29370247d162c3f05b8e938bf1314f19a63ad9a5302d88dd478e8e8",
+     "BEXHOMA_JAR_URL": "https://repo1.maven.org/maven2/com/ibm/db2/jcc/12.1.5.0/jcc-12.1.5.0.jar",
+     "SF": "1"
+    }
+   ],
+   "configuration": "DB2-1",
+   "data_components": null,
+   "dialect": "DB2",
+   "docker": "DB2",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "benchbase",
+       "fixed_parallelism": false,
+       "name": "benchbase",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BENCHBASE_BATCHSIZE": 128,
+        "BENCHBASE_BENCH": "ycsb",
+        "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+        "BENCHBASE_KEY_AND_THINK": "false",
+        "BENCHBASE_PROFILE": "db2",
+        "BENCHBASE_STATUS_INTERVAL": 0,
+        "BENCHBASE_TARGET": 1024,
+        "BENCHBASE_TERMINALS": 1,
+        "BENCHBASE_TIME": 300,
+        "BENCHBASE_WARMUP": 0,
+        "BEXHOMA_JAR_SHA256": "04150111a29370247d162c3f05b8e938bf1314f19a63ad9a5302d88dd478e8e8",
+        "BEXHOMA_JAR_URL": "https://repo1.maven.org/maven2/com/ibm/db2/jcc/12.1.5.0/jcc-12.1.5.0.jar",
+        "SF": "1"
+       },
+       "resetscript": [],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-benchbase.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "benchbase",
+      "name": "benchbase-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BENCHBASE_BATCHSIZE": 128,
+       "BENCHBASE_BENCH": "ycsb",
+       "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+       "BENCHBASE_KEY_AND_THINK": "false",
+       "BENCHBASE_PROFILE": "db2",
+       "BENCHBASE_STATUS_INTERVAL": 0,
+       "BENCHBASE_TERMINALS": 1,
+       "BENCHBASE_TIME": 300,
+       "BENCHBASE_WARMUP": 0,
+       "BEXHOMA_JAR_SHA256": "04150111a29370247d162c3f05b8e938bf1314f19a63ad9a5302d88dd478e8e8",
+       "BEXHOMA_JAR_URL": "https://repo1.maven.org/maven2/com/ibm/db2/jcc/12.1.5.0/jcc-12.1.5.0.jar",
+       "SF": "1"
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-benchbase.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "ycsb",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_PROFILE": "db2",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TERMINALS": 1,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "BEXHOMA_JAR_SHA256": "04150111a29370247d162c3f05b8e938bf1314f19a63ad9a5302d88dd478e8e8",
+    "BEXHOMA_JAR_URL": "https://repo1.maven.org/maven2/com/ibm/db2/jcc/12.1.5.0/jcc-12.1.5.0.jar",
+    "SF": "1"
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "DB2",
+   "prometheus_interval": "10s",
+   "prometheus_timeout": "10s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "db2",
+    "storageSize": ""
+   },
+   "storage_label": "benchbase-ycsb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-DB2.yml",
+   "tenant_per": "",
+   "volume": "benchbase",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "usecase": "benchbase_ycsb",
+    "warehouses": "1"
+   },
    "alias": "Service-A",
    "benchmark_list": [
     1
@@ -1117,6 +1299,178 @@
     "usecase": "benchbase_ycsb",
     "warehouses": "1"
    },
+   "alias": "General-H",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "ycsb",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "ycsb",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "oracle",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "SF": "1"
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "ycsb",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "oracle",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "SF": "1"
+    }
+   ],
+   "configuration": "OracleDB-1",
+   "data_components": null,
+   "dialect": "Oracle",
+   "docker": "OracleDB",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "benchbase",
+       "fixed_parallelism": false,
+       "name": "benchbase",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BENCHBASE_BATCHSIZE": 128,
+        "BENCHBASE_BENCH": "ycsb",
+        "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+        "BENCHBASE_KEY_AND_THINK": "false",
+        "BENCHBASE_PROFILE": "oracle",
+        "BENCHBASE_STATUS_INTERVAL": 0,
+        "BENCHBASE_TARGET": 1024,
+        "BENCHBASE_TERMINALS": 1,
+        "BENCHBASE_TIME": 300,
+        "BENCHBASE_WARMUP": 0,
+        "SF": "1"
+       },
+       "resetscript": [],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-benchbase.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "benchbase",
+      "name": "benchbase-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BENCHBASE_BATCHSIZE": 128,
+       "BENCHBASE_BENCH": "ycsb",
+       "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+       "BENCHBASE_KEY_AND_THINK": "false",
+       "BENCHBASE_PROFILE": "oracle",
+       "BENCHBASE_STATUS_INTERVAL": 0,
+       "BENCHBASE_TERMINALS": 1,
+       "BENCHBASE_TIME": 300,
+       "BENCHBASE_WARMUP": 0,
+       "SF": "1"
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-benchbase.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "ycsb",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_PROFILE": "oracle",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TERMINALS": 1,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "SF": "1"
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "OracleDB",
+   "prometheus_interval": "10s",
+   "prometheus_timeout": "10s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "oracledb",
+    "storageSize": ""
+   },
+   "storage_label": "benchbase-ycsb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-OracleDB.yml",
+   "tenant_per": "",
+   "volume": "benchbase",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "usecase": "benchbase_ycsb",
+    "warehouses": "1"
+   },
    "alias": "General-E",
    "benchmark_list": [
     1
@@ -1498,6 +1852,183 @@
    "sut_role": "data",
    "sut_service_name": "",
    "sut_template": "deploymenttemplate-PostgreSQL.yml",
+   "tenant_per": "",
+   "volume": "benchbase",
+   "worker_metric_strip_container": false
+  },
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "usecase": "benchbase_ycsb",
+    "warehouses": "1"
+   },
+   "alias": "General-G",
+   "benchmark_list": [
+    1
+   ],
+   "benchmark_list_template": [
+    1
+   ],
+   "benchmarking_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "ycsb",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "SF": "1"
+   },
+   "benchmarking_parameters_list": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "ycsb",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "sqlserver",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "BEXHOMA_DATABASE": "benchbase",
+     "SF": "1"
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "BENCHBASE_BATCHSIZE": 128,
+     "BENCHBASE_BENCH": "ycsb",
+     "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+     "BENCHBASE_KEY_AND_THINK": "false",
+     "BENCHBASE_PROFILE": "sqlserver",
+     "BENCHBASE_STATUS_INTERVAL": 0,
+     "BENCHBASE_TARGET": 1024,
+     "BENCHBASE_TERMINALS": 1,
+     "BENCHBASE_TIME": 300,
+     "BENCHBASE_WARMUP": 0,
+     "BEXHOMA_DATABASE": "benchbase",
+     "SF": "1"
+    }
+   ],
+   "configuration": "SQLServer-1",
+   "data_components": null,
+   "dialect": "TSQL",
+   "docker": "SQLServer",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "benchbase",
+       "fixed_parallelism": false,
+       "name": "benchbase",
+       "num_pods": 1,
+       "parallelism": 1,
+       "parameters": {
+        "BENCHBASE_BATCHSIZE": 128,
+        "BENCHBASE_BENCH": "ycsb",
+        "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+        "BENCHBASE_KEY_AND_THINK": "false",
+        "BENCHBASE_PROFILE": "sqlserver",
+        "BENCHBASE_STATUS_INTERVAL": 0,
+        "BENCHBASE_TARGET": 1024,
+        "BENCHBASE_TERMINALS": 1,
+        "BENCHBASE_TIME": 300,
+        "BENCHBASE_WARMUP": 0,
+        "BEXHOMA_DATABASE": "benchbase",
+        "SF": "1"
+       },
+       "resetscript": [],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-benchbase.yml"
+      }
+     ]
+    ],
+    "loader": [
+     {
+      "benchmarker": "benchbase",
+      "name": "benchbase-loader",
+      "num_pods": 1,
+      "parallelism": 1,
+      "parameters": {
+       "BENCHBASE_BATCHSIZE": 128,
+       "BENCHBASE_BENCH": "ycsb",
+       "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+       "BENCHBASE_KEY_AND_THINK": "false",
+       "BENCHBASE_PROFILE": "sqlserver",
+       "BENCHBASE_STATUS_INTERVAL": 0,
+       "BENCHBASE_TERMINALS": 1,
+       "BENCHBASE_TIME": 300,
+       "BENCHBASE_WARMUP": 0,
+       "BEXHOMA_DATABASE": "benchbase",
+       "SF": "1"
+      },
+      "target": "sut",
+      "template": "jobtemplate-loading-benchbase.yml"
+     }
+    ]
+   },
+   "indexing": "Checks",
+   "loading_deactivated": false,
+   "loading_parameters": {
+    "BENCHBASE_BATCHSIZE": 128,
+    "BENCHBASE_BENCH": "ycsb",
+    "BENCHBASE_ISOLATION": "TRANSACTION_READ_COMMITTED",
+    "BENCHBASE_KEY_AND_THINK": "false",
+    "BENCHBASE_PROFILE": "sqlserver",
+    "BENCHBASE_STATUS_INTERVAL": 0,
+    "BENCHBASE_TERMINALS": 1,
+    "BENCHBASE_TIME": 300,
+    "BENCHBASE_WARMUP": 0,
+    "BEXHOMA_DATABASE": "benchbase",
+    "SF": "1"
+   },
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 1,
+   "num_loading_pods": 1,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "SQLServer",
+   "prometheus_interval": "10s",
+   "prometheus_timeout": "10s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "sqlserver",
+    "storageSize": ""
+   },
+   "storage_label": "benchbase-ycsb-1",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-SQLServer.yml",
    "tenant_per": "",
    "volume": "benchbase",
    "worker_metric_strip_container": false

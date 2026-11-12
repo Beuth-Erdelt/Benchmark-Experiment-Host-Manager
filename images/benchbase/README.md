@@ -14,7 +14,10 @@ Supported benchmarks: `tpcc`, `twitter`, `chbenchmark`, `ycsb`, `auctionmark`, `
 `tpch` and `tpcds` are not supported (no timed workload, `tpcds` has no config).
 
 Supported profiles (config subdirectory / DBMS): `postgres`, `mysql`, `mariadb`,
-`cockroachdb`, `noisepage`, `spanner`, `sqlite`, `sqlserver`, `phoenix`.
+`cockroachdb`, `noisepage`, `spanner`, `sqlite`, `sqlserver`, `oracle`, `phoenix`, `db2`. The `oracle` profile has a config for `tpcc` only (service `FREEPDB1` of Oracle Database Free in the URL; the tables are in the schema of `BEXHOMA_USER`).
+The `db2` profile (config for `tpcc` only) is added by the Dockerfiles: Benchbase supports Db2 (type `DB2`, `ddl-db2.sql` and `dialect-db2.xml` of `tpcc`), but its image has no profile with the Db2 driver.
+It is the `postgres` profile without its driver; the IBM driver `jcc` is not part of the image (its license does not allow bexhoma to ship it) and is downloaded into `profiles/db2/lib` at the start (`BEXHOMA_JAR_URL`, checked against `BEXHOMA_JAR_SHA256` if set).
+So that a driver in `lib` is found, the Dockerfiles change `entrypoint.sh` of the image to start every profile with `java -cp "benchbase.jar:lib/*" com.oltpbenchmark.DBWorkload` instead of `java -jar benchbase.jar`; the class path in the manifest of every profile is exactly `lib/*`, so nothing changes for the other profiles.
 
 ## Directory layout
 
@@ -33,6 +36,7 @@ images/benchbase/
 │   ├── spanner/
 │   ├── sqlite/
 │   ├── sqlserver/
+│   ├── oracle/
 │   └── phoenix/
 └── README.md                — environment variable reference for both images
 ```
@@ -126,6 +130,7 @@ The following variables are substituted into the selected XML config template vi
 * `BEXHOMA_SCHEMA`: Schema name. Set automatically in multi-tenant (`schema`) mode; otherwise substituted as-is.
 * `BEXHOMA_URL`: JDBC connection URL. Not used directly by the entrypoint script.
 * `BEXHOMA_JAR`: JDBC driver jar file name. Not used directly by the entrypoint script.
+* `BEXHOMA_JAR_URL`, `BEXHOMA_JAR_SHA256`: a JDBC driver that is not part of the image is downloaded into `profiles/$BENCHBASE_PROFILE/lib` at the start, before the pods synchronise (profile `db2`). Default: empty.
 * `BEXHOMA_DRIVER`: JDBC driver class name. Not used directly by the entrypoint script.
 
 #### Bexhoma experiment identity
@@ -196,6 +201,7 @@ The following variables are substituted into the selected XML config template vi
 * `BEXHOMA_SCHEMA`: Schema name. Set automatically in multi-tenant (`schema`) mode; otherwise substituted as-is.
 * `BEXHOMA_URL`: JDBC connection URL. Not used directly by the entrypoint script.
 * `BEXHOMA_JAR`: JDBC driver jar file name. Not used directly by the entrypoint script.
+* `BEXHOMA_JAR_URL`, `BEXHOMA_JAR_SHA256`: a JDBC driver that is not part of the image is downloaded into `profiles/$BENCHBASE_PROFILE/lib` at the start, before the pods synchronise (profile `db2`). Default: empty.
 * `BEXHOMA_DRIVER`: JDBC driver class name. Not used directly by the entrypoint script.
 
 #### Bexhoma experiment identity

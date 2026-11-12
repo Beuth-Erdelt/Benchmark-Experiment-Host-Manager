@@ -1,0 +1,204 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+  storageClassName: shared
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-service
+spec:
+  ports:
+  - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 50000}
+  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
+  selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  name: bexhoma-deployment-db2
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+  template:
+    metadata:
+      labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
+    spec:
+      automountServiceAccountToken: false
+      imagePullSecrets:
+      - {name: dockerhub}
+      nodeSelector:
+      tolerations:
+      #- key: "nvidia.com/gpu"
+      #  effect: "NoSchedule"
+      terminationGracePeriodSeconds: 180
+      containers:
+      - name: dbms
+        # IBM Db2 Community Edition 12.1.5 (container format). The license of the edition limits
+        # Db2 to 4 processor cores and 8 GB of instance memory (db2licm -l), whatever the container gets.
+        image: icr.io/db2_community/db2:12.1.5.0
+        # The entrypoint of the image (setup_db2_instance.sh) runs as root: it creates the instance
+        # db2inst1 and the database BEXHOMA in /database on the first start (about a minute) and
+        # starts both on every later start, also on a volume created by another pod (other hostname).
+        # Before it, the container command writes:
+        # 1. /tmp/bexhoma-run.sh, which loadData runs for every script (bexhoma-run.sh database script):
+        #    one CLP session of db2inst1 connects to the database and runs the script with
+        #    db2 -tvsf (stops at the first error); an error ends the script with exit code 1 and a
+        #    line "ERROR" on stderr.
+        # 2. /var/custom/01-bexhoma.sh, which the entrypoint runs once the database is active, at
+        #    every start:
+        #    - switches off the AI query optimizer (AI_OPTIMIZER, AUTO_AI_OPTIMIZER, AUTO_AI_MAINT);
+        #      the image lists the "Machine Learning Optimizer" as Technology Preview Code, which is
+        #      not part of the licensed program and is on by default in new databases,
+        #    - sizes the transaction log for loading (64 MB files, 16 primary, up to 64 in total),
+        #    - restarts the database to apply both and, only if the AI optimizer is off, writes
+        #      /tmp/bexhoma-ready (readiness probe).
+        command:
+        - bash
+        - -c
+        - |
+          cat > /tmp/bexhoma-run.sh <<'SH'
+          #!/bin/bash
+          # usage: bexhoma-run.sh <database> <script>
+          DB="${1:-BEXHOMA}"
+          SCRIPT="$2"
+          F="/tmp/bexhoma-script-$$.sql"
+          cp "$SCRIPT" "$F" && chmod 644 "$F" || { echo "ERROR: cannot read $SCRIPT" >&2; exit 1; }
+          su - db2inst1 -c "db2 connect to $DB || exit 8; db2 -tvsf $F; rc=\$?; db2 connect reset > /dev/null; db2 terminate > /dev/null; exit \$rc"
+          rc=$?
+          rm -f "$F"
+          # CLP exit code: bit 1 no rows, bit 2 warning, bit 4 SQL error, bit 8 system error
+          if [ $((rc & 12)) -ne 0 ]; then
+            echo "ERROR: Db2 CLP exit code $rc in $SCRIPT" >&2
+            exit 1
+          fi
+          exit 0
+          SH
+          chmod 755 /tmp/bexhoma-run.sh
+          mkdir -p /var/custom
+          cat > /var/custom/01-bexhoma.sh <<'SH'
+          #!/bin/bash
+          echo "bexhoma: switching off the AI optimizer (Technology Preview Code), sizing the log"
+          su - db2inst1 -c "db2 update db cfg for $DBNAME using AI_OPTIMIZER OFF AUTO_AI_OPTIMIZER OFF AUTO_AI_MAINT OFF
+          db2 update db cfg for $DBNAME using LOGFILSIZ 16384 LOGPRIMARY 16 LOGSECOND 48
+          db2 force application all
+          sleep 2
+          db2 deactivate db $DBNAME
+          db2 activate db $DBNAME"
+          su - db2inst1 -c "db2 get db cfg for $DBNAME" | grep -E 'AI_|LOGFILSIZ|LOGPRIMARY|LOGSECOND' | tee /tmp/bexhoma-dbcfg.txt
+          if grep -q '(AI_OPTIMIZER) = OFF' /tmp/bexhoma-dbcfg.txt && ! grep -qE 'AI_[A-Z_]*\) = ON' /tmp/bexhoma-dbcfg.txt; then
+            touch /tmp/bexhoma-ready
+          else
+            echo "bexhoma: startup script failed, the AI optimizer is not off (the pod does not become ready)"
+          fi
+          SH
+          chmod 755 /var/custom/01-bexhoma.sh
+          exec /var/db2_setup/lib/setup_db2_instance.sh
+        env:
+        - {name: LICENSE, value: 'accept'}
+        - {name: DB2INSTANCE, value: 'db2inst1'}
+        # password of db2inst1; = JDBC auth of cluster.config, letters and digits only
+        # (it goes through sed in the YCSB image)
+        - {name: DB2INST1_PASSWORD, value: 'BexhomaBenchmark2026'}
+        - {name: DBNAME, value: 'bexhoma'}
+        # row-organized tables (no BLU), no Oracle compatibility, no sample, repository or text search database
+        - {name: BLU, value: 'false'}
+        - {name: ENABLE_ORACLE_COMPATIBILITY, value: 'false'}
+        - {name: SAMPLEDB, value: 'false'}
+        - {name: REPODB, value: 'false'}
+        - {name: TEXT_SEARCH, value: 'false'}
+        # instance home on the storage volume, so a loaded volume keeps the instance
+        - {name: PERSISTENT_HOME, value: 'true'}
+        - {name: HADR_ENABLED, value: 'false'}
+        # circular logging (no log archiving), no automatic tuning of instance and database by the image
+        - {name: ARCHIVE_LOGS, value: 'false'}
+        - {name: AUTOCONFIG, value: 'false'}
+        - {name: UPDATEAVAIL, value: 'NO'}
+        readinessProbe:
+          # ready after the startup script (AI optimizer off) when db2inst1 can connect to the database
+          exec:
+            command: ["bash", "-c", "test -f /tmp/bexhoma-ready && su - db2inst1 -c 'db2 connect to bexhoma > /dev/null && db2 terminate > /dev/null'"]
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 30
+        lifecycle:
+          preStop:
+            # stop Db2 cleanly, so the next start on the volume needs no crash recovery
+            exec:
+              command: ["bash", "-c", "su - db2inst1 -c 'db2 force application all; db2 deactivate db bexhoma; db2stop force'"]
+        ports:
+        - {containerPort: 50000}
+        securityContext:
+          # Db2 needs IPC_OWNER for its System V message queues and shared memory (db2start fails with
+          # SQL1042C without it); no privileged mode. The entrypoint switches users with su.
+          capabilities:
+            add: ["IPC_OWNER"]
+        resources:
+          # the license limits Db2 to 4 cores and 8 GB of instance memory
+          limits: {cpu: 4000m, memory: 12Gi}
+          requests: {cpu: 4000m, memory: 12Gi}
+        volumeMounts:
+        - {mountPath: /data, name: benchmark-data-volume}
+        # instance home, configuration, database and transaction log
+        - {mountPath: /database, name: benchmark-storage-volume}
+      - name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:v0.47.0
+        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
+        ports:
+        - containerPort: 9300
+          #hostPort: 9300
+          name: http
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+        resources:
+          requests: {cpu: 150m, memory: 200Mi}
+          limits: {cpu: 16000m, memory: 128Gi}
+        volumeMounts:
+        - name: rootfs
+          mountPath: /rootfs
+          readOnly: true
+        - name: var-run
+          mountPath: /var/run
+          readOnly: true
+        - name: sys
+          mountPath: /sys
+          readOnly: true
+        - name: docker
+          mountPath: /var/lib/docker
+          readOnly: true
+        - name: disk
+          mountPath: /dev/disk
+          readOnly: true
+      volumes:
+      - name: benchmark-data-volume
+        persistentVolumeClaim: {claimName: bexhoma-data}
+      - name: benchmark-storage-volume
+        persistentVolumeClaim: {claimName: bexhoma-storage}
+      - name: rootfs
+        hostPath:
+          path: /
+      - name: var-run
+        hostPath:
+          path: /var/run
+      - name: sys
+        hostPath:
+          path: /sys
+      - name: docker
+        hostPath:
+          path: /var/lib/docker
+      - name: disk
+        hostPath:
+          path: /dev/disk

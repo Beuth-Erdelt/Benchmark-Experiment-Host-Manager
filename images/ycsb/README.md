@@ -50,6 +50,16 @@ This file covers the shared design and decisions that apply across both.
 | Kinetica | 7.1.8.7 | `kinetica-jdbc-7.1.8.7-jar-with-dependencies.jar` |
 | YugabyteDB | 42.3.5-yb-2 | `jdbc-yugabytedb-42.3.5-yb-2.jar` |
 | YugabyteDB | 42.7.3-yb-3 | `jdbc-yugabytedb-42.7.3-yb-3.jar` (generator only) |
+| SQL Server | 9.4.1 (jre8) | `mssql-jdbc-9.4.1.jre8.jar` |
+| Oracle | 23.26.3 (ojdbc8) | `ojdbc8-23.26.3.0.0.jar` |
+| IBM Db2 | 12.1.5 (JCC, Java 8) | `jcc-12.1.5.0.jar`, not part of the image: downloaded at the start (`BEXHOMA_JAR_URL`) |
+
+The JDBC binding of YCSB splits `db.url` at `;` into shard URLs, so a SQL Server URL keeps only `jdbc:sqlserver://host:port` and cannot set `encrypt`, `trustServerCertificate` or `databaseName`.
+Driver 9.4.1 is the last one that does not encrypt by default (10.1 and newer refuse the self-signed certificate of the server); the database is the default database of the login (`initschema-ycsb.sql` of SQL Server sets it).
+
+`BEXHOMA_JAR_URL`: a JDBC driver that is not part of the image (its license does not allow bexhoma to ship it, IBM Db2) is downloaded into `jars/` at the start of the generator and the benchmarker, before the pods synchronise; `BEXHOMA_JAR_SHA256` is checked if set. A pod that cannot download it exits with 1.
+
+The JDBC binding of YCSB 0.17 scans with `ORDER BY ... LIMIT ?` (or `SELECT TOP` for SQL Server); Oracle has no `LIMIT`, so workload E fails on Oracle, the other workloads run; Db2 has `LIMIT`, workload E runs.
 
 ## Workload template placeholders
 

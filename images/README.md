@@ -68,6 +68,7 @@ shared persistent volume, then one or more loader pods import those files into t
 | [`tpcds/loader_mariadb/`](tpcds/loader_mariadb/) | Loader | Loads TPC-DS flat files into MariaDB. |
 | [`tpcds/loader_monetdb/`](tpcds/loader_monetdb/) | Loader | Loads TPC-DS flat files into MonetDB. |
 | [`tpcds/loader_clickhouse/`](tpcds/loader_clickhouse/) | Loader | Loads TPC-DS flat files into ClickHouse (also ClickHouseCluster) via `clickhouse-client INSERT ... FORMAT CSV`. |
+| [`tpcds/loader_db2/`](tpcds/loader_db2/) | Loader | Loads TPC-DS flat files into IBM Db2 as remote external tables (`ibm_db`). |
 
 The `dsdgen` binary and `tpcds.idx` index file must be present in
 `tpcds/generator/` before building the image (not included due to TPC licensing).
@@ -82,6 +83,9 @@ The `dsdgen` binary and `tpcds.idx` index file must be present in
 | [`tpch/loader_mariadb/`](tpch/loader_mariadb/) | Loader | Loads TPC-H flat files into MariaDB. |
 | [`tpch/loader_monetdb/`](tpch/loader_monetdb/) | Loader | Loads TPC-H flat files into MonetDB. |
 | [`tpch/loader_clickhouse/`](tpch/loader_clickhouse/) | Loader | Loads TPC-H flat files into ClickHouse (also ClickHouseCluster) via `clickhouse-client INSERT ... FORMAT CSV`. |
+| [`tpch/loader_sqlserver/`](tpch/loader_sqlserver/) | Loader | Loads TPC-H flat files into SQL Server via `bcp`. |
+| [`tpch/loader_oracle/`](tpch/loader_oracle/) | Loader | Loads TPC-H flat files into Oracle Database via SQL*Loader (`sqlldr`). |
+| [`tpch/loader_db2/`](tpch/loader_db2/) | Loader | Loads TPC-H flat files into IBM Db2 as remote external tables (`ibm_db`). |
 
 The `dbgen` binary and `dists.dss` file must be present in `tpch/generator/`
 before building the image (not included due to TPC licensing).

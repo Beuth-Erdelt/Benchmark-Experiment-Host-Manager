@@ -30,6 +30,21 @@ images/tpch/
 │   ├── Dockerfile         — MonetDB loader image
 │   ├── loader.sh          — loads .tbl via mclient COPY FROM STDIN
 │   └── README.md          — environment variable reference + execution flow
+├── loader_sqlserver/
+│   ├── Dockerfile         — SQL Server loader image
+│   ├── loader.sh          — loads .tbl via bcp
+│   └── README.md          — environment variable reference + execution flow
+├── loader_oracle/
+│   ├── Dockerfile         — Oracle loader image (oraclelinux:9-slim + Instant Client)
+│   ├── loader.sh          — loads .tbl via SQL*Loader
+│   ├── ctl/               — SQL*Loader control files, one per table
+│   └── README.md          — environment variable reference + execution flow
+├── loader_db2/
+│   ├── Dockerfile         — Db2 loader image (python:3.12-slim, no IBM software)
+│   ├── install-driver.sh  — installs ibm_db (IBM's CLI driver) from PyPI at the start
+│   ├── loader.sh          — loads .tbl via load.py
+│   ├── load.py            — remote external table insert, one transaction per chunk
+│   └── README.md          — environment variable reference + execution flow
 └── README.md              — this file
 ```
 
@@ -58,6 +73,9 @@ of them.
 | MySQL | `mysql LOAD DATA LOCAL INFILE` | BEXHOMA_DATABASE=$BEXHOMA_VOLUME; per-table column mapping with NULLIF |
 | MariaDB | `mysql LOAD DATA LOCAL INFILE` | BEXHOMA_DATABASE=$BEXHOMA_VOLUME; same column mapping |
 | MonetDB | `mclient COPY N RECORDS INTO ... FROM STDIN` | Writes `.monetdb` credentials file; retries on worker thread errors |
+| SQL Server | `bcp ... in` (mssql-tools18) | One transaction per file, `TABLOCK`; schema `dbo` unless `BEXHOMA_SCHEMA`; retries only on connection errors |
+| Oracle | `sqlldr` (Instant Client tools) | Conventional path, one commit per 50000 rows, `errors=0`; schema `BEXHOMA_DATABASE` unless `BEXHOMA_SCHEMA`; retries only on connection errors |
+| Db2 | `load.py` (`ibm_db`, IBM Data Server Driver for ODBC and CLI, installed from PyPI at the start) | Remote external table (`INSERT ... SELECT * FROM EXTERNAL ... REMOTESOURCE 'YES'`), one transaction per chunk of 20000 lines, `MAXERRORS 1`; default schema of the user unless `BEXHOMA_SCHEMA`; retries a chunk only on connection errors and deadlock rollbacks (`40001`) |
 
 ## Style conventions
 

@@ -28,7 +28,7 @@ _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _EXPERIMENTS = os.path.join(_REPO, 'experiments')
 
 #: Copy that all other copies of a DBMS's durability scripts are compared with.
-REFERENCE_BENCHMARK = {'PostgreSQL': 'tpch', 'MySQL': 'tpcds', 'Citus': 'tpch', 'MariaDB': 'tpch'}
+REFERENCE_BENCHMARK = {'PostgreSQL': 'tpch', 'MySQL': 'tpcds', 'Citus': 'tpch', 'MariaDB': 'tpch', 'SQLServer': 'tpch', 'OracleDB': 'tpch'}
 
 #: (benchmark, DBMS, script) -> why this copy differs from the reference copy.
 ALLOWED_DEVIATIONS = {

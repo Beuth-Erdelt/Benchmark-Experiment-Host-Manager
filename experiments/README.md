@@ -276,7 +276,7 @@ folder declares.
 | Clickhouse | `tpch` database | `cat … \| clickhouse-client --format_csv_delimiter="\|"` | None | `ENGINE = MergeTree() ORDER BY …`; uses `Int32` not `INTEGER` |
 | CockroachDB | varies | SQL `INSERT` / COPY | PK + FK | Similar to PostgreSQL syntax |
 | YugabyteDB | varies | SQL | PK + FK | PostgreSQL-compatible |
-| DB2 | varies | SQL | PK + FK | Keyword `NOT NULL` same; type names may differ |
+| DB2 | `DB2INST1` (user `db2inst1`, database `BEXHOMA`) | remote external tables (`load.py` of the loaders) | PK + FK | dialect `DB2`; scripts run in one CLP session via `/tmp/bexhoma-run.sh`; statistics with `RUNSTATS`; YCSB in a 32 KiB table space |
 | MonetDB | varies | SQL COPY | PK; FK optional | `initschemadummy` needed |
 | CedarDB | `public` | SQL | PK + FK | Client `\COPY` of the PostgreSQL loaders; no `CHECKPOINT` |
 | DatabaseService | varies | SQL | PK + FK | `initschemadummy` needed |
@@ -284,7 +284,7 @@ folder declares.
 | Exasol | varies | SQL | PK + FK | |
 | Kinetica | varies | SQL | PK; replicated variant | |
 | MemSQL / SingleStore | varies | SQL | PK + FK | |
-| OracleDB | varies | SQL | PK + FK | |
+| OracleDB | `BEXHOMA` (user `bexhoma`) | SQL*Loader | PK + FK | dialect `Oracle`; scripts run as SYSDBA via `/tmp/bexhoma-session.sql` |
 | SAPHANA | varies | SQL | PK only | No `initindexes` file |
 | SQLServer | varies | SQL | PK + FK | T-SQL dialect |
 | Citus | `public` | SQL | PK + FK; columnar variant | Extends PostgreSQL |

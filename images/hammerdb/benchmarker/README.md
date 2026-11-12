@@ -4,7 +4,7 @@ The image is based on https://hub.docker.com/r/tpcorg/hammerdb
 
 This folder contains the Dockerfile for a benchmarker that runs a timed TPC-C
 workload against an already-loaded DBMS using HammerDB.
-Supported backends: `postgresql`, `mysql`, `mariadb`, `citus`.
+Supported backends: `postgresql`, `mysql`, `mariadb`, `citus`, `mssqlserver`, `oracle`.
 
 See [images/hammerdb/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/hammerdb/README.md) for shared design decisions and the full
 supported-backend table.
@@ -19,7 +19,7 @@ supported-backend table.
    `bexhoma-benchmarker-podcount-<CONNECTION>-<EXPERIMENT>` until all
    `BEXHOMA_NUM_PODS` pods are ready (synchronisation is unconditional).
 5. Generate a `benchmark.tcl` script tailored to `HAMMERDB_TYPE`
-   (postgresql / mysql / mariadb / citus).
+   (postgresql / mysql / mariadb / citus / mssqlserver / oracle).
 6. Run `hammerdbcli auto benchmark.tcl`.
 7. Copy `/tmp/hammerdb.log` into the result folder as
    `hammerdb.<CONNECTION>.<CLIENT>.<UUID>.log`.
@@ -43,7 +43,7 @@ supported-backend table.
 * `BEXHOMA_PORT`: Port of the target DBMS.
 * `BEXHOMA_USER`: Database user.
 * `BEXHOMA_PASSWORD`: Database password.
-* `BEXHOMA_DATABASE`: Database name (used for PostgreSQL and Citus; the JDBC database of the DBMS, `postgres`).
+* `BEXHOMA_DATABASE`: Database name (used for PostgreSQL and Citus, the JDBC database of the DBMS, `postgres`; for SQL Server the TPC-C database, `tpcc`; for Oracle the TPC-C user (schema) that HammerDB creates, `tpcc`).
 
 ### Bexhoma experiment identity
 
@@ -66,13 +66,14 @@ Pods always synchronise before starting: each pod increments the Redis counter
 
 ### HammerDB workload parameters
 
-* `HAMMERDB_TYPE`: Backend type — `postgresql`, `mysql`, `mariadb`, or `citus`.
+* `HAMMERDB_TYPE`: Backend type — `postgresql`, `mysql`, `mariadb`, `citus`, `mssqlserver` or `oracle`.
 * `HAMMERDB_RAMPUP`: Ramp-up time in minutes before the first transaction count is taken.
 * `HAMMERDB_DURATION`: Duration in minutes before the second transaction count is taken.
 * `HAMMERDB_ITERATIONS`: Maximum number of transactions before a virtual user logs off.
 * `HAMMERDB_VUSERS`: Space-separated list of virtual-user counts to run in sequence (e.g. `1 2 4 8`).
 * `HAMMERDB_NUM_VU`: Number of virtual users used during the setup phase.
 * `HAMMERDB_MYSQL_ENGINE`: Storage engine for MySQL/MariaDB (default `innodb`).
+* `TMP`: Directory for temporary files of HammerDB (default `/tmp`); the SQL Server schema build writes its bcp files there and fails without it.
 * `HAMMERDB_TIMEPROFILE`: When `true`, per-transaction latency profiles are written to `/tmp/hdbxtprofile.log`.
 * `HAMMERDB_ALLWAREHOUSES`: When `true`, virtual users are not pinned to a fixed warehouse at startup.
 * `HAMMERDB_KEYANDTHINK`: When `true`, key-and-think time is added between transactions.
