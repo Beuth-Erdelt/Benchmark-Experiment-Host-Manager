@@ -316,7 +316,7 @@ class BenchbaseEvaluator(LogEvaluator):
             0.45 * 60. * 100. * df_aggregated['Goodput (requests/second)'] / 12.86 / df_aggregated['sf']
         )
         return df_aggregated
-    def parse_benchbase_log_file(self, file_path):
+    def parse_log_file(self, file_path):
         """
         Parses a Benchbase log file into a list of per-second throughput records.
 
@@ -389,7 +389,7 @@ class BenchbaseEvaluator(LogEvaluator):
             matching_files = find_matching_files(self.path, pattern)
             for file in matching_files:
                 num_logs = num_logs + 1
-                parsed_results = self.parse_benchbase_log_file(file)
+                parsed_results = self.parse_log_file(file)
                 df = pd.DataFrame(parsed_results)
                 df = df.set_index('second')
                 df = df.groupby(df.index).last()  # collapse duplicate timestamps
@@ -544,23 +544,6 @@ class BenchbaseEvaluator(LogEvaluator):
             df_aggregated_reduced = df_aggregated_reduced.reindex(index=natural_sort(df_aggregated_reduced.index))
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
-    def get_summary_loading_per_run(self):
-        """
-        Returns loading metrics aggregated per experiment run.
-
-        Delegates to :meth:`get_loading_per_run` (defined in :class:`base`),
-        which reduces the per-connection loading DataFrame to one row per
-        ``(code, configuration, experiment_run)`` and adds a
-        ``'Throughput [SF/h]'`` column.
-
-        :return: DataFrame with one row per experiment run.
-        :rtype: pandas.DataFrame
-        """
-        df = self.get_loading_per_run()
-        df.drop('code', axis=1, inplace=True, errors='ignore')
-        df.drop('configuration', axis=1, inplace=True, errors='ignore')
-        return df
-
     @staticmethod
     def test_efficiency(experiment, df, computed: bool, reason: str) -> None:
         """

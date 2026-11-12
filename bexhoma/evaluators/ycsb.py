@@ -554,7 +554,7 @@ class YcsbEvaluator(LogEvaluator):
         if os.path.isfile(pickle_path):
             return pd.read_pickle(pickle_path)
         return pd.DataFrame()
-    def parse_ycsb_log_file(self, file_path):
+    def parse_log_file(self, file_path):
         """
         Scans the lines of a YCSB log file.
         Extracts relevant performance infos for time series analysis.
@@ -691,7 +691,7 @@ class YcsbEvaluator(LogEvaluator):
             matching_files = find_matching_files(self.path, pattern)
             for file in matching_files:
                 num_logs = num_logs + 1
-                parsed_results = self.parse_ycsb_log_file(file)
+                parsed_results = self.parse_log_file(file)
                 data = []
                 for result in parsed_results:
                     if not column in result:

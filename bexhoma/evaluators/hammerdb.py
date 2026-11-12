@@ -376,7 +376,7 @@ class HammerdbEvaluator(LogEvaluator):
             100. * df_aggregated['NOPM'] / 12.86 / df_aggregated['sf']
         )
         return df_aggregated
-    def parse_hammerdb_log_file(self, file_path):
+    def parse_log_file(self, file_path):
         """
         Parses the HammerDB transaction counter lines of a pod log file.
 
@@ -445,7 +445,7 @@ class HammerdbEvaluator(LogEvaluator):
         for file_logs in list_logs:
             pattern = 'bexhoma-benchmarker-*-{}.log'.format(file_logs)
             for file in find_matching_files(self.path, pattern):
-                parsed_results = self.parse_hammerdb_log_file(file)
+                parsed_results = self.parse_log_file(file)
                 if not parsed_results:
                     continue
                 df = pd.DataFrame(parsed_results).set_index('second')
@@ -599,23 +599,6 @@ class HammerdbEvaluator(LogEvaluator):
                     df_aggregated_reduced[col] = df_aggregated.loc[:, col]
             df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
         return df_aggregated_reduced
-    def get_summary_loading_per_run(self):
-        """
-        Returns loading metrics aggregated per experiment run.
-
-        Delegates to :meth:`get_loading_per_run` (defined in :class:`base`),
-        which reduces the per-connection loading DataFrame to one row per
-        ``(code, configuration, experiment_run)`` and adds a
-        ``'Throughput [SF/h]'`` column.
-
-        :return: DataFrame with one row per experiment run.
-        :rtype: pandas.DataFrame
-        """
-        df = self.get_loading_per_run()
-        df.drop('code', axis=1, inplace=True, errors='ignore')
-        df.drop('configuration', axis=1, inplace=True, errors='ignore')
-        return df
-
     @staticmethod
     def test_efficiency(experiment, df, computed: bool, reason: str) -> None:
         """

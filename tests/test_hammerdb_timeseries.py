@@ -51,7 +51,7 @@ class ParseCounterLogTest(unittest.TestCase):
 
     def test_parse(self) -> None:
         filename = self._write("aaaaa", _LOG)
-        results = _evaluator(self.tmp.name).parse_hammerdb_log_file(filename)
+        results = _evaluator(self.tmp.name).parse_log_file(filename)
         self.assertEqual(results, [
             {"second": 0, "tpm": 200000},
             {"second": 10, "tpm": 220000},
@@ -60,16 +60,16 @@ class ParseCounterLogTest(unittest.TestCase):
 
     def test_drift_is_rounded(self) -> None:
         filename = self._write("aaaaa", "1 X tpm @ Mon Oct 19 10:00:00 UTC 2026\n2 X tpm @ Mon Oct 19 10:00:11 UTC 2026\n3 X tpm @ Mon Oct 19 10:00:21 UTC 2026\n")
-        seconds = [r["second"] for r in _evaluator(self.tmp.name).parse_hammerdb_log_file(filename)]
+        seconds = [r["second"] for r in _evaluator(self.tmp.name).parse_log_file(filename)]
         self.assertEqual(seconds, [0, 10, 20])
 
     def test_single_digit_day(self) -> None:
         filename = self._write("aaaaa", "5 MySQL tpm @ Mon Oct  5 23:48:10 UTC 2026\n")
-        self.assertEqual(_evaluator(self.tmp.name).parse_hammerdb_log_file(filename), [{"second": 0, "tpm": 5}])
+        self.assertEqual(_evaluator(self.tmp.name).parse_log_file(filename), [{"second": 0, "tpm": 5}])
 
     def test_no_counter(self) -> None:
         filename = self._write("aaaaa", "Vuser 1:TEST RESULT : System achieved 1 NOPM from 2 PostgreSQL TPM\n")
-        self.assertEqual(_evaluator(self.tmp.name).parse_hammerdb_log_file(filename), [])
+        self.assertEqual(_evaluator(self.tmp.name).parse_log_file(filename), [])
 
     def test_aggregate_is_mean_over_pods(self) -> None:
         # the counter measures the whole database, so parallel pods are averaged, not summed

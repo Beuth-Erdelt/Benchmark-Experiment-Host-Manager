@@ -326,7 +326,7 @@ Plus: `[OVERALL].RunTime(ms)`, `[OVERALL].Throughput(ops/sec)`.
 `Return=OK`; averages `AverageLatency`; takes max for `RunTime`, `MaxLatency`,
 percentiles; min for `MinLatency`.
 
-**Time series**: `parse_ycsb_log_file()` parses per-second status lines
+**Time series**: `parse_log_file()` parses per-second status lines
 (`N sec; M current ops/sec [SECTION: ...]`).  Metrics whose name contains `"9"`
 or `"Max"` are aggregated by max; `"Min"` → min; all others → sum.
 
@@ -361,7 +361,7 @@ max for `time`, `sf`.
 **TPC-C efficiency**: recomputed only when `bench == 'tpcc'` and `terminals == sf × 10`:
 `0.45 × 60 × 100 × Goodput / 12.86 / sf`.
 
-**Time series**: `parse_benchbase_log_file()` parses
+**Time series**: `parse_log_file()` parses
 `[INFO] YYYY-MM-DD HH:MM:SS,mmm ... Throughput: X txn/sec` lines; elapsed second
 is computed relative to the first matching line.
 
