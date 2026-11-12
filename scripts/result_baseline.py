@@ -7,10 +7,15 @@ runs it re-runs ``bexhoma summary -e <code> -rp`` on a copy of the result folder
 
 * the printed summary (``summary.txt``),
 * the Markdown report (``report/``),
-* the DataFrames the evaluators derive from the logs (``frames/*.csv``, full precision).
+* the DataFrames the evaluators derive from the logs (``frames/*.csv``, full precision),
+* the table behind every section of the summary, before it is formatted for printing
+  (``tables/*.csv``, full precision).
 
-Everything is taken from stdout and from files, nothing from bexhoma's classes, so the
-tool keeps working while the classes are moved and renamed.
+Everything but the tables is taken from stdout and from files, nothing from bexhoma's
+classes, so the tool keeps working while the classes are moved and renamed. The tables
+are taken where the sections are rendered (``_render_section_stdout`` of
+:mod:`bexhoma.benchmarks.base`, and the sections handed to the report writer); if that
+function is ever moved, the tool says so instead of silently recording no tables.
 
 A run is summarized twice:
 
@@ -203,6 +208,40 @@ def init(self, *args, **kwargs):
     self.config['benchmarker']['resultfolder'] = copy_root
     self.resultfolder = copy_root.replace("\\", "/").replace("C:", "")
 clusters.Kubernetes.__init__ = init
+
+# the table of every summary section, as data: dumped where a section is rendered
+import os, re
+from bexhoma.benchmarks import base as benchmark_base
+from bexhoma import report_writer
+tables_folder = os.environ['BEXHOMA_BASELINE_TABLES']
+os.makedirs(tables_folder, exist_ok=True)
+counter = [0]
+def dump(section, origin):
+    frame = getattr(section, 'dataframe', None)
+    if frame is None:
+        return
+    counter[0] += 1
+    slug = re.sub(r'[^a-z0-9]+', '-', str(section.heading).lower()).strip('-')[:60]
+    frame.to_csv(os.path.join(tables_folder, f'{counter[0]:03d}-{origin}-{slug}.csv'),
+                 lineterminator='\n', float_format='%.12g')
+render_section = benchmark_base._render_section_stdout
+def render_and_dump(section):
+    dump(section, 'summary')
+    render_section(section)
+benchmark_base._render_section_stdout = render_and_dump
+write_report = report_writer.write_markdown_report
+def walk(section):
+    if section is not None:
+        dump(section, 'report')
+        for child in section.children:
+            walk(child)
+def write_report_and_dump(*args, **kwargs):
+    # the sections that only the report shows; the others were dumped when printed
+    for name in ('key_metrics_section', 'explain_section'):
+        walk(kwargs.get(name))
+    return write_report(*args, **kwargs)
+report_writer.write_markdown_report = write_report_and_dump
+
 from bexhoma.scripts.experimentsmanager import manage
 manage()
 '''
@@ -258,7 +297,9 @@ def summarize(code: str, mode: str, source_root: str, target: str) -> dict:
                     os.remove(os.path.join(folder, name))
         start = time.time()
         done = subprocess.run([sys.executable, '-c', _RUNNER, copy_root, 'summary', '-e', code, '-rp'],
-                              cwd=_REPO, capture_output=True, env=dict(os.environ, PYTHONIOENCODING='utf-8'))
+                              cwd=_REPO, capture_output=True,
+                              env=dict(os.environ, PYTHONIOENCODING='utf-8',
+                                       BEXHOMA_BASELINE_TABLES=os.path.join(target, 'tables')))
         seconds = round(time.time() - start, 1)
         output = done.stdout.decode('utf-8', errors='replace')
         errors = done.stderr.decode('utf-8', errors='replace')
@@ -333,7 +374,7 @@ def differences(before: str, after: str) -> list:
         found.append(f'new: {name}')
     for name in sorted(set(old_files) & set(new_files)):
         old_path, new_path = os.path.join(before, name), os.path.join(after, name)
-        if name.startswith('frames/'):
+        if name.startswith(('frames/', 'tables/')):
             difference = _frame_difference(old_path, new_path)
             if difference:
                 found.append(f'{name}: {difference}')
