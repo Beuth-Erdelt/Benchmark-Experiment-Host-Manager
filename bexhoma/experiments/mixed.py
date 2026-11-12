@@ -7,9 +7,7 @@ a central ``experiment_dict_template`` copied to each new configuration, and
 delegation of workload configuration, summary display, and result validation to
 the individual benchmark objects.
 
-All named single-benchmark experiment classes (``YcsbExperiment``,
-``HammerdbExperiment``, ``TpchExperiment``, ``TpcdsExperiment``,
-``BenchbaseExperiment``) are subclasses of :class:`MixedExperiment`.
+All named single-benchmark experiment classes are subclasses of :class:`MixedExperiment`.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -37,7 +35,7 @@ class MixedExperiment(ExperimentBase):
     :class:`~bexhoma.benchmarks.base.Benchmark` objects that govern result
     interpretation.
 
-    Named single-benchmark experiments (YCSB, TPC-C, TPC-H, TPC-DS, Benchbase)
+    Named single-benchmark experiments
     subclass :class:`MixedExperiment` and pre-populate the template in ``__init__``.
     Direct use of :class:`MixedExperiment` is intended for fully custom experiment dicts.
 
@@ -117,8 +115,8 @@ class MixedExperiment(ExperimentBase):
         Every benchmark's ``configure_workload()`` calls ``experiment.set_workload(name=...,
         type=..., defaultParameters=...)`` on this shared experiment, since each was
         originally written assuming it is the only benchmark. For a genuinely mixed
-        experiment (e.g. a YCSB benchmark added via :meth:`add_benchmark` alongside a
-        primary TPC-H benchmark), calling every benchmark's ``configure_workload()``
+        experiment (e.g. a second benchmark added via :meth:`add_benchmark` alongside a
+        primary one), calling every benchmark's ``configure_workload()``
         unconditionally would let whichever one runs last silently overwrite the
         experiment's identity (its reported ``type``/``name`` and, critically, the scale
         factor dbmsbenchmarker uses for Power@Size/Throughput) with its own. Only the

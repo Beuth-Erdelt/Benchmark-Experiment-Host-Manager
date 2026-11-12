@@ -388,7 +388,7 @@ class LoadingCoordinator:
             # Always suffixed by data_job, even when there is only one entry —
             # matching how the benchmarker side always includes benchmark_run
             # in its job names/keys (e.g. "PostgreSQL-1-1-1") regardless of
-            # whether a refresh stream makes it a "real" multi-entry round.
+            # whether a second entry makes it a "real" multi-entry round.
             # Keeping this unconditional means every loader/generator shell
             # script can unconditionally use $BEXHOMA_DATA_JOB, with no
             # "only if there's more than one entry" branch to forget to add.
@@ -573,7 +573,7 @@ class LoadingCoordinator:
         """Database the scripts run in the SUT pod connect to, without database tenancy.
 
         The benchmark's own database when its loading parameters declare one
-        (``BEXHOMA_DATABASE``, e.g. ``benchbase`` for Benchbase on MySQL, whose JDBC
+        (``BEXHOMA_DATABASE``, e.g. for a tool that loads into a database of its own on MySQL, whose JDBC
         database ``mysql`` holds no benchmark tables), else the connection's JDBC
         database, else the experiment's volume. With database tenancy the scripts
         run in ``tenant_<n>`` instead, so a script must not select a database itself.

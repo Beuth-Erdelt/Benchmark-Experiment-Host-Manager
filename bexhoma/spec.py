@@ -8,7 +8,7 @@ knobs, profiles, ``derive:`` formulas) and emits the argument vector an
 existing bexhoma entry script already understands. No entry script or
 execution code path is changed by this module — it only produces the CLI
 arguments a human would otherwise have had to type by hand, so the result
-can be run as ``python tpch.py <argv...>`` exactly like any other invocation.
+can be run as ``python <entry script> <argv...>`` exactly like any other invocation.
 
 This module itself carries no workload- or DBMS-specific knowledge: catalog
 loading, ``derive:``/knob resolution, and validation are all generic.
@@ -1013,11 +1013,11 @@ def build_command(argv: list[str], entry_script: str = "tpch.py") -> str:
 
 
 def translate(experiment_path: str, catalog_path: str) -> list[str]:
-    """Load, validate, and translate an experiment.yml into a ``tpch.py`` argument vector.
+    """Load, validate, and translate an experiment.yml into the argument vector of its entry script.
 
     :param experiment_path: Path to the experiment spec.
     :param catalog_path: Path to ``catalog.yaml``.
-    :return: Argument vector, usable as ``python tpch.py`` followed by these tokens.
+    :return: Argument vector, usable as ``python <entry script>`` followed by these tokens.
     :rtype: list[str]
     """
     catalog = load_catalog(catalog_path)

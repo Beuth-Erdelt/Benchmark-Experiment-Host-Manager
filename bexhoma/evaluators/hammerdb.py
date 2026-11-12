@@ -616,6 +616,34 @@ class HammerdbEvaluator(LogEvaluator):
         df.drop('configuration', axis=1, inplace=True, errors='ignore')
         return df
 
+    @staticmethod
+    def test_efficiency(experiment, df, computed: bool, reason: str) -> None:
+        """
+        Test the TPC-C efficiency of the phases where it is computed.
+
+        Efficiency is only computed with key-and-think time and
+        ``vusers == 10 x SF`` (TPC-C convention); everywhere else it is 0
+        by design, so the test is skipped instead of failed.
+
+        :param experiment: The owning experiment object; the result is recorded there.
+        :param df: Per-phase execution DataFrame with ``efficiency`` and ``vusers``.
+        :param computed: Whether the settings of HammerDB let efficiency be computed at all.
+        :param reason: Why it is not computed, for the skipped label, when ``computed`` is False.
+        """
+        if not computed:
+            experiment._record_skipped_test(f"efficiency (not computed: {reason})")
+            return
+        if df.empty or 'efficiency' not in df.columns or 'vusers' not in df.columns:
+            experiment._record_skipped_test("efficiency (no benchmarking results)")
+            return
+        sf = int(experiment.SF)
+        df_eligible = df[df['vusers'] == 10 * sf]
+        if df_eligible.empty:
+            experiment._record_skipped_test(
+                f"efficiency (not computed: no phase with vusers = 10 x SF = {10 * sf})")
+            return
+        experiment._test_column(df_eligible, "efficiency")
+
     def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
                      workflow_actual: dict, workflow_planned: dict, **extra) -> None:
         """
@@ -631,8 +659,8 @@ class HammerdbEvaluator(LogEvaluator):
             experiment._test_column(df_reduced, "NOPM")
             # log_to_df computes efficiency only with key-and-think time
             keyandthink = str(experiment.default_benchmarking_parameters.get('HAMMERDB_KEYANDTHINK', 'false')) == "true"
-            experiment._test_efficiency(
-                df_reduced, "vusers",
+            HammerdbEvaluator.test_efficiency(
+                experiment, df_reduced,
                 computed=keyandthink,
                 reason="needs key-and-think time (-xkey)")
             experiment._record_test(

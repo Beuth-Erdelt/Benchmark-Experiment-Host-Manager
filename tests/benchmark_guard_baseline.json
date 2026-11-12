@@ -8,49 +8,12 @@
   "tpch": 3,
   "ycsb": 3
  },
- "bexhoma/benchmarks/base.py": {
-  "benchbase": 1,
-  "refresh_stream": 2,
-  "ssb": 1,
-  "tpcc": 1,
-  "tpcds": 2,
-  "tpch": 4,
-  "ycsb": 2
- },
- "bexhoma/cli_args.py": {
-  "benchbase": 2,
-  "hammerdb": 1,
-  "tpcds": 1,
-  "tpch": 1,
-  "ycsb": 1
- },
- "bexhoma/clusters.py": {
-  "tpch": 1
- },
  "bexhoma/collectors/__init__.py": {
   "benchbase": 5,
   "hammerdb": 4,
   "hardware": 3,
   "tpcc": 1,
   "ycsb": 5
- },
- "bexhoma/configurations/base.py": {
-  "benchbase": 3,
-  "hammerdb": 1,
-  "tpch": 1,
-  "ycsb": 3
- },
- "bexhoma/configurations/loading.py": {
-  "benchbase": 2,
-  "refresh_stream": 1
- },
- "bexhoma/configurations/manifest.py": {
-  "hammerdb": 1,
-  "refresh_stream": 1,
-  "tpch": 1
- },
- "bexhoma/ddl_parameters.py": {
-  "tpch": 1
  },
  "bexhoma/environment.py": {
   "fio": 10,
@@ -64,19 +27,6 @@
   "hardware": 3,
   "ycsb": 4
  },
- "bexhoma/evaluators/base.py": {
-  "benchbase": 1,
-  "hammerdb": 5,
-  "refresh_stream": 1,
-  "tpcc": 1,
-  "tpch": 3,
-  "ycsb": 4
- },
- "bexhoma/evaluators/logger.py": {
-  "benchbase": 1,
-  "tpcc": 1,
-  "ycsb": 1
- },
  "bexhoma/experiments/__init__.py": {
   "benchbase": 4,
   "hammerdb": 4,
@@ -87,29 +37,7 @@
   "ycsb": 4
  },
  "bexhoma/experiments/base.py": {
-  "benchbase": 2,
-  "hammerdb": 1,
-  "refresh_stream": 1,
-  "tpcc": 3,
-  "tpcds": 1,
-  "tpch": 7,
-  "ycsb": 2
- },
- "bexhoma/experiments/mixed.py": {
-  "benchbase": 2,
-  "hammerdb": 1,
-  "tpcc": 1,
-  "tpcds": 2,
-  "tpch": 3,
-  "ycsb": 3
- },
- "bexhoma/experiments/system_builder.py": {
-  "benchbase": 1,
-  "hammerdb": 2,
-  "ssb": 1,
-  "tpcds": 1,
-  "tpch": 2,
-  "ycsb": 1
+  "tpch": 1
  },
  "bexhoma/hardware_baseline.py": {
   "fio": 55,
@@ -118,24 +46,15 @@
   "sockperf": 18,
   "sysbench": 16
  },
- "bexhoma/load_durability.py": {
+ "bexhoma/report_writer.py": {
+  "tpcds": 1,
   "tpch": 1
  },
- "bexhoma/report_writer.py": {
-  "hammerdb": 1,
-  "tpcds": 1,
-  "tpch": 2
- },
  "bexhoma/scripts/cli.py": {
-  "tpcds": 1,
-  "tpch": 3,
-  "ycsb": 1
- },
- "bexhoma/scripts/experimentsmanager.py": {
   "tpch": 1
  },
  "bexhoma/spec.py": {
-  "tpch": 4
+  "tpch": 1
  },
  "bexhoma/system_descriptors.py": {
   "benchbase": 1,
@@ -144,8 +63,5 @@
   "tpcc": 2,
   "tpch": 1,
   "ycsb": 1
- },
- "bexhoma/tls.py": {
-  "hammerdb": 1
  }
 }

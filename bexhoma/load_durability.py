@@ -59,7 +59,7 @@ def expand_durability_placeholders(scripts: list, level: str, folder: str) -> li
 
     :param scripts: Init script list from the cluster config (not changed).
     :param level: One of :data:`LEVELS`.
-    :param folder: The configuration's DBMS script folder (e.g. ``experiments/tpch/MySQL``).
+    :param folder: The configuration's DBMS script folder (``experiments/<benchmark>/<DBMS>``).
     :return: The list with every placeholder replaced (possibly by nothing).
     :rtype: list
     """

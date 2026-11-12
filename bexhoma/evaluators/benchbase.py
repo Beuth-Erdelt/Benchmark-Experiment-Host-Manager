@@ -561,6 +561,34 @@ class BenchbaseEvaluator(LogEvaluator):
         df.drop('configuration', axis=1, inplace=True, errors='ignore')
         return df
 
+    @staticmethod
+    def test_efficiency(experiment, df, computed: bool, reason: str) -> None:
+        """
+        Test the TPC-C efficiency of the phases where it is computed.
+
+        Efficiency is only computed with key-and-think time and
+        ``terminals == 10 x SF`` (TPC-C convention); everywhere else it is 0
+        by design, so the test is skipped instead of failed.
+
+        :param experiment: The owning experiment object; the result is recorded there.
+        :param df: Per-phase execution DataFrame with ``efficiency`` and ``terminals``.
+        :param computed: Whether the settings of Benchbase let efficiency be computed at all.
+        :param reason: Why it is not computed, for the skipped label, when ``computed`` is False.
+        """
+        if not computed:
+            experiment._record_skipped_test(f"efficiency (not computed: {reason})")
+            return
+        if df.empty or 'efficiency' not in df.columns or 'terminals' not in df.columns:
+            experiment._record_skipped_test("efficiency (no benchmarking results)")
+            return
+        sf = int(experiment.SF)
+        df_eligible = df[df['terminals'] == 10 * sf]
+        if df_eligible.empty:
+            experiment._record_skipped_test(
+                f"efficiency (not computed: no phase with terminals = 10 x SF = {10 * sf})")
+            return
+        experiment._test_column(df_eligible, "efficiency")
+
     def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
                      workflow_actual: dict, workflow_planned: dict, **extra) -> None:
         """
@@ -581,8 +609,8 @@ class BenchbaseEvaluator(LogEvaluator):
             # log_to_df and benchmarking_aggregate_by_parallel_pods compute efficiency only for these settings
             keyandthink = str(experiment.default_benchmarking_parameters.get('BENCHBASE_KEY_AND_THINK', 'false')) == "true"
             bench = getattr(experiment, 'benchmark_type', '')
-            experiment._test_efficiency(
-                df_reduced, "terminals",
+            BenchbaseEvaluator.test_efficiency(
+                experiment, df_reduced,
                 computed=keyandthink and bench == "tpcc",
                 reason="needs key-and-think time (-xkey) and the tpcc benchmark")
             experiment._record_test(

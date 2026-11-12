@@ -38,8 +38,7 @@ class LogEvaluator(EvaluatorBase):
     Extends :class:`base` by implementing :meth:`end_benchmarking` and
     :meth:`end_loading` to parse pod log files, pickle the resulting DataFrames,
     and collect them into a single combined pickle per phase.
-    All benchmark-specific evaluators (``benchbase``, ``ycsb``, ``tpcc``,
-    ``dbmsbenchmarker``) inherit from this class.
+    All benchmark-specific evaluators inherit from this class.
     """
     def end_benchmarking(self, jobname):
         """

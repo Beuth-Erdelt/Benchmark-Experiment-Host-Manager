@@ -506,7 +506,7 @@ class Kubernetes():
         """
         Set the folder that contains experiment configuration sub-folders.
 
-        Bexhoma expects sub-folders named by experiment type (e.g. ``tpch``),
+        Bexhoma expects sub-folders named by experiment type (``<benchmark>``),
         each containing a ``queries.config`` file and per-DBMS DDL schema folders.
 
         :param experiments_configfolder: Relative path to the experiments folder.

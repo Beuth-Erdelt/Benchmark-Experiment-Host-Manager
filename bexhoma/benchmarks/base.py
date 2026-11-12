@@ -2,7 +2,7 @@
 Abstract Benchmark base classes for bexhoma.
 
 Provides :class:`Benchmark` (abstract) and :class:`DBMSBenchmarkerBenchmark`,
-which is the shared base for TPC-H and TPC-DS.
+which is the shared base for the benchmarks that run through DBMSBenchmarker.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -17,7 +17,7 @@ from bexhoma import evaluators, failure_timeline
 __all__ = ["Benchmark", "DBMSBenchmarkerBenchmark", "Section", "render_stdout",
            "DIMENSION_VARIANTS", "dimension_folder", "dimension_info"]
 
-#: ``-xdim`` (TPC-H, SSB): placement of the dimensions on a multi-node DBMS: a full
+#: ``-xdim``: placement of the dimensions on a multi-node DBMS: a full
 #: copy on every node (default), or spread over the nodes like the fact table.
 DIMENSION_VARIANTS = ('replicated', 'distributed')
 
@@ -211,7 +211,7 @@ class Benchmark:
     result validation).  Job submission is controlled by the experiment dict
     on each configuration object, not by this class.
 
-    :param name: Short identifier, e.g. ``'ycsb'``.
+    :param name: Short identifier of the benchmark.
     :param SF: Scaling factor (meaning varies per benchmark).
     """
 
@@ -262,7 +262,7 @@ class Benchmark:
         Build the loading section and return the per-run loading DataFrame.
 
         Default builds ``### Loading / #### Per Run`` when loading is active.
-        Override to add extra subsections (e.g. ``#### Per Connection`` for YCSB).
+        Override to add extra subsections (e.g. ``#### Per Connection``).
 
         :param experiment: The owning experiment object.
         :param is_multitenant: Whether the experiment runs in multitenant mode.
@@ -291,7 +291,7 @@ class Benchmark:
         ``resetscript`` ran before that connection's round was submitted). This
         column carries no benchmark-tool-specific data, so the section applies to
         any benchmark type that sets a ``resetscript`` on a benchmarker entry, not
-        just Benchbase TPC-C. Returns ``None`` when no connection triggered a reset.
+        just one benchmark. Returns ``None`` when no connection triggered a reset.
 
         :param df_connections: Output of ``evaluator.get_connections_of_experiment()``.
         :return: The ``Reset`` section, or ``None`` when nothing to show.
@@ -562,8 +562,8 @@ class Benchmark:
         own connections).
 
         Override when a benchmark needs different or no section here — e.g.
-        :class:`~bexhoma.benchmarks.refresh.RefreshStreamBenchmark` overrides
-        this because it has no per-query metrics of its own, only timing.
+        a co-running benchmark that has no per-query metrics of its own,
+        only timing.
 
         :param experiment: The owning experiment object.
         :return: The benchmark's own section, or ``None`` when benchmarking is
@@ -595,8 +595,7 @@ class Benchmark:
         entries (see :meth:`~bexhoma.evaluators.logger.LogEvaluator.test_results`),
         so the comparison is correct whether this benchmark is the primary or a
         co-running secondary benchmark. Override for a benchmark with no
-        per-query results of its own to validate, e.g.
-        :class:`~bexhoma.benchmarks.refresh.RefreshStreamBenchmark`.
+        per-query results of its own to validate.
 
         :param experiment: The owning experiment object.
         """
@@ -611,15 +610,14 @@ class Benchmark:
 
 class DBMSBenchmarkerBenchmark(Benchmark):
     """
-    Shared base for benchmarks that use the DBMSBenchmarker tool
-    (TPC-H, TPC-DS).
+    Shared base for benchmarks that use the DBMSBenchmarker tool.
 
     Provides :meth:`create_evaluator` wired to ``evaluators.DbmsBenchmarkerEvaluator``.
     """
 
     def __init__(self, name: str, SF: str = '1') -> None:
         """
-        :param name: Short identifier, e.g. ``'tpch'``.
+        :param name: Short identifier of the benchmark.
         :param SF: Scaling factor.
         """
         super().__init__(name=name, SF=SF)

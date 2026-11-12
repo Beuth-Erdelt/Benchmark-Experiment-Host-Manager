@@ -193,8 +193,8 @@ def manage():
             with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
                 workload_properties = ast.literal_eval(inp.read())
                 # Reconstructing an experiment object from just its code must not
-                # silently fall back to the experiment class's default SF (e.g.
-                # TpchExperiment's '100'): that default is written into
+                # silently fall back to the experiment class's default SF:
+                # that default is written into
                 # dbmsbenchmarker's process-global parameter.defaultParameters and
                 # can leak into a re-evaluated queries.config on -fe, corrupting
                 # Power@Size/Throughput/Throughput[SF/h] for an experiment that

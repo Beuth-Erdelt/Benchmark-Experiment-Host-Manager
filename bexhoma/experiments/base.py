@@ -273,7 +273,7 @@ class ExperimentBase():
         self.ddl_parameters = {}                                        # DDL schema parameter for init scripts (like index type or sharding strategy)
         self.ddl_assignments = {}                                       # DDL parameter values per key from -xddl/-nwr/-nws, a list of several sweeps the key
         self.ddl_keys_given = []                                        # keys given by -xddl: at least one configuration must declare each
-        self.data_parameters = {}                                       # other values that define the loaded data (e.g. YCSB insert order), stored as load_<key> labels on volumes
+        self.data_parameters = {}                                       # other values that define the loaded data (e.g. the insert order of keys), stored as load_<key> labels on volumes
         self.eval_parameters = {}                                       # parameters that will be handed over to dbmsbenchmarker
         self.storage = {}                                               # parameters for persistent storage (like type and size)
         self.nodes = {}                                                 # dict of node infos to guide components (like nodeSelector for SUT)
@@ -319,7 +319,7 @@ class ExperimentBase():
         self.storage_types = [None]                                     # storage class per resource cell, None = ephemeral (set from -rst)
         self.resource_cells = []                                        # one dict per swept resource cell (set from -rc/-lc/-rr/-lr/-rst)
         self.storage_label = ''                                         # label to mark persistent storage with (so that they can be matched to experiment)
-        self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
+        self.experiments_configfolder = ''                              # relative path to config folder of experiment ('experiments/<benchmark>')
         self.evaluator = evaluators.LogEvaluator(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
         self.benchmarks: list = []                                        # ordered Benchmark objects; index+1 = benchmark_index
@@ -1071,7 +1071,7 @@ class ExperimentBase():
         """
         Set the relative config folder for the experiment type.
 
-        Bexhoma expects subfolders per experiment type (e.g. ``experiments/tpch``).
+        Bexhoma expects subfolders per experiment type (``experiments/<benchmark>``).
         Each subfolder must contain a ``queries.config`` and per-DBMS schema subdirectories.
 
         :param experiments_configfolder: Relative path to the experiment config folder.
@@ -1092,7 +1092,7 @@ class ExperimentBase():
         """
         Sets mata data about the experiment, for example name and description.
 
-        :param kwargs: Dict of meta data, example 'name' => 'TPC-H'
+        :param kwargs: Dict of meta data, example 'name' => 'My Benchmark'
         """
         self.workload = {**self.workload, **kwargs}
     def set_query_management(self,
@@ -1757,8 +1757,8 @@ class ExperimentBase():
                 'PostgreSQL-1-1-1': [
                     [  # experiment run 1
                         [  # client round 1
-                            {'type': 'tpch',         'pods': 3},
-                            {'type': 'tpch_refresh', 'pods': 1},
+                            {'type': 'first_benchmark',  'pods': 3},
+                            {'type': 'second_benchmark', 'pods': 1},
                         ],
                     ],
                 ],
@@ -2147,32 +2147,6 @@ class ExperimentBase():
         full_title = f"{title} {column}" if len(title) > 0 else column
         suffix = "contains no 0 or NaN" if passed else "contains 0 or NaN"
         return self._record_test(passed, f"{full_title} {suffix}")
-    def _test_efficiency(self, df, threads_column: str, computed: bool, reason: str) -> None:
-        """
-        Test the TPC-C efficiency of the phases where the evaluator computes it.
-
-        Efficiency is only computed with key-and-think time and
-        ``threads_column == 10 x SF`` (TPC-C convention); everywhere else it is 0
-        by design, so the test is skipped instead of failed.
-
-        :param df: Per-phase execution DataFrame with ``efficiency`` and ``threads_column``.
-        :param threads_column: ``terminals`` (Benchbase) or ``vusers`` (HammerDB).
-        :param computed: Whether the settings let the evaluator compute efficiency at all.
-        :param reason: Why it is not computed, for the skipped label, when ``computed`` is False.
-        """
-        if not computed:
-            self._record_skipped_test(f"efficiency (not computed: {reason})")
-            return
-        if df.empty or 'efficiency' not in df.columns or threads_column not in df.columns:
-            self._record_skipped_test("efficiency (no benchmarking results)")
-            return
-        sf = int(self.SF)
-        df_eligible = df[df[threads_column] == 10 * sf]
-        if df_eligible.empty:
-            self._record_skipped_test(
-                f"efficiency (not computed: no phase with {threads_column} = 10 x SF = {10 * sf})")
-            return
-        self._test_column(df_eligible, "efficiency")
     def _print_test_summary(self) -> None:
         """Print all results collected in _test_results as a single summary block."""
         print("\n### Tests")
@@ -3272,7 +3246,7 @@ class ExperimentBase():
                                     jobname: str) -> list:
         """
         Extracts start and end times from a benchmarking job.
-        All benchmarker containers (including refresh-stream loaders) must be named
+        All benchmarker containers (of every benchmark of a round) must be named
         ``dbmsbenchmarker`` so the log file ends with ``.dbmsbenchmarker.log``.
 
         :param jobname: Name of the job
@@ -3817,8 +3791,7 @@ class ExperimentBase():
         Print a basic experiment summary using the DBMSBenchmarker inspector directly.
 
         .. deprecated::
-            Probably unused in practice.  All named experiment types (``tpch``,
-            ``tpcds``, ``benchbase``, ``ycsb``, ``tpcc``) override this via
+            Probably unused in practice.  All named experiment types override this via
             :meth:`~bexhoma.experiments.dbmsbenchmarker.dbmsbenchmarker.show_summary`,
             which delegates to the :mod:`bexhoma.benchmarks` pipeline.
             This implementation is only reachable for legacy result folders whose

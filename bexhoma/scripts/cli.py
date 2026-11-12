@@ -4,9 +4,8 @@ Unified ``bexhoma`` CLI dispatcher.
 Runs a root-level benchmark script by name and forwards all remaining
 arguments to it::
 
-    bexhoma tpch  run  [args...]
-    bexhoma tpcds load [args...]
-    bexhoma ycsb  run  [args...]
+    bexhoma <benchmark> run  [args...]
+    bexhoma <benchmark> load [args...]
 
 The script is located by walking up from the current working directory
 until a file named ``<name>.py`` is found.  This works regardless of
@@ -17,7 +16,7 @@ If the first argument is one of ``EXPERIMENT_MODES`` (``stop``, ``status``,
 :func:`bexhoma.scripts.experimentsmanager.manage` instead, e.g.
 ``bexhoma summary -e 12345678``.  The import of ``experimentsmanager``
 (and its heavier ``dbmsbenchmarker`` dependency) is deferred to that branch
-so that plain script dispatch (``bexhoma tpch run``) does not require it.
+so that plain script dispatch (``bexhoma <benchmark> run``) does not require it.
 
 ``bexhoma environment <subcommand>`` is dispatched in-process to
 :mod:`bexhoma.environment` instead of being treated as a script name, e.g.
