@@ -1,6 +1,6 @@
 """Tests for the TPC-C efficiency TEST line of Benchbase and HammerDB experiments.
 
-Efficiency is only computed with key-and-think time and terminals/vusers = 10 x SF;
+Efficiency is only computed with key-and-think time and threads = 10 x SF;
 everywhere else it is 0 by design, so the test is skipped instead of failed.
 
 Authors: Patrick K. Erdelt
@@ -44,33 +44,27 @@ class EfficiencyTestHelperTest(unittest.TestCase):
 
     def test_not_computed_is_skipped(self):
         exp = _experiment()
-        df = pd.DataFrame({'terminals': [40], 'efficiency': [0.0]})
+        df = pd.DataFrame({'threads': [40], 'efficiency': [0.0]})
         BenchbaseEvaluator.test_efficiency(exp, df, computed=False, reason="needs key-and-think time (-xkey)")
         self.assertEqual(_labels(exp), [(None, "efficiency (not computed: needs key-and-think time (-xkey))")])
 
     def test_no_phase_with_ten_times_sf_is_skipped(self):
         exp = _experiment(sf=4)
-        df = pd.DataFrame({'vusers': [4, 8], 'efficiency': [0.0, 0.0]})
+        df = pd.DataFrame({'threads': [4, 8], 'efficiency': [0.0, 0.0]})
         HammerdbEvaluator.test_efficiency(exp, df, computed=True, reason='')
-        self.assertEqual(_labels(exp), [(None, "efficiency (not computed: no phase with vusers = 10 x SF = 40)")])
+        self.assertEqual(_labels(exp), [(None, "efficiency (not computed: no phase with threads = 10 x SF = 40)")])
 
     def test_only_eligible_phases_are_tested(self):
         exp = _experiment(sf=4)
-        df = pd.DataFrame({'terminals': [40, 8], 'efficiency': [87.5, 0.0]})
+        df = pd.DataFrame({'threads': [40, 8], 'efficiency': [87.5, 0.0]})
         BenchbaseEvaluator.test_efficiency(exp, df, computed=True, reason='')
         self.assertEqual(_labels(exp), [(True, "efficiency contains no 0 or NaN")])
 
     def test_zero_in_eligible_phase_fails(self):
         exp = _experiment(sf=4)
-        df = pd.DataFrame({'terminals': [40], 'efficiency': [0.0]})
+        df = pd.DataFrame({'threads': [40], 'efficiency': [0.0]})
         BenchbaseEvaluator.test_efficiency(exp, df, computed=True, reason='')
         self.assertEqual(_labels(exp), [(False, "efficiency contains 0 or NaN")])
-
-    def test_each_evaluator_reads_its_own_threads_column(self):
-        df = pd.DataFrame({'terminals': [40], 'efficiency': [87.5]})
-        exp = _experiment(sf=4)
-        HammerdbEvaluator.test_efficiency(exp, df, computed=True, reason='')
-        self.assertEqual(_labels(exp), [(None, "efficiency (no benchmarking results)")])
 
 
 class EvaluatorRecordTestsTest(unittest.TestCase):
@@ -78,31 +72,31 @@ class EvaluatorRecordTestsTest(unittest.TestCase):
 
     def test_benchbase_without_keying_skips(self):
         exp = _experiment(BENCHBASE_KEY_AND_THINK="false")
-        df = pd.DataFrame({'terminals': [40], 'Throughput (requests/second)': [1024.0], 'efficiency': [0.0]})
+        df = pd.DataFrame({'threads': [40], 'Throughput (requests/second)': [1024.0], 'efficiency': [0.0]})
         BenchbaseEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp)[0][0], None)
 
     def test_benchbase_twitter_with_keying_skips(self):
         exp = _experiment(benchmark_type='twitter', BENCHBASE_KEY_AND_THINK="true")
-        df = pd.DataFrame({'terminals': [40], 'Throughput (requests/second)': [1024.0], 'efficiency': [0.0]})
+        df = pd.DataFrame({'threads': [40], 'Throughput (requests/second)': [1024.0], 'efficiency': [0.0]})
         BenchbaseEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp)[0][0], None)
 
     def test_benchbase_tpcc_with_keying_tests(self):
         exp = _experiment(BENCHBASE_KEY_AND_THINK="true")
-        df = pd.DataFrame({'terminals': [40], 'Throughput (requests/second)': [10.0], 'efficiency': [0.0]})
+        df = pd.DataFrame({'threads': [40], 'Throughput (requests/second)': [10.0], 'efficiency': [0.0]})
         BenchbaseEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp), [(False, "efficiency contains 0 or NaN")])
 
     def test_hammerdb_without_keying_skips(self):
         exp = _experiment(HAMMERDB_KEYANDTHINK="false")
-        df = pd.DataFrame({'vusers': [40], 'NOPM': [1000], 'efficiency': [50.0]})
+        df = pd.DataFrame({'threads': [40], 'NOPM': [1000], 'efficiency': [50.0]})
         HammerdbEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp)[0][0], None)
 
     def test_hammerdb_with_keying_tests(self):
         exp = _experiment(HAMMERDB_KEYANDTHINK="true")
-        df = pd.DataFrame({'vusers': [40], 'NOPM': [500], 'efficiency': [97.2]})
+        df = pd.DataFrame({'threads': [40], 'NOPM': [500], 'efficiency': [97.2]})
         HammerdbEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp), [(True, "efficiency contains no 0 or NaN")])
 
@@ -114,8 +108,8 @@ def _hammerdb_pods(keyandthink=None, vusers=(20, 20), sf=4, nopm=500):
         row = {'connection': f'mysql-1-1-1-{child}', 'phase': 'mysql-1-1', 'job': 'mysql-1-1-1',
                'configuration': 'MySQL-1', 'experiment_run': 1, 'code': 1, 'client': 1,
                'benchmark_run': 1, 'pod': str(child), 'pod_count': len(vusers), 'iterations': 1,
-               'duration': 2, 'rampup': 0, 'sf': sf, 'run': 0, 'errors': 0, 'vusers_loading': 1,
-               'vusers': vuser, 'NOPM': nopm, 'TPM': 2 * nopm, 'efficiency': 0.0, 'dbms': 'MySQL',
+               'duration': 2, 'rampup': 0, 'sf': sf, 'run': 0, 'errors': 0, 'threads_loading': 1,
+               'threads': vuser, 'NOPM': nopm, 'TPM': 2 * nopm, 'efficiency': 0.0, 'dbms': 'MySQL',
                'tenant_id': -1}
         if keyandthink is not None:
             row['keyandthink'] = keyandthink

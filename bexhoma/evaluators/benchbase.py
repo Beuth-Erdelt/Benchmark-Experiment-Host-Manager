@@ -46,7 +46,10 @@ class BenchbaseEvaluator(LogEvaluator):
     :param include_loading: Whether loading-phase results are expected.
     :param include_benchmarking: Whether benchmarking-phase results are expected.
     """
-    def get_terminals(self, loading_parameters):
+    #: Benchbase's names for the common columns.
+    column_names = {'terminals': 'threads'}
+
+    def get_threads(self, loading_parameters):
         """
         Returns the number of Benchbase terminals from ``BENCHBASE_TERMINALS``.
 
@@ -219,7 +222,7 @@ class BenchbaseEvaluator(LogEvaluator):
             'isolation':'str',
             'DBMS Version':'str',
             'Goodput (requests/second)':'float',
-            'terminals':'int',
+            'threads':'int',
             'DBMS Type':'str',
             'Throughput (requests/second)':'float',
             'Latency Distribution.95th Percentile Latency (microseconds)':'float',
@@ -284,7 +287,7 @@ class BenchbaseEvaluator(LogEvaluator):
                 'isolation':'max',
                 'DBMS Version':'max',
                 'Goodput (requests/second)':'sum',
-                'terminals':'sum',
+                'threads':'sum',
                 'DBMS Type':'max',
                 'Throughput (requests/second)':'sum',
                 'Latency Distribution.95th Percentile Latency (microseconds)':'max',
@@ -310,7 +313,7 @@ class BenchbaseEvaluator(LogEvaluator):
             df_grp = pd.DataFrame(dict_grp, index=[key_index])
             df_aggregated = pd.concat([df_aggregated, df_grp])
         # efficiency is only valid for TPC-C runs where vusers == 10 × SF
-        tpcc_mask = (df_aggregated['sf'] * 10 == df_aggregated['terminals']) & (df_aggregated['efficiency'] != 0.) & (df_aggregated['bench'] == "tpcc")
+        tpcc_mask = (df_aggregated['sf'] * 10 == df_aggregated['threads']) & (df_aggregated['efficiency'] != 0.) & (df_aggregated['bench'] == "tpcc")
         df_aggregated['efficiency'] = 0.
         df_aggregated.loc[tpcc_mask, 'efficiency'] = (
             0.45 * 60. * 100. * df_aggregated['Goodput (requests/second)'] / 12.86 / df_aggregated['sf']
@@ -479,7 +482,7 @@ class BenchbaseEvaluator(LogEvaluator):
         df = self.drop_rows_without_results(self.get_df_benchmarking())
         if df.empty:
             return pd.DataFrame()
-        columns = ["phase", "job", "experiment_run","terminals","target","client","benchmark_run", "child", "tenant_id", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
+        columns = ["phase", "job", "experiment_run","threads","target","client","benchmark_run", "child", "tenant_id", "time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
         df = df.fillna(0)
         df_plot = self.benchmarking_set_datatypes(df)
         df_plot_filtered = pd.DataFrame()
@@ -510,7 +513,7 @@ class BenchbaseEvaluator(LogEvaluator):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
             df_aggregated = df_aggregated.sort_values(['experiment_run','target','pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['phase', 'experiment_run',"terminals","target","benchmark_run","pod_count","tenant_id"]].copy()
+            df_aggregated_reduced = df_aggregated[['phase', 'experiment_run',"threads","target","benchmark_run","pod_count","tenant_id"]].copy()
             columns = ["time", "num_errors", "Throughput (requests/second)","Goodput (requests/second)","efficiency", "Latency Distribution.95th Percentile Latency (microseconds)","Latency Distribution.Average Latency (microseconds)"]
             for col in columns:
                 if col in df_aggregated.columns:
@@ -536,7 +539,7 @@ class BenchbaseEvaluator(LogEvaluator):
             df_plot = self.benchmarking_set_datatypes(df)
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
             df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'target', 'pod_count']).round(2)
-            df_aggregated_reduced = df_aggregated[['phase', 'experiment_run', "terminals", "target", "benchmark_run", "pod_count", "tenant_id"]].copy()
+            df_aggregated_reduced = df_aggregated[['phase', 'experiment_run', "threads", "target", "benchmark_run", "pod_count", "tenant_id"]].copy()
             columns = ["time", "num_errors", "Throughput (requests/second)", "Goodput (requests/second)", "efficiency", "Latency Distribution.95th Percentile Latency (microseconds)", "Latency Distribution.Average Latency (microseconds)"]
             for col in columns:
                 if col in df_aggregated.columns:
@@ -550,25 +553,25 @@ class BenchbaseEvaluator(LogEvaluator):
         Test the TPC-C efficiency of the phases where it is computed.
 
         Efficiency is only computed with key-and-think time and
-        ``terminals == 10 x SF`` (TPC-C convention); everywhere else it is 0
+        ``threads == 10 x SF`` (TPC-C convention); everywhere else it is 0
         by design, so the test is skipped instead of failed.
 
         :param experiment: The owning experiment object; the result is recorded there.
-        :param df: Per-phase execution DataFrame with ``efficiency`` and ``terminals``.
+        :param df: Per-phase execution DataFrame with ``efficiency`` and ``threads``.
         :param computed: Whether the settings of Benchbase let efficiency be computed at all.
         :param reason: Why it is not computed, for the skipped label, when ``computed`` is False.
         """
         if not computed:
             experiment._record_skipped_test(f"efficiency (not computed: {reason})")
             return
-        if df.empty or 'efficiency' not in df.columns or 'terminals' not in df.columns:
+        if df.empty or 'efficiency' not in df.columns or 'threads' not in df.columns:
             experiment._record_skipped_test("efficiency (no benchmarking results)")
             return
         sf = int(experiment.SF)
-        df_eligible = df[df['terminals'] == 10 * sf]
+        df_eligible = df[df['threads'] == 10 * sf]
         if df_eligible.empty:
             experiment._record_skipped_test(
-                f"efficiency (not computed: no phase with terminals = 10 x SF = {10 * sf})")
+                f"efficiency (not computed: no phase with threads = 10 x SF = {10 * sf})")
             return
         experiment._test_column(df_eligible, "efficiency")
 

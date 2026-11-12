@@ -382,7 +382,7 @@ class StorageReusedTest(unittest.TestCase):
             **extra,
         }
         result = {}
-        evaluator = types.SimpleNamespace(get_terminals=lambda parameters: 0)
+        evaluator = types.SimpleNamespace(get_threads=lambda parameters: 0)
         EvaluatorBase.add_connection_to_result(evaluator, connection, 'c', result)
         return result['c']
 

@@ -79,7 +79,10 @@ class HammerdbEvaluator(LogEvaluator):
     :param include_loading: Whether loading-phase results are expected.
     :param include_benchmarking: Whether benchmarking-phase results are expected.
     """
-    def get_terminals(self, loading_parameters):
+    #: HammerDB's names (virtual users) for the common columns.
+    column_names = {'vusers': 'threads', 'vusers_loading': 'threads_loading'}
+
+    def get_threads(self, loading_parameters):
         """
         Returns the number of HammerDB virtual users from ``HAMMERDB_VUSERS``.
 
@@ -238,8 +241,8 @@ class HammerdbEvaluator(LogEvaluator):
                 'sf':'int',
                 'run':'int',
                 'errors':'int',
-                'vusers_loading':'int',
-                'vusers':'int',
+                'threads_loading':'int',
+                'threads':'int',
                 'NOPM':'int',
                 'TPM':'int',
                 'efficiency':'float',
@@ -271,8 +274,8 @@ class HammerdbEvaluator(LogEvaluator):
                 'sf':'int',
                 'run':'int',
                 'errors':'int',
-                'vusers_loading':'int',
-                'vusers':'int',
+                'threads_loading':'int',
+                'threads':'int',
                 'NOPM':'int',
                 'TPM':'int',
                 'efficiency':'float',
@@ -319,8 +322,8 @@ class HammerdbEvaluator(LogEvaluator):
                     'sf':'max',
                     'run':'max',
                     'errors':'sum',
-                    'vusers_loading':'max',
-                    'vusers':'sum',
+                    'threads_loading':'max',
+                    'threads':'sum',
                     'NOPM':'mean',
                     'TPM':'mean',
                     'efficiency':'min',
@@ -348,8 +351,8 @@ class HammerdbEvaluator(LogEvaluator):
                     'sf':'max',
                     'run':'max',
                     'errors':'sum',
-                    'vusers_loading':'max',
-                    'vusers':'sum',
+                    'threads_loading':'max',
+                    'threads':'sum',
                     'NOPM':'mean',
                     'TPM':'mean',
                     'efficiency':'min',
@@ -369,7 +372,7 @@ class HammerdbEvaluator(LogEvaluator):
             df_aggregated = pd.concat([df_aggregated, df_grp])
         # efficiency is only valid with key-and-think time and vusers == 10 × SF (standard TPC-C convention)
         df_aggregated['efficiency'] = 0.
-        tpcc_mask = df_aggregated['sf'] * 10 == df_aggregated['vusers']
+        tpcc_mask = df_aggregated['sf'] * 10 == df_aggregated['threads']
         if 'keyandthink' in df_aggregated:
             tpcc_mask &= df_aggregated['keyandthink'] == "true"
         df_aggregated.loc[tpcc_mask, 'efficiency'] = (
@@ -523,9 +526,9 @@ class HammerdbEvaluator(LogEvaluator):
             return pd.DataFrame()
         if "P95 [ms]" in df:
             # we have latencies
-            columns = ['phase', 'job', 'experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
+            columns = ['phase', 'job', 'experiment_run',"threads","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
         else:
-            columns = ['phase', 'job', 'experiment_run',"vusers","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
+            columns = ['phase', 'job', 'experiment_run',"threads","client","benchmark_run", "child", "NOPM", "TPM", "efficiency", "duration", "errors"]
         _fill_missing_counts(df)
         df_plot = self.benchmarking_set_datatypes(df)
         df_plot_filtered = pd.DataFrame()
@@ -558,10 +561,10 @@ class HammerdbEvaluator(LogEvaluator):
             df_aggregated = df_aggregated.sort_values(['experiment_run','pod_count']).round(2)
             if "P95 [ms]" in df_aggregated:
                 # we have latencies
-                aggregated_list = ['phase', 'experiment_run',"vusers","client","benchmark_run","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
+                aggregated_list = ['phase', 'experiment_run',"threads","client","benchmark_run","pod_count","P95 [ms]","P99 [ms]", "efficiency"]
                 columns = ["NOPM", "TPM", "efficiency", "duration", "errors","P95 [ms]","P99 [ms]"]
             else:
-                aggregated_list = ['phase', 'experiment_run',"vusers","client","benchmark_run","pod_count", "efficiency"]
+                aggregated_list = ['phase', 'experiment_run',"threads","client","benchmark_run","pod_count", "efficiency"]
                 columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
             df_aggregated_reduced = df_aggregated[aggregated_list].copy()
             for col in columns:
@@ -588,10 +591,10 @@ class HammerdbEvaluator(LogEvaluator):
             df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
             df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'pod_count']).round(2)
             if "P95 [ms]" in df_aggregated:
-                aggregated_list = ['phase', 'experiment_run', "vusers", "client", "benchmark_run", "pod_count", "tenant_id", "P95 [ms]", "P99 [ms]", "efficiency"]
+                aggregated_list = ['phase', 'experiment_run', "threads", "client", "benchmark_run", "pod_count", "tenant_id", "P95 [ms]", "P99 [ms]", "efficiency"]
                 columns = ["NOPM", "TPM", "efficiency", "duration", "errors", "P95 [ms]", "P99 [ms]"]
             else:
-                aggregated_list = ['phase', 'experiment_run', "vusers", "client", "benchmark_run", "pod_count", "tenant_id", "efficiency"]
+                aggregated_list = ['phase', 'experiment_run', "threads", "client", "benchmark_run", "pod_count", "tenant_id", "efficiency"]
                 columns = ["NOPM", "TPM", "efficiency", "duration", "errors"]
             df_aggregated_reduced = df_aggregated[[c for c in aggregated_list if c in df_aggregated.columns]].copy()
             for col in columns:
@@ -605,25 +608,25 @@ class HammerdbEvaluator(LogEvaluator):
         Test the TPC-C efficiency of the phases where it is computed.
 
         Efficiency is only computed with key-and-think time and
-        ``vusers == 10 x SF`` (TPC-C convention); everywhere else it is 0
+        ``threads == 10 x SF`` (TPC-C convention); everywhere else it is 0
         by design, so the test is skipped instead of failed.
 
         :param experiment: The owning experiment object; the result is recorded there.
-        :param df: Per-phase execution DataFrame with ``efficiency`` and ``vusers``.
+        :param df: Per-phase execution DataFrame with ``efficiency`` and ``threads``.
         :param computed: Whether the settings of HammerDB let efficiency be computed at all.
         :param reason: Why it is not computed, for the skipped label, when ``computed`` is False.
         """
         if not computed:
             experiment._record_skipped_test(f"efficiency (not computed: {reason})")
             return
-        if df.empty or 'efficiency' not in df.columns or 'vusers' not in df.columns:
+        if df.empty or 'efficiency' not in df.columns or 'threads' not in df.columns:
             experiment._record_skipped_test("efficiency (no benchmarking results)")
             return
         sf = int(experiment.SF)
-        df_eligible = df[df['vusers'] == 10 * sf]
+        df_eligible = df[df['threads'] == 10 * sf]
         if df_eligible.empty:
             experiment._record_skipped_test(
-                f"efficiency (not computed: no phase with vusers = 10 x SF = {10 * sf})")
+                f"efficiency (not computed: no phase with threads = 10 x SF = {10 * sf})")
             return
         experiment._test_column(df_eligible, "efficiency")
 

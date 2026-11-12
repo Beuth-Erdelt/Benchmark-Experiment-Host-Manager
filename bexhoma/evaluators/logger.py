@@ -40,6 +40,24 @@ class LogEvaluator(EvaluatorBase):
     and collect them into a single combined pickle per phase.
     All benchmark-specific evaluators inherit from this class.
     """
+    #: The tool's names for what bexhoma calls by a common name, as ``{tool's column: common column}``.
+    #: :meth:`log_to_df` keeps the names of the tool (they are what its logs say and what the cached
+    #: DataFrames of a result folder hold); everything that reads these DataFrames
+    #: (:meth:`get_df_benchmarking`, :meth:`get_df_loading`) gets the common names. Common names are
+    #: ``threads`` (client threads of a pod), ``errors`` and ``SF``.
+    column_names: dict = {}
+
+    def unify_columns(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Rename the tool's columns to the common names of :attr:`column_names`.
+
+        :param df: Per-pod DataFrame as :meth:`log_to_df` built it.
+        :return: The DataFrame with common column names; a column whose common name is taken stays.
+        :rtype: pandas.DataFrame
+        """
+        renames = {old: new for old, new in self.column_names.items() if old in df.columns and new not in df.columns}
+        return df.rename(columns=renames) if renames else df
+
     def end_benchmarking(self, jobname):
         """
         Parses all benchmarker log files for a job and caches results as pickle files.
@@ -197,7 +215,7 @@ class LogEvaluator(EvaluatorBase):
             df = pd.read_pickle(pickle_path)
             if 'pods' not in df.columns and 'pod_count' in df.columns:
                 df['pods'] = df['pod_count']
-            return df
+            return self.unify_columns(df)
         return pd.DataFrame()
 
     def get_df_loading(self):
@@ -211,7 +229,7 @@ class LogEvaluator(EvaluatorBase):
         """
         pickle_path = self.path + "/" + self._pickle_name_loading()
         if os.path.isfile(pickle_path):
-            return pd.read_pickle(pickle_path)
+            return self.unify_columns(pd.read_pickle(pickle_path))
         return pd.DataFrame()
     def plot(self, df, column, x, y, plot_by=None, kind='line', dict_colors=None, figsize=(12,8)):
         """

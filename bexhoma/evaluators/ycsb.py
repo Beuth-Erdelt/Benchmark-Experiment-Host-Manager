@@ -552,7 +552,7 @@ class YcsbEvaluator(LogEvaluator):
         """
         pickle_path = self.path + "/bexhoma-loading.all.df.pickle"
         if os.path.isfile(pickle_path):
-            return pd.read_pickle(pickle_path)
+            return self.unify_columns(pd.read_pickle(pickle_path))
         return pd.DataFrame()
     def parse_log_file(self, file_path):
         """

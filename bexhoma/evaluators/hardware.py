@@ -124,6 +124,9 @@ class HardwareEvaluator(LogEvaluator):
     :param include_loading: Whether loading-phase results are expected.
     :param include_benchmarking: Whether benchmarking-phase results are expected.
     """
+    #: The hardware tools' names for the common columns.
+    column_names = {'hardware_threads': 'threads'}
+
     def log_to_df(self, filename):
         """
         Parses a Hardware pod log file into a DataFrame.
@@ -238,7 +241,7 @@ class HardwareEvaluator(LogEvaluator):
             'experiment_run': 'int', 'code': 'int', 'client': 'int', 'benchmark_run': 'int',
             'child': 'int', 'pod': 'str', 'pod_count': 'int', 'errors': 'int',
             'hardware_type': 'str', 'hardware_size': 'str', 'hardware_duration': 'float',
-            'hardware_threads': 'int',
+            'threads': 'int',
             'hardware_fio_rw': 'str', 'hardware_fio_bs': 'str', 'hardware_fio_engine': 'str',
             'hardware_fio_iodepth': 'int', 'hardware_fio_numjobs': 'int',
             'hardware_fio_fsync': 'int', 'hardware_fio_fdatasync': 'int',
@@ -297,7 +300,7 @@ class HardwareEvaluator(LogEvaluator):
                 'code': 'max', 'job': 'max', 'client': 'max', 'benchmark_run': 'max',
                 'pod': 'sum', 'pod_count': 'count', 'errors': 'sum',
                 'hardware_duration': 'max', 'hardware_fio_numjobs': 'sum',
-                'hardware_threads': 'sum', 'hardware_sysbench_cpu_total_time_s': 'max',
+                'threads': 'sum', 'hardware_sysbench_cpu_total_time_s': 'max',
                 'tenant_id': 'min', 'duration': 'max',
                 # aggregate throughput across pods, same convention as fio's iops/sockperf's
                 # msg_rate; instances_failed is a count, summed like errors above
@@ -364,7 +367,7 @@ class HardwareEvaluator(LogEvaluator):
             'hardware_fio_read_iops', 'hardware_fio_write_iops',
             'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
             'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
-            'hardware_threads', 'hardware_sysbench_cpu_events_per_sec',
+            'threads', 'hardware_sysbench_cpu_events_per_sec',
             'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
             'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
             'hardware_sysbench_memory_lat_p95_ms',
@@ -417,7 +420,7 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_fio_read_iops', 'hardware_fio_write_iops',
                 'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
                 'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
-                'hardware_threads', 'hardware_sysbench_cpu_events_per_sec',
+                'threads', 'hardware_sysbench_cpu_events_per_sec',
                 'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
                 'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
                 'hardware_sysbench_memory_lat_p95_ms',
@@ -467,7 +470,7 @@ class HardwareEvaluator(LogEvaluator):
                 'hardware_fio_read_iops', 'hardware_fio_write_iops',
                 'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
                 'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
-                'hardware_threads', 'hardware_sysbench_cpu_events_per_sec',
+                'threads', 'hardware_sysbench_cpu_events_per_sec',
                 'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
                 'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
                 'hardware_sysbench_memory_lat_p95_ms',

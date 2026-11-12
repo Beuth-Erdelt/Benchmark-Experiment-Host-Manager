@@ -569,13 +569,13 @@ class EvaluatorBase:
         """
         with open(self.path + "/queries.config", 'r') as f:
             return ast.literal_eval(f.read())
-    def get_terminals(self, loading_parameters):
+    def get_threads(self, loading_parameters):
         """
-        Returns the number of client terminals/virtual users a benchmarking
+        Returns the number of client threads a benchmarking
         tool ran with, read from its own loading-parameter env var.
 
         The base implementation knows no tool-specific env var and always
-        returns ``0``; subclasses for tools that report a terminal/VU count
+        returns ``0``; subclasses for tools that report a thread count
         override this.
 
         :param loading_parameters: The connection's ``loading_parameters`` dict.
@@ -626,7 +626,7 @@ class EvaluatorBase:
             'time_reset': float(c.get('time_reset', 0) or 0),
             # None: no reset ran; '': it ran without errors; else the failed scripts
             'reset_failed': c.get('reset_failed'),
-            'terminals': self.get_terminals(loading_parameters),
+            'threads': self.get_threads(loading_parameters),
             'pods': c['parameter']['parallelism'],
             'loading_pods': num_loading_pods,
             'tenant_id': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
@@ -794,7 +794,7 @@ class EvaluatorBase:
         selected_cols = [
             'code', 'SF', 'configuration', 'connection', 'phase',
             'experiment_run', 'client', 'time_load', 'time_preload',
-            'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods', 'terminals',
+            'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods', 'threads',
             'tenant_id', 'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
         ]
         # True: this repetition did not load, its times are copied from the
