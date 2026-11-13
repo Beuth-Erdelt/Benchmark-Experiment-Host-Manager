@@ -20,11 +20,10 @@ from .dbmsbenchmarker import DbmsBenchmarkerCollector, map_index_to_queryname
 from .benchbase import BenchbaseCollector
 from .hardware import HardwareCollector
 from .hammerdb import HammerdbCollector
-from .ycsb import YcsbCollector
 from .mixed import MixedCollector
 
 __all__ = [
     "CollectorBase", "DbmsBenchmarkerCollector", "HardwareCollector", "MixedCollector",
-    "HammerdbCollector", "BenchbaseCollector", "YcsbCollector",
+    "HammerdbCollector", "BenchbaseCollector",
     "get_non_constant", "map_index_to_queryname",
 ]

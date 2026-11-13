@@ -2,7 +2,7 @@
 Tests for the ``ycsb`` half of the catalog-contract translator.
 
 ``bexhoma/spec.py::build_argv`` dispatches a ``workload.name == 'ycsb'``
-experiment.yml to :func:`bexhoma.experiments.ycsb_catalog.build_ycsb_argv`,
+experiment.yml to :func:`bexhoma.benchmarks.ycsb.catalog.build_ycsb_argv`,
 which turns it into a ``ycsb.py`` argument vector. These tests check that:
 
 * the emitted argv parses back cleanly through ``ycsb.build_parser()``;

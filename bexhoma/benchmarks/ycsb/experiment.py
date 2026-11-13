@@ -14,8 +14,8 @@ from dbmsbenchmarker import parameter
 import logging
 import urllib3
 
-from bexhoma import benchmarks
-from .mixed import MixedExperiment
+from bexhoma.experiments.mixed import MixedExperiment
+from bexhoma.benchmarks.ycsb.benchmark import YCSB
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -28,7 +28,7 @@ class YcsbExperiment(MixedExperiment):
     YCSB experiment: orchestrates loading and benchmarking via the Yahoo Cloud
     Serving Benchmark tool inside a Kubernetes cluster.
 
-    Registers a :class:`~bexhoma.benchmarks.ycsb.YCSB` benchmark object and
+    Registers a :class:`~bexhoma.benchmarks.ycsb.benchmark.YCSB` benchmark object and
     pre-populates the experiment dict template with YCSB-specific job templates.
 
     Extends :class:`MixedExperiment`.
@@ -70,7 +70,7 @@ class YcsbExperiment(MixedExperiment):
             "loader": {"sensor": True},
             "benchmarker": {"dbmsbenchmarker": True},
         }
-        self.add_benchmark(benchmarks.YCSB(SF=SF))
+        self.add_benchmark(YCSB(SF=SF))
         self.experiment_dict_template = {
             "loader": [
                 {

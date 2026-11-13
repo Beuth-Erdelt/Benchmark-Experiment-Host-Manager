@@ -12,7 +12,6 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from .base import Benchmark, DBMSBenchmarkerBenchmark
-from .ycsb import YCSB
 from .hammerdb import HammerDB
 from .tpch import TPCH
 from .tpcds import TPCDS
@@ -24,7 +23,6 @@ from .hardware import Hardware
 __all__ = [
     "Benchmark",
     "DBMSBenchmarkerBenchmark",
-    "YCSB",
     "HammerDB",
     "TPCH",
     "TPCDS",

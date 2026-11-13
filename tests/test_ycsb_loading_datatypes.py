@@ -3,7 +3,7 @@ import unittest
 
 import pandas as pd
 
-from bexhoma.evaluators.ycsb import YcsbEvaluator
+from bexhoma.benchmarks.ycsb.evaluator import YcsbEvaluator
 
 
 class LoadingSetDatatypesTest(unittest.TestCase):

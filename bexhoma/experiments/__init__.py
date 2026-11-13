@@ -20,11 +20,10 @@ from .tpcds import TpcdsExperiment
 from .ssb import SsbExperiment
 from .benchbase import BenchbaseExperiment
 from .hammerdb import HammerdbExperiment
-from .ycsb import YcsbExperiment
 from .hardware import HardwareExperiment
 
 __all__ = [
     "ExperimentBase", "MixedExperiment", "DbmsBenchmarkerExperiment",
-    "TpchExperiment", "TpcdsExperiment", "SsbExperiment", "YcsbExperiment", "HammerdbExperiment",
+    "TpchExperiment", "TpcdsExperiment", "SsbExperiment", "HammerdbExperiment",
     "BenchbaseExperiment", "HardwareExperiment",
 ]

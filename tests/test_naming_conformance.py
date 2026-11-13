@@ -380,7 +380,7 @@ class YcsbLogToDfCasingTest(unittest.TestCase):
     BEXHOMA_CONFIGURATION (sourced from the mixed-case DBMS config name) is not."""
 
     def test_phase_and_connection_are_lowercased(self) -> None:
-        from bexhoma.evaluators.ycsb import YcsbEvaluator
+        from bexhoma.benchmarks.ycsb.evaluator import YcsbEvaluator
 
         with tempfile.TemporaryDirectory() as tmp_dir:
             log_content = (

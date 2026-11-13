@@ -4,15 +4,14 @@
   "hammerdb": 3,
   "ssb": 3,
   "tpcds": 3,
-  "tpch": 3,
-  "ycsb": 3
+  "tpch": 3
  },
  "bexhoma/collectors/__init__.py": {
   "benchbase": 5,
   "hammerdb": 4,
   "hardware": 3,
   "tpcc": 1,
-  "ycsb": 5
+  "ycsb": 2
  },
  "bexhoma/environment.py": {
   "fio": 10,
@@ -24,7 +23,7 @@
   "benchbase": 4,
   "hammerdb": 4,
   "hardware": 3,
-  "ycsb": 4
+  "ycsb": 1
  },
  "bexhoma/experiments/__init__.py": {
   "benchbase": 4,
@@ -33,7 +32,7 @@
   "ssb": 4,
   "tpcds": 4,
   "tpch": 4,
-  "ycsb": 4
+  "ycsb": 1
  },
  "bexhoma/report_writer.py": {
   "tpcds": 1,

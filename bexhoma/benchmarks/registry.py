@@ -13,8 +13,10 @@ Lookups:
 * :func:`descriptor_for_type` by a name a result folder uses for it,
 * :func:`descriptors` for all of them.
 
-The descriptors are loaded on the first lookup, not on import, so this module
-can be imported from anywhere in the package without an import cycle.
+A benchmark is a folder ``bexhoma/benchmarks/<name>/`` whose ``__init__`` defines
+``DESCRIPTOR``. The folders are found and imported on the first lookup, not on
+import, so this module can be imported from anywhere in the package without an
+import cycle. Adding a benchmark therefore needs no change outside its folder.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -24,13 +26,15 @@ See LICENSE for details.
 from __future__ import annotations
 
 import importlib
+import os
+import pkgutil
 from dataclasses import dataclass
 from typing import Any, Callable, Optional
 
 __all__ = ["BenchmarkDescriptor", "register", "descriptors", "descriptor_of", "descriptor_for_type"]
 
-#: The module that registers the descriptors.
-_DESCRIPTOR_MODULES = ("bexhoma.benchmarks.registered",)
+#: Module that registers the descriptors of the benchmarks that have no folder of their own yet.
+_TRANSITIONAL_MODULE = "bexhoma.benchmarks.registered"
 
 
 @dataclass(frozen=True)
@@ -85,13 +89,27 @@ def register(descriptor: BenchmarkDescriptor) -> BenchmarkDescriptor:
 
 
 def _load() -> None:
-    """Import the modules that register the descriptors, once. A failing import is raised, not skipped."""
+    """
+    Import every benchmark folder and register its ``DESCRIPTOR``, once.
+
+    A folder that fails to import, or defines no ``DESCRIPTOR``, raises: a
+    benchmark must not vanish silently.
+    """
     if _state['loaded'] or _state['loading']:
         return
     _state['loading'] = True
     try:
-        for module in _DESCRIPTOR_MODULES:
-            importlib.import_module(module)
+        folder = os.path.dirname(os.path.abspath(__file__))
+        if os.path.exists(os.path.join(folder, _TRANSITIONAL_MODULE.rsplit('.', 1)[1] + '.py')):
+            importlib.import_module(_TRANSITIONAL_MODULE)
+        for module_info in sorted(pkgutil.iter_modules([folder]), key=lambda info: info.name):
+            if not module_info.ispkg:
+                continue
+            module = importlib.import_module(f"{__package__}.{module_info.name}")
+            descriptor = getattr(module, 'DESCRIPTOR', None)
+            if not isinstance(descriptor, BenchmarkDescriptor):
+                raise ImportError(f"{module.__name__} defines no DESCRIPTOR (a BenchmarkDescriptor)")
+            register(descriptor)
         _state['loaded'] = True
     finally:
         _state['loading'] = False

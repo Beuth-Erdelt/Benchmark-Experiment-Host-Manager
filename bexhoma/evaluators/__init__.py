@@ -16,10 +16,9 @@ from .logger import LogEvaluator
 from .dbmsbenchmarker import DbmsBenchmarkerEvaluator
 from .benchbase import BenchbaseEvaluator
 from .hammerdb import HammerdbEvaluator
-from .ycsb import YcsbEvaluator
 from .hardware import HardwareEvaluator
 
 __all__ = [
     "EvaluatorBase", "LogEvaluator", "DbmsBenchmarkerEvaluator",
-    "BenchbaseEvaluator", "HammerdbEvaluator", "YcsbEvaluator", "HardwareEvaluator", "natural_sort",
+    "BenchbaseEvaluator", "HammerdbEvaluator", "HardwareEvaluator", "natural_sort",
 ]

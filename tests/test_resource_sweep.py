@@ -26,7 +26,7 @@ from unittest import mock
 import tpch
 import ycsb
 from bexhoma.experiments.tpch import TpchExperiment
-from bexhoma.experiments.ycsb import YcsbExperiment
+from bexhoma.benchmarks.ycsb.experiment import YcsbExperiment
 from bexhoma.experiments.base import ExperimentBase
 
 from .stubs import StubCluster

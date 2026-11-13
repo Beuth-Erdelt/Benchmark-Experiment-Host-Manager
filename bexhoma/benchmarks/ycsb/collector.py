@@ -2,7 +2,7 @@
 Collector for YCSB experiments.
 
 Provides :class:`YcsbCollector`, a thin subclass of :class:`CollectorBase` that wires up
-:class:`evaluators.YcsbEvaluator` as the evaluator. All data collection and
+:class:`YcsbEvaluator` as the evaluator. All data collection and
 aggregation logic is inherited from :class:`CollectorBase`.
 
 Authors: Patrick K. Erdelt
@@ -24,8 +24,8 @@ import pprint
 
 from dbmsbenchmarker import parameter, inspector
 
-from bexhoma import evaluators
-from .base import CollectorBase
+from bexhoma.collectors.base import CollectorBase
+from bexhoma.benchmarks.ycsb.evaluator import YcsbEvaluator
 
 __all__ = ["YcsbCollector"]
 
@@ -34,7 +34,7 @@ class YcsbCollector(CollectorBase):
     """
     Collector for YCSB experiments.
 
-    Overrides :meth:`get_evaluator` to return a :class:`evaluators.YcsbEvaluator` instance.
+    Overrides :meth:`get_evaluator` to return a :class:`YcsbEvaluator` instance.
     All data collection and aggregation methods are inherited from :class:`CollectorBase`.
     """
     def __init__(self, path, codes, benchmark_run: int = 0):
@@ -51,23 +51,23 @@ class YcsbCollector(CollectorBase):
 
     def get_evaluator(self, code=''):
         """
-        Returns a :class:`evaluators.YcsbEvaluator` instance for the given experiment code.
+        Returns a :class:`YcsbEvaluator` instance for the given experiment code.
 
         :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
         :type code: str
         :return: YCSB evaluator for the specified experiment.
-        :rtype: evaluators.YcsbEvaluator
+        :rtype: YcsbEvaluator
         """
         if code == '':
             code = self.codes[0]
-        return evaluators.YcsbEvaluator(code=code, path=self.path, benchmark_run=self.benchmark_run)
+        return YcsbEvaluator(code=code, path=self.path, benchmark_run=self.benchmark_run)
 
     def get_benchmark_timeseries_per_phase(self, metric="current_ops_per_sec"):
         """
         Combines aggregated YCSB time-series per phase from all experiment codes into a wide-format DataFrame.
 
         For each code and each unique ``(configuration, client, experiment_run, benchmark_run)``
-        combination, calls :meth:`evaluators.YcsbEvaluator.get_benchmark_logs_timeseries_df_aggregated`
+        combination, calls :meth:`YcsbEvaluator.get_benchmark_logs_timeseries_df_aggregated`
         and places the metric column as one column in the result.  Each column is labelled
         ``{code}-{configuration}-{client}-{experiment_run}-{benchmark_run}``.
 
@@ -103,7 +103,7 @@ class YcsbCollector(CollectorBase):
         Combines aggregated YCSB loading time-series per phase from all experiment codes into a wide-format DataFrame.
 
         For each code and each unique ``(configuration, experiment_run)`` combination,
-        calls :meth:`evaluators.YcsbEvaluator.get_loading_logs_timeseries_df_aggregated` and
+        calls :meth:`YcsbEvaluator.get_loading_logs_timeseries_df_aggregated` and
         places the metric column as one column in the result.  Each column is labelled
         ``{code}-{configuration}-{experiment_run}``.
 
@@ -140,7 +140,7 @@ class YcsbCollector(CollectorBase):
         Collects long-format YCSB loading time-series data for a given metric across all experiment codes.
 
         For each code and each unique ``(configuration, experiment_run)`` combination,
-        calls :meth:`evaluators.YcsbEvaluator.get_loading_logs_timeseries_df_aggregated`, reshapes
+        calls :meth:`YcsbEvaluator.get_loading_logs_timeseries_df_aggregated`, reshapes
         the result to long format, and annotates each row with its identifying fields.
         Connection metadata (e.g. ``type_tenants``, ``num_tenants``, ``vol_tenants``) is joined
         in from :meth:`get_connections` for each code.
@@ -200,7 +200,7 @@ class YcsbCollector(CollectorBase):
         Collects long-format YCSB time-series data for a given metric across all experiment codes.
 
         For each code and each unique ``(configuration, client, experiment_run)`` combination,
-        calls :meth:`evaluators.YcsbEvaluator.get_benchmark_logs_timeseries_df_aggregated`, reshapes
+        calls :meth:`YcsbEvaluator.get_benchmark_logs_timeseries_df_aggregated`, reshapes
         the result to long format, and annotates each row with its identifying fields.
         Connection metadata (e.g. ``type_tenants``, ``num_tenants``, ``vol_tenants``) is joined
         in from :meth:`get_connections` for each code.

@@ -22,7 +22,7 @@ import yaml
 
 from bexhoma import ddl_parameters
 from bexhoma.configurations.loading import script_failed
-from bexhoma.evaluators.ycsb import YcsbEvaluator
+from bexhoma.benchmarks.ycsb.evaluator import YcsbEvaluator
 
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

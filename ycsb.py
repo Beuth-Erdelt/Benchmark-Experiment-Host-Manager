@@ -16,6 +16,7 @@ import logging
 import urllib3
 import argparse
 import pandas as pd
+from bexhoma.benchmarks.ycsb.experiment import YcsbExperiment
 
 
 urllib3.disable_warnings()
@@ -148,7 +149,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     ##############
     ### prepare and configure experiment
     ##############
-    experiment = experiments.YcsbExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    experiment = YcsbExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
     if on_experiment_built is not None:
         on_experiment_built(experiment)
     if args.max_sut_experiment is not None:
