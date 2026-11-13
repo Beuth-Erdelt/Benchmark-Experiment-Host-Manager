@@ -26,7 +26,7 @@ from typing import Any
 
 from bexhoma import spec
 from bexhoma.cli_args import format_metric_overrides
-from bexhoma.experiments.tpch_catalog import (
+from bexhoma.spec_argv import (
     _env_set_arg, append_ddl_flags, append_resource_flags, resolve_resource_cells, resource_sweep)
 from bexhoma.spec import SpecError
 

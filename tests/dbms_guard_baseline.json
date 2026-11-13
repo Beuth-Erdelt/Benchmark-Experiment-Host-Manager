@@ -8,7 +8,7 @@
   "duckdb": 2
  },
  "bexhoma/experiments/tpch_catalog.py": {
-  "postgres": 3
+  "postgres": 1
  },
  "bexhoma/report_writer.py": {
   "PostgreSQL": 7
@@ -18,6 +18,9 @@
  },
  "bexhoma/spec.py": {
   "mysql": 1
+ },
+ "bexhoma/spec_argv.py": {
+  "postgres": 3
  },
  "example.py": {
   "PostgreSQL": 1
