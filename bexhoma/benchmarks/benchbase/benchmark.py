@@ -9,9 +9,9 @@ See LICENSE for details.
 import pandas as pd
 from types import SimpleNamespace
 
-from bexhoma import evaluators
-from ..system_descriptors import notes
-from .base import Benchmark, Section, _key_metrics_section_from_columns
+from bexhoma.system_descriptors import notes
+from bexhoma.benchmarks.base import Benchmark, Section, _key_metrics_section_from_columns
+from bexhoma.benchmarks.benchbase.evaluator import BenchbaseEvaluator
 
 __all__ = ["Benchbase"]
 
@@ -36,9 +36,9 @@ class Benchbase(Benchmark):
         :param code: Experiment identifier.
         :param path: Root result path.
         :param benchmark_run: 1-based benchmark position.
-        :return: :class:`evaluators.BenchbaseEvaluator` instance.
+        :return: :class:`BenchbaseEvaluator` instance.
         """
-        return evaluators.BenchbaseEvaluator(
+        return BenchbaseEvaluator(
             code=code,
             path=path,
             include_loading=False,
@@ -50,7 +50,7 @@ class Benchbase(Benchmark):
     def _build_key_metrics_section(self, df_aggregated_reduced: pd.DataFrame) -> Section | None:
         """
         Surface ``Throughput (requests/second)`` — the same column
-        :meth:`~bexhoma.evaluators.benchbase.benchbase.record_tests` tests via
+        :meth:`~bexhoma.benchmarks.benchbase.evaluator.benchbase.record_tests` tests via
         ``experiment._test_column()``.
 
         :param df_aggregated_reduced: The per-phase execution DataFrame.

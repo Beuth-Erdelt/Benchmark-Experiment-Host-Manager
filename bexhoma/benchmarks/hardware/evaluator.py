@@ -17,7 +17,7 @@ import pandas as pd
 import re
 import traceback
 
-from .logger import LogEvaluator
+from bexhoma.evaluators.logger import LogEvaluator
 
 __all__ = ["HardwareEvaluator"]
 
@@ -114,7 +114,7 @@ class HardwareEvaluator(LogEvaluator):
     ``HARDWARE_TYPE`` for all of its rounds (``-xht`` is not swept), and each row
     only carries that type's own parameter/result columns — the other three
     types' columns are absent entirely, not present and zero-filled. Combining
-    rows/frames of different types (e.g. via ``collectors.HardwareCollector`` across
+    rows/frames of different types (e.g. via ``HardwareCollector`` across
     experiment codes) still works: ``pandas`` concatenation and the
     ``in df.columns`` guards throughout this class treat missing columns as
     ``NaN``, not ``0``.
@@ -214,7 +214,7 @@ class HardwareEvaluator(LogEvaluator):
         columns to ``''``; such blanks are treated as ``0`` here before casting.
         Rows of a different ``HARDWARE_TYPE`` don't have a given type's columns
         at all, so concatenating rows/frames of different types (e.g. across
-        ``collectors.HardwareCollector`` experiment codes, or a future per-round
+        ``HardwareCollector`` experiment codes, or a future per-round
         ``HARDWARE_TYPE`` sweep within one experiment) leaves those cells
         ``NaN`` instead; this method treats such ``NaN`` the same as an
         empty-string blank — ``0`` for numeric columns, ``''`` for string
@@ -271,7 +271,7 @@ class HardwareEvaluator(LogEvaluator):
         df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce').fillna(0)
         # a row from one HARDWARE_TYPE has no column at all for another type's
         # string parameters; concatenating rows of different types (e.g. across
-        # collectors.HardwareCollector experiment codes) leaves those cells NaN, and
+        # HardwareCollector experiment codes) leaves those cells NaN, and
         # astype('str') would otherwise turn NaN into the literal string 'nan'
         string_columns = [column for column, dtype in dtype_map.items() if dtype == 'str']
         df[string_columns] = df[string_columns].fillna('')
@@ -573,7 +573,7 @@ class HardwareEvaluator(LogEvaluator):
         Prefers the per-row ``hardware_type`` column (present once an
         experiment mixes tools within a single run, e.g. a per-node
         hardware-baseline sweep running sysbench then fio under the same
-        configuration -- see ``bexhoma.hardware_baseline``). Falls back to
+        configuration -- see ``bexhoma.benchmarks.hardware.baseline``). Falls back to
         the experiment-wide ``-xht`` value for older cached results that
         predate that column, preserving the original single-type-per-experiment
         behaviour exactly (either every row matches, or none do).

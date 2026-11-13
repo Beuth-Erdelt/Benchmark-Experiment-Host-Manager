@@ -1,11 +1,9 @@
 """
 Public API of the bexhoma.experiments package.
 
-Exports :class:`ExperimentBase`, :class:`MixedExperiment`,
-:class:`DbmsBenchmarkerExperiment`, :class:`TpchExperiment`,
-:class:`TpcdsExperiment`, :class:`SsbExperiment`, :class:`BenchbaseExperiment`,
-:class:`HammerdbExperiment`, :class:`YcsbExperiment`, and
-:class:`HardwareExperiment` experiment classes.
+Exports the generic experiment classes :class:`ExperimentBase` and
+:class:`MixedExperiment`. The experiment class of a benchmark is in that
+benchmark's folder, ``bexhoma/benchmarks/<name>/experiment.py``.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -14,11 +12,7 @@ See LICENSE for details.
 """
 from .base import ExperimentBase
 from .mixed import MixedExperiment
-from .benchbase import BenchbaseExperiment
-from .hammerdb import HammerdbExperiment
-from .hardware import HardwareExperiment
 
 __all__ = [
-    "ExperimentBase", "MixedExperiment", "HammerdbExperiment",
-    "BenchbaseExperiment", "HardwareExperiment",
+    "ExperimentBase", "MixedExperiment",
 ]

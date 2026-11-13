@@ -13,8 +13,8 @@ from dbmsbenchmarker import parameter
 import logging
 import urllib3
 
-from bexhoma import benchmarks
-from .mixed import MixedExperiment
+from bexhoma.experiments.mixed import MixedExperiment
+from bexhoma.benchmarks.hammerdb.benchmark import HammerDB
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -27,7 +27,7 @@ class HammerdbExperiment(MixedExperiment):
     TPC-C experiment: orchestrates HammerDB TPC-C loading and benchmarking
     inside a Kubernetes cluster.
 
-    Registers a :class:`~bexhoma.benchmarks.hammerdb.HammerDB` benchmark object and
+    Registers a :class:`~bexhoma.benchmarks.hammerdb.benchmark.HammerDB` benchmark object and
     pre-populates the experiment dict template with HammerDB-specific job templates.
     """
 
@@ -67,7 +67,7 @@ class HammerdbExperiment(MixedExperiment):
             "loader": {"sensor": True},
             "benchmarker": {"dbmsbenchmarker": True},
         }
-        self.add_benchmark(benchmarks.HammerDB(SF=SF))
+        self.add_benchmark(HammerDB(SF=SF))
         self.experiment_dict_template = {
             "loader": [
                 {

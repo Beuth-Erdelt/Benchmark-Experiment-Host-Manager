@@ -1,10 +1,10 @@
 """
 Public API of the bexhoma.evaluators package.
 
-Exports :class:`EvaluatorBase`, :class:`LogEvaluator`,
-:class:`DbmsBenchmarkerEvaluator`, :class:`BenchbaseEvaluator`,
-:class:`HammerdbEvaluator`, :class:`YcsbEvaluator`, and :class:`HardwareEvaluator`
-evaluator classes, plus the :func:`natural_sort` utility from :mod:`base`.
+Exports the generic evaluator classes :class:`EvaluatorBase` and
+:class:`LogEvaluator`, plus the :func:`natural_sort` utility from :mod:`base`.
+The evaluator of a benchmark is in that benchmark's folder,
+``bexhoma/benchmarks/<name>/evaluator.py``.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -13,11 +13,7 @@ See LICENSE for details.
 """
 from .base import EvaluatorBase, natural_sort
 from .logger import LogEvaluator
-from .benchbase import BenchbaseEvaluator
-from .hammerdb import HammerdbEvaluator
-from .hardware import HardwareEvaluator
 
 __all__ = [
-    "EvaluatorBase", "LogEvaluator",
-    "BenchbaseEvaluator", "HammerdbEvaluator", "HardwareEvaluator", "natural_sort",
+    "EvaluatorBase", "LogEvaluator", "natural_sort",
 ]

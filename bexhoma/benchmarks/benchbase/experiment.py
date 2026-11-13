@@ -13,8 +13,8 @@ from dbmsbenchmarker import parameter
 import logging
 import urllib3
 
-from bexhoma import benchmarks
-from .mixed import MixedExperiment
+from bexhoma.experiments.mixed import MixedExperiment
+from bexhoma.benchmarks.benchbase.benchmark import Benchbase
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -27,7 +27,7 @@ class BenchbaseExperiment(MixedExperiment):
     Benchbase experiment: orchestrates Benchbase loading and benchmarking
     inside a Kubernetes cluster.
 
-    Registers a :class:`~bexhoma.benchmarks.benchbase.Benchbase` benchmark
+    Registers a :class:`~bexhoma.benchmarks.benchbase.benchmark.Benchbase` benchmark
     object and pre-populates the experiment dict template with Benchbase-specific
     job templates.
     """
@@ -72,7 +72,7 @@ class BenchbaseExperiment(MixedExperiment):
             "loader": {"sensor": True},
             "benchmarker": {"dbmsbenchmarker": True},
         }
-        self.add_benchmark(benchmarks.Benchbase(SF=SF))
+        self.add_benchmark(Benchbase(SF=SF))
         self.experiment_dict_template = {
             "loader": [
                 {

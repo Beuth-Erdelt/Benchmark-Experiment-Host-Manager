@@ -37,7 +37,7 @@ class ApplyHardwareBaselineTest(unittest.TestCase):
     and records whether the sweep collected everything it scheduled."""
 
     def _apply(self, result) -> dict:
-        from bexhoma import hardware_baseline
+        from bexhoma.benchmarks.hardware import baseline as hardware_baseline
         environment_dict = {
             'nodes': [{'name': 'n1'}, {'name': 'n2'}],
             'storage_classes': [{'name': 'cephcsi'}, {'name': 'local-hdd'}],
@@ -47,7 +47,7 @@ class ApplyHardwareBaselineTest(unittest.TestCase):
         return environment_dict
 
     def test_storage_class_result_lands_on_the_storage_class_entry(self) -> None:
-        from bexhoma import hardware_baseline
+        from bexhoma.benchmarks.hardware import baseline as hardware_baseline
         result = hardware_baseline.HardwareBaselineResult(
             code='c',
             per_node={'n1': {'cpu_mem': {}, 'fio': {}}, 'n2': {'cpu_mem': {}, 'fio': {}}},
@@ -63,7 +63,7 @@ class ApplyHardwareBaselineTest(unittest.TestCase):
                          {'complete': True, 'timeout_minutes': 30, 'missing': []})
 
     def test_incomplete_sweep_is_marked(self) -> None:
-        from bexhoma import hardware_baseline
+        from bexhoma.benchmarks.hardware import baseline as hardware_baseline
         result = hardware_baseline.HardwareBaselineResult(
             code='c', per_node={'n1': {'cpu_mem': {}}}, failed_nodes=['n2'],
             missing=['nodes.n1.fio', 'nodes.n2.cpu_mem', 'nodes.n2.fio'],

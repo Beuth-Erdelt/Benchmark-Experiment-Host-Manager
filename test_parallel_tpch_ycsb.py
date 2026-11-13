@@ -32,8 +32,6 @@ import logging
 import urllib3
 import argparse
 from bexhoma.benchmarks.ycsb.benchmark import YCSB
-from bexhoma.benchmarks.ycsb.evaluator import YcsbEvaluator
-from bexhoma.benchmarks.tpch.benchmark import TPCH
 
 
 urllib3.disable_warnings()

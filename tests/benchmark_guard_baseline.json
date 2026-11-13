@@ -1,35 +1,10 @@
 {
- "bexhoma/benchmarks/__init__.py": {
-  "benchbase": 3,
-  "hammerdb": 3
- },
- "bexhoma/collectors/__init__.py": {
-  "benchbase": 5,
-  "hammerdb": 4,
-  "hardware": 3,
-  "tpcc": 1,
-  "ycsb": 2
- },
  "bexhoma/environment.py": {
   "fio": 10,
+  "hardware": 5,
   "sockperf": 3,
   "sysbench": 5,
   "tpch": 1
- },
- "bexhoma/evaluators/__init__.py": {
-  "benchbase": 4,
-  "hammerdb": 4,
-  "hardware": 3,
-  "ycsb": 1
- },
- "bexhoma/experiments/__init__.py": {
-  "benchbase": 4,
-  "hammerdb": 4,
-  "hardware": 3,
-  "ssb": 1,
-  "tpcds": 1,
-  "tpch": 1,
-  "ycsb": 1
  },
  "bexhoma/report_writer.py": {
   "tpcds": 1,

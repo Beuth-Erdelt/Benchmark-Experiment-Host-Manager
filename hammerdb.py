@@ -21,6 +21,7 @@ import time
 from timeit import default_timer
 import datetime
 import math
+from bexhoma.benchmarks.hammerdb.experiment import HammerdbExperiment
 
 
 urllib3.disable_warnings()
@@ -118,7 +119,7 @@ if __name__ == '__main__':
     ##############
     ### prepare and configure experiment
     ##############
-    experiment = experiments.HammerdbExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    experiment = HammerdbExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
     if args.max_sut_experiment is not None:
         experiment.max_sut = int(args.max_sut_experiment)
     experiment.prometheus_interval = "10s"

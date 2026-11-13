@@ -2,7 +2,7 @@
 Collector for Hardware (fio/sysbench/sockperf/netperf) experiments.
 
 Provides :class:`HardwareCollector`, a subclass of :class:`CollectorBase` that wires up
-:class:`evaluators.HardwareEvaluator` as the evaluator and overrides the performance aggregation
+:class:`HardwareEvaluator` as the evaluator and overrides the performance aggregation
 methods to handle the hardware evaluator's column layout.
 
 Authors: Patrick K. Erdelt
@@ -12,14 +12,14 @@ See LICENSE for details.
 """
 import pandas as pd
 
-from bexhoma import evaluators
-from .base import CollectorBase
+from bexhoma.collectors.base import CollectorBase
+from bexhoma.benchmarks.hardware.evaluator import HardwareEvaluator
 
 __all__ = ["HardwareCollector"]
 
 #: fio, sysbench, sockperf and netperf result columns shown in the default
 #: summary view. A given phase only ever populates one type's columns (see
-#: evaluators.HardwareEvaluator); the rest are absent/NaN, and this list is filtered
+#: HardwareEvaluator); the rest are absent/NaN, and this list is filtered
 #: down to whatever the aggregated result actually contains in get_summary().
 _SUMMARY_COLS = [
     'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
@@ -45,24 +45,24 @@ class HardwareCollector(CollectorBase):
     """
     Collector for Hardware (fio/sysbench/sockperf/netperf) experiments.
 
-    Overrides :meth:`get_evaluator` to return a :class:`evaluators.HardwareEvaluator` instance and
+    Overrides :meth:`get_evaluator` to return a :class:`HardwareEvaluator` instance and
     overrides the performance aggregation methods because the hardware evaluator's
-    :meth:`~bexhoma.evaluators.hardware.HardwareEvaluator.benchmarking_aggregate_by_parallel_pods`
+    :meth:`~bexhoma.benchmarks.hardware.evaluator.HardwareEvaluator.benchmarking_aggregate_by_parallel_pods`
     does not produce a ``connection`` column (unlike the base class expectation).
     """
 
-    def get_evaluator(self, code: str = '') -> evaluators.HardwareEvaluator:
+    def get_evaluator(self, code: str = '') -> HardwareEvaluator:
         """
-        Returns a :class:`evaluators.HardwareEvaluator` instance for the given experiment code.
+        Returns a :class:`HardwareEvaluator` instance for the given experiment code.
 
         :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
         :type code: str
         :return: Hardware evaluator for the specified experiment.
-        :rtype: evaluators.HardwareEvaluator
+        :rtype: HardwareEvaluator
         """
         if code == '':
             code = self.codes[0]
-        return evaluators.HardwareEvaluator(code=code, path=self.path)
+        return HardwareEvaluator(code=code, path=self.path)
 
     def get_performance_aggregated_per_phase(self) -> pd.DataFrame:
         """

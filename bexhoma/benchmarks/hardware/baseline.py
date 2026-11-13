@@ -44,6 +44,7 @@ from typing import Any, Optional
 
 from bexhoma import configurations, experiments
 from bexhoma.cli_args import make_base_parser
+from bexhoma.benchmarks.hardware.experiment import HardwareExperiment
 
 __all__ = [
     "HardwareBaselineError",
@@ -313,7 +314,7 @@ def _build_parsed_args(*, timeout_minutes: Optional[int], hardware_duration: int
     args.monitoring = False
     args.monitoring_app = False
     args.monitoring_cluster = False
-    # bexhoma.benchmarks.hardware.Hardware.configure_workload() (called from
+    # bexhoma.benchmarks.hardware.benchmark.Hardware.configure_workload() (called from
     # prepare_testbed(), before any of this sweep's own per-round HARDWARE_TYPE
     # overrides exist) reads these two hardware.py-specific flags straight off
     # args -- they are not part of make_base_parser(). Only used to build the
@@ -403,7 +404,7 @@ def run_hardware_baseline(
         network_targets = {node: [] for node in node_names}
 
     args = _build_parsed_args(timeout_minutes=timeout_minutes, hardware_duration=hardware_duration)
-    experiment = experiments.HardwareExperiment(
+    experiment = HardwareExperiment(
         cluster=cluster, timeout=int(args.timeout), code=None, num_experiment_to_apply=1)
     experiment.prometheus_interval = "10s"
     experiment.prometheus_timeout = "10s"
@@ -530,7 +531,7 @@ def _collect_results(
     """Parse the sweep's already-collected pod logs into ``result`` in place.
 
     Reuses the ``Hardware`` benchmark's own evaluator
-    (:class:`bexhoma.evaluators.hardware.HardwareEvaluator`, already
+    (:class:`bexhoma.benchmarks.hardware.evaluator.HardwareEvaluator`, already
     instantiated by ``experiment.process()`` for its own summary/tests) --
     it already parses every ``HARDWARE_*`` ``KEY:VALUE`` line the benchmarker
     scripts emit; nothing new is needed here beyond mapping its rows back to

@@ -9,8 +9,8 @@ See LICENSE for details.
 import pandas as pd
 from types import SimpleNamespace
 
-from bexhoma import evaluators
-from .base import Benchmark, Section, _key_metrics_section_from_columns
+from bexhoma.benchmarks.base import Benchmark, Section, _key_metrics_section_from_columns
+from bexhoma.benchmarks.hammerdb.evaluator import HammerdbEvaluator
 
 __all__ = ["HammerDB"]
 
@@ -35,9 +35,9 @@ class HammerDB(Benchmark):
         :param code: Experiment identifier.
         :param path: Root result path.
         :param benchmark_run: 1-based benchmark position.
-        :return: :class:`evaluators.HammerdbEvaluator` instance.
+        :return: :class:`HammerdbEvaluator` instance.
         """
-        return evaluators.HammerdbEvaluator(
+        return HammerdbEvaluator(
             code=code,
             path=path,
             include_loading=False,
@@ -49,7 +49,7 @@ class HammerDB(Benchmark):
     def _build_key_metrics_section(self, df_aggregated_reduced: pd.DataFrame) -> Section | None:
         """
         Surface ``NOPM`` — the same column
-        :meth:`~bexhoma.evaluators.hammerdb.HammerdbEvaluator.record_tests` tests via
+        :meth:`~bexhoma.benchmarks.hammerdb.evaluator.HammerdbEvaluator.record_tests` tests via
         ``experiment._test_column()``.
 
         :param df_aggregated_reduced: The per-phase execution DataFrame.

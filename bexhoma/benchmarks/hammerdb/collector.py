@@ -2,7 +2,7 @@
 Collector for HammerDB TPC-C experiments.
 
 Provides :class:`HammerdbCollector`, a thin subclass of :class:`CollectorBase` that wires up
-:class:`evaluators.HammerdbEvaluator` as the evaluator. All data collection and
+:class:`HammerdbEvaluator` as the evaluator. All data collection and
 aggregation logic is inherited from :class:`CollectorBase`.
 
 Authors: Patrick K. Erdelt
@@ -24,8 +24,8 @@ import pprint
 
 from dbmsbenchmarker import parameter, inspector
 
-from bexhoma import evaluators
-from .base import CollectorBase
+from bexhoma.collectors.base import CollectorBase
+from bexhoma.benchmarks.hammerdb.evaluator import HammerdbEvaluator
 
 __all__ = ["HammerdbCollector"]
 
@@ -34,7 +34,7 @@ class HammerdbCollector(CollectorBase):
     """
     Collector for HammerDB TPC-C experiments.
 
-    Overrides :meth:`get_evaluator` to return a :class:`evaluators.HammerdbEvaluator` instance.
+    Overrides :meth:`get_evaluator` to return a :class:`HammerdbEvaluator` instance.
     All data collection and aggregation methods are inherited from :class:`CollectorBase`;
     the transaction counter time series (``tpm`` every 10 s) are added here.
     """
@@ -52,23 +52,23 @@ class HammerdbCollector(CollectorBase):
 
     def get_evaluator(self, code=''):
         """
-        Returns a :class:`evaluators.HammerdbEvaluator` instance for the given experiment code.
+        Returns a :class:`HammerdbEvaluator` instance for the given experiment code.
 
         :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
         :type code: str
         :return: TPC-C evaluator for the specified experiment.
-        :rtype: evaluators.HammerdbEvaluator
+        :rtype: HammerdbEvaluator
         """
         if code == '':
             code = self.codes[0]
-        return evaluators.HammerdbEvaluator(code=code, path=self.path, benchmark_run=self.benchmark_run)
+        return HammerdbEvaluator(code=code, path=self.path, benchmark_run=self.benchmark_run)
 
     def get_benchmark_timeseries_per_phase(self, metric="tpm"):
         """
         Combines aggregated HammerDB transaction counter time-series per phase from all experiment codes into a wide-format DataFrame.
 
         For each code and each unique ``(configuration, client, experiment_run, benchmark_run)``
-        combination, calls :meth:`evaluators.HammerdbEvaluator.get_benchmark_logs_timeseries_df_aggregated`
+        combination, calls :meth:`HammerdbEvaluator.get_benchmark_logs_timeseries_df_aggregated`
         and places the metric column as one column in the result.  Each column is labelled
         ``{code}-{configuration}-{client}-{experiment_run}-{benchmark_run}``.
 
@@ -104,7 +104,7 @@ class HammerdbCollector(CollectorBase):
         Collects long-format HammerDB transaction counter time-series data for a given metric across all experiment codes.
 
         For each code and each unique ``(configuration, client, experiment_run)`` combination,
-        calls :meth:`evaluators.HammerdbEvaluator.get_benchmark_logs_timeseries_df_aggregated`, reshapes
+        calls :meth:`HammerdbEvaluator.get_benchmark_logs_timeseries_df_aggregated`, reshapes
         the result to long format, and annotates each row with its identifying fields.
         Connection metadata (e.g. ``type_tenants``, ``num_tenants``, ``vol_tenants``) is joined
         in from :meth:`get_connections` for each code.

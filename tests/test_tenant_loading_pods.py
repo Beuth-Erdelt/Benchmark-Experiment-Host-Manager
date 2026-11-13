@@ -44,7 +44,7 @@ class CheckTenantLoadingPodsTest(unittest.TestCase):
 
     def test_benchbase_is_one_pod_per_tenant(self):
         from bexhoma.experiments.base import ExperimentBase
-        from bexhoma.experiments.benchbase import BenchbaseExperiment
+        from bexhoma.benchmarks.benchbase.experiment import BenchbaseExperiment
         from bexhoma.benchmarks.tpch.experiment import TpchExperiment
         self.assertTrue(BenchbaseExperiment.tenant_loading_one_pod_per_tenant)
         self.assertFalse(TpchExperiment.tenant_loading_one_pod_per_tenant)

@@ -18,8 +18,8 @@ See LICENSE for details.
 import logging
 import urllib3
 
-from bexhoma import benchmarks
-from .mixed import MixedExperiment
+from bexhoma.experiments.mixed import MixedExperiment
+from bexhoma.benchmarks.hardware.benchmark import Hardware
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -32,7 +32,7 @@ class HardwareExperiment(MixedExperiment):
     Hardware experiment: orchestrates fio/sysbench/sockperf benchmarks against a
     dedicated SUT container inside a Kubernetes cluster.
 
-    Registers a :class:`~bexhoma.benchmarks.hardware.Hardware` benchmark object
+    Registers a :class:`~bexhoma.benchmarks.hardware.benchmark.Hardware` benchmark object
     and pre-populates the experiment dict template with the Hardware-specific
     job template. Extends :class:`MixedExperiment`.
     """
@@ -83,7 +83,7 @@ class HardwareExperiment(MixedExperiment):
         self.components = {
             "benchmarker": {"dbmsbenchmarker": True},
         }
-        self.add_benchmark(benchmarks.Hardware())
+        self.add_benchmark(Hardware())
         self.experiment_dict_template = {
             "loader": [],
             "benchmarker": [[

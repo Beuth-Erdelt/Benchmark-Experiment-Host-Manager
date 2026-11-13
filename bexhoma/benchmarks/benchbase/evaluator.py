@@ -25,8 +25,8 @@ from datetime import datetime
 import glob
 from pathlib import Path
 
-from .base import natural_sort
-from .logger import LogEvaluator
+from bexhoma.evaluators.base import natural_sort
+from bexhoma.evaluators.logger import LogEvaluator
 
 __all__ = ["BenchbaseEvaluator"]
 

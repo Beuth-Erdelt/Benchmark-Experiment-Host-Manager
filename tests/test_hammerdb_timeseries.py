@@ -1,5 +1,5 @@
 """
-Unit tests for the HammerDB transaction counter time series in :class:`bexhoma.evaluators.hammerdb.HammerdbEvaluator`.
+Unit tests for the HammerDB transaction counter time series in :class:`bexhoma.benchmarks.hammerdb.evaluator.HammerdbEvaluator`.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -12,7 +12,7 @@ import os
 import tempfile
 import unittest
 
-from bexhoma.evaluators.hammerdb import HammerdbEvaluator
+from bexhoma.benchmarks.hammerdb.evaluator import HammerdbEvaluator
 
 # Two VU tests in one pod log, as printed by benchmarker.sh after the run
 _LOG = """Vuser 1:TEST RESULT : System achieved 96312 NOPM from 220914 PostgreSQL TPM

@@ -33,8 +33,6 @@ from typing import Any, Callable, Optional
 
 __all__ = ["BenchmarkDescriptor", "register", "descriptors", "descriptor_of", "descriptor_for_type"]
 
-#: Module that registers the descriptors of the benchmarks that have no folder of their own yet.
-_TRANSITIONAL_MODULE = "bexhoma.benchmarks.registered"
 
 
 @dataclass(frozen=True)
@@ -100,8 +98,6 @@ def _load() -> None:
     _state['loading'] = True
     try:
         folder = os.path.dirname(os.path.abspath(__file__))
-        if os.path.exists(os.path.join(folder, _TRANSITIONAL_MODULE.rsplit('.', 1)[1] + '.py')):
-            importlib.import_module(_TRANSITIONAL_MODULE)
         for module_info in sorted(pkgutil.iter_modules([folder]), key=lambda info: info.name):
             if not module_info.ispkg:
                 continue

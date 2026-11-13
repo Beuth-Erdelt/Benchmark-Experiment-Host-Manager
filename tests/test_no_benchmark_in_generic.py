@@ -14,8 +14,8 @@ like "``terminals`` (Benchbase) or ``vusers`` (HammerDB)" marks code that reacts
 specifics of a benchmark although no name appears in the code itself. Every hit is
 either such a special case or a stale example that can be reworded.
 
-Not scanned are the files that belong to one benchmark or tool (:func:`is_benchmark_file`);
-they move to ``bexhoma/benchmarks/<name>/`` and are then exempt by their folder.
+Not scanned are the files that belong to one benchmark or tool: the folders
+``bexhoma/benchmarks/<name>/`` (:func:`is_benchmark_file`).
 
 The existing occurrences are recorded per file in
 ``tests/benchmark_guard_baseline.json``. The test fails when a file gets *more*
@@ -62,19 +62,9 @@ NAMES = {
 _HARDWARE_BENCHMARK = re.compile(r'Hardware(?:Experiment|Evaluator|Collector)|HARDWARE_TYPE|hardware_type'
                                  r'|(?:experiments|evaluators|collectors|benchmarks)\.[Hh]ardware\b')
 
-#: Files of the layer packages that belong to one benchmark or to one benchmarking tool.
-#: They are moved to ``bexhoma/benchmarks/<name>/``; delete an entry when its file has moved.
-_BENCHMARK_FILES = {
-    # the descriptors of all benchmarks, until each benchmark has a folder of its own
-    'bexhoma/benchmarks/registered.py',
-    'bexhoma/benchmarks/benchbase.py', 'bexhoma/benchmarks/hardware.py',
-    # the baseline of the cluster's hardware is a use of the hardware benchmark; bexhoma.environment
-    # imports it, the one place where a generic module depends on a benchmark
-    'bexhoma/hardware_baseline.py',
-    'bexhoma/benchmarks/hammerdb.py',       'bexhoma/collectors/benchbase.py', 'bexhoma/collectors/hardware.py',
-    'bexhoma/collectors/hammerdb.py',    'bexhoma/evaluators/benchbase.py', 'bexhoma/evaluators/hardware.py',
-    'bexhoma/evaluators/hammerdb.py',    'bexhoma/experiments/benchbase.py', 'bexhoma/experiments/hardware.py',
-    'bexhoma/experiments/hammerdb.py',       }
+#: Files outside the benchmark folders that belong to one benchmark. There are none; a file added
+#: here is a benchmark-specific file in the wrong place.
+_BENCHMARK_FILES = set()
 
 
 def is_benchmark_file(relative: str) -> bool:

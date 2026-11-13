@@ -8,8 +8,8 @@ See LICENSE for details.
 """
 from types import SimpleNamespace
 
-from bexhoma import evaluators
-from .base import Benchmark
+from bexhoma.benchmarks.base import Benchmark
+from bexhoma.benchmarks.hardware.evaluator import HardwareEvaluator
 
 __all__ = ["Hardware"]
 
@@ -30,9 +30,9 @@ class Hardware(Benchmark):
         :param code: Experiment identifier.
         :param path: Root result path.
         :param benchmark_run: 1-based benchmark position.
-        :return: :class:`evaluators.HardwareEvaluator` instance.
+        :return: :class:`HardwareEvaluator` instance.
         """
-        return evaluators.HardwareEvaluator(
+        return HardwareEvaluator(
             code=code,
             path=path,
             include_loading=False,

@@ -1,8 +1,8 @@
 """
-Unit tests for :mod:`bexhoma.evaluators.hardware`.
+Unit tests for :mod:`bexhoma.benchmarks.hardware.evaluator`.
 
 Covers a real bug found while validating the hardware-baseline sweep
-(:mod:`bexhoma.hardware_baseline`) against a live cluster: an experiment that
+(:mod:`bexhoma.benchmarks.hardware.baseline`) against a live cluster: an experiment that
 mixes multiple ``HARDWARE_TYPE`` rounds under one configuration (e.g. a
 sysbench round then a fio round for the same node) caused
 ``HardwareEvaluator.record_tests()`` to report a false "0 CPU events/sec"
@@ -21,11 +21,12 @@ from types import SimpleNamespace
 import pandas as pd
 
 from bexhoma import evaluators
+from bexhoma.benchmarks.hardware.evaluator import HardwareEvaluator
 
 
-def _make_evaluator() -> evaluators.HardwareEvaluator:
+def _make_evaluator() -> HardwareEvaluator:
     """Build a HardwareEvaluator with no disk access needed for these tests."""
-    return evaluators.HardwareEvaluator(code='test-code', path='/nonexistent', include_loading=False,
+    return HardwareEvaluator(code='test-code', path='/nonexistent', include_loading=False,
                                 include_benchmarking=True, benchmark_run=1, name='hardware')
 
 
@@ -48,14 +49,14 @@ class RowsOfHardwareTypeTest(unittest.TestCase):
             {'hardware_type': 'fio', 'value': 2},
             {'hardware_type': 'sysbench', 'value': 3},
         ])
-        selected = evaluators.HardwareEvaluator._rows_of_hardware_type(df, 'sysbench', 'sysbench')
+        selected = HardwareEvaluator._rows_of_hardware_type(df, 'sysbench', 'sysbench')
         self.assertEqual(sorted(selected['value']), [1, 3])
 
     def test_falls_back_to_experiment_wide_type_when_column_absent(self) -> None:
         df = pd.DataFrame([{'value': 1}, {'value': 2}])
-        matching = evaluators.HardwareEvaluator._rows_of_hardware_type(df, 'sysbench', 'sysbench')
+        matching = HardwareEvaluator._rows_of_hardware_type(df, 'sysbench', 'sysbench')
         self.assertEqual(len(matching), 2)
-        not_matching = evaluators.HardwareEvaluator._rows_of_hardware_type(df, 'fio', 'sysbench')
+        not_matching = HardwareEvaluator._rows_of_hardware_type(df, 'fio', 'sysbench')
         self.assertEqual(len(not_matching), 0)
 
 
@@ -90,7 +91,7 @@ class BenchmarkingAggregateHardwareTypeTest(unittest.TestCase):
 class RecordTestsMixedHardwareTypeTest(unittest.TestCase):
     """Tests for :meth:`HardwareEvaluator.record_tests` against a ``df_reduced``
     that mixes multiple hardware types under one experiment -- the scenario
-    :mod:`bexhoma.hardware_baseline` introduces."""
+    :mod:`bexhoma.benchmarks.hardware.baseline` introduces."""
 
     def _df_reduced(self, sysbench_cpu_events: float, fio_read_iops: float, fio_write_iops: float) -> pd.DataFrame:
         return pd.DataFrame([

@@ -16,8 +16,8 @@ import unittest
 import pandas as pd
 
 from bexhoma.evaluators.base import EvaluatorBase
-from bexhoma.evaluators.benchbase import BenchbaseEvaluator
-from bexhoma.evaluators.hammerdb import HammerdbEvaluator
+from bexhoma.benchmarks.benchbase.evaluator import BenchbaseEvaluator
+from bexhoma.benchmarks.hammerdb.evaluator import HammerdbEvaluator
 from bexhoma.experiments.base import ExperimentBase
 
 __all__ = []

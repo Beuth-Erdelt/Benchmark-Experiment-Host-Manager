@@ -204,9 +204,9 @@ class SupportTest(unittest.TestCase):
 
     def test_the_workloads_opt_in(self):
         from bexhoma.benchmarks.tpcds.experiment import TpcdsExperiment
-        from bexhoma.experiments.hammerdb import HammerdbExperiment
-        from bexhoma.experiments.benchbase import BenchbaseExperiment
-        from bexhoma.experiments.hardware import HardwareExperiment
+        from bexhoma.benchmarks.hammerdb.experiment import HammerdbExperiment
+        from bexhoma.benchmarks.benchbase.experiment import BenchbaseExperiment
+        from bexhoma.benchmarks.hardware.experiment import HardwareExperiment
         self.assertFalse(ExperimentBase.supports_storage_sweep)
         for experiment_class in (TpchExperiment, TpcdsExperiment, YcsbExperiment, HammerdbExperiment,
                                  BenchbaseExperiment, HardwareExperiment):

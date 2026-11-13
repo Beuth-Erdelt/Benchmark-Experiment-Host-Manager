@@ -18,6 +18,7 @@ from dbmsbenchmarker import *
 import logging
 import urllib3
 import argparse
+from bexhoma.benchmarks.benchbase.experiment import BenchbaseExperiment
 
 
 urllib3.disable_warnings()
@@ -187,7 +188,7 @@ if __name__ == '__main__':
     ##############
     ### prepare and configure experiment
     ##############
-    experiment = experiments.BenchbaseExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    experiment = BenchbaseExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
     if args.max_sut_experiment is not None:
         experiment.max_sut = int(args.max_sut_experiment)
     experiment.set_benchmark_type(type_of_benchmark)

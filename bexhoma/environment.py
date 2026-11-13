@@ -24,7 +24,7 @@ is auditable rather than silent.
 The hardware-baseline step (running sysbench cpu/memory per node, fio
 against each node's own container-local scratch space, and an optional
 sockperf network test between nodes) is opt-in via ``-xhw`` on the CLI, or
-:func:`bexhoma.hardware_baseline.run_hardware_baseline` directly. Unlike the
+:func:`bexhoma.benchmarks.hardware.baseline.run_hardware_baseline` directly. Unlike the
 collectors above it is cluster-mutating (it deploys and tears down a short
 benchmark sweep), so it stays off by default.
 
@@ -176,7 +176,7 @@ class NodeInfo:
     :ivar hardware_baseline: This node's own CPU/RAM (sysbench) and
         container-local disk I/O (fio) results, keyed ``"cpu_mem"``/``"fio"``
         — populated by the opt-in ``-xhw`` sweep
-        (:func:`bexhoma.hardware_baseline.run_hardware_baseline`), empty
+        (:func:`bexhoma.benchmarks.hardware.baseline.run_hardware_baseline`), empty
         otherwise. Node-to-node network results are not per-node; see the
         top-level ``network_matrix`` key :func:`build_environment` returns.
     """
@@ -1038,18 +1038,18 @@ def apply_hardware_baseline(
     :param environment: Descriptor built by :func:`build_environment`; mutated in place.
     :param hardware_duration: Seconds each sysbench/fio/sockperf round runs for.
     :param network_topology: ``'none'``, ``'star'``, or ``'full'`` — see
-        :func:`bexhoma.hardware_baseline.run_hardware_baseline`.
+        :func:`bexhoma.benchmarks.hardware.baseline.run_hardware_baseline`.
     :param hub: Hub node for ``network_topology='star'``; defaults to the first node.
     :param storage_classes: Extra StorageClasses to additionally run the fio
         round against, e.g. ``[None, 'cephcsi']`` — see
-        :func:`bexhoma.hardware_baseline.run_hardware_baseline`. Each named
+        :func:`bexhoma.benchmarks.hardware.baseline.run_hardware_baseline`. Each named
         class is only swept once, on a single node; its result goes to that
         class's ``storage_classes`` entry as ``hardware_baseline``, with
         ``measured_from`` naming the node. Every node's ``hardware_baseline``
         still gets the always-present ``"fio"`` (ephemeral) entry.
     :param timeout_minutes: Wall-clock cap for the whole sweep.
     """
-    from bexhoma import hardware_baseline
+    from bexhoma.benchmarks.hardware import baseline as hardware_baseline
 
     node_names = [node["name"] for node in environment["nodes"]]
     try:
