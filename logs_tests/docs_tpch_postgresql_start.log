@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1794486117
-Experiment                    : starts at 2026-11-12 13:21:57.955190 (122663.6424462)
+Experiment                    : has code 1794579527
+Experiment                    : starts at 2026-11-13 15:18:49.227487 (216072.7260516)
 Experiment                    : This just starts a SUT.
 Load durability is relaxed (-xld; restored after the load).
 Experiment uses bexhoma version 0.11.17.
@@ -20,28 +20,28 @@ PostgreSQL-1                  : will start now
 PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1794486117
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1794486117
-Loop pass                     : took 1.7s (1 kubectl calls 0.5s, 9 API requests 0.4s)
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1794579527
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1794579527
+Loop pass                     : took 2.5s (1 kubectl calls 1.2s, 9 API requests 0.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 14 API requests 0.8s)
+Loop pass                     : took 6.3s (0 kubectl calls 0.0s, 14 API requests 0.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 14 API requests 0.8s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 14 API requests 0.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 14 API requests 0.8s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 14 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 14 API requests 0.7s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 14 API requests 0.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : can be stopped, but we leave it running
-PostgreSQL-1                  : Ready: kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1794486117 9091
+PostgreSQL-1                  : Ready: kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1794579527 9091
 postgresql-1-1                : needs monitoring (common metrics) for deployment sut
-PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1794486117
-Loop pass                     : took 7.3s (3 kubectl calls 1.7s, 41 API requests 3.3s)
-Experiment                    : ends at 2026-11-12 13:24:41.106209 (122826.7904083) - 163.15s total
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1794579527
+Loop pass                     : took 10.4s (3 kubectl calls 3.8s, 41 API requests 4.5s)
+Experiment                    : ends at 2026-11-13 15:21:42.996937 (216246.4923554) - 173.77s total
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
@@ -52,8 +52,8 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Start DBMS
 * Type: tpch
-* Duration: 164s 
-* Code: 1794486117
+* Duration: 174s 
+* Code: 1794579527
 * Start DBMS and do not load data.
 * This just starts a SUT.
   * Load durability is relaxed (-xld; restored after the load).
@@ -69,7 +69,7 @@ TPC-H Start DBMS
 
 ### Services
 PostgreSQL-1
-* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1794486117 9091:9091
+* kubectl --context oidc_ds_cluster port-forward service/bexhoma-sut-postgresql-1-1794579527 9091:9091
 
 ### Connections
 * postgresql-1-1 uses docker image postgres:18.6
@@ -78,10 +78,10 @@ PostgreSQL-1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1009716
+  * disk:1123532
   * datadisk:39
   * volume_size:1.8T
-  * volume_used:987G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -90,7 +90,7 @@ PostgreSQL-1
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794486117
+    * code:1794579527
 
 ### Tests
 * TEST passed: Loading measured in this experiment
