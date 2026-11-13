@@ -531,7 +531,13 @@ class ResetSummaryTest(unittest.TestCase):
         from bexhoma.benchmarks.base import Benchmark
         recorded = []
         experiment = types.SimpleNamespace(_record_test=lambda passed, label: recorded.append((passed, label)))
-        Benchmark._record_reset_test(Benchmark.__new__(Benchmark), experiment, df)
+        class _AnyBenchmark(Benchmark):  # Benchmark is abstract; the test needs no evaluator
+            def create_evaluator(self, code, path, benchmark_run):
+                return None
+
+            def configure_workload(self, experiment, parameter):
+                pass
+        Benchmark._record_reset_test(_AnyBenchmark(name='any'), experiment, df)
         return recorded
 
     def test_table_shows_failed_and_fast_resets(self):
