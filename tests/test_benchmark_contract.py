@@ -13,7 +13,7 @@ message, not later on a cluster:
   without a template of its own takes it per DBMS from ``cluster.config``, and those
   templates exist as well;
 * the evaluator implements the two summary tables;
-* the entry script exists;
+* the entry script exists and is a shim over ``cli.main`` of the folder;
 * names and types are unique.
 
 The dependency test checks the direction of imports: generic code never imports a
@@ -134,6 +134,20 @@ class BenchmarkContractTest(unittest.TestCase):
             with self.subTest(benchmark=descriptor.name):
                 self.assertTrue(descriptor.entry_script, 'a benchmark with an experiment has an entry script')
                 self.assertTrue(os.path.isfile(os.path.join(_REPO, descriptor.entry_script)), descriptor.entry_script)
+
+    def test_command_line(self) -> None:
+        """The command line is ``cli.main`` in the folder; the root script only calls it."""
+        import importlib
+        for descriptor in self.descriptors:
+            if descriptor.experiment is None:
+                continue
+            with self.subTest(benchmark=descriptor.name):
+                cli = importlib.import_module(f'bexhoma.benchmarks.{descriptor.name}.cli')
+                self.assertTrue(callable(getattr(cli, 'main', None)), 'cli.py defines main()')
+                with open(os.path.join(_REPO, descriptor.entry_script), encoding='utf-8') as file:
+                    shim = file.read()
+                self.assertIn(f'from bexhoma.benchmarks.{descriptor.name}.cli import main', shim)
+                self.assertLess(len(ast.parse(shim).body), 4, 'the root script is a shim, its code is in cli.py')
 
     def test_experiment(self) -> None:
         for descriptor in self.descriptors:

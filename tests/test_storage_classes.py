@@ -18,7 +18,7 @@ from unittest import mock
 
 import pandas as pd
 
-import tpch
+from bexhoma.benchmarks.tpch import cli as tpch
 from bexhoma import environment
 from bexhoma import spec as catalog_spec
 from bexhoma.cli_args import format_storage_types, split_storage_types

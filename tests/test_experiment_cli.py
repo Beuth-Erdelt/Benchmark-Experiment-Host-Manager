@@ -55,7 +55,7 @@ class RunExperimentYamlDispatchTest(unittest.TestCase):
         alongside dev/catalog/experiment.yml (see DefaultCatalogPathTest), so
         the default "alongside" lookup would not find it.
         """
-        import tpch
+        from bexhoma.benchmarks.tpch import cli as tpch
         with mock.patch.object(tpch, 'run') as mock_run:
             experiment_cli.run_experiment_yaml(_CATALOG_DRIVEN_FILE, _CATALOG_FILE)
         mock_run.assert_called_once()
@@ -66,7 +66,7 @@ class RunExperimentYamlDispatchTest(unittest.TestCase):
 
     def test_catalog_driven_file_accepts_preassigned_code(self) -> None:
         """The harness can know the result folder before launching the run."""
-        import tpch
+        from bexhoma.benchmarks.tpch import cli as tpch
         with mock.patch.object(tpch, 'run') as mock_run:
             experiment_cli.run_experiment_yaml(
                 _CATALOG_DRIVEN_FILE, _CATALOG_FILE, experiment_code='1234567890')
@@ -75,8 +75,8 @@ class RunExperimentYamlDispatchTest(unittest.TestCase):
     def test_catalog_driven_ycsb_file_resolves_and_calls_ycsb_run(self) -> None:
         """A ``workload.name: ycsb`` catalog file is translated into a ycsb.py argv
         and handed to ycsb.run(), not tpch.run()."""
-        import tpch
-        import ycsb
+        from bexhoma.benchmarks.tpch import cli as tpch
+        from bexhoma.benchmarks.ycsb import cli as ycsb
         with mock.patch.object(ycsb, 'run') as mock_ycsb_run, \
              mock.patch.object(tpch, 'run') as mock_tpch_run:
             experiment_cli.run_experiment_yaml(_CATALOG_DRIVEN_YCSB_FILE, _CATALOG_FILE)
@@ -93,7 +93,7 @@ class RunExperimentYamlDispatchTest(unittest.TestCase):
 
     def test_self_specified_file_routes_to_experiment_builder(self) -> None:
         """A self-specified file is validated and handed to experiment_builder, not tpch.run()."""
-        import tpch
+        from bexhoma.benchmarks.tpch import cli as tpch
         with mock.patch.object(experiment_cli.tpch_builder, 'build_experiment') as mock_build, \
              mock.patch.object(tpch, 'run') as mock_run:
             experiment_cli.run_experiment_yaml(_SELF_SPECIFIED_FILE)
@@ -104,7 +104,7 @@ class RunExperimentYamlDispatchTest(unittest.TestCase):
         """The catalog-driven branch must give tpch.run() an on_experiment_built
         callback, so the experiment.yml + contracts still land in the result
         folder even though tpch.run() itself never returns the built experiment."""
-        import tpch
+        from bexhoma.benchmarks.tpch import cli as tpch
         with mock.patch.object(tpch, 'run') as mock_run:
             experiment_cli.run_experiment_yaml(_CATALOG_DRIVEN_FILE, _CATALOG_FILE)
         callback = mock_run.call_args.kwargs['on_experiment_built']

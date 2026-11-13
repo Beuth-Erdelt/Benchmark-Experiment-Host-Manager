@@ -23,7 +23,7 @@ See LICENSE for details.
 import copy
 import unittest
 
-import ycsb
+from bexhoma.benchmarks.ycsb import cli as ycsb
 from bexhoma import spec as catalog_spec
 
 _CATALOG_FILE = 'contracts/contract_catalog.yml'

@@ -39,7 +39,6 @@ agent = ["openai>=1.0", "python-dotenv>=1.0", "httpx>=0.27"]
 # ---- setuptools configuration ----
 [tool.setuptools]
 include-package-data = true
-py-modules = ["tpch"]
 
 [tool.setuptools.packages.find]
 where = ["."]

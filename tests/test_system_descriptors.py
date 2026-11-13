@@ -192,7 +192,7 @@ class ConfigFilesTest(unittest.TestCase):
 
     def test_catalog_option_flags_exist_in_tpch(self) -> None:
         """An env-var knob of an experiment.yaml that is a tpch.py option is passed as that option's flag."""
-        import tpch
+        from bexhoma.benchmarks.tpch import cli as tpch
         from bexhoma.benchmarks.tpch.catalog import option_flags
         destinations = {option: action.dest for action in tpch.build_parser()._actions for option in action.option_strings}
         dockers = _load('k8s-cluster.config')['dockers']

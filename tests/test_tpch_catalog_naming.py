@@ -24,7 +24,7 @@ import copy
 import re
 import unittest
 
-import tpch
+from bexhoma.benchmarks.tpch import cli as tpch
 from bexhoma import spec as catalog_spec
 
 _CATALOG_FILE = 'contracts/contract_catalog.yml'

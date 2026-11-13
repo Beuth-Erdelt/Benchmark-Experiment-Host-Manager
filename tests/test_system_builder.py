@@ -17,8 +17,8 @@ import types
 import unittest
 from unittest import mock
 
-import benchbase
-import tpch
+from bexhoma.benchmarks.benchbase import cli as benchbase
+from bexhoma.benchmarks.tpch import cli as tpch
 
 from bexhoma import system_descriptors as sd
 from bexhoma.experiments import system_builder as builder
@@ -356,7 +356,7 @@ class LoadingTemplateInTheScriptsTest(unittest.TestCase):
     """The scripts, with a PostgreSQL that lost its loading_template."""
 
     def run_tpch(self, *argv):
-        import tpch
+        from bexhoma.benchmarks.tpch import cli as tpch
         with tempfile.TemporaryDirectory() as tmp_dir:
             cluster = _SweepStubCluster(resultfolder=tmp_dir)
             cluster.volumes = _AnyVolumes(cluster.volumes)

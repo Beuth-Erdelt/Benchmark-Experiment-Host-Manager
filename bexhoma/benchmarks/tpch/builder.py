@@ -37,24 +37,13 @@ _PROVENANCE_FILES = (('catalog', 'catalog.yaml'), ('environment', 'environment.y
 
 def _import_tpch_module():
     """
-    Import the repo-root ``tpch.py`` module to reuse its real, single-sourced
+    The module of ``tpch.py``'s command line, to reuse its real, single-sourced
     ``build_parser()`` argparse defaults.
 
-    ``tpch.py`` lives at the repo root, not inside the ``bexhoma`` package, so
-    it is only importable when the repo root is on ``sys.path`` — true when
-    this process was started as ``python experiment.py`` (Python prepends the
-    launched script's directory), but not guaranteed for other callers (e.g.
-    a test suite run from a different working directory), hence the fallback.
-
-    :return: The imported ``tpch`` module.
+    :return: :mod:`bexhoma.benchmarks.tpch.cli`.
     """
-    try:
-        import tpch as tpch_module
-    except ModuleNotFoundError:
-        repo_root = Path(__file__).resolve().parent.parent.parent
-        sys.path.insert(0, str(repo_root))
-        import tpch as tpch_module
-    return tpch_module
+    from bexhoma.benchmarks.tpch import cli
+    return cli
 
 
 def _build_cluster(cluster_spec: dict):
