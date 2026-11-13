@@ -112,6 +112,38 @@ class CollectorBase:
             workload_properties['tenant_per'] = 'None'
         return workload_properties
 
+    #: Monitoring components every experiment collects; an experiment can add more in the
+    #: ``monitoring_components`` of its ``queries.config`` (e.g. ``datagenerator``).
+    BASE_COMPONENTS = ('loading', 'benchmarking', 'loader', 'benchmarker')
+
+    def known_components(self) -> list:
+        """
+        The monitoring components of the experiments of this collector.
+
+        :return: :data:`BASE_COMPONENTS` and the ``monitoring_components`` of every
+            experiment's workload, sorted.
+        :rtype: list[str]
+        """
+        components = set(self.BASE_COMPONENTS)
+        for code in self.codes:
+            components |= set(self.get_workload(code).get('monitoring_components') or {})
+        return sorted(components)
+
+    def _check_component(self, component: str) -> None:
+        """
+        Refuse a monitoring component the experiments do not have.
+
+        Asking for one would otherwise return an empty DataFrame without a word.
+
+        :param component: Component name, e.g. ``'benchmarking'``.
+        :raises ValueError: When monitoring is on and no experiment has the component.
+        """
+        if not self.with_monitoring:
+            return
+        known = self.known_components()
+        if component not in known:
+            raise ValueError(f"unknown monitoring component {component!r}; the experiments have {known}")
+
     def get_monitored_components(self, code=''):
         """
         Returns a DataFrame of monitored components defined in the workload configuration.
@@ -507,6 +539,7 @@ class CollectorBase:
         if not self.with_monitoring:
             return pd.DataFrame()
         evaluation = self.get_evaluator(code)
+        self._check_component(component)
         df = evaluation.get_monitoring_metric(metric=metric, component=component).T
         df.index = code + '-' + df.index.astype(str)
         return df.T
@@ -531,6 +564,7 @@ class CollectorBase:
         """
         if not self.with_monitoring:
             return pd.DataFrame()
+        self._check_component(type)
         df_monitoring_all = pd.DataFrame()
         for code in self.codes:
             evaluation = self.get_evaluator(code)
@@ -609,6 +643,7 @@ class CollectorBase:
         if not self.with_monitoring:
             return pd.DataFrame()
         evaluation = self.get_evaluator(code)
+        self._check_component(component)
         df = evaluation.get_monitoring_metric(metric=metric, component=component)
         if df.empty:
             return pd.DataFrame()
@@ -765,6 +800,7 @@ class CollectorBase:
         :return: Grouped long-format time-series DataFrame, or empty if monitoring is disabled.
         :rtype: pandas.DataFrame
         """
+        self._check_component(component)
         if not self.with_monitoring:
             return pd.DataFrame()
         df_timeseries = pd.DataFrame()
@@ -812,6 +848,7 @@ class CollectorBase:
         :return: Grouped long-format time-series DataFrame, or empty if monitoring is disabled.
         :rtype: pandas.DataFrame
         """
+        self._check_component(component)
         if not self.with_monitoring:
             return pd.DataFrame()
         df_timeseries = pd.DataFrame()
