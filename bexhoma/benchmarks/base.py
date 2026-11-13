@@ -9,6 +9,7 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
+from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
 import pandas as pd
@@ -163,7 +164,7 @@ def _key_metrics_section_from_columns(df_aggregated_reduced: pd.DataFrame, colum
     return Section(heading="Key Metrics", level=3, dataframe=df_aggregated_reduced[present], link_connections=True)
 
 
-class Benchmark:
+class Benchmark(ABC):
     """
     Abstract base for all benchmark types.
 
@@ -185,6 +186,7 @@ class Benchmark:
         self.benchmark_index: int = 0   # assigned by experiment.add_benchmark(); 1-based
         self.evaluator = None           # set by experiment.add_benchmark()
 
+    @abstractmethod
     def create_evaluator(self, code: str, path: str, benchmark_run: int):
         """
         Instantiate and return the evaluator for this benchmark.
@@ -196,6 +198,7 @@ class Benchmark:
         """
         raise NotImplementedError
 
+    @abstractmethod
     def configure_workload(self, experiment, parameter: dict) -> None:
         """
         Parse CLI arguments and update experiment workload metadata.
