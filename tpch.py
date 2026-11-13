@@ -33,6 +33,7 @@ import subprocess
 import psutil
 import math
 import re
+from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 
 
 urllib3.disable_warnings()
@@ -45,7 +46,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     Extracted from ``if __name__ == '__main__':`` so it can be imported and
     fed a synthetic argv (e.g. ``build_parser().parse_args([mode])``) by
-    :mod:`bexhoma.experiments.tpch_builder`, instead of re-declaring these flags by hand.
+    :mod:`bexhoma.benchmarks.tpch.builder`, instead of re-declaring these flags by hand.
 
     :return: Configured argument parser.
     :rtype: argparse.ArgumentParser
@@ -212,7 +213,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     ##############
     ### prepare and configure experiment
     ##############
-    experiment = experiments.TpchExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    experiment = TpchExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
     if on_experiment_built is not None:
         on_experiment_built(experiment)
     if args.max_sut_experiment is not None:

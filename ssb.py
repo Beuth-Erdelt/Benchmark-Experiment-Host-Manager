@@ -14,13 +14,14 @@ See LICENSE for details.
 """
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
-from bexhoma.benchmarks.ssb import SCHEMA_VARIANTS, QUERY_VARIANTS, DIMENSION_VARIANTS, resolve_dimension_folder
+from bexhoma.benchmarks.ssb.benchmark import SCHEMA_VARIANTS, QUERY_VARIANTS, DIMENSION_VARIANTS, resolve_dimension_folder
 from bexhoma.experiments.system_builder import build_configuration, entry_parameters, loading_layouts
 from bexhoma.system_descriptors import dbms_choices, dimension_dockers
 from dbmsbenchmarker import *
 import logging
 import urllib3
 import argparse
+from bexhoma.benchmarks.ssb.experiment import SsbExperiment
 
 
 urllib3.disable_warnings()
@@ -122,7 +123,7 @@ if __name__ == '__main__':
     ##############
     ### prepare and configure experiment
     ##############
-    experiment = experiments.SsbExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
+    experiment = SsbExperiment(cluster=cluster, SF=SF, timeout=timeout, code=code, num_experiment_to_apply=num_experiment_to_apply)
     if args.max_sut_experiment is not None:
         experiment.max_sut = int(args.max_sut_experiment)
     experiment.prometheus_interval = "30s"

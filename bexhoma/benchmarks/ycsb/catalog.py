@@ -6,14 +6,14 @@ loading, ``derive:``/knob resolution, validation) and dispatches, by
 ``experiment['workload']['name']``, to a workload's own argv builder. This
 module is that builder for the ``ycsb`` workload: it knows ``ycsb.py``'s own
 CLI flags and PostgreSQL's memory-GUC formatting -- neither of which belongs
-in the generic engine. Mirrors :mod:`bexhoma.experiments.tpch_catalog`.
+in the generic engine. Mirrors :mod:`bexhoma.benchmarks.tpch.catalog`.
 
 Scope: the catalog trims ``workloads.ycsb`` to ``supports: [PostgreSQL]`` (see
 ``contracts/contract_catalog.yml``), so this builder only has to translate the
 PostgreSQL case. It has no post_load / physical-design step -- YCSB manages
 its own schema. Resource sweeps (``resources.cpu``/``memory``/``storage_class``
 lists) are translated exactly as for ``tpch``, through the shared helpers in
-:mod:`bexhoma.experiments.tpch_catalog`.
+:mod:`bexhoma.benchmarks.tpch.catalog`.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt

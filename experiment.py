@@ -6,7 +6,7 @@ exist (see ``docs/Design-Yaml-Experiment-Entry-Script.md``'s "Relation to
 ``bexhoma/spec.py``" section):
 
 * **Self-specified** (``workload: tpch``, a bare string): built directly in
-  Python via :mod:`bexhoma.experiments.tpch_builder` — no argv is generated, no
+  Python via :mod:`bexhoma.benchmarks.tpch.builder` — no argv is generated, no
   subprocess is spawned, nothing is re-parsed through ``tpch.py``'s own CLI.
 * **Catalog-driven** (``workload: {name: ..., params: ...}``, a dict —
   :mod:`bexhoma.spec`'s schema): resolved against ``catalog.yaml`` into the
@@ -34,7 +34,7 @@ import shutil
 
 import yaml
 
-from bexhoma.experiments import tpch_builder, tpch_catalog, tpch_loader
+from bexhoma.benchmarks.tpch import builder as tpch_builder, catalog as tpch_catalog, loader as tpch_loader
 from bexhoma import spec as catalog_spec
 
 __all__ = ["is_catalog_driven", "default_catalog_path", "entry_module_for_workload", "run_experiment_yaml"]

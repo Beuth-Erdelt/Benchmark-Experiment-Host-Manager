@@ -1,5 +1,5 @@
 """
-Build a running :class:`~bexhoma.experiments.tpch.TpchExperiment` straight
+Build a running :class:`~bexhoma.benchmarks.tpch.experiment.TpchExperiment` straight
 from a parsed ``experiment.yaml`` — no argv is ever generated, nothing is
 handed to a shell.
 
@@ -24,9 +24,9 @@ from pathlib import Path
 
 from bexhoma import clusters, configurations, experiments
 from bexhoma.cli_args import resolve_scaling_factor
-from bexhoma.experiments.tpch import TpchExperiment
+from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 from bexhoma.experiments.system_builder import loading_variants, set_loading_template
-from bexhoma.experiments.tpch_loader import loading_count, merged_loading
+from bexhoma.benchmarks.tpch.loader import loading_count, merged_loading
 from bexhoma.system_descriptors import base_system, benchmark_entry, refresh_template, storage_prefix
 
 __all__ = ["build_experiment"]
@@ -136,7 +136,7 @@ def _configure_system(experiment: TpchExperiment, spec: dict, system: dict, tpch
     like ``tpch.py``'s own ``-rr``/``-lr``/``-nlp``/``-nlt``/``-xnls`` comma-list
     sweeps, are follow-up work, same scoping as ``experiment_yaml`` excluding
     the DBMS with workers or container-tenancy. So ``loading.pods``, ``threads``
-    and ``split`` are one value each (:func:`~bexhoma.experiments.tpch_loader.loading_count`),
+    and ``split`` are one value each (:func:`~bexhoma.benchmarks.tpch.loader.loading_count`),
     from the top-level ``loading:`` block with the system's own on top.
 
     :param experiment: The experiment these DBMS configurations are attached to.
@@ -147,7 +147,7 @@ def _configure_system(experiment: TpchExperiment, spec: dict, system: dict, tpch
         environment variable itself in its ``sut_parameters``.
     :raises IncompatibleBenchmark: When ``system['dbms']`` has no ``tpch`` entry in the cluster
         configuration (caught earlier by
-        :func:`bexhoma.experiments.tpch_loader.validate_experiment_yaml`).
+        :func:`bexhoma.benchmarks.tpch.loader.validate_experiment_yaml`).
     """
     dbms = system['dbms']
     dockers = experiment.cluster.dockers
@@ -244,12 +244,12 @@ def _copy_provenance_files(spec: dict, spec_path: str, result_path: str) -> None
 
 def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
     """
-    Build a fully-configured :class:`~bexhoma.experiments.tpch.TpchExperiment`
+    Build a fully-configured :class:`~bexhoma.benchmarks.tpch.experiment.TpchExperiment`
     from an already-validated ``experiment.yaml``.
 
     :param spec: Parsed experiment spec, as returned by
-        :func:`bexhoma.experiments.tpch_loader.load_experiment_yaml` and validated by
-        :func:`bexhoma.experiments.tpch_loader.validate_experiment_yaml`.
+        :func:`bexhoma.benchmarks.tpch.loader.load_experiment_yaml` and validated by
+        :func:`bexhoma.benchmarks.tpch.loader.validate_experiment_yaml`.
     :param spec_path: Path to the ``experiment.yaml`` file that was loaded —
         used to resolve relative ``catalog``/``environment`` provenance
         pointers and to copy the file itself into the result folder.
@@ -271,7 +271,7 @@ def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
         code = cluster.code
     SF = resolve_scaling_factor(cluster, code, mode, experiment_cfg.get('scaling_factor', 1))
 
-    experiment = experiments.TpchExperiment(
+    experiment = TpchExperiment(
         cluster=cluster, SF=SF, timeout=int(experiment_cfg.get('timeout', 600)),
         code=code, num_experiment_to_apply=int(experiment_cfg.get('num_config', 1)),
     )

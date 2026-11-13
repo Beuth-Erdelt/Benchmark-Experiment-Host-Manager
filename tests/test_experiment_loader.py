@@ -1,5 +1,5 @@
 """
-Unit tests for :mod:`bexhoma.experiments.tpch_loader`.
+Unit tests for :mod:`bexhoma.benchmarks.tpch.loader`.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -13,7 +13,7 @@ import unittest
 
 import yaml
 
-from bexhoma.experiments.tpch_loader import (
+from bexhoma.benchmarks.tpch.loader import (
     ExperimentYamlError,
     load_experiment_yaml,
     validate_experiment_yaml,

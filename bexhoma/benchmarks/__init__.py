@@ -13,9 +13,6 @@ See LICENSE for details.
 """
 from .base import Benchmark
 from .hammerdb import HammerDB
-from .tpch import TPCH
-from .tpcds import TPCDS
-from .ssb import SSB
 from .benchbase import Benchbase
 from .refresh import RefreshStreamBenchmark
 from .hardware import Hardware
@@ -23,9 +20,6 @@ from .hardware import Hardware
 __all__ = [
     "Benchmark",
     "HammerDB",
-    "TPCH",
-    "TPCDS",
-    "SSB",
     "Benchbase",
     "RefreshStreamBenchmark",
     "Hardware",

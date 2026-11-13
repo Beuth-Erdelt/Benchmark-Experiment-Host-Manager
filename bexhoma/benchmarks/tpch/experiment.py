@@ -17,6 +17,7 @@ import urllib3
 
 from bexhoma import benchmarks
 from bexhoma.benchmarks.dbmsbenchmarker.experiment import DbmsBenchmarkerExperiment
+from bexhoma.benchmarks.tpch.benchmark import TPCH
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -29,10 +30,10 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
     TPC-H experiment: orchestrates data generation, loading, and
     DBMSBenchmarker query execution inside a Kubernetes cluster.
 
-    Registers a :class:`~bexhoma.benchmarks.tpch.TPCH` benchmark object and
+    Registers a :class:`~bexhoma.benchmarks.tpch.benchmark.TPCH` benchmark object and
     pre-populates the experiment dict template.  Workload configuration
     (modes, info strings, indexing strategies) is delegated to
-    :meth:`~bexhoma.benchmarks.tpch.TPCH.configure_workload`.
+    :meth:`~bexhoma.benchmarks.tpch.benchmark.TPCH.configure_workload`.
 
     Extends :class:`DbmsBenchmarkerExperiment`.
     """
@@ -73,7 +74,7 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
             type='tpch',
         )
         self.storage_label = 'tpch-' + str(SF)
-        self.add_benchmark(benchmarks.TPCH(SF=SF))
+        self.add_benchmark(TPCH(SF=SF))
         self.experiment_dict_template = {
             "loader": [
                 {

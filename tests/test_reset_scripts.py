@@ -24,8 +24,8 @@ import types
 import unittest
 from unittest import mock
 
-from bexhoma.benchmarks.tpcds import TPCDS
-from bexhoma.benchmarks.tpch import TPCH
+from bexhoma.benchmarks.tpcds.benchmark import TPCDS
+from bexhoma.benchmarks.tpch.benchmark import TPCH
 from bexhoma.configurations.loading import LoadingCoordinator, script_failed
 from bexhoma.experiments.base import ExperimentBase
 

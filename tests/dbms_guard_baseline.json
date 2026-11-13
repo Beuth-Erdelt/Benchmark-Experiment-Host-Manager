@@ -1,14 +1,14 @@
 {
+ "bexhoma/benchmarks/tpch/builder.py": {
+  "duckdb": 2
+ },
+ "bexhoma/benchmarks/tpch/catalog.py": {
+  "postgres": 1
+ },
  "bexhoma/experiments/base.py": {
   "PostgreSQL": 1,
   "mysql": 1,
   "postgres": 2
- },
- "bexhoma/experiments/tpch_builder.py": {
-  "duckdb": 2
- },
- "bexhoma/experiments/tpch_catalog.py": {
-  "postgres": 1
  },
  "bexhoma/report_writer.py": {
   "PostgreSQL": 7

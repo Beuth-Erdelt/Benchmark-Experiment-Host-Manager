@@ -25,7 +25,7 @@ from unittest import mock
 
 import tpch
 import ycsb
-from bexhoma.experiments.tpch import TpchExperiment
+from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 from bexhoma.benchmarks.ycsb.experiment import YcsbExperiment
 from bexhoma.experiments.base import ExperimentBase
 
@@ -203,7 +203,7 @@ class SupportTest(unittest.TestCase):
     """Only experiments that opt in accept a sweep."""
 
     def test_the_workloads_opt_in(self):
-        from bexhoma.experiments.tpcds import TpcdsExperiment
+        from bexhoma.benchmarks.tpcds.experiment import TpcdsExperiment
         from bexhoma.experiments.hammerdb import HammerdbExperiment
         from bexhoma.experiments.benchbase import BenchbaseExperiment
         from bexhoma.experiments.hardware import HardwareExperiment

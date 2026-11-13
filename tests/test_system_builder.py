@@ -381,7 +381,7 @@ class LoadingTemplateInTheScriptsTest(unittest.TestCase):
         for module, name in (('tpch', 'TpchExperiment'), ('tpcds', 'TpcdsExperiment'), ('ssb', 'SsbExperiment')):
             with self.subTest(benchmark=module):
                 import importlib
-                source = open(importlib.import_module(f'bexhoma.experiments.{module}').__file__, encoding='utf-8').read()
+                source = open(importlib.import_module(f'bexhoma.benchmarks.{module}.experiment').__file__, encoding='utf-8').read()
                 self.assertNotIn('jobtemplate-loading-' + module + '-PostgreSQL.yml', source)
 
 

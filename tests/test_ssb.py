@@ -38,12 +38,13 @@ from dbmsbenchmarker import parameter
 from bexhoma import experiments
 from bexhoma.benchmarks import registry
 from bexhoma.system_descriptors import dimension_dockers, load_dockers
-from bexhoma.benchmarks.ssb import (QUERY_VARIANTS, SCHEMA_VARIANTS,
+from bexhoma.benchmarks.ssb.benchmark import (QUERY_VARIANTS, SCHEMA_VARIANTS,
                                     resolve_dimension_folder, resolve_indexing_key,
                                     resolve_queryfile)
 from bexhoma.experiments.base import ExperimentBase
 
 from .test_resource_sweep import _AnyDockers, _SweepStubCluster
+from bexhoma.benchmarks.ssb.experiment import SsbExperiment
 
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _EXP = os.path.join(_REPO, 'experiments', 'ssb')
@@ -397,7 +398,7 @@ class SummaryDispatchTest(unittest.TestCase):
         self.assertEqual(types, {'tpch', 'tpcds', 'ssb', 'ycsb', 'hammerdb', 'benchbase', 'hardware'})
 
     def test_workload_type_names_the_class(self):
-        self.assertIs(registry.descriptor_for_type('ssb').experiment, experiments.SsbExperiment)
+        self.assertIs(registry.descriptor_for_type('ssb').experiment, SsbExperiment)
         for descriptor in registry.descriptors():
             if descriptor.experiment is not None:
                 self.assertTrue(issubclass(descriptor.experiment, ExperimentBase), descriptor.name)

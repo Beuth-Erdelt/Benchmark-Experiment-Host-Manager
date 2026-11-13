@@ -21,7 +21,7 @@ from typing import Any, Optional
 
 from bexhoma import spec
 from bexhoma import system_descriptors as descriptors
-from bexhoma.benchmarks.tpch import resolve_indexing_key
+from bexhoma.benchmarks.tpch.benchmark import resolve_indexing_key
 from bexhoma.cli_args import format_metric_overrides, format_storage_types
 from bexhoma.spec import ResolvedSystem, SpecError
 from bexhoma.spec_argv import (

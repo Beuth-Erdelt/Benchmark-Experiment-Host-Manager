@@ -20,7 +20,7 @@ import unittest
 
 import yaml
 
-from bexhoma.benchmarks.tpch import resolve_indexing_key
+from bexhoma.benchmarks.tpch.benchmark import resolve_indexing_key
 from bexhoma.cli_args import make_base_parser, resource_cells, split_worker_nodes
 from bexhoma.configurations.base import SutConfiguration
 from bexhoma.configurations.lifecycle import pin_pods_to_nodes, sum_requested_resources

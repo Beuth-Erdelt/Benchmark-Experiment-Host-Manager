@@ -20,23 +20,8 @@ from bexhoma.collectors.hardware import HardwareCollector
 from bexhoma.collectors.hammerdb import HammerdbCollector
 from bexhoma.experiments.benchbase import BenchbaseExperiment
 from bexhoma.experiments.hardware import HardwareExperiment
-from bexhoma.experiments.ssb import SsbExperiment
 from bexhoma.experiments.hammerdb import HammerdbExperiment
-from bexhoma.experiments.tpcds import TpcdsExperiment
-from bexhoma.experiments.tpch import TpchExperiment
-from bexhoma.experiments.tpch_catalog import build_tpch_argv
 
-# The first benchmark with an ``argv_builder`` is the one whose entry script
-# bexhoma.spec.entry_script_for_workload() falls back to.
-register(BenchmarkDescriptor(
-    name='tpch', types=('tpch',), experiment=TpchExperiment, collector=DbmsBenchmarkerCollector,
-    entry_script='tpch.py', argv_builder=build_tpch_argv))
-register(BenchmarkDescriptor(
-    name='tpcds', types=('tpcds',), experiment=TpcdsExperiment, collector=DbmsBenchmarkerCollector,
-    entry_script='tpcds.py'))
-register(BenchmarkDescriptor(
-    name='ssb', types=('ssb',), experiment=SsbExperiment, collector=DbmsBenchmarkerCollector,
-    entry_script='ssb.py'))
 register(BenchmarkDescriptor(
     name='benchbase', types=('benchbase',), experiment=BenchbaseExperiment, collector=BenchbaseCollector,
     entry_script='benchbase.py'))

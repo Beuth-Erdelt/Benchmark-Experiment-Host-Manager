@@ -14,7 +14,7 @@ import unittest
 from unittest import mock
 
 import experiment as experiment_cli
-from bexhoma.experiments import tpch_loader as experiment_loader
+from bexhoma.benchmarks.tpch import loader as experiment_loader
 
 _CATALOG_DRIVEN_FILE = 'dev/catalog/experiment.yml'
 _CATALOG_DRIVEN_YCSB_FILE = 'dev/catalog/experiment-ycsb.yml'

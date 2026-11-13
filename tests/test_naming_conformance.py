@@ -27,8 +27,8 @@ from unittest import mock
 import yaml
 
 from bexhoma import report_writer, spec
-from bexhoma.experiments import tpch_builder as experiment_builder
-from bexhoma.experiments.tpch import TpchExperiment
+from bexhoma.benchmarks.tpch import builder as experiment_builder
+from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 
 from .stubs import StubCluster
 

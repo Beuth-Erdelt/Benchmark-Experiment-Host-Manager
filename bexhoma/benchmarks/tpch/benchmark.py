@@ -8,7 +8,7 @@ See LICENSE for details.
 """
 from types import SimpleNamespace
 
-from ..system_descriptors import dimension_dockers, notes
+from bexhoma.system_descriptors import dimension_dockers, notes
 from bexhoma.benchmarks.dbmsbenchmarker.benchmark import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, dimension_info
 
 __all__ = ["TPCH", "resolve_indexing_key"]
@@ -36,7 +36,7 @@ def resolve_indexing_key(indexes: bool, constraints: bool, statistics: bool) -> 
     """Map a post_load selection to its ``initscripts`` key.
 
     Single source of truth shared with the catalog-contract translator
-    (:func:`bexhoma.experiments.tpch_catalog.resolve_physical_design_overrides`),
+    (:func:`bexhoma.benchmarks.tpch.catalog.resolve_physical_design_overrides`),
     which applies the same mapping to a ``systems[].post_load`` selection —
     the key strings must match ``k8s-cluster.config``'s ``volumes.tpch.initscripts``
     literally, or the resulting

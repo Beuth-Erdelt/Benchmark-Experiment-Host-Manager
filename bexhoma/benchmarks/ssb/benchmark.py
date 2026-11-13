@@ -8,7 +8,7 @@ See LICENSE for details.
 """
 from types import SimpleNamespace
 
-from ..system_descriptors import dimension_dockers, notes
+from bexhoma.system_descriptors import dimension_dockers, notes
 from bexhoma.benchmarks.dbmsbenchmarker.benchmark import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, dimension_folder, dimension_info
 
 __all__ = ["SSB", "SCHEMA_VARIANTS", "QUERY_VARIANTS", "DIMENSION_VARIANTS",

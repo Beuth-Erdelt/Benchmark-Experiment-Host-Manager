@@ -71,13 +71,10 @@ _BENCHMARK_FILES = {
     # the baseline of the cluster's hardware is a use of the hardware benchmark; bexhoma.environment
     # imports it, the one place where a generic module depends on a benchmark
     'bexhoma/hardware_baseline.py',
-    'bexhoma/benchmarks/ssb.py', 'bexhoma/benchmarks/hammerdb.py', 'bexhoma/benchmarks/tpcds.py',
-    'bexhoma/benchmarks/tpch.py',    'bexhoma/collectors/benchbase.py', 'bexhoma/collectors/hardware.py',
+    'bexhoma/benchmarks/hammerdb.py',       'bexhoma/collectors/benchbase.py', 'bexhoma/collectors/hardware.py',
     'bexhoma/collectors/hammerdb.py',    'bexhoma/evaluators/benchbase.py', 'bexhoma/evaluators/hardware.py',
     'bexhoma/evaluators/hammerdb.py',    'bexhoma/experiments/benchbase.py', 'bexhoma/experiments/hardware.py',
-    'bexhoma/experiments/ssb.py', 'bexhoma/experiments/hammerdb.py', 'bexhoma/experiments/tpcds.py',
-    'bexhoma/experiments/tpch.py', 'bexhoma/experiments/tpch_builder.py', 'bexhoma/experiments/tpch_catalog.py',
-    'bexhoma/experiments/tpch_loader.py',}
+    'bexhoma/experiments/hammerdb.py',       }
 
 
 def is_benchmark_file(relative: str) -> bool:
@@ -181,7 +178,7 @@ class NoBenchmarkInGenericTest(unittest.TestCase):
 
     def test_benchmark_folders_are_exempt(self) -> None:
         self.assertTrue(is_benchmark_file('bexhoma/benchmarks/ycsb/evaluator.py'))
-        self.assertTrue(is_benchmark_file('bexhoma/experiments/tpch.py'))
+        self.assertTrue(is_benchmark_file('bexhoma/benchmarks/tpch/experiment.py'))
         self.assertFalse(is_benchmark_file('bexhoma/benchmarks/base.py'))
         self.assertFalse(is_benchmark_file('bexhoma/benchmarks/__init__.py'))
         self.assertFalse(is_benchmark_file('bexhoma/experiments/base.py'))

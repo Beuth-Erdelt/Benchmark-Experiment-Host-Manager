@@ -23,7 +23,7 @@ from bexhoma import environment
 from bexhoma import spec as catalog_spec
 from bexhoma.cli_args import format_storage_types, split_storage_types
 from bexhoma.experiments.base import ExperimentBase
-from bexhoma.experiments.tpch import TpchExperiment
+from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 from bexhoma.experiments.hammerdb import HammerdbExperiment
 from tests.test_ycsb_catalog import _BASE_SPEC
 

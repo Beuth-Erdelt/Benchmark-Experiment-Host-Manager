@@ -26,13 +26,14 @@ See LICENSE for details.
 from bexhoma import *
 from bexhoma import benchmarks
 from bexhoma.cli_args import make_base_parser
-from bexhoma.experiments.tpch import TpchExperiment
+from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 from dbmsbenchmarker import *
 import logging
 import urllib3
 import argparse
 from bexhoma.benchmarks.ycsb.benchmark import YCSB
 from bexhoma.benchmarks.ycsb.evaluator import YcsbEvaluator
+from bexhoma.benchmarks.tpch.benchmark import TPCH
 
 
 urllib3.disable_warnings()
@@ -99,7 +100,7 @@ if __name__ == '__main__':
     parser.add_argument('mode', help='experiment phase', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-dbms', '--dbms', help='fixed to PostgreSQL for this demo; present only because ExperimentBase.prepare_testbed() reads args.dbms', default=[], nargs='*')
     parser.add_argument('-yr', '--ycsb-rows', help='number of YCSB rows/operations to load and run (kept small; this is a demo)', default=10000, type=int, dest='ycsb_rows')
-    # TPC-H-specific args read by benchmarks.TPCH.configure_workload()
+    # TPC-H-specific args read by TPCH.configure_workload()
     parser.add_argument('-xlit', '--xlimit-import-table', help='import only this table', default='', dest='limit_import_table')
     parser.add_argument('-xrcp', '--xrecreate-parameter', help='regenerate random query parameters for each stream', action='store_true', default=False, dest='recreate_parameter')
     parser.add_argument('-xshq', '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')

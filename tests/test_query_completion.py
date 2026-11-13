@@ -16,7 +16,7 @@ from unittest import mock
 import pandas as pd
 
 from bexhoma import report_writer
-from bexhoma.benchmarks.tpch import TPCH
+from bexhoma.benchmarks.tpch.benchmark import TPCH
 from bexhoma.benchmarks.dbmsbenchmarker.evaluator import DbmsBenchmarkerEvaluator
 
 _PHASES = {"c-1-1-1-1": "c-1-1", "c-1-2-1-1": "c-1-2", "c-1-2-1-2": "c-1-2"}

@@ -15,8 +15,8 @@ from dbmsbenchmarker import parameter
 import logging
 import urllib3
 
-from bexhoma import benchmarks
 from bexhoma.benchmarks.dbmsbenchmarker.experiment import DbmsBenchmarkerExperiment
+from bexhoma.benchmarks.tpcds.benchmark import TPCDS
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -29,10 +29,10 @@ class TpcdsExperiment(DbmsBenchmarkerExperiment):
     TPC-DS experiment: orchestrates data generation, loading, and
     DBMSBenchmarker query execution inside a Kubernetes cluster.
 
-    Registers a :class:`~bexhoma.benchmarks.tpcds.TPCDS` benchmark object and
+    Registers a :class:`~bexhoma.benchmarks.tpcds.benchmark.TPCDS` benchmark object and
     pre-populates the experiment dict template.  Workload configuration
     (modes, info strings, indexing strategies) is delegated to
-    :meth:`~bexhoma.benchmarks.tpcds.TPCDS.configure_workload`.
+    :meth:`~bexhoma.benchmarks.tpcds.benchmark.TPCDS.configure_workload`.
 
     Extends :class:`DbmsBenchmarkerExperiment`.
     """
@@ -73,7 +73,7 @@ class TpcdsExperiment(DbmsBenchmarkerExperiment):
             type='tpcds',
         )
         self.storage_label = 'tpcds-' + str(SF)
-        self.add_benchmark(benchmarks.TPCDS(SF=SF))
+        self.add_benchmark(TPCDS(SF=SF))
         self.experiment_dict_template = {
             "loader": [
                 {

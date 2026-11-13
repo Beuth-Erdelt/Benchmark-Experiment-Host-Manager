@@ -14,8 +14,8 @@ from dbmsbenchmarker import parameter
 import logging
 import urllib3
 
-from bexhoma import benchmarks
 from bexhoma.benchmarks.dbmsbenchmarker.experiment import DbmsBenchmarkerExperiment
+from bexhoma.benchmarks.ssb.benchmark import SSB
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -28,10 +28,10 @@ class SsbExperiment(DbmsBenchmarkerExperiment):
     SSB experiment: orchestrates data generation, loading, and DBMSBenchmarker
     query execution inside a Kubernetes cluster.
 
-    Registers a :class:`~bexhoma.benchmarks.ssb.SSB` benchmark object and
+    Registers a :class:`~bexhoma.benchmarks.ssb.benchmark.SSB` benchmark object and
     pre-populates the experiment dict template. Workload configuration (modes,
     schema and query variants, info strings, post-load scripts) is delegated to
-    :meth:`~bexhoma.benchmarks.ssb.SSB.configure_workload`.
+    :meth:`~bexhoma.benchmarks.ssb.benchmark.SSB.configure_workload`.
 
     Extends :class:`DbmsBenchmarkerExperiment`.
     """
@@ -68,7 +68,7 @@ class SsbExperiment(DbmsBenchmarkerExperiment):
             type='ssb',
         )
         self.storage_label = 'ssb-' + str(SF)
-        self.add_benchmark(benchmarks.SSB(SF=SF))
+        self.add_benchmark(SSB(SF=SF))
         self.experiment_dict_template = {
             "loader": [
                 {

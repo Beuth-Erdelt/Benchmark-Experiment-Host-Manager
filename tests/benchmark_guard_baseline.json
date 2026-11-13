@@ -1,10 +1,7 @@
 {
  "bexhoma/benchmarks/__init__.py": {
   "benchbase": 3,
-  "hammerdb": 3,
-  "ssb": 3,
-  "tpcds": 3,
-  "tpch": 3
+  "hammerdb": 3
  },
  "bexhoma/collectors/__init__.py": {
   "benchbase": 5,
@@ -29,9 +26,9 @@
   "benchbase": 4,
   "hammerdb": 4,
   "hardware": 3,
-  "ssb": 4,
-  "tpcds": 4,
-  "tpch": 4,
+  "ssb": 1,
+  "tpcds": 1,
+  "tpch": 1,
   "ycsb": 1
  },
  "bexhoma/report_writer.py": {

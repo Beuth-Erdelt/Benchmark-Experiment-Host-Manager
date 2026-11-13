@@ -14,15 +14,11 @@ See LICENSE for details.
 """
 from .base import ExperimentBase
 from .mixed import MixedExperiment
-from .tpch import TpchExperiment
-from .tpcds import TpcdsExperiment
-from .ssb import SsbExperiment
 from .benchbase import BenchbaseExperiment
 from .hammerdb import HammerdbExperiment
 from .hardware import HardwareExperiment
 
 __all__ = [
-    "ExperimentBase", "MixedExperiment",
-    "TpchExperiment", "TpcdsExperiment", "SsbExperiment", "HammerdbExperiment",
+    "ExperimentBase", "MixedExperiment", "HammerdbExperiment",
     "BenchbaseExperiment", "HardwareExperiment",
 ]
