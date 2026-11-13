@@ -8,7 +8,7 @@ The `collectors` module aggregates results from one or more bexhoma experiments 
 Each collector wraps a benchmark-specific **evaluator** — the lower-level class that parses raw log files and result folders for a single experiment code.
 
 ```
-collectors.benchbase(path, codes)        ← collector: spans N experiments
+BenchbaseCollector(path, codes)        ← collector: spans N experiments
     └── get_evaluator(code)              ← evaluator: single experiment
             └── log parsing, DataFrames
 ```
@@ -17,11 +17,12 @@ Supported benchmark types:
 
 | Collector class | Benchmark tool | Evaluator class |
 |---|---|---|
-| `collectors.benchbase` | Benchbase | `evaluators.benchbase` |
-| `collectors.tpcc` | HammerDB TPC-C | `evaluators.tpcc` |
-| `collectors.ycsb` | YCSB | `evaluators.ycsb` |
-| `collectors.dbmsbenchmarker` | DBMSBenchmarker | `evaluators.dbmsbenchmarker` |
-| `collectors.mixed` | Multiple tools in one experiment | per-tool evaluator, selected automatically |
+| `BenchbaseCollector` (`bexhoma.benchmarks.benchbase`) | Benchbase | `BenchbaseEvaluator` |
+| `HammerdbCollector` (`bexhoma.benchmarks.hammerdb`) | HammerDB TPC-C | `HammerdbEvaluator` |
+| `YcsbCollector` (`bexhoma.benchmarks.ycsb`) | YCSB | `YcsbEvaluator` |
+| `HardwareCollector` (`bexhoma.benchmarks.hardware`) | fio, sysbench, sockperf, netperf | `HardwareEvaluator` |
+| `DbmsBenchmarkerCollector` (`bexhoma.benchmarks.dbmsbenchmarker`) | DBMSBenchmarker | `DbmsBenchmarkerEvaluator` |
+| `collectors.MixedCollector` | Multiple tools in one experiment | per-tool evaluator, selected automatically |
 
 ---
 
@@ -125,12 +126,13 @@ Multi-tenancy adds a further dimension: a single service provider may map to sev
 
 ---
 
-## Class `collector`
+## Class `CollectorBase`
 
 ### Constructor
 
 ```python
-collect = collectors.benchbase(path, codes)
+from bexhoma.benchmarks.benchbase import BenchbaseCollector
+collect = BenchbaseCollector(path, codes)
 ```
 
 * `path` — filesystem path containing the experiment result directories.
@@ -140,7 +142,7 @@ The constructor reads `connections.config` from the first code to build the metr
 
 An optional `benchmark_run` parameter (default `0`) filters all result methods to a single benchmark session; `0` includes all sessions.
 
-For experiments that ran multiple benchmark tools in sequence, use `collectors.mixed` instead — see the [dedicated section](#collectorsmixed) below.
+For experiments that ran multiple benchmark tools in sequence, use `collectors.MixedCollector` instead — see the [dedicated section](#collectorsmixedcollector) below.
 
 ### Configuration & Metadata
 
@@ -240,7 +242,7 @@ Standalone function. Drops all columns whose values are identical across every r
 
 Each subclass extends `base` by providing the correct evaluator. Most data retrieval is inherited; subclasses add benchmark-specific parsing.
 
-### `collectors.benchbase`
+### `BenchbaseCollector`
 
 For [Benchbase](https://github.com/cmu-db/benchbase) experiments.
 
@@ -262,7 +264,7 @@ Wide-format DataFrame: index is second, each column represents one benchmark job
 **`get_benchmark_timeseries_all(metric='throughput')`**  
 Long-format DataFrame with columns `second`, `code`, `configuration`, `experiment_run`, `client`, `benchmark_run`, `metric`, `value`, plus connection metadata columns (e.g. `type_tenants`, `num_tenants`, `vol_tenants`). One row per second per job.
 
-### `collectors.tpcc`
+### `HammerdbCollector`
 
 For [HammerDB](https://hammerdb.com/) TPC-C experiments.
 
@@ -280,9 +282,9 @@ evaluate.get_benchmark_logs_timeseries_df_single(metric, configuration, client, 
 `metric` is `"tpm"`. Parallel pods are averaged, as for NOPM and TPM.
 
 **`get_benchmark_timeseries_per_phase(metric='tpm')`** and **`get_benchmark_timeseries_all(metric='tpm')`**  
-Same layout as for `collectors.benchbase`; the index is seconds since the pod's first counter value.
+Same layout as for `BenchbaseCollector`; the index is seconds since the pod's first counter value.
 
-### `collectors.ycsb`
+### `YcsbCollector`
 
 For [YCSB](https://github.com/brianfrankcooper/YCSB) experiments.
 
@@ -320,7 +322,7 @@ Wide-format DataFrame for the loading phase: index is second, each column repres
 **`get_loading_timeseries_all(metric='current_ops_per_sec')`**  
 Long-format DataFrame for the loading phase with columns `second`, `code`, `configuration`, `experiment_run`, `metric`, `value`, plus connection metadata columns (excluding `client`). One row per second per loading job.
 
-### `collectors.dbmsbenchmarker`
+### `DbmsBenchmarkerCollector`
 
 For [DBMSBenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) experiments. Adds query-level analytics:
 
@@ -335,7 +337,7 @@ Per-query result-mismatch counts for all codes.
 
 Pass `query_titles=True` to replace the numeric query index with the human-readable title from the query configuration.
 
-### `collectors.mixed`
+### `collectors.MixedCollector`
 
 For experiments that ran **more than one benchmark tool** in a single experiment (e.g. Benchbase followed by YCSB, or two different tools in the same client round).
 
@@ -351,14 +353,14 @@ Before an experiment's benchmarking phase starts (and again after it finishes), 
 ]
 ```
 
-`collectors.mixed` reads this key and dispatches to the correct typed sub-collector for each benchmark-run index, so each tool's log files are parsed by the right evaluator.
+`collectors.MixedCollector` reads this key and dispatches to the correct typed sub-collector for each benchmark-run index, so each tool's log files are parsed by the right evaluator.
 
 The constraint is that all configurations in an experiment must share the same benchmark sequence (which is enforced by the experiment framework — every configuration receives a deep copy of the same `experiment_dict_template`).
 
 #### Constructor
 
 ```python
-collect = collectors.mixed(path, codes)
+collect = collectors.MixedCollector(path, codes)
 ```
 
 Same signature as the typed collectors. Reads `benchmark_sequence` from `queries.config` of the first code.
@@ -366,7 +368,7 @@ Same signature as the typed collectors. Reads `benchmark_sequence` from `queries
 #### Methods
 
 **`get_typed_collector(benchmark_run: int)`**  
-Returns a fully functional typed sub-collector (e.g. `collectors.benchbase`) scoped to the given benchmark-run index. All standard methods (`get_performance_aggregated_per_phase`, `get_monitoring_aggregated_per_phase`, etc.) are available on the returned object.
+Returns a fully functional typed sub-collector (e.g. `BenchbaseCollector`) scoped to the given benchmark-run index. All standard methods (`get_performance_aggregated_per_phase`, `get_monitoring_aggregated_per_phase`, etc.) are available on the returned object.
 
 **`get_performance_per_benchmark()`**  
 Calls `get_performance_aggregated_per_phase()` on each typed sub-collector and returns a dict keyed by benchmark type name:
@@ -382,10 +384,14 @@ When two entries share the same tool type (parallel runs of the same tool), thei
 
 | `type` in `benchmark_sequence` | Mapped collector |
 |---|---|
-| `'benchbase'` | `collectors.benchbase` |
-| `'ycsb'` | `collectors.ycsb` |
-| `'tpcc'` / `'hammerdb'` | `collectors.tpcc` |
-| `'dbmsbenchmarker'` / `'tpch'` / `'tpcds'` | `collectors.dbmsbenchmarker` |
+| `'benchbase'` | `BenchbaseCollector` |
+| `'ycsb'` | `YcsbCollector` |
+| `'hammerdb'` | `HammerdbCollector` |
+| `'hardware'` | `HardwareCollector` |
+| `'dbmsbenchmarker'` / `'tpch'` / `'tpcds'` / `'ssb'` | `DbmsBenchmarkerCollector` |
+
+The mapping is not a table in the code: each benchmark declares its types and its
+collector in its `DESCRIPTOR`, and `MixedCollector` asks the benchmark registry.
 
 ---
 
@@ -393,11 +399,12 @@ When two entries share the same tool type (parallel runs of the same tool), thei
 
 ```python
 from bexhoma import collectors
+from bexhoma.benchmarks.benchbase import BenchbaseCollector
 
 path  = "/results"
 codes = ["1776751747", "1776754749"]
 
-collect = collectors.benchbase(path, codes)
+collect = BenchbaseCollector(path, codes)
 
 # What varied across these two experiments?
 df_conn = collect.get_connections()

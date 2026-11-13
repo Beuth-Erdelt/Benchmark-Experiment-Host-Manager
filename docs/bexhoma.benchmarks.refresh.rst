@@ -1,7 +1,7 @@
-bexhoma.experiments.tpcds module
+bexhoma.benchmarks.refresh module
 =================================
 
-.. automodule:: bexhoma.experiments.tpcds
+.. automodule:: bexhoma.benchmarks.refresh
    :members:
    :undoc-members:
    :show-inheritance:

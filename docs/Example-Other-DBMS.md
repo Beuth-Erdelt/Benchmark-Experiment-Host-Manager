@@ -17,7 +17,7 @@ The Community Edition turns read-only above 64 GiB of data.
 | SSB | yes | normal and flat schema |
 | YCSB | yes | workloads with concurrent updates lose some of them, see below |
 | Benchbase `tpcc`, `ycsb` | yes | |
-| Benchbase `chbenchmark` | yes | Q22 and sometimes Q15 fail, so `num_errors` is not 0 |
+| Benchbase `chbenchmark` | yes | Q22 and sometimes Q15 fail, so `errors` is not 0 |
 | Benchbase `twitter` | no | the benchmark needs `SERIALIZABLE`, which CedarDB refuses |
 
 CedarDB does not wait on a write conflict, the transaction fails.

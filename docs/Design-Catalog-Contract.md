@@ -197,7 +197,7 @@ implied by `arg_style` at the system level, with per-knob overrides for the
 
 ### Non-DBMS and composite shapes that don't fit "system = one Deployment with knobs"
 
-1. **Hardware benchmarking** (`hardware.py`) — no DBMS at all. `bexhoma/experiments/hardware.py:52-58`
+1. **Hardware benchmarking** (`hardware.py`) — no DBMS at all. `bexhoma/benchmarks/hardware/experiment.py:52-58`
    sets `self.loading_deactivated = True` unconditionally, with the comment
    *"Hardware has no loading phase in any mode."* The four tools
    (fio/sysbench/sockperf/netperf) sweep their own tool-specific parameters,
@@ -872,7 +872,7 @@ This parses and validates (legality/support are both checked per system,
 per "Validation ordering" above) and now translates: `PostgreSQL` and
 `PgDuckDB` resolve to different effective post_load, so `build_argv()` emits
 none of `-xii`/`-xic`/`-xis`/`-xcol` (a global flag can't represent a
-divergent selection), and `bexhoma/experiments/tpch_catalog.py::resolve_physical_design_overrides()`
+divergent selection), and `bexhoma/benchmarks/tpch/catalog.py::resolve_physical_design_overrides()`
 instead resolves `{'PostgreSQL': 'Index_and_Constraints_and_Statistics',
 'PgDuckDB': ''}` — one `initscripts` key per system (see `k8s-cluster.config`'s
 `volumes.tpch.initscripts`). `experiment.py`'s catalog-driven dispatch attaches
@@ -899,7 +899,7 @@ limit or CPU), each with its own `derive:`d knob values (`shared_buffers` etc.
 computed from *that* cell's `memory_limit`). This is the same "list = swept,
 scalar = shared" idiom
 `workload.rounds` already uses for concurrency — see
-`bexhoma/experiments/tpch_catalog.py::build_tpch_argv()`'s `cpu_cells`/`memory_cells` handling.
+`bexhoma/benchmarks/tpch/catalog.py::build_tpch_argv()`'s `cpu_cells`/`memory_cells` handling.
 
 Two things had to change below `spec.py` for this to actually run, not
 just parse:
@@ -1160,7 +1160,7 @@ generalizes, not because it's in scope to implement now.
   logic is modified": `resolve_indexing_key()`/`resolve_physical_design_overrides()`
   feed `tpch.py::run()`'s small `physical_design_overrides` hook (see
   "Per-system post_load selection" above) — the only change this catalog work
-  has made to `tpch.py` or `bexhoma/benchmarks/tpch.py` itself, and it adds no
+  has made to `tpch.py` or `bexhoma/benchmarks/tpch/benchmark.py` itself, and it adds no
   CLI flag.
 - `validate_experiment.py` — a dry-run CLI wrapping the same `build_argv()`
   plus `validate_environment()`, without touching a live cluster.
@@ -1184,8 +1184,8 @@ cluster's nodes, merged into the same `environment.yml`:
 
 - Deploys one `Hardware` SUT per node, pinned via the existing
   `kubernetes.io/hostname` nodeSelector patch, reusing
-  `bexhoma/experiments/hardware.py`/`bexhoma/configurations` unmodified
-  (`bexhoma/hardware_baseline.py` is new orchestration only — no new k8s
+  `bexhoma/benchmarks/hardware/experiment.py`/`bexhoma/configurations` unmodified
+  (`bexhoma/benchmarks/hardware/baseline.py` is new orchestration only — no new k8s
   manifests, no `images/hardware/*` changes).
 - Every node gets two baseline rounds — sysbench (CPU/RAM) and fio (against
   the node's own container-local scratch space, no PVC) — landing under

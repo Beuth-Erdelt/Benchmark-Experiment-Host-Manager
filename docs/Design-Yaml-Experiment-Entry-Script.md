@@ -75,7 +75,7 @@ hand-copying ~20 dest names and defaults a second time — which is the wart
 `dev/spec_prototype_demo.py` already has today (it duplicates `tpch.py`'s
 parser by hand) and should not be repeated.
 
-### 2. `bexhoma/experiments/tpch.py` — add `DBMS_DEFAULTS` (superseded, see the update at the top)
+### 2. `bexhoma/benchmarks/tpch/experiment.py` — add `DBMS_DEFAULTS` (superseded, see the update at the top)
 
 A new, data-only module-level dict, values extracted from (not duplicating
 the logic of) `tpch.py`'s existing per-DBMS branches:
@@ -120,7 +120,7 @@ ddl/sut parameters — real per-DBMS *logic*, not data) and container-tenancy
 (`tenant_per == 'container'`, the multi-tenant loop in `tpch.py`). Both are
 follow-up work once the simple single-cell path is proven.
 
-### 3. `bexhoma/experiments/tpch_loader.py` (new)
+### 3. `bexhoma/benchmarks/tpch/loader.py` (new)
 
 ```python
 def load_experiment_yaml(path: str) -> dict:
@@ -128,10 +128,10 @@ def load_experiment_yaml(path: str) -> dict:
 
 def validate_experiment_yaml(spec: dict) -> None:
     """Required keys present; workload == 'tpch' for now; every
-    systems[].dbms key exists in bexhoma.experiments.tpch.DBMS_DEFAULTS."""
+    systems[].dbms key exists in bexhoma.benchmarks.tpch.benchmark.experiment.DBMS_DEFAULTS."""
 ```
 
-### 4. `bexhoma/experiments/tpch_builder.py` (new)
+### 4. `bexhoma/benchmarks/tpch/builder.py` (new)
 
 `build_experiment(spec: dict) -> TpchExperiment`:
 
@@ -140,7 +140,7 @@ def validate_experiment_yaml(spec: dict) -> None:
 2. Resolve `SF` via the existing `bexhoma.cli_args.resolve_scaling_factor()`
    (unchanged, reused so `mode: summary` keeps resuming with the
    already-persisted scale factor, exactly like every CLI entry script).
-3. Construct `experiments.tpch(cluster=..., SF=..., timeout=..., code=...,
+3. Construct `TpchExperiment(cluster=..., SF=..., timeout=..., code=...,
    num_experiment_to_apply=...)`. Set `prometheus_interval`,
    `set_active_queries()`, `set_additional_labels()`,
    `set_default_loading_parameters()`, `set_default_benchmarking_parameters()`,
@@ -159,7 +159,7 @@ def validate_experiment_yaml(spec: dict) -> None:
      `prepare_testbed()`/`configure_workload()` expect it).
    - call `experiment.prepare_testbed(parameter)`.
 5. For each entry in `spec['systems']`: look up
-   `bexhoma.experiments.tpch.DBMS_DEFAULTS[dbms]`, build a
+   `bexhoma.benchmarks.tpch.benchmark.experiment.DBMS_DEFAULTS[dbms]`, build a
    `configurations.default(experiment=experiment, docker=..., dialect=...,
    configuration=..., alias=...)`, and call the same setter sequence
    `tpch.py`'s PostgreSQL branch calls — `set_resources()`, `set_storage()`,
@@ -295,7 +295,7 @@ cross-referencing).
    stale path, or the fields simply omitted) are silently skipped — this is
    best-effort provenance, not a hard requirement, so it must never abort an
    otherwise-valid run.
-4. Implementation location: a small helper in `bexhoma/experiments/tpch_builder.py`,
+4. Implementation location: a small helper in `bexhoma/benchmarks/tpch/builder.py`,
    e.g. `_copy_provenance_files(spec: dict, spec_path: str, result_path: str)`,
    called once from `build_experiment()` after `experiment.path` exists.
    Plain `shutil.copyfile`, no YAML re-serialization — copy the bytes the
@@ -317,8 +317,8 @@ Deliberately separate, and left untouched by this plan:
   **CLI argv**, for a human or CI to actually run. `spec.py` itself is
   workload-agnostic (catalog loading, knob resolution, validation); it
   dispatches by `workload.name` to that workload's own argv builder —
-  today `bexhoma/experiments/tpch_catalog.py` (`build_tpch_argv()`) and
-  `bexhoma/experiments/ycsb_catalog.py` (`build_ycsb_argv()`), which own
+  today `bexhoma/benchmarks/tpch/catalog.py` (`build_tpch_argv()`) and
+  `bexhoma/benchmarks/ycsb/catalog.py` (`build_ycsb_argv()`), which own
   the actual `tpch.py`/`ycsb.py` flag mapping and PostgreSQL GUC
   formatting. Scope today: TPC-H against PostgreSQL/PgDuckDB, YCSB against
   PostgreSQL. `experiment.py`'s catalog-driven branch dispatches the
@@ -348,10 +348,10 @@ memory: "Docs fixes + agent summary plan").
 
 1. `tpch.py`: extract `build_parser()`. Verify `python tpch.py run ...`
    behaves identically (no behavior change expected).
-2. `bexhoma/experiments/tpch.py`: add `DBMS_DEFAULTS`.
-3. `bexhoma/experiments/tpch_loader.py`: `load_experiment_yaml()` +
+2. `bexhoma/benchmarks/tpch/experiment.py`: add `DBMS_DEFAULTS`.
+3. `bexhoma/benchmarks/tpch/loader.py`: `load_experiment_yaml()` +
    `validate_experiment_yaml()`.
-4. `bexhoma/experiments/tpch_builder.py`: `build_experiment()`, including the
+4. `bexhoma/benchmarks/tpch/builder.py`: `build_experiment()`, including the
    provenance-copy helper.
 5. `experiment.py`: the entry script.
 6. `dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml`: worked example.

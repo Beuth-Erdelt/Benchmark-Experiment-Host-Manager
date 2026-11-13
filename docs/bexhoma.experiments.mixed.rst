@@ -1,7 +1,7 @@
-bexhoma.experiments.ycsb module
+bexhoma.experiments.mixed module
 ================================
 
-.. automodule:: bexhoma.experiments.ycsb
+.. automodule:: bexhoma.experiments.mixed
    :members:
    :undoc-members:
    :show-inheritance:

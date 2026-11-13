@@ -1,7 +1,7 @@
-bexhoma.experiments.benchbase module
+bexhoma.benchmarks.tpch.loader module
 =====================================
 
-.. automodule:: bexhoma.experiments.benchbase
+.. automodule:: bexhoma.benchmarks.tpch.loader
    :members:
    :undoc-members:
    :show-inheritance:

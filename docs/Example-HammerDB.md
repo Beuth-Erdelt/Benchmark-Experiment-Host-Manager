@@ -834,8 +834,9 @@ The evaluator turns these lines into a time series (see [Evaluators](Evaluators.
 
 ```python
 from bexhoma import collectors
+from bexhoma.benchmarks.hammerdb import HammerdbCollector
 
-collect = collectors.tpcc(path=resultfolder, codes=["1792485256"])
+collect = HammerdbCollector(path=resultfolder, codes=["1792485256"])
 # one column per phase, index is seconds since the first counter value
 df = collect.get_benchmark_timeseries_per_phase(metric="tpm")
 # one DataFrame per benchmarker pod

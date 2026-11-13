@@ -1,7 +1,7 @@
-bexhoma.evaluators.dbmsbenchmarker module
+bexhoma.benchmarks.tpcds.experiment module
 ==========================================
 
-.. automodule:: bexhoma.evaluators.dbmsbenchmarker
+.. automodule:: bexhoma.benchmarks.tpcds.experiment
    :members:
    :undoc-members:
    :show-inheritance:

@@ -255,7 +255,7 @@ library's own result files (pickle/JSON cubes built inside the dashboard pod by
 
 ## 7. Per-benchmarker details
 
-### 7a. DBMSBenchmarker (`evaluators/dbmsbenchmarker.py`)
+### 7a. DBMSBenchmarker (`benchmarks/dbmsbenchmarker/evaluator.py`)
 
 **Used by**: `tpch.py`, `tpcds.py`, and all workloads that use
 `configurations.default` + `jobtemplate-benchmarking-dbmsbenchmarker.yml`.
@@ -292,7 +292,7 @@ copy with the stale pod version (written at job-submission time with
 
 ---
 
-### 7b. YCSB (`evaluators/ycsb.py`)
+### 7b. YCSB (`benchmarks/ycsb/evaluator.py`)
 
 **Used by**: `ycsb.py`.
 
@@ -313,7 +313,7 @@ Result lines (YCSB format): `[SECTION], MetricName, count, value`
 | Column | Source |
 |---|---|
 | `connection`, `configuration`, `experiment_run`, `client`, `benchmark_run` | Header |
-| `threads`, `target`, `SF`, `workload`, `operations`, `batchsize`, `exceptions` | Header |
+| `threads`, `target`, `SF`, `workload`, `operations`, `batchsize`, `exceptions` (read back as `errors`) | Header |
 | `pod`, `pod_count`, `child` | Header |
 
 Per-operation metrics (for each of READ, UPDATE, INSERT, SCAN, CLEANUP, READ-MODIFY-WRITE and their `-FAILED` variants):
@@ -332,7 +332,7 @@ or `"Max"` are aggregated by max; `"Min"` → min; all others → sum.
 
 ---
 
-### 7c. Benchbase (`evaluators/benchbase.py`)
+### 7c. Benchbase (`benchmarks/benchbase/evaluator.py`)
 
 **Used by**: `benchbase.py`.
 
@@ -348,13 +348,13 @@ Header: `BEXHOMA_CONNECTION`, `BEXHOMA_DURATION`, `BEXHOMA_CONFIGURATION`,
 
 JSON block between `####BEXHOMA####` markers (normalized via `pd.json_normalize()`):
 `scalefactor`, `Benchmark Type`, `DBMS Version`, `DBMS Type`, `isolation`,
-`terminals`, `Goodput (requests/second)`, `Throughput (requests/second)`,
+`terminals` (read back as `threads`), `Goodput (requests/second)`, `Throughput (requests/second)`,
 `Latency Distribution.{Avg/Min/Max/25th/50th/75th/90th/95th/99th} Latency (microseconds)`.
 
 Early exit (row with `num_errors > 0`) when `"start time has already passed"` appears
 in the log (time-sync failure).
 
-**Aggregation across parallel pods**: sums `Goodput`, `Throughput`, `terminals`,
+**Aggregation across parallel pods**: sums `Goodput`, `Throughput`, `threads`,
 `target`; max for latency percentiles; mean for `AverageLatency`, `batchsize`;
 max for `time`, `sf`.
 
@@ -367,7 +367,7 @@ is computed relative to the first matching line.
 
 ---
 
-### 7d. HammerDB TPC-C (`evaluators/hammerdb.py`)
+### 7d. HammerDB TPC-C (`benchmarks/hammerdb/evaluator.py`)
 
 **Used by**: `hammerdb.py`.
 
@@ -394,11 +394,12 @@ Early exit when `"start time has already passed"` appears.
 **Columns produced** (one row per iteration per pod):
 `connection`, `configuration`, `experiment_run`, `client`, `benchmark_run`,
 `child`, `pod`, `pod_count`, `iterations`, `duration`, `rampup`, `sf`,
-`run` (0-based iteration index), `errors`, `vusers_loading`, `vusers`,
+`run` (0-based iteration index), `errors`, `vusers_loading`, `vusers` (read back as
+`threads_loading`, `threads`),
 `NOPM`, `TPM`, `dbms`, `keyandthink`, `efficiency` (only when `keyandthink == 'true'`:
 `round(100 × NOPM / vusers / 1.286, 2)`).
 
-**Aggregation across parallel pods**: mean for `NOPM`, `TPM`; sum for `vusers`,
+**Aggregation across parallel pods**: mean for `NOPM`, `TPM`; sum for `threads`,
 `errors`; max for percentiles.  `efficiency` recomputed from aggregated values
 only when `keyandthink == 'true'` and `vusers == sf × 10` (results parsed before
 `keyandthink` was kept: `vusers == sf × 10` only).
@@ -419,7 +420,7 @@ metrics.  The contribution of the refresh stream to the result set is:
    `benchmarking_timespans` to the `{connection}.config` file just like any
    other job.
 
-2. **Summary display** — `experiments/dbmsbenchmarker.py::show_summary()` calls
+2. **Summary display** — `benchmarks/dbmsbenchmarker/experiment.py::show_summary()` calls
    `show_summary_section()` on each registered benchmark with
    `benchmark_index != 1`, which prints `connection`, `experiment_run`,
    `client`, `benchmark_begin`, `benchmark_end`, and `benchmark_duration`.
@@ -506,7 +507,7 @@ After the round, `connections.config` contains (among entries from other rounds)
 
 | Entry | Evaluator sees it? | What is stored |
 |---|---|---|
-| `PostgreSQL-1-1-1` (query stream) | Yes — `evaluators.dbmsbenchmarker` reads DBMSBenchmarker cube | per-query latencies, `Power@Size`, `Throughput@Size` |
+| `PostgreSQL-1-1-1` (query stream) | Yes — `DbmsBenchmarkerEvaluator` reads DBMSBenchmarker cube | per-query latencies, `Power@Size`, `Throughput@Size` |
 | `PostgreSQL-1-1-2` (refresh stream) | Not in the cube — detected as "sidecar" entry by `show_summary()` | `benchmark_begin`, `benchmark_end`, `benchmark_duration` (seconds) |
 
 ---
@@ -522,8 +523,8 @@ Per-experiment-type dispatch:
 | Experiment | `show_summary()` override | Behavior |
 |---|---|---|
 | `mixed` (generic) | `experiments/mixed.py` | loops `benchmark.show_summary(self)` for **every** registered benchmark — only exercised when the experiment class is exactly `mixed` (no subclass overrides it) |
-| `tpch`/`tpcds` (→ `dbmsbenchmarker`) | `experiments/dbmsbenchmarker.py` | finds the benchmark with `benchmark_index == 1` and calls **only its** `show_summary(self)` |
-| `tpch` specifically | `experiments/tpch.py` | if no `RefreshStreamBenchmark` is in `self.benchmarks` (post-hoc `bexhoma summary` — `enable_refresh_stream()` was not called during the live run), creates one on the fly with a fresh evaluator and **temporarily appends it**, calls `super().show_summary()`, then removes the temporary entry so `self.benchmarks` is restored |
+| `tpch`/`tpcds` (→ `dbmsbenchmarker`) | `benchmarks/dbmsbenchmarker/experiment.py` | finds the benchmark with `benchmark_index == 1` and calls **only its** `show_summary(self)` |
+| `tpch` specifically | `benchmarks/tpch/experiment.py` | if no `RefreshStreamBenchmark` is in `self.benchmarks` (post-hoc `bexhoma summary` — `enable_refresh_stream()` was not called during the live run), creates one on the fly with a fresh evaluator and **temporarily appends it**, calls `super().show_summary()`, then removes the temporary entry so `self.benchmarks` is restored |
 | `ycsb`/`tpcc`/`benchbase` | none — inherit `mixed.show_summary()` | since each of these registers exactly one benchmark, the `mixed` loop calls the template method once |
 
 For all named experiment types, the actual summary content is produced by a single
@@ -616,7 +617,7 @@ the pieces that differ:
 | `_show_loading_sections(experiment, is_multitenant)` → `(Section \| None, df_loading)` | builds `### Loading → Per Run` when `loading_is_active()` | `YCSB` → also builds `#### Per Connection` first; guards on `df_loading.empty` |
 | `_show_extra_sections(experiment, df_aggregated_reduced)` → `(list[Section], dict, Section \| None)` | no-op, returns `([], {}, None)` | `DBMSBenchmarkerBenchmark` → runs the secondary-benchmark loop (see §9d), then builds `Latency`/`Errors`/`Warnings` sections; returns `{"num_errors": N, "num_warnings": N, "num_active_queries": N, "num_queries_with_explain": N}` plus a report-only `EXPLAIN` section (or `None` when `-se`/`--store-explain` captured nothing) — the full per-query/per-connection EXPLAIN dump is never rendered to stdout, only into `benchmarking.md`; `show_summary()` only shows a pass/fail/skipped Tests-table row for it |
 | `_build_key_metrics_section(df_aggregated_reduced)` → `Section \| None` | no-op, returns `None` | `DBMSBenchmarkerBenchmark`/`YCSB`/`TPCC`/`Benchbase` → surface the exact column(s) their own `record_tests()` tests (Geo Times/Power@Size/Throughput@Size, `[OVERALL].Throughput(ops/sec)`, `NOPM`, `Throughput (requests/second)` respectively), via the shared `_key_metrics_section_from_columns()` helper. Report-only (§9h) — never rendered to stdout. |
-| `evaluator.record_tests(experiment, df_loading, df_reduced, workflow_actual, workflow_planned, **extra)` | `evaluators/logger.py` default: tests workflow only | `evaluators/dbmsbenchmarker.py` → also tests Geo Times, Power@Size, Throughput@Size, SQL errors/warnings, and EXPLAIN coverage (from `extra`; skipped rather than failed when `-se`/`--store-explain` was not used); `evaluators/ycsb.py`, `evaluators/hammerdb.py`, `evaluators/benchbase.py` → test their own metric columns plus workflow |
+| `evaluator.record_tests(experiment, df_loading, df_reduced, workflow_actual, workflow_planned, **extra)` | `evaluators/logger.py` default: tests workflow only | `benchmarks/dbmsbenchmarker/evaluator.py` → also tests Geo Times, Power@Size, Throughput@Size, SQL errors/warnings, and EXPLAIN coverage (from `extra`; skipped rather than failed when `-se`/`--store-explain` was not used); `benchmarks/ycsb/evaluator.py`, `benchmarks/hammerdb/evaluator.py`, `benchmarks/benchbase/evaluator.py` → test their own metric columns plus workflow |
 
 `record_tests()` lives on the **evaluator**, not the `Benchmark`, because the metric
 columns it checks (`df_reduced`) are evaluator-specific; the `extra` kwargs bridge
@@ -669,7 +670,7 @@ def show_summary_section(self, experiment) -> Section | None:
                     dataframe=df_section, floatfmt=None, link_connections=True)
 ```
 
-`self.evaluator` is `evaluators.base(benchmark_run=2)`.
+`self.evaluator` is `evaluators.EvaluatorBase(benchmark_run=2)`.
 `get_connections_of_experiment()` reads from `connections.config` (which has entries
 for both benchmark_run=1 and benchmark_run=2).  The filter `benchmark_run == 2` selects
 only the refresh-stream entries, so the output is:
@@ -695,7 +696,7 @@ always `1`.  `phase` and `job` contain no code prefix; the collector's
 To add any new secondary benchmarker that runs in parallel with the query stream:
 
 1. **Create a `Benchmark` subclass** that implements `show_summary_section(experiment)`.
-   Return `evaluators.base(...)` from `create_evaluator()` if only timing is needed,
+   Return `evaluators.EvaluatorBase(...)` from `create_evaluator()` if only timing is needed,
    or a richer evaluator if the pod logs contain parseable metrics.
 
 2. **Register it** with `experiment.add_benchmark(MyBenchmark())` after the primary
@@ -764,11 +765,11 @@ benchmark types.
 | Timing extraction | `experiments/base.py` | `end_benchmarking()`, `get_job_timing_benchmarking()`, `extract_job_timing()` |
 | Connection file write | `experiments/base.py` | `end_benchmarking()` (timespans) + `configurations/benchmarking.py::BenchmarkRunner.run_pod()` (initial create) |
 | Log-to-pickle pipeline | `evaluators/logger.py` | `end_benchmarking()`, `_collect_dfs()`, `transform_all_logs_benchmarking()` |
-| YCSB metrics | `evaluators/ycsb.py` | `log_to_df()`, `benchmarking_aggregate_by_parallel_pods()` |
-| Benchbase metrics | `evaluators/benchbase.py` | `log_to_df()`, `benchmarking_aggregate_by_parallel_pods()` |
-| HammerDB metrics | `evaluators/hammerdb.py` | `log_to_df()`, `benchmarking_aggregate_by_parallel_pods()` |
-| DBMSBenchmarker metrics | `evaluators/dbmsbenchmarker.py` | `get_df_benchmarking()` |
+| YCSB metrics | `benchmarks/ycsb/evaluator.py` | `log_to_df()`, `benchmarking_aggregate_by_parallel_pods()` |
+| Benchbase metrics | `benchmarks/benchbase/evaluator.py` | `log_to_df()`, `benchmarking_aggregate_by_parallel_pods()` |
+| HammerDB metrics | `benchmarks/hammerdb/evaluator.py` | `log_to_df()`, `benchmarking_aggregate_by_parallel_pods()` |
+| DBMSBenchmarker metrics | `benchmarks/dbmsbenchmarker/evaluator.py` | `get_df_benchmarking()` |
 | Refresh stream timing in summary | `benchmarks/refresh.py` | `RefreshStreamBenchmark.show_summary_section()` |
 | Connection metadata (incl. duration) | `evaluators/base.py` | `add_connection_to_result()`, `get_connections_of_experiment()` |
-| Refresh stream setup | `experiments/tpch.py` | `enable_refresh_stream()` |
+| Refresh stream setup | `benchmarks/tpch/experiment.py` | `enable_refresh_stream()` |
 | `fixed_parallelism` guard | `configurations/base.py` | `SutConfiguration.add_benchmark_list()` |

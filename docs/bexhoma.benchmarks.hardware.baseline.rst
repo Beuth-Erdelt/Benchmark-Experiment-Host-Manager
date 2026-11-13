@@ -1,7 +1,7 @@
-bexhoma.experiments.dbmsbenchmarker module
+bexhoma.benchmarks.hardware.baseline module
 ===========================================
 
-.. automodule:: bexhoma.experiments.dbmsbenchmarker
+.. automodule:: bexhoma.benchmarks.hardware.baseline
    :members:
    :undoc-members:
    :show-inheritance:

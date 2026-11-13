@@ -1,7 +1,7 @@
-bexhoma.evaluators.tpcc module
+bexhoma.benchmarks.base module
 ==============================
 
-.. automodule:: bexhoma.evaluators.tpcc
+.. automodule:: bexhoma.benchmarks.base
    :members:
    :undoc-members:
    :show-inheritance:
