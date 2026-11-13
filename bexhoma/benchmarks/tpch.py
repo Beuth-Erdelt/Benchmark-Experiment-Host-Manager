@@ -9,7 +9,7 @@ See LICENSE for details.
 from types import SimpleNamespace
 
 from ..system_descriptors import dimension_dockers, notes
-from .base import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, dimension_info
+from bexhoma.benchmarks.dbmsbenchmarker.benchmark import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, dimension_info
 
 __all__ = ["TPCH", "resolve_indexing_key"]
 

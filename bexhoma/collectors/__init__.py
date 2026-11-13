@@ -16,14 +16,13 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from .base import CollectorBase, get_non_constant
-from .dbmsbenchmarker import DbmsBenchmarkerCollector, map_index_to_queryname
 from .benchbase import BenchbaseCollector
 from .hardware import HardwareCollector
 from .hammerdb import HammerdbCollector
 from .mixed import MixedCollector
 
 __all__ = [
-    "CollectorBase", "DbmsBenchmarkerCollector", "HardwareCollector", "MixedCollector",
+    "CollectorBase", "HardwareCollector", "MixedCollector",
     "HammerdbCollector", "BenchbaseCollector",
-    "get_non_constant", "map_index_to_queryname",
+    "get_non_constant",
 ]

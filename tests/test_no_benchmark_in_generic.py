@@ -72,9 +72,9 @@ _BENCHMARK_FILES = {
     # imports it, the one place where a generic module depends on a benchmark
     'bexhoma/hardware_baseline.py',
     'bexhoma/benchmarks/ssb.py', 'bexhoma/benchmarks/hammerdb.py', 'bexhoma/benchmarks/tpcds.py',
-    'bexhoma/benchmarks/tpch.py',    'bexhoma/collectors/benchbase.py', 'bexhoma/collectors/dbmsbenchmarker.py', 'bexhoma/collectors/hardware.py',
-    'bexhoma/collectors/hammerdb.py',    'bexhoma/evaluators/benchbase.py', 'bexhoma/evaluators/dbmsbenchmarker.py', 'bexhoma/evaluators/hardware.py',
-    'bexhoma/evaluators/hammerdb.py',    'bexhoma/experiments/benchbase.py', 'bexhoma/experiments/dbmsbenchmarker.py', 'bexhoma/experiments/hardware.py',
+    'bexhoma/benchmarks/tpch.py',    'bexhoma/collectors/benchbase.py', 'bexhoma/collectors/hardware.py',
+    'bexhoma/collectors/hammerdb.py',    'bexhoma/evaluators/benchbase.py', 'bexhoma/evaluators/hardware.py',
+    'bexhoma/evaluators/hammerdb.py',    'bexhoma/experiments/benchbase.py', 'bexhoma/experiments/hardware.py',
     'bexhoma/experiments/ssb.py', 'bexhoma/experiments/hammerdb.py', 'bexhoma/experiments/tpcds.py',
     'bexhoma/experiments/tpch.py', 'bexhoma/experiments/tpch_builder.py', 'bexhoma/experiments/tpch_catalog.py',
     'bexhoma/experiments/tpch_loader.py',}

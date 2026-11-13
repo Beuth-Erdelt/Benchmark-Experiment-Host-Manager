@@ -24,8 +24,8 @@ import pprint
 
 from dbmsbenchmarker import parameter, inspector
 
-from bexhoma import evaluators
-from .base import CollectorBase
+from bexhoma.collectors.base import CollectorBase
+from bexhoma.benchmarks.dbmsbenchmarker.evaluator import DbmsBenchmarkerEvaluator
 
 __all__ = ["DbmsBenchmarkerCollector", "map_index_to_queryname"]
 
@@ -58,7 +58,7 @@ class DbmsBenchmarkerCollector(CollectorBase):
 
     Extends :class:`CollectorBase` with query-level aggregation methods for warnings,
     errors, and latencies. Overrides :meth:`get_evaluator` to return a
-    :class:`evaluators.DbmsBenchmarkerEvaluator` instance.
+    :class:`DbmsBenchmarkerEvaluator` instance.
     """
     def __init__(self, path, codes, benchmark_run: int = 0):
         """
@@ -74,16 +74,16 @@ class DbmsBenchmarkerCollector(CollectorBase):
 
     def get_evaluator(self, code=''):
         """
-        Returns a :class:`evaluators.DbmsBenchmarkerEvaluator` instance for the given experiment code.
+        Returns a :class:`DbmsBenchmarkerEvaluator` instance for the given experiment code.
 
         :param code: Experiment identifier. Defaults to the first code in ``self.codes``.
         :type code: str
         :return: DBMSBenchmarker evaluator for the specified experiment.
-        :rtype: evaluators.DbmsBenchmarkerEvaluator
+        :rtype: DbmsBenchmarkerEvaluator
         """
         if code == '':
             code = self.codes[0]
-        return evaluators.DbmsBenchmarkerEvaluator(code=code, path=self.path, benchmark_run=self.benchmark_run)
+        return DbmsBenchmarkerEvaluator(code=code, path=self.path, benchmark_run=self.benchmark_run)
 
     def get_total_warnings(self, query_titles=False):
         """

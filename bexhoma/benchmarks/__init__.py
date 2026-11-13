@@ -11,7 +11,7 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from .base import Benchmark, DBMSBenchmarkerBenchmark
+from .base import Benchmark
 from .hammerdb import HammerDB
 from .tpch import TPCH
 from .tpcds import TPCDS
@@ -22,7 +22,6 @@ from .hardware import Hardware
 
 __all__ = [
     "Benchmark",
-    "DBMSBenchmarkerBenchmark",
     "HammerDB",
     "TPCH",
     "TPCDS",

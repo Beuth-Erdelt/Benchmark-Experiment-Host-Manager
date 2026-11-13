@@ -9,7 +9,7 @@ See LICENSE for details.
 from types import SimpleNamespace
 
 from ..system_descriptors import dimension_dockers, notes
-from .base import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, dimension_folder, dimension_info
+from bexhoma.benchmarks.dbmsbenchmarker.benchmark import DBMSBenchmarkerBenchmark, DIMENSION_VARIANTS, dimension_folder, dimension_info
 
 __all__ = ["SSB", "SCHEMA_VARIANTS", "QUERY_VARIANTS", "DIMENSION_VARIANTS",
            "resolve_indexing_key", "resolve_queryfile", "resolve_dimension_folder"]
@@ -24,7 +24,7 @@ QUERY_VARIANTS = ('spec', 'random')
 def resolve_dimension_folder(docker: str, schema_variant: str, dimensions: str, applies_to: tuple) -> str:
     """Script folder (in ``experiments/ssb``) of a DBMS for a dimension placement.
 
-    As :func:`~bexhoma.benchmarks.base.dimension_folder`; the flat schema has no
+    As :func:`~bexhoma.benchmarks.dbmsbenchmarker.benchmark.dimension_folder`; the flat schema has no
     dimensions, so it always uses the DBMS folder.
 
     :param docker: DBMS name, e.g. ``ClickHouseCluster``.

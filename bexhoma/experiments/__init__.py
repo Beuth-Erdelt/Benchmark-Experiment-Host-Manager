@@ -14,7 +14,6 @@ See LICENSE for details.
 """
 from .base import ExperimentBase
 from .mixed import MixedExperiment
-from .dbmsbenchmarker import DbmsBenchmarkerExperiment
 from .tpch import TpchExperiment
 from .tpcds import TpcdsExperiment
 from .ssb import SsbExperiment
@@ -23,7 +22,7 @@ from .hammerdb import HammerdbExperiment
 from .hardware import HardwareExperiment
 
 __all__ = [
-    "ExperimentBase", "MixedExperiment", "DbmsBenchmarkerExperiment",
+    "ExperimentBase", "MixedExperiment",
     "TpchExperiment", "TpcdsExperiment", "SsbExperiment", "HammerdbExperiment",
     "BenchbaseExperiment", "HardwareExperiment",
 ]

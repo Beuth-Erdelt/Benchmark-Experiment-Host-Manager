@@ -15,7 +15,7 @@ See LICENSE for details.
 """
 from bexhoma.benchmarks.registry import BenchmarkDescriptor, register
 from bexhoma.collectors.benchbase import BenchbaseCollector
-from bexhoma.collectors.dbmsbenchmarker import DbmsBenchmarkerCollector
+from bexhoma.benchmarks.dbmsbenchmarker.collector import DbmsBenchmarkerCollector
 from bexhoma.collectors.hardware import HardwareCollector
 from bexhoma.collectors.hammerdb import HammerdbCollector
 from bexhoma.experiments.benchbase import BenchbaseExperiment
@@ -46,7 +46,3 @@ register(BenchmarkDescriptor(
 register(BenchmarkDescriptor(
     name='hardware', types=('hardware',), experiment=HardwareExperiment, collector=HardwareCollector,
     entry_script='hardware.py'))
-# The tool family behind TPC-H, TPC-DS and SSB: a benchmark run of this type has a
-# collector, but no experiment class of its own to rebuild a summary from
-register(BenchmarkDescriptor(
-    name='dbmsbenchmarker', types=('dbmsbenchmarker',), collector=DbmsBenchmarkerCollector))

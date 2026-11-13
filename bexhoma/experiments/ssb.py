@@ -15,7 +15,7 @@ import logging
 import urllib3
 
 from bexhoma import benchmarks
-from .dbmsbenchmarker import DbmsBenchmarkerExperiment
+from bexhoma.benchmarks.dbmsbenchmarker.experiment import DbmsBenchmarkerExperiment
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)

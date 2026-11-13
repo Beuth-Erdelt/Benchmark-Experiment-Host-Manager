@@ -29,8 +29,8 @@ from pathlib import Path
 from scipy.stats import gmean
 import numpy as np
 
-from .base import natural_sort, resolve_within_result_folder
-from .logger import LogEvaluator
+from bexhoma.evaluators.base import natural_sort, resolve_within_result_folder
+from bexhoma.evaluators.logger import LogEvaluator
 
 __all__ = ["DbmsBenchmarkerEvaluator", "map_index_to_queryname"]
 
@@ -738,7 +738,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         :param workflow_planned: Planned workflow dict from workload config.
         :param extra: Must contain ``num_errors`` and ``num_warnings``, and
                       ``num_active_queries``/``missing_queries``/``num_queries_with_explain`` from
-                      :meth:`~bexhoma.benchmarks.base.DBMSBenchmarkerBenchmark._show_extra_sections`.
+                      :meth:`~bexhoma.benchmarks.dbmsbenchmarker.benchmark.DBMSBenchmarkerBenchmark._show_extra_sections`.
         """
         if experiment.benchmarking_is_active():
             experiment._test_column(df_reduced, "Geo Times [s]")

@@ -8,7 +8,7 @@ See LICENSE for details.
 """
 from types import SimpleNamespace
 
-from .base import DBMSBenchmarkerBenchmark
+from bexhoma.benchmarks.dbmsbenchmarker.benchmark import DBMSBenchmarkerBenchmark
 
 __all__ = ["TPCDS"]
 

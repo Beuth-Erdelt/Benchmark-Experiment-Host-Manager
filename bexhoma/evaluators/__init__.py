@@ -13,12 +13,11 @@ See LICENSE for details.
 """
 from .base import EvaluatorBase, natural_sort
 from .logger import LogEvaluator
-from .dbmsbenchmarker import DbmsBenchmarkerEvaluator
 from .benchbase import BenchbaseEvaluator
 from .hammerdb import HammerdbEvaluator
 from .hardware import HardwareEvaluator
 
 __all__ = [
-    "EvaluatorBase", "LogEvaluator", "DbmsBenchmarkerEvaluator",
+    "EvaluatorBase", "LogEvaluator",
     "BenchbaseEvaluator", "HammerdbEvaluator", "HardwareEvaluator", "natural_sort",
 ]

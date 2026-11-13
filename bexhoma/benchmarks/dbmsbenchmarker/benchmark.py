@@ -1,0 +1,420 @@
+"""
+Benchmark base class of the DBMSBenchmarker family.
+
+Provides :class:`DBMSBenchmarkerBenchmark`, the shared base of the benchmarks
+that run their queries through the DBMSBenchmarker tool, and the placement of
+dimension tables on a multi-node DBMS (``-xdim``) that some of them offer.
+
+Authors: Patrick K. Erdelt
+Copyright (C) 2020 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
+"""
+import pandas as pd
+from bexhoma import failure_timeline
+from bexhoma.benchmarks.base import Benchmark, Section, _key_metrics_section_from_columns
+from bexhoma.benchmarks.dbmsbenchmarker.evaluator import DbmsBenchmarkerEvaluator
+
+__all__ = ["DBMSBenchmarkerBenchmark", "DIMENSION_VARIANTS", "dimension_folder", "dimension_info"]
+
+#: ``-xdim``: placement of the dimensions on a multi-node DBMS: a full
+#: copy on every node (default), or spread over the nodes like the fact table.
+DIMENSION_VARIANTS = ('replicated', 'distributed')
+
+def dimension_folder(docker: str, dimensions: str, applies_to: tuple) -> str:
+    """Script folder (in ``experiments/<benchmark>``) of a DBMS for a dimension placement.
+
+    The default placement's scripts are in the DBMS folder, the other's in its
+    subfolder ``distributed``; DBMS outside ``applies_to`` ignore it.
+
+    :param docker: DBMS name, e.g. ``ClickHouseCluster``.
+    :param dimensions: One of :data:`DIMENSION_VARIANTS`.
+    :param applies_to: DBMS of the benchmark that ``-xdim`` applies to
+        (:func:`bexhoma.system_descriptors.dimension_dockers`).
+    :return: Folder relative to ``experiments/<benchmark>``, e.g. ``ClickHouseCluster/distributed``.
+    :rtype: str
+    """
+    if docker in applies_to and dimensions == 'distributed':
+        return docker + '/distributed'
+    return docker
+
+
+def dimension_info(dbms: list, dimensions: str, fact: str, applies_to: tuple) -> str:
+    """Workload info line on the dimension placement, empty without a DBMS it applies to.
+
+    :param dbms: The ``-dbms`` list.
+    :param dimensions: One of :data:`DIMENSION_VARIANTS`.
+    :param fact: Name of the fact table(s), e.g. ``lineorder``.
+    :param applies_to: DBMS of the benchmark that ``-xdim`` applies to.
+    :return: The line with a leading newline, or ``''``.
+    :rtype: str
+    """
+    names = [d for d in applies_to if d in (dbms or [])]
+    if not names:
+        return ''
+    placement = ('a full copy on every node' if dimensions == 'replicated'
+                 else f'spread over the nodes like {fact}')
+    return f"\nDimensions of {', '.join(names)} are {placement} (-xdim {dimensions})."
+
+
+class DBMSBenchmarkerBenchmark(Benchmark):
+    """
+    Shared base for benchmarks that use the DBMSBenchmarker tool.
+
+    Provides :meth:`create_evaluator` wired to ``DbmsBenchmarkerEvaluator``.
+    """
+
+    def __init__(self, name: str, SF: str = '1') -> None:
+        """
+        :param name: Short identifier of the benchmark.
+        :param SF: Scaling factor.
+        """
+        super().__init__(name=name, SF=SF)
+        self._completion: pd.DataFrame | None = None
+
+    def _query_completion(self) -> pd.DataFrame:
+        """
+        Return which active query each connection completed, computed once
+        per summary (see :meth:`~bexhoma.benchmarks.dbmsbenchmarker.evaluator.DbmsBenchmarkerEvaluator.get_query_completion`).
+
+        :return: Boolean connection × query DataFrame with a ``phase`` column.
+        :rtype: pandas.DataFrame
+        """
+        if self._completion is None:
+            self._completion = self.evaluator.get_query_completion()
+        return self._completion
+
+    def _query_titles(self) -> dict[str, str]:
+        """
+        Map query labels (``'Q1'``, ...) to the titles the report's other tables use.
+
+        :return: Label to title, for every active query.
+        :rtype: dict[str, str]
+        """
+        labels = self.evaluator.get_total_errors(query_titles=False).columns
+        titles = self.evaluator.get_total_errors(query_titles=True).columns
+        return dict(zip(labels, titles))
+
+    def _results_notes(self, is_empty: bool) -> list[str]:
+        """
+        Say which queries the pooled totals leave out, and why.
+
+        DBMSBenchmarker computes Per Connection, Per Phase and the latency
+        table only over queries that succeeded in every connection of the
+        experiment. Without this note a single failure anywhere silently
+        narrows every row, and a failure of each query somewhere leaves the
+        tables empty with no visible reason.
+
+        DBMSBenchmarker leaves a query out only when some connection failed
+        every run of it, so a query with failed runs elsewhere stays in the
+        totals. The note names those too; otherwise the totals silently
+        disagree with Query Completion per Phase.
+
+        :param is_empty: Whether the table the note is attached to has no rows.
+        :return: One explanatory line, or none when every pooled query
+                 succeeded everywhere and nothing was left out.
+        :rtype: list[str]
+        """
+        completion = self._query_completion()
+        if completion.empty:
+            return []
+        active = [column for column in completion.columns if column != 'phase']
+        pooled = self.evaluator.get_pooled_queries()
+        left_out = [query for query in active if query not in pooled]
+        partial = [query for query in active if query in pooled and not completion[query].all()]
+        if is_empty and pooled:
+            return []
+
+        def failed(queries: list[str]) -> str:
+            return "; ".join(
+                f"{query} failed in {int((~completion[query]).sum())} of {len(completion)} connections"
+                for query in queries
+            )
+        see = ("See Query Completion per Phase for where, and Per Phase (Complete Phases Only) "
+               "for the phases that completed every query.")
+        if is_empty:
+            if not left_out:
+                return []
+            return [f"No rows: these totals count only queries that succeeded in every connection of "
+                    f"this experiment, and no query did ({failed(left_out)}). {see}"]
+        sentences = []
+        if left_out:
+            sentences.append(
+                f"These totals cover {len(pooled)} of {len(active)} active queries: only queries that "
+                f"succeeded in every connection of this experiment count, so the others are left out of "
+                f"every row ({failed(left_out)}).")
+        if partial:
+            sentences.append(
+                f"Included although some of their runs failed ({failed(partial)}): each such connection "
+                f"still had a successful run of the query; its failed runs count neither in the timings "
+                f"nor in Throughput@Size.")
+        if not sentences:
+            return []
+        return [" ".join(sentences + [see])]
+
+    def _build_completion_sections(self, is_multitenant: bool) -> list[Section]:
+        """
+        Build ``#### Query Completion per Phase`` and, when some phase is
+        incomplete, ``#### Per Phase (Complete Phases Only)``.
+
+        The completion matrix counts pods per phase and query, independent of
+        any other phase, so it is never emptied by failures elsewhere. The
+        complete-phases table keeps the pooled metric definition but pools
+        only over phases in which every pod completed every active query, so
+        its rows share one query set and stay comparable.
+
+        :param is_multitenant: Whether the experiment runs in multitenant mode.
+        :return: The completion sections, or none without completion data.
+        :rtype: list[Section]
+        """
+        completion = self._query_completion()
+        if completion.empty:
+            return []
+        df_counts = self.evaluator.get_query_completion_per_phase(completion)
+        queries = [column for column in df_counts.columns if column != 'pods']
+        titles = self._query_titles()
+        complete = df_counts[queries].eq(df_counts['pods'], axis=0).all(axis=1)
+        df_matrix = pd.DataFrame({'pods': df_counts['pods']}, index=df_counts.index)
+        for query in queries:
+            df_matrix[titles.get(query, query)] = df_counts[query].astype(str) + "/" + df_counts['pods'].astype(str)
+        df_matrix['complete'] = complete.map({True: 'yes', False: 'no'})
+        df_matrix.index.name = 'phase'
+        sections = [Section(
+            heading="Query Completion per Phase", level=4, dataframe=df_matrix, floatfmt=None,
+            lines=["", "Pods that completed each query, out of the pods the phase ran (`completed/pods`). "
+                       "Counted per phase, so a failure in one phase does not change another phase's row. "
+                       "`complete` = every pod completed every active query."],
+        )]
+        if complete.all():
+            return sections
+        incomplete = [phase for phase, ok in complete.items() if not ok]
+        df_complete = self.evaluator.get_summary_benchmark_per_phase_complete(
+            completion, columns=['phase', 'tenant_id'] if is_multitenant else ['phase'])
+        note = (f"Only the {int(complete.sum())} of {len(complete)} phases in which every pod completed every "
+                f"active query; each row covers all {len(queries)} active queries, so the rows are comparable "
+                f"with each other. Left out: {', '.join(incomplete)} - see Query Completion per Phase.")
+        sections.append(Section(
+            heading="Per Phase (Complete Phases Only)", level=4, dataframe=df_complete, skip_if_empty=True,
+            lines=[note] if df_complete.empty else ["", note],
+        ))
+        return sections
+
+    def _build_complete_latency_section(self) -> Section | None:
+        """
+        Build ``### Latency of Timer Execution [ms] (Complete Phases Only)``.
+
+        The pooled latency table keeps only queries that succeeded in every
+        connection, so a failure anywhere removes a query's timings everywhere.
+        This table gives the same mean execution times over the connections of
+        the phases in which every pod completed every active query, so the
+        per-query behaviour of a partly failed run stays visible.
+
+        :return: The section, or ``None`` when every phase is complete (the
+            pooled table already says it all) or no phase is.
+        :rtype: Section | None
+        """
+        completion = self._query_completion()
+        if completion.empty:
+            return None
+        connections = self.evaluator.get_complete_connections(completion)
+        if not connections or len(connections) == len(completion):
+            return None
+        df = self.evaluator.get_query_latencies(query_titles=True, dbms_filter=connections)
+        if df is None or df.empty:
+            return None
+        df = df.sort_index().T.round(2)
+        df.index.names = ["Queries"]
+        complete_phases = sorted(set(completion.loc[connections, 'phase']))
+        incomplete = sorted(set(completion['phase']) - set(complete_phases))
+        note = (f"Mean execution time per query and connection, over the {len(complete_phases)} of "
+                f"{len(complete_phases) + len(incomplete)} phases in which every pod completed every "
+                f"active query. Left out: {', '.join(incomplete)} - see Query Completion per Phase.")
+        # No blank line after the heading: the table follows it directly, as in
+        # the pooled latency section.
+        return Section(heading="Latency of Timer Execution [ms] (Complete Phases Only)", level=3,
+                       blank_after_heading=False, dataframe=df, lines=["", note])
+
+    def _failure_events(self) -> list[failure_timeline.FailureEvent]:
+        """
+        One failure event per phase in which some pod failed some query.
+
+        The events carry no time of their own; the report places each in its
+        phase's time window.
+
+        :return: Failure events, in phase order.
+        :rtype: list[failure_timeline.FailureEvent]
+        """
+        completion = self._query_completion()
+        if completion.empty:
+            return []
+        df_counts = self.evaluator.get_query_completion_per_phase(completion)
+        queries = [column for column in df_counts.columns if column != 'pods']
+        events = []
+        for phase, row in df_counts.iterrows():
+            failed = [f"{query} in {row['pods'] - row[query]} of {row['pods']} pods"
+                      for query in queries if row[query] < row['pods']]
+            if failed:
+                events.append(failure_timeline.FailureEvent(
+                    phase=str(phase), text="queries failed: " + "; ".join(failed),
+                    see="[benchmarking.md](benchmarking.md)'s Query Completion per Phase and Errors",
+                ))
+        return events
+
+    def create_evaluator(self, code: str, path: str, benchmark_run: int):
+        """
+        Return a ``dbmsbenchmarker`` evaluator scoped to this benchmark's index.
+
+        :param code: Experiment identifier.
+        :param path: Root result path.
+        :param benchmark_run: 1-based benchmark position.
+        :return: :class:`DbmsBenchmarkerEvaluator` instance.
+        """
+        return DbmsBenchmarkerEvaluator(
+            code=code,
+            path=path,
+            include_loading=True,
+            include_benchmarking=True,
+            benchmark_run=benchmark_run,
+            name=self.name,
+        )
+
+    def _prepare_evaluator(self, experiment) -> None:
+        """
+        Load the DBMSBenchmarker inspector before the summary is printed.
+
+        :param experiment: The owning experiment object.
+        """
+        self.evaluator.load_inspector()
+        self._completion = None
+
+    def _build_key_metrics_section(self, df_aggregated_reduced: pd.DataFrame) -> Section | None:
+        """
+        Surface Geo Times, Power@Size, and Throughput@Size — the same columns
+        :meth:`~bexhoma.benchmarks.dbmsbenchmarker.evaluator.dbmsbenchmarker.record_tests`
+        tests via ``experiment._test_column()``.
+
+        :param df_aggregated_reduced: The per-phase execution DataFrame.
+        :return: A ``Key Metrics`` section, or ``None`` when none of the
+                 tested columns are present.
+        :rtype: Section | None
+        """
+        return _key_metrics_section_from_columns(
+            df_aggregated_reduced, ["Geo Times [s]", "Power@Size [~Q/h]", "Throughput@Size"]
+        )
+
+    def _show_extra_sections(self, experiment, df_aggregated_reduced: pd.DataFrame) -> tuple[list[Section], dict, Section | None]:
+        """
+        Build secondary-benchmark sections, query latency, SQL errors, and warnings.
+
+        :param experiment: The owning experiment object.
+        :param df_aggregated_reduced: The per-phase execution DataFrame.
+        :return: Tuple of the extra sections to append to the summary; a dict
+                 with ``num_errors``, ``num_warnings``, ``num_active_queries``,
+                 ``missing_queries`` (active queries outside the pooled set the
+                 totals cover) and ``num_queries_with_explain`` for test recording; and a
+                 report-only ``EXPLAIN`` detail section (or ``None``), shown
+                 in ``benchmarking.md`` but never in the stdout summary.
+        :rtype: tuple[list[Section], dict, Section | None]
+        """
+        if not experiment.benchmarking_is_active():
+            return [], {"num_errors": 0, "num_warnings": 0, "num_active_queries": 0, "num_queries_with_explain": 0}, None
+        sections: list[Section] = []
+        for bm in experiment.benchmarks:
+            if bm.benchmark_index == self.benchmark_index:
+                continue
+            section = bm.show_summary_section(experiment)
+            if section is not None:
+                sections.append(section)
+
+        latency_section = Section(heading="Latency of Timer Execution [ms]", level=3, blank_after_heading=False,
+                                  skip_if_empty=True)
+        df_latencies = self.evaluator.get_query_latencies(query_titles=True)
+        # Columns are dbmsbenchmarker's pooled query set: the queries every
+        # connection of this experiment code completed, i.e. what the totals cover.
+        pooled_queries = set(df_latencies.columns) if df_latencies is not None else set()
+        if df_latencies is not None and not df_latencies.empty:
+            df_latencies = df_latencies.sort_index().T.round(2)
+            df_latencies.index.names = ["Queries"]
+            latency_section.dataframe = df_latencies
+            notes = self._results_notes(is_empty=False)
+            latency_section.lines = [""] + notes if notes else None
+        else:
+            latency_section.lines = self._results_notes(is_empty=True) or None
+        sections.append(latency_section)
+        complete_latency_section = self._build_complete_latency_section()
+        if complete_latency_section is not None:
+            sections.append(complete_latency_section)
+
+        errors_section = Section(heading="Errors (failed queries)", level=3)
+        df_errors = self.evaluator.get_total_errors(query_titles=True)
+        num_errors = df_errors.sum().sum()
+        if num_errors > 0:
+            errors_section.dataframe = df_errors[~(df_errors == 0).all(axis=1)]
+            failing_cols_mask = (df_errors != 0).any(axis=0)
+            list_error_query_titles = list(df_errors.columns[failing_cols_mask])
+            df_errors_by_num = self.evaluator.get_total_errors(query_titles=False)
+            list_error_query_nums = list(df_errors_by_num.columns[failing_cols_mask])
+            error_lines: list[str] = []
+            for query_title, query_num in zip(list_error_query_titles, list_error_query_nums):
+                query_num_stripped = str(query_num).lstrip('Q')
+                list_errors = self.evaluator.evaluation.get_error(query_num_stripped)
+                list_errors = {k: v for k, v in list_errors.items() if len(v) > 0}
+                error_lines.append("* " + query_title)
+                for k, v in list_errors.items():
+                    error_lines.append(f"  * {k}: {v}")
+            errors_section.lines = error_lines
+        else:
+            errors_section.lines = ["No errors"]
+        sections.append(errors_section)
+
+        warnings_section = Section(heading="Warnings (result mismatch)", level=3)
+        df_warnings = self.evaluator.get_total_warnings(query_titles=True)
+        num_warnings = df_warnings.sum().sum()
+        if num_warnings > 0:
+            warnings_section.dataframe = df_warnings[~(df_warnings == 0).all(axis=1)]
+        else:
+            warnings_section.lines = ["No warnings"]
+        sections.append(warnings_section)
+
+        # EXPLAIN is opt-in evidence (dbmsbenchmarker's -se/--store-explain). The full
+        # per-connection dump is report-only (see explain_section below, rendered into
+        # benchmarking.md but never printed to stdout) — show_summary() only sees a
+        # pass/fail/skipped Tests-table row (record_tests() in evaluators/dbmsbenchmarker.py).
+        df_errors_by_num = self.evaluator.get_total_errors(query_titles=False)
+        explain_lines: list[str] = []
+        num_active_queries = len(df_errors.columns)
+        missing_queries = [q for q in df_errors.columns if q not in pooled_queries]
+        num_queries_with_explain = 0
+        for query_title, query_num in zip(list(df_errors.columns), list(df_errors_by_num.columns)):
+            query_num_stripped = str(query_num).lstrip('Q')
+            list_explains = self.evaluator.evaluation.get_explain(query_num_stripped)
+            list_explains = {k: v for k, v in list_explains.items() if len(v) > 0}
+            if not list_explains:
+                continue
+            num_queries_with_explain += 1
+            explain_lines.append("* " + query_title)
+            for connection_name, explain_text in list_explains.items():
+                explain_lines.append(f"  * {connection_name}")
+                explain_lines.append("    ```text")
+                explain_lines.extend("    " + line for line in explain_text.splitlines())
+                explain_lines.append("    ```")
+        explain_section = Section(heading="EXPLAIN", level=3, lines=explain_lines) if explain_lines else None
+
+        extra_context = {
+            "num_errors": num_errors,
+            "num_warnings": num_warnings,
+            "num_active_queries": num_active_queries,
+            "missing_queries": missing_queries,
+            "num_queries_with_explain": num_queries_with_explain,
+            "failure_events": self._failure_events(),
+            # DBMSBenchmarker's own timing; the connection table's benchmark_begin
+            # can lag one phase behind (it may carry the previous job's timespans).
+            "phase_windows": self.evaluator.get_phase_windows(),
+        }
+        completion = self._query_completion()
+        if not completion.empty:
+            queries = [column for column in completion.columns if column != 'phase']
+            phase_complete = completion[queries].all(axis=1).groupby(completion['phase']).all()
+            extra_context["phases_complete"] = int(phase_complete.sum())
+            extra_context["phases_total"] = len(phase_complete)
+        return sections, extra_context, explain_section

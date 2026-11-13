@@ -13,7 +13,7 @@ See LICENSE for details.
 """
 from bexhoma import *
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
-from bexhoma.benchmarks.base import DIMENSION_VARIANTS, dimension_folder
+from bexhoma.benchmarks.dbmsbenchmarker.benchmark import DIMENSION_VARIANTS, dimension_folder
 from bexhoma.system_descriptors import (dbms_choices, default_dockers, dimension_dockers, load_dockers,
                                         refresh_template, storage_prefix, unsupported_dimension)
 from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, loading_layouts,

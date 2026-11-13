@@ -15,8 +15,8 @@ import logging
 import urllib3
 import pandas as pd
 
-from bexhoma import evaluators
-from .mixed import MixedExperiment
+from bexhoma.experiments.mixed import MixedExperiment
+from bexhoma.benchmarks.dbmsbenchmarker.evaluator import DbmsBenchmarkerEvaluator
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -52,7 +52,7 @@ class DbmsBenchmarkerExperiment(MixedExperiment):
         :param timeout: Per-query timeout in seconds.
         """
         MixedExperiment.__init__(self, cluster=cluster, code=code, num_experiment_to_apply=num_experiment_to_apply, timeout=timeout)
-        self.evaluator = evaluators.DbmsBenchmarkerEvaluator(
+        self.evaluator = DbmsBenchmarkerEvaluator(
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
         self.active_queries: list[int] | None = None
     def set_active_queries(self,
