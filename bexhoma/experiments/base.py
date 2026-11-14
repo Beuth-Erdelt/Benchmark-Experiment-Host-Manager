@@ -230,11 +230,20 @@ class ExperimentBase():
         :param timeout: Maximum timeout per query
         """
         self.cluster = cluster                                          # cluster object
-        self.code = code                                                # code of experiment
-        if self.code is None:
-            self.code = str(round(time.time()))
+        if code is None:
+            # Reserve a fresh code by creating its result folder: makedirs without exist_ok
+            # is atomic, so two experiments started in the same second never share a code
+            # (and with it SUT deployments, job names and the result folder).
+            candidate = round(time.time())
+            while True:
+                try:
+                    makedirs(self.cluster.resultfolder+"/"+str(candidate))
+                    break
+                except FileExistsError:
+                    candidate += 1
+            self.code = str(candidate)                                  # code of experiment
         else:
-            self.code = str(self.code)
+            self.code = str(code)                                       # code of experiment
         self.path = self.cluster.resultfolder+"/"+self.code             # path to result folder (read from cluster.config)
         if not path.isdir(self.path):
             makedirs(self.path)
