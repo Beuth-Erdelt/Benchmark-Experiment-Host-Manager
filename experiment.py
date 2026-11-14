@@ -6,7 +6,7 @@ exist (see ``docs/Design-Yaml-Experiment-Entry-Script.md``'s "Relation to
 ``bexhoma/spec.py``" section):
 
 * **Self-specified** (``workload: tpch``, a bare string): built directly in
-  Python via :mod:`bexhoma.experiments.tpch_builder` — no argv is generated, no
+  Python via :mod:`bexhoma.benchmarks.tpch.builder` — no argv is generated, no
   subprocess is spawned, nothing is re-parsed through ``tpch.py``'s own CLI.
 * **Catalog-driven** (``workload: {name: ..., params: ...}``, a dict —
   :mod:`bexhoma.spec`'s schema): resolved against ``catalog.yaml`` into the
@@ -28,24 +28,17 @@ Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
+import importlib
 import argparse
 import os
 import shutil
 
 import yaml
 
-from bexhoma.experiments import tpch_builder, tpch_catalog, tpch_loader
+from bexhoma.benchmarks.tpch import builder as tpch_builder, catalog as tpch_catalog, loader as tpch_loader
 from bexhoma import spec as catalog_spec
 
 __all__ = ["is_catalog_driven", "default_catalog_path", "entry_module_for_workload", "run_experiment_yaml"]
-
-#: Catalog-driven workload name -> its entry-script module name. Each module
-#: must expose ``build_parser()`` and ``run(args, on_experiment_built=...)``
-#: (see :func:`tpch.run` / :func:`ycsb.run`).
-_ENTRY_MODULE_BY_WORKLOAD = {
-    "tpch": "tpch",
-    "ycsb": "ycsb",
-}
 
 #: Sibling output contract to contract_catalog.yml -- not itself consulted to
 #: build/validate this run, but copied alongside it so an agent reading the
@@ -121,17 +114,19 @@ def entry_module_for_workload(workload_name: str):
     Import and return the entry-script module a catalog-driven workload runs through.
 
     :param workload_name: ``experiment.yml``'s ``workload.name`` (e.g. ``"tpch"``).
-    :return: The imported module (``tpch`` or ``ycsb``), exposing ``build_parser()``
-        and ``run(args, on_experiment_built=...)``.
+    :return: The ``cli`` module of the benchmark registered under that name, exposing
+        ``build_parser()`` and ``run(args, on_experiment_built=...)``.
     :raises ValueError: When no entry script is wired up for the workload.
     """
-    module_name = _ENTRY_MODULE_BY_WORKLOAD.get(workload_name)
-    if module_name is None:
+    from bexhoma.benchmarks import registry
+    catalog_driven = sorted(d.name for d in registry.descriptors() if d.argv_builder is not None)
+    descriptor = registry.descriptor_of(workload_name)
+    if descriptor is None or descriptor.argv_builder is None:
         raise ValueError(
             f"catalog-driven workload '{workload_name}' has no entry script wired up "
-            f"(known: {sorted(_ENTRY_MODULE_BY_WORKLOAD)})"
+            f"(known: {catalog_driven})"
         )
-    return __import__(module_name)
+    return importlib.import_module(f"bexhoma.benchmarks.{descriptor.name}.cli")
 
 
 def run_experiment_yaml(

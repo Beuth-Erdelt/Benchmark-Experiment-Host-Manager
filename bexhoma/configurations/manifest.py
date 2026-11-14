@@ -661,7 +661,7 @@ class ManifestBuilder:
                         for i, e in env_merged.items():
                             dep['spec']['template']['spec']['initContainers'][i_container]['env'].append(
                                 {'name': i, 'value': str(e)})
-                # the CA of the SUT's TLS Secret, for clients that need a CA file (HammerDB)
+                # the CA of the SUT's TLS Secret, for clients that need a CA file
                 pod_spec = dep['spec']['template']['spec']
                 if apply_tls_volume(pod_spec, getattr(cfg, 'tls_secret', '')):
                     for cont in pod_spec['containers']:
@@ -715,8 +715,8 @@ class ManifestBuilder:
         :param env: Extra environment variables merged into the job ENV; take
             precedence over :attr:`SutConfiguration.benchmarking_parameters` on
             conflict, so a non-primary round entry (e.g. a benchmark registered
-            via ``experiment.add_benchmark()`` alongside the primary, such as the
-            TPC-H refresh stream or a co-running different-tool benchmark) can
+            via ``experiment.add_benchmark()`` alongside the primary, such as a
+            co-running benchmark of the same or a different tool) can
             override a shared default like ``SF`` instead of inheriting a value
             that may not even be valid for its own tool's format.
         :param template: Optional YAML template filename override.

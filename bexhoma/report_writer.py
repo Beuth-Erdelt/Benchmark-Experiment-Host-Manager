@@ -91,7 +91,7 @@ SCHEMA_VERSION = "1.14.0"
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
 #: contract and any pointer files), not rendered Kubernetes manifests -- see
 #: experiment.py::_copy_catalog_provenance and
-#: bexhoma/experiments/tpch_builder.py::_copy_provenance_files. Their group in
+#: the ``_copy_provenance_files`` of a benchmark's experiment builder. Their group in
 #: :data:`_FILE_KINDS` precedes the manifest group, so the manifests' broad
 #: ``*.yml`` pattern never mislabels them.
 _INPUT_PROVENANCE_FILENAMES = frozenset({
@@ -1138,9 +1138,8 @@ def write_markdown_report(
         never printed to stdout — ``show_summary()`` only shows a pass/fail/
         skipped Tests-table row for it.
     :param key_metrics_section: The benchmark-type-specific ``Key Metrics``
-        section from ``benchmark._build_key_metrics_section()`` (e.g. Geo
-        Times/Power@Size/Throughput@Size for DBMSBenchmarker, NOPM for
-        HammerDB) — the same columns that benchmark's evaluator already
+        section from ``benchmark._build_key_metrics_section()`` (the headline
+        numbers of that benchmark) — the same columns that benchmark's evaluator already
         tests via ``record_tests()``. Report-only: rendered into ``index.md``,
         never printed to stdout. ``None`` when this benchmark type defines no
         headline metric, or benchmarking was not active.

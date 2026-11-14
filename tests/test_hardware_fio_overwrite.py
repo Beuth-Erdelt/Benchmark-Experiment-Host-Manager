@@ -28,6 +28,7 @@ from bexhoma import evaluators
 from bexhoma.experiments.base import ExperimentBase
 
 from .test_resource_sweep import _AnyDockers, _AnyVolumes, _SweepStubCluster
+from bexhoma.benchmarks.hardware.evaluator import HardwareEvaluator
 
 RUN_FIO = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                        'images', 'hardware', 'benchmarker', 'run_fio.sh')
@@ -124,7 +125,7 @@ class EvaluatorOverwriteTest(unittest.TestCase):
     )
 
     def parse(self, overwrite_line: str):
-        evaluator = evaluators.hardware(code='1', path='/nonexistent', include_loading=False,
+        evaluator = HardwareEvaluator(code='1', path='/nonexistent', include_loading=False,
                                         include_benchmarking=True, benchmark_run=1, name='hardware')
         with tempfile.TemporaryDirectory() as tmp_dir:
             filename = os.path.join(tmp_dir, 'bexhoma-benchmarker-hardware-1-1-1-1-abcde.log')

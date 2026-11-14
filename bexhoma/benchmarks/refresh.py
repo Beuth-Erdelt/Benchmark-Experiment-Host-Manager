@@ -1,5 +1,5 @@
 """
-Benchmark class for co-running stream benchmarkers (e.g. TPC-H refresh stream).
+Benchmark class for co-running stream benchmarkers (the refresh stream of a benchmark).
 
 Provides :class:`RefreshStreamBenchmark`, a lightweight :class:`Benchmark`
 subclass for secondary benchmarker jobs that run in parallel with a primary
@@ -21,7 +21,7 @@ class RefreshStreamBenchmark(Benchmark):
     """
     Benchmark class for a co-running refresh / maintenance stream.
 
-    Registered alongside the primary benchmark (e.g. ``TPCH``) via
+    Registered alongside the primary benchmark via
     :meth:`~bexhoma.experiments.mixed.mixed.add_benchmark`.  The job runs
     as ``benchmark_run = self.benchmark_index`` (typically 2) in parallel
     with the query stream.
@@ -36,11 +36,11 @@ class RefreshStreamBenchmark(Benchmark):
     timing infrastructure picks it up automatically.
 
     :param name: Short identifier; must match the ``"benchmarker"`` field in
-        the experiment dict entry (e.g. ``'tpch_refresh'``).
+        the experiment dict entry (``'<benchmark>_refresh'``).
     :param SF: Scaling factor (forwarded for context; not used by this class).
     """
 
-    def __init__(self, name: str = 'tpch_refresh', SF: str = '1') -> None:
+    def __init__(self, name: str, SF: str = '1') -> None:
         """
         :param name: Name that matches the ``"benchmarker"`` key in the experiment dict.
         :param SF: Scaling factor.
@@ -57,9 +57,9 @@ class RefreshStreamBenchmark(Benchmark):
         :param code: Experiment identifier.
         :param path: Root result path.
         :param benchmark_run: 1-based benchmark position.
-        :return: :class:`evaluators.base` instance.
+        :return: :class:`evaluators.EvaluatorBase` instance.
         """
-        return evaluators.base(
+        return evaluators.EvaluatorBase(
             code=code,
             path=path,
             include_loading=False,
@@ -89,7 +89,7 @@ class RefreshStreamBenchmark(Benchmark):
 
         Delegates to :meth:`show_summary_section` so the same output is
         produced whether the call comes from ``mixed`` or from
-        ``dbmsbenchmarker.show_summary``. Not part of the normal TPC-H/TPC-DS
+        ``dbmsbenchmarker.show_summary``. Not part of the normal
         dispatch (the primary benchmark's :meth:`~bexhoma.benchmarks.base.Benchmark.show_summary`
         already calls :meth:`show_summary_section` via the secondary-benchmark
         loop in ``_show_extra_sections()``) — kept for the case where this

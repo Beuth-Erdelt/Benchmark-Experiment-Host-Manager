@@ -27,8 +27,8 @@ from unittest import mock
 import yaml
 
 from bexhoma import report_writer, spec
-from bexhoma.experiments import tpch_builder as experiment_builder
-from bexhoma.experiments.tpch import TpchExperiment
+from bexhoma.benchmarks.tpch import builder as experiment_builder
+from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 
 from .stubs import StubCluster
 
@@ -380,7 +380,7 @@ class YcsbLogToDfCasingTest(unittest.TestCase):
     BEXHOMA_CONFIGURATION (sourced from the mixed-case DBMS config name) is not."""
 
     def test_phase_and_connection_are_lowercased(self) -> None:
-        from bexhoma.evaluators.ycsb import YcsbEvaluator
+        from bexhoma.benchmarks.ycsb.evaluator import YcsbEvaluator
 
         with tempfile.TemporaryDirectory() as tmp_dir:
             log_content = (

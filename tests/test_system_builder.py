@@ -17,8 +17,8 @@ import types
 import unittest
 from unittest import mock
 
-import benchbase
-import tpch
+from bexhoma.benchmarks.benchbase import cli as benchbase
+from bexhoma.benchmarks.tpch import cli as tpch
 
 from bexhoma import system_descriptors as sd
 from bexhoma.experiments import system_builder as builder
@@ -356,7 +356,7 @@ class LoadingTemplateInTheScriptsTest(unittest.TestCase):
     """The scripts, with a PostgreSQL that lost its loading_template."""
 
     def run_tpch(self, *argv):
-        import tpch
+        from bexhoma.benchmarks.tpch import cli as tpch
         with tempfile.TemporaryDirectory() as tmp_dir:
             cluster = _SweepStubCluster(resultfolder=tmp_dir)
             cluster.volumes = _AnyVolumes(cluster.volumes)
@@ -381,7 +381,7 @@ class LoadingTemplateInTheScriptsTest(unittest.TestCase):
         for module, name in (('tpch', 'TpchExperiment'), ('tpcds', 'TpcdsExperiment'), ('ssb', 'SsbExperiment')):
             with self.subTest(benchmark=module):
                 import importlib
-                source = open(importlib.import_module(f'bexhoma.experiments.{module}').__file__, encoding='utf-8').read()
+                source = open(importlib.import_module(f'bexhoma.benchmarks.{module}.experiment').__file__, encoding='utf-8').read()
                 self.assertNotIn('jobtemplate-loading-' + module + '-PostgreSQL.yml', source)
 
 

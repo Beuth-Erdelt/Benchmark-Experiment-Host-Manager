@@ -1,10 +1,10 @@
 """
 Public API of the bexhoma.evaluators package.
 
-Exports :class:`EvaluatorBase`, :class:`LogEvaluator`,
-:class:`DbmsBenchmarkerEvaluator`, :class:`BenchbaseEvaluator`,
-:class:`TpccEvaluator`, :class:`YcsbEvaluator`, and :class:`HardwareEvaluator`
-evaluator classes, plus the :func:`natural_sort` utility from :mod:`base`.
+Exports the generic evaluator classes :class:`EvaluatorBase` and
+:class:`LogEvaluator`, plus the :func:`natural_sort` utility from :mod:`base`.
+The evaluator of a benchmark is in that benchmark's folder,
+``bexhoma/benchmarks/<name>/evaluator.py``.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -13,24 +13,7 @@ See LICENSE for details.
 """
 from .base import EvaluatorBase, natural_sort
 from .logger import LogEvaluator
-from .dbmsbenchmarker import DbmsBenchmarkerEvaluator
-from .benchbase import BenchbaseEvaluator
-from .tpcc import TpccEvaluator
-from .ycsb import YcsbEvaluator
-from .hardware import HardwareEvaluator
-
-# backward-compat aliases
-base = EvaluatorBase
-logger = LogEvaluator
-dbmsbenchmarker = DbmsBenchmarkerEvaluator
-benchbase = BenchbaseEvaluator
-tpcc = TpccEvaluator
-ycsb = YcsbEvaluator
-hardware = HardwareEvaluator
 
 __all__ = [
-    "EvaluatorBase", "LogEvaluator", "DbmsBenchmarkerEvaluator",
-    "BenchbaseEvaluator", "TpccEvaluator", "YcsbEvaluator", "HardwareEvaluator", "natural_sort",
-    # backward-compat aliases
-    "base", "logger", "dbmsbenchmarker", "tpcc", "benchbase", "ycsb", "hardware",
+    "EvaluatorBase", "LogEvaluator", "natural_sort",
 ]

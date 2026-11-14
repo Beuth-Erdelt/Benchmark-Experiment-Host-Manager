@@ -10,7 +10,7 @@ It sits one level below the [Collectors](Collectors.md), which aggregate results
 across multiple experiment codes.
 
 ```
-evaluators.benchbase(code, path)
+BenchbaseEvaluator(code, path)
     ├── log_to_df()           ← parse pod log files into DataFrames
     ├── get_df_benchmarking() ← read combined benchmarking pickle
     ├── get_df_loading()      ← read combined loading pickle
@@ -19,29 +19,45 @@ evaluators.benchbase(code, path)
 
 Supported benchmark types:
 
-| Evaluator class | Benchmark tool |
-|---|---|
-| `evaluators.benchbase` | Benchbase |
-| `evaluators.tpcc` | HammerDB TPC-C |
-| `evaluators.ycsb` | YCSB |
-| `evaluators.dbmsbenchmarker` | DBMSBenchmarker |
+| Evaluator class | Module | Benchmark tool |
+|---|---|---|
+| `BenchbaseEvaluator` | `bexhoma.benchmarks.benchbase` | Benchbase |
+| `HammerdbEvaluator` | `bexhoma.benchmarks.hammerdb` | HammerDB TPC-C |
+| `YcsbEvaluator` | `bexhoma.benchmarks.ycsb` | YCSB |
+| `HardwareEvaluator` | `bexhoma.benchmarks.hardware` | fio, sysbench, sockperf, netperf |
+| `DbmsBenchmarkerEvaluator` | `bexhoma.benchmarks.dbmsbenchmarker` | DBMSBenchmarker (TPC-H, TPC-DS, SSB) |
+
+The evaluator of a benchmark lives in that benchmark's folder,
+`bexhoma/benchmarks/<name>/evaluator.py`; the package `bexhoma.evaluators` holds the
+generic classes `EvaluatorBase` and `LogEvaluator`.
 
 ---
 
 ## Class hierarchy
 
 ```
-base
-└── logger
-    ├── benchbase
-    ├── tpcc
-    ├── ycsb
-    └── dbmsbenchmarker
+EvaluatorBase
+└── LogEvaluator
+    ├── BenchbaseEvaluator
+    ├── HammerdbEvaluator
+    ├── YcsbEvaluator
+    ├── HardwareEvaluator
+    └── DbmsBenchmarkerEvaluator
 ```
 
-`base` provides connection metadata and loading throughput helpers.
-`logger` adds the log-file → DataFrame → pickle pipeline used by all
-benchmark-specific subclasses.
+`EvaluatorBase` provides connection metadata and loading throughput helpers.
+`LogEvaluator` adds the log-file → DataFrame → pickle pipeline used by all
+benchmark-specific subclasses, and declares what such a subclass implements: the
+two summary tables are required, the rest has defaults.
+
+Column names: `log_to_df()` keeps the words of the benchmarking tool (Benchbase's
+`terminals`, HammerDB's `vusers`, YCSB's `exceptions`, ...). Everything that reads
+the per-pod DataFrames (`get_df_benchmarking()`, `get_df_loading()`, the summaries,
+the collectors) gets common names instead: `threads`, `errors` and `SF`. Each
+evaluator declares its mapping in `column_names`. The summary tables start with
+the same identity columns for every benchmark: `phase, job, experiment_run, client,
+benchmark_run, child` per connection and `phase, experiment_run, client,
+benchmark_run, pod_count` per phase.
 
 ---
 
@@ -50,9 +66,9 @@ benchmark-specific subclasses.
 All evaluators share the same constructor signature:
 
 ```python
-from bexhoma import evaluators
+from bexhoma.benchmarks.ycsb import YcsbEvaluator
 
-ev = evaluators.ycsb(code="1777285093", path="/data/benchmarks")
+ev = YcsbEvaluator(code="1777285093", path="/data/benchmarks")
 ```
 
 | Parameter | Description |
@@ -71,11 +87,11 @@ ev = evaluators.ycsb(code="1777285093", path="/data/benchmarks")
 
 | Method | Defined in | Returns |
 |---|---|---|
-| `get_df_benchmarking()` | `logger` | All benchmarking results for this experiment |
+| `get_df_benchmarking()` | `LogEvaluator` | All benchmarking results for this experiment |
 | `get_df_loading()` | `logger` / `ycsb` / `dbmsbenchmarker` | All loading results |
-| `get_connections_of_experiment()` | `base` | Connection/pod metadata, one row per pod |
-| `get_workload()` | `base` | Raw workload properties dict |
-| `get_connection_config()` | `logger` | `connections.config` as a Python list |
+| `get_connections_of_experiment()` | `EvaluatorBase` | Connection/pod metadata, one row per pod |
+| `get_workload()` | `EvaluatorBase` | Raw workload properties dict |
+| `get_connection_config()` | `LogEvaluator` | `connections.config` as a Python list |
 
 ### Type Conversion & Aggregation
 
@@ -83,25 +99,25 @@ ev = evaluators.ycsb(code="1777285093", path="/data/benchmarks")
 |---|---|---|
 | `benchmarking_set_datatypes(df)` | all subclasses | Cast benchmarking DataFrame to correct dtypes |
 | `benchmarking_aggregate_by_parallel_pods(df)` | all subclasses | Reduce parallel pods → one row per phase (default) or per job |
-| `loading_set_datatypes(df)` | `ycsb` | Cast loading DataFrame to correct dtypes |
-| `loading_aggregate_by_parallel_pods(df)` | `ycsb` | Reduce parallel loading pods → one row per job |
+| `loading_set_datatypes(df)` | `YcsbEvaluator` | Cast loading DataFrame to correct dtypes |
+| `loading_aggregate_by_parallel_pods(df)` | `YcsbEvaluator` | Reduce parallel loading pods → one row per job |
 
 ### Loading Throughput
 
 | Method | Defined in | Returns |
 |---|---|---|
 | `get_loading_per_connection()` | `base` / `ycsb` | Loading metrics per connection |
-| `get_loading_per_run()` | `base` | Loading metrics aggregated per experiment run |
-| `get_loading_per_run_multitenant()` | `base` | Loading metrics per run with tenant grouping |
-| `get_loading_per_pod()` | `ycsb` | Raw loading DataFrame, one row per pod |
+| `get_loading_per_run()` | `EvaluatorBase` | Loading metrics aggregated per experiment run |
+| `get_loading_per_run_multitenant()` | `EvaluatorBase` | Loading metrics per run with tenant grouping |
+| `get_loading_per_pod()` | `YcsbEvaluator` | Raw loading DataFrame, one row per pod |
 
 ### Monitoring
 
 | Method | Defined in | Returns |
 |---|---|---|
-| `get_monitoring_metrics()` | `logger` | List of metric keys from `connections.config` |
-| `get_monitoring_metric(metric, component)` | `logger` | Time-series CSV for one metric, all connections |
-| `transform_monitoring_results(component)` | `logger` | Combines per-connection CSVs into one file |
+| `get_monitoring_metrics()` | `LogEvaluator` | List of metric keys from `connections.config` |
+| `get_monitoring_metric(metric, component)` | `LogEvaluator` | Time-series CSV for one metric, all connections |
+| `transform_monitoring_results(component)` | `LogEvaluator` | Combines per-connection CSVs into one file |
 
 ### Workflow & Testing
 
@@ -109,11 +125,11 @@ ev = evaluators.ycsb(code="1777285093", path="/data/benchmarks")
 |---|---|---|
 | `reconstruct_workflow(df)` | `base` / `logger` | Dict mapping configuration → `[[pods], …]` |
 | `test_results()` | all | Exit code `0` if results are intact |
-| `test_results_column(df, col)` | `base` | `True` if column contains no zero or NaN |
+| `test_results_column(df, col)` | `EvaluatorBase` | `True` if column contains no zero or NaN |
 
 ---
 
-## Class `base`
+## Class `EvaluatorBase`
 
 `base` is the root evaluator. It owns the experiment folder path, error tracking,
 and the connection-metadata helpers that underpin all downstream aggregation.
@@ -173,7 +189,7 @@ Like `get_loading_per_run()` but groups by
 
 ---
 
-## Class `logger`
+## Class `LogEvaluator`
 
 `logger` extends `base` with the log-file parsing and pickle-caching pipeline.
 All benchmark-specific evaluators inherit from `logger`.
@@ -220,7 +236,7 @@ sub-plots — one per group — with lines split by `column` within each sub-plo
 
 ---
 
-## Class `benchbase`
+## Class `BenchbaseEvaluator`
 
 Evaluator for [Benchbase](https://github.com/cmu-db/benchbase) experiments.
 
@@ -259,7 +275,7 @@ and the `job` column holds the job identifier
 Throughput and goodput are summed; latency percentiles use `max`; minimum
 latency uses `min`; average latency uses `mean`.
 
-### `parse_benchbase_log_file(file_path)`
+### `parse_log_file(file_path)`
 
 Low-level parser. Extracts per-second throughput from lines matching the
 Benchbase log format and returns a list of `{'second': …, 'throughput': …}` dicts.
@@ -299,7 +315,7 @@ Like the aggregated variant but returns a list of per-pod DataFrames instead.
 ### `get_summary_benchmark_per_connection()`
 
 Returns benchmarking results with one row per pod, filtered to the key display
-columns (experiment run, terminals, target, client, child, time, errors,
+columns (the identity columns, then threads, target, time, errors,
 throughput, goodput, efficiency, and latency percentiles), sorted by
 `(experiment_run, client, child)`.  Used by `show_summary()`.
 
@@ -312,13 +328,13 @@ Used by `show_summary()`.
 
 ### `get_summary_loading_per_run()`
 
-Delegates to :class:`base`'s `get_loading_per_run()`.  Returns one row per
+Delegates to `EvaluatorBase`'s `get_loading_per_run()`.  Returns one row per
 `(code, configuration, experiment_run)` with `time_load` and
 `Throughput [SF/h]`.  Used by `show_summary()`.
 
 ---
 
-## Class `tpcc`
+## Class `HammerdbEvaluator`
 
 Evaluator for [HammerDB](https://hammerdb.com/) TPC-C experiments.
 
@@ -345,7 +361,7 @@ identifier (`configuration-experiment_run-client-benchmark_run`).  Default
 job.  NOPM and TPM are averaged (not summed) across pods; efficiency is recomputed after
 aggregation.
 
-### `parse_hammerdb_log_file(file_path)`
+### `parse_log_file(file_path)`
 
 Low-level parser for HammerDB's transaction counter.  The benchmarker prints one
 counter log per VU test after the run, with a line `<n> <DBMS> tpm @ <date>` every
@@ -381,7 +397,7 @@ Like the aggregated variant but returns a list of per-pod DataFrames instead.
 
 ---
 
-## Class `ycsb`
+## Class `YcsbEvaluator`
 
 Evaluator for [YCSB](https://github.com/brianfrankcooper/YCSB) experiments.
 
@@ -429,7 +445,7 @@ without a recorded loading phase, and attaches the scale factor.
 
 Returns the raw loading DataFrame (one row per pod) from `get_df_loading()`.
 
-### `parse_ycsb_log_file(file_path)`
+### `parse_log_file(file_path)`
 
 Low-level parser.  Each line produces a dict with `sec`, `total_operations`,
 `current_ops_per_sec`, and a nested `metrics` dict for per-operation statistics.
@@ -483,7 +499,7 @@ Returns a list of per-pod DataFrames for the loading phase.
 
 ---
 
-## Class `dbmsbenchmarker`
+## Class `DbmsBenchmarkerEvaluator`
 
 Evaluator for [DBMSBenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker)
 experiments.  Uses the `dbmsbenchmarker.inspector` API rather than raw log
@@ -537,8 +553,9 @@ Returns mean execution latency per query and DBMS, rounded to 2 decimal places.
 
 ```python
 from bexhoma import evaluators
+from bexhoma.benchmarks.benchbase import BenchbaseEvaluator
 
-ev = evaluators.benchbase(code="1777285093", path="/data/benchmarks")
+ev = BenchbaseEvaluator(code="1777285093", path="/data/benchmarks")
 
 # All benchmarking results
 df_bench = ev.get_df_benchmarking()
@@ -558,7 +575,8 @@ df_ts = ev.get_benchmark_logs_timeseries_df_aggregated(
 ### YCSB
 
 ```python
-ev = evaluators.ycsb(code="1777285093", path="/data/benchmarks")
+from bexhoma.benchmarks.ycsb import YcsbEvaluator
+ev = YcsbEvaluator(code="1777285093", path="/data/benchmarks")
 
 # Summary DataFrames
 df_bench   = ev.get_df_benchmarking()
@@ -587,7 +605,8 @@ ev.get_loading_logs_timeseries_df_single(
 ### DBMSBenchmarker (TPC-H)
 
 ```python
-ev = evaluators.dbmsbenchmarker(code="1777285093", path="/data/benchmarks")
+from bexhoma.benchmarks.dbmsbenchmarker import DbmsBenchmarkerEvaluator
+ev = DbmsBenchmarkerEvaluator(code="1777285093", path="/data/benchmarks")
 
 # Throughput and power metrics
 ev.get_df_benchmarking()

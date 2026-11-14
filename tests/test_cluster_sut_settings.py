@@ -20,7 +20,7 @@ import unittest
 
 import yaml
 
-from bexhoma.benchmarks.tpch import resolve_indexing_key
+from bexhoma.benchmarks.tpch.benchmark import resolve_indexing_key
 from bexhoma.cli_args import make_base_parser, resource_cells, split_worker_nodes
 from bexhoma.configurations.base import SutConfiguration
 from bexhoma.configurations.lifecycle import pin_pods_to_nodes, sum_requested_resources
@@ -179,7 +179,7 @@ class CheckScriptsAlwaysRunTest(unittest.TestCase):
 
         The init scripts relax nothing themselves any more.
         """
-        for benchmark in ('tpch', 'tpcds', 'tpcc', 'ycsb', 'benchbase/tpcc'):
+        for benchmark in ('tpch', 'tpcds', 'hammerdb', 'ycsb', 'benchbase/tpcc'):
             folder = os.path.join(_REPO, 'experiments', benchmark, 'MySQL')
             path = os.path.join(folder, 'durability-relaxed.sql')
             with open(os.path.join(folder, 'restoredurability-relaxed.sql'), encoding='utf-8') as f:
@@ -191,7 +191,7 @@ class CheckScriptsAlwaysRunTest(unittest.TestCase):
             for setting in relaxed:
                 self.assertIn(f"('{setting}', @@GLOBAL.{setting})", relax_text, f'{path}: {setting} not saved')
                 self.assertIn(f'SET GLOBAL {setting} = @v;', restore_text, f'{setting} not restored')
-        for benchmark in ('tpch', 'tpcc', 'ycsb', 'tpcds'):
+        for benchmark in ('tpch', 'hammerdb', 'ycsb', 'tpcds'):
             init = os.path.join(_REPO, 'experiments', benchmark, 'MySQL', f'initschema-{benchmark}.sql')
             with open(init, encoding='utf-8') as f:
                 init_text = f.read()

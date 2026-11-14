@@ -36,13 +36,15 @@ from unittest import mock
 from dbmsbenchmarker import parameter
 
 from bexhoma import experiments
+from bexhoma.benchmarks import registry
 from bexhoma.system_descriptors import dimension_dockers, load_dockers
-from bexhoma.benchmarks.ssb import (QUERY_VARIANTS, SCHEMA_VARIANTS,
+from bexhoma.benchmarks.ssb.benchmark import (QUERY_VARIANTS, SCHEMA_VARIANTS,
                                     resolve_dimension_folder, resolve_indexing_key,
                                     resolve_queryfile)
 from bexhoma.experiments.base import ExperimentBase
 
 from .test_resource_sweep import _AnyDockers, _SweepStubCluster
+from bexhoma.benchmarks.ssb.experiment import SsbExperiment
 
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _EXP = os.path.join(_REPO, 'experiments', 'ssb')
@@ -388,18 +390,23 @@ class EntryScriptTest(unittest.TestCase):
 
 
 class SummaryDispatchTest(unittest.TestCase):
-    """``bexhoma summary`` maps a workload type to its class only where the class allows it."""
+    """``bexhoma summary`` maps a workload type to the experiment class of the benchmark registered for it."""
 
-    def test_classes_with_summary_from_type(self):
-        classes = {name for name in experiments.__all__
-                   if isinstance(getattr(experiments, name), type) and name.islower()
-                   and getattr(experiments, name).summary_from_type}
-        self.assertEqual(classes, {'tpch', 'tpcds', 'ssb', 'ycsb', 'tpcc', 'benchbase'})
+    def test_types_with_an_experiment_class(self):
+        types = {type_name for descriptor in registry.descriptors() if descriptor.experiment is not None
+                 for type_name in descriptor.types}
+        self.assertEqual(types, {'tpch', 'tpcds', 'ssb', 'ycsb', 'hammerdb', 'benchbase', 'hardware'})
 
-    def test_workload_type_names_the_alias(self):
-        self.assertIs(experiments.ssb, experiments.SsbExperiment)
-        for alias in ('tpch', 'tpcds', 'ssb', 'ycsb', 'tpcc', 'benchbase'):
-            self.assertTrue(issubclass(getattr(experiments, alias), ExperimentBase), alias)
+    def test_workload_type_names_the_class(self):
+        self.assertIs(registry.descriptor_for_type('ssb').experiment, SsbExperiment)
+        for descriptor in registry.descriptors():
+            if descriptor.experiment is not None:
+                self.assertTrue(issubclass(descriptor.experiment, ExperimentBase), descriptor.name)
+
+    def test_unknown_type_uses_the_base_class(self):
+        self.assertIsNone(registry.descriptor_for_type('dbmsbenchmarker').experiment)
+        self.assertIsNone(registry.descriptor_for_type('no-such-benchmark'))
+        self.assertIsNone(registry.descriptor_for_type(None))
 
 
 if __name__ == '__main__':

@@ -8,18 +8,14 @@ knobs, profiles, ``derive:`` formulas) and emits the argument vector an
 existing bexhoma entry script already understands. No entry script or
 execution code path is changed by this module — it only produces the CLI
 arguments a human would otherwise have had to type by hand, so the result
-can be run as ``python tpch.py <argv...>`` exactly like any other invocation.
+can be run as ``python <entry script> <argv...>`` exactly like any other invocation.
 
 This module itself carries no workload- or DBMS-specific knowledge: catalog
 loading, ``derive:``/knob resolution, and validation are all generic.
-:func:`build_argv` dispatches by ``experiment['workload']['name']`` to that
-workload's own argv builder — today ``tpch``
-(:func:`bexhoma.experiments.tpch_catalog.build_tpch_argv`) and ``ycsb``
-(:func:`bexhoma.experiments.ycsb_catalog.build_ycsb_argv`), matching the
-prototype catalog in ``catalog.yaml`` (``tpch`` against the
-``PostgreSQL``/``PgDuckDB`` pair, ``ycsb`` against ``PostgreSQL`` only).
-Extending to another workload means adding its own argv-builder module and a
-dispatch branch in :func:`build_argv`, not changing the resolution logic here.
+:func:`build_argv` dispatches by ``experiment['workload']['name']`` to the
+argv builder of the benchmark registered under that name
+(:mod:`bexhoma.benchmarks.registry`). Extending to another workload means
+giving its benchmark an argv builder, not changing the resolution logic here.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
@@ -965,10 +961,9 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
     Carries no workload-specific knowledge itself: it validates
     ``experiment`` against ``catalog`` and dispatches, by
     ``experiment['workload']['name']``, to that workload's own argv builder.
-    Today only ``tpch`` has one
-    (:func:`bexhoma.experiments.tpch_catalog.build_tpch_argv`) — extending to
-    another workload means adding its own argv-builder module and a branch
-    here, not changing any resolution logic in this module.
+    The builder is the ``argv_builder`` of the benchmark registered under that
+    name (:mod:`bexhoma.benchmarks.registry`) — extending to another workload
+    means giving its benchmark an argv builder, not changing this module.
 
     :param catalog: Parsed catalog.
     :param experiment: Parsed experiment spec.
@@ -979,31 +974,29 @@ def build_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list[str]
     """
     validate_experiment(catalog, experiment)
     workload_name = experiment["workload"]["name"]
-    if workload_name == "tpch":
-        from bexhoma.experiments.tpch_catalog import build_tpch_argv
-        return build_tpch_argv(catalog, experiment)
-    if workload_name == "ycsb":
-        from bexhoma.experiments.ycsb_catalog import build_ycsb_argv
-        return build_ycsb_argv(catalog, experiment)
-    raise SpecError(f"no argv builder implemented yet for workload '{workload_name}'")
-
-
-#: Catalog-driven workload name -> the entry script its argv runs through.
-_ENTRY_SCRIPT_BY_WORKLOAD = {
-    "tpch": "tpch.py",
-    "ycsb": "ycsb.py",
-}
+    # imported here: the registry's descriptors import the benchmarks, which import this package
+    from bexhoma.benchmarks import registry
+    descriptor = registry.descriptor_of(workload_name)
+    if descriptor is None or descriptor.argv_builder is None:
+        raise SpecError(f"no argv builder implemented yet for workload '{workload_name}'")
+    return descriptor.argv_builder(catalog, experiment)
 
 
 def entry_script_for_workload(workload_name: str) -> str:
     """Return the entry script a catalog-driven workload's argv runs through.
 
     :param workload_name: ``experiment['workload']['name']``.
-    :return: Entry script filename (e.g. ``"ycsb.py"``); falls back to
-        ``"tpch.py"`` for an unknown name so :func:`build_command` still renders.
+    :return: Entry script filename of the benchmark registered under that name;
+        for a name without an argv builder, the script of the first registered
+        benchmark that has one, so :func:`build_command` still renders.
     :rtype: str
     """
-    return _ENTRY_SCRIPT_BY_WORKLOAD.get(workload_name, "tpch.py")
+    from bexhoma.benchmarks import registry
+    catalog_driven = [d for d in registry.descriptors() if d.argv_builder is not None]
+    descriptor = registry.descriptor_of(workload_name)
+    if descriptor not in catalog_driven:
+        descriptor = catalog_driven[0]
+    return descriptor.entry_script
 
 
 def build_command(argv: list[str], entry_script: str = "tpch.py") -> str:
@@ -1020,11 +1013,11 @@ def build_command(argv: list[str], entry_script: str = "tpch.py") -> str:
 
 
 def translate(experiment_path: str, catalog_path: str) -> list[str]:
-    """Load, validate, and translate an experiment.yml into a ``tpch.py`` argument vector.
+    """Load, validate, and translate an experiment.yml into the argument vector of its entry script.
 
     :param experiment_path: Path to the experiment spec.
     :param catalog_path: Path to ``catalog.yaml``.
-    :return: Argument vector, usable as ``python tpch.py`` followed by these tokens.
+    :return: Argument vector, usable as ``python <entry script>`` followed by these tokens.
     :rtype: list[str]
     """
     catalog = load_catalog(catalog_path)

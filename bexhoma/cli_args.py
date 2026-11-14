@@ -2,8 +2,7 @@
 Shared argument parser factory for bexhoma CLI scripts.
 
 Provides :func:`make_base_parser`, which returns an :class:`argparse.ArgumentParser`
-pre-loaded with all arguments that are common to ``benchbase.py``, ``hammerdb.py``,
-``tpch.py``, ``tpcds.py``, and ``ycsb.py``.
+pre-loaded with all arguments that are common to the entry scripts of the benchmarks.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2023 Patrick K. Erdelt
@@ -106,7 +105,7 @@ def check_tenant_loading_pods(num_loading_pods, num_tenants: int, tenant_by: str
     :param num_tenants: ``-mtn``; 0 means no tenancy.
     :param tenant_by: ``-mtb``: ``schema``, ``database`` or ``container``.
     :param one_pod_per_tenant: ``-nlp`` counts pods per tenant (the experiment starts
-        ``-nlp`` x ``-mtn`` pods) and the loader maps pod k to tenant k-1 (Benchbase),
+        ``-nlp`` x ``-mtn`` pods) and the loader maps pod k to tenant k-1,
         so ``-nlp`` must be 1.
     :raises ValueError: When an ``-nlp`` value is not a multiple of ``-mtn`` (or, with
         ``one_pod_per_tenant``, not 1).

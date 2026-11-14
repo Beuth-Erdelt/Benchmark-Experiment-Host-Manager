@@ -24,8 +24,8 @@ import types
 import unittest
 from unittest import mock
 
-from bexhoma.benchmarks.tpcds import TPCDS
-from bexhoma.benchmarks.tpch import TPCH
+from bexhoma.benchmarks.tpcds.benchmark import TPCDS
+from bexhoma.benchmarks.tpch.benchmark import TPCH
 from bexhoma.configurations.loading import LoadingCoordinator, script_failed
 from bexhoma.experiments.base import ExperimentBase
 
@@ -76,12 +76,12 @@ EXPECTED = {
         'DB2': ['reset-benchbase.sql'],
     },
     'hammerdb.py': {
-        'PostgreSQL': ['reset-tpcc.sql'],
-        'MySQL': ['reset-tpcc.sql', _FLUSH],
-        'MariaDB': ['reset-tpcc.sql', _FLUSH],
-        'Citus': ['reset-tpcc.sql'],
-        'SQLServer': ['reset-tpcc.sql'],
-        'OracleDB': ['reset-tpcc.sql'],
+        'PostgreSQL': ['reset-hammerdb.sql'],
+        'MySQL': ['reset-hammerdb.sql', _FLUSH],
+        'MariaDB': ['reset-hammerdb.sql', _FLUSH],
+        'Citus': ['reset-hammerdb.sql'],
+        'SQLServer': ['reset-hammerdb.sql'],
+        'OracleDB': ['reset-hammerdb.sql'],
     },
     'tpch.py': {
         'PostgreSQL': ['reset-tpch.sql'],
@@ -531,7 +531,13 @@ class ResetSummaryTest(unittest.TestCase):
         from bexhoma.benchmarks.base import Benchmark
         recorded = []
         experiment = types.SimpleNamespace(_record_test=lambda passed, label: recorded.append((passed, label)))
-        Benchmark._record_reset_test(Benchmark.__new__(Benchmark), experiment, df)
+        class _AnyBenchmark(Benchmark):  # Benchmark is abstract; the test needs no evaluator
+            def create_evaluator(self, code, path, benchmark_run):
+                return None
+
+            def configure_workload(self, experiment, parameter):
+                pass
+        Benchmark._record_reset_test(_AnyBenchmark(name='any'), experiment, df)
         return recorded
 
     def test_table_shows_failed_and_fast_resets(self):

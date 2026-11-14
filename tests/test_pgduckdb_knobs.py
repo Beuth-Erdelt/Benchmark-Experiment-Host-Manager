@@ -17,7 +17,7 @@ import unittest
 from bexhoma import spec as catalog_spec
 from bexhoma.configurations.manifest import ensure_arg_pairs
 from bexhoma.experiments.base import parse_set_arg
-from bexhoma.experiments.tpch_catalog import format_postgres_memory
+from bexhoma.benchmarks.tpch.catalog import format_postgres_memory
 
 _CATALOG_FILE = 'contracts/contract_catalog.yml'
 

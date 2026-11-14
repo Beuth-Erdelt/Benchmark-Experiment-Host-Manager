@@ -15,16 +15,22 @@ collectors.<benchmark>(path, codes)   ← spans N experiment codes
 
 ## Class hierarchy
 
-| Collector | Evaluator | Benchmark tool |
-|---|---|---|
-| `base` | `evaluators.dbmsbenchmarker` (default) | — |
-| `benchbase` | `evaluators.benchbase` | Benchbase |
-| `tpcc` | `evaluators.tpcc` | HammerDB TPC-C |
-| `ycsb` | `evaluators.ycsb` | YCSB |
-| `dbmsbenchmarker` | `evaluators.dbmsbenchmarker` | DBMSBenchmarker |
+| Collector | Module | Evaluator | Benchmark tool |
+|---|---|---|---|
+| `CollectorBase` | `bexhoma.collectors.base` | `LogEvaluator` (default) | — |
+| `MixedCollector` | `bexhoma.collectors.mixed` | the collector of each benchmark run | several |
+| `BenchbaseCollector` | `bexhoma.benchmarks.benchbase.collector` | `BenchbaseEvaluator` | Benchbase |
+| `HammerdbCollector` | `bexhoma.benchmarks.hammerdb.collector` | `HammerdbEvaluator` | HammerDB TPC-C |
+| `YcsbCollector` | `bexhoma.benchmarks.ycsb.collector` | `YcsbEvaluator` | YCSB |
+| `HardwareCollector` | `bexhoma.benchmarks.hardware.collector` | `HardwareEvaluator` | fio, sysbench, sockperf, netperf |
+| `DbmsBenchmarkerCollector` | `bexhoma.benchmarks.dbmsbenchmarker.collector` | `DbmsBenchmarkerEvaluator` | DBMSBenchmarker (TPC-H, TPC-DS, SSB) |
 
-`benchbase`, `tpcc`, `ycsb`, and `dbmsbenchmarker` are thin subclasses that only override
-`get_evaluator()`. All data retrieval and aggregation logic lives in `base`.
+This package holds only the generic classes. The collector of a benchmark is in that
+benchmark's folder, ``bexhoma/benchmarks/<name>/collector.py``; it is a thin subclass
+that overrides `get_evaluator()` (and adds the benchmark's own time series where it
+has them). All data retrieval and aggregation logic lives in `CollectorBase`.
+`MixedCollector` finds the collector of each benchmark run through the benchmark
+registry.
 
 ---
 
@@ -78,11 +84,12 @@ Typical notebook pattern:
 
 ```python
 from bexhoma import collectors
+from bexhoma.benchmarks.ycsb import YcsbCollector
 
 path  = r"D:\data\benchmarks"
 codes = ["1777285093", "1776792746"]
 
-collect = collectors.ycsb(path, codes)
+collect = YcsbCollector(path, codes)
 
 # Inspect what varies across the two experiments
 collectors.get_non_constant(collect.get_connections()).T

@@ -83,7 +83,7 @@ def load_declarations(experiments_folder: str, docker_path: str) -> dict:
     file of the parent folder (``Citus``). Defaults and allowed values are
     returned as strings, the form they have as labels.
 
-    :param experiments_folder: The benchmark's folder (e.g. ``experiments/tpch``).
+    :param experiments_folder: The benchmark's folder (``experiments/<benchmark>``).
     :param docker_path: The configuration's ``path_experiment_docker``.
     :return: Declarations per key, empty when there is no file.
     :rtype: dict

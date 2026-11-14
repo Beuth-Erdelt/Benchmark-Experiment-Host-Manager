@@ -1,14 +1,20 @@
 {
+ "bexhoma/benchmarks/ssb/cli.py": {
+  "duckdb": 1
+ },
+ "bexhoma/benchmarks/tpch/builder.py": {
+  "duckdb": 2
+ },
+ "bexhoma/benchmarks/tpch/catalog.py": {
+  "postgres": 1
+ },
+ "bexhoma/benchmarks/tpch/cli.py": {
+  "duckdb": 1
+ },
  "bexhoma/experiments/base.py": {
   "PostgreSQL": 1,
   "mysql": 1,
   "postgres": 2
- },
- "bexhoma/experiments/tpch_builder.py": {
-  "duckdb": 2
- },
- "bexhoma/experiments/tpch_catalog.py": {
-  "postgres": 3
  },
  "bexhoma/report_writer.py": {
   "PostgreSQL": 7
@@ -19,17 +25,14 @@
  "bexhoma/spec.py": {
   "mysql": 1
  },
+ "bexhoma/spec_argv.py": {
+  "postgres": 3
+ },
  "example.py": {
   "PostgreSQL": 1
  },
- "ssb.py": {
-  "duckdb": 1
- },
  "test_parallel_tpch_ycsb.py": {
   "PostgreSQL": 6,
-  "duckdb": 1
- },
- "tpch.py": {
   "duckdb": 1
  }
 }

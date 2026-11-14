@@ -21,7 +21,7 @@ from bexhoma.configurations.manifest import (
     ARG_STYLE_FLAG, ARG_STYLE_PG, ManifestBuilder, detect_arg_style, ensure_arg_flags, ensure_env,
     patch_container)
 from bexhoma.experiments.base import parse_set_arg
-from bexhoma.experiments.tpch_catalog import _env_set_arg
+from bexhoma.benchmarks.tpch.catalog import _env_set_arg
 
 
 def _load(template):

@@ -216,8 +216,10 @@ HAMMERDB_RC=${PIPESTATUS[0]}
 ######################## Check the load (#848) ###################
 # HammerDB exits 0 even when a virtual user failed: the schema build must report
 # SCHEMA COMPLETE and ALL VIRTUAL USERS COMPLETE, no virtual user FINISHED FAILED,
-# and the virtual users together must have loaded SF warehouses
-WAREHOUSES=$(grep -oE 'Loading [0-9]+ Warehouses? start' /tmp/hammerdb_load.txt | awk '{s+=$2} END {print s+0}')
+# and the virtual users together must have loaded SF warehouses.
+# Counted per warehouse ("Loading Stock Wid=<n>"): the range line "Loading <n> Warehouses start"
+# is only printed when several virtual users share the load, not for a single one
+WAREHOUSES=$(grep -oE 'Loading Stock Wid=[0-9]+' /tmp/hammerdb_load.txt | sort -u | wc -l | tr -d ' ')
 SCHEMA_COMPLETE=$(grep -c "SCHEMA COMPLETE" /tmp/hammerdb_load.txt)
 ALL_COMPLETE=$(grep -c "ALL VIRTUAL USERS COMPLETE" /tmp/hammerdb_load.txt)
 VUSERS_FAILED=$(grep -c "FINISHED FAILED" /tmp/hammerdb_load.txt)

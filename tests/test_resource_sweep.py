@@ -14,6 +14,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 import ast
+import os
 import collections
 import contextlib
 import io
@@ -23,10 +24,10 @@ import tempfile
 import unittest
 from unittest import mock
 
-import tpch
-import ycsb
-from bexhoma.experiments.tpch import TpchExperiment
-from bexhoma.experiments.ycsb import YcsbExperiment
+from bexhoma.benchmarks.tpch import cli as tpch
+from bexhoma.benchmarks.ycsb import cli as ycsb
+from bexhoma.benchmarks.tpch.experiment import TpchExperiment
+from bexhoma.benchmarks.ycsb.experiment import YcsbExperiment
 from bexhoma.experiments.base import ExperimentBase
 
 from .stubs import StubCluster
@@ -203,12 +204,12 @@ class SupportTest(unittest.TestCase):
     """Only experiments that opt in accept a sweep."""
 
     def test_the_workloads_opt_in(self):
-        from bexhoma.experiments.tpcds import TpcdsExperiment
-        from bexhoma.experiments.tpcc import TpccExperiment
-        from bexhoma.experiments.benchbase import BenchbaseExperiment
-        from bexhoma.experiments.hardware import HardwareExperiment
+        from bexhoma.benchmarks.tpcds.experiment import TpcdsExperiment
+        from bexhoma.benchmarks.hammerdb.experiment import HammerdbExperiment
+        from bexhoma.benchmarks.benchbase.experiment import BenchbaseExperiment
+        from bexhoma.benchmarks.hardware.experiment import HardwareExperiment
         self.assertFalse(ExperimentBase.supports_storage_sweep)
-        for experiment_class in (TpchExperiment, TpcdsExperiment, YcsbExperiment, TpccExperiment,
+        for experiment_class in (TpchExperiment, TpcdsExperiment, YcsbExperiment, HammerdbExperiment,
                                  BenchbaseExperiment, HardwareExperiment):
             with self.subTest(experiment_class.__name__):
                 self.assertTrue(experiment_class.supports_storage_sweep)
@@ -231,8 +232,15 @@ class _AnyDockers(dict):
 
 
 def _dbms_choices(script: str) -> list:
-    """Return the ``choices`` of the entry script's ``-dbms`` argument."""
-    with open(script, encoding='utf-8') as file:
+    """Return the ``choices`` of the entry script's ``-dbms`` argument.
+
+    The root script is a shim; its command line is the ``cli`` module of the benchmark whose
+    ``entry_script`` it is.
+    """
+    from bexhoma.benchmarks import registry
+    name = next(d.name for d in registry.descriptors() if d.entry_script == os.path.basename(script))
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(root, 'bexhoma', 'benchmarks', name, 'cli.py'), encoding='utf-8') as file:
         tree = ast.parse(file.read())
     for node in ast.walk(tree):
         if (isinstance(node, ast.Call) and getattr(node.func, 'attr', '') == 'add_argument'

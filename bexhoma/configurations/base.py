@@ -414,12 +414,11 @@ class SutConfiguration:
 
         :param name: Short identifier for this benchmark entry.
         :param template: K8s job template filename.
-        :param benchmarker: Tool name (``'ycsb'``, ``'hammerdb'``, ``'benchbase'``,
-            ``'dbmsbenchmarker'``).
+        :param benchmarker: Name of the benchmarking tool that the job runs.
         :param parallelism: Number of pods.
         :param target: Component the job runs against (default ``'sut'``).
         :param resetscript: Scripts exec'd synchronously on the SUT before this
-            entry's pod is submitted (e.g. ``['reset-benchbase.sql']``).
+            entry's pod is submitted (e.g. ``['reset-<benchmark>.sql']``).
         :param env_vars: ENV vars injected into the container.
         """
         if not self.experiment_dict['benchmarker']:
@@ -445,7 +444,7 @@ class SutConfiguration:
         before either of them applies the scripts to all rounds.
 
         :param scripts: List of script filenames exec'd synchronously on the SUT
-            before this entry's pod is submitted (e.g. ``['reset-benchbase.sql']``).
+            before this entry's pod is submitted (e.g. ``['reset-<benchmark>.sql']``).
         :param name: Name of the entry to target; ``None`` targets every entry
             in the round template.
         """
@@ -866,7 +865,7 @@ class SutConfiguration:
         """Return the name of a StatefulSet of the SUT (and of its headless Service).
 
         ``bx-<w|component>-<storage name>-<storage_label>``, e.g.
-        ``bx-w-ci-cephcsi-tpch-100`` or ``bx-tikv-ti-nvme-ycsb-10``: short,
+        ``bx-w-ci-cephcsi-<benchmark>-100`` or ``bx-tikv-ti-nvme-<benchmark>-10``: short,
         because Kubernetes limits StatefulSet names to 52 characters (the pod
         label ``controller-revision-hash`` adds ``-<10 hex>`` and may have
         63), and Redis limits hostname length. Named by the storage label, not
@@ -1422,7 +1421,7 @@ class SutConfiguration:
         The init script list (e.g. ``Schema`` or ``Schema-Columnar``), the
         post-load list (indexes, constraints, statistics; ``none`` without)
         and the experiment's :attr:`~bexhoma.experiments.base.ExperimentBase.data_parameters`
-        (e.g. YCSB's insert order).
+        (e.g. the order in which keys are inserted).
 
         :return: Value per key, as strings.
         :rtype: dict[str, str]

@@ -1,5 +1,5 @@
 bexhoma.experiments package
-============================
+===========================
 
 Submodules
 ----------
@@ -8,12 +8,8 @@ Submodules
    :maxdepth: 4
 
    bexhoma.experiments.base
-   bexhoma.experiments.benchbase
-   bexhoma.experiments.dbmsbenchmarker
-   bexhoma.experiments.tpcc
-   bexhoma.experiments.tpcds
-   bexhoma.experiments.tpch
-   bexhoma.experiments.ycsb
+   bexhoma.experiments.mixed
+   bexhoma.experiments.system_builder
 
 Module contents
 ---------------

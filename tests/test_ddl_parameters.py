@@ -22,15 +22,15 @@ import types
 import unittest
 from unittest import mock
 
-import tpch
-import ycsb
+from bexhoma.benchmarks.tpch import cli as tpch
+from bexhoma.benchmarks.ycsb import cli as ycsb
 from bexhoma import ddl_parameters
 from bexhoma.cli_args import MAX_STATEFULSET_NAME, abbreviate_storage_name, limit_name
 from bexhoma.configurations.base import SutConfiguration
 from bexhoma.configurations.loading import LoadingCoordinator
 from bexhoma.experiments.base import ExperimentBase
-from bexhoma.experiments.tpch import TpchExperiment
-from bexhoma.experiments.ycsb import YcsbExperiment
+from bexhoma.benchmarks.tpch.experiment import TpchExperiment
+from bexhoma.benchmarks.ycsb.experiment import YcsbExperiment
 
 from .test_resource_sweep import _AnyDockers, _AnyVolumes, _SweepStubCluster
 
