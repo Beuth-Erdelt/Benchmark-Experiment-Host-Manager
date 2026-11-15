@@ -1,0 +1,242 @@
+{
+ "configfolder": "experiments/hardware",
+ "configurations": [
+  {
+   "_jobtemplate_loading": "",
+   "additional_labels": {
+    "hardware_type": "fio",
+    "usecase": "hardware"
+   },
+   "alias": "Hardware",
+   "benchmark_list": [
+    2,
+    4
+   ],
+   "benchmark_list_template": [
+    2,
+    4
+   ],
+   "benchmarking_parameters": {
+    "HARDWARE_DURATION": "60",
+    "HARDWARE_SIZE": "1G",
+    "HARDWARE_TEST_DIR": "/database/fio-test",
+    "HARDWARE_TYPE": "fio"
+   },
+   "benchmarking_parameters_list": [
+    {
+     "HARDWARE_DURATION": "60",
+     "HARDWARE_FIO_BS": "8k",
+     "HARDWARE_FIO_ENGINE": "sync",
+     "HARDWARE_FIO_FDATASYNC": "0",
+     "HARDWARE_FIO_FSYNC": "0",
+     "HARDWARE_FIO_IODEPTH": "1",
+     "HARDWARE_FIO_NUMJOBS": "2",
+     "HARDWARE_FIO_OVERWRITE": "0",
+     "HARDWARE_FIO_RW": "randrw",
+     "HARDWARE_FIO_RWMIXREAD": "50",
+     "HARDWARE_NETPERF_PROTOCOL": "tcp",
+     "HARDWARE_SIZE": "1G",
+     "HARDWARE_SOCKPERF_MODE": "ul",
+     "HARDWARE_SOCKPERF_MPS": "max",
+     "HARDWARE_SOCKPERF_MSGSIZE": "64",
+     "HARDWARE_SOCKPERF_PROTOCOL": "udp",
+     "HARDWARE_TEST_DIR": "/database/fio-test",
+     "HARDWARE_THREADS": "2",
+     "HARDWARE_TYPE": "fio"
+    },
+    {
+     "HARDWARE_DURATION": "60",
+     "HARDWARE_FIO_BS": "8k",
+     "HARDWARE_FIO_ENGINE": "sync",
+     "HARDWARE_FIO_FDATASYNC": "0",
+     "HARDWARE_FIO_FSYNC": "0",
+     "HARDWARE_FIO_IODEPTH": "1",
+     "HARDWARE_FIO_NUMJOBS": "2",
+     "HARDWARE_FIO_OVERWRITE": "0",
+     "HARDWARE_FIO_RW": "randrw",
+     "HARDWARE_FIO_RWMIXREAD": "50",
+     "HARDWARE_NETPERF_PROTOCOL": "tcp",
+     "HARDWARE_SIZE": "1G",
+     "HARDWARE_SOCKPERF_MODE": "ul",
+     "HARDWARE_SOCKPERF_MPS": "max",
+     "HARDWARE_SOCKPERF_MSGSIZE": "64",
+     "HARDWARE_SOCKPERF_PROTOCOL": "udp",
+     "HARDWARE_TEST_DIR": "/database/fio-test",
+     "HARDWARE_THREADS": "2",
+     "HARDWARE_TYPE": "fio"
+    }
+   ],
+   "benchmarking_parameters_list_template": [
+    {
+     "HARDWARE_DURATION": "60",
+     "HARDWARE_FIO_BS": "8k",
+     "HARDWARE_FIO_ENGINE": "sync",
+     "HARDWARE_FIO_FDATASYNC": "0",
+     "HARDWARE_FIO_FSYNC": "0",
+     "HARDWARE_FIO_IODEPTH": "1",
+     "HARDWARE_FIO_NUMJOBS": "2",
+     "HARDWARE_FIO_OVERWRITE": "0",
+     "HARDWARE_FIO_RW": "randrw",
+     "HARDWARE_FIO_RWMIXREAD": "50",
+     "HARDWARE_NETPERF_PROTOCOL": "tcp",
+     "HARDWARE_SIZE": "1G",
+     "HARDWARE_SOCKPERF_MODE": "ul",
+     "HARDWARE_SOCKPERF_MPS": "max",
+     "HARDWARE_SOCKPERF_MSGSIZE": "64",
+     "HARDWARE_SOCKPERF_PROTOCOL": "udp",
+     "HARDWARE_TEST_DIR": "/database/fio-test",
+     "HARDWARE_THREADS": "2",
+     "HARDWARE_TYPE": "fio"
+    },
+    {
+     "HARDWARE_DURATION": "60",
+     "HARDWARE_FIO_BS": "8k",
+     "HARDWARE_FIO_ENGINE": "sync",
+     "HARDWARE_FIO_FDATASYNC": "0",
+     "HARDWARE_FIO_FSYNC": "0",
+     "HARDWARE_FIO_IODEPTH": "1",
+     "HARDWARE_FIO_NUMJOBS": "2",
+     "HARDWARE_FIO_OVERWRITE": "0",
+     "HARDWARE_FIO_RW": "randrw",
+     "HARDWARE_FIO_RWMIXREAD": "50",
+     "HARDWARE_NETPERF_PROTOCOL": "tcp",
+     "HARDWARE_SIZE": "1G",
+     "HARDWARE_SOCKPERF_MODE": "ul",
+     "HARDWARE_SOCKPERF_MPS": "max",
+     "HARDWARE_SOCKPERF_MSGSIZE": "64",
+     "HARDWARE_SOCKPERF_PROTOCOL": "udp",
+     "HARDWARE_TEST_DIR": "/database/fio-test",
+     "HARDWARE_THREADS": "2",
+     "HARDWARE_TYPE": "fio"
+    }
+   ],
+   "configuration": "Hardware-1",
+   "data_components": null,
+   "dialect": "",
+   "docker": "Hardware",
+   "eval_parameters": {
+    "code": "<CODE>"
+   },
+   "experiment_dict": {
+    "benchmarker": [
+     [
+      {
+       "benchmarker": "hardware",
+       "fixed_parallelism": false,
+       "name": "hardware",
+       "num_pods": 2,
+       "parallelism": 2,
+       "parameters": {
+        "HARDWARE_DURATION": "60",
+        "HARDWARE_FIO_BS": "8k",
+        "HARDWARE_FIO_ENGINE": "sync",
+        "HARDWARE_FIO_FDATASYNC": "0",
+        "HARDWARE_FIO_FSYNC": "0",
+        "HARDWARE_FIO_IODEPTH": "1",
+        "HARDWARE_FIO_NUMJOBS": "2",
+        "HARDWARE_FIO_OVERWRITE": "0",
+        "HARDWARE_FIO_RW": "randrw",
+        "HARDWARE_FIO_RWMIXREAD": "50",
+        "HARDWARE_NETPERF_PROTOCOL": "tcp",
+        "HARDWARE_SIZE": "1G",
+        "HARDWARE_SOCKPERF_MODE": "ul",
+        "HARDWARE_SOCKPERF_MPS": "max",
+        "HARDWARE_SOCKPERF_MSGSIZE": "64",
+        "HARDWARE_SOCKPERF_PROTOCOL": "udp",
+        "HARDWARE_TEST_DIR": "/database/fio-test",
+        "HARDWARE_THREADS": "2",
+        "HARDWARE_TYPE": "fio"
+       },
+       "resetscript": [],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-hardware.yml"
+      }
+     ],
+     [
+      {
+       "benchmarker": "hardware",
+       "fixed_parallelism": false,
+       "name": "hardware",
+       "num_pods": 4,
+       "parallelism": 4,
+       "parameters": {
+        "HARDWARE_DURATION": "60",
+        "HARDWARE_FIO_BS": "8k",
+        "HARDWARE_FIO_ENGINE": "sync",
+        "HARDWARE_FIO_FDATASYNC": "0",
+        "HARDWARE_FIO_FSYNC": "0",
+        "HARDWARE_FIO_IODEPTH": "1",
+        "HARDWARE_FIO_NUMJOBS": "2",
+        "HARDWARE_FIO_OVERWRITE": "0",
+        "HARDWARE_FIO_RW": "randrw",
+        "HARDWARE_FIO_RWMIXREAD": "50",
+        "HARDWARE_NETPERF_PROTOCOL": "tcp",
+        "HARDWARE_SIZE": "1G",
+        "HARDWARE_SOCKPERF_MODE": "ul",
+        "HARDWARE_SOCKPERF_MPS": "max",
+        "HARDWARE_SOCKPERF_MSGSIZE": "64",
+        "HARDWARE_SOCKPERF_PROTOCOL": "udp",
+        "HARDWARE_TEST_DIR": "/database/fio-test",
+        "HARDWARE_THREADS": "2",
+        "HARDWARE_TYPE": "fio"
+       },
+       "resetscript": [],
+       "target": "sut",
+       "template": "jobtemplate-benchmarking-hardware.yml"
+      }
+     ]
+    ],
+    "loader": []
+   },
+   "indexing": "",
+   "loading_deactivated": true,
+   "loading_parameters": {},
+   "max_sut_dbms": null,
+   "monitoring_sut": true,
+   "num_loading": 0,
+   "num_loading_pods": 0,
+   "num_tenants": 0,
+   "num_worker": 0,
+   "path_experiment_docker": "Hardware",
+   "prometheus_interval": "10s",
+   "prometheus_timeout": "10s",
+   "pvc_selector": "",
+   "resource_sweep": true,
+   "resources": {
+    "limits": {
+     "cpu": "0",
+     "memory": "0"
+    },
+    "nodeSelector": {
+     "cpu": "",
+     "gpu": ""
+    },
+    "requests": {
+     "cpu": "4",
+     "gpu": 0,
+     "memory": "16Gi"
+    }
+   },
+   "script": "Schema",
+   "script_target": "sut",
+   "statefulset_name": "",
+   "storage": {
+    "keep": true,
+    "storageClassName": null,
+    "storageConfiguration": "hardware",
+    "storageSize": ""
+   },
+   "storage_label": "hardware",
+   "sut_container_name": "dbms",
+   "sut_has_pool": false,
+   "sut_parameters": {},
+   "sut_pod_name": "",
+   "sut_role": "data",
+   "sut_service_name": "",
+   "sut_template": "deploymenttemplate-Hardware.yml",
+   "tenant_per": "",
+   "volume": "hardware",
+   "worker_metric_strip_container": false
+  }
+ ]
+}

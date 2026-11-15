@@ -226,13 +226,12 @@ class EvaluatorBase:
         Looks up ``experiment_dict['loader'][data_job - 1]`` from the persisted
         per-configuration experiment dict (see :meth:`_load_experiment_dict`) and
         matches it against :attr:`name`. Unlike benchmarker entries (whose ``name``
-        directly matches the owning benchmark's own name, e.g. ``'ycsb'``), loader
+        directly matches the owning benchmark's own name), loader
         entries name themselves after the experiment type with a conventional
-        ``'-loader'`` suffix (e.g. ``'tpcc-loader'``), which does not always equal
-        the benchmark's name (e.g. TPC-C's own benchmark is named ``'hammerdb'``,
-        see :class:`~bexhoma.benchmarks.tpcc.TPCC`). So a match is accepted either
+        ``'-loader'`` suffix (``'<name>-loader'``), which need not equal
+        the benchmark's name. So a match is accepted either
         via the entry's ``name`` with that suffix stripped, or via its
-        ``benchmarker`` field (the tool identifier, e.g. ``'hammerdb'``).
+        ``benchmarker`` field (the tool identifier).
 
         Falls back to ``data_job == self.benchmark_run`` when :attr:`name` is unset
         or the experiment dict lookup fails, preserving the prior behaviour.
@@ -307,7 +306,7 @@ class EvaluatorBase:
 
         Default implementation delegates to :meth:`log_to_df`, which is
         correct for benchmarks whose loading and benchmarking log formats are
-        identical (e.g. YCSB).  Subclasses where the formats differ must
+        identical.  Subclasses where the formats differ must
         override this method.
 
         :param filename: Absolute path to the loading log file.
@@ -477,11 +476,11 @@ class EvaluatorBase:
                     [  # experiment run 1
                         [  # client round 1
                             {'type': 'dbmsbenchmarker', 'pods': 4},
-                            {'type': 'tpch_refresh',    'pods': 1},
+                            {'type': 'second_benchmark', 'pods': 1},
                         ],
                         [  # client round 2
                             {'type': 'dbmsbenchmarker', 'pods': 8},
-                            {'type': 'tpch_refresh',    'pods': 1},
+                            {'type': 'second_benchmark', 'pods': 1},
                         ],
                     ],
                 ],
@@ -570,14 +569,14 @@ class EvaluatorBase:
         """
         with open(self.path + "/queries.config", 'r') as f:
             return ast.literal_eval(f.read())
-    def get_terminals(self, loading_parameters):
+    def get_threads(self, loading_parameters):
         """
-        Returns the number of client terminals/virtual users a benchmarking
+        Returns the number of client threads a benchmarking
         tool ran with, read from its own loading-parameter env var.
 
         The base implementation knows no tool-specific env var and always
-        returns ``0``; subclasses for tools that report a terminal/VU count
-        (e.g. Benchbase, HammerDB) override this.
+        returns ``0``; subclasses for tools that report a thread count
+        override this.
 
         :param loading_parameters: The connection's ``loading_parameters`` dict.
         :type loading_parameters: dict
@@ -627,7 +626,7 @@ class EvaluatorBase:
             'time_reset': float(c.get('time_reset', 0) or 0),
             # None: no reset ran; '': it ran without errors; else the failed scripts
             'reset_failed': c.get('reset_failed'),
-            'terminals': self.get_terminals(loading_parameters),
+            'threads': self.get_threads(loading_parameters),
             'pods': c['parameter']['parallelism'],
             'loading_pods': num_loading_pods,
             'tenant_id': c['parameter']['TENANT'] if 'TENANT' in c['parameter'] else '',
@@ -708,7 +707,7 @@ class EvaluatorBase:
             if 'orig_name' in conn:
                 covered_names.add(conn['orig_name'])
         # Supplement with individual {connection}.config files for connections absent from the
-        # combined file (e.g. the refresh stream after dbmsbenchmarker expands connections.config).
+        # combined file (e.g. a co-running benchmark after dbmsbenchmarker expands connections.config).
         for entry in sorted(os.listdir(self.path)):
             if not entry.endswith('.config') or entry in ('connections.config', 'queries.config'):
                 continue
@@ -773,7 +772,7 @@ class EvaluatorBase:
         ``queries.config`` ``defaultParameters.SF`` only for connections that carry
         no ``loading_parameters_SF`` of their own (e.g. benchmark types with no
         loading phase). This keeps ``Throughput [SF/h]`` correct even in a mixed
-        experiment where two co-running benchmarks (e.g. TPC-H and YCSB, both
+        experiment where two co-running benchmarks (both
         registered via ``add_benchmark()``) use different scale factors -- the
         single experiment-wide default can only ever reflect one of them.
 
@@ -795,7 +794,7 @@ class EvaluatorBase:
         selected_cols = [
             'code', 'SF', 'configuration', 'connection', 'phase',
             'experiment_run', 'client', 'time_load', 'time_preload',
-            'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods', 'terminals',
+            'time_generate', 'time_ingest', 'time_postload', 'pods', 'loading_pods', 'threads',
             'tenant_id', 'type_tenants', 'num_tenants', 'vol_tenants', 'Throughput [SF/h]',
         ]
         # True: this repetition did not load, its times are copied from the

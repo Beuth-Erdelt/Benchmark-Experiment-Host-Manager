@@ -2,13 +2,13 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1792732734
-Experiment                    : starts at 2026-10-23 07:18:54.460384 (58077.2939947)
+Experiment                    : has code 1794661616
+Experiment                    : starts at 2026-11-14 14:06:56.643061 (298158.2547592)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
 Benchmark is 'ycsb'. Workload is 'f'. Scaling factor is 1000. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.8.
+Experiment uses bexhoma version 0.11.17.
 Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker38.
@@ -27,131 +27,131 @@ PostgreSQL-1                  : will start now
 PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1792732734
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1792732734
-Loop pass                     : took 2.8s (1 kubectl calls 1.2s, 9 API requests 1.1s)
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1794661616
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1794661616
+Loop pass                     : took 2.5s (1 kubectl calls 1.1s, 9 API requests 0.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 1.7s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 16 API requests 2.0s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 4.1s (0 kubectl calls 0.0s, 16 API requests 1.7s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 16 API requests 1.6s)
+Loop pass                     : took 7.2s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is not loaded yet
 PostgreSQL-1                  : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792732734-7b9bf98c5b-j4csf to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1794661616-7dbfd57cf6-4575c to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type schema
 PostgreSQL-1                  : waits for the Schema scripts (schema=True) before starting the loading jobs
 PostgreSQL-1                  : Schema scripts done after 6s
 PostgreSQL-1                  : is loading
-Loop pass                     : took 20.7s (8 kubectl calls 9.5s, 38 API requests 5.1s)
+Loop pass                     : took 19.1s (8 kubectl calls 9.6s, 39 API requests 2.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : showing loader times (benchbase-loader)
 PostgreSQL-1                  : generator times (start/end per pod and container) []
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1792732921, 1792732926)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1792732921, 1792732926)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1794661800, 1794661805)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1794661800, 1794661805)]
 PostgreSQL-1                  : loader timespan (first to last [s]) = 5
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792732734-7b9bf98c5b-j4csf to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1794661616-7dbfd57cf6-4575c to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type index
 PostgreSQL-1                  : is loading
-Loop pass                     : took 15.6s (10 kubectl calls 11.8s, 27 API requests 3.4s)
+Loop pass                     : took 15.0s (10 kubectl calls 12.4s, 27 API requests 1.0s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1792732734 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1794661616 initialized to 1.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 1
 postgresql-1-1-1-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792732734
-PostgreSQL-1                  : submitted benchmarker job in 10.0s (4 kubectl calls 4.4s, 24 API requests 5.5s)
-Loop pass                     : took 13.7s (5 kubectl calls 5.4s, 44 API requests 8.1s)
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1794661616
+PostgreSQL-1                  : submitted benchmarker job in 8.3s (4 kubectl calls 5.0s, 24 API requests 2.4s)
+Loop pass                     : took 10.9s (5 kubectl calls 6.0s, 46 API requests 3.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 20 API requests 2.9s)
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 21 API requests 0.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 4.5s (0 kubectl calls 0.0s, 18 API requests 4.4s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 19 API requests 1.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 18 API requests 2.2s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 4.8s (0 kubectl calls 0.0s, 18 API requests 2.1s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 18 API requests 1.8s)
+Loop pass                     : took 8.3s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 18 API requests 1.9s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 18 API requests 1.8s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 18 API requests 3.1s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 18 API requests 1.9s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
-postgresql-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1792732734/postgresql-1-1-1-1.config
+postgresql-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1794661616/postgresql-1-1-1-1.config
 postgresql-1-1-1-1            : showing benchmarker times
-postgresql-1-1-1-1            : benchmarker timespan job from 1792733007 to 1792733343
-postgresql-1-1-1-1            : benchmarker timespan pods from 1792733009 to 1792733323
-postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 314
-postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1792733009, 1792733323)]
-postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1792733009, 1792733323)]}
-Loop pass                     : took 7.4s (4 kubectl calls 4.4s, 24 API requests 2.9s)
+postgresql-1-1-1-1            : benchmarker timespan job from 1794661883 to 1794662208
+postgresql-1-1-1-1            : benchmarker timespan pods from 1794661886 to 1794662201
+postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 315
+postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1794661886, 1794662201)]
+postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1794661886, 1794662201)]}
+Loop pass                     : took 6.5s (4 kubectl calls 4.6s, 24 API requests 1.0s)
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PostgreSQL-1-1792732734 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PostgreSQL-1-1794661616 initialized to 2.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 2
 postgresql-1-1-2-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792732734
-PostgreSQL-1                  : submitted benchmarker job in 6.0s (3 kubectl calls 3.3s, 13 API requests 2.5s)
-Loop pass                     : took 8.4s (3 kubectl calls 3.3s, 34 API requests 4.9s)
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1794661616
+PostgreSQL-1                  : submitted benchmarker job in 4.6s (3 kubectl calls 3.5s, 13 API requests 1.0s)
+Loop pass                     : took 5.8s (3 kubectl calls 3.5s, 35 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 3.3s (0 kubectl calls 0.0s, 21 API requests 2.9s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 22 API requests 0.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 19 API requests 2.1s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 20 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 5.6s (0 kubectl calls 0.0s, 19 API requests 2.3s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 20 API requests 0.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 2.3s)
+Loop pass                     : took 8.8s (0 kubectl calls 0.0s, 20 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 19 API requests 2.0s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 20 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 19 API requests 2.0s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 19 API requests 2.2s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 20 API requests 1.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 19 API requests 2.0s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 20 API requests 1.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 19 API requests 2.1s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 20 API requests 0.8s)
 - waiting 30s -               : done
-postgresql-1-1-2-1            : wrote benchmarking_timespans to /data/benchmarks/1792732734/postgresql-1-1-2-1.config
+postgresql-1-1-2-1            : wrote benchmarking_timespans to D:/data/benchmarks/1794661616/postgresql-1-1-2-1.config
 postgresql-1-1-2-1            : showing benchmarker times
-postgresql-1-1-2-1            : benchmarker timespan job from 1792733353 to 1792733688
-postgresql-1-1-2-1            : benchmarker timespan pods from 1792733356 to 1792733664
+postgresql-1-1-2-1            : benchmarker timespan job from 1794662215 to 1794662543
+postgresql-1-1-2-1            : benchmarker timespan pods from 1794662219 to 1794662527
 postgresql-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 308
-postgresql-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1792733357, 1792733664), (1792733356, 1792733664)]
-postgresql-1-1-2-1            : found and updated times {'benchmarker': [(1792733357, 1792733664), (1792733356, 1792733664)]}
-Loop pass                     : took 9.8s (6 kubectl calls 6.4s, 28 API requests 3.2s)
+postgresql-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1794662219, 1794662526), (1794662220, 1794662527)]
+postgresql-1-1-2-1            : found and updated times {'benchmarker': [(1794662219, 1794662526), (1794662220, 1794662527)]}
+Loop pass                     : took 8.2s (6 kubectl calls 6.8s, 28 API requests 1.2s)
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1792732734-7b9bf98c5b-j4csf
-Loop pass                     : took 7.1s (4 kubectl calls 3.8s, 29 API requests 3.0s)
-Experiment                    : ends at 2026-10-23 07:34:58.636532 (59041.4686004) - 964.17s total
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1794661616-7dbfd57cf6-4575c
+Loop pass                     : took 6.0s (4 kubectl calls 4.2s, 29 API requests 1.4s)
+Experiment                    : ends at 2026-11-14 14:22:31.915817 (299093.5075813) - 935.25s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -162,14 +162,14 @@ Result workflow complete
 ### Workload
 Benchbase Workload ycsb SF=1000
 * Type: benchbase
-* Duration: 965s 
-* Code: 1792732734
+* Duration: 936s 
+* Code: 1794661616
 * Benchbase runs an YCSB experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'ycsb'. Workload is 'f'. Scaling factor is 1000. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.8.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -186,15 +186,15 @@ Benchbase Workload ycsb SF=1000
 
 ### Connections
 * postgresql-1-1-1-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:922357
+  * disk:1200039
   * datadisk:2298
   * volume_size:1.8T
-  * volume_used:901G
+  * volume_used:1.2T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -203,18 +203,18 @@ Benchbase Workload ycsb SF=1000
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792732734
+    * code:1794661616
     * TENANT_VOL:False
 * postgresql-1-1-2-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:926245
-  * datadisk:6182
+  * disk:1203905
+  * datadisk:6162
   * volume_size:1.8T
-  * volume_used:905G
+  * volume_used:1.2T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -223,11 +223,14 @@ Benchbase Workload ycsb SF=1000
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792732734
+    * code:1794661616
     * TENANT_VOL:False
 
+### Ingestion
+* PostgreSQL-1: 1 of 1 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1792732734-7b9bf98c5b-j4csf: 0
+* bexhoma-sut-postgresql-1-1794661616-7dbfd57cf6-4575c: 0
 
 ### Workflow
 
@@ -245,29 +248,33 @@ Benchbase Workload ycsb SF=1000
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 | 1000 |       13.00 |           4.00 |            0.00 |          5.00 |            4.00 |              1 |           1 |             |                |             0 | False         |           276923.08 | False               |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 | 1000 |       14.00 |           4.00 |            0.00 |          5.00 |            5.00 |              1 |         1 |             |                |             0 | False         |           257142.86 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | phase            | job                |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
-|:---------------------|:-----------------|:-------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |          32 |    16384 |        1 |               1 |       1 |           0 | 300.00 |            0 |                       16384.18 |                    16384.20 |         0.00 |                                                       2169.00 |                                                983.00 |
-| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       1 |           0 | 300.00 |            0 |                        7978.41 |                     7978.47 |         0.00 |                                                       2296.00 |                                               1092.00 |
-| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       2 |           0 | 300.00 |            0 |                        7986.09 |                     7986.14 |         0.00 |                                                       2177.00 |                                               1028.00 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |        32 |    16384 |           0 | 300.00 |        0 |                       16369.99 |                    16370.10 |         0.00 |                                                       1953.00 |                                                846.00 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 |        16 |     8192 |           0 | 300.00 |        0 |                        8176.13 |                     8176.19 |         0.00 |                                                       1980.00 |                                                863.00 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 |        16 |     8192 |           0 | 300.00 |        0 |                        8192.11 |                     8192.11 |         0.00 |                                                       1923.00 |                                                819.00 |
 
 #### Per Phase
 
-| DBMS             | phase            |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
-|:-----------------|:-----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |          32 |    16384 |               1 |           1 |           0 | 300.00 |            0 |                       16384.18 |                    16384.20 |         0.00 |                                                       2169.00 |                                                983.00 |
-| postgresql-1-1-2 | postgresql-1-1-2 |                1 |          32 |    16384 |               1 |           2 |           0 | 300.00 |            0 |                       15964.51 |                    15964.61 |         0.00 |                                                       2296.00 |                                               1060.00 |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |        32 |    16384 |           0 | 300.00 |        0 |                       16369.99 |                    16370.10 |         0.00 |                                                       1953.00 |                                                846.00 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 |        32 |    16384 |           0 | 300.00 |        0 |                       16368.24 |                    16368.30 |         0.00 |                                                       1980.00 |                                                841.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN

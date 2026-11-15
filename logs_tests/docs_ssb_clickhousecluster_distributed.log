@@ -2,22 +2,24 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1794004498
-Experiment                    : starts at 2026-11-06 23:34:58.702884 (227688.2966846)
+Experiment                    : has code 1794599572
+Experiment                    : starts at 2026-11-13 20:52:52.995269 (236116.0436563)
 Experiment                    : This experiment compares run time and resource consumption of SSB queries in different DBMS.
 Schema is the star schema (-xsv normal).
+Dimensions of ClickHouseCluster are spread over the nodes like lineorder (-xdim distributed).
 SSB (SF=1) data is loaded and benchmark is executed.
 Queries use the constants of the specification (-xqv spec).
 Query ordering is Q1.1 - Q4.3.
 Timeout per query is 1200.
 Data transfer volume per query is also measured.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.13.
-Experiment is limited to DBMS ['ClickHouse'].
+Experiment uses bexhoma version 0.11.17.
+Experiment is limited to DBMS ['ClickHouseCluster'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker38.
 Benchmarking is fixed to cl-worker38.
 SUT is fixed to cl-worker36.
+Workers are fixed to cl-worker36, cl-worker37, cl-worker29.
 Database uses ephemeral storage of size 50Gi.
 Loading is tested with [1] threads, split into [8] pods.
 Benchmarking is tested with [1] threads, split into [1] pods.
@@ -25,93 +27,84 @@ Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Maximum DBMS across the whole cluster is 10.
 Results are validated against basic correctness requirements.
+Distributed DBMS uses 3 worker nodes, 0 replicas and 0 shards per node.
 SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 Cluster monitoring            : is running
-ClickHouse-1                  : will start now
-ClickHouse-1                  : deployments ['sut']
-ClickHouse-1                  : stateful sets []
-ClickHouse-1                  : pvcs ['sut']
-ClickHouse-1                  : name of SUT pods = bexhoma-sut-clickhouse-1-1794004498
-ClickHouse-1                  : name of SUT service = bexhoma-sut-clickhouse-1-1794004498
-Loop pass                     : took 2.6s (1 kubectl calls 1.2s, 9 API requests 0.4s)
+ClickHouseCluster-1           : will start now
+ClickHouseCluster-1           : deployments ['sut']
+ClickHouseCluster-1           : stateful sets ['worker']
+ClickHouseCluster-1           : pvcs ['sut']
+ClickHouseCluster-1           : name of SUT pods = bexhoma-sut-clickhousecluster-1-1794599572
+ClickHouseCluster-1           : name of SUT service = bexhoma-sut-clickhousecluster-1-1794599572
+ClickHouseCluster-1           : name of worker pods = bx-w-chc-1-1794599572
+ClickHouseCluster-1           : name of worker service headless = bx-w-chc-1-1794599572
+Loop pass                     : took 2.4s (1 kubectl calls 1.2s, 9 API requests 0.4s)
 - waiting 30s -               : done
-ClickHouse-1                  : is not loaded yet
-ClickHouse-1                  : will start loading but not before 2026-11-06 22:36:33 (that is in 60 secs)
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
-- waiting 30s -               : done
-ClickHouse-1                  : is not loaded yet
-ClickHouse-1                  : will start loading but not before 2026-11-06 22:36:33
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 13 API requests 0.5s)
-- waiting 30s -               : done
-ClickHouse-1                  : is not loaded yet
-ClickHouse-1                  : load durability relaxed, scripts []
-ClickHouse-1                  : connect to pod bexhoma-sut-clickhouse-1-1794004498-5994f65fb4-2s4jn to load scripts
-ClickHouse-1                  : start asynch loading scripts of type schema
-ClickHouse-1                  : waits for the Schema scripts (schema=True) before starting the loading jobs
-ClickHouse-1                  : Schema scripts done after 4s
-ClickHouse-1                  : is loading
-Loop pass- waiting 30s -               : done
+ClickHouseCluster-1           : worker pods found: ['bx-w-chc-1-1794599572-0', 'bx-w-chc-1-1794599572-1', 'bx-w-chc-1-1794599572-2']
+ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bx-w-chc-1-1794599572-0', 'bx-w-chc-1-1794599572-1', 'bx-w-chc-1-1794599572-2']
+ClickHouseCluster-1           : found 3 / 3 running workers (component worker)
 ClickHouseCluster-1           : is not loaded yet
-ClickHouseCluster-1           : will start loading but not before 2026-11-06 23:28:11
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 13 API requests 0.7s)
+ClickHouseCluster-1           : will start loading but not before 2026-11-13 19:54:27 (that is in 60 secs)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 23 API requests 1.0s)
+- waiting 30s -               : done
+ClickHouseCluster-1           : is not loaded yet
+ClickHouseCluster-1           : will start loading but not before 2026-11-13 19:54:27
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 13 API requests 0.6s)
 - waiting 30s -               : done
 ClickHouseCluster-1           : is not loaded yet
 ClickHouseCluster-1           : load durability relaxed, scripts []
-ClickHouseCluster-1           : connect to pod bexhoma-sut-clickhousecluster-1-1794007596-7599b844c4-kf6tq to load scripts
+ClickHouseCluster-1           : connect to pod bexhoma-sut-clickhousecluster-1-1794599572-85fcb59684-2fhdf to load scripts
 ClickHouseCluster-1           : start asynch loading scripts of type schema
 ClickHouseCluster-1           : waits for the Schema scripts (schema=True) before starting the loading jobs
-ClickHouseCluster-1           : Schema scripts done after 5s
+ClickHouseCluster-1           : Schema scripts done after 6s
 ClickHouseCluster-1           : is loading
-Loop pass                     : took 21.7s (5 kubectl calls 6.3s, 34 API requests 5.3s)
+Loop pass                     : took 15.1s (5 kubectl calls 6.4s, 36 API requests 2.7s)
 - waiting 30s -               : done
 ClickHouseCluster-1           : is loading
-Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 34 API requests 1.4s)
-- waiting 30s -           - waiting 30s -               : done
-ClickHouseCluster-1           : is loading
-Loop pass                     : took 31.3s (24 kubectl calls 28.5s, 42 API requests 1.7s)
+Loop pass                     : took 14.9s (0 kubectl calls 0.0s, 34 API requests 1.6s)
 - waiting 30s -               : done
 ClickHouseCluster-1           : showing loader times (ssb-loader)
-ClickHouseCluster-1           : generator times (start/end per pod and container) [(1794008085, 1794008093), (1794008089, 1794008093), (1794008076, 1794008093), (1794008073, 1794008093), (1794008083, 1794008093), (1794008074, 1794008093), (1794008092, 1794008092), (1794008081, 1794008093)]
-ClickHouseCluster-1           : loader times (start/end per pod and container) [(1794008101, 1794008102), (1794008101, 1794008102), (1794008101, 1794008102), (1794008101, 1794008103), (1794008101, 1794008103), (1794008101, 1794008102), (1794008101, 1794008102), (1794008101, 1794008102)]
-ClickHouseCluster-1           : total times (start/end per pod and container) [(1794008085, 1794008093), (1794008089, 1794008093), (1794008076, 1794008093), (1794008073, 1794008093), (1794008083, 1794008093), (1794008074, 1794008093), (1794008092, 1794008092), (1794008081, 1794008093), (1794008101, 1794008102), (1794008101, 1794008102), (1794008101, 1794008102), (1794008101, 1794008103), (1794008101, 1794008103), (1794008101, 1794008102), (1794008101, 1794008102), (1794008101, 1794008102)]
-ClickHouseCluster-1           : generator timespan (first to last [s]) = 20
-ClickHouseCluster-1           : loader timespan (first to last [s]) = 2
-ClickHouseCluster-1           : total timespan (first to last [s]) = 30
-ClickHouseCluster-1           : connect to pod bexhoma-sut-clickhousecluster-1-1794007941-7f5bc7f4-26s22 to load scripts
+ClickHouseCluster-1           : generator times (start/end per pod and container) [(1794599699, 1794599717), (1794599695, 1794599718), (1794599703, 1794599718), (1794599717, 1794599717), (1794599706, 1794599718), (1794599697, 1794599718), (1794599713, 1794599718), (1794599708, 1794599718)]
+ClickHouseCluster-1           : loader times (start/end per pod and container) [(1794599725, 1794599726), (1794599725, 1794599728), (1794599725, 1794599726), (1794599726, 1794599727), (1794599725, 1794599726), (1794599725, 1794599726), (1794599725, 1794599726), (1794599725, 1794599726)]
+ClickHouseCluster-1           : total times (start/end per pod and container) [(1794599699, 1794599717), (1794599695, 1794599718), (1794599703, 1794599718), (1794599717, 1794599717), (1794599706, 1794599718), (1794599697, 1794599718), (1794599713, 1794599718), (1794599708, 1794599718), (1794599725, 1794599726), (1794599725, 1794599728), (1794599725, 1794599726), (1794599726, 1794599727), (1794599725, 1794599726), (1794599725, 1794599726), (1794599725, 1794599726), (1794599725, 1794599726)]
+ClickHouseCluster-1           : generator timespan (first to last [s]) = 23
+ClickHouseCluster-1           : loader timespan (first to last [s]) = 3
+ClickHouseCluster-1           : total timespan (first to last [s]) = 33
+ClickHouseCluster-1           : connect to pod bexhoma-sut-clickhousecluster-1-1794599572-85fcb59684-2fhdf to load scripts
 ClickHouseCluster-1           : start asynch loading scripts of type index
 ClickHouseCluster-1           : is loading
-Loop pass                     : took 9.0s (5 kubectl calls 6.0s, 46 API requests 1.8s)
+Loop pass                     : took 34.7s (29 kubectl calls 31.0s, 62 API requests 2.7s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-ClickHouseCluster-1-1794007941 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-ClickHouseCluster-1-1794599572 initialized to 1.
 ClickHouseCluster-1           : benchmarks done 0 of 1. This will be client 1
 clickhousecluster-1-1-1-1     : start benchmarking (benchmark_run=1)
-ClickHouseCluster-1           : worker pods found: ['bx-w-chc-1-1794007941-0', 'bx-w-chc-1-1794007941-1', 'bx-w-chc-1-1794007941-2']
-ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bx-w-chc-1-1794007941-0', 'bx-w-chc-1-1794007941-1', 'bx-w-chc-1-1794007941-2']
-ClickHouseCluster-1           : distributed system - get host info for worker bx-w-chc-1-1794007941-0
-ClickHouseCluster-1           : distributed system - get host info for worker bx-w-chc-1-1794007941-1
-ClickHouseCluster-1           : distributed system - get host info for worker bx-w-chc-1-1794007941-2
-ClickHouseCluster-1           : benchmarking results in folder C:\data\benchmarks/1794007941
-ClickHouseCluster-1           : submitted benchmarker job in 14.5s (4 kubectl calls 5.0s, 70 API requests 9.4s)
-Loop pass                     : took 17.1s (5 kubectl calls 6.1s, 90 API requests 10.8s)
+ClickHouseCluster-1           : worker pods found: ['bx-w-chc-1-1794599572-0', 'bx-w-chc-1-1794599572-1', 'bx-w-chc-1-1794599572-2']
+ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bx-w-chc-1-1794599572-0', 'bx-w-chc-1-1794599572-1', 'bx-w-chc-1-1794599572-2']
+ClickHouseCluster-1           : distributed system - get host info for worker bx-w-chc-1-1794599572-0
+ClickHouseCluster-1           : distributed system - get host info for worker bx-w-chc-1-1794599572-1
+ClickHouseCluster-1           : distributed system - get host info for worker bx-w-chc-1-1794599572-2
+ClickHouseCluster-1           : benchmarking results in folder D:\data\benchmarks/1794599572
+ClickHouseCluster-1           : submitted benchmarker job in 14.6s (4 kubectl calls 4.7s, 70 API requests 8.6s)
+Loop pass                     : took 17.9s (5 kubectl calls 5.7s, 92 API requests 10.0s)
 - waiting 30s -               : done
-clickhousecluster-1-1-1-1     : wrote benchmarking_timespans to /data/benchmarks/1794007941/clickhousecluster-1-1-1-1.config
+clickhousecluster-1-1-1-1     : wrote benchmarking_timespans to D:/data/benchmarks/1794599572/clickhousecluster-1-1-1-1.config
 clickhousecluster-1-1-1-1     : showing benchmarker times
-clickhousecluster-1-1-1-1     : benchmarker timespan job from 1794008237 to 1794008273
-clickhousecluster-1-1-1-1     : benchmarker timespan pods from 1794008244 to 1794008255
-clickhousecluster-1-1-1-1     : benchmarker timespan (start to end single container [s]) = 11
-clickhousecluster-1-1-1-1     : benchmarker times (start/end per pod and container) = [(1794008244, 1794008255)]
-clickhousecluster-1-1-1-1     : found and updated times {'benchmarker': [(1794008244, 1794008255)]}
-Loop pass                     : took 7.1s (4 kubectl calls 5.0s, 24 API requests 1.0s)
+clickhousecluster-1-1-1-1     : benchmarker timespan job from 1794599840 to 1794599874
+clickhousecluster-1-1-1-1     : benchmarker timespan pods from 1794599851 to 1794599863
+clickhousecluster-1-1-1-1     : benchmarker timespan (start to end single container [s]) = 12
+clickhousecluster-1-1-1-1     : benchmarker times (start/end per pod and container) = [(1794599851, 1794599863)]
+clickhousecluster-1-1-1-1     : found and updated times {'benchmarker': [(1794599851, 1794599863)]}
+Loop pass                     : took 6.5s (4 kubectl calls 5.3s, 24 API requests 1.1s)
 ClickHouseCluster-1           : can be stopped
-ClickHouseCluster-1           : had 0 restarts at worker bexhoma-sut-clickhousecluster-1-1794007941-7f5bc7f4-26s22
-ClickHouseCluster-1           : worker pods found: ['bx-w-chc-1-1794007941-0', 'bx-w-chc-1-1794007941-1', 'bx-w-chc-1-1794007941-2']
-ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bx-w-chc-1-1794007941-0', 'bx-w-chc-1-1794007941-1', 'bx-w-chc-1-1794007941-2']
-ClickHouseCluster-1           : had 0 restarts at worker bx-w-chc-1-1794007941-0
-ClickHouseCluster-1           : had 0 restarts at worker bx-w-chc-1-1794007941-1
-ClickHouseCluster-1           : had 0 restarts at worker bx-w-chc-1-1794007941-2
-Loop pass                     : took 12.7s (9 kubectl calls 10.6s, 39 API requests 1.5s)
-Experiment                    : ends at 2026-11-07 00:38:08.696171 (231478.1962738) - 347.11s total
+ClickHouseCluster-1           : had 0 restarts at worker bexhoma-sut-clickhousecluster-1-1794599572-85fcb59684-2fhdf
+ClickHouseCluster-1           : worker pods found: ['bx-w-chc-1-1794599572-0', 'bx-w-chc-1-1794599572-1', 'bx-w-chc-1-1794599572-2']
+ClickHouseCluster-1           : worker pods found (only stateful set pods): ['bx-w-chc-1-1794599572-0', 'bx-w-chc-1-1794599572-1', 'bx-w-chc-1-1794599572-2']
+ClickHouseCluster-1           : had 0 restarts at worker bx-w-chc-1-1794599572-0
+ClickHouseCluster-1           : had 0 restarts at worker bx-w-chc-1-1794599572-1
+ClickHouseCluster-1           : had 0 restarts at worker bx-w-chc-1-1794599572-2
+Loop pass                     : took 12.7s (9 kubectl calls 9.5s, 39 API requests 1.4s)
+Experiment                    : ends at 2026-11-13 20:58:11.017313 (236434.0599208) - 318.02s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
@@ -124,8 +117,8 @@ Result workflow complete
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 348s 
-* Code: 1794007941
+* Duration: 319s 
+* Code: 1794599572
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -136,7 +129,7 @@ SSB Queries SF=1
   * Timeout per query is 1200.
   * Data transfer volume per query is also measured.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['ClickHouseCluster'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -160,10 +153,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:867986
-  * datadisk:153
+  * disk:1146961
+  * datadisk:147
   * volume_size:1.8T
-  * volume_used:848G
+  * volume_used:1.1T
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
@@ -174,46 +167,49 @@ SSB Queries SF=1
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:716471
-    * datadisk:200
+    * disk:1302105
+    * datadisk:194
     * volume_size:1.8T
-    * volume_used:700G
+    * volume_used:1.3T
     * cpu_list:0-127
   * worker 1
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:309930
-    * datadisk:201
-    * volume_size:879G
-    * volume_used:303G
-    * cpu_list:0-127
-  * worker 2
     * RAM:2164173156352
     * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
     * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:867989
-    * datadisk:201
+    * disk:1146977
+    * datadisk:194
     * volume_size:1.8T
-    * volume_used:848G
+    * volume_used:1.1T
     * cpu_list:0-223
+  * worker 2
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:692961
+    * datadisk:195
+    * volume_size:879G
+    * volume_used:677G
+    * cpu_list:0-127
   * resources_total: 16.0 CPU, 256.0 GiB RAM requested in 4 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794007941
+    * code:1794599572
     * BEXHOMA_WORKERS:3
 
+### Ingestion
+* ClickHouseCluster-1: 12 of 12 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-clickhousecluster-1-1794007941-7f5bc7f4-26s22: 0
-* bx-w-chc-1-1794007941-0: 0
-* bx-w-chc-1-1794007941-1: 0
-* bx-w-chc-1-1794007941-2: 0
+* bexhoma-sut-clickhousecluster-1-1794599572-85fcb59684-2fhdf: 0
+* bx-w-chc-1-1794599572-0: 0
+* bx-w-chc-1-1794599572-1: 0
+* bx-w-chc-1-1794599572-2: 0
 
 ### Workflow
 
@@ -229,23 +225,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|                       |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:----------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| ClickHouseCluster-1-1 |                1 |    1 |       36.00 |           3.00 |           20.00 |          2.00 |            3.00 |              8 |           0 |             | None           |             0 | False         |              100.00 | False               |
+| DBMS                  |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| ClickHouseCluster-1-1 |                1 |    1 |       38.00 |           3.00 |           23.00 |          3.00 |            2.00 |              8 |         0 |             | None           |             0 | False         |               94.74 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                        | configuration       | phase                   | job                       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                         |
-|:----------------------------|:--------------------|:------------------------|:--------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------------------|
-| clickhousecluster-1-1-1-1-1 | ClickHouseCluster-1 | clickhousecluster-1-1-1 | clickhousecluster-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         11 |            0.48 |             7496.79 |           4254.55 |          -1 | clickhousecluster-1-1-1-1-1 |
+| connection                  | phase                   | job                       |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:----------------------------|:------------------------|:--------------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| clickhousecluster-1-1-1-1-1 | clickhousecluster-1-1-1 | clickhousecluster-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |         12 |            0.50 |             7204.87 |           3900.00 |          -1 |
 
 #### Per Phase
 
-|                         | phase                   |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS                    | phase                   |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------------------|:------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| clickhousecluster-1-1-1 | clickhousecluster-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         11 |            0.48 |             7496.79 |           4254.55 |          -1 |
+| clickhousecluster-1-1-1 | clickhousecluster-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         12 |            0.50 |             7204.87 |           3900.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -258,19 +254,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   clickhousecluster-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|------------------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                        314.42 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                         80.44 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                         77.34 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                        450.19 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                        228.39 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                        198.61 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                        865.01 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                        981.54 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                        763.85 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                        708.21 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                       1469.36 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                       1629.61 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                       1643.47 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                        380.03 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                         91.67 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                         83.10 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                        263.51 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                        226.18 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                        208.90 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                       1214.79 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                       1034.72 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                        829.83 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                        864.14 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                       1724.70 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                       1666.18 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                       1295.88 |
 
 ### Errors (failed queries)
 
@@ -284,6 +280,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

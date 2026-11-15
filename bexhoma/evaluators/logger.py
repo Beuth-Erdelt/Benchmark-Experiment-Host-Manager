@@ -38,9 +38,58 @@ class LogEvaluator(EvaluatorBase):
     Extends :class:`base` by implementing :meth:`end_benchmarking` and
     :meth:`end_loading` to parse pod log files, pickle the resulting DataFrames,
     and collect them into a single combined pickle per phase.
-    All benchmark-specific evaluators (``benchbase``, ``ycsb``, ``tpcc``,
-    ``dbmsbenchmarker``) inherit from this class.
+    All benchmark-specific evaluators inherit from this class.
     """
+    #: The tool's names for what bexhoma calls by a common name, as ``{tool's column: common column}``.
+    #: :meth:`log_to_df` keeps the names of the tool (they are what its logs say and what the cached
+    #: DataFrames of a result folder hold); everything that reads these DataFrames
+    #: (:meth:`get_df_benchmarking`, :meth:`get_df_loading`) gets the common names. Common names are
+    #: ``threads`` (client threads of a pod), ``errors`` and ``SF``.
+    column_names: dict = {}
+
+    #: The columns that identify a row of ``#### Per Connection``, in the order every benchmark shows them.
+    IDENTITY_PER_CONNECTION = ('phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'child')
+    #: The columns that identify a row of ``#### Per Phase``, in the order every benchmark shows them.
+    IDENTITY_PER_PHASE = ('phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count')
+
+    @staticmethod
+    def identity_first(df: pd.DataFrame, identity: tuple, source: pd.DataFrame = None) -> pd.DataFrame:
+        """
+        Put the identity columns of a summary table first, in their common order.
+
+        Every benchmark calls this at the end of its
+        :meth:`get_summary_benchmark_per_connection` (with
+        :attr:`IDENTITY_PER_CONNECTION`) and :meth:`get_summary_benchmark_per_phase`
+        (with :attr:`IDENTITY_PER_PHASE`), so that the tables of all benchmarks
+        start alike and the benchmark's own columns follow.
+
+        :param df: The table.
+        :param identity: The identity columns, in order.
+        :param source: DataFrame with the same index that the table was selected
+            from; an identity column the table lacks is taken from it.
+        :return: The table with the identity columns first; the other columns keep their order.
+        :rtype: pandas.DataFrame
+        """
+        if df.empty:
+            return df
+        if source is not None:
+            for column in identity:
+                if column not in df.columns and column in source.columns:
+                    df[column] = source[column]
+        first = [column for column in identity if column in df.columns]
+        return df[first + [column for column in df.columns if column not in first]]
+
+    def unify_columns(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Rename the tool's columns to the common names of :attr:`column_names`.
+
+        :param df: Per-pod DataFrame as :meth:`log_to_df` built it.
+        :return: The DataFrame with common column names; a column whose common name is taken stays.
+        :rtype: pandas.DataFrame
+        """
+        renames = {old: new for old, new in self.column_names.items() if old in df.columns and new not in df.columns}
+        return df.rename(columns=renames) if renames else df
+
     def end_benchmarking(self, jobname):
         """
         Parses all benchmarker log files for a job and caches results as pickle files.
@@ -198,7 +247,7 @@ class LogEvaluator(EvaluatorBase):
             df = pd.read_pickle(pickle_path)
             if 'pods' not in df.columns and 'pod_count' in df.columns:
                 df['pods'] = df['pod_count']
-            return df
+            return self.unify_columns(df)
         return pd.DataFrame()
 
     def get_df_loading(self):
@@ -212,7 +261,7 @@ class LogEvaluator(EvaluatorBase):
         """
         pickle_path = self.path + "/" + self._pickle_name_loading()
         if os.path.isfile(pickle_path):
-            return pd.read_pickle(pickle_path)
+            return self.unify_columns(pd.read_pickle(pickle_path))
         return pd.DataFrame()
     def plot(self, df, column, x, y, plot_by=None, kind='line', dict_colors=None, figsize=(12,8)):
         """
@@ -270,6 +319,142 @@ class LogEvaluator(EvaluatorBase):
             plt.legend(loc='best')
             plt.tight_layout()
             plt.show()
+    # ------------------------------------------------------------------
+    # What the evaluator of a benchmark implements.
+    #
+    # Required: the two summary tables. Everything else has a default that
+    # suits a benchmark without that feature.
+    # ------------------------------------------------------------------
+    def get_summary_benchmark_per_connection(self) -> pd.DataFrame:
+        """
+        The table of ``#### Per Connection``: one row per benchmarking pod.
+
+        Required. Starts with the identity of the pod (:attr:`IDENTITY_PER_CONNECTION`,
+        put first by :meth:`identity_first`), followed by what the benchmark measures.
+
+        :return: DataFrame indexed by connection, the index named ``"connection"``.
+        :rtype: pandas.DataFrame
+        """
+        raise NotImplementedError(f"{type(self).__name__} must implement get_summary_benchmark_per_connection()")
+
+    def get_summary_benchmark_per_phase(self) -> pd.DataFrame:
+        """
+        The table of ``#### Per Phase``: the pods of a phase aggregated to one row.
+
+        Required. Starts with the identity of the phase (:attr:`IDENTITY_PER_PHASE`,
+        put first by :meth:`identity_first`). The result is also what
+        :meth:`record_tests` gets as ``df_reduced``.
+
+        :return: DataFrame indexed by phase, the index named ``"DBMS"``.
+        :rtype: pandas.DataFrame
+        """
+        raise NotImplementedError(f"{type(self).__name__} must implement get_summary_benchmark_per_phase()")
+
+    def get_summary_benchmark_per_phase_multitenant(self) -> pd.DataFrame:
+        """
+        The ``#### Per Phase`` table of a multi-tenant experiment.
+
+        Default: the same table as without tenants. Override to aggregate per tenant.
+
+        :return: DataFrame indexed by phase.
+        :rtype: pandas.DataFrame
+        """
+        return self.get_summary_benchmark_per_phase()
+
+    def get_summary_loading_per_run(self) -> pd.DataFrame:
+        """
+        The table of ``### Loading / #### Per Run``.
+
+        Default: :meth:`get_loading_per_run`, which reduces the per-connection
+        loading DataFrame to one row per ``(code, configuration, experiment_run)``
+        and adds a ``'Throughput [SF/h]'`` column, without the columns that are
+        the same for the whole experiment. Override for a benchmark whose loader
+        reports metrics of its own.
+
+        :return: DataFrame with one row per configuration and experiment run, indexed as ``"DBMS"``.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_loading_per_run()
+        df.drop('code', axis=1, inplace=True, errors='ignore')
+        df.drop('configuration', axis=1, inplace=True, errors='ignore')
+        return df.rename_axis(index="DBMS")
+
+    def benchmarking_set_datatypes(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Cast the columns of the per-pod benchmarking DataFrame (:meth:`get_df_benchmarking`) to their types.
+
+        Default: unchanged. Override when :meth:`log_to_df` yields strings that
+        are to be aggregated as numbers.
+
+        :param df: Per-pod DataFrame.
+        :return: The DataFrame with typed columns.
+        :rtype: pandas.DataFrame
+        """
+        return df
+
+    def benchmarking_aggregate_by_parallel_pods(self, df: pd.DataFrame, columns: list = ["phase"]) -> pd.DataFrame:
+        """
+        Aggregate the typed per-pod DataFrame to one row per group of parallel pods.
+
+        Default: unchanged. Override to say how each metric of the benchmark
+        combines across pods (sum of throughputs, maximum of latencies, ...).
+
+        :param df: Typed per-pod DataFrame.
+        :param columns: Columns that identify a group.
+        :return: Aggregated DataFrame.
+        :rtype: pandas.DataFrame
+        """
+        return df
+
+    # Optional: time series parsed from the benchmarker logs, for the collectors.
+    def parse_log_file(self, file_path: str) -> pd.DataFrame:
+        """
+        Parse the time series of one benchmarker pod log.
+
+        Optional. Implement together with :meth:`benchmark_logs_to_timeseries_df`
+        for a tool that logs its progress while it runs.
+
+        :param file_path: Path of the log file.
+        :return: DataFrame with one row per logged interval.
+        :rtype: pandas.DataFrame
+        """
+        raise NotImplementedError(f"{type(self).__name__} has no time series of its logs")
+
+    def benchmark_logs_to_timeseries_df(self, list_logs: list, metric: str = None, aggregate: bool = True) -> pd.DataFrame:
+        """
+        Combine the time series of several benchmarker pod logs for one metric.
+
+        Optional, see :meth:`parse_log_file`.
+
+        :param list_logs: Paths of the log files.
+        :param metric: Name of the metric; each tool has its own names and default.
+        :param aggregate: Whether to aggregate the pods into one series.
+        :rtype: pandas.DataFrame
+        """
+        raise NotImplementedError(f"{type(self).__name__} has no time series of its logs")
+
+    def get_benchmark_logs_timeseries_df_aggregated(self, metric: str = None, configuration: str = "",
+                                                    client: str = '1', experiment_run: str = '1') -> pd.DataFrame:
+        """
+        The time series of a phase, aggregated over its pods.
+
+        Optional, see :meth:`parse_log_file`.
+
+        :rtype: pandas.DataFrame
+        """
+        raise NotImplementedError(f"{type(self).__name__} has no time series of its logs")
+
+    def get_benchmark_logs_timeseries_df_single(self, metric: str = None, configuration: str = "",
+                                                client: str = '1', experiment_run: str = '1') -> pd.DataFrame:
+        """
+        The time series of a phase, one column per pod.
+
+        Optional, see :meth:`parse_log_file`.
+
+        :rtype: pandas.DataFrame
+        """
+        raise NotImplementedError(f"{type(self).__name__} has no time series of its logs")
+
     def test_results(self):
         """
         Validates results by loading and reconstructing the workflow.

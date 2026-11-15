@@ -1,35 +1,25 @@
 """
-Benchmark class hierarchy for bexhoma experiments.
+The benchmarks of bexhoma.
 
-Each Benchmark subclass holds result-interpretation logic for one benchmark
-tool: which evaluator to instantiate, how to display the summary, and how
-to validate results.  Job submission is governed by the experiment dict on
-each configuration object, not by these classes.
+A benchmark is a folder ``bexhoma/benchmarks/<name>/`` with its benchmark,
+experiment, evaluator and collector classes and a ``DESCRIPTOR`` in its
+``__init__``. Generic code reaches the benchmarks through
+:mod:`bexhoma.benchmarks.registry`, which finds the folders by itself; this
+package imports none of them.
+
+Exports the generic classes: :class:`Benchmark`, the base class of every
+benchmark, and :class:`RefreshStreamBenchmark` for a refresh stream that runs
+beside a benchmark.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from .base import Benchmark, DBMSBenchmarkerBenchmark
-from .ycsb import YCSB
-from .tpcc import TPCC
-from .tpch import TPCH
-from .tpcds import TPCDS
-from .ssb import SSB
-from .benchbase import Benchbase
+from .base import Benchmark
 from .refresh import RefreshStreamBenchmark
-from .hardware import Hardware
 
 __all__ = [
     "Benchmark",
-    "DBMSBenchmarkerBenchmark",
-    "YCSB",
-    "TPCC",
-    "TPCH",
-    "TPCDS",
-    "SSB",
-    "Benchbase",
     "RefreshStreamBenchmark",
-    "Hardware",
 ]

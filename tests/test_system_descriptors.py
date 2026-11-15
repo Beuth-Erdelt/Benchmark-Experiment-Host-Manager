@@ -23,14 +23,14 @@ import unittest
 
 from bexhoma import system_descriptors as sd
 
-from .test_dbms_snapshots import SCRIPTS, build_snapshot
+from .test_dbms_snapshots import build_snapshot
 from .test_resource_sweep import _dbms_choices
 
 _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _SNAPSHOT_DIR = os.path.join(_REPO, 'tests', 'snapshots')
 
 #: Entry script -> benchmark key of ``dockers.<x>.benchmarks`` (the key of ``volumes``).
-BENCHMARK_OF_SCRIPT = {'hammerdb.py': 'tpcc', 'tpch.py': 'tpch', 'tpcds.py': 'tpcds',
+BENCHMARK_OF_SCRIPT = {'hammerdb.py': 'hammerdb', 'tpch.py': 'tpch', 'tpcds.py': 'tpcds',
                        'ssb.py': 'ssb', 'benchbase.py': 'benchbase', 'ycsb.py': 'ycsb'}
 
 
@@ -192,8 +192,8 @@ class ConfigFilesTest(unittest.TestCase):
 
     def test_catalog_option_flags_exist_in_tpch(self) -> None:
         """An env-var knob of an experiment.yaml that is a tpch.py option is passed as that option's flag."""
-        import tpch
-        from bexhoma.experiments.tpch_catalog import option_flags
+        from bexhoma.benchmarks.tpch import cli as tpch
+        from bexhoma.benchmarks.tpch.catalog import option_flags
         destinations = {option: action.dest for action in tpch.build_parser()._actions for option in action.option_strings}
         dockers = _load('k8s-cluster.config')['dockers']
         checked = 0
@@ -244,7 +244,8 @@ class DescriptorsMatchScriptsTest(unittest.TestCase):
                 self.assertEqual(set(sd.default_dockers(self.dockers, benchmark)), ran)
 
     def test_storage_prefix_is_what_the_scripts_set(self) -> None:
-        for script in SCRIPTS:
+        # the scripts that build from the descriptors (hardware.py sets its storage itself)
+        for script in BENCHMARK_OF_SCRIPT:
             with open(os.path.join(_SNAPSHOT_DIR, f'{script[:-3]}-default.json'), encoding='utf-8') as file:
                 snapshot = json.load(file)
             for config in snapshot['configurations']:
@@ -295,8 +296,8 @@ class DescriptorsMatchScriptsTest(unittest.TestCase):
         self.assertNotIn('option_parameters', entry('PostgreSQL'))
 
     def test_entries_equal_the_configurations_the_scripts_build(self) -> None:
-        for script in SCRIPTS:
-            benchmark = BENCHMARK_OF_SCRIPT[script]
+        # the scripts that build from the descriptors (hardware.py has no dockers.<x>.benchmarks entry)
+        for script, benchmark in BENCHMARK_OF_SCRIPT.items():
             with open(os.path.join(_SNAPSHOT_DIR, f'{script[:-3]}-default.json'), encoding='utf-8') as file:
                 snapshot = json.load(file)
             for config in snapshot['configurations']:

@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1792706824
-Experiment                    : starts at 2026-10-23 00:07:06.896831 (32169.8304271)
+Experiment                    : has code 1794605374
+Experiment                    : starts at 2026-11-13 22:29:36.061869 (241919.0001159)
 Experiment                    : This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
 TPC-DS (SF=3) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q99.
@@ -12,7 +12,7 @@ Timeout per query is 1200.
 Data transfer volume per query is also measured.
 Import sets indexes and constraints after loading and recomputes statistics.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.8.
+Experiment uses bexhoma version 0.11.17.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 8 processes (pods).
@@ -26,15 +26,15 @@ Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Maximum DBMS across the whole cluster is 10.
 Results are validated against basic correctness requirements.
-Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2GB')].
+Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost', 'target': 'container'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency', 'target': 'container'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method', 'target': 'container'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather', 'target': 'container'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers', 'target': 'container'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes', 'target': 'container'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers', 'target': 'container'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size', 'target': 'container'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem', 'target': 'container'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem', 'target': 'container'}, '2GB')].
 SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 Cluster monitoring            : is running
 PostgreSQL-1                  : will start now
 PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1792706824
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1792706824
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1794605374
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1794605374
 PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost = 1.1
 PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
 PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
@@ -45,142 +45,276 @@ PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].
 PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 48GB
 PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].work_mem = 1GB
 PostgreSQL-1                  : deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem already set to desired value
-Loop pass                     : took 4.2s (1 kubectl calls 1.8s, 9 API requests 1.3s)
+Loop pass                     : took 2.7s (1 kubectl calls 1.2s, 9 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 16 API requests 1.8s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 16 API requests 1.8s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 1.7s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 6.9s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is not loaded yet
 PostgreSQL-1                  : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792706824-67cb98dbcf-dhrb7 to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1794605374-78d7b6b57-jz2sm to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type schema
 PostgreSQL-1                  : waits for the Schema scripts (schema=True) before starting the loading jobs
-PostgreSQL-1                  : Schema scripts done after 11s
+PostgreSQL-1                  : Schema scripts done after 6s
 PostgreSQL-1                  : is loading
-Loop pass                     : took 32.7s (8 kubectl calls 14.6s, 40 API requests 6.9s)
+Loop pass                     : took 19.4s (8 kubectl calls 9.0s, 39 API requests 3.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
-Loop pass                     : took 23.1s (0 kubectl calls 0.0s, 34 API requests 5.9s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
-Loop pass                     : took 42.5s (21 kubectl calls 35.1s, 41 API requests 6.0s)
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
-Loop pass                     : took 4.8s (0 kubectl calls 0.0s, 27 API requests 3.7s)
+Loop pass                     : took 24.3s (21 kubectl calls 21.7s, 41 API requests 1.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 27 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : is loading
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 27 API requests 1.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : showing loader times (tpcds-loader)
-PostgreSQL-1                  : generator times (start/end per pod and container) [(1792707022, 1792707022), (1792707023, 1792707023), (1792707022, 1792707022), (1792707022, 1792707022), (1792707022, 1792707022), (1792707022, 1792707022), (1792707022, 1792707022), (1792707022, 1792707022)]
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1792707031, 1792707063), (1792707030, 1792707159), (1792707031, 1792707063), (1792707031, 1792707062), (1792707031, 1792707063), (1792707030, 1792707060), (1792707031, 1792707063), (1792707031, 1792707061)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1792707022, 1792707022), (1792707023, 1792707023), (1792707022, 1792707022), (1792707022, 1792707022), (1792707022, 1792707022), (1792707022, 1792707022), (1792707022, 1792707022), (1792707022, 1792707022), (1792707031, 1792707063), (1792707030, 1792707159), (1792707031, 1792707063), (1792707031, 1792707062), (1792707031, 1792707063), (1792707030, 1792707060), (1792707031, 1792707063), (1792707031, 1792707061)]
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1794605588, 1794605588), (1794605589, 1794605589), (1794605588, 1794605588), (1794605589, 1794605589), (1794605589, 1794605589), (1794605589, 1794605589), (1794605589, 1794605589), (1794605589, 1794605589)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1794605598, 1794605624), (1794605599, 1794605628), (1794605598, 1794605629), (1794605598, 1794605628), (1794605599, 1794605629), (1794605598, 1794605746), (1794605598, 1794605626), (1794605599, 1794605629)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1794605588, 1794605588), (1794605589, 1794605589), (1794605588, 1794605588), (1794605589, 1794605589), (1794605589, 1794605589), (1794605589, 1794605589), (1794605589, 1794605589), (1794605589, 1794605589), (1794605598, 1794605624), (1794605599, 1794605628), (1794605598, 1794605629), (1794605598, 1794605628), (1794605599, 1794605629), (1794605598, 1794605746), (1794605598, 1794605626), (1794605599, 1794605629)]
 PostgreSQL-1                  : generator timespan (first to last [s]) = 1
-PostgreSQL-1                  : loader timespan (first to last [s]) = 129
-PostgreSQL-1                  : total timespan (first to last [s]) = 137
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1792706824-67cb98dbcf-dhrb7 to load scripts
+PostgreSQL-1                  : loader timespan (first to last [s]) = 148
+PostgreSQL-1                  : total timespan (first to last [s]) = 158
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1794605374-78d7b6b57-jz2sm to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type index
 PostgreSQL-1                  : is loading
-Loop pass                     : took 46.7s (20 kubectl calls 39.0s, 48 API requests 6.2s)
+Loop pass                     : took 25.5s (20 kubectl calls 22.5s, 48 API requests 2.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 14 API requests 1.3s)
+Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 14 API requests 0.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
-Loop pass                     : took 2.4s (0 kubectl calls 0.0s, 14 API requests 1.4s)
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 14 API requests 0.5s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1792706824 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1794605374 initialized to 1.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 1
 postgresql-1-1-1-1            : start benchmarking (benchmark_run=1)
 postgresql-1-1-1-1            : needs monitoring (common metrics) for deployment sut
-PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1792706824
-PostgreSQL-1                  : submitted benchmarker job in 35.8s (4 kubectl calls 8.6s, 24 API requests 11.3s)
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1794605374
+PostgreSQL-1                  : submitted benchmarker job in 30.3s (4 kubectl calls 4.8s, 24 API requests 2.4s)
 postgresql-1-1-1-1            : needs monitoring (common metrics) for deployment sut
 postgresql-1-1-1-1            : collecting loading metrics of SUT at connection postgresql-1-1-1-1
 postgresql-1-1-1-1            : collecting metrics of data generator at connection postgresql-1-1-1-1
 postgresql-1-1-1-1            : collecting metrics of data injector at connection postgresql-1-1-1-1
-postgresql-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792706824(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792706824(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-postgresql-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-postgresql-1-1792706824-1-.+", namespace="perdelt", container="datagenerator"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-postgresql-1-1792706824-1-.+", namespace="perdelt", container="datagenerator"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-postgresql-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-postgresql-1-1792706824-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-postgresql-1-1792706824-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-postgresql-1-1-1-1            : WARNING metric missing for loading: CPU Throttling Rate [s/s]
-postgresql-1-1-1-1            : WARNING metric missing for loading: CPU Throttled Time [s]
+postgresql-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1794605374(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1794605374(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-postgresql-1-1794605374-1-.+", namespace="perdelt", container="datagenerator"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-postgresql-1-1794605374-1-.+", namespace="perdelt", container="datagenerator"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-postgresql-1-1794605374-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-postgresql-1-1794605374-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 postgresql-1-1-1-1            : WARNING metric missing for loader: CPU Throttling Rate [s/s]
 postgresql-1-1-1-1            : WARNING metric missing for loader: CPU Throttled Time [s]
-postgresql-1-1-1-1            : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
+postgresql-1-1-1-1            : WARNING metric missing for loading: CPU Throttling Rate [s/s]
+postgresql-1-1-1-1            : WARNING metric missing for loading: CPU Throttled Time [s]
 postgresql-1-1-1-1            : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
+postgresql-1-1-1-1            : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
 postgresql-1-1-1-1            : WARNING metric missing for datagenerator: CPU Throttled Time [s]
 postgresql-1-1-1-1            : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
 postgresql-1-1-1-1            : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
-Experiment                    : fetched 3 metric sets in 9s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 18.1s, 0 API requests 0.0s)
-Loop pass                     : took 52.4s (11 kubectl calls 30.4s, 44 API requests 14.7s)
+Experiment                    : fetched 3 metric sets in 7s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 14.9s, 0 API requests 0.0s)
+Loop pass                     : took 41.2s (11 kubectl calls 21.7s, 46 API requests 3.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 20 API requests 2.2s)
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 21 API requests 1.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 18 API requests 2.1s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 18 API requests 1.9s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 18 API requests 2.1s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 18 API requests 2.0s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 18 API requests 2.0s)
+Loop pass                     : took 8.2s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 18 API requests 1.8s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 13.2s (0 kubectl calls 0.0s, 18 API requests 2.6s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 3.2s (0 kubectl calls 0.0s, 18 API requests 2.2s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 18 API requests 2.0s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 18 API requests 2.1s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 18 API requests 1.9s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 18 API requests 2.1s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 18 API requests 1.9s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
-postgresql-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1792706824/postgresql-1-1-1-1.config
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 8.7s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 8.2s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.5s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 8.3s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 8.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 19 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 19 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 19 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+postgresql-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1794605374/postgresql-1-1-1-1.config
 postgresql-1-1-1-1            : showing benchmarker times
-postgresql-1-1-1-1            : benchmarker timespan job from 1792707361 to 1792707883
-postgresql-1-1-1-1            : benchmarker timespan pods from 1792707373 to 1792707853
-postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 480
-postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1792707373, 1792707853)]
-postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1792707373, 1792707853)]}
+postgresql-1-1-1-1            : benchmarker timespan job from 1794605921 to 1794607628
+postgresql-1-1-1-1            : benchmarker timespan pods from 1794605930 to 1794607597
+postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 1667
+postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1794605930, 1794607597)]
+postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1794605930, 1794607597)]}
 postgresql-1-1-1-1            : needs monitoring (common metrics) for deployment sut
 postgresql-1-1-1-1            : collecting execution metrics of SUT at connection postgresql-1-1-1-1
 postgresql-1-1-1-1            : collecting metrics of benchmarker at connection postgresql-1-1-1-1
-postgresql-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792706824(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1792706824(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-postgresql-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-postgresql-1-1792706824-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-postgresql-1-1792706824-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1794605374(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1794605374(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-1-1-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-postgresql-1-1794605374-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-postgresql-1-1794605374-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 postgresql-1-1-1-1            : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 postgresql-1-1-1-1            : WARNING metric missing for benchmarking: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 9s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 13.4s, 0 API requests 0.0s)
-Loop pass                     : took 21.8s (9 kubectl calls 22.3s, 24 API requests 3.2s)
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.3s, 0 API requests 0.0s)
+Loop pass                     : took 13.8s (9 kubectl calls 16.0s, 24 API requests 1.0s)
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1792706824-67cb98dbcf-dhrb7
-Loop pass                     : took 11.1s (4 kubectl calls 7.1s, 31 API requests 3.4s)
-Experiment                    : ends at 2026-10-23 00:25:09.200150 (33252.1195631) - 1082.29s total
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1794605374-78d7b6b57-jz2sm
+Loop pass                     : took 10.8s (4 kubectl calls 4.2s, 31 API requests 1.2s)
+Experiment                    : ends at 2026-11-13 23:07:28.917370 (244191.8123621) - 2272.81s total
 Experiment                    : join results...done!
+bexhoma : C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\bexhoma\benchmarks\dbmsbenchmarker\benchmark.py:180: 
+PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has 
+poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use 
+`newframe = frame.copy()`
+In C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\scripts\test-docs-tpcds.ps1:55 Zeichen:1
++ bexhoma tpcds `
++ ~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (C:\Users\Patric...= frame.copy()`:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  df_matrix['complete'] = complete.map({True: 'yes', False: 'no'})
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
@@ -192,8 +326,8 @@ Result workflow complete
 ### Workload
 TPC-DS Queries SF=3
 * Type: tpcds
-* Duration: 1083s 
-* Code: 1792706824
+* Duration: 2273s 
+* Code: 1794605374
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=3) data is loaded and benchmark is executed.
@@ -203,7 +337,7 @@ TPC-DS Queries SF=3
   * Data transfer volume per query is also measured.
   * Import sets indexes and constraints after loading and recomputes statistics.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.8.
+  * Experiment uses bexhoma version 0.11.17.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
@@ -217,20 +351,20 @@ TPC-DS Queries SF=3
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
   * Results are validated against basic correctness requirements.
-  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2GB')].
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost', 'target': 'container'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency', 'target': 'container'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method', 'target': 'container'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather', 'target': 'container'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers', 'target': 'container'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes', 'target': 'container'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers', 'target': 'container'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size', 'target': 'container'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem', 'target': 'container'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem', 'target': 'container'}, '2GB')].
   * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
 * postgresql-1-1-1-1-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:934115
-  * datadisk:14221
+  * disk:1137071
+  * datadisk:14228
   * volume_size:1.8T
-  * volume_used:913G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -240,10 +374,13 @@ TPC-DS Queries SF=3
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792706824
+    * code:1794605374
+
+### Ingestion
+* PostgreSQL-1: 39 of 39 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1792706824-67cb98dbcf-dhrb7: 0
+* bexhoma-sut-postgresql-1-1794605374-78d7b6b57-jz2sm: 0
 
 ### Workflow
 
@@ -259,23 +396,23 @@ TPC-DS Queries SF=3
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    3 |      224.00 |           7.00 |            1.00 |        129.00 |           80.00 |              8 |           0 |             | None           |             0 | False         |               48.21 | False               |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    3 |      247.00 |           5.00 |            1.00 |        148.00 |           84.00 |              8 |         0 |             | None           |             0 | False         |               43.72 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |                  99 |        480 |            0.72 |            15452.34 |           2227.50 |          -1 | postgresql-1-1-1-1-1 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 3.00 |               99 |                  99 |       1667 |            0.88 |            12545.38 |            641.39 |          -1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |                  99 |        480 |            0.72 |            15452.34 |           2227.50 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 3.00 |               99 |                  99 |       1667 |            0.88 |            12545.38 |            641.39 |          -1 |
 
 #### Query Completion per Phase
 
@@ -288,105 +425,105 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries       |   postgresql-1-1-1-1-1 |
 |:--------------|-----------------------:|
-| TPC-DS Q1     |                 268.68 |
-| TPC-DS Q2     |                 852.04 |
-| TPC-DS Q3     |                 267.53 |
-| TPC-DS Q4     |               18790.49 |
-| TPC-DS Q5     |                1945.32 |
-| TPC-DS Q6     |              191781.12 |
-| TPC-DS Q7     |                 536.04 |
-| TPC-DS Q8     |                 101.16 |
-| TPC-DS Q9     |                3106.06 |
-| TPC-DS Q10    |                1171.31 |
-| TPC-DS Q11    |               12645.56 |
-| TPC-DS Q12    |                 136.51 |
-| TPC-DS Q13    |                1076.39 |
-| TPC-DS Q14a+b |                8189.43 |
-| TPC-DS Q15    |                 271.01 |
-| TPC-DS Q16    |                 378.28 |
-| TPC-DS Q17    |                 618.49 |
-| TPC-DS Q18    |                 571.55 |
-| TPC-DS Q19    |                 386.71 |
-| TPC-DS Q20    |                 239.11 |
-| TPC-DS Q21    |                 522.68 |
-| TPC-DS Q22    |                6517.24 |
-| TPC-DS Q23a+b |               11431.01 |
-| TPC-DS Q24a+b |                 804.63 |
-| TPC-DS Q25    |                 582.42 |
-| TPC-DS Q26    |                 412.87 |
-| TPC-DS Q27    |                  38.76 |
-| TPC-DS Q28    |                2246.84 |
-| TPC-DS Q29    |                 682.64 |
-| TPC-DS Q30    |               68805.99 |
-| TPC-DS Q31    |                3529.78 |
-| TPC-DS Q32    |                 190.56 |
-| TPC-DS Q33    |                 632.73 |
-| TPC-DS Q34    |                  39.84 |
-| TPC-DS Q35    |                1379.12 |
-| TPC-DS Q36    |                 762.93 |
-| TPC-DS Q37    |                 718.13 |
-| TPC-DS Q38    |                3798.56 |
-| TPC-DS Q39a+b |                5078.84 |
-| TPC-DS Q40    |                 245.53 |
-| TPC-DS Q41    |                2225.17 |
-| TPC-DS Q42    |                 250.24 |
-| TPC-DS Q43    |                  46.09 |
-| TPC-DS Q44    |                   1.53 |
-| TPC-DS Q45    |                 178.62 |
-| TPC-DS Q46    |                  60.12 |
-| TPC-DS Q47    |                3186.03 |
-| TPC-DS Q48    |                1059.91 |
-| TPC-DS Q49    |                1036.49 |
-| TPC-DS Q50    |                1445.45 |
-| TPC-DS Q51    |                2413.15 |
-| TPC-DS Q52    |                 245.60 |
-| TPC-DS Q53    |                 329.50 |
-| TPC-DS Q54    |                  59.66 |
-| TPC-DS Q55    |                 234.49 |
-| TPC-DS Q56    |                 759.89 |
-| TPC-DS Q57    |                1551.90 |
-| TPC-DS Q58    |                 724.48 |
-| TPC-DS Q59    |                1196.92 |
-| TPC-DS Q60    |                 669.22 |
-| TPC-DS Q61    |                 108.41 |
-| TPC-DS Q62    |                 245.98 |
-| TPC-DS Q63    |                 313.26 |
-| TPC-DS Q64    |                1211.09 |
-| TPC-DS Q65    |                1472.33 |
-| TPC-DS Q66    |                 523.86 |
-| TPC-DS Q67    |                6750.41 |
-| TPC-DS Q68    |                  65.35 |
-| TPC-DS Q69    |                 686.83 |
-| TPC-DS Q70    |                 901.14 |
-| TPC-DS Q71    |                 671.47 |
-| TPC-DS Q72    |                2043.43 |
-| TPC-DS Q73    |                  37.03 |
-| TPC-DS Q74    |                1930.37 |
-| TPC-DS Q75    |                2698.08 |
-| TPC-DS Q76    |                 413.77 |
-| TPC-DS Q77    |                 602.41 |
-| TPC-DS Q78    |                2490.14 |
-| TPC-DS Q79    |                 409.39 |
-| TPC-DS Q80    |                 795.55 |
-| TPC-DS Q81    |               49292.95 |
-| TPC-DS Q82    |                 937.28 |
-| TPC-DS Q83    |                 139.95 |
-| TPC-DS Q84    |                  94.15 |
-| TPC-DS Q85    |                 396.84 |
-| TPC-DS Q86    |                 466.69 |
-| TPC-DS Q87    |                2848.38 |
-| TPC-DS Q88    |                2863.19 |
-| TPC-DS Q89    |                 307.25 |
-| TPC-DS Q90    |                 273.10 |
-| TPC-DS Q91    |                 140.40 |
-| TPC-DS Q92    |                 139.63 |
-| TPC-DS Q93    |                 825.50 |
-| TPC-DS Q94    |                 325.84 |
-| TPC-DS Q95    |                6316.65 |
-| TPC-DS Q96    |                 244.11 |
-| TPC-DS Q97    |                 907.85 |
-| TPC-DS Q98    |                 394.68 |
-| TPC-DS Q99    |                 480.34 |
+| TPC-DS Q1     |              936170.51 |
+| TPC-DS Q2     |                1061.48 |
+| TPC-DS Q3     |                 301.22 |
+| TPC-DS Q4     |               18743.13 |
+| TPC-DS Q5     |                2323.08 |
+| TPC-DS Q6     |              221867.65 |
+| TPC-DS Q7     |                 545.06 |
+| TPC-DS Q8     |                 230.20 |
+| TPC-DS Q9     |                3279.12 |
+| TPC-DS Q10    |                1347.62 |
+| TPC-DS Q11    |               10467.86 |
+| TPC-DS Q12    |                 135.42 |
+| TPC-DS Q13    |                1158.92 |
+| TPC-DS Q14a+b |                8225.18 |
+| TPC-DS Q15    |                 289.32 |
+| TPC-DS Q16    |                 418.23 |
+| TPC-DS Q17    |                 698.19 |
+| TPC-DS Q18    |                 654.25 |
+| TPC-DS Q19    |                 418.30 |
+| TPC-DS Q20    |                 239.34 |
+| TPC-DS Q21    |                 500.79 |
+| TPC-DS Q22    |                7118.65 |
+| TPC-DS Q23a+b |               12403.76 |
+| TPC-DS Q24a+b |                 881.93 |
+| TPC-DS Q25    |                 619.21 |
+| TPC-DS Q26    |                 425.50 |
+| TPC-DS Q27    |                 565.15 |
+| TPC-DS Q28    |                2417.56 |
+| TPC-DS Q29    |                 723.66 |
+| TPC-DS Q30    |               66779.62 |
+| TPC-DS Q31    |                3673.54 |
+| TPC-DS Q32    |                 261.27 |
+| TPC-DS Q33    |                 645.59 |
+| TPC-DS Q34    |                  34.61 |
+| TPC-DS Q35    |                1419.71 |
+| TPC-DS Q36    |                 779.50 |
+| TPC-DS Q37    |                 722.33 |
+| TPC-DS Q38    |                2968.27 |
+| TPC-DS Q39a+b |                5468.51 |
+| TPC-DS Q40    |                 213.46 |
+| TPC-DS Q41    |                2448.66 |
+| TPC-DS Q42    |                 255.75 |
+| TPC-DS Q43    |                  52.73 |
+| TPC-DS Q44    |                 539.96 |
+| TPC-DS Q45    |                 187.27 |
+| TPC-DS Q46    |                  61.60 |
+| TPC-DS Q47    |                3524.26 |
+| TPC-DS Q48    |                1055.79 |
+| TPC-DS Q49    |                1030.33 |
+| TPC-DS Q50    |                1186.77 |
+| TPC-DS Q51    |                2111.13 |
+| TPC-DS Q52    |                 246.86 |
+| TPC-DS Q53    |                 310.72 |
+| TPC-DS Q54    |                  60.39 |
+| TPC-DS Q55    |                 244.99 |
+| TPC-DS Q56    |                 682.00 |
+| TPC-DS Q57    |                1774.71 |
+| TPC-DS Q58    |                 694.38 |
+| TPC-DS Q59    |                1194.02 |
+| TPC-DS Q60    |                 813.97 |
+| TPC-DS Q61    |                 105.80 |
+| TPC-DS Q62    |                 203.01 |
+| TPC-DS Q63    |                 319.78 |
+| TPC-DS Q64    |                1235.87 |
+| TPC-DS Q65    |                1618.99 |
+| TPC-DS Q66    |                 513.26 |
+| TPC-DS Q67    |                8296.80 |
+| TPC-DS Q68    |                  67.65 |
+| TPC-DS Q69    |                 674.00 |
+| TPC-DS Q70    |                 922.74 |
+| TPC-DS Q71    |                 687.98 |
+| TPC-DS Q72    |                2165.12 |
+| TPC-DS Q73    |                  36.40 |
+| TPC-DS Q74    |                1445.37 |
+| TPC-DS Q75    |                2682.48 |
+| TPC-DS Q76    |                 532.60 |
+| TPC-DS Q77    |                 588.38 |
+| TPC-DS Q78    |                4231.88 |
+| TPC-DS Q79    |                 454.27 |
+| TPC-DS Q80    |                 729.39 |
+| TPC-DS Q81    |              271701.16 |
+| TPC-DS Q82    |                 999.40 |
+| TPC-DS Q83    |                 120.29 |
+| TPC-DS Q84    |                  86.73 |
+| TPC-DS Q85    |                 394.29 |
+| TPC-DS Q86    |                 238.96 |
+| TPC-DS Q87    |                2247.03 |
+| TPC-DS Q88    |                3068.03 |
+| TPC-DS Q89    |                 310.81 |
+| TPC-DS Q90    |                 273.70 |
+| TPC-DS Q91    |                 141.78 |
+| TPC-DS Q92    |                 109.47 |
+| TPC-DS Q93    |                 854.24 |
+| TPC-DS Q94    |                 294.06 |
+| TPC-DS Q95    |                6503.67 |
+| TPC-DS Q96    |                 255.09 |
+| TPC-DS Q97    |                 935.70 |
+| TPC-DS Q98    |                 395.87 |
+| TPC-DS Q99    |                 479.99 |
 
 ### Errors (failed queries)
 
@@ -402,37 +539,37 @@ No warnings
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |       253.55 |      3.46 |           6.37 |                 13.04 |
+| postgresql-1-1-1-1 |       288.01 |      2.23 |           6.37 |                 13.05 |
 
 ### Loading phase: component data generator
 
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |         0.72 |      0.00 |           0.01 |                  0.01 |
+| DBMS               | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-------------------|:-------------|----------:|---------------:|----------------------:|
+| postgresql-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |        40.37 |      0.32 |           0.01 |                  2.21 |
+| postgresql-1-1-1-1 |        46.44 |      0.37 |           0.01 |                  2.21 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |       564.75 |      1.97 |           6.54 |                 13.62 |
+| postgresql-1-1-1-1 |      1781.64 |      1.87 |           6.59 |                 13.69 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |        20.82 |      0.46 |           0.31 |                  0.32 |
+| postgresql-1-1-1-1 |        25.58 |      0.07 |           0.29 |                  0.30 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
@@ -443,10 +580,14 @@ No warnings
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Loading phase: component data generator contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]

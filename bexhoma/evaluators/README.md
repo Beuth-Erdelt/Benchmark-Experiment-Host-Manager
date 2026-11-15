@@ -19,26 +19,36 @@ evaluators.<benchmark>(code, path)
 
 ## Class hierarchy
 
-| Evaluator | Benchmark tool | Extra capabilities |
-|---|---|---|
-| `base` | — | connection metadata, loading throughput |
-| `logger` | — | log file → pickle pipeline, `plot()` |
-| `benchbase` | Benchbase | per-second throughput time series |
-| `tpcc` | HammerDB TPC-C | NOPM/TPM + optional latency stats |
-| `ycsb` | YCSB | per-second throughput time series (bench + loading) |
-| `dbmsbenchmarker` | DBMSBenchmarker | query latency, power/throughput metrics |
+| Evaluator | Module | Benchmark tool | Extra capabilities |
+|---|---|---|---|
+| `EvaluatorBase` | `bexhoma.evaluators.base` | — | connection metadata, loading throughput |
+| `LogEvaluator` | `bexhoma.evaluators.logger` | — | log file → pickle pipeline, `plot()`, the interface of a benchmark's evaluator |
+| `BenchbaseEvaluator` | `bexhoma.benchmarks.benchbase.evaluator` | Benchbase | per-second throughput time series |
+| `HammerdbEvaluator` | `bexhoma.benchmarks.hammerdb.evaluator` | HammerDB TPC-C | NOPM/TPM + optional latency stats |
+| `YcsbEvaluator` | `bexhoma.benchmarks.ycsb.evaluator` | YCSB | per-second throughput time series (bench + loading) |
+| `HardwareEvaluator` | `bexhoma.benchmarks.hardware.evaluator` | fio, sysbench, sockperf, netperf | per-round hardware metrics |
+| `DbmsBenchmarkerEvaluator` | `bexhoma.benchmarks.dbmsbenchmarker.evaluator` | DBMSBenchmarker | query latency, power/throughput metrics |
 
-`benchbase`, `tpcc`, `ycsb`, and `dbmsbenchmarker` all extend `logger`, which
-extends `base`.
+This package holds only the two generic classes. The evaluator of a benchmark is
+in that benchmark's folder, ``bexhoma/benchmarks/<name>/evaluator.py``, and extends
+`LogEvaluator`, which extends `EvaluatorBase`.
+
+`LogEvaluator` declares what a benchmark's evaluator implements: the two summary
+tables (`get_summary_benchmark_per_connection()`, `get_summary_benchmark_per_phase()`)
+are required; typing, aggregation over parallel pods, the loading table and the
+log time series have defaults. Its `column_names` maps the tool's own column names
+to the common ones (`threads`, `errors`, `SF`): `log_to_df()` keeps the tool's words,
+everything that reads the per-pod DataFrames gets the common names.
 
 ---
 
 ## Constructor signature
 
-All evaluators share the same constructor signature (inherited from `base`):
+All evaluators share the same constructor signature (inherited from `EvaluatorBase`):
 
 ```python
-evaluator = evaluators.ycsb(code="1777285093", path="/data/benchmarks")
+from bexhoma.benchmarks.ycsb import YcsbEvaluator
+evaluator = YcsbEvaluator(code="1777285093", path="/data/benchmarks")
 ```
 
 | Parameter | Description |
@@ -73,7 +83,8 @@ evaluator = evaluators.ycsb(code="1777285093", path="/data/benchmarks")
 ### benchbase
 
 ```python
-ev = evaluators.benchbase(code=code, path=path)
+from bexhoma.benchmarks.benchbase import BenchbaseEvaluator
+ev = BenchbaseEvaluator(code=code, path=path)
 
 # Aggregated time series (all pods combined)
 ev.get_benchmark_logs_timeseries_df_aggregated(
@@ -89,7 +100,8 @@ ev.get_benchmark_logs_timeseries_df_single(
 ### ycsb
 
 ```python
-ev = evaluators.ycsb(code=code, path=path)
+from bexhoma.benchmarks.ycsb import YcsbEvaluator
+ev = YcsbEvaluator(code=code, path=path)
 
 # Benchmarking phase
 ev.get_benchmark_logs_timeseries_df_aggregated(
@@ -115,7 +127,8 @@ Available metrics (YCSB): `current_ops_per_sec`, `READ_Avg`, `UPDATE_Avg`, `READ
 ## dbmsbenchmarker-specific methods
 
 ```python
-ev = evaluators.dbmsbenchmarker(code=code, path=path)
+from bexhoma.benchmarks.dbmsbenchmarker import DbmsBenchmarkerEvaluator
+ev = DbmsBenchmarkerEvaluator(code=code, path=path)
 
 ev.get_total_warnings(query_titles=True)   # per-query warning counts
 ev.get_total_errors(query_titles=True)     # per-query error counts

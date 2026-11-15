@@ -26,11 +26,12 @@ See LICENSE for details.
 from bexhoma import *
 from bexhoma import benchmarks
 from bexhoma.cli_args import make_base_parser
-from bexhoma.experiments.tpch import TpchExperiment
+from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 from dbmsbenchmarker import *
 import logging
 import urllib3
 import argparse
+from bexhoma.benchmarks.ycsb.benchmark import YCSB
 
 
 urllib3.disable_warnings()
@@ -60,7 +61,7 @@ class TpchYcsbParallelTestExperiment(TpchExperiment):
             num_experiment_to_apply=num_experiment_to_apply, timeout=timeout,
             script=script)
         self.ycsb_rows = ycsb_rows
-        self.add_benchmark(benchmarks.YCSB(SF=str(ycsb_rows // 1000000 or 1)))
+        self.add_benchmark(YCSB(SF=str(ycsb_rows // 1000000 or 1)))
         # The second parallel loading job (YCSB) is added later, per-config, via
         # SutConfiguration.add_loading_parameters() in the __main__ block below —
         # NOT here. Adding it to experiment_dict_template as well would double it
@@ -97,7 +98,7 @@ if __name__ == '__main__':
     parser.add_argument('mode', help='experiment phase', choices=['run', 'start', 'load', 'summary'], default='run')
     parser.add_argument('-dbms', '--dbms', help='fixed to PostgreSQL for this demo; present only because ExperimentBase.prepare_testbed() reads args.dbms', default=[], nargs='*')
     parser.add_argument('-yr', '--ycsb-rows', help='number of YCSB rows/operations to load and run (kept small; this is a demo)', default=10000, type=int, dest='ycsb_rows')
-    # TPC-H-specific args read by benchmarks.TPCH.configure_workload()
+    # TPC-H-specific args read by TPCH.configure_workload()
     parser.add_argument('-xlit', '--xlimit-import-table', help='import only this table', default='', dest='limit_import_table')
     parser.add_argument('-xrcp', '--xrecreate-parameter', help='regenerate random query parameters for each stream', action='store_true', default=False, dest='recreate_parameter')
     parser.add_argument('-xshq', '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')
@@ -112,7 +113,7 @@ if __name__ == '__main__':
     parser.add_argument('-xrs',   '--xnum-refresh-streams', help='enable a TPC-H RF1/RF2 refresh stream running in parallel with the query streams (0 = disabled)', default=0, type=int, dest='num_refresh_streams')
     parser.add_argument('-xse',   '--xstore-explain', help='run configured EXPLAIN statements after the first run of each benchmark query and store the result in the protocol', action='store_true', default=False, dest='store_explain')
     parser.add_argument('-xve',   '--xverbose-explain', help='run and print configured EXPLAIN statements after each benchmark query', action='store_true', default=False, dest='verbose_explain')
-    # YCSB-specific args read by benchmarks.YCSB.configure_workload()
+    # YCSB-specific args read by YCSB.configure_workload()
     parser.add_argument('-xwl',  '--xworkload', help='YCSB workload letter', choices=['a', 'b', 'c', 'd', 'e', 'f'], default='a', dest='workload')
     parser.add_argument('-xop',  '--xnum-operations', help='override YCSB operation count in millions (default: derive from --ycsb-rows)', default=None, dest='scaling_factor_operations')
     parser.add_argument('-xtb',  '--xtarget-base', help='YCSB base ops-per-second target', default="16384", dest='target_base')
@@ -258,7 +259,7 @@ if __name__ == '__main__':
         # (possibly fractional, e.g. "0.1") SF -- same reasoning as the SF
         # override on the "ycsb" benchmarker entry above. Without this, the
         # YCSB loader would silently load using TPC-H's SF/row count instead
-        # of its own, and evaluators.ycsb's per-connection SF (parsed from
+        # of its own, and YcsbEvaluator's per-connection SF (parsed from
         # this loader's own log header) would misreport YCSB's loading
         # Throughput [SF/h].
         SF=str(ycsb_rows // 1000000 or 1),

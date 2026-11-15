@@ -1,0 +1,144 @@
+"""
+Benchmark class for Benchbase experiments.
+
+Authors: Patrick K. Erdelt
+Copyright (C) 2020 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
+"""
+import pandas as pd
+from types import SimpleNamespace
+
+from bexhoma.system_descriptors import notes
+from bexhoma.benchmarks.base import Benchmark, Section, _key_metrics_section_from_columns
+from bexhoma.benchmarks.benchbase.evaluator import BenchbaseEvaluator
+
+__all__ = ["Benchbase"]
+
+
+class Benchbase(Benchmark):
+    """
+    Benchmark class for Benchbase workloads (TPC-C, SEATS, Twitter, etc.).
+
+    :param SF: Scaling factor — meaning depends on the chosen Benchbase workload.
+    """
+
+    def __init__(self, SF: str = '1') -> None:
+        """
+        :param SF: Scaling factor.
+        """
+        super().__init__(name='benchbase', SF=SF)
+
+    def create_evaluator(self, code: str, path: str, benchmark_run: int):
+        """
+        Return a Benchbase evaluator scoped to this benchmark's index.
+
+        :param code: Experiment identifier.
+        :param path: Root result path.
+        :param benchmark_run: 1-based benchmark position.
+        :return: :class:`BenchbaseEvaluator` instance.
+        """
+        return BenchbaseEvaluator(
+            code=code,
+            path=path,
+            include_loading=False,
+            include_benchmarking=True,
+            benchmark_run=benchmark_run,
+            name=self.name,
+        )
+
+    def _build_key_metrics_section(self, df_aggregated_reduced: pd.DataFrame) -> Section | None:
+        """
+        Surface ``Throughput (requests/second)`` — the same column
+        :meth:`~bexhoma.benchmarks.benchbase.evaluator.benchbase.record_tests` tests via
+        ``experiment._test_column()``.
+
+        :param df_aggregated_reduced: The per-phase execution DataFrame.
+        :return: A ``Key Metrics`` section, or ``None`` when the tested
+                 column is not present.
+        :rtype: Section | None
+        """
+        return _key_metrics_section_from_columns(df_aggregated_reduced, ["Throughput (requests/second)"])
+
+    def configure_workload(self, experiment, parameter: dict) -> None:
+        """
+        Parse CLI args and set Benchbase workload metadata on the experiment.
+
+        :param experiment: The owning experiment object.
+        :param parameter: Dict of CLI arguments as produced by argparse.
+        """
+        args = SimpleNamespace(**parameter)
+        experiment.args = args
+        experiment.args_dict = parameter
+        mode = str(parameter['mode'])
+        if mode == 'load' or mode == 'start':
+            experiment.benchmarking_active = False
+        if mode == 'start':
+            experiment.loading_deactivated = True
+        SF = str(self.SF)
+        SD = int(args.scaling_duration) * 60
+        target_base = int(args.target_base)
+        warmup = int(getattr(args, 'warmup', 0))   # missing in experiments from older versions
+        type_of_benchmark = args.benchmark
+        workload = args.workload
+        extra_keying = int(args.extra_keying)
+        extra_new_connection = int(args.extra_new_connection)
+        scaling_logging = int(args.scaling_logging)
+        extra_batchsize = int(args.extra_batchsize)
+        num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
+        if mode == 'run':
+            experiment.set_workload(
+                name=f'Benchbase Workload {type_of_benchmark} SF={SF}',
+                info='This experiment compares run time and resource consumption of Benchbase queries in different DBMS.',
+                type='benchbase',
+                defaultParameters={'SF': SF},
+            )
+        elif mode == 'load':
+            experiment.set_workload(
+                name=f'Benchbase Data {type_of_benchmark} Loading SF={SF}',
+                info='This imports a Benchbase data set.',
+                intro='Load data and do not run a benchmark.',
+                type='benchbase',
+                defaultParameters={'SF': SF},
+            )
+        else:
+            experiment.set_workload(
+                name='Benchbase Start DBMS',
+                info='This just starts a SUT.',
+                intro='Start DBMS and do not load data.',
+                type='benchbase',
+                defaultParameters={'SF': SF},
+            )
+        experiment.loading_active = True
+        experiment.set_experiment(script='Schema')
+        if experiment.loading_is_active():
+            experiment.workload['info'] += "\nBenchbase data is generated and loaded using several threads."
+            experiment.workload['info'] += f" Loading uses a batch size of {extra_batchsize} rows per INSERT."
+        if experiment.benchmarking_is_active():
+            if len(type_of_benchmark):
+                experiment.workload['info'] += f"\nBenchmark is '{type_of_benchmark}'."
+                if type_of_benchmark == "ycsb":
+                    experiment.workload['info'] += f" Workload is '{workload}'."
+        if experiment.loading_is_active() or experiment.benchmarking_is_active():
+            if SF:
+                experiment.workload['info'] += f" Scaling factor is {SF}."
+            if target_base > 0:
+                experiment.workload['info'] += f" Target is based on multiples of '{target_base}'."
+            else:
+                experiment.workload['info'] += " Target is unlimited."
+        if experiment.benchmarking_is_active():
+            experiment.workload['info'] += f" Factors for benchmarking are {num_benchmarking_target_factors}."
+            if extra_keying:
+                experiment.workload['info'] += " Benchmarking has keying and thinking times activated."
+            if extra_new_connection:
+                experiment.workload['info'] += " There is a reconnect for each transaction."
+            if SD:
+                experiment.workload['info'] += f" Benchmarking runs for {int(SD / 60)} minutes."
+            if warmup:
+                experiment.workload['info'] += f" Each benchmarker has a warmup of {warmup} seconds before that, which is not part of the results."
+            if args.activate_reset:
+                experiment.workload['info'] += " A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round."
+        if scaling_logging > 0:
+            experiment.workload['info'] += f"\nStatus is logged every {scaling_logging}ms."
+        experiment.workload['info'] += notes(experiment.cluster.dockers, 'benchbase', args)
+

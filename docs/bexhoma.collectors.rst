@@ -8,10 +8,7 @@ Submodules
    :maxdepth: 4
 
    bexhoma.collectors.base
-   bexhoma.collectors.benchbase
-   bexhoma.collectors.dbmsbenchmarker
-   bexhoma.collectors.tpcc
-   bexhoma.collectors.ycsb
+   bexhoma.collectors.mixed
 
 Module contents
 ---------------

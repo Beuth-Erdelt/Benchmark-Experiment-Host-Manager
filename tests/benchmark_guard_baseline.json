@@ -1,0 +1,19 @@
+{
+ "bexhoma/environment.py": {
+  "fio": 10,
+  "hardware": 5,
+  "sockperf": 3,
+  "sysbench": 5,
+  "tpch": 1
+ },
+ "bexhoma/report_writer.py": {
+  "tpcds": 1,
+  "tpch": 1
+ },
+ "bexhoma/scripts/cli.py": {
+  "tpch": 1
+ },
+ "bexhoma/spec.py": {
+  "tpch": 1
+ }
+}

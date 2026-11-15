@@ -673,7 +673,7 @@ YCSB does not retry them: workload A lost about 0.4% of its updates at 16 thread
 
 Benchbase `twitter` loads, but its benchmark stops when it connects: the PostgreSQL profile of the image fixes `TRANSACTION_SERIALIZABLE` for it and ignores `BENCHBASE_ISOLATION`.
 
-CH-benCHmark runs, but `num_errors` is not 0 and no bexhoma test reports it; the SQL comes from Benchbase:
+CH-benCHmark runs, but `errors` is not 0 and no bexhoma test reports it; the SQL comes from Benchbase:
 - Q22 always fails: `GROUP BY substring(c_state from 1 for 1)` and `ORDER BY substring(c_state,1,1)` are not the same expression for CedarDB.
 - Q15 fails when terminals overlap: all create the same view (`Catalog object was concurrently created`).
 

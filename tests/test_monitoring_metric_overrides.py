@@ -16,7 +16,7 @@ import copy
 import types
 import unittest
 
-import ycsb
+from bexhoma.benchmarks.ycsb import cli as ycsb
 from bexhoma import spec as catalog_spec
 from bexhoma.cli_args import format_metric_overrides, parse_metric_overrides
 from bexhoma.configurations.metrics import apply_metric_override

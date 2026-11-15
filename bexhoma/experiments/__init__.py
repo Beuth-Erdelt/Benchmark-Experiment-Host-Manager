@@ -1,11 +1,9 @@
 """
 Public API of the bexhoma.experiments package.
 
-Exports :class:`ExperimentBase`, :class:`MixedExperiment`,
-:class:`DbmsBenchmarkerExperiment`, :class:`TpchExperiment`,
-:class:`TpcdsExperiment`, :class:`SsbExperiment`, :class:`BenchbaseExperiment`,
-:class:`TpccExperiment`, :class:`YcsbExperiment`, and
-:class:`HardwareExperiment` experiment classes.
+Exports the generic experiment classes :class:`ExperimentBase` and
+:class:`MixedExperiment`. The experiment class of a benchmark is in that
+benchmark's folder, ``bexhoma/benchmarks/<name>/experiment.py``.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
@@ -14,31 +12,7 @@ See LICENSE for details.
 """
 from .base import ExperimentBase
 from .mixed import MixedExperiment
-from .dbmsbenchmarker import DbmsBenchmarkerExperiment
-from .tpch import TpchExperiment
-from .tpcds import TpcdsExperiment
-from .ssb import SsbExperiment
-from .benchbase import BenchbaseExperiment
-from .tpcc import TpccExperiment
-from .ycsb import YcsbExperiment
-from .hardware import HardwareExperiment
-
-# backward-compat aliases
-base = ExperimentBase
-mixed = MixedExperiment
-dbmsbenchmarker = DbmsBenchmarkerExperiment
-tpch = TpchExperiment
-tpcds = TpcdsExperiment
-ssb = SsbExperiment
-benchbase = BenchbaseExperiment
-tpcc = TpccExperiment
-ycsb = YcsbExperiment
-hardware = HardwareExperiment
 
 __all__ = [
-    "ExperimentBase", "MixedExperiment", "DbmsBenchmarkerExperiment",
-    "TpchExperiment", "TpcdsExperiment", "SsbExperiment", "YcsbExperiment", "TpccExperiment",
-    "BenchbaseExperiment", "HardwareExperiment",
-    # backward-compat aliases
-    "base", "mixed", "dbmsbenchmarker", "tpch", "tpcds", "ssb", "ycsb", "tpcc", "benchbase", "hardware",
+    "ExperimentBase", "MixedExperiment",
 ]

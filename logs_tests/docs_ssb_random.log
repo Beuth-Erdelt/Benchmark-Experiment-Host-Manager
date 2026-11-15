@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1794005468
-Experiment                    : starts at 2026-11-06 23:51:08.977309 (228658.541282)
+Experiment                    : has code 1794597119
+Experiment                    : starts at 2026-11-13 20:11:59.111257 (233662.2062741)
 Experiment                    : This experiment compares run time and resource consumption of SSB queries in different DBMS.
 Schema is the star schema (-xsv normal).
 SSB (SF=1) data is loaded and benchmark is executed.
@@ -14,7 +14,7 @@ Timeout per query is 1200.
 Data transfer volume per query is also measured.
 Import sets indexes, constraints, statistics recomputation after loading.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.13.
+Experiment uses bexhoma version 0.11.17.
 Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker38.
@@ -34,8 +34,8 @@ PostgreSQL-1                  : will start now
 PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1794005468
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1794005468
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1794597119
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1794597119
 PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost = 1.1
 PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency = 200
 PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].io_method = io_uring
@@ -46,83 +46,80 @@ PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].
 PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size = 48GB
 PostgreSQL-1                  : updated deployment[bexhoma-deployment-postgres].container[dbms].work_mem = 1GB
 PostgreSQL-1                  : deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem already set to desired value
-Loop pass                     : took 2.7s (1 kubectl calls 1.2s, 9 API requests 0.4s)
+Loop pass                     : took 2.3s (1 kubectl calls 1.1s, 9 API requests 0.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is not loaded yet
 PostgreSQL-1                  : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1794005468-fd4d6967-4lrm7 to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1794597119-c75867bd6-vn6vn to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type schema
 PostgreSQL-1                  : waits for the Schema scripts (schema=True) before starting the loading jobs
-PostgreSQL-1                  : Schema scripts done after 6s
+PostgreSQL-1                  : Schema scripts done after 7s
 PostgreSQL-1                  : is loading
-Loop pass                     : took 20.6s (8 kubectl calls 10.7s, 38 API requests 2.7s)
+Loop pass                     : took 25.7s (8 kubectl calls 10.9s, 39 API requests 4.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 34 API requests 1.3s)
-- waiting 30s -               : done
-PostgreSQL-1                  : is loading
-Loop pass                     : took 30.7s (24 kubectl calls 27.9s, 42 API requests 1.6s)
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : showing loader times (ssb-loader)
-PostgreSQL-1                  : generator times (start/end per pod and container) [(1794005676, 1794005687), (1794005660, 1794005687), (1794005686, 1794005686), (1794005666, 1794005686), (1794005663, 1794005687), (1794005682, 1794005687), (1794005670, 1794005687), (1794005679, 1794005687)]
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1794005697, 1794005700), (1794005697, 1794005701), (1794005696, 1794005699), (1794005696, 1794005699), (1794005696, 1794005699), (1794005696, 1794005699), (1794005696, 1794005700), (1794005697, 1794005700)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1794005676, 1794005687), (1794005660, 1794005687), (1794005686, 1794005686), (1794005666, 1794005686), (1794005663, 1794005687), (1794005682, 1794005687), (1794005670, 1794005687), (1794005679, 1794005687), (1794005697, 1794005700), (1794005697, 1794005701), (1794005696, 1794005699), (1794005696, 1794005699), (1794005696, 1794005699), (1794005696, 1794005699), (1794005696, 1794005700), (1794005697, 1794005700)]
+PostgreSQL-1                  : generator times (start/end per pod and container) [(1794597329, 1794597337), (1794597333, 1794597336), (1794597322, 1794597337), (1794597319, 1794597337), (1794597336, 1794597336), (1794597318, 1794597336), (1794597314, 1794597336), (1794597310, 1794597336)]
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1794597346, 1794597349), (1794597346, 1794597350), (1794597346, 1794597350), (1794597347, 1794597350), (1794597347, 1794597350), (1794597346, 1794597350), (1794597347, 1794597350), (1794597347, 1794597351)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1794597329, 1794597337), (1794597333, 1794597336), (1794597322, 1794597337), (1794597319, 1794597337), (1794597336, 1794597336), (1794597318, 1794597336), (1794597314, 1794597336), (1794597310, 1794597336), (1794597346, 1794597349), (1794597346, 1794597350), (1794597346, 1794597350), (1794597347, 1794597350), (1794597347, 1794597350), (1794597346, 1794597350), (1794597347, 1794597350), (1794597347, 1794597351)]
 PostgreSQL-1                  : generator timespan (first to last [s]) = 27
 PostgreSQL-1                  : loader timespan (first to last [s]) = 5
 PostgreSQL-1                  : total timespan (first to last [s]) = 41
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1794005468-fd4d6967-4lrm7 to load scripts
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1794597119-c75867bd6-vn6vn to load scripts
 PostgreSQL-1                  : start asynch loading scripts of type index
 PostgreSQL-1                  : is loading
-Loop pass                     : took 24.8s (17 kubectl calls 21.7s, 46 API requests 1.8s)
+Loop pass                     : took 48.4s (41 kubectl calls 45.1s, 62 API requests 2.4s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1794005468 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1794597119 initialized to 1.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 1
 postgresql-1-1-1-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1794005468
-PostgreSQL-1                  : submitted benchmarker job in 9.0s (4 kubectl calls 4.9s, 24 API requests 3.1s)
-Loop pass                     : took 12.1s (5 kubectl calls 6.0s, 44 API requests 4.6s)
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1794597119
+PostgreSQL-1                  : submitted benchmarker job in 7.8s (4 kubectl calls 4.6s, 24 API requests 2.3s)
+Loop pass                     : took 10.7s (5 kubectl calls 5.6s, 46 API requests 3.8s)
 - waiting 30s -               : done
-postgresql-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1794005468/postgresql-1-1-1-1.config
+postgresql-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1794597119/postgresql-1-1-1-1.config
 postgresql-1-1-1-1            : showing benchmarker times
-postgresql-1-1-1-1            : benchmarker timespan job from 1794005835 to 1794005870
-postgresql-1-1-1-1            : benchmarker timespan pods from 1794005847 to 1794005852
+postgresql-1-1-1-1            : benchmarker timespan job from 1794597452 to 1794597487
+postgresql-1-1-1-1            : benchmarker timespan pods from 1794597459 to 1794597464
 postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 5
-postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1794005847, 1794005852)]
-postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1794005847, 1794005852)]}
-Loop pass                     : took 6.0s (4 kubectl calls 4.9s, 24 API requests 1.0s)
+postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1794597459, 1794597464)]
+postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1794597459, 1794597464)]}
+Loop pass                     : took 5.9s (4 kubectl calls 4.4s, 24 API requests 1.1s)
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PostgreSQL-1-1794005468 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PostgreSQL-1-1794597119 initialized to 2.
 PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 2
 postgresql-1-1-2-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1794005468
-PostgreSQL-1                  : submitted benchmarker job in 5.0s (3 kubectl calls 3.7s, 13 API requests 1.0s)
-Loop pass                     : took 5.9s (3 kubectl calls 3.7s, 34 API requests 1.8s)
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1794597119
+PostgreSQL-1                  : submitted benchmarker job in 5.1s (3 kubectl calls 3.3s, 13 API requests 0.9s)
+Loop pass                     : took 5.9s (3 kubectl calls 3.3s, 35 API requests 1.7s)
 - waiting 30s -               : done
-postgresql-1-1-2-1            : wrote benchmarking_timespans to /data/benchmarks/1794005468/postgresql-1-1-2-1.config
+postgresql-1-1-2-1            : wrote benchmarking_timespans to D:/data/benchmarks/1794597119/postgresql-1-1-2-1.config
 postgresql-1-1-2-1            : showing benchmarker times
-postgresql-1-1-2-1            : benchmarker timespan job from 1794005877 to 1794005928
-postgresql-1-1-2-1            : benchmarker timespan pods from 1794005891 to 1794005897
+postgresql-1-1-2-1            : benchmarker timespan job from 1794597494 to 1794597531
+postgresql-1-1-2-1            : benchmarker timespan pods from 1794597502 to 1794597508
 postgresql-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 6
-postgresql-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1794005891, 1794005897), (1794005892, 1794005897)]
-postgresql-1-1-2-1            : found and updated times {'benchmarker': [(1794005891, 1794005897), (1794005892, 1794005897)]}
-Loop pass                     : took 22.7s (6 kubectl calls 7.3s, 28 API requests 1.3s)
+postgresql-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1794597502, 1794597508), (1794597503, 1794597508)]
+postgresql-1-1-2-1            : found and updated times {'benchmarker': [(1794597502, 1794597508), (1794597503, 1794597508)]}
+Loop pass                     : took 8.4s (6 kubectl calls 6.7s, 28 API requests 1.0s)
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1794005468-fd4d6967-4lrm7
-Loop pass                     : took 6.2s (4 kubectl calls 4.6s, 29 API requests 1.0s)
-Experiment                    : ends at 2026-11-06 23:58:58.303623 (229127.8550444) - 469.31s total
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1794597119-c75867bd6-vn6vn
+Loop pass                     : took 5.7s (4 kubectl calls 4.2s, 29 API requests 1.1s)
+Experiment                    : ends at 2026-11-13 20:18:59.746767 (234082.8339901) - 420.63s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
@@ -135,8 +132,8 @@ Result workflow complete
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 470s 
-* Code: 1794005468
+* Duration: 421s 
+* Code: 1794597119
 * This includes the 13 queries of the Star Schema Benchmark as templates with random parameters (generalization after Rabl et al., ICPE 2013): every predicate picks a random member of its hierarchy level or moves its range, so each query keeps the filter factor of the specification.
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -148,7 +145,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -171,10 +168,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:870822
+  * disk:1124399
   * datadisk:1581
   * volume_size:1.8T
-  * volume_used:851G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -184,17 +181,17 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794005468
+    * code:1794597119
 * postgresql-1-1-2-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:870823
+  * disk:1124400
   * datadisk:1581
   * volume_size:1.8T
-  * volume_used:851G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -204,17 +201,17 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794005468
+    * code:1794597119
 * postgresql-1-1-2-1-2 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:870823
+  * disk:1124400
   * datadisk:1581
   * volume_size:1.8T
-  * volume_used:851G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -224,10 +221,13 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794005468
+    * code:1794597119
+
+### Ingestion
+* PostgreSQL-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794005468-fd4d6967-4lrm7: 0
+* bexhoma-sut-postgresql-1-1794597119-c75867bd6-vn6vn: 0
 
 ### Workflow
 
@@ -245,26 +245,26 @@ SSB Queries SF=1
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    1 |       64.00 |           5.00 |           27.00 |          5.00 |           18.00 |              8 |           0 |             | None           |             0 | False         |               56.25 | False               |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       65.00 |           5.00 |           27.00 |          5.00 |           19.00 |              8 |         0 |             | None           |             0 | False         |               55.38 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.09 |            43217.07 |           9360.00 |          -1 | postgresql-1-1-1-1-1 |
-| postgresql-1-1-2-1-1 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.09 |            43078.17 |           7800.00 |          -1 | postgresql-1-1-2-1-1 |
-| postgresql-1-1-2-1-2 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.08 |            46204.84 |           9360.00 |          -1 | postgresql-1-1-2-1-2 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          5 |            0.09 |            40493.65 |           9360.00 |          -1 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               13 |                  13 |          6 |            0.09 |            42258.28 |           7800.00 |          -1 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 | 1.00 |               13 |                  13 |          5 |            0.09 |            41803.80 |           9360.00 |          -1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.09 |            43217.07 |           9360.00 |          -1 |
-| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |               26 |                  26 |          6 |            0.08 |            44614.12 |          15600.00 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.09 |            40493.65 |           9360.00 |          -1 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |               26 |                  26 |          6 |            0.09 |            42030.43 |          15600.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -278,19 +278,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   postgresql-1-1-1-1-1 |   postgresql-1-1-2-1-1 |   postgresql-1-1-2-1-2 |
 |:---------------------------------------------------------------------------------------|-----------------------:|-----------------------:|-----------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 457.86 |                 371.71 |                 325.42 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  21.97 |                  21.82 |                  20.82 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                   7.06 |                   6.90 |                   6.91 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                 155.55 |                 156.06 |                 130.68 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  61.21 |                  55.60 |                  55.57 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                   8.06 |                   6.80 |                   5.89 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                 240.38 |                 251.34 |                 236.25 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                 177.17 |                 173.88 |                 146.03 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  33.25 |                  31.54 |                  28.33 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  38.68 |                  36.68 |                  34.96 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                 800.40 |                1167.99 |                1113.52 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                 318.45 |                 341.75 |                 341.84 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                 122.32 |                 145.58 |                 149.77 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 413.74 |                 384.28 |                 390.73 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  25.74 |                  22.69 |                  25.82 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                   9.53 |                   8.99 |                   9.03 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                 175.98 |                 164.38 |                 161.57 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  74.99 |                  68.53 |                  68.54 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                   8.90 |                   7.86 |                   8.22 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                 229.25 |                 232.44 |                 232.09 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                 194.86 |                 188.29 |                 179.14 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  24.85 |                  26.61 |                  26.30 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  31.68 |                  34.74 |                  33.63 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                 991.27 |                 916.15 |                 919.46 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                 345.50 |                 339.74 |                 348.61 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                 150.95 |                 142.35 |                 146.55 |
 
 ### Errors (failed queries)
 
@@ -304,6 +304,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

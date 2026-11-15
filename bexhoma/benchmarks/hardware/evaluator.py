@@ -1,0 +1,589 @@
+"""
+Evaluator for Hardware (fio/sysbench/sockperf/netperf) experiments.
+
+Provides :class:`HardwareEvaluator`, which extends :class:`LogEvaluator` to parse and
+aggregate fio disk I/O results (IOPS, bandwidth, completion-latency percentiles),
+sysbench CPU/memory results (events/sec, throughput, completion latency), sockperf
+single-connection network results (latency percentiles, message rate, dropped-message
+rate), and netperf many-concurrent-connection TCP_RR/UDP_RR results (aggregate
+transaction rate, latency percentiles) produced by ``images/hardware/benchmarker``.
+
+Authors: Patrick K. Erdelt
+Copyright (C) 2020 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
+"""
+import pandas as pd
+import re
+import traceback
+
+from bexhoma.evaluators.logger import LogEvaluator
+
+__all__ = ["HardwareEvaluator"]
+
+# KEY:VALUE lines echoed by benchmarker.sh (identity/scaling) and, depending on
+# HARDWARE_TYPE, exactly one of run_fio.sh/run_sysbench.sh/run_sockperf.sh/
+# run_netperf.sh (that type's parameters/results); see
+# images/hardware/benchmarker/*.sh. A pod only ever runs one tool
+# (benchmarker.sh dispatches on HARDWARE_TYPE), so log_to_df() looks up
+# HARDWARE_TYPE first and then only scans for that type's own keys below —
+# the other types' columns are absent from the resulting row entirely,
+# instead of being present and zero-filled.
+_KEYS_IDENTITY = [
+    'BEXHOMA_CONNECTION', 'BEXHOMA_CONFIGURATION', 'BEXHOMA_EXPERIMENT',
+    'BEXHOMA_EXPERIMENT_RUN', 'BEXHOMA_CLIENT', 'BEXHOMA_BENCHMARK_RUN',
+    'BEXHOMA_CHILD', 'BEXHOMA_NUM_PODS',
+]
+_KEYS_COMMON_PARAMETERS = [
+    'HARDWARE_TYPE', 'HARDWARE_SIZE', 'HARDWARE_DURATION', 'HARDWARE_THREADS',
+]
+_KEYS_TYPE_PARAMETERS = {
+    'fio': [
+        'HARDWARE_FIO_RW', 'HARDWARE_FIO_BS', 'HARDWARE_FIO_IODEPTH',
+        'HARDWARE_FIO_NUMJOBS', 'HARDWARE_FIO_ENGINE', 'HARDWARE_FIO_FSYNC',
+        'HARDWARE_FIO_FDATASYNC', 'HARDWARE_FIO_RWMIXREAD',
+        # absent in logs from before -xfow; blank, so 0 (fresh file) after typing
+        'HARDWARE_FIO_OVERWRITE',
+    ],
+    'sysbench': [],
+    'sockperf': [
+        'HARDWARE_SOCKPERF_MODE', 'HARDWARE_SOCKPERF_PROTOCOL',
+        'HARDWARE_SOCKPERF_MSGSIZE', 'HARDWARE_SOCKPERF_MPS', 'HARDWARE_SOCKPERF_PORT',
+    ],
+    'netperf': ['HARDWARE_NETPERF_PROTOCOL'],
+}
+_PERCENTILE_LABELS = ['P01', 'P10', 'P50', 'P90', 'P95', 'P99', 'P999', 'P9999']
+_KEYS_FIO_RESULTS = ['HARDWARE_FIO_READ_IOPS', 'HARDWARE_FIO_WRITE_IOPS',
+                      'HARDWARE_FIO_READ_BW_KBPS', 'HARDWARE_FIO_WRITE_BW_KBPS']
+for _label in _PERCENTILE_LABELS:
+    _KEYS_FIO_RESULTS.append(f'HARDWARE_FIO_READ_LAT_{_label}_MS')
+    _KEYS_FIO_RESULTS.append(f'HARDWARE_FIO_WRITE_LAT_{_label}_MS')
+_KEYS_TYPE_RESULTS = {
+    'fio': _KEYS_FIO_RESULTS,
+    'sysbench': [
+        'HARDWARE_SYSBENCH_CPU_EVENTS_PER_SEC', 'HARDWARE_SYSBENCH_CPU_TOTAL_TIME_S',
+        'HARDWARE_SYSBENCH_CPU_LAT_P95_MS', 'HARDWARE_SYSBENCH_MEMORY_OPS_PER_SEC',
+        'HARDWARE_SYSBENCH_MEMORY_THROUGHPUT_MIBPS', 'HARDWARE_SYSBENCH_MEMORY_LAT_P95_MS',
+    ],
+    'sockperf': [
+        'HARDWARE_SOCKPERF_LATENCY_AVG_MS', 'HARDWARE_SOCKPERF_LATENCY_P50_MS',
+        'HARDWARE_SOCKPERF_LATENCY_P99_MS', 'HARDWARE_SOCKPERF_LATENCY_P999_MS',
+        'HARDWARE_SOCKPERF_MSG_RATE_PER_SEC', 'HARDWARE_SOCKPERF_DROPPED_PER_SEC',
+    ],
+    'netperf': [
+        'HARDWARE_NETPERF_TRANSACTION_RATE', 'HARDWARE_NETPERF_LATENCY_AVG_MS',
+        'HARDWARE_NETPERF_LATENCY_P50_MS', 'HARDWARE_NETPERF_LATENCY_P90_MS',
+        'HARDWARE_NETPERF_LATENCY_P99_MS', 'HARDWARE_NETPERF_INSTANCES_FAILED',
+    ],
+}
+# Full key set across all types, used where a superset is legitimately needed
+# (dtype casting, aggregation) and then filtered down to columns actually
+# present on the DataFrame at hand.
+_KEYS_PARAMETERS = _KEYS_COMMON_PARAMETERS + [
+    key for keys in _KEYS_TYPE_PARAMETERS.values() for key in keys
+]
+_KEYS_RESULTS = [key for keys in _KEYS_TYPE_RESULTS.values() for key in keys]
+
+_NATURAL_SORT_DIGIT_WIDTH = 10  # zero-pad width; comfortably covers phase strings like "Hardware-1-1-128"
+
+
+def _natural_sort_key(value: str) -> str:
+    """
+    Zero-pads digit runs so a lexicographic sort behaves like a numeric sort.
+
+    Turns ``"Hardware-1-1-10"`` into ``"Hardware-0000000001-0000000001-0000000010"``,
+    so ``"...-10"`` sorts after ``"...-9"`` instead of after ``"...-1"``.
+
+    :param value: String to build a natural-sort key for.
+    :type value: str
+    :return: Sortable string with all digit runs zero-padded.
+    :rtype: str
+    """
+    return re.sub(r'\d+', lambda match: match.group().zfill(_NATURAL_SORT_DIGIT_WIDTH), str(value))
+
+
+class HardwareEvaluator(LogEvaluator):
+    """
+    Evaluator for a Hardware (fio) experiment.
+
+    Parses per-pod log files for the ``KEY:VALUE`` parameter and result lines
+    echoed by ``benchmarker.sh`` and whichever of ``run_fio.sh``/``run_sysbench.sh``/
+    ``run_sockperf.sh``/``run_netperf.sh`` matches ``HARDWARE_TYPE``, and assembles
+    them into DataFrames. Aggregation over parallel pods follows the same pattern
+    as the other logger-based evaluators. A given experiment runs a single
+    ``HARDWARE_TYPE`` for all of its rounds (``-xht`` is not swept), and each row
+    only carries that type's own parameter/result columns — the other three
+    types' columns are absent entirely, not present and zero-filled. Combining
+    rows/frames of different types (e.g. via ``HardwareCollector`` across
+    experiment codes) still works: ``pandas`` concatenation and the
+    ``in df.columns`` guards throughout this class treat missing columns as
+    ``NaN``, not ``0``.
+
+    :param code: Experiment identifier — also the name of the result sub-folder.
+    :param path: Root path that contains the result folders.
+    :param include_loading: Whether loading-phase results are expected.
+    :param include_benchmarking: Whether benchmarking-phase results are expected.
+    """
+    #: The hardware tools' names for the common columns.
+    column_names = {'hardware_threads': 'threads'}
+
+    def log_to_df(self, filename):
+        """
+        Parses a Hardware pod log file into a DataFrame.
+
+        Extracts identity fields, workload parameters, and — depending on
+        ``HARDWARE_TYPE`` — either fio's IOPS/bandwidth/completion-latency
+        percentiles or sysbench's CPU events/sec and memory throughput/latency,
+        from the ``KEY:VALUE`` lines echoed by
+        ``benchmarker.sh``/``run_fio.sh``/``run_sysbench.sh``.
+
+        :param filename: Absolute path to the Hardware benchmarker log file.
+        :type filename: str
+        :return: Single-row DataFrame, or empty on parse failure.
+        :rtype: pandas.DataFrame
+        """
+        # test for known errors
+        LogEvaluator.log_to_df(self, filename)
+        try:
+            with open(filename) as f:
+                stdout = f.read()
+            error_timesynch = re.findall('start time has already passed', stdout)
+            if len(error_timesynch) > 0:
+                # log is incomplete
+                print(filename, "log is incomplete")
+                return pd.DataFrame()
+            pod_name = filename[filename.rindex("-") + 1:-len(".log")]
+            hardware_type_match = re.findall(re.escape('HARDWARE_TYPE') + ':(.*?)\n', stdout)
+            hardware_type = hardware_type_match[-1] if hardware_type_match else ''
+            keys_for_type = (
+                _KEYS_IDENTITY + _KEYS_COMMON_PARAMETERS
+                + _KEYS_TYPE_PARAMETERS.get(hardware_type, [])
+                + _KEYS_TYPE_RESULTS.get(hardware_type, [])
+            )
+            values = {}
+            for key in keys_for_type:
+                match = re.findall(re.escape(key) + ':(.*?)\n', stdout)
+                values[key] = match[-1] if match else ''
+            errors = re.findall('Error ', stdout)
+            num_errors = len(errors)
+            connection_name = values['BEXHOMA_CONNECTION']
+            configuration_name = values['BEXHOMA_CONFIGURATION']
+            code = values['BEXHOMA_EXPERIMENT']
+            experiment_run = values['BEXHOMA_EXPERIMENT_RUN']
+            client = values['BEXHOMA_CLIENT']
+            benchmark_run = values['BEXHOMA_BENCHMARK_RUN'] or '1'
+            child = values['BEXHOMA_CHILD']
+            pod_count = values['BEXHOMA_NUM_PODS']
+            # only present for -mtb container experiments (hardware.py); -1 marks single-tenant runs
+            tenant_id_match = re.findall(r'BEXHOMA_TENANT_ID:(\d+)', stdout)
+            tenant_id = int(tenant_id_match[0]) if tenant_id_match else -1
+            # measured wall-clock duration of this pod's benchmarker.sh run (fio or
+            # sysbench CPU+memory combined), same BEXHOMA_DURATION convention other
+            # evaluators (e.g. evaluators/benchbase.py) already parse as 'duration'
+            duration_match = re.findall(r'BEXHOMA_DURATION:(\d+)', stdout)
+            duration = int(duration_match[0]) if duration_match else 0
+            phase = (configuration_name + '-' + experiment_run + '-' + client).lower()
+            job = connection_name
+            connection = connection_name + '-' + child
+            row = {
+                'connection': connection, 'phase': phase, 'job': job,
+                'configuration': configuration_name, 'experiment_run': experiment_run,
+                'client': client, 'benchmark_run': benchmark_run, 'child': child,
+                'pod': pod_name, 'pod_count': pod_count, 'code': code, 'errors': num_errors,
+                'tenant_id': tenant_id, 'duration': duration,
+            }
+            for key in (
+                _KEYS_COMMON_PARAMETERS + _KEYS_TYPE_PARAMETERS.get(hardware_type, [])
+                + _KEYS_TYPE_RESULTS.get(hardware_type, [])
+            ):
+                row[key.lower()] = values[key]
+            df = pd.DataFrame([row])
+            df.index.name = connection_name
+            return df
+        except Exception as e:
+            print(e)
+            print(traceback.format_exc())
+            return pd.DataFrame()
+
+    def benchmarking_set_datatypes(self, df):
+        """
+        Casts all Hardware benchmarking result columns to their appropriate data types.
+
+        A read-only (or write-only) fio workload never echoes the opposing
+        direction's ``KEY:VALUE`` lines, so :meth:`log_to_df` defaults those
+        columns to ``''``; such blanks are treated as ``0`` here before casting.
+        Rows of a different ``HARDWARE_TYPE`` don't have a given type's columns
+        at all, so concatenating rows/frames of different types (e.g. across
+        ``HardwareCollector`` experiment codes, or a future per-round
+        ``HARDWARE_TYPE`` sweep within one experiment) leaves those cells
+        ``NaN`` instead; this method treats such ``NaN`` the same as an
+        empty-string blank — ``0`` for numeric columns, ``''`` for string
+        columns — rather than the default ``astype('str')`` behaviour of
+        turning ``NaN`` into the literal text ``'nan'``. Callers must not
+        blanket-``fillna(0)`` beforehand, since that would turn string-column
+        ``NaN`` into the literal text ``'0'`` before this method ever sees it.
+
+        Adds a ``tenant_id`` column (value ``-1``) and a ``duration`` column (value
+        ``0``) when absent, so DataFrames loaded from older pickles (predating
+        ``-mtb container`` support / ``BEXHOMA_DURATION`` parsing) remain compatible.
+
+        :param df: DataFrame of raw Hardware benchmarking results.
+        :type df: pandas.DataFrame
+        :return: DataFrame with columns cast to correct types.
+        :rtype: pandas.DataFrame
+        """
+        if 'tenant_id' not in df.columns:
+            df = df.assign(tenant_id=-1)
+        if 'duration' not in df.columns:
+            df = df.assign(duration=0)
+        dtype_map = {
+            'connection': 'str', 'phase': 'str', 'job': 'str', 'configuration': 'str',
+            'experiment_run': 'int', 'code': 'int', 'client': 'int', 'benchmark_run': 'int',
+            'child': 'int', 'pod': 'str', 'pod_count': 'int', 'errors': 'int',
+            'hardware_type': 'str', 'hardware_size': 'str', 'hardware_duration': 'float',
+            'threads': 'int',
+            'hardware_fio_rw': 'str', 'hardware_fio_bs': 'str', 'hardware_fio_engine': 'str',
+            'hardware_fio_iodepth': 'int', 'hardware_fio_numjobs': 'int',
+            'hardware_fio_fsync': 'int', 'hardware_fio_fdatasync': 'int',
+            'hardware_fio_overwrite': 'int',
+            'hardware_fio_rwmixread': 'int', 'tenant_id': 'int', 'duration': 'int',
+            'hardware_sockperf_mode': 'str', 'hardware_sockperf_protocol': 'str',
+            'hardware_sockperf_msgsize': 'int', 'hardware_sockperf_port': 'int',
+            # not 'int': the column may hold the literal "max" instead of a rate
+            'hardware_sockperf_mps': 'str',
+            'hardware_netperf_protocol': 'str',
+        }
+        for key in _KEYS_RESULTS:
+            dtype_map[key.lower()] = 'float'
+        # narrow to columns actually present: a given row only carries its own
+        # HARDWARE_TYPE's columns, and DataFrame.astype(dict) raises KeyError
+        # for dict keys that aren't columns
+        dtype_map = {column: dtype for column, dtype in dtype_map.items() if column in df.columns}
+        numeric_columns = [
+            column for column, dtype in dtype_map.items() if dtype in ('int', 'float')
+        ]
+        df = df.copy()
+        # replace('', 0) on an all-blank object column emits pandas' downcasting
+        # FutureWarning eagerly during its own execution - chaining
+        # infer_objects() afterward doesn't help, since the warning already
+        # fired. to_numeric()+fillna() sidesteps replace() entirely and also
+        # copes with any stray non-numeric string, not just exact ''.
+        df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors='coerce').fillna(0)
+        # a row from one HARDWARE_TYPE has no column at all for another type's
+        # string parameters; concatenating rows of different types (e.g. across
+        # HardwareCollector experiment codes) leaves those cells NaN, and
+        # astype('str') would otherwise turn NaN into the literal string 'nan'
+        string_columns = [column for column, dtype in dtype_map.items() if dtype == 'str']
+        df[string_columns] = df[string_columns].fillna('')
+        df_typed = df.astype(dtype_map)
+        return df_typed
+
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
+        """
+        Aggregates parallel-pod Hardware result rows into one row per group.
+
+        Groups by ``columns``; IOPS, bandwidth, events/sec and throughput
+        columns are summed across pods (aggregate throughput), latency
+        percentile columns take the max across pods (worst observed tail
+        latency).
+
+        :param df: Typed Hardware benchmarking DataFrame.
+        :type df: pandas.DataFrame
+        :param columns: Grouping columns (default ``['phase']``).
+        :type columns: list[str]
+        :return: Aggregated DataFrame with one row per group.
+        :rtype: pandas.DataFrame
+        """
+        df_aggregated = pd.DataFrame()
+        for key, grp in df.groupby([df[col] for col in columns]):
+            aggregate = {
+                'code': 'max', 'job': 'max', 'client': 'max', 'benchmark_run': 'max',
+                'pod': 'sum', 'pod_count': 'count', 'errors': 'sum',
+                'hardware_duration': 'max', 'hardware_fio_numjobs': 'sum',
+                'threads': 'sum', 'hardware_sysbench_cpu_total_time_s': 'max',
+                'tenant_id': 'min', 'duration': 'max',
+                # aggregate throughput across pods, same convention as fio's iops/sockperf's
+                # msg_rate; instances_failed is a count, summed like errors above
+                'hardware_netperf_transaction_rate': 'sum',
+                'hardware_netperf_instances_failed': 'sum',
+            }
+            # narrow to columns actually present: a given phase group only
+            # carries its own HARDWARE_TYPE's columns, and grp.agg(dict) raises
+            # KeyError for dict keys that aren't columns
+            aggregate = {col: how for col, how in aggregate.items() if col in grp.columns}
+            for col in grp.columns:
+                if (col.endswith('_iops') or col.endswith('_kbps')
+                        or col.endswith('_per_sec') or col.endswith('_mibps')):
+                    aggregate[col] = 'sum'
+                elif col.endswith('_ms'):
+                    aggregate[col] = 'max'
+            dict_grp = dict()
+            dict_grp['configuration'] = grp['configuration'].iloc[0]
+            dict_grp['experiment_run'] = grp['experiment_run'].iloc[0]
+            dict_grp['phase'] = grp['phase'].iloc[0]
+            dict_grp['job'] = grp['job'].iloc[0]
+            # constant within one round (one phase group), so take the first pod's value.
+            # hardware_type in particular lets record_tests() tell rounds of different
+            # tools apart when one experiment mixes them (e.g. a per-node hardware-baseline
+            # sweep running sysbench then fio under the same configuration) instead of
+            # every round being the single tool -xht fixes for a whole experiment.
+            if 'hardware_type' in grp.columns:
+                dict_grp['hardware_type'] = grp['hardware_type'].iloc[0]
+            for fio_param in ['hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
+                               'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
+                               'hardware_fio_overwrite', 'hardware_fio_rwmixread']:
+                if fio_param in grp.columns:
+                    dict_grp[fio_param] = grp[fio_param].iloc[0]
+            # sockperf_port is the exception: it varies per pod (each pod gets its own
+            # dedicated server, see run_sockperf.sh), so it's not copied here
+            for sockperf_param in ['hardware_sockperf_mode', 'hardware_sockperf_protocol',
+                                    'hardware_sockperf_msgsize', 'hardware_sockperf_mps']:
+                if sockperf_param in grp.columns:
+                    dict_grp[sockperf_param] = grp[sockperf_param].iloc[0]
+            if 'hardware_netperf_protocol' in grp.columns:
+                dict_grp['hardware_netperf_protocol'] = grp['hardware_netperf_protocol'].iloc[0]
+            dict_grp = {**dict_grp, **grp.agg(aggregate)}
+            df_grp = pd.DataFrame(dict_grp, index=["-".join(map(str, key))])
+            df_aggregated = pd.concat([df_aggregated, df_grp])
+        return df_aggregated
+
+    def get_summary_benchmark_per_connection(self):
+        """
+        Returns benchmarking results with one row per pod, filtered to the key
+        display columns.
+
+        :return: DataFrame indexed as ``"connection"`` with one row per pod, or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_benchmarking()
+        if df.empty:
+            return pd.DataFrame()
+        columns = [
+            'phase', 'job', 'experiment_run', 'client', 'benchmark_run', 'child', 'duration',
+            'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
+            'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
+            'hardware_fio_overwrite', 'hardware_fio_rwmixread', 'hardware_fio_numjobs',
+            'hardware_fio_read_iops', 'hardware_fio_write_iops',
+            'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
+            'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
+            'threads', 'hardware_sysbench_cpu_events_per_sec',
+            'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
+            'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
+            'hardware_sysbench_memory_lat_p95_ms',
+            'hardware_sockperf_mode', 'hardware_sockperf_protocol', 'hardware_sockperf_msgsize',
+            'hardware_sockperf_mps', 'hardware_sockperf_port',
+            'hardware_sockperf_latency_avg_ms', 'hardware_sockperf_latency_p50_ms',
+            'hardware_sockperf_latency_p99_ms', 'hardware_sockperf_latency_p999_ms',
+            'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec',
+            'hardware_netperf_protocol', 'hardware_netperf_transaction_rate',
+            'hardware_netperf_latency_avg_ms', 'hardware_netperf_latency_p50_ms',
+            'hardware_netperf_latency_p90_ms', 'hardware_netperf_latency_p99_ms',
+            'hardware_netperf_instances_failed', 'errors',
+        ]
+        df_plot = self.benchmarking_set_datatypes(df)
+        df_plot_filtered = pd.DataFrame()
+        for col in columns:
+            if col in df_plot.columns:
+                df_plot_filtered[col] = df_plot.loc[:, col]
+        df_plot_filtered = self.identity_first(df_plot_filtered, self.IDENTITY_PER_CONNECTION, source=df_plot)
+        df_plot_filtered = df_plot_filtered.rename_axis(index="connection")
+        # index (connection, e.g. "Hardware-1-1-2-1-1") already encodes
+        # configuration-experiment_run-client-benchmark_run-child in that
+        # positional order, so natural-sorting it (like get_summary_benchmark_per_phase
+        # does for 'phase') orders by experiment_run/client/child together,
+        # instead of leaving same-(experiment_run, client) rows in whatever
+        # order the underlying log files happened to be globbed in.
+        df_plot_filtered = df_plot_filtered.sort_index(key=lambda idx: idx.map(_natural_sort_key))
+        return df_plot_filtered
+
+    def get_summary_benchmark_per_phase(self):
+        """
+        Returns benchmarking results aggregated over parallel pods, one row per phase.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per phase, or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot)
+            df_aggregated = df_aggregated.sort_values(
+                by='phase', key=lambda col: col.map(_natural_sort_key)
+            ).round(2)
+            aggregated_list = ['phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count', 'duration']
+            columns = [
+                'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
+                'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
+                'hardware_fio_overwrite', 'hardware_fio_rwmixread',
+                'hardware_fio_read_iops', 'hardware_fio_write_iops',
+                'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
+                'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
+                'threads', 'hardware_sysbench_cpu_events_per_sec',
+                'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
+                'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
+                'hardware_sysbench_memory_lat_p95_ms',
+                'hardware_sockperf_mode', 'hardware_sockperf_protocol', 'hardware_sockperf_msgsize',
+                'hardware_sockperf_mps',
+                'hardware_sockperf_latency_avg_ms', 'hardware_sockperf_latency_p50_ms',
+                'hardware_sockperf_latency_p99_ms', 'hardware_sockperf_latency_p999_ms',
+                'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec',
+                'hardware_netperf_protocol', 'hardware_netperf_transaction_rate',
+                'hardware_netperf_latency_avg_ms', 'hardware_netperf_latency_p50_ms',
+                'hardware_netperf_latency_p90_ms', 'hardware_netperf_latency_p99_ms',
+                'hardware_netperf_instances_failed', 'errors', 'hardware_type',
+            ]
+            df_aggregated_reduced = df_aggregated[aggregated_list].copy()
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:, col]
+            df_aggregated_reduced = self.identity_first(df_aggregated_reduced, self.IDENTITY_PER_PHASE, source=df_aggregated)
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+        return df_aggregated_reduced
+
+    def get_summary_benchmark_per_phase_multitenant(self):
+        """
+        Returns benchmarking results aggregated per phase and tenant, one row per
+        ``(phase, tenant_id)``.
+
+        Used for ``-mtb container`` co-located noisy-neighbor experiments (see
+        ``hardware.py``), where each tenant is a separate SUT pod pinned to the
+        same node. Like :meth:`get_summary_benchmark_per_phase` but groups by
+        ``['phase', 'tenant_id']`` so each tenant appears as a separate row
+        instead of being aggregated away.
+
+        :return: DataFrame indexed as ``"DBMS"`` with one row per (phase, tenant), or an
+                 empty DataFrame if there are no benchmarking results.
+        :rtype: pandas.DataFrame
+        """
+        df = self.get_df_benchmarking()
+        df_aggregated_reduced = pd.DataFrame()
+        if not df.empty:
+            df_plot = self.benchmarking_set_datatypes(df)
+            df_aggregated = self.benchmarking_aggregate_by_parallel_pods(df_plot, columns=['phase', 'tenant_id'])
+            df_aggregated = df_aggregated.sort_values(['experiment_run', 'tenant_id', 'client', 'pod_count']).round(2)
+            aggregated_list = ['phase', 'experiment_run', 'client', 'benchmark_run', 'pod_count', 'tenant_id', 'duration']
+            columns = [
+                'hardware_fio_rw', 'hardware_fio_bs', 'hardware_fio_iodepth',
+                'hardware_fio_engine', 'hardware_fio_fsync', 'hardware_fio_fdatasync',
+                'hardware_fio_overwrite', 'hardware_fio_rwmixread',
+                'hardware_fio_read_iops', 'hardware_fio_write_iops',
+                'hardware_fio_read_lat_p95_ms', 'hardware_fio_write_lat_p95_ms',
+                'hardware_fio_read_lat_p99_ms', 'hardware_fio_write_lat_p99_ms',
+                'threads', 'hardware_sysbench_cpu_events_per_sec',
+                'hardware_sysbench_cpu_total_time_s', 'hardware_sysbench_cpu_lat_p95_ms',
+                'hardware_sysbench_memory_ops_per_sec', 'hardware_sysbench_memory_throughput_mibps',
+                'hardware_sysbench_memory_lat_p95_ms',
+                'hardware_sockperf_mode', 'hardware_sockperf_protocol', 'hardware_sockperf_msgsize',
+                'hardware_sockperf_mps',
+                'hardware_sockperf_latency_avg_ms', 'hardware_sockperf_latency_p50_ms',
+                'hardware_sockperf_latency_p99_ms', 'hardware_sockperf_latency_p999_ms',
+                'hardware_sockperf_msg_rate_per_sec', 'hardware_sockperf_dropped_per_sec',
+                'hardware_netperf_protocol', 'hardware_netperf_transaction_rate',
+                'hardware_netperf_latency_avg_ms', 'hardware_netperf_latency_p50_ms',
+                'hardware_netperf_latency_p90_ms', 'hardware_netperf_latency_p99_ms',
+                'hardware_netperf_instances_failed', 'errors', 'hardware_type',
+            ]
+            df_aggregated_reduced = df_aggregated[aggregated_list].copy()
+            for col in columns:
+                if col in df_aggregated.columns:
+                    df_aggregated_reduced[col] = df_aggregated.loc[:, col]
+            df_aggregated_reduced = self.identity_first(df_aggregated_reduced, self.IDENTITY_PER_PHASE, source=df_aggregated)
+            df_aggregated_reduced = df_aggregated_reduced.rename_axis(index="DBMS")
+        return df_aggregated_reduced
+
+    def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
+                     workflow_actual: dict, workflow_planned: dict, **extra) -> None:
+        """
+        Record Hardware pass/fail tests: workflow completeness and, depending on
+        ``HARDWARE_TYPE``, that every round measured something.
+
+        A fio round with both ``hardware_fio_read_iops`` and ``hardware_fio_write_iops``
+        at 0 did not produce a usable fio measurement (e.g. a full PVC or a local
+        disk-quota error while collecting results, as seen for round 10 of
+        experiment 1783115274) rather than a legitimate all-zero result — a
+        ``randread`` round always has 0 write IOPS and vice versa, so only the
+        combination of both being 0 indicates a failed round. A sysbench round
+        with 0 CPU events/sec did not produce a usable CPU measurement (the
+        memory sub-test can legitimately run with 0 CPU events only if
+        ``HARDWARE_THREADS`` starves the CPU test, which does not happen with the
+        image's fixed CPU-then-memory sequence, so 0 always indicates a failure).
+        A sockperf round with 0 message rate did not produce a usable measurement
+        (a connection failure or invalid argument combination, see run_sockperf.sh's
+        own validation) rather than a legitimate all-zero result.
+
+        :param experiment: The owning experiment object.
+        :param df_loading: Per-run loading DataFrame; always empty for Hardware.
+        :param df_reduced: Per-phase execution DataFrame.
+        :param workflow_actual: Reconstructed actual workflow dict.
+        :param workflow_planned: Planned workflow dict from workload config.
+        """
+        if experiment.benchmarking_is_active():
+            experiment._record_test(
+                experiment.test_workflow(workflow_actual, workflow_planned),
+                "Workflow as planned"
+            )
+            hardware_type = getattr(experiment.args, 'hardware_type', 'fio')
+            df_fio = self._rows_of_hardware_type(df_reduced, 'fio', hardware_type)
+            has_iops_columns = ('hardware_fio_read_iops' in df_fio.columns
+                                 and 'hardware_fio_write_iops' in df_fio.columns)
+            if not df_fio.empty and has_iops_columns:
+                both_zero = ((df_fio['hardware_fio_read_iops'] == 0)
+                             & (df_fio['hardware_fio_write_iops'] == 0))
+                passed = not both_zero.any()
+                experiment._record_test(
+                    passed,
+                    "Execution Phase: every round has non-zero read or write IOPS" if passed
+                    else "Execution Phase: at least one round has 0 IOPS for both read and write"
+                )
+            df_sysbench = self._rows_of_hardware_type(df_reduced, 'sysbench', hardware_type)
+            has_sysbench_columns = 'hardware_sysbench_cpu_events_per_sec' in df_sysbench.columns
+            if not df_sysbench.empty and has_sysbench_columns:
+                passed = not (df_sysbench['hardware_sysbench_cpu_events_per_sec'] == 0).any()
+                experiment._record_test(
+                    passed,
+                    "Execution Phase: every round has non-zero CPU events/sec" if passed
+                    else "Execution Phase: at least one round has 0 CPU events/sec"
+                )
+            df_sockperf = self._rows_of_hardware_type(df_reduced, 'sockperf', hardware_type)
+            has_sockperf_columns = 'hardware_sockperf_msg_rate_per_sec' in df_sockperf.columns
+            if not df_sockperf.empty and has_sockperf_columns:
+                passed = not (df_sockperf['hardware_sockperf_msg_rate_per_sec'] == 0).any()
+                experiment._record_test(
+                    passed,
+                    "Execution Phase: every round has non-zero sockperf message rate" if passed
+                    else "Execution Phase: at least one round has 0 sockperf message rate"
+                )
+            df_netperf = self._rows_of_hardware_type(df_reduced, 'netperf', hardware_type)
+            has_netperf_columns = 'hardware_netperf_transaction_rate' in df_netperf.columns
+            if not df_netperf.empty and has_netperf_columns:
+                passed = not (df_netperf['hardware_netperf_transaction_rate'] == 0).any()
+                experiment._record_test(
+                    passed,
+                    "Execution Phase: every round has non-zero netperf transaction rate" if passed
+                    else "Execution Phase: at least one round has 0 netperf transaction rate"
+                )
+
+    @staticmethod
+    def _rows_of_hardware_type(df_reduced: pd.DataFrame, hardware_type: str, experiment_wide_type: str) -> pd.DataFrame:
+        """Select the rows of ``df_reduced`` that actually measured ``hardware_type``.
+
+        Prefers the per-row ``hardware_type`` column (present once an
+        experiment mixes tools within a single run, e.g. a per-node
+        hardware-baseline sweep running sysbench then fio under the same
+        configuration -- see ``bexhoma.benchmarks.hardware.baseline``). Falls back to
+        the experiment-wide ``-xht`` value for older cached results that
+        predate that column, preserving the original single-type-per-experiment
+        behaviour exactly (either every row matches, or none do).
+
+        :param df_reduced: Per-phase execution DataFrame, as passed to :meth:`record_tests`.
+        :param hardware_type: Tool to select rows for, e.g. ``'fio'``.
+        :param experiment_wide_type: ``experiment.args.hardware_type`` fallback.
+        :return: The matching subset of ``df_reduced`` (possibly empty).
+        :rtype: pandas.DataFrame
+        """
+        if 'hardware_type' in df_reduced.columns:
+            return df_reduced[df_reduced['hardware_type'] == hardware_type]
+        return df_reduced if experiment_wide_type == hardware_type else df_reduced.iloc[0:0]

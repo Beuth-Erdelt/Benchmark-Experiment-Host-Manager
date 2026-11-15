@@ -22,7 +22,7 @@ import unittest
 from unittest import mock
 
 from bexhoma import ddl_parameters
-from bexhoma.benchmarks.base import dimension_folder
+from bexhoma.benchmarks.dbmsbenchmarker.benchmark import dimension_folder
 from bexhoma.system_descriptors import dimension_dockers, load_dockers
 
 from .test_reset_scripts import _run_script

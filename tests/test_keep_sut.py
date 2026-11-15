@@ -17,7 +17,7 @@ from types import SimpleNamespace
 import unittest
 from unittest import mock
 
-import tpch
+from bexhoma.benchmarks.tpch import cli as tpch
 from bexhoma import spec as catalog_spec
 from bexhoma.cli_args import make_base_parser, resolve_keep_sut
 from bexhoma.experiments.base import ExperimentBase

@@ -1,6 +1,6 @@
 #!C:\Users\Patrick\anaconda3\envs\bexhoma\python.exe
 """
-Validator for collectors.benchbase multi-tenancy (Collector-Benchbase-MT.ipynb).
+Validator for BenchbaseCollector multi-tenancy (Collector-Benchbase-MT.ipynb).
 Checks: no exceptions, non-empty DataFrames, important columns present.
 Shows head() for every DataFrame and prints a bottom-line summary.
 """
@@ -13,6 +13,7 @@ import traceback
 import numpy as np
 import pandas as pd
 from bexhoma import collectors
+from bexhoma.benchmarks.benchbase.collector import BenchbaseCollector
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_colwidth", None)
@@ -99,9 +100,9 @@ def check_df(df, label, required_cols=None):
 
 
 # ── SETUP ─────────────────────────────────────────────────────────────────────
-sep("Setup: collectors.benchbase (multi-tenancy)")
+sep("Setup: BenchbaseCollector (multi-tenancy)")
 try:
-    collect = collectors.benchbase(path, codes)
+    collect = BenchbaseCollector(path, codes)
     print("  OK    collector created")
 except Exception:
     traceback.print_exc()

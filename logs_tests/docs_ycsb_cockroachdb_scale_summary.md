@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=10
 * Type: ycsb
-* Duration: 4269s 
-* Code: 1792373455
+* Duration: 1584s 
+* Code: 1794698093
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -16,13 +16,15 @@ YCSB SF=10
   * Factors for loading are [4].
   * Factors for benchmarking are [4].
   * Status is logged every 10s.
-  * Experiment uses bexhoma version 0.11.6.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.17.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['CockroachDB'].
   * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker19.
-  * Benchmarking is fixed to cl-worker19.
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
   * SUT is fixed to cl-worker36.
+  * Workers are fixed to cl-worker36, cl-worker37, cl-worker29.
   * Database uses ephemeral storage of size 50Gi.
   * Loading is tested with [64] threads, split into [8] pods.
   * Benchmarking is tested with [64] threads, split into [1] pods.
@@ -35,59 +37,57 @@ YCSB SF=10
 
 ### Connections
 * cockroachdb-1-1-1-1 uses docker image cockroachdb/cockroach:v24.2.4
-  * RAM:2164173172736
+  * RAM:2164173156352
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:567704
+  * disk:1055111
   * cpu_list:0-223
   * args:['-c', 'while true; do echo hello; sleep 10;done']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:540590800896
-    * Cores:96
-    * host:6.8.0-146-generic
-    * node:cl-worker24
-    * disk:156832
-    * datadisk:701772
-    * volume_size:1000G
-    * volume_used:674G
-    * cpu_list:0-95
-  * worker 1
-    * RAM:540579299328
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker22
-    * disk:171242
-    * datadisk:700933
-    * volume_size:1000G
-    * volume_used:674G
-    * cpu_list:0-127
-  * worker 2
     * RAM:1081853952000
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:631582
-    * datadisk:701756
-    * volume_size:1000G
-    * volume_used:674G
+    * disk:677891
+    * datadisk:11678
     * cpu_list:0-127
+  * worker 1
+    * RAM:1081742753792
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:1392776
+    * datadisk:11465
+    * cpu_list:0-127
+  * worker 2
+    * RAM:2164173156352
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:1055111
+    * datadisk:11457
+    * cpu_list:0-223
   * resources_total: 12.25 CPU, 192.5 GiB RAM requested in 4 pods
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
+  * load_durability: relaxed
   * eval_parameters
-    * code:1792373455
+    * code:1794698093
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 
+### Ingestion
+* CockroachDB-1: 8 of 8 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-cockroachdb-1-1792373455-57bb4fdff4-2m8n4: 0
-* bexhoma-worker-cockroachdb-ycsb-10-0: 0
-* bexhoma-worker-cockroachdb-ycsb-10-1: 0
-* bexhoma-worker-cockroachdb-ycsb-10-2: 0
+* bexhoma-sut-cockroachdb-1-1794698093-55dd585f64-lxccf: 0
+* bx-w-cr-1-1794698093-0: 0
+* bx-w-cr-1-1794698093-1: 0
+* bx-w-cr-1-1794698093-2: 0
 
 ### Workflow
 
@@ -103,36 +103,36 @@ YCSB SF=10
 
 #### Per Connection
 
-| connection            |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |    sf |   Throughput [SF/h] |
-|:----------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|------:|--------------------:|
-| cockroachdb-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         1203.89 |              1038303.00 |           1250000.00 |                             23615.00 | 10.00 |               34.67 |
-| cockroachdb-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         1209.11 |              1033814.00 |           1250000.00 |                             23663.00 | 10.00 |               34.82 |
-| cockroachdb-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         1205.14 |              1037221.00 |           1250000.00 |                             23743.00 | 10.00 |               34.71 |
-| cockroachdb-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         1201.90 |              1040024.00 |           1250000.00 |                             23679.00 | 10.00 |               34.61 |
-| cockroachdb-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         1204.92 |              1037411.00 |           1250000.00 |                             23679.00 | 10.00 |               34.70 |
-| cockroachdb-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         1203.78 |              1038396.00 |           1250000.00 |                             23775.00 | 10.00 |               34.67 |
-| cockroachdb-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         1203.63 |              1038524.00 |           1250000.00 |                             23599.00 | 10.00 |               34.66 |
-| cockroachdb-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         1203.14 |              1038950.00 |           1250000.00 |                             23567.00 | 10.00 |               34.65 |
+| connection            |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |    SF |   Throughput [SF/h] |
+|:----------------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|------:|--------------------:|
+| cockroachdb-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2251.11 |               555282.00 |           1250000.00 |                             12815.00 | 10.00 |               64.83 |
+| cockroachdb-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2262.73 |               552430.00 |           1250000.00 |                             12903.00 | 10.00 |               65.17 |
+| cockroachdb-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2256.35 |               553992.00 |           1250000.00 |                             12735.00 | 10.00 |               64.98 |
+| cockroachdb-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2245.89 |               556573.00 |           1250000.00 |                             12799.00 | 10.00 |               64.68 |
+| cockroachdb-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2256.92 |               553851.00 |           1250000.00 |                             12855.00 | 10.00 |               65.00 |
+| cockroachdb-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2260.67 |               552933.00 |           1250000.00 |                             12839.00 | 10.00 |               65.11 |
+| cockroachdb-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2249.05 |               555789.00 |           1250000.00 |                             12879.00 | 10.00 |               64.77 |
+| cockroachdb-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2249.51 |               555677.00 |           1250000.00 |                             12615.00 | 10.00 |               64.79 |
 
 #### Per Run
 
-| DBMS            |   experiment_run |   threads |   target |   pod_count |   exceptions |    sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:----------------|-----------------:|----------:|---------:|------------:|-------------:|------:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| CockroachDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 10.00 |               34.61 |                         9635.51 |              1040024.00 |          10000000.00 |                             23665.00 |
+| DBMS            |   experiment_run |   threads |   target |   pod_count |   errors |    SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:----------------|-----------------:|----------:|---------:|------------:|---------:|------:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| CockroachDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |     0.00 | 10.00 |               64.68 |                        18032.24 |               556573.00 |          10000000.00 |                             12805.00 |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                  | phase             | job                 | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:----------------------|:------------------|:--------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| cockroachdb-1-1-1-1-1 | cockroachdb-1-1-1 | cockroachdb-1-1-1-1 | CockroachDB-1   |                1 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                         3502.95 |              2854738.00 |            5000734 |                           23775.00 |              4999266 |                           1285119.00 |
+| connection            | phase             | job                 |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:----------------------|:------------------|:--------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| cockroachdb-1-1-1-1-1 | cockroachdb-1-1-1 | cockroachdb-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    65536 |        0 |                        15485.70 |               645757.00 |            4999515 |                            6043.00 |              5000485 |                            101567.00 |
 
 #### Per Phase
 
-| DBMS              | phase             |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:------------------|:------------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| cockroachdb-1-1-1 | cockroachdb-1-1-1 |                1 |        64 |    65536 |               1 |           1 |            0 |                         3502.95 |              2854738.00 |            5000734 |                           23775.00 |              4999266 |                           1285119.00 |
+| DBMS              | phase             |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------------|:------------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| cockroachdb-1-1-1 | cockroachdb-1-1-1 |                1 |        1 |               1 |           1 |        64 |    65536 |        0 |                        15485.70 |               645757.00 |            4999515 |                            6043.00 |              5000485 |                            101567.00 |
 
 ### Monitoring
 
@@ -140,25 +140,25 @@ YCSB SF=10
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |     22282.05 |     27.10 |          25.28 |                 64.61 |
+| cockroachdb-1-1-1-1 |     21246.91 |     46.57 |          22.15 |                 53.14 |
 
 ### Loading phase: component loader
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |       765.23 |      1.17 |           0.10 |                  0.10 |
+| cockroachdb-1-1-1-1 |      1018.96 |      2.74 |           0.10 |                  0.10 |
 
 ### Benchmarking phase: component worker
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |     31274.39 |     27.42 |          29.86 |                 70.86 |
+| cockroachdb-1-1-1-1 |     22204.04 |     39.26 |          24.44 |                 67.66 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |       718.87 |      0.78 |           0.20 |                  0.21 |
+| cockroachdb-1-1-1-1 |       784.82 |      1.57 |           0.34 |                  0.34 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -172,6 +172,10 @@ YCSB SF=10
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
@@ -180,6 +184,7 @@ YCSB SF=10
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 * TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column

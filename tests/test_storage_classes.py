@@ -18,13 +18,13 @@ from unittest import mock
 
 import pandas as pd
 
-import tpch
+from bexhoma.benchmarks.tpch import cli as tpch
 from bexhoma import environment
 from bexhoma import spec as catalog_spec
 from bexhoma.cli_args import format_storage_types, split_storage_types
 from bexhoma.experiments.base import ExperimentBase
-from bexhoma.experiments.tpch import TpchExperiment
-from bexhoma.experiments.tpcc import TpccExperiment
+from bexhoma.benchmarks.tpch.experiment import TpchExperiment
+from bexhoma.benchmarks.hammerdb.experiment import HammerdbExperiment
 from tests.test_ycsb_catalog import _BASE_SPEC
 
 
@@ -120,7 +120,7 @@ class StorageTypeListTest(unittest.TestCase):
     def test_the_database_workloads_support_a_sweep(self):
         self.assertFalse(ExperimentBase.supports_storage_sweep)
         self.assertTrue(TpchExperiment.supports_storage_sweep)
-        self.assertTrue(TpccExperiment.supports_storage_sweep)
+        self.assertTrue(HammerdbExperiment.supports_storage_sweep)
 
 
 class TpchStorageCellTest(unittest.TestCase):
@@ -382,7 +382,7 @@ class StorageReusedTest(unittest.TestCase):
             **extra,
         }
         result = {}
-        evaluator = types.SimpleNamespace(get_terminals=lambda parameters: 0)
+        evaluator = types.SimpleNamespace(get_threads=lambda parameters: 0)
         EvaluatorBase.add_connection_to_result(evaluator, connection, 'c', result)
         return result['c']
 

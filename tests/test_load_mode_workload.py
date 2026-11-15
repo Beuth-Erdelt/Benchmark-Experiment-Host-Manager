@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import unittest
 
-from bexhoma.benchmarks.tpch import TPCH
+from bexhoma.benchmarks.tpch.benchmark import TPCH
 
 from .stubs import StubCluster
 

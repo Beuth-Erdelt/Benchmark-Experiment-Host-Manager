@@ -19,6 +19,7 @@ scripts/
 ├── scan-docs.py             # report experiment metadata for every doc log reference
 ├── demo-runs.py             # summary of all recorded demo runs: logs_tests/SUMMARY.md and the README badge
 ├── replace-docs.py          # patch docs with fresh summary content from logs_tests/
+├── result_baseline.py       # record/compare what bexhoma makes of finished runs (guards a refactoring)
 ├── convert-to-lf.ps1        # normalize line endings to LF + UTF-8 no-BOM (Windows)
 ├── _reorder_flags.py        # reorder bexhoma flags to canonical order in test scripts
 ├── _sync_docs.py            # sync example commands in docs/ from test-docs-*.sh
