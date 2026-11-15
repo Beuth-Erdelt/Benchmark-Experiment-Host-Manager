@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 2200s 
-* Code: 1792692159
+* Duration: 662s 
+* Code: 1794591998
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -14,7 +14,7 @@ TPC-H Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.8.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -27,17 +27,17 @@ TPC-H Queries SF=1
   * Experiment is run 2 times.
   * Maximum DBMS across the whole cluster is 10.
   * Results are validated against basic correctness requirements.
-  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem'}, '2GB')].
+  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost', 'target': 'container'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency', 'target': 'container'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method', 'target': 'container'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather', 'target': 'container'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers', 'target': 'container'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes', 'target': 'container'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers', 'target': 'container'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size', 'target': 'container'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem', 'target': 'container'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem', 'target': 'container'}, '2GB')].
   * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
 * postgresql-1-1-1-1-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:919478
+  * disk:1122758
   * datadisk:2757
   * volume_size:49G
   * volume_used:2.7G
@@ -50,14 +50,14 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792692159
+    * code:1794591998
 * postgresql-1-2-1-1-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:919644
+  * disk:1122759
   * datadisk:2757
   * volume_size:49G
   * volume_used:2.7G
@@ -70,14 +70,21 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792692159
+    * code:1794591998
 
 ### Inherited Loading
 * loading skipped, loading times copied from an earlier repetition: PostgreSQL-1-2
 
+### Data Parameters of Reused Volumes
+* PostgreSQL-1: DDL values of the volume: index_method=btree, btree_dedup=on, statistics_target=100, extended_statistics=off
+* PostgreSQL-1: loading values of the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
+
+### Ingestion
+* PostgreSQL-1: 50 of 50 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1792692159-5445bcd6bb-g4grx: 0
-* bexhoma-sut-postgresql-1-1792692159-7f6d67d5bc-cbswk: 0
+* bexhoma-sut-postgresql-1-1794591998-5b9fcf69c4-hxmb8: 0
+* bexhoma-sut-postgresql-1-1794591998-986c7c55-g89vv: 0
 
 ### Workflow
 
@@ -95,26 +102,26 @@ TPC-H Queries SF=1
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    1 |       76.00 |           8.00 |           21.00 |          8.00 |           34.00 |              8 |           0 |             |                |             0 | False         |               47.37 | False               |
-| PostgreSQL-1-2 |                2 |    1 |       76.00 |           8.00 |           21.00 |          8.00 |           34.00 |              8 |           0 |             |                |             0 | False         |               47.37 | True                |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       62.00 |           5.00 |           21.00 |          7.00 |           24.00 |              8 |         0 |             |                |             0 | False         |               58.06 | False               |
+| PostgreSQL-1-2 |                2 |    1 |       62.00 |           5.00 |           21.00 |          7.00 |           24.00 |              8 |         0 |             |                |             0 | False         |               58.06 | True                |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         15 |            0.26 |            14833.64 |           5280.00 |           0 | postgresql-1-1-1-1-1 |
-| postgresql-1-2-1-1-1 | PostgreSQL-1    | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         25 |            0.37 |            10335.11 |           3168.00 |           0 | postgresql-1-2-1-1-1 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         15 |            0.29 |            13315.81 |           5280.00 |           0 |
+| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         23 |            0.45 |             8461.97 |           3443.48 |           0 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         15 |            0.26 |            14833.64 |           5280.00 |           0 |
-| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         25 |            0.37 |            10335.11 |           3168.00 |           0 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         15 |            0.29 |            13315.81 |           5280.00 |           0 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         23 |            0.45 |             8461.97 |           3443.48 |           0 |
 
 #### Query Completion per Phase
 
@@ -128,28 +135,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   postgresql-1-1-1-1-1 |   postgresql-1-2-1-1-1 |
 |:----------------------------------------------------|-----------------------:|-----------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |                1453.88 |                1358.30 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |                 169.82 |                1192.02 |
-| Shipping Priority (TPC-H Q3)                        |                 416.70 |                6066.66 |
-| Order Priority Checking Query (TPC-H Q4)            |                 116.52 |                 123.31 |
-| Local Supplier Volume (TPC-H Q5)                    |                 184.21 |                 193.36 |
-| Forecasting Revenue Change (TPC-H Q6)               |                 227.71 |                 214.16 |
-| Volume Shipping Query (TPC-H Q7)                    |                 258.92 |                 249.99 |
-| National Market Share (TPC-H Q8)                    |                 141.28 |                1077.96 |
-| Product Type Profit Measure (TPC-H Q9)              |                 511.48 |                 881.05 |
-| Returned Item Reporting Query (TPC-H Q10)           |                 230.13 |                 231.50 |
-| Important Stock Identification (TPC-H Q11)          |                  57.02 |                  52.62 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |                 348.25 |                 351.59 |
-| Customer Distribution (TPC-H Q13)                   |                 612.00 |                 598.73 |
-| Promotion Effect Query (TPC-H Q14)                  |                 245.70 |                 236.66 |
-| Top Supplier Query (TPC-H Q15)                      |                 253.46 |                 241.91 |
-| Parts/Supplier Relationship (TPC-H Q16)             |                 196.95 |                 340.42 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |                 495.09 |                 486.26 |
-| Large Volume Customer (TPC-H Q18)                   |                2093.17 |                1994.49 |
-| Discounted Revenue (TPC-H Q19)                      |                  41.31 |                  48.24 |
-| Potential Part Promotion (TPC-H Q20)                |                  85.27 |                 109.94 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                 357.43 |                 356.45 |
-| Global Sales Opportunity Query (TPC-H Q22)          |                  70.29 |                  76.88 |
+| Pricing Summary Report (TPC-H Q1)                   |                1250.25 |                2174.19 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                 169.45 |                1129.57 |
+| Shipping Priority (TPC-H Q3)                        |                 404.77 |                5508.30 |
+| Order Priority Checking Query (TPC-H Q4)            |                 124.36 |                 166.30 |
+| Local Supplier Volume (TPC-H Q5)                    |                 207.94 |                 269.09 |
+| Forecasting Revenue Change (TPC-H Q6)               |                 216.17 |                 263.26 |
+| Volume Shipping Query (TPC-H Q7)                    |                 258.69 |                 297.38 |
+| National Market Share (TPC-H Q8)                    |                 137.61 |                 890.25 |
+| Product Type Profit Measure (TPC-H Q9)              |                 508.27 |                1031.26 |
+| Returned Item Reporting Query (TPC-H Q10)           |                 233.42 |                 513.60 |
+| Important Stock Identification (TPC-H Q11)          |                  61.43 |                 161.42 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                 352.98 |                 493.07 |
+| Customer Distribution (TPC-H Q13)                   |                1366.38 |                 622.27 |
+| Promotion Effect Query (TPC-H Q14)                  |                1320.01 |                1265.22 |
+| Top Supplier Query (TPC-H Q15)                      |                 246.61 |                 289.03 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                 156.09 |                 157.60 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                 485.99 |                 490.14 |
+| Large Volume Customer (TPC-H Q18)                   |                2171.27 |                2119.67 |
+| Discounted Revenue (TPC-H Q19)                      |                  39.33 |                  40.63 |
+| Potential Part Promotion (TPC-H Q20)                |                  92.10 |                  90.05 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                 379.35 |                 389.65 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                  71.97 |                  72.26 |
 
 ### Errors (failed queries)
 
@@ -161,6 +168,10 @@ No warnings
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

@@ -1,5 +1,5 @@
 """
-Unit tests for :mod:`bexhoma.hardware_baseline`.
+Unit tests for :mod:`bexhoma.benchmarks.hardware.baseline`.
 
 Schedule-computation tests run against plain node-name lists (no cluster
 needed). The setup-phase tests construct a real ``HardwareExperiment``
@@ -37,8 +37,8 @@ from unittest import mock
 
 import pandas as pd
 
-from bexhoma import hardware_baseline
-from bexhoma.experiments.hardware import HardwareExperiment
+from bexhoma.benchmarks.hardware import baseline as hardware_baseline
+from bexhoma.benchmarks.hardware.experiment import HardwareExperiment
 
 from .stubs import StubCluster
 
@@ -56,7 +56,7 @@ class _HardwareStubCluster(StubCluster):
 
 
 class ComputeRoundRobinScheduleTest(unittest.TestCase):
-    """Tests for :func:`bexhoma.hardware_baseline.compute_round_robin_schedule`."""
+    """Tests for :func:`bexhoma.benchmarks.hardware.baseline.compute_round_robin_schedule`."""
 
     def _assert_valid_schedule(self, nodes: list) -> dict:
         """Assert full-coverage, disjoint-per-round, reciprocated pairing; return the schedule."""
@@ -107,7 +107,7 @@ class ComputeRoundRobinScheduleTest(unittest.TestCase):
 
 
 class ComputeStarScheduleTest(unittest.TestCase):
-    """Tests for :func:`bexhoma.hardware_baseline.compute_star_schedule`."""
+    """Tests for :func:`bexhoma.benchmarks.hardware.baseline.compute_star_schedule`."""
 
     def test_every_spoke_targets_the_hub(self) -> None:
         schedule = hardware_baseline.compute_star_schedule(['n1', 'n2', 'n3'], 'n1')
@@ -127,7 +127,7 @@ class ComputeStarScheduleTest(unittest.TestCase):
 
 
 class SanitizeNodeIdTest(unittest.TestCase):
-    """Tests for :func:`bexhoma.hardware_baseline._sanitize_node_id`."""
+    """Tests for :func:`bexhoma.benchmarks.hardware.baseline._sanitize_node_id`."""
 
     def test_lowercases_and_replaces_invalid_characters(self) -> None:
         self.assertEqual(
@@ -142,7 +142,7 @@ class SanitizeNodeIdTest(unittest.TestCase):
 
 
 class SanitizeStorageClassIdTest(unittest.TestCase):
-    """Tests for :func:`bexhoma.hardware_baseline._sanitize_storage_class_id`."""
+    """Tests for :func:`bexhoma.benchmarks.hardware.baseline._sanitize_storage_class_id`."""
 
     def test_lowercases_and_replaces_invalid_characters(self) -> None:
         self.assertEqual(hardware_baseline._sanitize_storage_class_id('Ceph_CSI'), 'ceph-csi')
@@ -153,7 +153,7 @@ class SanitizeStorageClassIdTest(unittest.TestCase):
 
 
 class FindMissingResultsTest(unittest.TestCase):
-    """Tests for :func:`bexhoma.hardware_baseline._find_missing_results`."""
+    """Tests for :func:`bexhoma.benchmarks.hardware.baseline._find_missing_results`."""
 
     def test_complete_sweep_has_nothing_missing(self) -> None:
         result = hardware_baseline.HardwareBaselineResult(
@@ -186,7 +186,7 @@ class FindMissingResultsTest(unittest.TestCase):
 
 
 class ValidateStorageClassesTest(unittest.TestCase):
-    """Tests for :func:`bexhoma.hardware_baseline._validate_storage_classes`."""
+    """Tests for :func:`bexhoma.benchmarks.hardware.baseline._validate_storage_classes`."""
 
     def test_none_input_yields_no_extra_classes(self) -> None:
         self.assertEqual(hardware_baseline._validate_storage_classes(None), [])
@@ -209,7 +209,7 @@ class ValidateStorageClassesTest(unittest.TestCase):
 
 
 class BuildParsedArgsTest(unittest.TestCase):
-    """Tests for :func:`bexhoma.hardware_baseline._build_parsed_args`."""
+    """Tests for :func:`bexhoma.benchmarks.hardware.baseline._build_parsed_args`."""
 
     def test_overrides_expected_fields(self) -> None:
         args = hardware_baseline._build_parsed_args(timeout_minutes=7, hardware_duration=20)
@@ -385,7 +385,7 @@ class RunHardwareBaselineSetupTest(unittest.TestCase):
 
 
 class _FakeHardwareEvaluator:
-    """Stands in for :class:`bexhoma.evaluators.hardware.HardwareEvaluator`,
+    """Stands in for :class:`bexhoma.benchmarks.hardware.evaluator.HardwareEvaluator`,
     returning a pre-built already-aggregated DataFrame directly instead of
     reading log files off disk -- ``_collect_results`` only cares about the
     evaluator's public shape (``get_df_benchmarking``/
@@ -414,7 +414,7 @@ def _fake_experiment(df_aggregated: pd.DataFrame) -> SimpleNamespace:
 
 
 class CollectResultsTest(unittest.TestCase):
-    """Tests for :func:`bexhoma.hardware_baseline._collect_results`.
+    """Tests for :func:`bexhoma.benchmarks.hardware.baseline._collect_results`.
 
     Exercises the ``client``-column round-index convention directly against
     realistic (1-indexed -- see ``hardware_baseline._CPU_BASELINE_ROUND``'s

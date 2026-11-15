@@ -3,8 +3,8 @@
 ### Workload
 SSB Data Profiling SF=1
 * Type: ssb
-* Duration: 517s 
-* Code: 1794007042
+* Duration: 492s 
+* Code: 1794598670
 * Row count, count distinct, minimum and maximum of the key and date columns of each table.
 * This experiment compares imported SSB data sets in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -13,7 +13,7 @@ SSB Data Profiling SF=1
   * Timeout per query is 1200.
   * Data transfer volume per query is also measured.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL', 'MonetDB', 'ClickHouse'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -36,10 +36,10 @@ SSB Data Profiling SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:871726
-  * datadisk:506
+  * disk:1149076
+  * datadisk:499
   * volume_size:1.8T
-  * volume_used:852G
+  * volume_used:1.1T
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
@@ -48,14 +48,14 @@ SSB Data Profiling SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794007042
+    * code:1794598670
 * monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:872018
+  * disk:1149086
   * datadisk:862
   * cpu_list:0-223
   * requests_cpu:4
@@ -65,17 +65,17 @@ SSB Data Profiling SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794007042
+    * code:1794598670
 * postgresql-1-1-1-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:872018
+  * disk:1149086
   * datadisk:1354
   * volume_size:1.8T
-  * volume_used:852G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -85,12 +85,17 @@ SSB Data Profiling SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794007042
+    * code:1794598670
+
+### Ingestion
+* ClickHouse-1: 12 of 12 units ok
+* MonetDB-1: 12 of 12 units ok
+* PostgreSQL-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-clickhouse-1-1794007042-7c4fd8d676-n7w7n: 0
-* bexhoma-sut-monetdb-1-1794007042-544848ffbc-4nk47: 0
-* bexhoma-sut-postgresql-1-1794007042-84b4b77d5d-g8nzd: 0
+* bexhoma-sut-clickhouse-1-1794598670-6d6c6c4db8-h4rjj: 0
+* bexhoma-sut-monetdb-1-1794598670-68f87755dc-6crm7: 0
+* bexhoma-sut-postgresql-1-1794598670-dc65dcd48-w5m8k: 0
 
 ### Workflow
 
@@ -110,29 +115,29 @@ SSB Data Profiling SF=1
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| ClickHouse-1-1 |                1 |    1 |       65.00 |           3.00 |           48.00 |          2.00 |            2.00 |              8 |           0 |             | None           |             0 | False         |               55.38 | False               |
-| MonetDB-1-1    |                1 |    1 |       64.00 |           3.00 |           33.00 |         11.00 |            3.00 |              8 |           0 |             | None           |             0 | False         |               56.25 | False               |
-| PostgreSQL-1-1 |                1 |    1 |       60.00 |           5.00 |           36.00 |          4.00 |            7.00 |              8 |           0 |             | None           |             0 | False         |               60.00 | False               |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| ClickHouse-1-1 |                1 |    1 |       66.00 |           3.00 |           40.00 |          3.00 |            2.00 |              8 |         0 |             | None           |             0 | False         |               54.55 | False               |
+| MonetDB-1-1    |                1 |    1 |       60.00 |           3.00 |           34.00 |         10.00 |            2.00 |              8 |         0 |             | None           |             0 | False         |               60.00 | False               |
+| PostgreSQL-1-1 |                1 |    1 |       59.00 |           4.00 |           35.00 |          4.00 |            7.00 |              8 |         0 |             | None           |             0 | False         |               61.02 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| clickhouse-1-1-1-1-1 | ClickHouse-1    | clickhouse-1-1-1 | clickhouse-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          2 |            0.02 |           215640.44 |          18000.00 |          -1 | clickhouse-1-1-1-1-1 |
-| monetdb-1-1-1-1-1    | MonetDB-1       | monetdb-1-1-1    | monetdb-1-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          1 |            0.03 |           143183.66 |          36000.00 |          -1 | monetdb-1-1-1-1-1    |
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          8 |            0.13 |            27434.03 |           4500.00 |          -1 | postgresql-1-1-1-1-1 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| clickhouse-1-1-1-1-1 | clickhouse-1-1-1 | clickhouse-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               10 |                  10 |          2 |            0.03 |           142902.21 |          18000.00 |          -1 |
+| monetdb-1-1-1-1-1    | monetdb-1-1-1    | monetdb-1-1-1-1    |                1 |        1 |               1 |       1 | 1.00 |               10 |                  10 |          3 |            0.04 |            90302.01 |          12000.00 |          -1 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               10 |                  10 |          8 |            0.19 |            19704.05 |           4500.00 |          -1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| clickhouse-1-1-1 | clickhouse-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          2 |            0.02 |           215640.44 |          18000.00 |          -1 |
-| monetdb-1-1-1    | monetdb-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          1 |            0.03 |           143183.66 |          36000.00 |          -1 |
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          8 |            0.13 |            27434.03 |           4500.00 |          -1 |
+| clickhouse-1-1-1 | clickhouse-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          2 |            0.03 |           142902.21 |          18000.00 |          -1 |
+| monetdb-1-1-1    | monetdb-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          3 |            0.04 |            90302.01 |          12000.00 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          8 |            0.19 |            19704.05 |           4500.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -147,16 +152,16 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                             |   clickhouse-1-1-1-1-1 |   monetdb-1-1-1-1-1 |   postgresql-1-1-1-1-1 |
 |:------------------------------------|-----------------------:|--------------------:|-----------------------:|
-| stats about customer.c_custkey      |                 103.08 |               19.14 |                  41.34 |
-| stats about supplier.s_suppkey      |                   5.01 |                2.22 |                   1.34 |
-| stats about part.p_partkey          |                  12.84 |                2.65 |                  23.16 |
-| stats about dates.d_datekey         |                  26.81 |                2.04 |                   1.55 |
-| stats about lineorder.lo_orderkey   |                  23.26 |              145.93 |                 980.46 |
-| stats about lineorder.lo_custkey    |                  16.18 |               73.69 |                 768.83 |
-| stats about lineorder.lo_partkey    |                  22.98 |              107.87 |                1014.79 |
-| stats about lineorder.lo_suppkey    |                  10.22 |               65.19 |                1139.41 |
-| stats about lineorder.lo_orderdate  |                   9.66 |               73.59 |                1059.95 |
-| stats about lineorder.lo_commitdate |                  11.07 |               79.13 |                 823.37 |
+| stats about customer.c_custkey      |                 227.33 |               34.12 |                  57.94 |
+| stats about supplier.s_suppkey      |                   7.94 |                3.78 |                   3.59 |
+| stats about part.p_partkey          |                  21.86 |                4.91 |                  59.32 |
+| stats about dates.d_datekey         |                  41.21 |                2.63 |                   2.17 |
+| stats about lineorder.lo_orderkey   |                  36.53 |              348.78 |                1383.64 |
+| stats about lineorder.lo_custkey    |                  17.87 |              190.40 |                 931.47 |
+| stats about lineorder.lo_partkey    |                  37.10 |              275.46 |                1174.03 |
+| stats about lineorder.lo_suppkey    |                  15.28 |               78.17 |                1033.42 |
+| stats about lineorder.lo_orderdate  |                  10.34 |               66.27 |                1284.80 |
+| stats about lineorder.lo_commitdate |                  16.54 |               64.42 |                 770.34 |
 
 ### Errors (failed queries)
 
@@ -170,6 +175,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

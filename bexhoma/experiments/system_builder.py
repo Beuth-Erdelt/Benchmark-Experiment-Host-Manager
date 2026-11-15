@@ -1,7 +1,7 @@
 """
 Build the configuration of one DBMS for one benchmark from the cluster configuration.
 
-The entry scripts (``tpch.py``, ``hammerdb.py``, ...) used to carry one block per DBMS
+The entry scripts of the benchmarks used to carry one block per DBMS
 that named the DBMS and set its scripts, storage and parameters. Everything
 specific to a DBMS now lives in the ``dockers:`` section of ``cluster.config``
 (:mod:`bexhoma.system_descriptors`); a script loops over :func:`selected_dockers` and
@@ -126,7 +126,7 @@ def set_loading_template(config, entry: dict, docker: str, benchmark: str) -> No
     """Give the configuration the loading job of its DBMS, and refuse a DBMS that has none.
 
     The job is the ``loading_template`` of the DBMS's entry. There is no default: a benchmark whose
-    experiment brings a loading job of its own (HammerDB, Benchbase, YCSB) needs no entry, every
+    experiment brings a loading job of its own needs no entry, every
     other needs one for each DBMS that loads. Nothing is needed when loading is off (``-sl``, ``start``).
 
     :param config: The configuration.
@@ -250,7 +250,7 @@ def loading_variants(entry: dict, threads: list) -> list:
 
 
 def loading_layouts(dockers: dict, benchmark: str, args, splits: list, pods: list, threads: list):
-    """The ways to load each selected DBMS, for the scripts that load with parallel pods (TPC-H, TPC-DS, SSB).
+    """The ways to load each selected DBMS, for the scripts that load with parallel pods.
 
     One layout per split of ``-nls``, number of pods of ``-nlp`` (a split larger than the number of
     pods is skipped), DBMS of :func:`selected_dockers` and set of :func:`loading_variants`, with the

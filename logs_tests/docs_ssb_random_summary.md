@@ -3,8 +3,8 @@
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 470s 
-* Code: 1794005468
+* Duration: 421s 
+* Code: 1794597119
 * This includes the 13 queries of the Star Schema Benchmark as templates with random parameters (generalization after Rabl et al., ICPE 2013): every predicate picks a random member of its hierarchy level or moves its range, so each query keeps the filter factor of the specification.
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -16,7 +16,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -39,10 +39,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:870822
+  * disk:1124399
   * datadisk:1581
   * volume_size:1.8T
-  * volume_used:851G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -52,17 +52,17 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794005468
+    * code:1794597119
 * postgresql-1-1-2-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:870823
+  * disk:1124400
   * datadisk:1581
   * volume_size:1.8T
-  * volume_used:851G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -72,17 +72,17 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794005468
+    * code:1794597119
 * postgresql-1-1-2-1-2 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:870823
+  * disk:1124400
   * datadisk:1581
   * volume_size:1.8T
-  * volume_used:851G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -92,10 +92,13 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794005468
+    * code:1794597119
+
+### Ingestion
+* PostgreSQL-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794005468-fd4d6967-4lrm7: 0
+* bexhoma-sut-postgresql-1-1794597119-c75867bd6-vn6vn: 0
 
 ### Workflow
 
@@ -113,26 +116,26 @@ SSB Queries SF=1
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    1 |       64.00 |           5.00 |           27.00 |          5.00 |           18.00 |              8 |           0 |             | None           |             0 | False         |               56.25 | False               |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       65.00 |           5.00 |           27.00 |          5.00 |           19.00 |              8 |         0 |             | None           |             0 | False         |               55.38 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.09 |            43217.07 |           9360.00 |          -1 | postgresql-1-1-1-1-1 |
-| postgresql-1-1-2-1-1 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.09 |            43078.17 |           7800.00 |          -1 | postgresql-1-1-2-1-1 |
-| postgresql-1-1-2-1-2 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.08 |            46204.84 |           9360.00 |          -1 | postgresql-1-1-2-1-2 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          5 |            0.09 |            40493.65 |           9360.00 |          -1 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               13 |                  13 |          6 |            0.09 |            42258.28 |           7800.00 |          -1 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 | 1.00 |               13 |                  13 |          5 |            0.09 |            41803.80 |           9360.00 |          -1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.09 |            43217.07 |           9360.00 |          -1 |
-| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |               26 |                  26 |          6 |            0.08 |            44614.12 |          15600.00 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.09 |            40493.65 |           9360.00 |          -1 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |               26 |                  26 |          6 |            0.09 |            42030.43 |          15600.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -146,19 +149,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   postgresql-1-1-1-1-1 |   postgresql-1-1-2-1-1 |   postgresql-1-1-2-1-2 |
 |:---------------------------------------------------------------------------------------|-----------------------:|-----------------------:|-----------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 457.86 |                 371.71 |                 325.42 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  21.97 |                  21.82 |                  20.82 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                   7.06 |                   6.90 |                   6.91 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                 155.55 |                 156.06 |                 130.68 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  61.21 |                  55.60 |                  55.57 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                   8.06 |                   6.80 |                   5.89 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                 240.38 |                 251.34 |                 236.25 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                 177.17 |                 173.88 |                 146.03 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  33.25 |                  31.54 |                  28.33 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  38.68 |                  36.68 |                  34.96 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                 800.40 |                1167.99 |                1113.52 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                 318.45 |                 341.75 |                 341.84 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                 122.32 |                 145.58 |                 149.77 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 413.74 |                 384.28 |                 390.73 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  25.74 |                  22.69 |                  25.82 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                   9.53 |                   8.99 |                   9.03 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                 175.98 |                 164.38 |                 161.57 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  74.99 |                  68.53 |                  68.54 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                   8.90 |                   7.86 |                   8.22 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                 229.25 |                 232.44 |                 232.09 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                 194.86 |                 188.29 |                 179.14 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  24.85 |                  26.61 |                  26.30 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  31.68 |                  34.74 |                  33.63 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                 991.27 |                 916.15 |                 919.46 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                 345.50 |                 339.74 |                 348.61 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                 150.95 |                 142.35 |                 146.55 |
 
 ### Errors (failed queries)
 
@@ -172,6 +175,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

@@ -2,7 +2,7 @@
 TLS material for a SUT: a self-signed CA plus a server certificate in a Secret.
 
 MySQL 9 has no ``mysql_native_password``; ``caching_sha2_password`` needs TLS
-(or the server's RSA key) for a client's first login, and HammerDB only does
+(or the server's RSA key) for a client's first login, and some benchmarking tools only do
 TLS with a readable CA file. bexhoma therefore creates one Secret per SUT,
 mounts it into the server and gives the clients the CA.
 

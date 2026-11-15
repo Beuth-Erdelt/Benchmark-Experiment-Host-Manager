@@ -21,7 +21,7 @@ from pathlib import Path
 import yaml
 
 from bexhoma import spec as catalog_spec
-from bexhoma.experiments import tpch_catalog
+from bexhoma.benchmarks.tpch import catalog as tpch_catalog
 import experiment as experiment_cli
 
 __all__ = ["run", "refresh_cluster_credentials", "main"]

@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   bexhoma.benchmarks
    bexhoma.collectors
    bexhoma.evaluators
    bexhoma.experiments

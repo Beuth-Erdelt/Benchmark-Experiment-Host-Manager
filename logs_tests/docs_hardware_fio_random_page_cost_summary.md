@@ -3,8 +3,8 @@
 ### Workload
 Hardware Benchmark (fio)
 * Type: hardware
-* Duration: 266s 
-* Code: 1793240941
+* Duration: 257s 
+* Code: 1794477372
 * fio/sysbench driver runs the experiment.
 * This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
   * Benchmark tool: fio.
@@ -17,7 +17,7 @@ Hardware Benchmark (fio)
   * Fdatasync interval(s) swept: [0].
   * Overwrite (prefilled test file) swept: ['0'].
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.10.
+  * Experiment uses bexhoma version 0.11.17.
   * System metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['Hardware'].
   * Benchmarking is fixed to cl-worker38.
@@ -31,13 +31,13 @@ Hardware Benchmark (fio)
   * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.11.10
+* hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.11.17
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:363109
+  * disk:902249
   * volume_size:48.9G
   * volume_used:24.0K
   * cpu_list:0-223
@@ -46,14 +46,14 @@ Hardware Benchmark (fio)
   * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1793240941
-* hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.11.10
+    * code:1794477372
+* hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.11.17
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:363110
+  * disk:902249
   * volume_size:48.9G
   * volume_used:32.0K
   * cpu_list:0-223
@@ -62,10 +62,10 @@ Hardware Benchmark (fio)
   * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1793240941
+    * code:1794477372
 
 ### SUT Container Restarts
-* bexhoma-sut-hardware-1-1793240941-7fbbbc4f6d-2j4gf: 0
+* bexhoma-sut-hardware-1-1794477372-56789c966b-s5qkz: 0
 
 ### Workflow
 
@@ -85,15 +85,15 @@ Hardware Benchmark (fio)
 
 | DBMS               | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_overwrite |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   errors |
 |:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------:|
-| hardware-1-1-1-1-1 | hardware-1-1-1 | hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         67 | read              | 8k                |                     64 | libaio                |                    0 |                        0 |                        0 |                       50 |                      1 |                  8659.23 |                      0.00 |                           9.90 |                            0.00 |                          11.08 |                            0.00 |                  1 |        0 |
-| hardware-1-1-2-1-1 | hardware-1-1-2 | hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         67 | randread          | 8k                |                     64 | libaio                |                    0 |                        0 |                        0 |                       50 |                      1 |                 76455.18 |                      0.00 |                           1.25 |                            0.00 |                           2.09 |                            0.00 |                  1 |        0 |
+| hardware-1-1-1-1-1 | hardware-1-1-1 | hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         67 | read              | 8k                |                     64 | libaio                |                    0 |                        0 |                        0 |                       50 |                      1 |                 11094.60 |                      0.00 |                           9.37 |                            0.00 |                          10.16 |                            0.00 |                  1 |        0 |
+| hardware-1-1-2-1-1 | hardware-1-1-2 | hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         66 | randread          | 8k                |                     64 | libaio                |                    0 |                        0 |                        0 |                       50 |                      1 |                 84560.07 |                      0.00 |                           1.12 |                            0.00 |                           1.40 |                            0.00 |                  1 |        0 |
 
 #### Per Phase
 
 | DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_overwrite |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   hardware_threads |   errors | hardware_type   |
 |:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|-------------------:|---------:|:----------------|
-| hardware-1-1-1 | hardware-1-1-1 |                1 |        1 |               1 |           1 |         67 | read              | 8k                |                     64 | libaio                |                    0 |                        0 |                        0 |                       50 |                  8659.23 |                      0.00 |                           9.90 |                            0.00 |                          11.08 |                            0.00 |                  1 |        0 | fio             |
-| hardware-1-1-2 | hardware-1-1-2 |                1 |        2 |               1 |           1 |         67 | randread          | 8k                |                     64 | libaio                |                    0 |                        0 |                        0 |                       50 |                 76455.18 |                      0.00 |                           1.25 |                            0.00 |                           2.09 |                            0.00 |                  1 |        0 | fio             |
+| hardware-1-1-1 | hardware-1-1-1 |                1 |        1 |               1 |           1 |         67 | read              | 8k                |                     64 | libaio                |                    0 |                        0 |                        0 |                       50 |                 11094.60 |                      0.00 |                           9.37 |                            0.00 |                          10.16 |                            0.00 |                  1 |        0 | fio             |
+| hardware-1-1-2 | hardware-1-1-2 |                1 |        2 |               1 |           1 |         66 | randread          | 8k                |                     64 | libaio                |                    0 |                        0 |                        0 |                       50 |                 84560.07 |                      0.00 |                           1.12 |                            0.00 |                           1.40 |                            0.00 |                  1 |        0 | fio             |
 
 ### Monitoring
 
@@ -101,15 +101,15 @@ Hardware Benchmark (fio)
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| hardware-1-1-1-1 |        74.99 |      1.72 |           0.21 |                  0.21 |
-| hardware-1-1-2-1 |        54.90 |      1.39 |           0.21 |                  0.21 |
+| hardware-1-1-1-1 |        75.60 |      2.02 |           0.23 |                  0.23 |
+| hardware-1-1-2-1 |        84.17 |      1.93 |           0.23 |                  0.23 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| hardware-1-1-1-1 |         0.85 |      0.00 |           0.00 |                  0.00 |
-| hardware-1-1-2-1 |         0.84 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-1-1-1 |         0.85 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-1-2-1 |         0.82 |      0.00 |           0.00 |                  0.00 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -127,6 +127,8 @@ Hardware Benchmark (fio)
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]

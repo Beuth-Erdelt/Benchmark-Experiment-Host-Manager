@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1792619082
-Experiment                    : starts at 2026-10-21 23:44:42.819875 (31024.710525)
+Experiment                    : has code 1794619306
+Experiment                    : starts at 2026-11-14 02:21:46.456825 (255849.0633023)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -16,7 +16,7 @@ Factors for benchmarking are [1].
 Status is logged every 10s.
 TiDB uses 3 SUT replica(s) and 3 PD node(s).
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.7.
+Experiment uses bexhoma version 0.11.17.
 Experiment is limited to DBMS ['TiDB'].
 Import is handled by 8 processes (pods).
 Loading is tested with [64] threads, split into [8] pods.
@@ -32,108 +32,111 @@ TiDB-1                        : will start now
 TiDB-1                        : deployments ['sut']
 TiDB-1                        : stateful sets ['pd', 'tikv']
 TiDB-1                        : pvcs []
-TiDB-1                        : name of SUT pods = bexhoma-sut-tidb-1-1792619082
-TiDB-1                        : name of SUT service = bexhoma-sut-tidb-1-1792619082
-TiDB-1                        : name of worker pods = bexhoma-worker-tidb-ycsb-1
-TiDB-1                        : name of worker service headless = bexhoma-worker-tidb-ycsb-1
-Loop pass                     : took 3.3s (1 kubectl calls 1.6s, 9 API requests 1.2s)
+TiDB-1                        : name of SUT pods = bexhoma-sut-tidb-1-1794619306
+TiDB-1                        : name of SUT service = bexhoma-sut-tidb-1-1794619306
+TiDB-1                        : name of worker pods = bx-w-ti-1-1794619306
+TiDB-1                        : name of worker service headless = bx-w-ti-1-1794619306
+Loop pass                     : took 2.7s (1 kubectl calls 1.3s, 9 API requests 0.6s)
 - waiting 30s -               : done
 TiDB-1                        : waits for health check to succeed
-Loop pass                     : took 2.8s (0 kubectl calls 0.0s, 24 API requests 2.7s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 24 API requests 1.0s)
 - waiting 30s -               : done
-TiDB-1                        : worker pods found: ['bexhoma-pd-tidb-ycsb-1-0', 'bexhoma-pd-tidb-ycsb-1-1', 'bexhoma-pd-tidb-ycsb-1-2']
-TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-ycsb-1-0', 'bexhoma-pd-tidb-ycsb-1-1', 'bexhoma-pd-tidb-ycsb-1-2']
+TiDB-1                        : worker pods found: ['bx-pd-ti-1-1794619306-0', 'bx-pd-ti-1-1794619306-1', 'bx-pd-ti-1-1794619306-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bx-pd-ti-1-1794619306-0', 'bx-pd-ti-1-1794619306-1', 'bx-pd-ti-1-1794619306-2']
 TiDB-1                        : found 3 / 3 running workers (component pd)
-TiDB-1                        : worker pods found: ['bexhoma-tikv-tidb-ycsb-1-0', 'bexhoma-tikv-tidb-ycsb-1-1', 'bexhoma-tikv-tidb-ycsb-1-2']
-TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-ycsb-1-0', 'bexhoma-tikv-tidb-ycsb-1-1', 'bexhoma-tikv-tidb-ycsb-1-2']
+TiDB-1                        : worker pods found: ['bx-tikv-ti-1-1794619306-0', 'bx-tikv-ti-1-1794619306-1', 'bx-tikv-ti-1-1794619306-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bx-tikv-ti-1-1794619306-0', 'bx-tikv-ti-1-1794619306-1', 'bx-tikv-ti-1-1794619306-2']
 TiDB-1                        : found 3 / 3 running workers (component tikv)
 TiDB-1                        : is not loaded yet
-TiDB-1                        : will start loading but not before 2026-10-21 21:46:54 (that is in 60 secs)
-Loop pass                     : took 4.9s (0 kubectl calls 0.0s, 38 API requests 4.3s)
+TiDB-1                        : will start loading but not before 2026-11-14 01:23:53 (that is in 60 secs)
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 38 API requests 1.3s)
 - waiting 30s -               : done
 TiDB-1                        : is not loaded yet
-TiDB-1                        : will start loading but not before 2026-10-21 21:46:54
-Loop pass                     : took 4.7s (0 kubectl calls 0.0s, 17 API requests 2.1s)
+TiDB-1                        : will start loading but not before 2026-11-14 01:23:53
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 17 API requests 0.9s)
 - waiting 30s -               : done
 TiDB-1                        : is not loaded yet
 TiDB-1                        : load durability relaxed, scripts []
-TiDB-1                        : connect to pod bexhoma-sut-tidb-1-1792619082-55977579f4-48hzg to load scripts
+TiDB-1                        : connect to pod bexhoma-sut-tidb-1-1794619306-658546c4c7-dszsj to load scripts
 TiDB-1                        : start asynch loading scripts of type schema
 TiDB-1                        : waits for the Schema scripts (schema=True) before starting the loading jobs
-TiDB-1                        : Schema scripts done after 4s
+TiDB-1                        : Schema scripts done after 6s
 TiDB-1                        : is loading
-Loop pass                     : took 17.0s (5 kubectl calls 5.8s, 38 API requests 6.0s)
+Loop pass                     : took 16.2s (5 kubectl calls 6.7s, 40 API requests 2.7s)
 - waiting 30s -               : done
 TiDB-1                        : is loading
-Loop pass                     : took 4.1s (0 kubectl calls 0.0s, 36 API requests 3.8s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 36 API requests 1.3s)
 - waiting 30s -               : done
 TiDB-1                        : is loading
-Loop pass                     : took 4.6s (0 kubectl calls 0.0s, 36 API requests 3.9s)
+Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 36 API requests 1.5s)
 - waiting 30s -               : done
 TiDB-1                        : is loading
-Loop pass                     : took 23.4s (10 kubectl calls 18.1s, 41 API requests 5.1s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 36 API requests 1.3s)
+- waiting 30s -               : done
+TiDB-1                        : is loading
+Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 36 API requests 1.5s)
 - waiting 30s -               : done
 TiDB-1                        : showing loader times (ycsb-loader)
 TiDB-1                        : generator times (start/end per pod and container) []
-TiDB-1                        : loader times (start/end per pod and container) [(1792619256, 1792619334), (1792619256, 1792619334), (1792619256, 1792619335), (1792619257, 1792619334), (1792619256, 1792619335), (1792619257, 1792619334), (1792619257, 1792619335), (1792619257, 1792619334)]
-TiDB-1                        : total times (start/end per pod and container) [(1792619256, 1792619334), (1792619256, 1792619334), (1792619256, 1792619335), (1792619257, 1792619334), (1792619256, 1792619335), (1792619257, 1792619334), (1792619257, 1792619335), (1792619257, 1792619334)]
-TiDB-1                        : loader timespan (first to last [s]) = 79
-TiDB-1                        : connect to pod bexhoma-sut-tidb-1-1792619082-55977579f4-48hzg to load scripts
+TiDB-1                        : loader times (start/end per pod and container) [(1794619484, 1794619580), (1794619484, 1794619580), (1794619484, 1794619580), (1794619483, 1794619580), (1794619484, 1794619580), (1794619484, 1794619581), (1794619484, 1794619580), (1794619484, 1794619580)]
+TiDB-1                        : total times (start/end per pod and container) [(1794619484, 1794619580), (1794619484, 1794619580), (1794619484, 1794619580), (1794619483, 1794619580), (1794619484, 1794619580), (1794619484, 1794619581), (1794619484, 1794619580), (1794619484, 1794619580)]
+TiDB-1                        : loader timespan (first to last [s]) = 98
+TiDB-1                        : connect to pod bexhoma-sut-tidb-1-1794619306-658546c4c7-dszsj to load scripts
 TiDB-1                        : start asynch loading scripts of type index
 TiDB-1                        : is loading
-Loop pass                     : took 26.8s (11 kubectl calls 18.9s, 54 API requests 6.7s)
+Loop pass                     : took 25.8s (21 kubectl calls 22.2s, 64 API requests 2.9s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-TiDB-1-1792619082 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-TiDB-1-1794619306 initialized to 1.
 TiDB-1                        : benchmarks done 0 of 1. This will be client 1
 tidb-1-1-1-1                  : start benchmarking (benchmark_run=1)
-TiDB-1                        : worker pods found: ['bexhoma-pd-tidb-ycsb-1-0', 'bexhoma-pd-tidb-ycsb-1-1', 'bexhoma-pd-tidb-ycsb-1-2']
-TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-ycsb-1-0', 'bexhoma-pd-tidb-ycsb-1-1', 'bexhoma-pd-tidb-ycsb-1-2']
-TiDB-1                        : distributed system - get host info for worker bexhoma-pd-tidb-ycsb-1-0
-TiDB-1                        : distributed system - get host info for worker bexhoma-pd-tidb-ycsb-1-1
-TiDB-1                        : distributed system - get host info for worker bexhoma-pd-tidb-ycsb-1-2
-TiDB-1                        : worker pods found: ['bexhoma-tikv-tidb-ycsb-1-0', 'bexhoma-tikv-tidb-ycsb-1-1', 'bexhoma-tikv-tidb-ycsb-1-2']
-TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-ycsb-1-0', 'bexhoma-tikv-tidb-ycsb-1-1', 'bexhoma-tikv-tidb-ycsb-1-2']
-TiDB-1                        : distributed system - get host info for worker bexhoma-tikv-tidb-ycsb-1-0
-TiDB-1                        : distributed system - get host info for worker bexhoma-tikv-tidb-ycsb-1-1
-TiDB-1                        : distributed system - get host info for worker bexhoma-tikv-tidb-ycsb-1-2
-TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1792619082-55977579f4-48hzg
-TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1792619082-55977579f4-dhf5v
-TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1792619082-55977579f4-k77kk
-TiDB-1                        : benchmarking results in folder C:\data\benchmarks/1792619082
-TiDB-1                        : submitted benchmarker job in 56.6s (4 kubectl calls 7.0s, 151 API requests 46.8s)
-Loop pass                     : took 65.2s (5 kubectl calls 8.9s, 175 API requests 50.7s)
+TiDB-1                        : worker pods found: ['bx-pd-ti-1-1794619306-0', 'bx-pd-ti-1-1794619306-1', 'bx-pd-ti-1-1794619306-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bx-pd-ti-1-1794619306-0', 'bx-pd-ti-1-1794619306-1', 'bx-pd-ti-1-1794619306-2']
+TiDB-1                        : distributed system - get host info for worker bx-pd-ti-1-1794619306-0
+TiDB-1                        : distributed system - get host info for worker bx-pd-ti-1-1794619306-1
+TiDB-1                        : distributed system - get host info for worker bx-pd-ti-1-1794619306-2
+TiDB-1                        : worker pods found: ['bx-tikv-ti-1-1794619306-0', 'bx-tikv-ti-1-1794619306-1', 'bx-tikv-ti-1-1794619306-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bx-tikv-ti-1-1794619306-0', 'bx-tikv-ti-1-1794619306-1', 'bx-tikv-ti-1-1794619306-2']
+TiDB-1                        : distributed system - get host info for worker bx-tikv-ti-1-1794619306-0
+TiDB-1                        : distributed system - get host info for worker bx-tikv-ti-1-1794619306-1
+TiDB-1                        : distributed system - get host info for worker bx-tikv-ti-1-1794619306-2
+TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1794619306-658546c4c7-dszsj
+TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1794619306-658546c4c7-pxrwg
+TiDB-1                        : distributed system - get host info for sut bexhoma-sut-tidb-1-1794619306-658546c4c7-qdqqs
+TiDB-1                        : benchmarking results in folder D:\data\benchmarks/1794619306
+TiDB-1                        : submitted benchmarker job in 26.0s (4 kubectl calls 4.5s, 151 API requests 20.4s)
+Loop pass                     : took 29.6s (5 kubectl calls 5.5s, 177 API requests 22.2s)
 - waiting 30s -               : done
 TiDB-1                        : has running benchmarks
-Loop pass                     : took 5.4s (0 kubectl calls 0.0s, 24 API requests 3.5s)
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 25 API requests 1.3s)
 - waiting 30s -               : done
 TiDB-1                        : has running benchmarks
-Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 22 API requests 2.6s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 23 API requests 1.2s)
 - waiting 30s -               : done
-tidb-1-1-1-1                  : wrote benchmarking_timespans to /data/benchmarks/1792619082/tidb-1-1-1-1.config
+tidb-1-1-1-1                  : wrote benchmarking_timespans to D:/data/benchmarks/1794619306/tidb-1-1-1-1.config
 tidb-1-1-1-1                  : showing benchmarker times
-tidb-1-1-1-1                  : benchmarker timespan job from 1792619506 to 1792619620
-tidb-1-1-1-1                  : benchmarker timespan pods from 1792619512 to 1792619588
-tidb-1-1-1-1                  : benchmarker timespan (start to end single container [s]) = 76
-tidb-1-1-1-1                  : benchmarker times (start/end per pod and container) = [(1792619512, 1792619588)]
-tidb-1-1-1-1                  : found and updated times {'benchmarker': [(1792619512, 1792619588)]}
-Loop pass                     : took 11.9s (4 kubectl calls 7.0s, 28 API requests 3.6s)
+tidb-1-1-1-1                  : benchmarker timespan job from 1794619692 to 1794619792
+tidb-1-1-1-1                  : benchmarker timespan pods from 1794619696 to 1794619784
+tidb-1-1-1-1                  : benchmarker timespan (start to end single container [s]) = 88
+tidb-1-1-1-1                  : benchmarker times (start/end per pod and container) = [(1794619696, 1794619784)]
+tidb-1-1-1-1                  : found and updated times {'benchmarker': [(1794619696, 1794619784)]}
+Loop pass                     : took 6.7s (4 kubectl calls 4.3s, 28 API requests 1.4s)
 TiDB-1                        : can be stopped
-TiDB-1                        : had 0 restarts at worker bexhoma-sut-tidb-1-1792619082-55977579f4-48hzg
-TiDB-1                        : had 0 restarts at worker bexhoma-sut-tidb-1-1792619082-55977579f4-dhf5v
-TiDB-1                        : had 0 restarts at worker bexhoma-sut-tidb-1-1792619082-55977579f4-k77kk
-TiDB-1                        : worker pods found: ['bexhoma-pd-tidb-ycsb-1-0', 'bexhoma-pd-tidb-ycsb-1-1', 'bexhoma-pd-tidb-ycsb-1-2']
-TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-pd-tidb-ycsb-1-0', 'bexhoma-pd-tidb-ycsb-1-1', 'bexhoma-pd-tidb-ycsb-1-2']
-TiDB-1                        : had 0 restarts at worker bexhoma-pd-tidb-ycsb-1-0
-TiDB-1                        : had 0 restarts at worker bexhoma-pd-tidb-ycsb-1-1
-TiDB-1                        : had 0 restarts at worker bexhoma-pd-tidb-ycsb-1-2
-TiDB-1                        : worker pods found: ['bexhoma-tikv-tidb-ycsb-1-0', 'bexhoma-tikv-tidb-ycsb-1-1', 'bexhoma-tikv-tidb-ycsb-1-2']
-TiDB-1                        : worker pods found (only stateful set pods): ['bexhoma-tikv-tidb-ycsb-1-0', 'bexhoma-tikv-tidb-ycsb-1-1', 'bexhoma-tikv-tidb-ycsb-1-2']
-TiDB-1                        : had 0 restarts at worker bexhoma-tikv-tidb-ycsb-1-0
-TiDB-1                        : had 0 restarts at worker bexhoma-tikv-tidb-ycsb-1-1
-TiDB-1                        : had 0 restarts at worker bexhoma-tikv-tidb-ycsb-1-2
-Loop pass                     : took 52.3s (19 kubectl calls 42.9s, 59 API requests 7.6s)
-Experiment                    : ends at 2026-10-21 23:54:37.519548 (31619.4101966) - 594.70s total
+TiDB-1                        : had 0 restarts at worker bexhoma-sut-tidb-1-1794619306-658546c4c7-dszsj
+TiDB-1                        : had 0 restarts at worker bexhoma-sut-tidb-1-1794619306-658546c4c7-pxrwg
+TiDB-1                        : had 0 restarts at worker bexhoma-sut-tidb-1-1794619306-658546c4c7-qdqqs
+TiDB-1                        : worker pods found: ['bx-pd-ti-1-1794619306-0', 'bx-pd-ti-1-1794619306-1', 'bx-pd-ti-1-1794619306-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bx-pd-ti-1-1794619306-0', 'bx-pd-ti-1-1794619306-1', 'bx-pd-ti-1-1794619306-2']
+TiDB-1                        : had 0 restarts at worker bx-pd-ti-1-1794619306-0
+TiDB-1                        : had 0 restarts at worker bx-pd-ti-1-1794619306-1
+TiDB-1                        : had 0 restarts at worker bx-pd-ti-1-1794619306-2
+TiDB-1                        : worker pods found: ['bx-tikv-ti-1-1794619306-0', 'bx-tikv-ti-1-1794619306-1', 'bx-tikv-ti-1-1794619306-2']
+TiDB-1                        : worker pods found (only stateful set pods): ['bx-tikv-ti-1-1794619306-0', 'bx-tikv-ti-1-1794619306-1', 'bx-tikv-ti-1-1794619306-2']
+TiDB-1                        : had 0 restarts at worker bx-tikv-ti-1-1794619306-0
+TiDB-1                        : had 0 restarts at worker bx-tikv-ti-1-1794619306-1
+TiDB-1                        : had 0 restarts at worker bx-tikv-ti-1-1794619306-2
+Loop pass                     : took 24.8s (19 kubectl calls 21.5s, 59 API requests 2.7s)
+Experiment                    : ends at 2026-11-14 02:30:19.460605 (256362.0574526) - 512.99s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -144,8 +147,8 @@ Result workflow complete
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 595s 
-* Code: 1792619082
+* Duration: 513s 
+* Code: 1794619306
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -159,7 +162,7 @@ YCSB SF=1
   * Status is logged every 10s.
   * TiDB uses 3 SUT replica(s) and 3 PD node(s).
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.7.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['TiDB'].
   * Import is handled by 8 processes (pods).
   * Loading is tested with [64] threads, split into [8] pods.
@@ -173,74 +176,74 @@ YCSB SF=1
 
 ### Connections
 * tidb-1-1-1-1 uses docker image pingcap/tidb:v8.5.8
-  * RAM:540590792704
-  * CPU:AMD EPYC 7352 24-Core Processor
-  * Cores:96
-  * host:6.8.0-146-generic
-  * node:cl-worker25
-  * disk:155355
-  * cpu_list:0-95
+  * RAM:1077381263360
+  * CPU:AMD EPYC 7742 64-Core Processor
+  * Cores:256
+  * host:6.8.0-137-generic
+  * node:cl-worker27
+  * disk:671783
+  * cpu_list:0-255
   * requests_cpu:4
   * requests_memory:16Gi
   * sut 0
-    * RAM:540590792704
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-146-generic
-    * node:cl-worker25
-    * disk:155355
-    * cpu_list:0-95
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:671783
+    * cpu_list:0-255
   * sut 1
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:501715
+    * disk:653329
     * cpu_list:0-127
   * sut 2
-    * RAM:540579299328
+    * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker22
-    * disk:271374
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:1323296
     * cpu_list:0-127
   * pd 0
-    * RAM:540579299328
-    * CPU:AMD EPYC 7502 32-Core Processor
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker22
-    * disk:269790
-    * datadisk:123
-    * cpu_list:0-127
-  * pd 1
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:501715
+    * disk:653330
     * datadisk:123
     * cpu_list:0-127
-  * pd 2
+  * pd 1
     * RAM:540590792704
     * CPU:AMD EPYC 7352 24-Core Processor
     * Cores:96
     * host:6.8.0-146-generic
     * node:cl-worker25
-    * disk:155355
+    * disk:164758
     * datadisk:123
     * cpu_list:0-95
-  * tikv 0
-    * RAM:540579299328
+  * pd 2
+    * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:1323296
+    * datadisk:123
+    * cpu_list:0-127
+  * tikv 0
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
     * host:6.8.0-137-generic
-    * node:cl-worker22
-    * disk:271229
-    * datadisk:8597
+    * node:cl-worker37
+    * disk:653329
+    * datadisk:12037
     * cpu_list:0-127
   * tikv 1
     * RAM:540590792704
@@ -248,17 +251,17 @@ YCSB SF=1
     * Cores:96
     * host:6.8.0-146-generic
     * node:cl-worker25
-    * disk:155355
-    * datadisk:5242
+    * disk:164758
+    * datadisk:5260
     * cpu_list:0-95
   * tikv 2
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:501715
-    * datadisk:12154
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:1323296
+    * datadisk:21043
     * cpu_list:0-127
   * resources_total: 24.75 CPU, 97.5 GiB RAM requested in 9 pods
     * pd: 3 x, 0.75 CPU, 1.5 GiB RAM
@@ -266,20 +269,23 @@ YCSB SF=1
     * sut: 3 x, 12.0 CPU, 48.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792619082
+    * code:1794619306
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 
+### Ingestion
+* TiDB-1: 8 of 8 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-tidb-1-1792619082-55977579f4-48hzg: 0
-* bexhoma-sut-tidb-1-1792619082-55977579f4-dhf5v: 0
-* bexhoma-sut-tidb-1-1792619082-55977579f4-k77kk: 0
-* bexhoma-pd-tidb-ycsb-1-0: 0
-* bexhoma-pd-tidb-ycsb-1-1: 0
-* bexhoma-pd-tidb-ycsb-1-2: 0
-* bexhoma-tikv-tidb-ycsb-1-0: 0
-* bexhoma-tikv-tidb-ycsb-1-1: 0
-* bexhoma-tikv-tidb-ycsb-1-2: 0
+* bexhoma-sut-tidb-1-1794619306-658546c4c7-dszsj: 0
+* bexhoma-sut-tidb-1-1794619306-658546c4c7-pxrwg: 0
+* bexhoma-sut-tidb-1-1794619306-658546c4c7-qdqqs: 0
+* bx-pd-ti-1-1794619306-0: 0
+* bx-pd-ti-1-1794619306-1: 0
+* bx-pd-ti-1-1794619306-2: 0
+* bx-tikv-ti-1-1794619306-0: 0
+* bx-tikv-ti-1-1794619306-1: 0
+* bx-tikv-ti-1-1794619306-2: 0
 
 ### Workflow
 
@@ -295,42 +301,47 @@ YCSB SF=1
 
 #### Per Connection
 
-| connection     |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
-|:---------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| tidb-1-1-0-1-1 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1600.25 |                78113.00 |            125000.00 |                             32223.00 | 1.00 |               46.09 |
-| tidb-1-1-0-1-2 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1612.40 |                77524.00 |            125000.00 |                             32271.00 | 1.00 |               46.44 |
-| tidb-1-1-0-1-3 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1607.74 |                77749.00 |            125000.00 |                             32015.00 | 1.00 |               46.30 |
-| tidb-1-1-0-1-4 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1612.72 |                77509.00 |            125000.00 |                             31791.00 | 1.00 |               46.45 |
-| tidb-1-1-0-1-5 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1625.91 |                76880.00 |            125000.00 |                             31295.00 | 1.00 |               46.83 |
-| tidb-1-1-0-1-6 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1608.23 |                77725.00 |            125000.00 |                             31775.00 | 1.00 |               46.32 |
-| tidb-1-1-0-1-7 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1614.95 |                77402.00 |            125000.00 |                             32095.00 | 1.00 |               46.51 |
-| tidb-1-1-0-1-8 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1610.04 |                77638.00 |            125000.00 |                             31631.00 | 1.00 |               46.37 |
+| connection     |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   SF |   Throughput [SF/h] |
+|:---------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| tidb-1-1-0-1-1 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1300.70 |                96102.00 |            125000.00 |                             23935.00 | 1.00 |               37.46 |
+| tidb-1-1-0-1-2 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1301.35 |                96054.00 |            125000.00 |                             23999.00 | 1.00 |               37.48 |
+| tidb-1-1-0-1-3 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1300.84 |                96092.00 |            125000.00 |                             24543.00 | 1.00 |               37.46 |
+| tidb-1-1-0-1-4 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1303.94 |                95863.00 |            125000.00 |                             24207.00 | 1.00 |               37.55 |
+| tidb-1-1-0-1-5 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1300.73 |                96100.00 |            125000.00 |                             24863.00 | 1.00 |               37.46 |
+| tidb-1-1-0-1-6 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1301.66 |                96031.00 |            125000.00 |                             23679.00 | 1.00 |               37.49 |
+| tidb-1-1-0-1-7 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1302.35 |                95980.00 |            125000.00 |                             24367.00 | 1.00 |               37.51 |
+| tidb-1-1-0-1-8 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1299.98 |                96155.00 |            125000.00 |                             24639.00 | 1.00 |               37.44 |
 
 #### Per Run
 
-| DBMS     |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:---------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| TiDB-1-1 |             1.00 |     64.00 | 16384.00 |        8.00 |         0.00 | 1.00 |               46.09 |                        12892.23 |                78113.00 |           1000000.00 |                             31887.00 |
+| DBMS     |   experiment_run |   threads |   target |   pod_count |   errors |   SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:---------|-----------------:|----------:|---------:|------------:|---------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| TiDB-1-1 |             1.00 |     64.00 | 16384.00 |        8.00 |     0.00 | 1.00 |               37.44 |                        10411.56 |                96155.00 |           1000000.00 |                             24279.00 |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS           | phase      | job          | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:---------------|:-----------|:-------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| tidb-1-1-1-1-1 | tidb-1-1-1 | tidb-1-1-1-1 | TiDB-1          |                1 |        1 |               1 |       1 |        64 |    16384 |           1 |            0 |                        13103.76 |                76314.00 |             499780 |                            2547.00 |               500220 |                            108031.00 |
+| connection     | phase      | job          |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:---------------|:-----------|:-------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| tidb-1-1-1-1-1 | tidb-1-1-1 | tidb-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    16384 |        0 |                        11462.63 |                87240.00 |             500686 |                            3557.00 |               499314 |                            120575.00 |
 
 #### Per Phase
 
-| DBMS       | phase      |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:-----------|:-----------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| tidb-1-1-1 | tidb-1-1-1 |                1 |        64 |    16384 |               1 |           1 |            0 |                        13103.76 |                76314.00 |             499780 |                            2547.00 |               500220 |                            108031.00 |
+| DBMS       | phase      |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-----------|:-----------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| tidb-1-1-1 | tidb-1-1-1 |                1 |        1 |               1 |           1 |        64 |    16384 |        0 |                        11462.63 |                87240.00 |             500686 |                            3557.00 |               499314 |                            120575.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column

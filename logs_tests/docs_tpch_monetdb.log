@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1793713047
-Experiment                    : starts at 2026-11-03 14:37:26.756175 (17247.169428215)
+Experiment                    : has code 1794658880
+Experiment                    : starts at 2026-11-14 13:21:21.126200 (295422.8177626)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
@@ -12,7 +12,7 @@ Timeout per query is 1200.
 Data transfer volume per query is also measured.
 Import sets indexes, constraints, statistics recomputation after loading.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.12.
+Experiment uses bexhoma version 0.11.17.
 Experiment is limited to DBMS ['MonetDB'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker38.
@@ -28,68 +28,65 @@ MonetDB-1                     : will start now
 MonetDB-1                     : deployments ['sut']
 MonetDB-1                     : stateful sets []
 MonetDB-1                     : pvcs ['sut']
-MonetDB-1                     : name of SUT pods = bexhoma-sut-monetdb-1-1793713047
-MonetDB-1                     : name of SUT service = bexhoma-sut-monetdb-1-1793713047
-Loop pass                     : took 0.5s (1 kubectl calls 0.2s, 9 API requests 0.1s)
+MonetDB-1                     : name of SUT pods = bexhoma-sut-monetdb-1-1794658880
+MonetDB-1                     : name of SUT service = bexhoma-sut-monetdb-1-1794658880
+Loop pass                     : took 3.6s (1 kubectl calls 1.1s, 9 API requests 0.6s)
 - waiting 30s -               : done
 MonetDB-1                     : is not loaded yet
-MonetDB-1                     : will start loading but not before 2026-11-03 13:38:57 (that is in 60 secs)
-Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.4s)
+MonetDB-1                     : will start loading but not before 2026-11-14 12:22:56 (that is in 60 secs)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.9s)
 - waiting 30s -               : done
 MonetDB-1                     : is not loaded yet
-MonetDB-1                     : will start loading but not before 2026-11-03 13:38:57
-Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 13 API requests 0.1s)
+MonetDB-1                     : will start loading but not before 2026-11-14 12:22:56
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 13 API requests 0.8s)
 - waiting 30s -               : done
 MonetDB-1                     : is not loaded yet
 MonetDB-1                     : load durability relaxed, scripts []
-MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1793713047-7468bdc589-5fpwp to load scripts
+MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1794658880-f598f57-484w2 to load scripts
 MonetDB-1                     : start asynch loading scripts of type schema
 MonetDB-1                     : waits for the Schema scripts (schema=True) before starting the loading jobs
-MonetDB-1                     : Schema scripts done after 2s
+MonetDB-1                     : Schema scripts done after 5s
 MonetDB-1                     : is loading
-Loop pass                     : took 4.3s (5 kubectl calls 0.9s, 33 API requests 1.3s)
+Loop pass                     : took 18.9s (5 kubectl calls 5.7s, 35 API requests 4.2s)
 - waiting 30s -               : done
 MonetDB-1                     : is loading
-Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 34 API requests 0.2s)
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 MonetDB-1                     : is loading
-Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 34 API requests 0.2s)
-- waiting 30s -               : done
-MonetDB-1                     : is loading
-Loop pass                     : took 3.6s (15 kubectl calls 3.1s, 39 API requests 0.2s)
+Loop pass                     : took 29.1s (24 kubectl calls 26.1s, 42 API requests 2.0s)
 - waiting 30s -               : done
 MonetDB-1                     : showing loader times (tpch-loader)
-MonetDB-1                     : generator times (start/end per pod and container) [(1793713183, 1793713184), (1793713164, 1793713164), (1793713179, 1793713179), (1793713178, 1793713178), (1793713189, 1793713189), (1793713176, 1793713176), (1793713160, 1793713160), (1793713179, 1793713179)]
-MonetDB-1                     : loader times (start/end per pod and container) [(1793713202, 1793713212), (1793713202, 1793713212), (1793713202, 1793713213), (1793713203, 1793713212), (1793713202, 1793713213), (1793713203, 1793713213), (1793713203, 1793713212), (1793713203, 1793713212)]
-MonetDB-1                     : total times (start/end per pod and container) [(1793713183, 1793713184), (1793713164, 1793713164), (1793713179, 1793713179), (1793713178, 1793713178), (1793713189, 1793713189), (1793713176, 1793713176), (1793713160, 1793713160), (1793713179, 1793713179), (1793713202, 1793713212), (1793713202, 1793713212), (1793713202, 1793713213), (1793713203, 1793713212), (1793713202, 1793713213), (1793713203, 1793713213), (1793713203, 1793713212), (1793713203, 1793713212)]
-MonetDB-1                     : generator timespan (first to last [s]) = 29
-MonetDB-1                     : loader timespan (first to last [s]) = 11
-MonetDB-1                     : total timespan (first to last [s]) = 53
-MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1793713047-7468bdc589-5fpwp to load scripts
+MonetDB-1                     : generator times (start/end per pod and container) [(1794659018, 1794659018), (1794659028, 1794659028), (1794659021, 1794659021), (1794659012, 1794659012), (1794659025, 1794659025), (1794659007, 1794659007), (1794659008, 1794659008), (1794659031, 1794659031)]
+MonetDB-1                     : loader times (start/end per pod and container) [(1794659035, 1794659054), (1794659036, 1794659056), (1794659035, 1794659055), (1794659036, 1794659050), (1794659036, 1794659055), (1794659036, 1794659051), (1794659036, 1794659050), (1794659035, 1794659050)]
+MonetDB-1                     : total times (start/end per pod and container) [(1794659018, 1794659018), (1794659028, 1794659028), (1794659021, 1794659021), (1794659012, 1794659012), (1794659025, 1794659025), (1794659007, 1794659007), (1794659008, 1794659008), (1794659031, 1794659031), (1794659035, 1794659054), (1794659036, 1794659056), (1794659035, 1794659055), (1794659036, 1794659050), (1794659036, 1794659055), (1794659036, 1794659051), (1794659036, 1794659050), (1794659035, 1794659050)]
+MonetDB-1                     : generator timespan (first to last [s]) = 24
+MonetDB-1                     : loader timespan (first to last [s]) = 21
+MonetDB-1                     : total timespan (first to last [s]) = 49
+MonetDB-1                     : connect to pod bexhoma-sut-monetdb-1-1794658880-f598f57-484w2 to load scripts
 MonetDB-1                     : start asynch loading scripts of type index
 MonetDB-1                     : is loading
-Loop pass                     : took 6.5s (23 kubectl calls 3.9s, 52 API requests 0.6s)
+Loop pass                     : took 18.6s (14 kubectl calls 15.9s, 46 API requests 2.1s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MonetDB-1-1793713047 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MonetDB-1-1794658880 initialized to 1.
 MonetDB-1                     : benchmarks done 0 of 1. This will be client 1
 monetdb-1-1-1-1               : start benchmarking (benchmark_run=1)
-MonetDB-1                     : benchmarking results in folder /data/benchmarks/1793713047
-MonetDB-1                     : submitted benchmarker job in 2.2s (4 kubectl calls 1.1s, 24 API requests 0.8s)
-Loop pass                     : took 2.8s (5 kubectl calls 1.3s, 44 API requests 1.3s)
+MonetDB-1                     : benchmarking results in folder D:\data\benchmarks/1794658880
+MonetDB-1                     : submitted benchmarker job in 8.1s (4 kubectl calls 4.5s, 24 API requests 2.5s)
+Loop pass                     : took 11.3s (5 kubectl calls 5.5s, 46 API requests 3.9s)
 - waiting 30s -               : done
-monetdb-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1793713047/monetdb-1-1-1-1.config
+monetdb-1-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1794658880/monetdb-1-1-1-1.config
 monetdb-1-1-1-1               : showing benchmarker times
-monetdb-1-1-1-1               : benchmarker timespan job from 1793713305 to 1793713336
-monetdb-1-1-1-1               : benchmarker timespan pods from 1793713313 to 1793713323
-monetdb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 10
-monetdb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1793713313, 1793713323)]
-monetdb-1-1-1-1               : found and updated times {'benchmarker': [(1793713313, 1793713323)]}
-Loop pass                     : took 1.5s (4 kubectl calls 1.0s, 24 API requests 0.4s)
+monetdb-1-1-1-1               : benchmarker timespan job from 1794659177 to 1794659211
+monetdb-1-1-1-1               : benchmarker timespan pods from 1794659180 to 1794659191
+monetdb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 11
+monetdb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1794659180, 1794659191)]
+monetdb-1-1-1-1               : found and updated times {'benchmarker': [(1794659180, 1794659191)]}
+Loop pass                     : took 5.6s (4 kubectl calls 4.5s, 24 API requests 1.1s)
 MonetDB-1                     : can be stopped
-MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1793713047-7468bdc589-5fpwp
-Loop pass                     : took 1.1s (3 kubectl calls 0.4s, 29 API requests 0.6s)
-Experiment                    : ends at 2026-11-03 14:42:18.764054 (17539.177306774) - 292.01s total
+MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1794658880-f598f57-484w2
+Loop pass                     : took 5.0s (3 kubectl calls 3.0s, 29 API requests 1.5s)
+Experiment                    : ends at 2026-11-14 13:26:59.401728 (295761.0817452) - 338.26s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
@@ -101,8 +98,8 @@ Experiment                    : uploading workload file
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 293s 
-* Code: 1793713047
+* Duration: 339s 
+* Code: 1794658880
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -112,7 +109,7 @@ TPC-H Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['MonetDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -126,14 +123,14 @@ TPC-H Queries SF=1
 
 ### Connections
 * monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:540590821376
-  * CPU:AMD EPYC 7352 24-Core Processor
-  * Cores:96
+  * RAM:1081853952000
+  * CPU:Intel(R) Xeon(R) Gold 6438Y+
+  * Cores:128
   * host:6.8.0-137-generic
-  * node:cl-worker23
-  * disk:1289451
+  * node:cl-worker37
+  * disk:575856
   * datadisk:2937
-  * cpu_list:0-95
+  * cpu_list:0-127
   * requests_cpu:16
   * requests_memory:64Gi
   * limits_cpu:16
@@ -142,10 +139,13 @@ TPC-H Queries SF=1
     * sut: 1 x, 16.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793713047
+    * code:1794658880
+
+### Ingestion
+* MonetDB-1: 50 of 50 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-monetdb-1-1793713047-7468bdc589-5fpwp: 0
+* bexhoma-sut-monetdb-1-1794658880-f598f57-484w2: 0
 
 ### Workflow
 
@@ -161,23 +161,23 @@ TPC-H Queries SF=1
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MonetDB-1-1 |                1 |    1 |       69.00 |           0.00 |           29.00 |         11.00 |           16.00 |              8 |           0 |             | None           |             0 | False         |               52.17 | False               |
+| DBMS        |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MonetDB-1-1 |                1 |    1 |       67.00 |           3.00 |           24.00 |         21.00 |           15.00 |              8 |         0 |             | None           |             0 | False         |               53.73 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
-|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| monetdb-1-1-1-1-1 | MonetDB-1       | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         10 |            0.07 |            58983.69 |           7920.00 |          -1 | monetdb-1-1-1-1-1 |
+| connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| monetdb-1-1-1-1-1 | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         11 |            0.14 |            29330.44 |           7200.00 |          -1 |
 
 #### Per Phase
 
-|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS          | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         10 |            0.07 |            58983.69 |           7920.00 |          -1 |
+| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         11 |            0.14 |            29330.44 |           7200.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -190,28 +190,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   monetdb-1-1-1-1-1 |
 |:----------------------------------------------------|--------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |              747.37 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |               17.68 |
-| Shipping Priority (TPC-H Q3)                        |               51.82 |
-| Order Priority Checking Query (TPC-H Q4)            |              103.65 |
-| Local Supplier Volume (TPC-H Q5)                    |               41.57 |
-| Forecasting Revenue Change (TPC-H Q6)               |               15.97 |
-| Volume Shipping Query (TPC-H Q7)                    |               43.86 |
-| National Market Share (TPC-H Q8)                    |              248.23 |
-| Product Type Profit Measure (TPC-H Q9)              |               48.59 |
-| Returned Item Reporting Query (TPC-H Q10)           |               80.83 |
-| Important Stock Identification (TPC-H Q11)          |               14.32 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |               33.29 |
-| Customer Distribution (TPC-H Q13)                   |              292.59 |
-| Promotion Effect Query (TPC-H Q14)                  |               24.20 |
-| Top Supplier Query (TPC-H Q15)                      |               22.29 |
-| Parts/Supplier Relationship (TPC-H Q16)             |               46.39 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |               34.04 |
-| Large Volume Customer (TPC-H Q18)                   |              124.60 |
-| Discounted Revenue (TPC-H Q19)                      |               52.11 |
-| Potential Part Promotion (TPC-H Q20)                |               34.56 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |             1299.22 |
-| Global Sales Opportunity Query (TPC-H Q22)          |               27.47 |
+| Pricing Summary Report (TPC-H Q1)                   |              960.56 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |               41.18 |
+| Shipping Priority (TPC-H Q3)                        |              136.21 |
+| Order Priority Checking Query (TPC-H Q4)            |              173.37 |
+| Local Supplier Volume (TPC-H Q5)                    |              134.05 |
+| Forecasting Revenue Change (TPC-H Q6)               |               41.61 |
+| Volume Shipping Query (TPC-H Q7)                    |              109.38 |
+| National Market Share (TPC-H Q8)                    |              241.45 |
+| Product Type Profit Measure (TPC-H Q9)              |              119.02 |
+| Returned Item Reporting Query (TPC-H Q10)           |              149.70 |
+| Important Stock Identification (TPC-H Q11)          |               25.51 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |               73.22 |
+| Customer Distribution (TPC-H Q13)                   |              376.71 |
+| Promotion Effect Query (TPC-H Q14)                  |               55.01 |
+| Top Supplier Query (TPC-H Q15)                      |               55.12 |
+| Parts/Supplier Relationship (TPC-H Q16)             |              120.78 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |               82.41 |
+| Large Volume Customer (TPC-H Q18)                   |              209.00 |
+| Discounted Revenue (TPC-H Q19)                      |              120.94 |
+| Potential Part Promotion (TPC-H Q20)                |               51.64 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |             1903.59 |
+| Global Sales Opportunity Query (TPC-H Q22)          |               70.09 |
 
 ### Errors (failed queries)
 
@@ -225,6 +225,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

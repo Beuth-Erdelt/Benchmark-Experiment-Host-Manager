@@ -10,7 +10,7 @@ memory request while differing in memory limit or CPU, and a value-based name
 
 Covers both halves of the translator:
 
-* :func:`bexhoma.spec.build_argv` -> :func:`bexhoma.experiments.tpch_catalog.build_tpch_argv`,
+* :func:`bexhoma.spec.build_argv` -> :func:`bexhoma.benchmarks.tpch.catalog.build_tpch_argv`,
   which predicts each cell's name for its scoped ``--set`` operations;
 * ``tpch.py``'s own ``_resource_cells`` loop, which must name the same cells
   identically.
@@ -24,7 +24,7 @@ import copy
 import re
 import unittest
 
-import tpch
+from bexhoma.benchmarks.tpch import cli as tpch
 from bexhoma import spec as catalog_spec
 
 _CATALOG_FILE = 'contracts/contract_catalog.yml'

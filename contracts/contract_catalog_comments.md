@@ -128,7 +128,7 @@ Wording only; no field changed. Folded into 1.11.0 (not yet released).
 configuration per (system, cell), knobs derived per cell and scoped to
 `PostgreSQL-{cell}`. Both builders share `resource_sweep()`,
 `resolve_resource_cells()` and `append_resource_flags()` in
-`bexhoma/experiments/tpch_catalog.py`; on the bexhoma side,
+`bexhoma/benchmarks/tpch/catalog.py`; on the bexhoma side,
 `ExperimentBase.expand_resource_cells()` clones every configuration per cell
 for every workload. The `out_of_scope` "ycsb accepts a single storage class
 only" is gone.
@@ -533,7 +533,7 @@ Three `workloads.TPCH.params` entries were removed as exposed options:
   isn't needed for this contract's scope.
 
 None of these were removed from the underlying bexhoma code (`tpch.py`,
-`bexhoma/spec.py`, `bexhoma/benchmarks/tpch.py` still reference them) — only
+`bexhoma/spec.py`, `bexhoma/benchmarks/tpch/benchmark.py` still reference them) — only
 from the catalog's exposed surface. If the code paths for these are later
 found unused elsewhere, that's a separate cleanup, not implied by this one.
 
@@ -605,7 +605,7 @@ Scope decisions:
 End-to-end wiring (2026-08-27, same change): a catalog-driven `ycsb`
 experiment.yml now runs, not just validates.
 
-- `bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()` translates the
+- `bexhoma/benchmarks/ycsb/catalog.py::build_ycsb_argv()` translates the
   spec into a `ycsb.py` argv; `bexhoma/spec.py::build_argv()` dispatches
   `workload.name == "ycsb"` to it (alongside the existing `tpch` branch).
 - `ycsb.py` gained `build_parser()` + `run(args, on_experiment_built=...)`,
@@ -622,7 +622,7 @@ experiment.yml now runs, not just validates.
   when the experiment.yml has a `resources:` block) — a plain CLI run still
   leaves the SUT pod unconstrained.
 
-Still `tpch`-only: `bexhoma.experiments.tpch_loader` (the *self-specified*
+Still `tpch`-only: `bexhoma.benchmarks.tpch.benchmark.loader` (the *self-specified*
 YAML path, `workload: ycsb` as a bare string), which is unrelated to the
 catalog path.
 
@@ -631,7 +631,7 @@ catalog path.
 The `loading.split` field was removed from both `experiment_schema` and
 `workloads.tpch.loading` (`catalog_contract_version` 1.2.0 -> 1.3.0,
 `spec.CATALOG_CONTRACT_VERSION` kept in lockstep), and
-`bexhoma/experiments/tpch_catalog.py::build_tpch_argv()` no longer emits the
+`bexhoma/benchmarks/tpch/catalog.py::build_tpch_argv()` no longer emits the
 `-xnls` flag it drove.
 
 Rationale: `split` set `-xnls`, which `tpch.py` divides the total loader-pod
@@ -649,7 +649,7 @@ Since synchronized loading can only ever use `split: 1`, the field could not
 express anything valid and is gone from the contract. A spec that still
 carries `loading.split` is now rejected by `validate_experiment()` as an
 unknown field. This is a catalog-surface removal only: `tpch.py`'s `-xnls`
-argument and `bexhoma/experiments/tpch_builder.py`'s `split` handling (the
+argument and `bexhoma/benchmarks/tpch/builder.py`'s `split` handling (the
 separate self-specified-YAML path) are unchanged.
 
 ## Two-sentence `why:` fields in the TPC-H block (2026-08-31)
@@ -676,7 +676,7 @@ string re-reads the block.
 `workloads.ycsb` gained a `benchmarking:` block (`catalog_contract_version`
 1.4.0 -> 1.5.0, `spec.CATALOG_CONTRACT_VERSION` kept in lockstep), mirroring
 the pre-existing `loading:` block's `pods`/`threads` pair but for the
-benchmarking phase, and `bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()`
+benchmarking phase, and `bexhoma/benchmarks/ycsb/catalog.py::build_ycsb_argv()`
 now emits `-nbp`/`-nbt` from it.
 
 Rationale: before this change, the only lever the catalog exposed for
@@ -711,7 +711,7 @@ already read by `ycsb.py`'s own run loop; neither file needed a change.
 ## Three YCSB knobs that validated but silently did nothing, corrected (2026-09-12)
 
 Reading `ycsb.py` end to end while investigating the incident above turned up
-three places where `bexhoma/experiments/ycsb_catalog.py::build_ycsb_argv()`
+three places where `bexhoma/benchmarks/ycsb/catalog.py::build_ycsb_argv()`
 either never translated a field the schema already accepted, or never gave
 the workload a way to reach a real `ycsb.py` behavior at all. All three are
 fixed in the same change as the `benchmarking:` block above.
@@ -719,7 +719,7 @@ fixed in the same change as the `benchmarking:` block above.
 - **`loading.timeout_minutes` reached the validator's timeout budget but not
   `ycsb.py`.** This field is generic (`experiment_schema.fields.loading`),
   and `agent/harness/validation.py`'s cost estimate already accounts for it
-  for every workload. `bexhoma/experiments/tpch_catalog.py` translates it
+  for every workload. `bexhoma/benchmarks/tpch/catalog.py` translates it
   into `--loading-timeout`; `ycsb_catalog.py` never did, so a YCSB
   experiment declaring this field got a clean validation and a timeout
   figure in its budget that was never actually enforced against a stuck
@@ -741,7 +741,7 @@ fixed in the same change as the `benchmarking:` block above.
   reset is never a valid experimental treatment, only a bug.
 - **`-tr`/`--test-result` had no YCSB-side path to turn it on.** The
   underlying mechanism is workload-agnostic (`bexhoma/experiments/base.py`
-  reads `self.args.test_result` directly), and `bexhoma/evaluators/ycsb.py`
+  reads `self.args.test_result` directly), and `bexhoma/benchmarks/ycsb/evaluator.py`
   already implements `record_tests()` — non-zero loading/benchmarking
   throughput, the planned workflow actually ran, no `FAILED` operation
   column — so turning it on is meaningful, not a no-op. `tpch_catalog.py`

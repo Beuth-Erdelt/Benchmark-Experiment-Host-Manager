@@ -78,62 +78,8 @@ At the end of a benchmark you will see a summary like
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 625s 
-* Code: 1793202264
-* This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
-* This experiment compares run time and resource consumption of SSB queries in different DBMS.
-  * Schema is the star schema (-xsv normal).
-  * SSB (SF=1) data is loaded and benchmark is executed.
-  * Queries use the constants of the specification (-xqv spec).
-  * Query ordering is Q1.1 - Q4.3.
-  * Timeout per query is 1200.
-  * PgDuckDB queries are forced through the DuckDB execution engine.
-  * Data transfer volume per query is also measured.
-  * Import sets indexes, constraints, statistics recomputation after loading.
-  * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.9.
-  * Experiment is limited to DBMS ['PgDuckDB'].
-  * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker38.
-  * Benchmarking is fixed to cl-worker38.
-  * SUT is fixed - waiting 30s -               : done
-Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1794003634 initialized to 1.
-PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 1
-postgresql-1-1-1-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1794003634
-PostgreSQL-1                  : submitted benchmarker job in 7.2s (4 kubectl calls 4.9s, 24 API requests 2.2s)
-Loop pass                     : took 11.0s (5 kubectl calls 6.1s, 44 API requests 3.7s)
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 20 API requests 1.0s)
-- waiting 30s -               : done
-postgresql-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1794003634/postgresql-1-1-1-1.config
-postgresql-1-1-1-1            : showing benchmarker times
-postgresql-1-1-1-1            : benchmarker timespan job from 1794004007 to 1794004074
-postgresql-1-1-1-1            : benchmarker timespan pods from 1794004036 to 1794004039
-postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 3
-postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1794004036, 1794004039)]
-postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1794004036, 1794004039)]}
-Loop pass                     : took 7.3s (4 kubectl calls 5.1s, 24 API requests 1.2s)
-PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1794003634-655fc4c647-zxvk2
-Loop pass                     : took 6.7s (4 kubectl calls 4.7s, 29 API requests 1.3s)
-Experiment                    : ends at 2026-11-06 23:28:04.327884 (227273.9341146) - 449.90s total
-Experiment                    : join results...done!
-Experiment                    : build evaluation cube...done!
-Experiment                    : downloading partial results
-Experiment                    : uploading full results
-Experiment                    : uploading workload file
-Result workflow complete
-
-## Show Summary
-
-### Workload
-SSB Queries SF=1
-* Type: ssb
-* Duration: 450s 
-* Code: 1794003634
+* Duration: 418s 
+* Code: 1794595408
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -144,7 +90,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -167,10 +113,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:872701
+  * disk:1126908
   * datadisk:1581
   * volume_size:1.8T
-  * volume_used:853G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -180,10 +126,13 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794003634
+    * code:1794595408
+
+### Ingestion
+* PostgreSQL-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794003634-655fc4c647-zxvk2: 0
+* bexhoma-sut-postgresql-1-1794595408-568d4475cb-5ddxj: 0
 
 ### Workflow
 
@@ -199,23 +148,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    1 |       60.00 |           5.00 |           23.00 |          5.00 |           17.00 |              8 |           0 |             | None           |             0 | False         |               60.00 | False               |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       59.00 |           4.00 |           25.00 |          5.00 |           16.00 |              8 |         0 |             | None           |             0 | False         |               61.02 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          3 |            0.08 |            48071.31 |          15600.00 |          -1 | postgresql-1-1-1-1-1 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          7 |            0.10 |            40796.05 |           6685.71 |          -1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          3 |            0.08 |            48071.31 |          15600.00 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          7 |            0.10 |            40796.05 |           6685.71 |          -1 |
 
 #### Query Completion per Phase
 
@@ -228,19 +177,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   postgresql-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|-----------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 387.06 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  25.00 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                   6.96 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                 167.91 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  56.46 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                   6.66 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                 223.97 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                 146.47 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  44.03 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  35.29 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                 238.31 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                 312.47 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                 144.52 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 476.44 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  30.68 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                   9.92 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                 169.15 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  66.86 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                  10.11 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                 231.08 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                 170.83 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  54.85 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  43.38 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                 245.38 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                 321.73 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                 159.99 |
 
 ### Errors (failed queries)
 
@@ -254,6 +203,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -289,8 +240,8 @@ bexhoma ssb -dbms MonetDB -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 358s 
-* Code: 1794004112
+* Duration: 331s 
+* Code: 1794595853
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -301,7 +252,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['MonetDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -323,8 +274,8 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:872024
-  * datadisk:2024
+  * disk:1127383
+  * datadisk:2026
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
@@ -333,10 +284,13 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794004112
+    * code:1794595853
+
+### Ingestion
+* MonetDB-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-monetdb-1-1794004112-784cbf9487-s9x4s: 0
+* bexhoma-sut-monetdb-1-1794595853-75cfbf767f-nnth7: 0
 
 ### Workflow
 
@@ -352,23 +306,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MonetDB-1-1 |                1 |    1 |       63.00 |           3.00 |           24.00 |         11.00 |           14.00 |              8 |           0 |             | None           |             0 | False         |               57.14 | False               |
+| DBMS        |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MonetDB-1-1 |                1 |    1 |       56.00 |           3.00 |           17.00 |         14.00 |           12.00 |              8 |         0 |             | None           |             0 | False         |               64.29 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
-|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| monetdb-1-1-1-1-1 | MonetDB-1       | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          3 |            0.03 |           147572.27 |          15600.00 |          -1 | monetdb-1-1-1-1-1 |
+| connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| monetdb-1-1-1-1-1 | monetdb-1-1-1 | monetdb-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          5 |            0.06 |            89279.89 |           9360.00 |          -1 |
 
 #### Per Phase
 
-|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS          | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          3 |            0.03 |           147572.27 |          15600.00 |          -1 |
+| monetdb-1-1-1 | monetdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.06 |            89279.89 |           9360.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -381,19 +335,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   monetdb-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|--------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |               31.68 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               12.53 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |               12.57 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |               23.46 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |               33.09 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               30.27 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |               25.52 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |               26.38 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |               24.25 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |               24.62 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |               27.29 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |               28.93 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |               29.13 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |              157.16 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               18.56 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |               14.79 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |               32.53 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |               31.07 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               61.83 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |               66.37 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |               35.71 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |               39.80 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |               32.48 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |               48.08 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |               44.32 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |               42.32 |
 
 ### Errors (failed queries)
 
@@ -407,6 +361,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -437,8 +393,8 @@ bexhoma ssb -dbms ClickHouse -sf 1 -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 328s 
-* Code: 1794004498
+* Duration: 327s 
+* Code: 1794596209
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -448,7 +404,7 @@ SSB Queries SF=1
   * Timeout per query is 1200.
   * Data transfer volume per query is also measured.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['ClickHouse'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -470,10 +426,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:869697
-  * datadisk:477
+  * disk:1123293
+  * datadisk:479
   * volume_size:1.8T
-  * volume_used:850G
+  * volume_used:1.1T
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
@@ -482,10 +438,13 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794004498
+    * code:1794596209
+
+### Ingestion
+* ClickHouse-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-clickhouse-1-1794004498-5994f65fb4-2s4jn: 0
+* bexhoma-sut-clickhouse-1-1794596209-7875f667f6-q7whp: 0
 
 ### Workflow
 
@@ -501,23 +460,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| ClickHouse-1-1 |                1 |    1 |       43.00 |           2.00 |           27.00 |          3.00 |            2.00 |              8 |           0 |             | None           |             0 | False         |               83.72 | False               |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| ClickHouse-1-1 |                1 |    1 |       41.00 |           2.00 |           24.00 |          3.00 |            2.00 |              8 |         0 |             | None           |             0 | False         |               87.80 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| clickhouse-1-1-1-1-1 | ClickHouse-1    | clickhouse-1-1-1 | clickhouse-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.04 |           102123.10 |           7800.00 |          -1 | clickhouse-1-1-1-1-1 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| clickhouse-1-1-1-1-1 | clickhouse-1-1-1 | clickhouse-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          9 |            0.09 |            65177.39 |           5200.00 |          -1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| clickhouse-1-1-1 | clickhouse-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.04 |           102123.10 |           7800.00 |          -1 |
+| clickhouse-1-1-1 | clickhouse-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          9 |            0.09 |            65177.39 |           5200.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -530,19 +489,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   clickhouse-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|-----------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 127.94 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  20.99 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                  18.93 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                  31.12 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  29.24 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                  25.11 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                  44.56 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                  26.49 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  20.91 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  22.55 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                  60.64 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                  37.62 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                  88.04 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 283.65 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  28.99 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                  27.79 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                  43.16 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  39.90 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                  87.26 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                  86.93 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                  55.83 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  48.65 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  40.29 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                  66.64 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                  51.43 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                  39.77 |
 
 ### Errors (failed queries)
 
@@ -556,6 +515,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -586,8 +547,8 @@ bexhoma ssb -dbms PgDuckDB -xdfe -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 437s 
-* Code: 1794008315
+* Duration: 426s 
+* Code: 1794599919
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -599,7 +560,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PgDuckDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -621,10 +582,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:869175
-  * datadisk:1581
+  * disk:1141514
+  * datadisk:1582
   * volume_size:1.8T
-  * volume_used:849G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -634,10 +595,13 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794008315
+    * code:1794599919
+
+### Ingestion
+* PgDuckDB-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-pgduckdb-1-1794008315-6d67cbf5cc-9nxm4: 0
+* bexhoma-sut-pgduckdb-1-1794599919-6885c79f66-4tdg4: 0
 
 ### Workflow
 
@@ -653,23 +617,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|              |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:-------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PgDuckDB-1-1 |                1 |    1 |       56.00 |           5.00 |           22.00 |          4.00 |           17.00 |              8 |           0 |             | None           |             0 | False         |               64.29 | False               |
+| DBMS         |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:-------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PgDuckDB-1-1 |                1 |    1 |       54.00 |           4.00 |           17.00 |          4.00 |           20.00 |              8 |         0 |             | None           |             0 | False         |               66.67 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS               | configuration   | phase          | job              |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                |
-|:-------------------|:----------------|:---------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:-------------------|
-| pgduckdb-1-1-1-1-1 | PgDuckDB-1      | pgduckdb-1-1-1 | pgduckdb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          7 |            0.35 |            10358.37 |           6685.71 |          -1 | pgduckdb-1-1-1-1-1 |
+| connection         | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| pgduckdb-1-1-1-1-1 | pgduckdb-1-1-1 | pgduckdb-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          9 |            0.39 |             9256.75 |           5200.00 |          -1 |
 
 #### Per Phase
 
-|                | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| pgduckdb-1-1-1 | pgduckdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          7 |            0.35 |            10358.37 |           6685.71 |          -1 |
+| pgduckdb-1-1-1 | pgduckdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          9 |            0.39 |             9256.75 |           5200.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -682,19 +646,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   pgduckdb-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|---------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |               373.16 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               134.45 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                67.94 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |               670.37 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |               684.89 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               671.79 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |               615.87 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |               579.38 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |               188.06 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |               105.13 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |               731.98 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |               466.94 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |               425.74 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |               608.73 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               142.50 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                77.78 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |               636.42 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |               805.65 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               687.68 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |               622.38 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |               716.60 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |               174.61 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                70.35 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |              1483.58 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |               532.69 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |               452.01 |
 
 ### Errors (failed queries)
 
@@ -708,6 +672,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -717,8 +683,6 @@ No warnings
 * TEST passed: No SQL warnings
 * TEST passed: All active queries counted in the totals
 * TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
-* TEST passed: Workflow as planned
-red for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
 ```
 
@@ -742,8 +706,8 @@ bexhoma ssb -dbms MySQL -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 6
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 608s 
-* Code: 1794009954
+* Duration: 598s 
+* Code: 1794601146
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -754,7 +718,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -775,10 +739,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:901973
-  * datadisk:34369
+  * disk:1157244
+  * datadisk:34417
   * volume_size:1.8T
-  * volume_used:881G
+  * volume_used:1.2T
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
@@ -788,10 +752,13 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794009954
+    * code:1794601146
+
+### Ingestion
+* MySQL-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1794009954-5566db9f-svx5x: 0
+* bexhoma-sut-mysql-1-1794601146-6dd88f4977-jl6px: 0
 
 ### Workflow
 
@@ -807,23 +774,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MySQL-1-1 |                1 |    1 |      101.00 |           4.00 |           15.00 |         22.00 |           48.00 |              8 |           0 |             | None           |             0 | False         |               35.64 | False               |
+| DBMS      |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MySQL-1-1 |                1 |    1 |       91.00 |           3.00 |           23.00 |         10.00 |           47.00 |              8 |         0 |             | None           |             0 | False         |               39.56 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS            | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
-|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
-| mysql-1-1-1-1-1 | MySQL-1         | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         24 |            0.52 |             6947.24 |           1950.00 |          -1 | mysql-1-1-1-1-1 |
+| connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |         22 |            0.52 |             7014.68 |           2127.27 |          -1 |
 
 #### Per Phase
 
-|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS        | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         24 |            0.52 |             6947.24 |           1950.00 |          -1 |
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         22 |            0.52 |             7014.68 |           2127.27 |          -1 |
 
 #### Query Completion per Phase
 
@@ -836,19 +803,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   mysql-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |           1490.67 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |             92.80 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |             23.09 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |           2452.97 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |            345.73 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |             41.34 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |           5445.68 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |            736.38 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |            173.05 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |            123.71 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |           4704.76 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |           3693.57 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |           1162.82 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |           1445.71 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |             94.41 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |             23.20 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |           2382.05 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |            334.77 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |             41.99 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |           5200.79 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |            688.74 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |            182.25 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |            172.91 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |           4297.92 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |           2839.51 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |           1172.88 |
 
 ### Errors (failed queries)
 
@@ -862,6 +829,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -889,8 +858,8 @@ bexhoma ssb -dbms MariaDB -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 550s 
-* Code: 1794010597
+* Duration: 470s 
+* Code: 1794601771
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -901,7 +870,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -923,10 +892,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:869164
-  * datadisk:1552
+  * disk:1151274
+  * datadisk:1576
   * volume_size:1.8T
-  * volume_used:849G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -936,10 +905,13 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794010597
+    * code:1794601771
+
+### Ingestion
+* MariaDB-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1794010597-794c9b57f8-sml8d: 0
+* bexhoma-sut-mariadb-1-1794601771-85dc7ff4f8-b89kr: 0
 
 ### Workflow
 
@@ -955,23 +927,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MariaDB-1-1 |                1 |    1 |       80.00 |           4.00 |           21.00 |         10.00 |           34.00 |              8 |           0 |             | None           |             0 | False         |               45.00 | False               |
+| DBMS        |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MariaDB-1-1 |                1 |    1 |       81.00 |           4.00 |           17.00 |         12.00 |           37.00 |              8 |         0 |             | None           |             0 | False         |               44.44 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
-|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| mariadb-1-1-1-1-1 | MariaDB-1       | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         16 |            0.34 |            10878.71 |           2925.00 |          -1 | mariadb-1-1-1-1-1 |
+| connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |         15 |            0.32 |            11528.31 |           3120.00 |          -1 |
 
 #### Per Phase
 
-|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS          | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         16 |            0.34 |            10878.71 |           2925.00 |          -1 |
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         15 |            0.32 |            11528.31 |           3120.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -984,19 +956,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   mariadb-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|--------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |             1302.29 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               79.71 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |               17.72 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |              664.93 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |              146.03 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               17.26 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |             3494.09 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |              440.96 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |              140.20 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |               97.24 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |             4013.46 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |             2505.25 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |              876.39 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |              867.87 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               70.75 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |               16.59 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |              654.47 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |              130.31 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               16.96 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |             3317.05 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |              457.07 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |              157.70 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |              150.02 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |             4004.27 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |             2657.09 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |              477.54 |
 
 ### Errors (failed queries)
 
@@ -1010,6 +982,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -1059,8 +1033,8 @@ bexhoma ssb -dbms ClickHouseCluster -nw 3 -sf 1 -nlp 8 -xdt -ms 1 -t 1200 -tr -l
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 317s 
-* Code: 1794007596
+* Duration: 353s 
+* Code: 1794599193
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -1071,7 +1045,7 @@ SSB Queries SF=1
   * Timeout per query is 1200.
   * Data transfer volume per query is also measured.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['ClickHouseCluster'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -1095,60 +1069,63 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:867996
-  * datadisk:157
+  * disk:1125193
+  * datadisk:164
   * volume_size:1.8T
-  * volume_used:848G
+  * volume_used:1.1T
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:288106
-    * datadisk:199
-    * volume_size:879G
-    * volume_used:282G
-    * cpu_list:0-127
-  * worker 1
-    * RAM:2164173156352
-    * CPU:INTEL(R) XEON(R) PLATINUM 8570
-    * Cores:224
-    * host:6.8.0-147-generic
-    * node:cl-worker36
-    * disk:867997
-    * datadisk:202
-    * volume_size:1.8T
-    * volume_used:848G
-    * cpu_list:0-223
-  * worker 2
     * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:716496
-    * datadisk:202
+    * disk:1302290
+    * datadisk:207
     * volume_size:1.8T
-    * volume_used:700G
+    * volume_used:1.3T
     * cpu_list:0-127
+  * worker 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:692971
+    * datadisk:205
+    * volume_size:879G
+    * volume_used:677G
+    * cpu_list:0-127
+  * worker 2
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:1126105
+    * datadisk:211
+    * volume_size:1.8T
+    * volume_used:1.1T
+    * cpu_list:0-223
   * resources_total: 16.0 CPU, 256.0 GiB RAM requested in 4 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794007596
+    * code:1794599193
     * BEXHOMA_WORKERS:3
 
+### Ingestion
+* ClickHouseCluster-1: 12 of 12 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-clickhousecluster-1-1794007596-7599b844c4-kf6tq: 0
-* bx-w-chc-1-1794007596-0: 0
-* bx-w-chc-1-1794007596-1: 0
-* bx-w-chc-1-1794007596-2: 0
+* bexhoma-sut-clickhousecluster-1-1794599193-8464f679cf-9f4kx: 0
+* bx-w-chc-1-1794599193-0: 0
+* bx-w-chc-1-1794599193-1: 0
+* bx-w-chc-1-1794599193-2: 0
 
 ### Workflow
 
@@ -1164,23 +1141,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|                       |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:----------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| ClickHouseCluster-1-1 |                1 |    1 |       39.00 |           4.00 |           20.00 |          4.00 |            3.00 |              8 |           0 |             | None           |             0 | False         |               92.31 | False               |
+| DBMS                  |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| ClickHouseCluster-1-1 |                1 |    1 |       45.00 |           4.00 |           25.00 |          3.00 |            2.00 |              8 |         0 |             | None           |             0 | False         |               80.00 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                        | configuration       | phase                   | job                       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                         |
-|:----------------------------|:--------------------|:------------------------|:--------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------------------|
-| clickhousecluster-1-1-1-1-1 | ClickHouseCluster-1 | clickhousecluster-1-1-1 | clickhousecluster-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          4 |            0.12 |            30605.87 |          11700.00 |          -1 | clickhousecluster-1-1-1-1-1 |
+| connection                  | phase                   | job                       |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:----------------------------|:------------------------|:--------------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| clickhousecluster-1-1-1-1-1 | clickhousecluster-1-1-1 | clickhousecluster-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          5 |            0.18 |            20820.93 |           9360.00 |          -1 |
 
 #### Per Phase
 
-|                         | phase                   |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS                    | phase                   |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------------------|:------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| clickhousecluster-1-1-1 | clickhousecluster-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          4 |            0.12 |            30605.87 |          11700.00 |          -1 |
+| clickhousecluster-1-1-1 | clickhousecluster-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.18 |            20820.93 |           9360.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -1193,19 +1170,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   clickhousecluster-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|------------------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                        107.96 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                         50.42 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                         52.98 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                         95.68 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                         84.15 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                         82.07 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                        203.07 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                        135.64 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                        130.25 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                        156.03 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                        195.86 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                        217.66 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                        181.43 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                        339.35 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                         49.53 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                        180.97 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                        592.61 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                         96.79 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                         79.90 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                        241.27 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                        154.74 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                        149.31 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                        145.93 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                        180.33 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                        285.26 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                        211.60 |
 
 ### Errors (failed queries)
 
@@ -1219,6 +1196,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -1248,8 +1227,8 @@ bexhoma ssb -dbms ClickHouseCluster -nw 3 -xdim distributed -sf 1 -nlp 8 -xdt -m
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 348s 
-* Code: 1794007941
+* Duration: 319s 
+* Code: 1794599572
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -1260,7 +1239,7 @@ SSB Queries SF=1
   * Timeout per query is 1200.
   * Data transfer volume per query is also measured.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['ClickHouseCluster'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -1284,10 +1263,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:867986
-  * datadisk:153
+  * disk:1146961
+  * datadisk:147
   * volume_size:1.8T
-  * volume_used:848G
+  * volume_used:1.1T
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
@@ -1298,46 +1277,49 @@ SSB Queries SF=1
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:716471
-    * datadisk:200
+    * disk:1302105
+    * datadisk:194
     * volume_size:1.8T
-    * volume_used:700G
+    * volume_used:1.3T
     * cpu_list:0-127
   * worker 1
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:309930
-    * datadisk:201
-    * volume_size:879G
-    * volume_used:303G
-    * cpu_list:0-127
-  * worker 2
     * RAM:2164173156352
     * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
     * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:867989
-    * datadisk:201
+    * disk:1146977
+    * datadisk:194
     * volume_size:1.8T
-    * volume_used:848G
+    * volume_used:1.1T
     * cpu_list:0-223
+  * worker 2
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:692961
+    * datadisk:195
+    * volume_size:879G
+    * volume_used:677G
+    * cpu_list:0-127
   * resources_total: 16.0 CPU, 256.0 GiB RAM requested in 4 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794007941
+    * code:1794599572
     * BEXHOMA_WORKERS:3
 
+### Ingestion
+* ClickHouseCluster-1: 12 of 12 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-clickhousecluster-1-1794007941-7f5bc7f4-26s22: 0
-* bx-w-chc-1-1794007941-0: 0
-* bx-w-chc-1-1794007941-1: 0
-* bx-w-chc-1-1794007941-2: 0
+* bexhoma-sut-clickhousecluster-1-1794599572-85fcb59684-2fhdf: 0
+* bx-w-chc-1-1794599572-0: 0
+* bx-w-chc-1-1794599572-1: 0
+* bx-w-chc-1-1794599572-2: 0
 
 ### Workflow
 
@@ -1353,23 +1335,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|                       |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:----------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| ClickHouseCluster-1-1 |                1 |    1 |       36.00 |           3.00 |           20.00 |          2.00 |            3.00 |              8 |           0 |             | None           |             0 | False         |              100.00 | False               |
+| DBMS                  |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| ClickHouseCluster-1-1 |                1 |    1 |       38.00 |           3.00 |           23.00 |          3.00 |            2.00 |              8 |         0 |             | None           |             0 | False         |               94.74 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                        | configuration       | phase                   | job                       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                         |
-|:----------------------------|:--------------------|:------------------------|:--------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------------------|
-| clickhousecluster-1-1-1-1-1 | ClickHouseCluster-1 | clickhousecluster-1-1-1 | clickhousecluster-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         11 |            0.48 |             7496.79 |           4254.55 |          -1 | clickhousecluster-1-1-1-1-1 |
+| connection                  | phase                   | job                       |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:----------------------------|:------------------------|:--------------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| clickhousecluster-1-1-1-1-1 | clickhousecluster-1-1-1 | clickhousecluster-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |         12 |            0.50 |             7204.87 |           3900.00 |          -1 |
 
 #### Per Phase
 
-|                         | phase                   |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS                    | phase                   |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------------------|:------------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| clickhousecluster-1-1-1 | clickhousecluster-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         11 |            0.48 |             7496.79 |           4254.55 |          -1 |
+| clickhousecluster-1-1-1 | clickhousecluster-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         12 |            0.50 |             7204.87 |           3900.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -1382,19 +1364,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   clickhousecluster-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|------------------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                        314.42 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                         80.44 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                         77.34 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                        450.19 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                        228.39 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                        198.61 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                        865.01 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                        981.54 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                        763.85 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                        708.21 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                       1469.36 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                       1629.61 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                       1643.47 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                        380.03 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                         91.67 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                         83.10 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                        263.51 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                        226.18 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                        208.90 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                       1214.79 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                       1034.72 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                        829.83 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                        864.14 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                       1724.70 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                       1666.18 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                       1295.88 |
 
 ### Errors (failed queries)
 
@@ -1408,6 +1390,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -1437,8 +1421,8 @@ bexhoma ssb -dbms Citus -nw 3 -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 818s 
-* Code: 1794009097
+* Duration: 747s 
+* Code: 1794600373
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -1450,7 +1434,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['Citus'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -1474,37 +1458,37 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:868392
+  * disk:1147171
   * datadisk:58
   * volume_size:1.8T
-  * volume_used:849G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:310364
-    * datadisk:801
-    * volume_size:879G
-    * volume_used:304G
-    * cpu_list:0-127
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 1
     * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:718539
+    * disk:1301917
     * datadisk:801
     * volume_size:1.8T
-    * volume_used:702G
+    * volume_used:1.3T
+    * cpu_list:0-127
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * worker 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:694361
+    * datadisk:800
+    * volume_size:879G
+    * volume_used:679G
     * cpu_list:0-127
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * worker 2
@@ -1513,10 +1497,10 @@ SSB Queries SF=1
     * Cores:224
     * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:868392
+    * disk:1147171
     * datadisk:735
     * volume_size:1.8T
-    * volume_used:849G
+    * volume_used:1.1T
     * cpu_list:0-223
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * resources_total: 16.0 CPU, 256.0 GiB RAM requested in 4 pods
@@ -1524,14 +1508,17 @@ SSB Queries SF=1
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794009097
+    * code:1794600373
     * BEXHOMA_WORKERS:3
 
+### Ingestion
+* Citus-1: 12 of 12 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-citus-1-1794009097-5b55dcbb98-z7stz: 0
-* bx-w-ci-1-1794009097-0: 0
-* bx-w-ci-1-1794009097-1: 0
-* bx-w-ci-1-1794009097-2: 0
+* bexhoma-sut-citus-1-1794600373-857d446cb6-bnjk8: 0
+* bx-w-ci-1-1794600373-0: 0
+* bx-w-ci-1-1794600373-1: 0
+* bx-w-ci-1-1794600373-2: 0
 
 ### Workflow
 
@@ -1547,23 +1534,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| Citus-1-1 |                1 |    1 |       71.00 |           5.00 |           22.00 |         19.00 |           15.00 |              8 |           0 |             | None           |             0 | False         |               50.70 | False               |
+| DBMS      |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| Citus-1-1 |                1 |    1 |       54.00 |           5.00 |           20.00 |          4.00 |           16.00 |              8 |         0 |             | None           |             0 | False         |               66.67 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS            | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
-|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
-| citus-1-1-1-1-1 | Citus-1         | citus-1-1-1 | citus-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.09 |            41436.31 |           7800.00 |          -1 | citus-1-1-1-1-1 |
+| connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| citus-1-1-1-1-1 | citus-1-1-1 | citus-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          6 |            0.09 |            39523.05 |           7800.00 |          -1 |
 
 #### Per Phase
 
-|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS        | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| citus-1-1-1 | citus-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.09 |            41436.31 |           7800.00 |          -1 |
+| citus-1-1-1 | citus-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.09 |            39523.05 |           7800.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -1576,19 +1563,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   citus-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |            135.51 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |             46.42 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |             25.92 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |            151.77 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |            107.49 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |             60.49 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |            137.41 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |             91.28 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |             62.90 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |             59.33 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |            159.63 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |            131.40 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |            101.70 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |            139.62 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |             54.29 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |             26.12 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |            150.65 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |            104.52 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |             61.46 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |            152.54 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |            101.39 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |             68.61 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |             61.23 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |            167.01 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |            136.52 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |            104.69 |
 
 ### Errors (failed queries)
 
@@ -1602,6 +1589,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -1672,8 +1661,8 @@ date dimension. They return the same results.
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 582s 
-* Code: 1794004854
+* Duration: 526s 
+* Code: 1794596562
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there). The queries read the denormalized table lineorder_flat; year, month and week come from lo_orderdate.
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the flat table lineorder_flat (-xsv flat).
@@ -1684,7 +1673,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL', 'MonetDB', 'ClickHouse'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -1707,10 +1696,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:877471
-  * datadisk:1613
+  * disk:1155701
+  * datadisk:1608
   * volume_size:1.8T
-  * volume_used:857G
+  * volume_used:1.2T
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
@@ -1719,14 +1708,14 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794004854
+    * code:1794596562
 * monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:877471
+  * disk:1155621
   * datadisk:2153
   * cpu_list:0-223
   * requests_cpu:4
@@ -1736,17 +1725,17 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794004854
+    * code:1794596562
 * postgresql-1-1-1-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:877679
+  * disk:1155616
   * datadisk:4470
   * volume_size:1.8T
-  * volume_used:858G
+  * volume_used:1.2T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -1756,15 +1745,20 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794004854
+    * code:1794596562
 
 ### Init Scripts Not in Folder
 * ClickHouse-1: skipped initindexes-ssb-flat.sql, initstatistics-ssb-flat.sql
 
+### Ingestion
+* ClickHouse-1: 8 of 8 units ok
+* MonetDB-1: 8 of 8 units ok
+* PostgreSQL-1: 8 of 8 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-clickhouse-1-1794004854-8594c68996-nd2tp: 0
-* bexhoma-sut-monetdb-1-1794004854-54c9bc6879-442kn: 0
-* bexhoma-sut-postgresql-1-1794004854-697cb777bb-sjnmd: 0
+* bexhoma-sut-clickhouse-1-1794596562-6b644b4c56-5thmr: 0
+* bexhoma-sut-monetdb-1-1794596562-84c79bdc5f-lcpgt: 0
+* bexhoma-sut-postgresql-1-1794596562-67b9d76cdd-lhzd4: 0
 
 ### Workflow
 
@@ -1784,29 +1778,29 @@ SSB Queries SF=1
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| ClickHouse-1-1 |                1 |    1 |       62.00 |           3.00 |           38.00 |          4.00 |            2.00 |              8 |           0 |             | None           |             0 | False         |               58.06 | False               |
-| MonetDB-1-1    |                1 |    1 |       96.00 |           3.00 |           39.00 |         28.00 |           15.00 |              8 |           0 |             | None           |             0 | False         |               37.50 | False               |
-| PostgreSQL-1-1 |                1 |    1 |       80.00 |           5.00 |           25.00 |         13.00 |           25.00 |              8 |           0 |             | None           |             0 | False         |               45.00 | False               |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| ClickHouse-1-1 |                1 |    1 |       58.00 |           3.00 |           37.00 |          5.00 |            2.00 |              8 |         0 |             | None           |             0 | False         |               62.07 | False               |
+| MonetDB-1-1    |                1 |    1 |      108.00 |           2.00 |           28.00 |         46.00 |           15.00 |              8 |         0 |             | None           |             0 | False         |               33.33 | False               |
+| PostgreSQL-1-1 |                1 |    1 |       87.00 |           4.00 |           37.00 |         11.00 |           26.00 |              8 |         0 |             | None           |             0 | False         |               41.38 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| clickhouse-1-1-1-1-1 | ClickHouse-1    | clickhouse-1-1-1 | clickhouse-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          2 |            0.04 |           119059.33 |          23400.00 |          -1 | clickhouse-1-1-1-1-1 |
-| monetdb-1-1-1-1-1    | MonetDB-1       | monetdb-1-1-1    | monetdb-1-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          3 |            0.03 |           158466.70 |          15600.00 |          -1 | monetdb-1-1-1-1-1    |
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.07 |            53755.16 |           7800.00 |          -1 | postgresql-1-1-1-1-1 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| clickhouse-1-1-1-1-1 | clickhouse-1-1-1 | clickhouse-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          3 |            0.03 |           129285.94 |          15600.00 |          -1 |
+| monetdb-1-1-1-1-1    | monetdb-1-1-1    | monetdb-1-1-1-1    |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          4 |            0.03 |           140706.71 |          11700.00 |          -1 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          7 |            0.09 |            45283.96 |           6685.71 |          -1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| clickhouse-1-1-1 | clickhouse-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          2 |            0.04 |           119059.33 |          23400.00 |          -1 |
-| monetdb-1-1-1    | monetdb-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          3 |            0.03 |           158466.70 |          15600.00 |          -1 |
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.07 |            53755.16 |           7800.00 |          -1 |
+| clickhouse-1-1-1 | clickhouse-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          3 |            0.03 |           129285.94 |          15600.00 |          -1 |
+| monetdb-1-1-1    | monetdb-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          4 |            0.03 |           140706.71 |          11700.00 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          7 |            0.09 |            45283.96 |           6685.71 |          -1 |
 
 #### Query Completion per Phase
 
@@ -1821,19 +1815,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   clickhouse-1-1-1-1-1 |   monetdb-1-1-1-1-1 |   postgresql-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|-----------------------:|--------------------:|-----------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                  60.25 |               34.27 |                 695.03 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  10.49 |               11.52 |                  43.07 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                   8.94 |               13.61 |                  10.51 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                  28.77 |               19.90 |                 173.89 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  26.04 |               18.32 |                  77.73 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                  21.15 |               18.69 |                  10.07 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                  54.02 |               24.76 |                 405.57 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                  30.44 |               23.87 |                  51.65 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  34.82 |               30.67 |                   8.47 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  15.07 |               21.38 |                   6.98 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                  90.14 |               32.16 |                 277.94 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                  47.48 |               31.93 |                 406.65 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                  53.39 |               29.48 |                  90.92 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 154.37 |               50.65 |                 460.58 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  12.84 |               22.16 |                  45.36 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                   9.11 |               12.28 |                  11.27 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                  30.89 |               18.89 |                 197.86 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  29.00 |               30.72 |                  98.13 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                  23.49 |               15.93 |                  11.49 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                  56.12 |               25.24 |                 408.26 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                  29.81 |               26.07 |                  60.25 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  21.73 |               29.07 |                  18.50 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  10.59 |               26.18 |                  14.62 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                  53.01 |               27.57 |                 779.41 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                  28.16 |               36.36 |                 286.31 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                  27.69 |               31.47 |                  65.00 |
 
 ### Errors (failed queries)
 
@@ -1847,6 +1841,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -1883,8 +1879,8 @@ The drawn values are in the protocol of the experiment.
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 470s 
-* Code: 1794005468
+* Duration: 421s 
+* Code: 1794597119
 * This includes the 13 queries of the Star Schema Benchmark as templates with random parameters (generalization after Rabl et al., ICPE 2013): every predicate picks a random member of its hierarchy level or moves its range, so each query keeps the filter factor of the specification.
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -1896,7 +1892,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -1919,10 +1915,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:870822
+  * disk:1124399
   * datadisk:1581
   * volume_size:1.8T
-  * volume_used:851G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -1932,17 +1928,17 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794005468
+    * code:1794597119
 * postgresql-1-1-2-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:870823
+  * disk:1124400
   * datadisk:1581
   * volume_size:1.8T
-  * volume_used:851G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -1952,17 +1948,17 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794005468
+    * code:1794597119
 * postgresql-1-1-2-1-2 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:870823
+  * disk:1124400
   * datadisk:1581
   * volume_size:1.8T
-  * volume_used:851G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -1972,10 +1968,13 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794005468
+    * code:1794597119
+
+### Ingestion
+* PostgreSQL-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794005468-fd4d6967-4lrm7: 0
+* bexhoma-sut-postgresql-1-1794597119-c75867bd6-vn6vn: 0
 
 ### Workflow
 
@@ -1993,26 +1992,26 @@ SSB Queries SF=1
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    1 |       64.00 |           5.00 |           27.00 |          5.00 |           18.00 |              8 |           0 |             | None           |             0 | False         |               56.25 | False               |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       65.00 |           5.00 |           27.00 |          5.00 |           19.00 |              8 |         0 |             | None           |             0 | False         |               55.38 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.09 |            43217.07 |           9360.00 |          -1 | postgresql-1-1-1-1-1 |
-| postgresql-1-1-2-1-1 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.09 |            43078.17 |           7800.00 |          -1 | postgresql-1-1-2-1-1 |
-| postgresql-1-1-2-1-2 | PostgreSQL-1    | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.08 |            46204.84 |           9360.00 |          -1 | postgresql-1-1-2-1-2 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          5 |            0.09 |            40493.65 |           9360.00 |          -1 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               13 |                  13 |          6 |            0.09 |            42258.28 |           7800.00 |          -1 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 | 1.00 |               13 |                  13 |          5 |            0.09 |            41803.80 |           9360.00 |          -1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.09 |            43217.07 |           9360.00 |          -1 |
-| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |               26 |                  26 |          6 |            0.08 |            44614.12 |          15600.00 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          5 |            0.09 |            40493.65 |           9360.00 |          -1 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |               26 |                  26 |          6 |            0.09 |            42030.43 |          15600.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -2026,19 +2025,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   postgresql-1-1-1-1-1 |   postgresql-1-1-2-1-1 |   postgresql-1-1-2-1-2 |
 |:---------------------------------------------------------------------------------------|-----------------------:|-----------------------:|-----------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 457.86 |                 371.71 |                 325.42 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  21.97 |                  21.82 |                  20.82 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                   7.06 |                   6.90 |                   6.91 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                 155.55 |                 156.06 |                 130.68 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  61.21 |                  55.60 |                  55.57 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                   8.06 |                   6.80 |                   5.89 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                 240.38 |                 251.34 |                 236.25 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                 177.17 |                 173.88 |                 146.03 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  33.25 |                  31.54 |                  28.33 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  38.68 |                  36.68 |                  34.96 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                 800.40 |                1167.99 |                1113.52 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                 318.45 |                 341.75 |                 341.84 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                 122.32 |                 145.58 |                 149.77 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 413.74 |                 384.28 |                 390.73 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  25.74 |                  22.69 |                  25.82 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                   9.53 |                   8.99 |                   9.03 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                 175.98 |                 164.38 |                 161.57 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  74.99 |                  68.53 |                  68.54 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                   8.90 |                   7.86 |                   8.22 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                 229.25 |                 232.44 |                 232.09 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                 194.86 |                 188.29 |                 179.14 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  24.85 |                  26.61 |                  26.30 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  31.68 |                  34.74 |                  33.63 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                 991.27 |                 916.15 |                 919.46 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                 345.50 |                 339.74 |                 348.61 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                 150.95 |                 142.35 |                 146.55 |
 
 ### Errors (failed queries)
 
@@ -2052,6 +2051,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -2084,87 +2085,8 @@ starts the SUT again on that volume and skips loading (see Inherited Loading in 
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 470s 
-* Code: 1794005468
-* This includes the 13 queries of the Star Schema Benchmark as templates with random parameters (generalization after Rabl et al., ICPE 2013): every predicate picks a random member of its hierarchy level or moves its range, so each query keeps the filter factor of the specification.
-* This experiment compares run time and resource consumption of SSB queries in different DBMS.
-  * Schema is the star schema (-xsv normal).
-  * SSB (SF=1) data is loaded and benchmark is executed.
-  * Queries use random parameters that keep the filter factor of the specification (-xqv random).
-  * Query ordering is Q1.1 - Q4.3.
-  * All instances use different query parameters.
-  * Timeout per query is 1200.
-  * Data transfer volume per query is also measured.
-  * Import sets indexes, constraints, statistics recomputation after loading.
-  * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
-  * Experiment is limited to DBMS ['PostgreSQL'].
-  * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker38.
-  * Benchmarking is fixed to cl-worker38.
-  * SUT is fixed to cl-worker36.
-  * Database uses ephemeral storage of size 50Gi.
-  * Loading is tested with [1] threads, split into [8] pods.
-  * Benchmarking is tested with [1] threads, split into [1] pods.
-  * Benchmarking is run as [1, 2] times the number of benchmarking pods.
-  * Experiment is run once.
-  * Maximum DBMS across the whole cluster is 10.
-  * Results are validated against basic correctness requirements.
-  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost', 'target': 'container'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency', 'target': 'container'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method', 'target': 'container'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather', 'target': 'container'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers', 'target': 'container'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes', 'target': 'container'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers', 'target': 'container'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size', 'target': 'container'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem', 'target': 'container'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem', 'target': 'container'}, '2GB')].
-  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
-
-### Connections
-* postgresql-1-1-1-1-1 uses docker image postgres:18.6
-  * RAM:2164173156352
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-147-generic
-  * node:cl-worker36
-  * disk:870822
-  * datadisk:1581
-  * volume_size:1.8T
-  * volume_used:851G
-  * cpu_list:0-223
-  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
-  * requests_cpu:4
-  * requests_memory:64Gi
-  * limits_memory:64Gi
-  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
-  * load_durability: relaxed
-  * eval_parameters
-    * code:1794005468
-* postgresql-1-1-2-1-1 uses docker- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
-- waiting 30s -               : done
-postgresql-1-2-1-1            : wrote benchmarking_timespans to /data/benchmarks/1794005970/postgresql-1-2-1-1.config
-postgresql-1-2-1-1            : showing benchmarker times
-postgresql-1-2-1-1            : benchmarker timespan job from 1794006596 to 1794006663
-postgresql-1-2-1-1            : benchmarker timespan pods from 1794006604 to 1794006638
-postgresql-1-2-1-1            : benchmarker timespan (start to end single container [s]) = 34
-postgresql-1-2-1-1            : benchmarker times (start/end per pod and container) = [(1794006604, 1794006638)]
-postgresql-1-2-1-1            : found and updated times {'benchmarker': [(1794006604, 1794006638)]}
-PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1794005970-5fcb66885b-frjmf and write to pvc bexhoma-storage-pg-nvme-ssb-1
-Loop pass                     : took 7.6s (4 kubectl calls 5.0s, 24 API requests 1.6s)
-PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1794005970-5fcb66885b-frjmf
-Loop pass                     : took 7.3s (5 kubectl calls 5.6s, 27 API requests 1.2s)
-Experiment                    : ends at 2026-11-07 00:11:14.094756 (229863.6293328) - 702.89s total
-Experiment                    : join results...done!
-Experiment                    : build evaluation cube...done!
-Experiment                    : downloading partial results
-Experiment                    : uploading full results
-Experiment                    : uploading workload file
-Result workflow complete
-
-## Show Summary
-
-### Workload
-SSB Queries SF=1
-* Type: ssb
-* Duration: 703s 
-* Code: 1794005970
+* Duration: 706s 
+* Code: 1794597570
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -2175,7 +2097,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -2198,7 +2120,7 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:869409
+  * disk:1146492
   * datadisk:1581
   * volume_size:49G
   * volume_used:1.6G
@@ -2211,14 +2133,14 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794005970
+    * code:1794597570
 * postgresql-1-2-1-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:869210
+  * disk:1146951
   * datadisk:1581
   * volume_size:49G
   * volume_used:1.6G
@@ -2231,7 +2153,7 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794005970
+    * code:1794597570
 
 ### Inherited Loading
 * loading skipped, loading times copied from an earlier repetition: PostgreSQL-1-2
@@ -2239,9 +2161,12 @@ SSB Queries SF=1
 ### Data Parameters of Reused Volumes
 * PostgreSQL-1: loading values of the volume: script=Schema, indexing=Index_and_Constraints_and_Statistics
 
+### Ingestion
+* PostgreSQL-1: 12 of 12 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794005970-9d6998f84-sg47x: 0
-* bexhoma-sut-postgresql-1-1794005970-5fcb66885b-frjmf: 0
+* bexhoma-sut-postgresql-1-1794597570-5fd7565f88-2bwmn: 0
+* bexhoma-sut-postgresql-1-1794597570-584f8496b5-hbzgb: 0
 
 ### Workflow
 
@@ -2259,26 +2184,26 @@ SSB Queries SF=1
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    1 |       57.00 |           6.00 |           18.00 |          5.00 |           20.00 |              8 |           0 |             | None           |             0 | False         |               63.16 | False               |
-| PostgreSQL-1-2 |                2 |    1 |       57.00 |           6.00 |           18.00 |          5.00 |           20.00 |              8 |           0 |             | None           |             0 | False         |               63.16 | True                |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       59.00 |           6.00 |           21.00 |          4.00 |           19.00 |              8 |         0 |             | None           |             0 | False         |               61.02 | False               |
+| PostgreSQL-1-2 |                2 |    1 |       59.00 |           6.00 |           21.00 |          4.00 |           19.00 |              8 |         0 |             | None           |             0 | False         |               61.02 | True                |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.12 |            30938.02 |           7800.00 |          -1 | postgresql-1-1-1-1-1 |
-| postgresql-1-2-1-1-1 | PostgreSQL-1    | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         34 |            0.20 |            18576.51 |           1376.47 |          -1 | postgresql-1-2-1-1-1 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          7 |            0.13 |            29047.66 |           6685.71 |          -1 |
+| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 | 1.00 |               13 |                  13 |         38 |            0.21 |            17964.02 |           1231.58 |          -1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.12 |            30938.02 |           7800.00 |          -1 |
-| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         34 |            0.20 |            18576.51 |           1376.47 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          7 |            0.13 |            29047.66 |           6685.71 |          -1 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         38 |            0.21 |            17964.02 |           1231.58 |          -1 |
 
 #### Query Completion per Phase
 
@@ -2292,19 +2217,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   postgresql-1-1-1-1-1 |   postgresql-1-2-1-1-1 |
 |:---------------------------------------------------------------------------------------|-----------------------:|-----------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 466.53 |               29916.43 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  34.71 |                  46.31 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                  17.39 |                  14.92 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                 206.87 |                 415.64 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  68.38 |                  93.68 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                  10.89 |                  10.54 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                 241.68 |                 269.15 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                 190.18 |                 294.21 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  47.57 |                  70.84 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  43.38 |                  56.74 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                1125.11 |                 954.74 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                 977.02 |                 803.80 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                 158.58 |                 262.36 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                 372.11 |               31887.87 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  62.31 |                  42.75 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                  12.22 |                  15.67 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                 203.83 |                 570.88 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  86.80 |                 118.32 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                  12.15 |                  14.72 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                 248.25 |                 326.91 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                 205.44 |                 320.40 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  57.03 |                  82.18 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  49.47 |                  38.32 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                1159.98 |                1014.08 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                 975.96 |                 763.60 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                 164.02 |                 155.04 |
 
 ### Errors (failed queries)
 
@@ -2318,6 +2243,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN
@@ -2349,15 +2276,15 @@ Mode `load` generates and loads the data and runs the post-load scripts, but no 
 ### Workload
 SSB Data Loading SF=1
 * Type: ssb
-* Duration: 318s 
-* Code: 1794006703
+* Duration: 347s 
+* Code: 1794598304
 * Load data and do not run a benchmark.
 * This imports SSB data sets.
   * Schema is the star schema (-xsv normal).
   * SSB (SF=1) data is loaded.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -2379,10 +2306,10 @@ SSB Data Loading SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:873693
+  * disk:1139063
   * datadisk:1581
   * volume_size:1.8T
-  * volume_used:854G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -2392,296 +2319,30 @@ SSB Data Loading SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794006703
+    * code:1794598304
+
+### Ingestion
+* PostgreSQL-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794006703-556f8dbfd6-btszb: 0
+* bexhoma-sut-postgresql-1-1794598304-56bd4bff97-szf7g: 0
 
 ### Loading
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    1 |       60.00 |           5.00 |           25.00 |          4.00 |           19.00 |              8 |           0 |             | None           |             0 | False         |               60.00 | False               |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       54.00 |           4.00 |           19.00 |          4.00 |           19.00 |              8 |         0 |             | None           |             0 | False         |               66.67 | False               |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
-794005050, 1794005053), (1794005049, 1794005052), (1794005049, 1794005052), (1794005050, 1794005052), (1794005050, 1794005053), (1794005050, 1794005052)]
-ClickHouse-1                  : generator timespan (first to last [s]) = 38
-ClickHouse-1                  : loader timespan (first to last [s]) = 4
-ClickHouse-1                  : total timespan (first to last [s]) = 57
-ClickHouse-1                  : loading scripts not in folder, skipped: initindexes-ssb-flat.sql, initstatistics-ssb-flat.sql
-ClickHouse-1                  : connect to pod bexhoma-sut-clickhouse-1-1794004854-8594c68996-nd2tp to load scripts
-ClickHouse-1                  : start asynch loading scripts of type index
-ClickHouse-1                  : is loading
-Loop pass                     : took 85.2s (64 kubectl calls 76.8s, 145 API requests 5.9s)
-- waiting 30s -               : done
-PostgreSQL-1                  : showing loader times (ssb-loader)
-PostgreSQL-1                  : generator times (start/end per pod and container) [(1794005097, 1794005113), (1794005094, 1794005113), (1794005089, 1794005114), (1794005113, 1794005113), (1794005103, 1794005114), (1794005109, 1794005113), (1794005107, 1794005114), (1794005101, 1794005113)]
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1794005126, 1794005139), (1794005126, 1794005139), (1794005127, 1794005139), (1794005126, 1794005139), (1794005127, 1794005139), (1794005126, 1794005138), (1794005126, 1794005139), (1794005127, 1794005139)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1794005097, 1794005113), (1794005094, 1794005113), (1794005089, 1794005114), (1794005113, 1794005113), (1794005103, 1794005114), (1794005109, 1794005113), (1794005107, 1794005114), (1794005101, 1794005113), (1794005126, 1794005139), (1794005126, 1794005139), (1794005127, 1794005139), (1794005126, 1794005139), (1794005127, 1794005139), (1794005126, 1794005138), (1794005126, 1794005139), (1794005127, 1794005139)]
-PostgreSQL-1                  : generator timespan (first to last [s]) = 25
-PostgreSQL-1                  : loader timespan (first to last [s]) = 13
-PostgreSQL-1                  : total timespan (first to last [s]) = 50
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1794004854-697cb777bb-sjnmd to load scripts
-PostgreSQL-1                  : start asynch loading scripts of type index
-PostgreSQL-1                  : is loading
-Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MonetDB-1-1794004854 initialized to 1.
-MonetDB-1                     : benchmarks done 0 of 1. This will be client 1
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-ClickHouse-1-1794004854 initialized to 1.
-ClickHouse-1                  : benchmarks done 0 of 1. This will be client 1
-monetdb-1-1-1-1               : start benchmarking (benchmark_run=1)
-clickhouse-1-1-1-1            : start benchmarking (benchmark_run=1)
-MonetDB-1                     : benchmarking results in folder C:\data\benchmarks/1794004854
-ClickHouse-1                  : benchmarking results in folder C:\data\benchmarks/1794004854
-MonetDB-1                     : submitted benchmarker job in 13.8s (4 kubectl calls 4.8s, 24 API requests 5.9s)
-ClickHouse-1                  : submitted benchmarker job in 16.6s (3 kubectl calls 4.0s, 23 API requests 6.0s)
-Experiment                    : submitted 2 benchmark rounds in 16.6s (2 at once; 7 kubectl calls 8.8s, 49 API requests 12.0s)
-Loop pass                     : took 65.0s (32 kubectl calls 39.5s, 131 API requests 16.3s)
-- waiting 30s -               : done
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1794004854 initialized to 1.
-PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 1
-postgresql-1-1-1-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1794004854
-PostgreSQL-1                  : submitted benchmarker job in 6.5s (3 kubectl calls 3.8s, 23 API requests 2.7s)
-monetdb-1-1-1-1               : wrote benchmarking_timespans to /data/benchmarks/1794004854/monetdb-1-1-1-1.config
-monetdb-1-1-1-1               : showing benchmarker times
-monetdb-1-1-1-1               : benchmarker timespan job from 1794005333 to 1794005380
-monetdb-1-1-1-1               : benchmarker timespan pods from 1794005348 to 1794005351
-monetdb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 3
-monetdb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1794005348, 1794005351)]
-monetdb-1-1-1-1               : found and updated times {'benchmarker': [(1794005348, 1794005351)]}
-clickhouse-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1794004854/clickhouse-1-1-1-1.config
-clickhouse-1-1-1-1            : showing benchmarker times
-clickhouse-1-1-1-1            : benchmarker timespan job from 1794005336 to 1794005380
-clickhouse-1-1-1-1            : benchmarker timespan pods from 1794005351 to 1794005353
-clickhouse-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 2
-clickhouse-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1794005351, 1794005353)]
-clickhouse-1-1-1-1            : found and updated times {'benchmarker': [(1794005351, 1794005353)]}
-Experiment                    : ended 2 benchmarker jobs in 3.0s (3 at once; 4 kubectl calls 4.9s, 24 API requests 1.1s)
-Loop pass                     : took 14.7s (10 kubectl calls 12.3s, 83 API requests 5.2s)
-PostgreSQL-1                  : has running benchmarks
-MonetDB-1                     : can be stopped
-MonetDB-1                     : had 0 restarts at worker bexhoma-sut-monetdb-1-1794004854-54c9bc6879-442kn
-ClickHouse-1                  : can be stopped
-ClickHouse-1                  : had 0 restarts at worker bexhoma-sut-clickhouse-1-1794004854-8594c68996-nd2tp
-Loop pass                     : took 10.3s (6 kubectl calls 6.9s, 70 API requests 2.5s)
-- waiting 30s -               : done
-postgresql-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1794004854/postgresql-1-1-1-1.config
-postgresql-1-1-1-1            : showing benchmarker times
-postgresql-1-1-1-1            : benchmarker timespan job from 1794005376 to 1794005427
-postgresql-1-1-1-1            : benchmarker timespan pods from 1794005386 to 1794005392
-postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 6
-postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1794005386, 1794005392)]
-postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1794005386, 1794005392)]}
-Loop pass                     : took 6.4s (4 kubectl calls 4.8s, 30 API requests 1.1s)
-PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1794004854-697cb777bb-sjnmd
-Loop pass                     : took 5.8s (4 kubectl calls 4.7s, 35 API requests 1.1s)
-Experiment                    : ends at 2026-11-06 23:50:36.482880 (228626.0479974) - 581.93s total
-Experiment                    : join results...done!
-Experiment                    : build evaluation cube...done!
-Experiment                    : downloading partial results
-Experiment                    : uploading full results
-Experiment                    : uploading workload file
-Result workflow complete
-
-## Show Summary
-
-### Workload
-SSB Queries SF=1
-* Type: ssb
-* Duration: 582s 
-* Code: 1794004854
-* This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there). The queries read the denormalized table lineorder_flat; year, month and week come from lo_orderdate.
-* This experiment compares run time and resource consumption of SSB queries in different DBMS.
-  * Schema is the flat table lineorder_flat (-xsv flat).
-  * SSB (SF=1) data is loaded and benchmark is executed.
-  * Queries use the constants of the specification (-xqv spec).
-  * Query ordering is Q1.1 - Q4.3.
-  * Timeout per query is 1200.
-  * Data transfer volume per query is also measured.
-  * Import sets indexes, statistics recomputation after loading.
-  * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
-  * Experiment is limited to DBMS ['PostgreSQL', 'MonetDB', 'ClickHouse'].
-  * Import is handled by 8 processes (pods).
-  * Loading is fixed to cl-worker38.
-  * Benchmarking is fixed to cl-worker38.
-  * SUT is fixed to cl-worker36.
-  * Database uses ephemeral storage of size 50Gi.
-  * Loading is tested with [1] threads, split into [8] pods.
-  * Benchmarking is tested with [1] threads, split into [1] pods.
-  * Benchmarking is run as [1] times the number of benchmarking pods.
-  * Experiment is run once.
-  * Maximum DBMS across the whole cluster is 10.
-  * Results are validated against basic correctness requirements.
-  * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'random_page_cost', 'target': 'container'}, '1.1'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_io_concurrency', 'target': 'container'}, '200'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'io_method', 'target': 'container'}, 'io_uring'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers_per_gather', 'target': 'container'}, '2'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_parallel_workers', 'target': 'container'}, '4'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'max_worker_processes', 'target': 'container'}, '6'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'shared_buffers', 'target': 'container'}, '20GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'effective_cache_size', 'target': 'container'}, '48GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'work_mem', 'target': 'container'}, '1GB'), ({'kind': 'deployment', 'workload': 'bexhoma-deployment-postgres', 'config': '', 'container': 'dbms', 'param': 'maintenance_work_mem', 'target': 'container'}, '2GB')].
-  * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
-
-### Connections
-* clickhouse-1-1-1-1-1 uses docker image clickhouse/clickhouse-server:26.8.34.13
-  * RAM:2164173156352
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-147-generic
-  * node:cl-worker36
-  * disk:877471
-  * datadisk:1613
-  * volume_size:1.8T
-  * volume_used:857G
-  * cpu_list:0-223
-  * requests_cpu:4
-  * requests_memory:64Gi
-  * limits_memory:64Gi
-  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
-  * load_durability: relaxed
-  * eval_parameters
-    * code:1794004854
-* monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
-  * RAM:2164173156352
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-147-generic
-  * node:cl-worker36
-  * disk:877471
-  * datadisk:2153
-  * cpu_list:0-223
-  * requests_cpu:4
-  * requests_memory:64Gi
-  * limits_memory:64Gi
-  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
-  * load_durability: relaxed
-  * eval_parameters
-    * code:1794004854
-* postgresql-1-1-1-1-1 uses docker image postgres:18.6
-  * RAM:2164173156352
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-147-generic
-  * node:cl-worker36
-  * disk:877679
-  * datadisk:4470
-  * volume_size:1.8T
-  * volume_used:858G
-  * cpu_list:0-223
-  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
-  * requests_cpu:4
-  * requests_memory:64Gi
-  * limits_memory:64Gi
-  * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
-  * load_durability: relaxed
-  * eval_parameters
-    * code:1794004854
-
-### Init Scripts Not in Folder
-* ClickHouse-1: skipped initindexes-ssb-flat.sql, initstatistics-ssb-flat.sql
-
-### SUT Container Restarts
-* bexhoma-sut-clickhouse-1-1794004854-8594c68996-nd2tp: 0
-* bexhoma-sut-monetdb-1-1794004854-54c9bc6879-442kn: 0
-* bexhoma-sut-postgresql-1-1794004854-697cb777bb-sjnmd: 0
-
-### Workflow
-
-#### Actual
-
-* DBMS ClickHouse-1 - Experiment 1 Client 1: ssb (1 pods)
-* DBMS MonetDB-1 - Experiment 1 Client 1: ssb (1 pods)
-* DBMS PostgreSQL-1 - Experiment 1 Client 1: ssb (1 pods)
-
-#### Planned
-
-* DBMS PostgreSQL-1 - Experiment 1 Client 1: ssb (1 pods)
-* DBMS MonetDB-1 - Experiment 1 Client 1: ssb (1 pods)
-* DBMS ClickHouse-1 - Experiment 1 Client 1: ssb (1 pods)
-
-### Loading
-
-#### Per Run
-
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| ClickHouse-1-1 |                1 |    1 |       62.00 |           3.00 |           38.00 |          4.00 |            2.00 |              8 |           0 |             | None           |             0 | False         |               58.06 | False               |
-| MonetDB-1-1    |                1 |    1 |       96.00 |           3.00 |           39.00 |         28.00 |           15.00 |              8 |           0 |             | None           |             0 | False         |               37.50 | False               |
-| PostgreSQL-1-1 |                1 |    1 |       80.00 |           5.00 |           25.00 |         13.00 |           25.00 |              8 |           0 |             | None           |             0 | False         |               45.00 | False               |
-
-### Benchmarking
-
-#### Per Connection
-
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| clickhouse-1-1-1-1-1 | ClickHouse-1    | clickhouse-1-1-1 | clickhouse-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          2 |            0.04 |           119059.33 |          23400.00 |          -1 | clickhouse-1-1-1-1-1 |
-| monetdb-1-1-1-1-1    | MonetDB-1       | monetdb-1-1-1    | monetdb-1-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          3 |            0.03 |           158466.70 |          15600.00 |          -1 | monetdb-1-1-1-1-1    |
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.07 |            53755.16 |           7800.00 |          -1 | postgresql-1-1-1-1-1 |
-
-#### Per Phase
-
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
-|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| clickhouse-1-1-1 | clickhouse-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          2 |            0.04 |           119059.33 |          23400.00 |          -1 |
-| monetdb-1-1-1    | monetdb-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          3 |            0.03 |           158466.70 |          15600.00 |          -1 |
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.07 |            53755.16 |           7800.00 |          -1 |
-
-#### Query Completion per Phase
-
-| phase            |   pods | Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)   | Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)   | Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)   | Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)   | Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)   | Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)   | Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)   | Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)   | Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)   | Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)   | Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1)   | Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)   | Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)   | complete   |
-|:-----------------|-------:|:-------------------------------------------------------------------------|:--------------------------------------------------------------------------|:-------------------------------------------------------------------------|:----------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------|:---------------------------------------------------------------------|:------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------|:---------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------|:------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------|:-----------|
-| clickhouse-1-1-1 |      1 | 1/1                                                                      | 1/1                                                                       | 1/1                                                                      | 1/1                                                                                     | 1/1                                                                                | 1/1                                                                  | 1/1                                                                                 | 1/1                                                                               | 1/1                                                                              | 1/1                                                                                  | 1/1                                                                                      | 1/1                                                                           | 1/1                                                                                  | yes        |
-| monetdb-1-1-1    |      1 | 1/1                                                                      | 1/1                                                                       | 1/1                                                                      | 1/1                                                                                     | 1/1                                                                                | 1/1                                                                  | 1/1                                                                                 | 1/1                                                                               | 1/1                                                                              | 1/1                                                                                  | 1/1                                                                                      | 1/1                                                                           | 1/1                                                                                  | yes        |
-| postgresql-1-1-1 |      1 | 1/1                                                                      | 1/1                                                                       | 1/1                                                                      | 1/1                                                                                     | 1/1                                                                                | 1/1                                                                  | 1/1                                                                                 | 1/1                                                                               | 1/1                                                                              | 1/1                                                                                  | 1/1                                                                                      | 1/1                                                                           | 1/1                                                                                  | yes        |
-
-Pods that completed each query, out of the pods the phase ran (`completed/pods`). Counted per phase, so a failure in one phase does not change another phase's row. `complete` = every pod completed every active query.
-
-### Latency of Timer Execution [ms]
-| Queries                                                                                |   clickhouse-1-1-1-1-1 |   monetdb-1-1-1-1-1 |   postgresql-1-1-1-1-1 |
-|:---------------------------------------------------------------------------------------|-----------------------:|--------------------:|-----------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                  60.25 |               34.27 |                 695.03 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                  10.49 |               11.52 |                  43.07 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                   8.94 |               13.61 |                  10.51 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                  28.77 |               19.90 |                 173.89 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                  26.04 |               18.32 |                  77.73 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                  21.15 |               18.69 |                  10.07 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                  54.02 |               24.76 |                 405.57 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                  30.44 |               23.87 |                  51.65 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                  34.82 |               30.67 |                   8.47 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                  15.07 |               21.38 |                   6.98 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                  90.14 |               32.16 |                 277.94 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                  47.48 |               31.93 |                 406.65 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                  53.39 |               29.48 |                  90.92 |
-
-### Errors (failed queries)
-
-No errors
-
-### Warnings (result mismatch)
-
-No warnings
-
-### Tests
-* TEST passed: Loading measured in this experiment
-* TEST passed: Data parameters as requested
-* TEST passed: Init scripts without errors
-* TEST passed: No SUT container restarts
-* TEST skipped: SUT data survived container restarts (no restarts)
-* TEST passed: Geo Times [s] contains no 0 or NaN
-* TEST passed: Power@Size [~Q/h] contains no 0 or NaN
-* TEST passed: Throughput@Size contains no 0 or NaN
-* TEST passed: No SQL errors
-* TEST passed: No SQL warnings
-* TEST passed: All active queries counted in the totals
-* TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
-* TEST passed: Workflow as planned
 ```
 
 </details>
@@ -3615,8 +3276,8 @@ instead of the benchmark queries. With `-xsv flat` it profiles `lineorder_flat`.
 ### Workload
 SSB Data Profiling SF=1
 * Type: ssb
-* Duration: 517s 
-* Code: 1794007042
+* Duration: 492s 
+* Code: 1794598670
 * Row count, count distinct, minimum and maximum of the key and date columns of each table.
 * This experiment compares imported SSB data sets in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -3625,7 +3286,7 @@ SSB Data Profiling SF=1
   * Timeout per query is 1200.
   * Data transfer volume per query is also measured.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL', 'MonetDB', 'ClickHouse'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -3648,10 +3309,10 @@ SSB Data Profiling SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:871726
-  * datadisk:506
+  * disk:1149076
+  * datadisk:499
   * volume_size:1.8T
-  * volume_used:852G
+  * volume_used:1.1T
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:64Gi
@@ -3660,14 +3321,14 @@ SSB Data Profiling SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794007042
+    * code:1794598670
 * monetdb-1-1-1-1-1 uses docker image monetdb/monetdb:Dec2025-SP3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:872018
+  * disk:1149086
   * datadisk:862
   * cpu_list:0-223
   * requests_cpu:4
@@ -3677,17 +3338,17 @@ SSB Data Profiling SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794007042
+    * code:1794598670
 * postgresql-1-1-1-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:872018
+  * disk:1149086
   * datadisk:1354
   * volume_size:1.8T
-  * volume_used:852G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -3697,12 +3358,17 @@ SSB Data Profiling SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794007042
+    * code:1794598670
+
+### Ingestion
+* ClickHouse-1: 12 of 12 units ok
+* MonetDB-1: 12 of 12 units ok
+* PostgreSQL-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-clickhouse-1-1794007042-7c4fd8d676-n7w7n: 0
-* bexhoma-sut-monetdb-1-1794007042-544848ffbc-4nk47: 0
-* bexhoma-sut-postgresql-1-1794007042-84b4b77d5d-g8nzd: 0
+* bexhoma-sut-clickhouse-1-1794598670-6d6c6c4db8-h4rjj: 0
+* bexhoma-sut-monetdb-1-1794598670-68f87755dc-6crm7: 0
+* bexhoma-sut-postgresql-1-1794598670-dc65dcd48-w5m8k: 0
 
 ### Workflow
 
@@ -3722,29 +3388,29 @@ SSB Data Profiling SF=1
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| ClickHouse-1-1 |                1 |    1 |       65.00 |           3.00 |           48.00 |          2.00 |            2.00 |              8 |           0 |             | None           |             0 | False         |               55.38 | False               |
-| MonetDB-1-1    |                1 |    1 |       64.00 |           3.00 |           33.00 |         11.00 |            3.00 |              8 |           0 |             | None           |             0 | False         |               56.25 | False               |
-| PostgreSQL-1-1 |                1 |    1 |       60.00 |           5.00 |           36.00 |          4.00 |            7.00 |              8 |           0 |             | None           |             0 | False         |               60.00 | False               |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| ClickHouse-1-1 |                1 |    1 |       66.00 |           3.00 |           40.00 |          3.00 |            2.00 |              8 |         0 |             | None           |             0 | False         |               54.55 | False               |
+| MonetDB-1-1    |                1 |    1 |       60.00 |           3.00 |           34.00 |         10.00 |            2.00 |              8 |         0 |             | None           |             0 | False         |               60.00 | False               |
+| PostgreSQL-1-1 |                1 |    1 |       59.00 |           4.00 |           35.00 |          4.00 |            7.00 |              8 |         0 |             | None           |             0 | False         |               61.02 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | configuration   | phase            | job                |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                  |
-|:---------------------|:----------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:---------------------|
-| clickhouse-1-1-1-1-1 | ClickHouse-1    | clickhouse-1-1-1 | clickhouse-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          2 |            0.02 |           215640.44 |          18000.00 |          -1 | clickhouse-1-1-1-1-1 |
-| monetdb-1-1-1-1-1    | MonetDB-1       | monetdb-1-1-1    | monetdb-1-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          1 |            0.03 |           143183.66 |          36000.00 |          -1 | monetdb-1-1-1-1-1    |
-| postgresql-1-1-1-1-1 | PostgreSQL-1    | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          8 |            0.13 |            27434.03 |           4500.00 |          -1 | postgresql-1-1-1-1-1 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| clickhouse-1-1-1-1-1 | clickhouse-1-1-1 | clickhouse-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               10 |                  10 |          2 |            0.03 |           142902.21 |          18000.00 |          -1 |
+| monetdb-1-1-1-1-1    | monetdb-1-1-1    | monetdb-1-1-1-1    |                1 |        1 |               1 |       1 | 1.00 |               10 |                  10 |          3 |            0.04 |            90302.01 |          12000.00 |          -1 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               10 |                  10 |          8 |            0.19 |            19704.05 |           4500.00 |          -1 |
 
 #### Per Phase
 
-|                  | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| clickhouse-1-1-1 | clickhouse-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          2 |            0.02 |           215640.44 |          18000.00 |          -1 |
-| monetdb-1-1-1    | monetdb-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          1 |            0.03 |           143183.66 |          36000.00 |          -1 |
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          8 |            0.13 |            27434.03 |           4500.00 |          -1 |
+| clickhouse-1-1-1 | clickhouse-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          2 |            0.03 |           142902.21 |          18000.00 |          -1 |
+| monetdb-1-1-1    | monetdb-1-1-1    |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          3 |            0.04 |            90302.01 |          12000.00 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               10 |                  10 |          8 |            0.19 |            19704.05 |           4500.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -3759,16 +3425,16 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                             |   clickhouse-1-1-1-1-1 |   monetdb-1-1-1-1-1 |   postgresql-1-1-1-1-1 |
 |:------------------------------------|-----------------------:|--------------------:|-----------------------:|
-| stats about customer.c_custkey      |                 103.08 |               19.14 |                  41.34 |
-| stats about supplier.s_suppkey      |                   5.01 |                2.22 |                   1.34 |
-| stats about part.p_partkey          |                  12.84 |                2.65 |                  23.16 |
-| stats about dates.d_datekey         |                  26.81 |                2.04 |                   1.55 |
-| stats about lineorder.lo_orderkey   |                  23.26 |              145.93 |                 980.46 |
-| stats about lineorder.lo_custkey    |                  16.18 |               73.69 |                 768.83 |
-| stats about lineorder.lo_partkey    |                  22.98 |              107.87 |                1014.79 |
-| stats about lineorder.lo_suppkey    |                  10.22 |               65.19 |                1139.41 |
-| stats about lineorder.lo_orderdate  |                   9.66 |               73.59 |                1059.95 |
-| stats about lineorder.lo_commitdate |                  11.07 |               79.13 |                 823.37 |
+| stats about customer.c_custkey      |                 227.33 |               34.12 |                  57.94 |
+| stats about supplier.s_suppkey      |                   7.94 |                3.78 |                   3.59 |
+| stats about part.p_partkey          |                  21.86 |                4.91 |                  59.32 |
+| stats about dates.d_datekey         |                  41.21 |                2.63 |                   2.17 |
+| stats about lineorder.lo_orderkey   |                  36.53 |              348.78 |                1383.64 |
+| stats about lineorder.lo_custkey    |                  17.87 |              190.40 |                 931.47 |
+| stats about lineorder.lo_partkey    |                  37.10 |              275.46 |                1174.03 |
+| stats about lineorder.lo_suppkey    |                  15.28 |               78.17 |                1033.42 |
+| stats about lineorder.lo_orderdate  |                  10.34 |               66.27 |                1284.80 |
+| stats about lineorder.lo_commitdate |                  16.54 |               64.42 |                 770.34 |
 
 ### Errors (failed queries)
 
@@ -3782,6 +3448,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

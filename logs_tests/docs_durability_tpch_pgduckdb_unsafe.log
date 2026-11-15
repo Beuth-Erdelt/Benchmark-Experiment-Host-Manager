@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1792608168
-Experiment                    : starts at 2026-10-21 20:42:49.196678 (20111.087329)
+Experiment                    : has code 1794609702
+Experiment                    : starts at 2026-11-13 23:41:42.183957 (246245.0045321)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
@@ -11,7 +11,7 @@ All instances use the same query parameters.
 Timeout per query is 1800.
 Import sets indexes, constraints, statistics recomputation after loading.
 Load durability is unsafe (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.7.
+Experiment uses bexhoma version 0.11.17.
 Experiment is limited to DBMS ['PgDuckDB'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker38.
@@ -29,126 +29,69 @@ PgDuckDB-1                    : will start now
 PgDuckDB-1                    : deployments ['sut']
 PgDuckDB-1                    : stateful sets []
 PgDuckDB-1                    : pvcs ['sut']
-PgDuckDB-1                    : name of SUT pods = bexhoma-sut-pgduckdb-1-1792608168
-PgDuckDB-1                    : name of SUT service = bexhoma-sut-pgduckdb-1-1792608168
-Loop pass                     : took 3.9s (1 kubectl calls 1.7s, 9 API requests 1.2s)
+PgDuckDB-1                    : name of SUT pods = bexhoma-sut-pgduckdb-1-1794609702
+PgDuckDB-1                    : name of SUT service = bexhoma-sut-pgduckdb-1-1794609702
+Loop pass                     : took 2.3s (1 kubectl calls 1.1s, 9 API requests 0.4s)
 - waiting 30s -               : done
 PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 1.7s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 16 API requests 0.8s)
 - waiting 30s -               : done
 PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 16 API requests 2.0s)
+Loop pass                     : took 7.1s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 1.7s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 16 API requests 0.8s)
 - waiting 30s -               : done
 PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 9.8s (0 kubectl calls 0.0s, 16 API requests 2.1s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 3.9s (0 kubectl calls 0.0s, 16 API requests 2.1s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 1.8s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 16 API requests 2.1s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 1.7s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 16 API requests 2.0s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 1.7s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 16 API requests 2.1s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 1.7s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 6.6s (0 kubectl calls 0.0s, 16 API requests 1.8s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 6.8s (0 kubectl calls 0.0s, 16 API requests 2.1s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 1.6s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 3.0s (0 kubectl calls 0.0s, 16 API requests 2.0s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 16 API requests 1.5s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 16 API requests 2.5s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 16 API requests 2.1s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 16 API requests 2.0s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 1.7s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 16 API requests 2.1s)
-- waiting 30s -               : done
-PgDuckDB-1                    : waits for health check to succeed
-Loop pass                     : took 4.3s (0 kubectl calls 0.0s, 16 API requests 1.7s)
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 PgDuckDB-1                    : is not loaded yet
 PgDuckDB-1                    : load durability unsafe, scripts ['durability-relaxed.sql', 'durability-unsafe.sql', 'restoredurability-unsafe.sql', 'restoredurability-unsafe.sh', 'restoredurability-relaxed.sql']
-PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1792608168-5fc67fcbdc-vxtsb to load scripts
+PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1794609702-7b8fcb6778-m62g9 to load scripts
 PgDuckDB-1                    : start asynch loading scripts of type schema
 PgDuckDB-1                    : waits for the Schema scripts (schema=True) before starting the loading jobs
-PgDuckDB-1                    : Schema scripts done after 8s
+PgDuckDB-1                    : Schema scripts done after 10s
 PgDuckDB-1                    : is loading
-Loop pass                     : took 29.8s (11 kubectl calls 15.5s, 39 API requests 5.3s)
+Loop pass                     : took 25.6s (11 kubectl calls 12.3s, 41 API requests 2.5s)
 - waiting 30s -               : done
 PgDuckDB-1                    : is loading
-Loop pass                     : took 4.4s (0 kubectl calls 0.0s, 34 API requests 3.9s)
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 34 API requests 1.2s)
+- waiting 30s -               : done
+PgDuckDB-1                    : is loading
+Loop pass                     : took 2.2s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 PgDuckDB-1                    : showing loader times (tpch-loader)
-PgDuckDB-1                    : generator times (start/end per pod and container) [(1792609030, 1792609030), (1792609009, 1792609009), (1792609032, 1792609032), (1792609022, 1792609022), (1792609007, 1792609007), (1792609016, 1792609016), (1792609014, 1792609014), (1792609020, 1792609020)]
-PgDuckDB-1                    : loader times (start/end per pod and container) [(1792609037, 1792609043), (1792609037, 1792609041), (1792609037, 1792609042), (1792609037, 1792609043), (1792609037, 1792609042), (1792609037, 1792609042), (1792609037, 1792609042), (1792609037, 1792609042)]
-PgDuckDB-1                    : total times (start/end per pod and container) [(1792609030, 1792609030), (1792609009, 1792609009), (1792609032, 1792609032), (1792609022, 1792609022), (1792609007, 1792609007), (1792609016, 1792609016), (1792609014, 1792609014), (1792609020, 1792609020), (1792609037, 1792609043), (1792609037, 1792609041), (1792609037, 1792609042), (1792609037, 1792609043), (1792609037, 1792609042), (1792609037, 1792609042), (1792609037, 1792609042), (1792609037, 1792609042)]
-PgDuckDB-1                    : generator timespan (first to last [s]) = 25
+PgDuckDB-1                    : generator times (start/end per pod and container) [(1794609920, 1794609920), (1794609905, 1794609905), (1794609907, 1794609907), (1794609911, 1794609911), (1794609906, 1794609906), (1794609904, 1794609904), (1794609953, 1794609953), (1794609915, 1794609915)]
+PgDuckDB-1                    : loader times (start/end per pod and container) [(1794609955, 1794609960), (1794609955, 1794609960), (1794609956, 1794609961), (1794609956, 1794609961), (1794609956, 1794609961), (1794609956, 1794609960), (1794609955, 1794609960), (1794609956, 1794609961)]
+PgDuckDB-1                    : total times (start/end per pod and container) [(1794609920, 1794609920), (1794609905, 1794609905), (1794609907, 1794609907), (1794609911, 1794609911), (1794609906, 1794609906), (1794609904, 1794609904), (1794609953, 1794609953), (1794609915, 1794609915), (1794609955, 1794609960), (1794609955, 1794609960), (1794609956, 1794609961), (1794609956, 1794609961), (1794609956, 1794609961), (1794609956, 1794609960), (1794609955, 1794609960), (1794609956, 1794609961)]
+PgDuckDB-1                    : generator timespan (first to last [s]) = 49
 PgDuckDB-1                    : loader timespan (first to last [s]) = 6
-PgDuckDB-1                    : total timespan (first to last [s]) = 36
-PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1792608168-5fc67fcbdc-vxtsb to load scripts
+PgDuckDB-1                    : total timespan (first to last [s]) = 57
+PgDuckDB-1                    : connect to pod bexhoma-sut-pgduckdb-1-1794609702-7b8fcb6778-m62g9 to load scripts
 PgDuckDB-1                    : start asynch loading scripts of type index
 PgDuckDB-1                    : is loading
-Loop pass                     : took 61.0s (47 kubectl calls 51.0s, 62 API requests 9.1s)
+Loop pass                     : took 54.7s (47 kubectl calls 51.1s, 62 API requests 2.6s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PgDuckDB-1-1792608168 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PgDuckDB-1-1794609702 initialized to 1.
 PgDuckDB-1                    : benchmarks done 0 of 1. This will be client 1
 pgduckdb-1-1-1-1              : start benchmarking (benchmark_run=1)
-PgDuckDB-1                    : benchmarking results in folder C:\data\benchmarks/1792608168
-PgDuckDB-1                    : submitted benchmarker job in 12.3s (4 kubectl calls 4.6s, 24 API requests 7.0s)
-Loop pass                     : took 16.4s (5 kubectl calls 5.6s, 44 API requests 9.7s)
+PgDuckDB-1                    : benchmarking results in folder D:\data\benchmarks/1794609702
+PgDuckDB-1                    : submitted benchmarker job in 17.8s (4 kubectl calls 4.3s, 24 API requests 8.4s)
+Loop pass                     : took 28.3s (5 kubectl calls 5.3s, 46 API requests 9.7s)
 - waiting 30s -               : done
-PgDuckDB-1                    : has running benchmarks
-Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 20 API requests 2.4s)
-- waiting 30s -               : done
-pgduckdb-1-1-1-1              : wrote benchmarking_timespans to /data/benchmarks/1792608168/pgduckdb-1-1-1-1.config
+pgduckdb-1-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1794609702/pgduckdb-1-1-1-1.config
 pgduckdb-1-1-1-1              : showing benchmarker times
-pgduckdb-1-1-1-1              : benchmarker timespan job from 1792609169 to 1792609238
-pgduckdb-1-1-1-1              : benchmarker timespan pods from 1792609189 to 1792609200
-pgduckdb-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 11
-pgduckdb-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1792609189, 1792609200)]
-pgduckdb-1-1-1-1              : found and updated times {'benchmarker': [(1792609189, 1792609200)]}
-Loop pass                     : took 7.8s (4 kubectl calls 4.5s, 24 API requests 2.8s)
+pgduckdb-1-1-1-1              : benchmarker timespan job from 1794610094 to 1794610130
+pgduckdb-1-1-1-1              : benchmarker timespan pods from 1794610099 to 1794610108
+pgduckdb-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 9
+pgduckdb-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1794610099, 1794610108)]
+pgduckdb-1-1-1-1              : found and updated times {'benchmarker': [(1794610099, 1794610108)]}
+Loop pass                     : took 5.3s (4 kubectl calls 4.5s, 24 API requests 0.8s)
 PgDuckDB-1                    : can be stopped
-PgDuckDB-1                    : had 0 restarts at worker bexhoma-sut-pgduckdb-1-1792608168-5fc67fcbdc-vxtsb
-Loop pass                     : took 11.2s (4 kubectl calls 3.7s, 29 API requests 3.1s)
-Experiment                    : ends at 2026-10-21 21:00:53.241219 (21195.1318678) - 1084.04s total
+PgDuckDB-1                    : had 0 restarts at worker bexhoma-sut-pgduckdb-1-1794609702-7b8fcb6778-m62g9
+Loop pass                     : took 5.7s (4 kubectl calls 4.1s, 29 API requests 1.1s)
+Experiment                    : ends at 2026-11-13 23:48:58.906426 (246681.7104171) - 436.71s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
@@ -161,8 +104,8 @@ Result workflow complete
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 1085s 
-* Code: 1792608168
+* Duration: 437s 
+* Code: 1794609702
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -171,7 +114,7 @@ TPC-H Queries SF=1
   * Timeout per query is 1800.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is unsafe (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.7.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PgDuckDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -187,15 +130,15 @@ TPC-H Queries SF=1
 
 ### Connections
 * pgduckdb-1-1-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:910879
-  * datadisk:2758
+  * disk:1126693
+  * datadisk:2757
   * volume_size:1.8T
-  * volume_used:890G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -204,10 +147,13 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: unsafe
   * eval_parameters
-    * code:1792608168
+    * code:1794609702
+
+### Ingestion
+* PgDuckDB-1: 50 of 50 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-pgduckdb-1-1792608168-5fc67fcbdc-vxtsb: 0
+* bexhoma-sut-pgduckdb-1-1794609702-7b8fcb6778-m62g9: 0
 
 ### Workflow
 
@@ -223,23 +169,23 @@ TPC-H Queries SF=1
 
 #### Per Run
 
-|              |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:-------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PgDuckDB-1-1 |                1 |    1 |       66.00 |           7.00 |           25.00 |          6.00 |           23.00 |              8 |           0 |             | None           |             0 | False         |               54.55 | False               |
+| DBMS         |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:-------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PgDuckDB-1-1 |                1 |    1 |       88.00 |           7.00 |           49.00 |          6.00 |           24.00 |              8 |         0 |             | None           |             0 | False         |               40.91 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS               | configuration   | phase          | job              |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                |
-|:-------------------|:----------------|:---------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:-------------------|
-| pgduckdb-1-1-1-1-1 | PgDuckDB-1      | pgduckdb-1-1-1 | pgduckdb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         11 |            0.21 |            17007.47 |           7200.00 |          -1 | pgduckdb-1-1-1-1-1 |
+| connection         | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| pgduckdb-1-1-1-1-1 | pgduckdb-1-1-1 | pgduckdb-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |          9 |            0.23 |            15636.48 |           8800.00 |          -1 |
 
 #### Per Phase
 
-|                | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| pgduckdb-1-1-1 | pgduckdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         11 |            0.21 |            17007.47 |           7200.00 |          -1 |
+| pgduckdb-1-1-1 | pgduckdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |          9 |            0.23 |            15636.48 |           8800.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -252,28 +198,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   pgduckdb-1-1-1-1-1 |
 |:----------------------------------------------------|---------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |               672.96 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |               169.84 |
-| Shipping Priority (TPC-H Q3)                        |               243.17 |
-| Order Priority Checking Query (TPC-H Q4)            |                98.49 |
-| Local Supplier Volume (TPC-H Q5)                    |               195.17 |
-| Forecasting Revenue Change (TPC-H Q6)               |               129.19 |
-| Volume Shipping Query (TPC-H Q7)                    |               221.58 |
-| National Market Share (TPC-H Q8)                    |               143.69 |
-| Product Type Profit Measure (TPC-H Q9)              |               396.83 |
-| Returned Item Reporting Query (TPC-H Q10)           |               372.55 |
-| Important Stock Identification (TPC-H Q11)          |                60.34 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |               189.90 |
-| Customer Distribution (TPC-H Q13)                   |               606.80 |
-| Promotion Effect Query (TPC-H Q14)                  |               226.05 |
-| Top Supplier Query (TPC-H Q15)                      |               141.96 |
-| Parts/Supplier Relationship (TPC-H Q16)             |               176.59 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |               611.90 |
-| Large Volume Customer (TPC-H Q18)                   |              2161.23 |
-| Discounted Revenue (TPC-H Q19)                      |                46.38 |
-| Potential Part Promotion (TPC-H Q20)                |               109.63 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |               215.39 |
-| Global Sales Opportunity Query (TPC-H Q22)          |                78.78 |
+| Pricing Summary Report (TPC-H Q1)                   |               665.15 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |               180.52 |
+| Shipping Priority (TPC-H Q3)                        |               235.98 |
+| Order Priority Checking Query (TPC-H Q4)            |               111.12 |
+| Local Supplier Volume (TPC-H Q5)                    |               207.83 |
+| Forecasting Revenue Change (TPC-H Q6)               |               130.32 |
+| Volume Shipping Query (TPC-H Q7)                    |               272.30 |
+| National Market Share (TPC-H Q8)                    |               147.05 |
+| Product Type Profit Measure (TPC-H Q9)              |               398.66 |
+| Returned Item Reporting Query (TPC-H Q10)           |               372.27 |
+| Important Stock Identification (TPC-H Q11)          |                60.50 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |               196.37 |
+| Customer Distribution (TPC-H Q13)                   |               601.26 |
+| Promotion Effect Query (TPC-H Q14)                  |               234.90 |
+| Top Supplier Query (TPC-H Q15)                      |               148.31 |
+| Parts/Supplier Relationship (TPC-H Q16)             |               175.56 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |               598.53 |
+| Large Volume Customer (TPC-H Q18)                   |              2029.46 |
+| Discounted Revenue (TPC-H Q19)                      |                47.20 |
+| Potential Part Promotion (TPC-H Q20)                |               297.07 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |               329.77 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                74.63 |
 
 ### Errors (failed queries)
 
@@ -285,6 +231,10 @@ No warnings
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

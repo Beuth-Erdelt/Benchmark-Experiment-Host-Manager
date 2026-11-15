@@ -22,8 +22,8 @@ import types
 import unittest
 from unittest import mock
 
-import benchbase
-import tpch
+from bexhoma.benchmarks.benchbase import cli as benchbase
+from bexhoma.benchmarks.tpch import cli as tpch
 from bexhoma import system_descriptors as sd
 from bexhoma.experiments import system_builder as builder
 

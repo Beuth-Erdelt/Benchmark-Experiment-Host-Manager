@@ -2,15 +2,15 @@
 
 ### Workload
 HammerDB Workload SF=4 (warehouses for TPC-C)
-* Type: tpcc
-* Duration: 1004s 
-* Code: 1792622350
+* Type: hammerdb
+* Duration: 907s 
+* Code: 1794621846
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 4. Benchmarking runs for 2 minutes. Ramp-up period is 2 minutes before measurements begin.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.7.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['Citus'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -27,68 +27,71 @@ HammerDB Workload SF=4 (warehouses for TPC-C)
 
 ### Connections
 * citus-1-1-1-1 uses docker image citusdata/citus:14.2.0
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:907445
+  * disk:1077348
   * datadisk:43
   * volume_size:1.8T
-  * volume_used:887G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * requests_cpu:4
   * requests_memory:16Gi
   * worker 0
-    * RAM:540579299328
-    * CPU:AMD EPYC 7502 32-Core Processor
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker22
-    * disk:271678
-    * datadisk:493
-    * volume_size:550G
-    * volume_used:266G
-    * cpu_list:0-127
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 1
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:542923
-    * datadisk:283
+    * disk:641364
+    * datadisk:494
     * volume_size:879G
-    * volume_used:531G
+    * volume_used:627G
+    * cpu_list:0-127
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * worker 1
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:1301555
+    * datadisk:284
+    * volume_size:1.8T
+    * volume_used:1.3T
     * cpu_list:0-127
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * worker 2
-    * RAM:540590792704
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-146-generic
-    * node:cl-worker25
-    * disk:150089
-    * datadisk:283
-    * volume_size:219G
-    * volume_used:147G
-    * cpu_list:0-95
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:671869
+    * datadisk:284
+    * volume_size:1.8T
+    * volume_used:657G
+    * cpu_list:0-255
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * resources_total: 16.0 CPU, 64.0 GiB RAM requested in 4 pods
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
     * worker: 3 x, 12.0 CPU, 48.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792622350
+    * code:1794621846
     * BEXHOMA_WORKERS:3
 
+### Ingestion
+* Citus-1: 1 of 1 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-citus-1-1792622350-74d6c7f659-x8rvz: 0
-* bexhoma-worker-citus-hammerdb-4-0: 0
-* bexhoma-worker-citus-hammerdb-4-1: 0
-* bexhoma-worker-citus-hammerdb-4-2: 0
+* bexhoma-sut-citus-1-1794621846-5fc85b74b9-dqxhr: 0
+* bx-w-ci-1-1794621846-0: 0
+* bx-w-ci-1-1794621846-1: 0
+* bx-w-ci-1-1794621846-2: 0
 
 ### Workflow
 
@@ -104,27 +107,32 @@ HammerDB Workload SF=4 (warehouses for TPC-C)
 
 #### Per Run
 
-|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| Citus-1-1 |                1 |    4 |       61.00 |           6.00 |            0.00 |         43.00 |           12.00 |              1 |           4 |             | None           |             0 | False         |              236.07 | False               |
+| DBMS      |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| Citus-1-1 |                1 |    4 |       45.00 |           4.00 |            0.00 |         33.00 |            8.00 |              1 |         4 |             | None           |             0 | False         |              320.00 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS            | phase       | job           |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |   TPM |   efficiency |   duration |   errors |
-|:----------------|:------------|:--------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|------:|-------------:|-----------:|---------:|
-| citus-1-1-1-1-1 | citus-1-1-1 | citus-1-1-1-1 |                1 |        4 |        1 |               1 |       1 |  11206 | 25712 |         0.00 |          2 |        0 |
+| connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |   threads |   NOPM |   TPM |   efficiency |   duration |   errors |
+|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|----------:|-------:|------:|-------------:|-----------:|---------:|
+| citus-1-1-1-1-1 | citus-1-1-1 | citus-1-1-1-1 |                1 |        1 |               1 |       1 |         4 |  17776 | 40950 |         0.00 |          2 |        0 |
 
 #### Per Phase
 
-| DBMS        | phase       |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   efficiency |     NOPM |      TPM |   duration |   errors |
-|:------------|:------------|-----------------:|---------:|---------:|----------------:|------------:|-------------:|---------:|---------:|-----------:|---------:|
-| citus-1-1-1 | citus-1-1-1 |                1 |        4 |        1 |               1 |           1 |         0.00 | 11206.00 | 25712.00 |          2 |        0 |
+| DBMS        | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   efficiency |     NOPM |      TPM |   duration |   errors |
+|:------------|:------------|-----------------:|---------:|----------------:|------------:|----------:|-------------:|---------:|---------:|-----------:|---------:|
+| citus-1-1-1 | citus-1-1-1 |                1 |        1 |               1 |           1 |         4 |         0.00 | 17776.00 | 40950.00 |          2 |        0 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: NOPM contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey))
 * TEST passed: Workflow as planned

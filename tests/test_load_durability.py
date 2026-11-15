@@ -34,7 +34,7 @@ REFERENCE_BENCHMARK = {'PostgreSQL': 'tpch', 'MySQL': 'tpcds', 'Citus': 'tpch', 
 ALLOWED_DEVIATIONS = {
     ('tpch', 'MySQL', 'durability-relaxed.sql'): 'also autocommit 0 (the TPC-H loaders commit), as before -xld',
     ('ssb', 'MySQL', 'durability-relaxed.sql'): 'also autocommit 0 (the SSB loader commits), as for TPC-H',
-    ('tpcc', 'MySQL', 'durability-relaxed.sql'): 'flush 0 and 1G log buffer for the HammerDB build, as before -xld',
+    ('hammerdb', 'MySQL', 'durability-relaxed.sql'): 'flush 0 and 1G log buffer for the HammerDB build, as before -xld',
     ('ycsb', 'MySQL', 'durability-relaxed.sql'): 'flush 0 and 1G log buffer for the YCSB load, as before -xld',
 }
 
@@ -73,7 +73,7 @@ class ClusterConfigTest(unittest.TestCase):
     def test_placeholders_in_benchmark_lists(self):
         with open(os.path.join(_REPO, 'k8s-cluster.config'), encoding='utf-8') as f:
             volumes = ast.literal_eval(f.read())['volumes']
-        for volume in ('tpch', 'tpcds', 'tpcc', 'ycsb', 'benchbase'):
+        for volume in ('tpch', 'tpcds', 'hammerdb', 'ycsb', 'benchbase'):
             for key, scripts in volumes[volume]['initscripts'].items():
                 if not scripts:
                     continue

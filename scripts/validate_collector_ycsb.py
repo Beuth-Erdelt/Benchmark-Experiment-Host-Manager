@@ -1,6 +1,6 @@
 #!C:\Users\Patrick\anaconda3\envs\bexhoma\python.exe
 """
-Validator for collectors.ycsb (Collector-YCSB.ipynb).
+Validator for YcsbCollector (Collector-YCSB.ipynb).
 Checks: no exceptions, non-empty DataFrames, important columns present.
 Shows head() for every DataFrame and prints a bottom-line summary.
 """
@@ -12,6 +12,7 @@ import zipfile
 import traceback
 import pandas as pd
 from bexhoma import collectors
+from bexhoma.benchmarks.ycsb.collector import YcsbCollector
 
 pd.set_option("display.max_rows", None)
 pd.set_option("display.max_colwidth", None)
@@ -67,7 +68,7 @@ for code in codes:
 HEADER_COLS = ["phase", "job", "code", "configuration", "experiment_run",
                "benchmark_run", "client", "type_tenants", "num_tenants", "vol_tenants"]
 TS_COLS     = ["timestamp", "phase", "job", "value", "code", "metric", "component"]
-LOAD_COLS   = ["sf", "[OVERALL].RunTime(ms)", "Throughput [SF/h]"]
+LOAD_COLS   = ["SF", "[OVERALL].RunTime(ms)", "Throughput [SF/h]"]
 
 PREVIEW = '--preview' in sys.argv
 
@@ -98,9 +99,9 @@ def check_df(df, label, required_cols=None):
 
 
 # ── SETUP ─────────────────────────────────────────────────────────────────────
-sep("Setup: collectors.ycsb")
+sep("Setup: YcsbCollector")
 try:
-    collect = collectors.ycsb(path, codes)
+    collect = YcsbCollector(path, codes)
     print("  OK    collector created")
 except Exception:
     traceback.print_exc()

@@ -3,8 +3,8 @@
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 818s 
-* Code: 1794009097
+* Duration: 747s 
+* Code: 1794600373
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -16,7 +16,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['Citus'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -40,37 +40,37 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:868392
+  * disk:1147171
   * datadisk:58
   * volume_size:1.8T
-  * volume_used:849G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:310364
-    * datadisk:801
-    * volume_size:879G
-    * volume_used:304G
-    * cpu_list:0-127
-    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
-  * worker 1
     * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:718539
+    * disk:1301917
     * datadisk:801
     * volume_size:1.8T
-    * volume_used:702G
+    * volume_used:1.3T
+    * cpu_list:0-127
+    * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
+  * worker 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:694361
+    * datadisk:800
+    * volume_size:879G
+    * volume_used:679G
     * cpu_list:0-127
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * worker 2
@@ -79,10 +79,10 @@ SSB Queries SF=1
     * Cores:224
     * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:868392
+    * disk:1147171
     * datadisk:735
     * volume_size:1.8T
-    * volume_used:849G
+    * volume_used:1.1T
     * cpu_list:0-223
     * args:['-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=16GB', '-c', 'max_connections=1024', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=32GB', '-c', 'maintenance_work_mem=512MB', '-c', 'wal_buffers=64MB', '-c', 'work_mem=64MB', '-c', 'temp_buffers=64MB', '-c', 'autovacuum_work_mem=-1', '-c', 'plan_cache_mode=force_custom_plan', '-c', 'max_stack_depth=4MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=replica', '-c', 'max_wal_senders=8', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=on', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=500', '-c', 'random_page_cost=1.1']
   * resources_total: 16.0 CPU, 256.0 GiB RAM requested in 4 pods
@@ -90,14 +90,17 @@ SSB Queries SF=1
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794009097
+    * code:1794600373
     * BEXHOMA_WORKERS:3
 
+### Ingestion
+* Citus-1: 12 of 12 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-citus-1-1794009097-5b55dcbb98-z7stz: 0
-* bx-w-ci-1-1794009097-0: 0
-* bx-w-ci-1-1794009097-1: 0
-* bx-w-ci-1-1794009097-2: 0
+* bexhoma-sut-citus-1-1794600373-857d446cb6-bnjk8: 0
+* bx-w-ci-1-1794600373-0: 0
+* bx-w-ci-1-1794600373-1: 0
+* bx-w-ci-1-1794600373-2: 0
 
 ### Workflow
 
@@ -113,23 +116,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| Citus-1-1 |                1 |    1 |       71.00 |           5.00 |           22.00 |         19.00 |           15.00 |              8 |           0 |             | None           |             0 | False         |               50.70 | False               |
+| DBMS      |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| Citus-1-1 |                1 |    1 |       54.00 |           5.00 |           20.00 |          4.00 |           16.00 |              8 |         0 |             | None           |             0 | False         |               66.67 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS            | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
-|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
-| citus-1-1-1-1-1 | Citus-1         | citus-1-1-1 | citus-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.09 |            41436.31 |           7800.00 |          -1 | citus-1-1-1-1-1 |
+| connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| citus-1-1-1-1-1 | citus-1-1-1 | citus-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          6 |            0.09 |            39523.05 |           7800.00 |          -1 |
 
 #### Per Phase
 
-|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS        | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| citus-1-1-1 | citus-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.09 |            41436.31 |           7800.00 |          -1 |
+| citus-1-1-1 | citus-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          6 |            0.09 |            39523.05 |           7800.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -142,19 +145,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   citus-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |            135.51 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |             46.42 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |             25.92 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |            151.77 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |            107.49 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |             60.49 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |            137.41 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |             91.28 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |             62.90 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |             59.33 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |            159.63 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |            131.40 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |            101.70 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |            139.62 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |             54.29 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |             26.12 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |            150.65 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |            104.52 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |             61.46 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |            152.54 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |            101.39 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |             68.61 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |             61.23 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |            167.01 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |            136.52 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |            104.69 |
 
 ### Errors (failed queries)
 
@@ -168,6 +171,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

@@ -43,7 +43,7 @@ _SNAPSHOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'snapsh
 _UPDATE = os.environ.get('BEXHOMA_UPDATE_SNAPSHOTS') == '1'
 
 #: Entry scripts under snapshot.
-SCRIPTS = ('hammerdb.py', 'tpch.py', 'tpcds.py', 'ssb.py', 'benchbase.py', 'ycsb.py')
+SCRIPTS = ('hammerdb.py', 'tpch.py', 'tpcds.py', 'ssb.py', 'benchbase.py', 'ycsb.py', 'hardware.py')
 
 #: Variant name -> extra argv. ``default`` builds the plain experiment; the others
 #: exercise the sweep/loop parameters that the per-DBMS blocks consume.
@@ -70,6 +70,11 @@ VARIANTS = {
     'cluster': ['-nw', '2'],
     'workload': ['-xwl', 'b', '-xop', '2', '-xio', 'ordered', '-xsbs', '100', '-xmet', '60'],
     'distributed': ['-xdim', 'distributed', '-nw', '2', '-dbms', 'PostgreSQL', 'ClickHouse', 'ClickHouseCluster'],
+    # Hardware: the benchmark tool and the sweep axes of fio and sockperf
+    'hw-sysbench': ['-xht', 'sysbench'],
+    'hw-sockperf': ['-xht', 'sockperf', '-xspm', 'pp,ul', '-xspp', 'tcp,udp'],
+    'hw-netperf': ['-xht', 'netperf'],
+    'hw-fio-sweep': ['-xht', 'fio', '-xfrw', 'randread,randwrite', '-xfbs', '4k,8k', '-xfid', '1,8'],
 }
 
 #: Variants only some scripts have the flags for.
@@ -77,7 +82,14 @@ ONLY_FOR = {'flat': {'ssb.py'}, 'distributed': {'tpch.py', 'ssb.py'},
             'tenants-schema': {'tpch.py', 'benchbase.py'}, 'tenants-container': {'tpch.py', 'benchbase.py'},
             'type-ycsb': {'benchbase.py'}, 'type-twitter': {'benchbase.py'}, 'factors': {'benchbase.py', 'ycsb.py'},
             'pooling': {'benchbase.py', 'ycsb.py'}, 'replicas': {'benchbase.py', 'ycsb.py'},
-            'cluster': {'ycsb.py'}, 'workload': {'ycsb.py'}}
+            'cluster': {'ycsb.py'}, 'workload': {'ycsb.py'},
+            'hw-sysbench': {'hardware.py'}, 'hw-sockperf': {'hardware.py'}, 'hw-netperf': {'hardware.py'},
+            'hw-fio-sweep': {'hardware.py'}}
+
+#: Scripts that take only some of the common variants: the hardware benchmark has no DBMS to load,
+#: scale out or share between tenants, so those variants build the same experiment as ``default``.
+ONLY_VARIANTS = {'hardware.py': {'default', 'ram-sweep', 'benchmarking', 'storage',
+                                 'hw-sysbench', 'hw-sockperf', 'hw-netperf', 'hw-fio-sweep'}}
 
 #: Variant argv of a script that differs from the common one.
 SCRIPT_ARGV = {('ycsb.py', 'factors'): ['-xnlf', '1,2', '-xnbf', '1,2', '-xtb', '100', '-nbp', '2', '-nlp', '2'],
@@ -223,6 +235,8 @@ def _add_tests():
     for script in SCRIPTS:
         for variant in VARIANTS:
             if (script, variant) in UNSUPPORTED or script not in ONLY_FOR.get(variant, {script}):
+                continue
+            if variant not in ONLY_VARIANTS.get(script, {variant}):
                 continue
 
             def test(self, script=script, variant=variant):

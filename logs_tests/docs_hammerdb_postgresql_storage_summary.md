@@ -2,15 +2,15 @@
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
-* Type: tpcc
-* Duration: 1431s 
-* Code: 1793803768
+* Type: hammerdb
+* Duration: 1429s 
+* Code: 1794607622
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Ramp-up period is 2 minutes before measurements begin. Benchmarking also logs latencies.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -32,7 +32,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:866926
+  * disk:1126228
   * datadisk:3280
   * volume_size:49G
   * volume_used:3.3G
@@ -45,15 +45,15 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793803768
+    * code:1794607622
 * postgresql-1-2-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:850637
-  * datadisk:12427
+  * disk:1129572
+  * datadisk:12552
   * volume_size:49G
   * volume_used:13G
   * cpu_list:0-223
@@ -65,7 +65,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793803768
+    * code:1794607622
 
 ### Inherited Loading
 * loading skipped, loading times copied from an earlier repetition: PostgreSQL-1-2
@@ -73,9 +73,12 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 ### Data Parameters of Reused Volumes
 * PostgreSQL-1: loading values of the volume: script=Schema, indexing=Checks
 
+### Ingestion
+* PostgreSQL-1: 1 of 1 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1793803768-7b6f699447-qvb9k: 0
-* bexhoma-sut-postgresql-1-1793803768-cbd658d5d-hf82c: 0
+* bexhoma-sut-postgresql-1-1794607622-766db6bb7b-vgs8q: 0
+* bexhoma-sut-postgresql-1-1794607622-7b985897f9-z6mx8: 0
 
 ### Workflow
 
@@ -93,31 +96,33 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |   16 |       49.00 |           3.00 |            0.00 |         36.00 |           10.00 |              1 |           8 |             | None           |             0 | False         |             1175.51 | False               |
-| PostgreSQL-1-2 |                2 |   16 |       49.00 |           3.00 |            0.00 |         36.00 |           10.00 |              1 |           8 |             | None           |             0 | False         |             1175.51 | True                |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |   16 |       52.00 |           5.00 |            0.00 |         35.00 |           12.00 |              1 |         8 |             | None           |             0 | False         |             1107.69 | False               |
+| PostgreSQL-1-2 |                2 |   16 |       52.00 |           5.00 |            0.00 |         35.00 |           12.00 |              1 |         8 |             | None           |             0 | False         |             1107.69 | True                |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | phase            | job                |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
-|:---------------------|:-----------------|:-------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|-----------:|-----------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 179132 | 411480 |         0.00 |          5 |        0 |       3.03 |       4.09 |
-| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |       16 |        1 |               1 |       1 | 130425 | 300044 |         0.00 |          5 |        0 |       2.85 |       3.99 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   NOPM |    TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|-------:|-------:|-------------:|-----------:|---------:|-----------:|-----------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |        16 | 181218 | 417343 |         0.00 |          5 |        0 |       2.97 |       3.97 |
+| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 |        16 |  52956 | 121993 |         0.00 |          5 |        0 |       2.98 |       4.05 |
 
 #### Per Phase
 
-| DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
-|:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |       16 |        1 |               1 |           1 |       3.03 |       4.09 |         0.00 | 179132.00 | 411480.00 |          5 |        0 |
-| postgresql-1-2-1 | postgresql-1-2-1 |                2 |       16 |        1 |               1 |           1 |       2.85 |       3.99 |         0.00 | 130425.00 | 300044.00 |          5 |        0 |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |        16 |       2.97 |       3.97 |         0.00 | 181218.00 | 417343.00 |          5 |        0 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 |        16 |       2.98 |       4.05 |         0.00 |  52956.00 | 121993.00 |          5 |        0 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: NOPM contains no 0 or NaN

@@ -495,7 +495,7 @@ def resolved_configurations(experiment: dict[str, Any]) -> list[dict[str, Any]]:
     are paired by position rather than crossed: configuration *i* takes entry
     *i* of each list, and a single entry is broadcast to every configuration.
     This mirrors the pairing
-    :func:`bexhoma.experiments.tpch_catalog.build_tpch_argv` performs on the
+    :func:`bexhoma.benchmarks.tpch.catalog.build_tpch_argv` performs on the
     same specification, so what is reported here is what Bexhoma will run. A
     design that means to cross them has to enumerate the combinations itself.
 

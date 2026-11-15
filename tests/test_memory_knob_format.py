@@ -20,7 +20,7 @@ import copy
 import unittest
 
 from bexhoma import spec as catalog_spec
-from bexhoma.experiments.tpch_catalog import format_postgres_memory
+from bexhoma.benchmarks.tpch.catalog import format_postgres_memory
 from tests.test_ycsb_catalog import _BASE_SPEC, _CATALOG_FILE
 
 _POSTGRES_UNITS = ['B', 'kB', 'MB', 'GB', 'TB']

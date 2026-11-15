@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 762s 
-* Code: 1793490908
+* Duration: 839s 
+* Code: 1794678740
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -17,7 +17,7 @@ YCSB SF=1
   * Factors for benchmarking are [4].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.11.
+  * Experiment uses bexhoma version 0.11.17.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['Valkey'].
   * Import is handled by 8 processes (pods).
@@ -40,7 +40,7 @@ YCSB SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:747430
+  * disk:1041681
   * datadisk:1
   * cpu_list:0-223
   * args:['--maxclients', '10000', '--io-threads', '64']
@@ -48,44 +48,44 @@ YCSB SF=1
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:2164173156352
-    * CPU:INTEL(R) XEON(R) PLATINUM 8570
-    * Cores:224
-    * host:6.8.0-147-generic
-    * node:cl-worker36
-    * disk:747430
-    * datadisk:720
-    * volume_size:49G
-    * volume_used:720M
-    * cpu_list:0-223
-  * worker 1
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:555202
-    * datadisk:799
+    * disk:659733
+    * datadisk:720
     * volume_size:49G
-    * volume_used:799M
+    * volume_used:720M
+    * cpu_list:0-127
+  * worker 1
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:1382081
+    * datadisk:804
+    * volume_size:49G
+    * volume_used:804M
     * cpu_list:0-127
   * worker 2
-    * RAM:1081649795072
-    * CPU:AMD EPYC 7453 28-Core Processor
-    * Cores:56
-    * host:6.8.0-139-generic
-    * node:cl-worker34
-    * disk:2199629
-    * datadisk:716
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:859571
+    * datadisk:719
     * volume_size:49G
-    * volume_used:716M
-    * cpu_list:0-55
+    * volume_used:719M
+    * cpu_list:0-255
   * resources_total: 12.25 CPU, 192.5 GiB RAM requested in 4 pods
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793490908
+    * code:1794678740
     * BEXHOMA_WORKERS:3
 * valkey-1-2-1-1 uses docker image valkey/valkey:9.1.3
   * RAM:2164173156352
@@ -93,7 +93,7 @@ YCSB SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:669593
+  * disk:1041486
   * datadisk:1
   * cpu_list:0-223
   * args:['--maxclients', '10000', '--io-threads', '64']
@@ -101,44 +101,44 @@ YCSB SF=1
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:2164173156352
-    * CPU:INTEL(R) XEON(R) PLATINUM 8570
-    * Cores:224
-    * host:6.8.0-147-generic
-    * node:cl-worker36
-    * disk:669594
-    * datadisk:730
-    * volume_size:49G
-    * volume_used:730M
-    * cpu_list:0-223
-  * worker 1
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:552552
-    * datadisk:794
+    * disk:659730
+    * datadisk:1032
     * volume_size:49G
-    * volume_used:794M
+    * volume_used:1.1G
+    * cpu_list:0-127
+  * worker 1
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:1382081
+    * datadisk:881
+    * volume_size:49G
+    * volume_used:881M
     * cpu_list:0-127
   * worker 2
-    * RAM:1081649795072
-    * CPU:AMD EPYC 7453 28-Core Processor
-    * Cores:56
-    * host:6.8.0-139-generic
-    * node:cl-worker34
-    * disk:2199630
-    * datadisk:710
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:859571
+    * datadisk:728
     * volume_size:49G
-    * volume_used:710M
-    * cpu_list:0-55
+    * volume_used:728M
+    * cpu_list:0-255
   * resources_total: 12.25 CPU, 192.5 GiB RAM requested in 4 pods
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793490908
+    * code:1794678740
     * BEXHOMA_WORKERS:3
 
 ### Inherited Loading
@@ -150,12 +150,15 @@ YCSB SF=1
 ### Init Scripts Not in Folder
 * Valkey-1: skipped checkschema-ycsb.sql, initschema-ycsb.sql
 
+### Ingestion
+* Valkey-1: 8 of 8 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-valkey-1-1793490908-75d4db9bf5-2lfxz: 0
+* bexhoma-sut-valkey-1-1794678740-5864854cd7-crdkx: 0
 * bx-w-valkey-nvme-ycsb-1-0: 0
 * bx-w-valkey-nvme-ycsb-1-1: 0
 * bx-w-valkey-nvme-ycsb-1-2: 0
-* bexhoma-sut-valkey-1-1793490908-75f99bb76b-tsjsb: 0
+* bexhoma-sut-valkey-1-1794678740-dcf79f9f-8z9xc: 0
 
 ### Workflow
 
@@ -173,38 +176,38 @@ YCSB SF=1
 
 #### Per Connection
 
-| connection       |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
-|:-----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| valkey-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         6204.09 |                20148.00 |            125000.00 |                              2677.00 | 1.00 |              178.68 |
-| valkey-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         6226.65 |                20075.00 |            125000.00 |                              2673.00 | 1.00 |              179.33 |
-| valkey-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         6279.20 |                19907.00 |            125000.00 |                              2659.00 | 1.00 |              180.84 |
-| valkey-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         6213.65 |                20117.00 |            125000.00 |                              2679.00 | 1.00 |              178.95 |
-| valkey-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         6360.03 |                19654.00 |            125000.00 |                              2649.00 | 1.00 |              183.17 |
-| valkey-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         6290.57 |                19871.00 |            125000.00 |                              2667.00 | 1.00 |              181.17 |
-| valkey-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         6227.58 |                20072.00 |            125000.00 |                              2641.00 | 1.00 |              179.35 |
-| valkey-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         6226.03 |                20077.00 |            125000.00 |                              2651.00 | 1.00 |              179.31 |
+| connection       |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   SF |   Throughput [SF/h] |
+|:-----------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| valkey-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         4002.56 |                31230.00 |            125000.00 |                              3893.00 | 1.00 |              115.27 |
+| valkey-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         4055.94 |                30819.00 |            125000.00 |                              3895.00 | 1.00 |              116.81 |
+| valkey-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         4025.64 |                31051.00 |            125000.00 |                              3893.00 | 1.00 |              115.94 |
+| valkey-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         3993.99 |                31297.00 |            125000.00 |                              3899.00 | 1.00 |              115.03 |
+| valkey-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         4029.66 |                31020.00 |            125000.00 |                              3893.00 | 1.00 |              116.05 |
+| valkey-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         4035.38 |                30976.00 |            125000.00 |                              3901.00 | 1.00 |              116.22 |
+| valkey-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         4008.34 |                31185.00 |            125000.00 |                              3901.00 | 1.00 |              115.44 |
+| valkey-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         4040.08 |                30940.00 |            125000.00 |                              3877.00 | 1.00 |              116.35 |
 
 #### Per Run
 
-| DBMS       |   experiment_run |   threads |    target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:-----------|-----------------:|----------:|----------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| Valkey-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 1.00 |              178.68 |                        50027.80 |                20148.00 |           1000000.00 |                              2662.00 |
+| DBMS       |   experiment_run |   threads |    target |   pod_count |   errors |   SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:-----------|-----------------:|----------:|----------:|------------:|---------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| Valkey-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |     0.00 | 1.00 |              115.03 |                        32191.58 |                31297.00 |           1000000.00 |                              3894.00 |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS             | phase        | job            | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:-----------------|:-------------|:---------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| valkey-1-1-1-1-1 | valkey-1-1-1 | valkey-1-1-1-1 | Valkey-1        |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        61899.96 |               161551.00 |            4999673 |                            1318.00 |              5000327 |                              1316.00 |
-| valkey-1-2-1-1-1 | valkey-1-2-1 | valkey-1-2-1-1 | Valkey-1        |                2 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        61599.87 |               162338.00 |            4999619 |                            1090.00 |              5000381 |                              1071.00 |
+| connection       | phase        | job            |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-----------------|:-------------|:---------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| valkey-1-1-1-1-1 | valkey-1-1-1 | valkey-1-1-1-1 |                1 |        1 |               1 |       1 |       128 |    65536 |        0 |                        61913.37 |               161516.00 |            4998725 |                            1280.00 |              5001275 |                              1281.00 |
+| valkey-1-2-1-1-1 | valkey-1-2-1 | valkey-1-2-1-1 |                2 |        1 |               1 |       1 |       128 |    65536 |        0 |                        61336.15 |               163036.00 |            4999602 |                            1465.00 |              5000398 |                              1435.00 |
 
 #### Per Phase
 
-| DBMS         | phase        |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:-------------|:-------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| valkey-1-1-1 | valkey-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        61899.96 |               161551.00 |            4999673 |                            1318.00 |              5000327 |                              1316.00 |
-| valkey-1-2-1 | valkey-1-2-1 |                2 |       128 |    65536 |               1 |           1 |            0 |                        61599.87 |               162338.00 |            4999619 |                            1090.00 |              5000381 |                              1071.00 |
+| DBMS         | phase        |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-------------|:-------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| valkey-1-1-1 | valkey-1-1-1 |                1 |        1 |               1 |           1 |       128 |    65536 |        0 |                        61913.37 |               161516.00 |            4998725 |                            1280.00 |              5001275 |                              1281.00 |
+| valkey-1-2-1 | valkey-1-2-1 |                2 |        1 |               1 |           1 |       128 |    65536 |        0 |                        61336.15 |               163036.00 |            4999602 |                            1465.00 |              5000398 |                              1435.00 |
 
 ### Monitoring
 
@@ -212,34 +215,36 @@ YCSB SF=1
 
 | DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:---------------|-------------:|----------:|---------------:|----------------------:|
-| valkey-1-1-1-1 |        51.47 |      1.51 |           1.44 |                  1.44 |
+| valkey-1-1-1-1 |        92.44 |      1.93 |           1.44 |                  1.44 |
 
 ### Loading phase: component loader
 
 | DBMS           | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:---------------|:-------------|----------:|---------------:|----------------------:|
-| valkey-1-1-1-1 | n/a          |         0 |           0.45 |                  0.45 |
+| valkey-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
 
 ### Benchmarking phase: component worker
 
 | DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:---------------|-------------:|----------:|---------------:|----------------------:|
-| valkey-1-1-1-1 |       212.18 |      1.60 |           1.48 |                  1.49 |
-| valkey-1-2-1-1 |       227.06 |      2.01 |           1.51 |                  2.26 |
+| valkey-1-1-1-1 |       275.46 |      2.10 |           1.46 |                  1.46 |
+| valkey-1-2-1-1 |       267.91 |      2.52 |           1.46 |                  2.65 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:---------------|-------------:|----------:|---------------:|----------------------:|
-| valkey-1-1-1-1 |       618.76 |      4.88 |           1.49 |                  1.49 |
-| valkey-1-2-1-1 |       647.85 |      4.96 |           1.48 |                  1.48 |
+| valkey-1-1-1-1 |       670.20 |      5.09 |           1.48 |                  1.49 |
+| valkey-1-2-1-1 |       733.77 |      4.97 |           1.49 |                  1.50 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Utilization [CPUs] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
 * CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
 * CPU Throttled Time [s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
@@ -253,6 +258,8 @@ YCSB SF=1
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]

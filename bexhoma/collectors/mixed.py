@@ -6,7 +6,7 @@ Provides :class:`mixed`, which reads the ``benchmark_sequence`` persisted in
 and dispatches to the correct typed sub-collector for each benchmark-run index.
 
 Use this collector when a single experiment code contains results from more than
-one benchmark tool (e.g. Benchbase followed by YCSB).  For experiments that use
+one benchmark tool.  For experiments that use
 only one benchmark tool, use the corresponding typed collector directly.
 
 Authors: Patrick K. Erdelt
@@ -15,23 +15,24 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from .base import CollectorBase
-from .benchbase import BenchbaseCollector
-from .ycsb import YcsbCollector
-from .tpcc import TpccCollector
-from .dbmsbenchmarker import DbmsBenchmarkerCollector
 
 __all__ = ["MixedCollector"]
 
-# Maps the benchmark tool name stored in queries.config to its collector class.
-_COLLECTOR_FOR_TYPE: dict = {
-    'benchbase':       BenchbaseCollector,
-    'ycsb':            YcsbCollector,
-    'tpcc':            TpccCollector,
-    'hammerdb':        TpccCollector,
-    'dbmsbenchmarker': DbmsBenchmarkerCollector,
-    'tpch':            DbmsBenchmarkerCollector,
-    'tpcds':           DbmsBenchmarkerCollector,
-}
+
+def collector_class_for_type(bm_type: str) -> type:
+    """
+    The collector class of the benchmark that a ``benchmark_sequence`` entry names.
+
+    :param bm_type: ``'type'`` of the entry.
+    :return: Collector class registered for that benchmark.
+    :raises KeyError: If no benchmark is registered for ``bm_type``, or it has no collector.
+    """
+    # imported here: the registry's descriptors import the collectors of this package
+    from bexhoma.benchmarks import registry
+    descriptor = registry.descriptor_for_type(bm_type)
+    if descriptor is None or descriptor.collector is None:
+        raise KeyError(bm_type)
+    return descriptor.collector
 
 
 class MixedCollector(CollectorBase):
@@ -66,7 +67,7 @@ class MixedCollector(CollectorBase):
         """
         Returns a typed sub-collector scoped to a single benchmark-run index.
 
-        The collector class is resolved from :data:`_COLLECTOR_FOR_TYPE` using the
+        The collector class is resolved by :func:`collector_class_for_type` from the
         ``'type'`` field of the matching entry in :attr:`benchmark_sequence`.
 
         :param benchmark_run: 1-based benchmark-run index.
@@ -75,12 +76,11 @@ class MixedCollector(CollectorBase):
         :rtype: CollectorBase
         :raises StopIteration: If ``benchmark_run`` is not found in
             :attr:`benchmark_sequence`.
-        :raises KeyError: If the benchmark type is not registered in
-            :data:`_COLLECTOR_FOR_TYPE`.
+        :raises KeyError: If no benchmark with a collector is registered for the type.
         """
         entry = next(e for e in self.benchmark_sequence if e['index'] == benchmark_run)
         bm_type = entry['type']
-        collector_cls = _COLLECTOR_FOR_TYPE[bm_type]
+        collector_cls = collector_class_for_type(bm_type)
         return collector_cls(self.path, self.codes, benchmark_run=benchmark_run)
 
     def get_performance_per_benchmark(self) -> dict:

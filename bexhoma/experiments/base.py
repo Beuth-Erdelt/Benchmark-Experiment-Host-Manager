@@ -12,7 +12,7 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from dbmsbenchmarker import parameter, inspector
+from dbmsbenchmarker import parameter
 import logging
 import urllib3
 from os import makedirs, path
@@ -215,11 +215,6 @@ class ExperimentBase():
     #: (``-nlp 1``, counted per tenant) instead of a multiple of ``-mtn`` (see
     #: :func:`bexhoma.cli_args.check_tenant_loading_pods`).
     tenant_loading_one_pod_per_tenant = False
-    #: Whether ``bexhoma summary`` rebuilds a finished experiment of this class from
-    #: the workload ``type`` in its ``queries.config`` (the type names the class alias
-    #: in :mod:`bexhoma.experiments`, constructed with ``cluster``, ``code`` and ``SF``);
-    #: otherwise the summary uses :class:`ExperimentBase`.
-    summary_from_type = False
 
     def __init__(self,
                  cluster,
@@ -235,11 +230,20 @@ class ExperimentBase():
         :param timeout: Maximum timeout per query
         """
         self.cluster = cluster                                          # cluster object
-        self.code = code                                                # code of experiment
-        if self.code is None:
-            self.code = str(round(time.time()))
+        if code is None:
+            # Reserve a fresh code by creating its result folder: makedirs without exist_ok
+            # is atomic, so two experiments started in the same second never share a code
+            # (and with it SUT deployments, job names and the result folder).
+            candidate = round(time.time())
+            while True:
+                try:
+                    makedirs(self.cluster.resultfolder+"/"+str(candidate))
+                    break
+                except FileExistsError:
+                    candidate += 1
+            self.code = str(candidate)                                  # code of experiment
         else:
-            self.code = str(self.code)
+            self.code = str(code)                                       # code of experiment
         self.path = self.cluster.resultfolder+"/"+self.code             # path to result folder (read from cluster.config)
         if not path.isdir(self.path):
             makedirs(self.path)
@@ -278,7 +282,7 @@ class ExperimentBase():
         self.ddl_parameters = {}                                        # DDL schema parameter for init scripts (like index type or sharding strategy)
         self.ddl_assignments = {}                                       # DDL parameter values per key from -xddl/-nwr/-nws, a list of several sweeps the key
         self.ddl_keys_given = []                                        # keys given by -xddl: at least one configuration must declare each
-        self.data_parameters = {}                                       # other values that define the loaded data (e.g. YCSB insert order), stored as load_<key> labels on volumes
+        self.data_parameters = {}                                       # other values that define the loaded data (e.g. the insert order of keys), stored as load_<key> labels on volumes
         self.eval_parameters = {}                                       # parameters that will be handed over to dbmsbenchmarker
         self.storage = {}                                               # parameters for persistent storage (like type and size)
         self.nodes = {}                                                 # dict of node infos to guide components (like nodeSelector for SUT)
@@ -324,7 +328,7 @@ class ExperimentBase():
         self.storage_types = [None]                                     # storage class per resource cell, None = ephemeral (set from -rst)
         self.resource_cells = []                                        # one dict per swept resource cell (set from -rc/-lc/-rr/-lr/-rst)
         self.storage_label = ''                                         # label to mark persistent storage with (so that they can be matched to experiment)
-        self.experiments_configfolder = ''                              # relative path to config folder of experiment (e.g., 'experiments/tpch')
+        self.experiments_configfolder = ''                              # relative path to config folder of experiment ('experiments/<benchmark>')
         self.evaluator = evaluators.LogEvaluator(                               # set evaluator for experiment - default uses base
             code=self.code, path=self.cluster.resultfolder, include_loading=True, include_benchmarking=True)
         self.benchmarks: list = []                                        # ordered Benchmark objects; index+1 = benchmark_index
@@ -1076,7 +1080,7 @@ class ExperimentBase():
         """
         Set the relative config folder for the experiment type.
 
-        Bexhoma expects subfolders per experiment type (e.g. ``experiments/tpch``).
+        Bexhoma expects subfolders per experiment type (``experiments/<benchmark>``).
         Each subfolder must contain a ``queries.config`` and per-DBMS schema subdirectories.
 
         :param experiments_configfolder: Relative path to the experiment config folder.
@@ -1097,7 +1101,7 @@ class ExperimentBase():
         """
         Sets mata data about the experiment, for example name and description.
 
-        :param kwargs: Dict of meta data, example 'name' => 'TPC-H'
+        :param kwargs: Dict of meta data, example 'name' => 'My Benchmark'
         """
         self.workload = {**self.workload, **kwargs}
     def set_query_management(self,
@@ -1762,8 +1766,8 @@ class ExperimentBase():
                 'PostgreSQL-1-1-1': [
                     [  # experiment run 1
                         [  # client round 1
-                            {'type': 'tpch',         'pods': 3},
-                            {'type': 'tpch_refresh', 'pods': 1},
+                            {'type': 'first_benchmark',  'pods': 3},
+                            {'type': 'second_benchmark', 'pods': 1},
                         ],
                     ],
                 ],
@@ -2152,32 +2156,6 @@ class ExperimentBase():
         full_title = f"{title} {column}" if len(title) > 0 else column
         suffix = "contains no 0 or NaN" if passed else "contains 0 or NaN"
         return self._record_test(passed, f"{full_title} {suffix}")
-    def _test_efficiency(self, df, threads_column: str, computed: bool, reason: str) -> None:
-        """
-        Test the TPC-C efficiency of the phases where the evaluator computes it.
-
-        Efficiency is only computed with key-and-think time and
-        ``threads_column == 10 x SF`` (TPC-C convention); everywhere else it is 0
-        by design, so the test is skipped instead of failed.
-
-        :param df: Per-phase execution DataFrame with ``efficiency`` and ``threads_column``.
-        :param threads_column: ``terminals`` (Benchbase) or ``vusers`` (HammerDB).
-        :param computed: Whether the settings let the evaluator compute efficiency at all.
-        :param reason: Why it is not computed, for the skipped label, when ``computed`` is False.
-        """
-        if not computed:
-            self._record_skipped_test(f"efficiency (not computed: {reason})")
-            return
-        if df.empty or 'efficiency' not in df.columns or threads_column not in df.columns:
-            self._record_skipped_test("efficiency (no benchmarking results)")
-            return
-        sf = int(self.SF)
-        df_eligible = df[df[threads_column] == 10 * sf]
-        if df_eligible.empty:
-            self._record_skipped_test(
-                f"efficiency (not computed: no phase with {threads_column} = 10 x SF = {10 * sf})")
-            return
-        self._test_column(df_eligible, "efficiency")
     def _print_test_summary(self) -> None:
         """Print all results collected in _test_results as a single summary block."""
         print("\n### Tests")
@@ -3277,7 +3255,7 @@ class ExperimentBase():
                                     jobname: str) -> list:
         """
         Extracts start and end times from a benchmarking job.
-        All benchmarker containers (including refresh-stream loaders) must be named
+        All benchmarker containers (of every benchmark of a round) must be named
         ``dbmsbenchmarker`` so the log file ends with ``.dbmsbenchmarker.log``.
 
         :param jobname: Name of the job
@@ -3819,213 +3797,19 @@ class ExperimentBase():
         return connections_sorted, monitoring_applications
     def show_summary(self, write_report: bool = False):
         """
-        Print a basic experiment summary using the DBMSBenchmarker inspector directly.
+        Tell that this experiment has no summary.
 
-        .. deprecated::
-            Probably unused in practice.  All named experiment types (``tpch``,
-            ``tpcds``, ``benchbase``, ``ycsb``, ``tpcc``) override this via
-            :meth:`~bexhoma.experiments.dbmsbenchmarker.dbmsbenchmarker.show_summary`,
-            which delegates to the :mod:`bexhoma.benchmarks` pipeline.
-            This implementation is only reachable for legacy result folders whose
-            ``queries.config`` still contains ``type='dbmsbenchmarker'`` — a value
-            written by ``experiments.base`` before the named experiment subclasses
-            existed.
+        A summary is built by the benchmarks of an experiment (see
+        :meth:`~bexhoma.experiments.mixed.MixedExperiment.show_summary`). An experiment of
+        this base class has none: ``bexhoma summary`` arrives here for a result folder
+        whose workload ``type`` no registered benchmark claims.
 
-        :param write_report: Accepted for signature parity with the
-            ``bexhoma.benchmarks`` pipeline's ``show_summary(write_report=...)``;
-            this legacy path has no tiered-report counterpart, so it is ignored.
+        :param write_report: Accepted for signature parity; no report is written.
         """
-        self._test_results = list(self._runtime_test_results)
-        self.cluster.logger.debug('base.show_summary()')
-        connections_sorted, monitoring_applications = self.show_summary_header()
-        resultfolder = self.cluster.config['benchmarker']['resultfolder']
-        code = self.code
-        num_run = self.workload['num_run'] if 'num_run' in self.workload else 1
-        #####################
-        evaluate = inspector.inspector(resultfolder)
-        evaluate.load_experiment(code=code, silent=True)
-        query_properties = evaluate.get_experiment_query_properties()
-        #print(query_properties)
-        def map_index_to_queryname(numQuery):
-            if numQuery[1:] in query_properties and 'config' in query_properties[numQuery[1:]] and 'title' in query_properties[numQuery[1:]]['config']:
-                return query_properties[numQuery[1:]]['config']['title']
-            else:
-                return numQuery
-        #####################
-        if self.benchmarking_is_active():
-            print("\n### Errors (failed queries)\n")
-            df = evaluate.get_total_errors().T
-            num_errors = df.sum().sum()
-            if num_errors > 0:
-                df_errors = df.copy()
-                df_errors = df_errors[~(df_errors == False).all(axis=1)]
-                list_error_queries = list(df_errors.index)
-                # set readable names
-                df.index = df.index.map(map_index_to_queryname)
-                # remove only False rows
-                df = df[~(df == False).all(axis=1)]
-                #print(df)
-                print(df.to_markdown(index=True, floatfmt=".2f"))
-                for error in list_error_queries:
-                    numQuery = error[1:]        # remove the leading "Q""
-                    list_errors = evaluate.get_error(numQuery)
-                    list_errors = {k:v for k,v in list_errors.items() if len(v) > 0}
-                    #print(list_errors)
-                    print("* "+map_index_to_queryname(error))
-                    #df_error = pd.DataFrame.from_dict(list_errors, orient='index').sort_index()
-                    #print(df_error)
-                    for k,v in list_errors.items():
-                        print("  * {}: {}".format(k,v))
-            else:
-                print("No errors")
-        #####################
-        if self.benchmarking_is_active():
-            print("\n### Warnings (result mismatch)\n")
-            df = evaluate.get_total_warnings().T
-            num_warnings = df.sum().sum()
-            if num_warnings > 0:
-                # set readable names
-                df.index = df.index.map(map_index_to_queryname)
-                # remove only False rows
-                df = df[~(df == False).all(axis=1)]
-                #print(df)
-                print(df.to_markdown(index=True, floatfmt=".2f"))
-            else:
-                print("No warnings")
-        #####################
-        if self.benchmarking_is_active():
-            print("\n### Latency of Timer Execution [ms]")
-            num_of_queries = 0
-            df = evaluate.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
-            if not df is None:
-                df = df.sort_index().T.round(2)
-                df.index = df.index.map(map_index_to_queryname)
-                #print(df)
-                df.index.names = ["DBMS"]
-                print(df.to_markdown(index=True, floatfmt=".2f"))
-                num_of_queries = len(df.index)
-        #####################
-        if self.loading_is_active():
-            print("\n### Loading [s]\n")
-            times = {}
-            for c, connection in evaluate.benchmarks.dbms.items():
-                times[c]={}
-                if 'time_generated' in connection.connectiondata:
-                    times[c]['time_generated'] = connection.connectiondata['time_generated']
-                if 'time_ingested' in connection.connectiondata:
-                    times[c]['time_ingested'] = connection.connectiondata['time_ingested']
-                if 'time_schema' in connection.connectiondata:
-                    times[c]['time_schema'] = connection.connectiondata['time_schema']
-                if 'time_index' in connection.connectiondata:
-                    times[c]['time_index'] = connection.connectiondata['time_index']
-                if 'time_loading' in connection.connectiondata:
-                    times[c]['time_loading'] = connection.connectiondata['time_loading']
-            df = pd.DataFrame(times)
-            df = df.reindex(sorted(df.columns), axis=1)
-            df = df.round(2).T
-            #df.index.names = ["DBMS"]
-            df = df.rename_axis(index="DBMS")
-            #print(df)
-            print(df.to_markdown(index=True, floatfmt=".2f"))
-        #####################
-        if self.benchmarking_is_active():
-            print("\n### Geometric Mean of Medians of Timer Run [s]\n")
-            df = evaluate.get_aggregated_experiment_statistics(type='timer', name='run', query_aggregate='Median', total_aggregate='Geo')
-            df = (df/1000.0).sort_index()
-            df.columns = ['Geo Times [s]']
-            df_geo_mean_runtime = df.copy()
-            #print(df.round(2))
-            df.index.names = ["DBMS"]
-            print(df.round(2).to_markdown(index=True, floatfmt=".2f"))
-        #####################
-        if self.benchmarking_is_active():
-            print("\n### Power@Size ((3600*SF)/(geo times))\n")
-            df = evaluate.get_aggregated_experiment_statistics(type='timer', name='execution', query_aggregate='Median', total_aggregate='Geo')
-            df = (df/1000.0).sort_index().astype('float')
-            #print(self.workload['defaultParameters'])
-            #print(self.workload['defaultParameters']['SF'])
-            df = float(self.workload['defaultParameters']['SF'])*3600./df
-            df.columns = ['Power@Size [~Q/h]']
-            df_power = df.copy()
-            #print(df.round(2))
-            df.index.names = ["DBMS"]
-            print(df.round(2).to_markdown(index=True, floatfmt=".2f"))
-        #####################
-        if self.benchmarking_is_active():
-            # aggregate time and throughput for parallel pods
-            print("\n### Throughput@Size ((runs*queries*streams*3600*SF)/(span of time))\n")
-            df_merged_time = pd.DataFrame()
-            for connection_nr, connection in evaluate.benchmarks.dbms.items():
-                df_time = pd.DataFrame()
-                c = connection.connectiondata
-                connection_name = c['name']
-                orig_name = c['orig_name']
-                eva = evaluate.get_experiment_connection_properties(c['name'])
-                df_time.index = [connection_name]
-                #df_time['SF'] = int(SF)
-                #print(c)
-                #print(connection.name)
-                #print(connection.connection)
-                df_time['orig_name'] = orig_name
-                df_time['SF'] = float(c['parameter']['connection_parameter']['loading_parameters']['SF'])
-                df_time['pods'] = int(c['parameter']['connection_parameter']['loading_parameters']['PODS_PARALLEL'])
-                #df_time['threads'] = int(c['parameter']['connection_parameter']['loading_parameters']['MYSQL_LOADING_THREADS'])
-                df_time['num_experiment'] = int(c['parameter']['numExperiment'])
-                df_time['num_client'] = int(c['parameter']['client'])
-                df_time['benchmark_start'] = int(eva['times']['total'][c['name']]['time_start'])
-                df_time['benchmark_end'] = int(eva['times']['total'][c['name']]['time_end'])
-                df_merged_time = pd.concat([df_merged_time, df_time])
-            df_time = df_merged_time.sort_index()
-            benchmark_start = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client'])[['benchmark_start']].min(numeric_only=True)
-            benchmark_end = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client'])[['benchmark_end']].max(numeric_only=True)
-            df_benchmark = pd.DataFrame(benchmark_end['benchmark_end'] - benchmark_start['benchmark_start'])
-            df_benchmark.columns = ['time [s]']
-            benchmark_count = df_time.groupby(['orig_name', 'SF', 'num_experiment', 'num_client']).count()
-            df_benchmark['count'] = benchmark_count['benchmark_end']
-            df_benchmark['SF'] = df_benchmark.index.map(lambda x: x[1])
-            df_benchmark['Throughput@Size'] = (num_run*num_of_queries*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
-            #df_benchmark['Throughput@Size [~GB/h]'] = (22*3600.*df_benchmark['count']/df_benchmark['time [s]']*df_benchmark['SF']).round(2)
-            index_names = list(df_benchmark.index.names)
-            index_names[0] = "DBMS"
-            df_benchmark.rename_axis(index_names, inplace=True)
-            df_benchmark.index = df_benchmark.index.get_level_values(0)
-            #print(df_benchmark)
-            print(df_benchmark.to_markdown(index=True, floatfmt=".2f"))
-        #####################
-        if self.benchmarking_is_active():
-            print("\n### Workflow\n")
-            #print(df_time)
-            df_time.index.names = ["DBMS"]
-            print(df_time.to_markdown(index=True, floatfmt=".2f"))
-            workflow_actual = evaluators.EvaluatorBase.reconstruct_workflow(self.evaluator, df_time)
-            #workflow_actual = self.evaluator.reconstruct_workflow(df_time)
-            workflow_planned = self.workload['workflow_planned']
-            if len(workflow_actual) > 0:
-                print("\n#### Actual\n")
-                for c in workflow_actual:
-                    print("* DBMS", c, "- Pods", workflow_actual[c])
-            if len(workflow_planned) > 0:
-                print("\n#### Planned\n")
-                for c in workflow_planned:
-                    print("* DBMS", c, "- Pods", workflow_planned[c])
-        #####################
-        self.show_summary_monitoring()
-        if len(monitoring_applications) > 0:
-            print("\n### Application Metrics")
-            for title, metrics in monitoring_applications.items():
-                print("\n#### "+title+"\n")
-                metrics.index.names = ["DBMS"]
-                print(metrics.to_markdown(index=True, floatfmt=".2f"))
-        if self.benchmarking_is_active():
-            self._test_column(df_geo_mean_runtime, "Geo Times [s]")
-            self._test_column(df_power, "Power@Size [~Q/h]")
-            self._test_column(df_benchmark, "Throughput@Size")
-            passed_errors = num_errors == 0
-            self._record_test(passed_errors, "No SQL errors" if passed_errors else "SQL errors")
-            passed_warnings = num_warnings == 0
-            self._record_test(passed_warnings, "No SQL warnings" if passed_warnings else "SQL warnings (result mismatch)")
-            self._record_test(self.test_workflow(workflow_actual, workflow_planned), "Workflow as planned")
-        self._print_test_summary()
+        workload_type = self.workload.get('type', '')
+        print(f"No summary: experiment {self.code} has the workload type {workload_type!r}, "
+              f"which belongs to no benchmark that bexhoma knows.")
+
     def scrape_interval(self) -> float:
         """
         Scrape interval of the cluster Prometheus in seconds, from ``cluster.config``.
@@ -4210,84 +3994,6 @@ class ExperimentBase():
 
 
 
-# Simple IoT example experiment
-
-
-class IotExperiment(ExperimentBase):
-    """
-    Class for defining an TSBS experiment.
-    This sets
-
-    * the folder to the experiment - including query file and schema informations per dbms
-    * name and information about the experiment
-    * additional parameters - here SF (the scaling factor)
-    """
-    def __init__(self,
-            cluster,
-            code=None,
-            queryfile = 'queries-iot.config',
-            SF = '1',
-            num_experiment_to_apply = 1,
-            timeout = 7200,
-            ):
-        ExperimentBase.__init__(self, cluster, code, num_experiment_to_apply, timeout)
-        self.set_experiment(volume='iot')
-        self.set_experiment(script='SF'+str(SF)+'-index')
-        self.cluster.set_experiments_configfolder('experiments/iot')
-        parameter.defaultParameters = {'SF': str(SF)}
-        self.set_queryfile(queryfile)
-        self.set_workload(
-            name = 'IoT Queries SF='+str(SF),
-            info = 'This experiment performs some IoT inspired queries.',
-            type = 'iot',
-            )
-        self.storage_label = 'tpch-'+str(SF)                           # label used to match persistent storage to this experiment
-    def set_queries_full(self):
-        self.set_queryfile('queries-iot.config')
-    def set_queries_profiling(self):
-        self.set_queryfile('queries-iot-profiling.config')
-
-
-
-# TSBS experiment
-
-
-class TsbsExperiment(ExperimentBase):
-    """
-    Class for defining an TSBS experiment.
-    This sets
-
-    * the folder to the experiment - including query file and schema informations per dbms
-    * name and information about the experiment
-    * additional parameters - here SF (the scaling factor)
-    """
-    def __init__(self,
-            cluster,
-            code=None,
-            queryfile = 'queries-tsbs.config',
-            SF = '1',
-            num_experiment_to_apply = 1,
-            timeout = 7200,
-            ):
-        ExperimentBase.__init__(self, cluster, code, num_experiment_to_apply, timeout)
-        self.set_experiment(volume='tsbs')
-        self.set_experiment(script='SF'+str(SF)+'-index')
-        self.cluster.set_experiments_configfolder('experiments/tsbs')
-        parameter.defaultParameters = {'SF': str(SF)}
-        self.set_queryfile(queryfile)
-        self.set_workload(
-            name = 'TSBS Queries SF='+str(SF),
-            info = 'This experiment performs some TSBS inspired queries.',
-            type = 'tsdb',
-            )
-        self.storage_label = 'tsbs-'+str(SF)                               # label used to match persistent storage to this experiment
-    def set_queries_full(self):
-        self.set_queryfile('queries-tsbs.config')
-    def set_queries_profiling(self):
-        self.set_queryfile('queries-tsbs-profiling.config')
-
-
-
 # Example experiment class
 
 class ExampleExperiment(ExperimentBase):
@@ -4318,43 +4024,3 @@ class ExampleExperiment(ExperimentBase):
             info = 'This experiment performs some custom queries.'
             )
         self.storage_label = 'example'                                      # label used to match persistent storage to this experiment
-
-
-# TPCx-AI experiment class
-
-class TpcxaiExperiment(ExperimentBase):
-    """
-    Class for defining an TPCx-AI experiment.
-    This sets
-
-    * the folder to the experiment - including query file and schema informations per dbms
-    * name and information about the experiment
-    * additional parameters - here SF (the scaling factor)
-    """
-    def __init__(self,
-            cluster,
-            code=None,
-            queryfile = 'queries-tpcxai.config',
-            SF = '100',
-            num_experiment_to_apply = 1,
-            timeout = 7200,
-            script=None,
-            ):
-        ExperimentBase.__init__(self, cluster, code, num_experiment_to_apply, timeout)
-        if script is None:
-            script = 'SF'+str(SF)+'-index'
-        self.set_experiment(volume='tpcxai')
-        self.set_experiment(script=script)
-        self.cluster.set_experiments_configfolder('experiments/tpcxai')
-        parameter.defaultParameters = {'SF': str(SF)}
-        self.set_additional_labels(SF=SF)
-        self.set_queryfile(queryfile)
-        self.set_workload(
-            name = 'TPCx-AI Queries SF='+str(SF),
-            info = 'This experiment performs some TPCx-AI inspired queries.'
-            )
-        self.storage_label = 'tpcxai-'+str(SF)                             # label used to match persistent storage to this experiment
-    def set_queries_full(self):
-        self.set_queryfile('queries-tpcxai.config')
-    def set_queries_profiling(self):
-        self.set_queryfile('queries-tpcxai-profiling.config')
