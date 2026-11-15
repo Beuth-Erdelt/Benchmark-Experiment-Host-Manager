@@ -3,8 +3,8 @@
 ### Workload
 TPC-DS Queries SF=1
 * Type: tpcds
-* Duration: 1185s 
-* Code: 1792614849
+* Duration: 1087s 
+* Code: 1794615413
 * This includes the reading queries of TPC-DS.
 * This experiment compares run time and resource consumption of TPC-DS queries in different DBMS.
   * TPC-DS (SF=1) data is loaded and benchmark is executed.
@@ -13,7 +13,7 @@ TPC-DS Queries SF=1
   * Timeout per query is 1200.
   * Import sets indexes and constraints after loading and recomputes statistics.
   * Load durability is unsafe (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.7.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -29,26 +29,29 @@ TPC-DS Queries SF=1
 
 ### Connections
 * mysql-1-1-1-1-1 uses docker image mysql:9.7.2
-  * RAM:2164173172736
+  * RAM:2164173156352
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:945750
-  * datadisk:37665
+  * disk:1111637
+  * datadisk:37597
   * volume_size:1.8T
-  * volume_used:924G
+  * volume_used:1.1T
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:16Gi
   * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: unsafe
   * eval_parameters
-    * code:1792614849
+    * code:1794615413
+
+### Ingestion
+* MySQL-1: 39 of 39 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1792614849-85fffd955c-jltn2: 0
+* bexhoma-sut-mysql-1-1794615413-8956f4488-xq7cf: 0
 
 ### Workflow
 
@@ -64,23 +67,23 @@ TPC-DS Queries SF=1
 
 #### Per Run
 
-|           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MySQL-1-1 |                1 |    1 |      151.00 |           7.00 |            1.00 |         50.00 |           83.00 |              8 |           0 |             | None           |             0 | False         |               23.84 | False               |
+| DBMS      |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MySQL-1-1 |                1 |    1 |      148.00 |           5.00 |            1.00 |         59.00 |           74.00 |              8 |         0 |             | None           |             0 | False         |               24.32 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS            | configuration   | phase       | job           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod             |
-|:----------------|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:----------------|
-| mysql-1-1-1-1-1 | MySQL-1         | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        476 |            0.71 |             5084.63 |            748.74 |          -1 | mysql-1-1-1-1-1 |
+| connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               99 |                  99 |        423 |            0.63 |             5702.23 |            842.55 |          -1 |
 
 #### Per Phase
 
-|             | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS        | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        476 |            0.71 |             5084.63 |            748.74 |          -1 |
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               99 |                  99 |        423 |            0.63 |             5702.23 |            842.55 |          -1 |
 
 #### Query Completion per Phase
 
@@ -93,105 +96,105 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries       |   mysql-1-1-1-1-1 |
 |:--------------|------------------:|
-| TPC-DS Q1     |             66.57 |
-| TPC-DS Q2     |           3690.70 |
-| TPC-DS Q3     |             13.51 |
-| TPC-DS Q4     |          54645.20 |
-| TPC-DS Q5     |          14430.11 |
-| TPC-DS Q6     |          59257.38 |
-| TPC-DS Q7     |            627.10 |
-| TPC-DS Q8     |            339.76 |
-| TPC-DS Q9     |           3909.22 |
-| TPC-DS Q10    |             78.56 |
-| TPC-DS Q11    |          37022.95 |
-| TPC-DS Q12    |            237.55 |
-| TPC-DS Q13    |           1099.22 |
-| TPC-DS Q14a+b |          40833.56 |
-| TPC-DS Q15    |            161.69 |
-| TPC-DS Q16    |            108.86 |
-| TPC-DS Q17    |            446.61 |
-| TPC-DS Q18    |            679.18 |
-| TPC-DS Q19    |            254.75 |
-| TPC-DS Q20    |            412.03 |
-| TPC-DS Q21    |           1524.86 |
-| TPC-DS Q22    |           3871.09 |
-| TPC-DS Q23a+b |          45934.14 |
-| TPC-DS Q24a+b |           1174.97 |
-| TPC-DS Q25    |            159.45 |
-| TPC-DS Q26    |            477.85 |
-| TPC-DS Q27    |            416.55 |
-| TPC-DS Q28    |           2784.03 |
-| TPC-DS Q29    |             93.00 |
-| TPC-DS Q30    |            410.87 |
-| TPC-DS Q31    |           8923.79 |
-| TPC-DS Q32    |            247.34 |
-| TPC-DS Q33    |            554.34 |
-| TPC-DS Q34    |            760.38 |
-| TPC-DS Q35    |          10995.99 |
-| TPC-DS Q36    |            985.53 |
-| TPC-DS Q37    |              9.09 |
-| TPC-DS Q38    |           5946.91 |
-| TPC-DS Q39a+b |            934.23 |
-| TPC-DS Q40    |            130.35 |
-| TPC-DS Q41    |           1170.28 |
-| TPC-DS Q42    |             20.43 |
-| TPC-DS Q43    |              2.42 |
-| TPC-DS Q44    |           1257.07 |
-| TPC-DS Q45    |            109.91 |
-| TPC-DS Q46    |            607.20 |
-| TPC-DS Q47    |           8570.75 |
-| TPC-DS Q48    |           1112.48 |
-| TPC-DS Q49    |            133.00 |
-| TPC-DS Q50    |             25.19 |
-| TPC-DS Q51    |           7755.92 |
-| TPC-DS Q52    |             21.65 |
-| TPC-DS Q53    |            174.81 |
-| TPC-DS Q54    |           2595.46 |
-| TPC-DS Q55    |             13.52 |
-| TPC-DS Q56    |            226.74 |
-| TPC-DS Q57    |           2618.48 |
-| TPC-DS Q58    |           5375.85 |
-| TPC-DS Q59    |           4990.11 |
-| TPC-DS Q60    |            380.28 |
-| TPC-DS Q61    |              2.70 |
-| TPC-DS Q62    |           2348.74 |
-| TPC-DS Q63    |            220.63 |
-| TPC-DS Q64    |            398.64 |
-| TPC-DS Q65    |           5907.29 |
-| TPC-DS Q66    |           1493.48 |
-| TPC-DS Q67    |           6903.80 |
-| TPC-DS Q68    |            277.09 |
-| TPC-DS Q69    |            445.93 |
-| TPC-DS Q70    |           9782.91 |
-| TPC-DS Q71    |            457.48 |
-| TPC-DS Q72    |          10576.98 |
-| TPC-DS Q73    |            868.62 |
-| TPC-DS Q74    |           7264.86 |
-| TPC-DS Q75    |           1907.51 |
-| TPC-DS Q76    |            436.46 |
-| TPC-DS Q77    |           7637.15 |
-| TPC-DS Q78    |          14908.01 |
-| TPC-DS Q79    |           4344.13 |
-| TPC-DS Q80    |           7195.29 |
-| TPC-DS Q81    |           2290.74 |
-| TPC-DS Q82    |              7.59 |
-| TPC-DS Q83    |            655.18 |
-| TPC-DS Q84    |             49.77 |
-| TPC-DS Q85    |             88.97 |
-| TPC-DS Q86    |            866.44 |
-| TPC-DS Q87    |           6413.73 |
-| TPC-DS Q88    |           1552.36 |
-| TPC-DS Q89    |             48.81 |
-| TPC-DS Q90    |            313.27 |
-| TPC-DS Q91    |             18.22 |
-| TPC-DS Q92    |             64.68 |
-| TPC-DS Q93    |             37.73 |
-| TPC-DS Q94    |            381.26 |
-| TPC-DS Q95    |           3167.39 |
-| TPC-DS Q96    |            122.28 |
-| TPC-DS Q97    |           6557.97 |
-| TPC-DS Q98    |            907.81 |
-| TPC-DS Q99    |           9514.53 |
+| TPC-DS Q1     |            137.96 |
+| TPC-DS Q2     |           3769.47 |
+| TPC-DS Q3     |              7.58 |
+| TPC-DS Q4     |          45383.08 |
+| TPC-DS Q5     |          16151.94 |
+| TPC-DS Q6     |            884.08 |
+| TPC-DS Q7     |            603.02 |
+| TPC-DS Q8     |            282.04 |
+| TPC-DS Q9     |           3805.26 |
+| TPC-DS Q10    |             52.56 |
+| TPC-DS Q11    |          28061.09 |
+| TPC-DS Q12    |            279.51 |
+| TPC-DS Q13    |            892.71 |
+| TPC-DS Q14a+b |          42206.41 |
+| TPC-DS Q15    |            193.96 |
+| TPC-DS Q16    |             34.23 |
+| TPC-DS Q17    |            437.82 |
+| TPC-DS Q18    |            927.74 |
+| TPC-DS Q19    |            262.18 |
+| TPC-DS Q20    |            421.78 |
+| TPC-DS Q21    |           1550.73 |
+| TPC-DS Q22    |           6484.40 |
+| TPC-DS Q23a+b |          37190.91 |
+| TPC-DS Q24a+b |             57.14 |
+| TPC-DS Q25    |            228.42 |
+| TPC-DS Q26    |            429.03 |
+| TPC-DS Q27    |            871.41 |
+| TPC-DS Q28    |           2858.76 |
+| TPC-DS Q29    |             92.01 |
+| TPC-DS Q30    |            423.20 |
+| TPC-DS Q31    |          11798.82 |
+| TPC-DS Q32    |             37.10 |
+| TPC-DS Q33    |            619.62 |
+| TPC-DS Q34    |           1659.68 |
+| TPC-DS Q35    |          11871.70 |
+| TPC-DS Q36    |           2571.38 |
+| TPC-DS Q37    |              7.01 |
+| TPC-DS Q38    |           6270.86 |
+| TPC-DS Q39a+b |            930.74 |
+| TPC-DS Q40    |            127.33 |
+| TPC-DS Q41    |             73.38 |
+| TPC-DS Q42    |             23.77 |
+| TPC-DS Q43    |              2.38 |
+| TPC-DS Q44    |           1209.38 |
+| TPC-DS Q45    |            323.29 |
+| TPC-DS Q46    |            294.59 |
+| TPC-DS Q47    |           9797.50 |
+| TPC-DS Q48    |           1202.52 |
+| TPC-DS Q49    |            122.22 |
+| TPC-DS Q50    |             24.87 |
+| TPC-DS Q51    |           7514.69 |
+| TPC-DS Q52    |             21.53 |
+| TPC-DS Q53    |            174.63 |
+| TPC-DS Q54    |           2927.40 |
+| TPC-DS Q55    |             20.61 |
+| TPC-DS Q56    |            233.12 |
+| TPC-DS Q57    |           4313.51 |
+| TPC-DS Q58    |           5286.70 |
+| TPC-DS Q59    |           4917.00 |
+| TPC-DS Q60    |            345.69 |
+| TPC-DS Q61    |              3.13 |
+| TPC-DS Q62    |           2090.70 |
+| TPC-DS Q63    |            226.96 |
+| TPC-DS Q64    |            505.43 |
+| TPC-DS Q65    |           5534.61 |
+| TPC-DS Q66    |           2150.81 |
+| TPC-DS Q67    |           7543.41 |
+| TPC-DS Q68    |            250.18 |
+| TPC-DS Q69    |              3.06 |
+| TPC-DS Q70    |           9968.78 |
+| TPC-DS Q71    |            431.36 |
+| TPC-DS Q72    |           8457.27 |
+| TPC-DS Q73    |            757.89 |
+| TPC-DS Q74    |           6072.68 |
+| TPC-DS Q75    |           2196.72 |
+| TPC-DS Q76    |            368.96 |
+| TPC-DS Q77    |           7772.32 |
+| TPC-DS Q78    |          16604.92 |
+| TPC-DS Q79    |           4362.20 |
+| TPC-DS Q80    |           7780.92 |
+| TPC-DS Q81    |           2319.21 |
+| TPC-DS Q82    |              8.29 |
+| TPC-DS Q83    |            753.54 |
+| TPC-DS Q84    |             46.30 |
+| TPC-DS Q85    |             91.80 |
+| TPC-DS Q86    |            980.97 |
+| TPC-DS Q87    |           7029.69 |
+| TPC-DS Q88    |           1456.31 |
+| TPC-DS Q89    |             98.05 |
+| TPC-DS Q90    |            293.65 |
+| TPC-DS Q91    |             19.11 |
+| TPC-DS Q92    |             51.40 |
+| TPC-DS Q93    |             42.45 |
+| TPC-DS Q94    |            348.36 |
+| TPC-DS Q95    |           3288.35 |
+| TPC-DS Q96    |            151.57 |
+| TPC-DS Q97    |           7234.90 |
+| TPC-DS Q98    |           1843.85 |
+| TPC-DS Q99    |          10840.34 |
 
 ### Errors (failed queries)
 
@@ -203,6 +206,10 @@ No warnings
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

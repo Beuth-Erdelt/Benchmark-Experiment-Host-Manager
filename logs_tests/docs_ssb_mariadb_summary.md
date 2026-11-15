@@ -3,8 +3,8 @@
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 550s 
-* Code: 1794010597
+* Duration: 470s 
+* Code: 1794601771
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there).
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the star schema (-xsv normal).
@@ -15,7 +15,7 @@ SSB Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.13.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -37,10 +37,10 @@ SSB Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:869164
-  * datadisk:1552
+  * disk:1151274
+  * datadisk:1576
   * volume_size:1.8T
-  * volume_used:849G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -50,10 +50,13 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794010597
+    * code:1794601771
+
+### Ingestion
+* MariaDB-1: 12 of 12 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1794010597-794c9b57f8-sml8d: 0
+* bexhoma-sut-mariadb-1-1794601771-85dc7ff4f8-b89kr: 0
 
 ### Workflow
 
@@ -69,23 +72,23 @@ SSB Queries SF=1
 
 #### Per Run
 
-|             |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MariaDB-1-1 |                1 |    1 |       80.00 |           4.00 |           21.00 |         10.00 |           34.00 |              8 |           0 |             | None           |             0 | False         |               45.00 | False               |
+| DBMS        |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MariaDB-1-1 |                1 |    1 |       81.00 |           4.00 |           17.00 |         12.00 |           37.00 |              8 |         0 |             | None           |             0 | False         |               44.44 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS              | configuration   | phase         | job             |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod               |
-|:------------------|:----------------|:--------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:------------------|
-| mariadb-1-1-1-1-1 | MariaDB-1       | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         16 |            0.34 |            10878.71 |           2925.00 |          -1 | mariadb-1-1-1-1-1 |
+| connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |         15 |            0.32 |            11528.31 |           3120.00 |          -1 |
 
 #### Per Phase
 
-|               | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS          | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         16 |            0.34 |            10878.71 |           2925.00 |          -1 |
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         15 |            0.32 |            11528.31 |           3120.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -98,19 +101,19 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   mariadb-1-1-1-1-1 |
 |:---------------------------------------------------------------------------------------|--------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |             1302.29 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               79.71 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |               17.72 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |              664.93 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |              146.03 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               17.26 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |             3494.09 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |              440.96 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |              140.20 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |               97.24 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |             4013.46 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |             2505.25 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |              876.39 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |              867.87 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |               70.75 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |               16.59 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |              654.47 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |              130.31 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |               16.96 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |             3317.05 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |              457.07 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |              157.70 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |              150.02 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |             4004.27 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |             2657.09 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |              477.54 |
 
 ### Errors (failed queries)
 
@@ -124,6 +127,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

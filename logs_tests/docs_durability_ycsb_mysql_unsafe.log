@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1792617629
-Experiment                    : starts at 2026-10-21 23:20:31.851624 (29573.7422754)
+Experiment                    : has code 1794617996
+Experiment                    : starts at 2026-11-14 01:59:57.310669 (254539.9421534)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -15,7 +15,7 @@ Factors for loading are [4].
 Factors for benchmarking are [1].
 Status is logged every 10s.
 Load durability is unsafe (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.7.
+Experiment uses bexhoma version 0.11.17.
 Experiment is limited to DBMS ['MySQL'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker38.
@@ -33,81 +33,84 @@ MySQL-1                       : will start now
 MySQL-1                       : deployments ['sut']
 MySQL-1                       : stateful sets []
 MySQL-1                       : pvcs ['sut']
-MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1792617629
-MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1792617629
-MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1792617629
-Loop pass                     : took 8.0s (1 kubectl calls 1.8s, 10 API requests 1.3s)
+MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1794617996
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1794617996
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1794617996
+Loop pass                     : took 5.4s (1 kubectl calls 1.1s, 10 API requests 0.3s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 3.8s (0 kubectl calls 0.0s, 16 API requests 2.1s)
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 16 API requests 1.9s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 2.9s (0 kubectl calls 0.0s, 16 API requests 2.0s)
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 16 API requests 0.4s)
+- waiting 30s -               : done
+MySQL-1                       : waits for health check to succeed
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-10-21 21:24:52 (that is in 120 secs)
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 16 API requests 1.8s)
+MySQL-1                       : will start loading but not before 2026-11-14 01:04:39 (that is in 120 secs)
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-10-21 21:24:52
-Loop pass                     : took 4.2s (0 kubectl calls 0.0s, 13 API requests 1.5s)
+MySQL-1                       : will start loading but not before 2026-11-14 01:04:39
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 13 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-10-21 21:24:52
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 13 API requests 1.5s)
+MySQL-1                       : will start loading but not before 2026-11-14 01:04:39
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 13 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
-MySQL-1                       : will start loading but not before 2026-10-21 21:24:52
-Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 13 API requests 1.7s)
+MySQL-1                       : will start loading but not before 2026-11-14 01:04:39
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 13 API requests 0.4s)
 - waiting 30s -               : done
 MySQL-1                       : is not loaded yet
 MySQL-1                       : load durability unsafe, scripts ['durability-relaxed.sql', 'durability-unsafe.sql', 'restoredurability-unsafe.sql', 'restoredurability-relaxed.sql']
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1792617629-6679b9fd9c-pqhj6 to load scripts
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1794617996-7c77ddd9c4-c7nsr to load scripts
 MySQL-1                       : start asynch loading scripts of type schema
 MySQL-1                       : waits for the Schema scripts (schema=True) before starting the loading jobs
-MySQL-1                       : Schema scripts done after 9s
+MySQL-1                       : Schema scripts done after 6s
 MySQL-1                       : is loading
-Loop pass                     : took 34.4s (11 kubectl calls 19.8s, 36 API requests 5.4s)
+Loop pass                     : took 21.5s (11 kubectl calls 12.6s, 36 API requests 2.0s)
 - waiting 30s -               : done
 MySQL-1                       : showing loader times (ycsb-loader)
 MySQL-1                       : generator times (start/end per pod and container) []
-MySQL-1                       : loader times (start/end per pod and container) [(1792617943, 1792617960), (1792617943, 1792617960), (1792617943, 1792617960), (1792617943, 1792617959), (1792617943, 1792617960), (1792617943, 1792617959), (1792617944, 1792617960), (1792617943, 1792617959)]
-MySQL-1                       : total times (start/end per pod and container) [(1792617943, 1792617960), (1792617943, 1792617960), (1792617943, 1792617960), (1792617943, 1792617959), (1792617943, 1792617960), (1792617943, 1792617959), (1792617944, 1792617960), (1792617943, 1792617959)]
+MySQL-1                       : loader times (start/end per pod and container) [(1794618312, 1794618328), (1794618311, 1794618328), (1794618311, 1794618327), (1794618312, 1794618328), (1794618311, 1794618328), (1794618311, 1794618328), (1794618311, 1794618328), (1794618311, 1794618327)]
+MySQL-1                       : total times (start/end per pod and container) [(1794618312, 1794618328), (1794618311, 1794618328), (1794618311, 1794618327), (1794618312, 1794618328), (1794618311, 1794618328), (1794618311, 1794618328), (1794618311, 1794618328), (1794618311, 1794618327)]
 MySQL-1                       : loader timespan (first to last [s]) = 17
-MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1792617629-6679b9fd9c-pqhj6 to load scripts
+MySQL-1                       : connect to pod bexhoma-sut-mysql-1-1794617996-7c77ddd9c4-c7nsr to load scripts
 MySQL-1                       : start asynch loading scripts of type index
 MySQL-1                       : is loading
-Loop pass                     : took 62.7s (27 kubectl calls 47.2s, 62 API requests 8.5s)
+Loop pass                     : took 32.5s (27 kubectl calls 28.9s, 62 API requests 2.0s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1792617629 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1794617996 initialized to 1.
 MySQL-1                       : benchmarks done 0 of 1. This will be client 1
 mysql-1-1-1-1                 : start benchmarking (benchmark_run=1)
-MySQL-1                       : benchmarking results in folder C:\data\benchmarks/1792617629
-MySQL-1                       : submitted benchmarker job in 13.2s (4 kubectl calls 7.0s, 24 API requests 6.0s)
-Loop pass                     : took 19.1s (5 kubectl calls 8.7s, 44 API requests 9.3s)
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1794617996
+MySQL-1                       : submitted benchmarker job in 6.8s (4 kubectl calls 4.5s, 24 API requests 2.1s)
+Loop pass                     : took 9.9s (5 kubectl calls 5.5s, 46 API requests 3.4s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 2.6s (0 kubectl calls 0.0s, 20 API requests 2.5s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 21 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 18 API requests 2.1s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
-mysql-1-1-1-1                 : wrote benchmarking_timespans to /data/benchmarks/1792617629/mysql-1-1-1-1.config
+mysql-1-1-1-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1794617996/mysql-1-1-1-1.config
 mysql-1-1-1-1                 : showing benchmarker times
-mysql-1-1-1-1                 : benchmarker timespan job from 1792618074 to 1792618179
-mysql-1-1-1-1                 : benchmarker timespan pods from 1792618094 to 1792618159
-mysql-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 65
-mysql-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1792618094, 1792618159)]
-mysql-1-1-1-1                 : found and updated times {'benchmarker': [(1792618094, 1792618159)]}
-Loop pass                     : took 10.1s (4 kubectl calls 7.3s, 24 API requests 2.7s)
+mysql-1-1-1-1                 : benchmarker timespan job from 1794618404 to 1794618501
+mysql-1-1-1-1                 : benchmarker timespan pods from 1794618407 to 1794618470
+mysql-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 63
+mysql-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1794618407, 1794618470)]
+mysql-1-1-1-1                 : found and updated times {'benchmarker': [(1794618407, 1794618470)]}
+Loop pass                     : took 5.6s (4 kubectl calls 4.7s, 24 API requests 0.9s)
 MySQL-1                       : can be stopped
-MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1792617629-6679b9fd9c-pqhj6
-Loop pass                     : took 11.1s (4 kubectl calls 7.1s, 30 API requests 3.4s)
-Experiment                    : ends at 2026-10-21 23:29:55.316971 (30137.2076177) - 563.47s total
+MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1794617996-7c77ddd9c4-c7nsr
+Loop pass                     : took 5.6s (4 kubectl calls 4.1s, 30 API requests 1.1s)
+Experiment                    : ends at 2026-11-14 02:08:29.464384 (255052.0860496) - 512.14s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -118,8 +121,8 @@ Result workflow complete
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 564s 
-* Code: 1792617629
+* Duration: 513s 
+* Code: 1794617996
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -132,7 +135,7 @@ YCSB SF=1
   * Factors for benchmarking are [1].
   * Status is logged every 10s.
   * Load durability is unsafe (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.7.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -148,26 +151,29 @@ YCSB SF=1
 
 ### Connections
 * mysql-1-1-1-1 uses docker image mysql:9.7.2
-  * RAM:2164173172736
+  * RAM:2164173156352
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:942053
-  * datadisk:34755
+  * disk:1109577
+  * datadisk:34723
   * volume_size:1.8T
-  * volume_used:920G
+  * volume_used:1.1T
   * cpu_list:0-223
-  * args:['--max_connections=1500', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=96G', '--innodb-buffer-pool-instances=16', '--innodb-buffer-pool-chunk-size=2G', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
   * requests_memory:16Gi
   * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: unsafe
   * eval_parameters
-    * code:1792617629
+    * code:1794617996
+
+### Ingestion
+* MySQL-1: 8 of 8 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1792617629-6679b9fd9c-pqhj6: 0
+* bexhoma-sut-mysql-1-1794617996-7c77ddd9c4-c7nsr: 0
 
 ### Workflow
 
@@ -183,42 +189,47 @@ YCSB SF=1
 
 #### Per Connection
 
-| connection      |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
-|:----------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| mysql-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7766.87 |                16094.00 |            125000.00 |                              6599.00 | 1.00 |              223.69 |
-| mysql-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7658.38 |                16322.00 |            125000.00 |                              6587.00 | 1.00 |              220.56 |
-| mysql-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7715.10 |                16202.00 |            125000.00 |                              6507.00 | 1.00 |              222.19 |
-| mysql-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7677.66 |                16281.00 |            125000.00 |                              6563.00 | 1.00 |              221.12 |
-| mysql-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7736.11 |                16158.00 |            125000.00 |                              6475.00 | 1.00 |              222.80 |
-| mysql-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7719.86 |                16192.00 |            125000.00 |                              6579.00 | 1.00 |              222.33 |
-| mysql-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7733.71 |                16163.00 |            125000.00 |                              6679.00 | 1.00 |              222.73 |
-| mysql-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7537.84 |                16583.00 |            125000.00 |                              6575.00 | 1.00 |              217.09 |
+| connection      |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   SF |   Throughput [SF/h] |
+|:----------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| mysql-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7728.45 |                16174.00 |            125000.00 |                              6419.00 | 1.00 |              222.58 |
+| mysql-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7762.05 |                16104.00 |            125000.00 |                              6431.00 | 1.00 |              223.55 |
+| mysql-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7684.74 |                16266.00 |            125000.00 |                              6415.00 | 1.00 |              221.32 |
+| mysql-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7717.48 |                16197.00 |            125000.00 |                              6423.00 | 1.00 |              222.26 |
+| mysql-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7771.22 |                16085.00 |            125000.00 |                              6499.00 | 1.00 |              223.81 |
+| mysql-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7781.86 |                16063.00 |            125000.00 |                              6471.00 | 1.00 |              224.12 |
+| mysql-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7695.62 |                16243.00 |            125000.00 |                              6427.00 | 1.00 |              221.63 |
+| mysql-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7742.34 |                16145.00 |            125000.00 |                              6355.00 | 1.00 |              222.98 |
 
 #### Per Run
 
-| DBMS      |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:----------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 1.00 |              217.09 |                        61545.52 |                16583.00 |           1000000.00 |                              6570.50 |
+| DBMS      |   experiment_run |   threads |   target |   pod_count |   errors |   SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:----------|-----------------:|----------:|---------:|------------:|---------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| MySQL-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |     0.00 | 1.00 |              221.32 |                        61883.75 |                16266.00 |           1000000.00 |                              6430.00 |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS            | phase       | job           | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:----------------|:------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 | MySQL-1         |                1 |        1 |               1 |       1 |        64 |    16384 |           1 |            0 |                        15412.60 |                64882.00 |             500106 |                             871.00 |               499894 |                              4423.00 |
+| connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    16384 |        0 |                        15784.82 |                63352.00 |             500069 |                             955.00 |               499931 |                              4227.00 |
 
 #### Per Phase
 
-| DBMS        | phase       |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:------------|:------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| mysql-1-1-1 | mysql-1-1-1 |                1 |        64 |    16384 |               1 |           1 |            0 |                        15412.60 |                64882.00 |             500106 |                             871.00 |               499894 |                              4423.00 |
+| DBMS        | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:------------|:------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 |        64 |    16384 |        0 |                        15784.82 |                63352.00 |             500069 |                             955.00 |               499931 |                              4227.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column

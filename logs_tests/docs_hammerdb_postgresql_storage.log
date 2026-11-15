@@ -2,13 +2,13 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1793803768
-Experiment                    : starts at 2026-11-04 15:49:28.198526 (26961.4869224)
+Experiment                    : has code 1794607622
+Experiment                    : starts at 2026-11-13 23:07:02.435240 (244165.3309515)
 Experiment                    : This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
 TPC-C data is generated and loaded using several threads.
 Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Ramp-up period is 2 minutes before measurements begin. Benchmarking also logs latencies.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.12.
+Experiment uses bexhoma version 0.11.17.
 Experiment is limited to DBMS ['PostgreSQL'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker38.
@@ -28,224 +28,215 @@ PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
 PostgreSQL-1                  : found labels on pvc = []
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1793803768
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1793803768
-PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-nvme-hammerdb-16
-PostgreSQL-1                  : storage bexhoma-storage-postgresql-nvme-hammerdb-16 should be removed
-- waiting 10s -               : done
-PostgreSQL-1                  : storage bexhoma-storage-postgresql-nvme-hammerdb-16 is gone
-Loop pass                     : took 12.1s (1 kubectl calls 0.7s, 12 API requests 0.9s)
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1794607622
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1794607622
+PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-pg-nvme-hammerdb-16
+Loop pass                     : took 2.5s (1 kubectl calls 1.2s, 10 API requests 0.5s)
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 7.1s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.5s)
-- waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
-- waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is not loaded yet
 PostgreSQL-1                  : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1793803768-7b6f699447-qvb9k to load scripts
-PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-nvme-hammerdb-16']
-PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-nvme-hammerdb-16
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1794607622-766db6bb7b-vgs8q to load scripts
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-pg-nvme-hammerdb-16']
+PostgreSQL-1                  : will be labeling bexhoma-storage-pg-nvme-hammerdb-16
 PostgreSQL-1                  : start asynch loading scripts of type schema
 PostgreSQL-1                  : waits for the Schema scripts (schema=True) before starting the loading jobs
-PostgreSQL-1                  : Schema scripts done after 4s
+PostgreSQL-1                  : Schema scripts done after 8s
 PostgreSQL-1                  : is loading
-Loop pass                     : took 11.8s (8 kubectl calls 5.0s, 37 API requests 2.8s)
+Loop pass                     : took 19.3s (8 kubectl calls 9.0s, 40 API requests 2.2s)
 - waiting 30s -               : done
 PostgreSQL-1                  : is loading
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 20 API requests 0.9s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 20 API requests 0.7s)
 - waiting 30s -               : done
-PostgreSQL-1                  : showing loader times (tpcc-loader)
+PostgreSQL-1                  : showing loader times (hammerdb-loader)
 PostgreSQL-1                  : generator times (start/end per pod and container) []
-PostgreSQL-1                  : loader times (start/end per pod and container) [(1793803947, 1793803983)]
-PostgreSQL-1                  : total times (start/end per pod and container) [(1793803947, 1793803983)]
-PostgreSQL-1                  : loader timespan (first to last [s]) = 36
-PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-nvme-hammerdb-16']
-PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-nvme-hammerdb-16
-PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1793803768-7b6f699447-qvb9k to load scripts
-PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-nvme-hammerdb-16']
-PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-nvme-hammerdb-16
+PostgreSQL-1                  : loader times (start/end per pod and container) [(1794607807, 1794607842)]
+PostgreSQL-1                  : total times (start/end per pod and container) [(1794607807, 1794607842)]
+PostgreSQL-1                  : loader timespan (first to last [s]) = 35
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-pg-nvme-hammerdb-16']
+PostgreSQL-1                  : will be labeling bexhoma-storage-pg-nvme-hammerdb-16
+PostgreSQL-1                  : connect to pod bexhoma-sut-postgresql-1-1794607622-766db6bb7b-vgs8q to load scripts
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-pg-nvme-hammerdb-16']
+PostgreSQL-1                  : will be labeling bexhoma-storage-pg-nvme-hammerdb-16
 PostgreSQL-1                  : start asynch loading scripts of type index
 PostgreSQL-1                  : is loading
-Loop pass                     : took 12.6s (11 kubectl calls 6.3s, 27 API requests 1.0s)
+Loop pass                     : took 13.2s (11 kubectl calls 12.0s, 27 API requests 1.1s)
 - waiting 30s -               : done
-PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-nvme-hammerdb-16']
-PostgreSQL-1                  : will be labeling bexhoma-storage-postgresql-nvme-hammerdb-16
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-pg-nvme-hammerdb-16']
+PostgreSQL-1                  : will be labeling bexhoma-storage-pg-nvme-hammerdb-16
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1793803768 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PostgreSQL-1-1794607622 initialized to 1.
 PostgreSQL-1                  : benchmarks done 0 of 2. This will be client 1
 postgresql-1-1-1-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1793803768-7b6f699447-qvb9k and write to pvc bexhoma-storage-postgresql-nvme-hammerdb-16
-PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1793803768
-PostgreSQL-1                  : submitted benchmarker job in 5.1s (5 kubectl calls 2.8s, 25 API requests 2.3s)
-Loop pass                     : took 7.1s (7 kubectl calls 3.7s, 45 API requests 3.3s)
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1794607622-766db6bb7b-vgs8q and write to pvc bexhoma-storage-pg-nvme-hammerdb-16
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1794607622
+PostgreSQL-1                  : submitted benchmarker job in 7.7s (5 kubectl calls 5.4s, 25 API requests 2.2s)
+Loop pass                     : took 11.8s (7 kubectl calls 7.5s, 47 API requests 3.4s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 20 API requests 0.7s)
+Loop pass                     : took 9.5s (0 kubectl calls 0.0s, 21 API requests 1.3s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 19 API requests 0.5s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 18 API requests 0.6s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 0.6s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 18 API requests 0.6s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 0.6s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 3.9s (0 kubectl calls 0.0s, 18 API requests 0.6s)
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 8.4s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 18 API requests 1.0s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 18 API requests 0.5s)
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 18 API requests 0.6s)
-- waiting 30s -               : done
-postgresql-1-1-1-1            : wrote benchmarking_timespans to /data/benchmarks/1793803768/postgresql-1-1-1-1.config
+postgresql-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1794607622/postgresql-1-1-1-1.config
 postgresql-1-1-1-1            : showing benchmarker times
-postgresql-1-1-1-1            : benchmarker timespan job from 1793804056 to 1793804526
-postgresql-1-1-1-1            : benchmarker timespan pods from 1793804058 to 1793804496
-postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 438
-postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1793804058, 1793804496)]
-postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1793804058, 1793804496)]}
-PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1793803768-7b6f699447-qvb9k and write to pvc bexhoma-storage-postgresql-nvme-hammerdb-16
-Loop pass                     : took 4.5s (5 kubectl calls 2.9s, 26 API requests 1.2s)
+postgresql-1-1-1-1            : benchmarker timespan job from 1794607920 to 1794608378
+postgresql-1-1-1-1            : benchmarker timespan pods from 1794607924 to 1794608361
+postgresql-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 437
+postgresql-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1794607924, 1794608361)]
+postgresql-1-1-1-1            : found and updated times {'benchmarker': [(1794607924, 1794608361)]}
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1794607622-766db6bb7b-vgs8q and write to pvc bexhoma-storage-pg-nvme-hammerdb-16
+Loop pass                     : took 6.8s (5 kubectl calls 5.3s, 26 API requests 1.4s)
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1793803768-7b6f699447-qvb9k
-Loop pass                     : took 4.0s (5 kubectl calls 2.6s, 29 API requests 1.1s)
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1794607622-766db6bb7b-vgs8q
+Loop pass                     : took 6.9s (5 kubectl calls 5.3s, 29 API requests 1.1s)
 - waiting 30s -               : done
 PostgreSQL-1                  : starts again
-Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 7 API requests 0.4s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 7 API requests 0.2s)
 PostgreSQL-1                  : will start now
 PostgreSQL-1                  : deployments ['sut']
 PostgreSQL-1                  : stateful sets []
 PostgreSQL-1                  : pvcs ['sut']
-PostgreSQL-1                  : list of pvcs ['bexhoma-storage-postgresql-nvme-hammerdb-16']
-PostgreSQL-1                  : storage bexhoma-storage-postgresql-nvme-hammerdb-16 exists
-PostgreSQL-1                  : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '10', 'time_ingested': '36', 'time_initschema': '1', 'time_loading': '49', 'time_loading_end': '1793804028', 'time_loading_start': '1793803939', 'time_schema': '3'}
-PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1793803768
-PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1793803768
-PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-postgresql-nvme-hammerdb-16
+PostgreSQL-1                  : list of pvcs ['bexhoma-storage-pg-nvme-hammerdb-16']
+PostgreSQL-1                  : storage bexhoma-storage-pg-nvme-hammerdb-16 exists
+PostgreSQL-1                  : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '12', 'time_ingested': '35', 'time_initschema': '2', 'time_loading': '52', 'time_loading_end': '1794607892', 'time_loading_start': '1794607795', 'time_schema': '5'}
+PostgreSQL-1                  : name of SUT pods = bexhoma-sut-postgresql-1-1794607622
+PostgreSQL-1                  : name of SUT service = bexhoma-sut-postgresql-1-1794607622
+PostgreSQL-1                  : name of SUT PVC name = bexhoma-storage-pg-nvme-hammerdb-16
 PostgreSQL-1                  : loading values taken from the volume: script=Schema, indexing=Checks
 PostgreSQL-1                  : copied label data = True
 PostgreSQL-1                  : copied label index = True
 PostgreSQL-1                  : copied label loaded = True
 PostgreSQL-1                  : copied label schema = True
 PostgreSQL-1                  : copied label time_generated = 0
-PostgreSQL-1                  : copied label time_index = 10
-PostgreSQL-1                  : copied label time_ingested = 36
-PostgreSQL-1                  : copied label time_initschema = 1
-PostgreSQL-1                  : copied label time_loading = 49
-PostgreSQL-1                  : copied label time_loading_end = 1793804028
-PostgreSQL-1                  : copied label time_loading_start = 1793803939
-PostgreSQL-1                  : copied label time_schema = 3
+PostgreSQL-1                  : copied label time_index = 12
+PostgreSQL-1                  : copied label time_ingested = 35
+PostgreSQL-1                  : copied label time_initschema = 2
+PostgreSQL-1                  : copied label time_loading = 52
+PostgreSQL-1                  : copied label time_loading_end = 1794607892
+PostgreSQL-1                  : copied label time_loading_start = 1794607795
+PostgreSQL-1                  : copied label time_schema = 5
 PostgreSQL-1                  : loading is set to finished
-Loop pass                     : took 1.2s (1 kubectl calls 0.6s, 12 API requests 0.6s)
-- waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 15 API requests 0.7s)
-- waiting 30s -               : done
-PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 15 API requests 0.5s)
+Loop pass                     : took 1.7s (1 kubectl calls 1.0s, 12 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
 Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 15 API requests 0.6s)
 - waiting 30s -               : done
 PostgreSQL-1                  : waits for health check to succeed
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 15 API requests 0.6s)
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 15 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : waits for health check to succeed
+Loop pass                     : took 6.6s (0 kubectl calls 0.0s, 15 API requests 0.7s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-PostgreSQL-1-1793803768 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-PostgreSQL-1-1794607622 initialized to 1.
 PostgreSQL-1                  : benchmarks done 1 of 2. This will be client 1
 postgresql-1-2-1-1            : start benchmarking (benchmark_run=1)
-PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1793803768-cbd658d5d-hf82c and write to pvc bexhoma-storage-postgresql-nvme-hammerdb-16
-PostgreSQL-1                  : benchmarking results in folder C:\data\benchmarks/1793803768
-PostgreSQL-1                  : submitted benchmarker job in 4.1s (3 kubectl calls 1.9s, 24 API requests 2.2s)
-Loop pass                     : took 5.4s (3 kubectl calls 1.9s, 45 API requests 3.4s)
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1794607622-7b985897f9-z6mx8 and write to pvc bexhoma-storage-pg-nvme-hammerdb-16
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1794607622
+PostgreSQL-1                  : submitted benchmarker job in 7.1s (3 kubectl calls 3.4s, 24 API requests 2.7s)
+Loop pass                     : took 9.6s (3 kubectl calls 3.4s, 46 API requests 4.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 19 API requests 1.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 17 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 17 API requests 0.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 17 API requests 0.8s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 17 API requests 1.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 17 API requests 0.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 16 API requests 0.7s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 17 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 17 API requests 1.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+Loop pass                     : took 7.6s (0 kubectl calls 0.0s, 17 API requests 0.7s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 17 API requests 1.0s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 17 API requests 0.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 17 API requests 0.9s)
 - waiting 30s -               : done
 PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 17 API requests 1.0s)
 - waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 16 API requests 1.1s)
-- waiting 30s -               : done
-postgresql-1-2-1-1            : wrote benchmarking_timespans to /data/benchmarks/1793803768/postgresql-1-2-1-1.config
+postgresql-1-2-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1794607622/postgresql-1-2-1-1.config
 postgresql-1-2-1-1            : showing benchmarker times
-postgresql-1-2-1-1            : benchmarker timespan job from 1793804722 to 1793805192
-postgresql-1-2-1-1            : benchmarker timespan pods from 1793804725 to 1793805166
+postgresql-1-2-1-1            : benchmarker timespan job from 1794608590 to 1794609041
+postgresql-1-2-1-1            : benchmarker timespan pods from 1794608592 to 1794609033
 postgresql-1-2-1-1            : benchmarker timespan (start to end single container [s]) = 441
-postgresql-1-2-1-1            : benchmarker times (start/end per pod and container) = [(1793804725, 1793805166)]
-postgresql-1-2-1-1            : found and updated times {'benchmarker': [(1793804725, 1793805166)]}
-PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1793803768-cbd658d5d-hf82c and write to pvc bexhoma-storage-postgresql-nvme-hammerdb-16
-Loop pass                     : took 4.6s (5 kubectl calls 3.0s, 24 API requests 1.2s)
+postgresql-1-2-1-1            : benchmarker times (start/end per pod and container) = [(1794608592, 1794609033)]
+postgresql-1-2-1-1            : found and updated times {'benchmarker': [(1794608592, 1794609033)]}
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1794607622-7b985897f9-z6mx8 and write to pvc bexhoma-storage-pg-nvme-hammerdb-16
+Loop pass                     : took 7.9s (4 kubectl calls 4.3s, 24 API requests 1.8s)
 PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1793803768-cbd658d5d-hf82c
-Loop pass                     : took 3.8s (5 kubectl calls 2.6s, 27 API requests 0.9s)
-Experiment                    : ends at 2026-11-04 16:13:18.606694 (28391.8949029) - 1430.41s total
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1794607622-7b985897f9-z6mx8
+Loop pass                     : took 6.7s (5 kubectl calls 5.1s, 27 API requests 1.2s)
+Experiment                    : ends at 2026-11-13 23:30:51.415907 (245594.260803) - 1428.93s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -255,15 +246,15 @@ Result workflow complete
 
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
-* Type: tpcc
-* Duration: 1431s 
-* Code: 1793803768
+* Type: hammerdb
+* Duration: 1429s 
+* Code: 1794607622
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Ramp-up period is 2 minutes before measurements begin. Benchmarking also logs latencies.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -285,7 +276,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:866926
+  * disk:1126228
   * datadisk:3280
   * volume_size:49G
   * volume_used:3.3G
@@ -298,15 +289,15 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793803768
+    * code:1794607622
 * postgresql-1-2-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:850637
-  * datadisk:12427
+  * disk:1129572
+  * datadisk:12552
   * volume_size:49G
   * volume_used:13G
   * cpu_list:0-223
@@ -318,7 +309,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793803768
+    * code:1794607622
 
 ### Inherited Loading
 * loading skipped, loading times copied from an earlier repetition: PostgreSQL-1-2
@@ -326,9 +317,12 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 ### Data Parameters of Reused Volumes
 * PostgreSQL-1: loading values of the volume: script=Schema, indexing=Checks
 
+### Ingestion
+* PostgreSQL-1: 1 of 1 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1793803768-7b6f699447-qvb9k: 0
-* bexhoma-sut-postgresql-1-1793803768-cbd658d5d-hf82c: 0
+* bexhoma-sut-postgresql-1-1794607622-766db6bb7b-vgs8q: 0
+* bexhoma-sut-postgresql-1-1794607622-7b985897f9-z6mx8: 0
 
 ### Workflow
 
@@ -346,31 +340,33 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 #### Per Run
 
-|                |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |   16 |       49.00 |           3.00 |            0.00 |         36.00 |           10.00 |              1 |           8 |             | None           |             0 | False         |             1175.51 | False               |
-| PostgreSQL-1-2 |                2 |   16 |       49.00 |           3.00 |            0.00 |         36.00 |           10.00 |              1 |           8 |             | None           |             0 | False         |             1175.51 | True                |
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |   16 |       52.00 |           5.00 |            0.00 |         35.00 |           12.00 |              1 |         8 |             | None           |             0 | False         |             1107.69 | False               |
+| PostgreSQL-1-2 |                2 |   16 |       52.00 |           5.00 |            0.00 |         35.00 |           12.00 |              1 |         8 |             | None           |             0 | False         |             1107.69 | True                |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | phase            | job                |   experiment_run |   vusers |   client |   benchmark_run |   child |   NOPM |    TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
-|:---------------------|:-----------------|:-------------------|-----------------:|---------:|---------:|----------------:|--------:|-------:|-------:|-------------:|-----------:|---------:|-----------:|-----------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |       16 |        1 |               1 |       1 | 179132 | 411480 |         0.00 |          5 |        0 |       3.03 |       4.09 |
-| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |       16 |        1 |               1 |       1 | 130425 | 300044 |         0.00 |          5 |        0 |       2.85 |       3.99 |
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   NOPM |    TPM |   efficiency |   duration |   errors |   P95 [ms] |   P99 [ms] |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|-------:|-------:|-------------:|-----------:|---------:|-----------:|-----------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |        16 | 181218 | 417343 |         0.00 |          5 |        0 |       2.97 |       3.97 |
+| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 |        16 |  52956 | 121993 |         0.00 |          5 |        0 |       2.98 |       4.05 |
 
 #### Per Phase
 
-| DBMS             | phase            |   experiment_run |   vusers |   client |   benchmark_run |   pod_count |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
-|:-----------------|:-----------------|-----------------:|---------:|---------:|----------------:|------------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |       16 |        1 |               1 |           1 |       3.03 |       4.09 |         0.00 | 179132.00 | 411480.00 |          5 |        0 |
-| postgresql-1-2-1 | postgresql-1-2-1 |                2 |       16 |        1 |               1 |           1 |       2.85 |       3.99 |         0.00 | 130425.00 | 300044.00 |          5 |        0 |
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   P95 [ms] |   P99 [ms] |   efficiency |      NOPM |       TPM |   duration |   errors |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|-----------:|-----------:|-------------:|----------:|----------:|-----------:|---------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |        16 |       2.97 |       3.97 |         0.00 | 181218.00 | 417343.00 |          5 |        0 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 |        16 |       2.98 |       4.05 |         0.00 |  52956.00 | 121993.00 |          5 |        0 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: NOPM contains no 0 or NaN

@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 1085s 
-* Code: 1792608168
+* Duration: 437s 
+* Code: 1794609702
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -13,7 +13,7 @@ TPC-H Queries SF=1
   * Timeout per query is 1800.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is unsafe (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.7.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['PgDuckDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -29,15 +29,15 @@ TPC-H Queries SF=1
 
 ### Connections
 * pgduckdb-1-1-1-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:910879
-  * datadisk:2758
+  * disk:1126693
+  * datadisk:2757
   * volume_size:1.8T
-  * volume_used:890G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -46,10 +46,13 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: unsafe
   * eval_parameters
-    * code:1792608168
+    * code:1794609702
+
+### Ingestion
+* PgDuckDB-1: 50 of 50 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-pgduckdb-1-1792608168-5fc67fcbdc-vxtsb: 0
+* bexhoma-sut-pgduckdb-1-1794609702-7b8fcb6778-m62g9: 0
 
 ### Workflow
 
@@ -65,23 +68,23 @@ TPC-H Queries SF=1
 
 #### Per Run
 
-|              |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:-------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PgDuckDB-1-1 |                1 |    1 |       66.00 |           7.00 |           25.00 |          6.00 |           23.00 |              8 |           0 |             | None           |             0 | False         |               54.55 | False               |
+| DBMS         |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:-------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PgDuckDB-1-1 |                1 |    1 |       88.00 |           7.00 |           49.00 |          6.00 |           24.00 |              8 |         0 |             | None           |             0 | False         |               40.91 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS               | configuration   | phase          | job              |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                |
-|:-------------------|:----------------|:---------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:-------------------|
-| pgduckdb-1-1-1-1-1 | PgDuckDB-1      | pgduckdb-1-1-1 | pgduckdb-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         11 |            0.21 |            17007.47 |           7200.00 |          -1 | pgduckdb-1-1-1-1-1 |
+| connection         | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| pgduckdb-1-1-1-1-1 | pgduckdb-1-1-1 | pgduckdb-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |          9 |            0.23 |            15636.48 |           8800.00 |          -1 |
 
 #### Per Phase
 
-|                | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| pgduckdb-1-1-1 | pgduckdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         11 |            0.21 |            17007.47 |           7200.00 |          -1 |
+| pgduckdb-1-1-1 | pgduckdb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |          9 |            0.23 |            15636.48 |           8800.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -94,28 +97,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   pgduckdb-1-1-1-1-1 |
 |:----------------------------------------------------|---------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |               672.96 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |               169.84 |
-| Shipping Priority (TPC-H Q3)                        |               243.17 |
-| Order Priority Checking Query (TPC-H Q4)            |                98.49 |
-| Local Supplier Volume (TPC-H Q5)                    |               195.17 |
-| Forecasting Revenue Change (TPC-H Q6)               |               129.19 |
-| Volume Shipping Query (TPC-H Q7)                    |               221.58 |
-| National Market Share (TPC-H Q8)                    |               143.69 |
-| Product Type Profit Measure (TPC-H Q9)              |               396.83 |
-| Returned Item Reporting Query (TPC-H Q10)           |               372.55 |
-| Important Stock Identification (TPC-H Q11)          |                60.34 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |               189.90 |
-| Customer Distribution (TPC-H Q13)                   |               606.80 |
-| Promotion Effect Query (TPC-H Q14)                  |               226.05 |
-| Top Supplier Query (TPC-H Q15)                      |               141.96 |
-| Parts/Supplier Relationship (TPC-H Q16)             |               176.59 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |               611.90 |
-| Large Volume Customer (TPC-H Q18)                   |              2161.23 |
-| Discounted Revenue (TPC-H Q19)                      |                46.38 |
-| Potential Part Promotion (TPC-H Q20)                |               109.63 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |               215.39 |
-| Global Sales Opportunity Query (TPC-H Q22)          |                78.78 |
+| Pricing Summary Report (TPC-H Q1)                   |               665.15 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |               180.52 |
+| Shipping Priority (TPC-H Q3)                        |               235.98 |
+| Order Priority Checking Query (TPC-H Q4)            |               111.12 |
+| Local Supplier Volume (TPC-H Q5)                    |               207.83 |
+| Forecasting Revenue Change (TPC-H Q6)               |               130.32 |
+| Volume Shipping Query (TPC-H Q7)                    |               272.30 |
+| National Market Share (TPC-H Q8)                    |               147.05 |
+| Product Type Profit Measure (TPC-H Q9)              |               398.66 |
+| Returned Item Reporting Query (TPC-H Q10)           |               372.27 |
+| Important Stock Identification (TPC-H Q11)          |                60.50 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |               196.37 |
+| Customer Distribution (TPC-H Q13)                   |               601.26 |
+| Promotion Effect Query (TPC-H Q14)                  |               234.90 |
+| Top Supplier Query (TPC-H Q15)                      |               148.31 |
+| Parts/Supplier Relationship (TPC-H Q16)             |               175.56 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |               598.53 |
+| Large Volume Customer (TPC-H Q18)                   |              2029.46 |
+| Discounted Revenue (TPC-H Q19)                      |                47.20 |
+| Potential Part Promotion (TPC-H Q20)                |               297.07 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |               329.77 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                74.63 |
 
 ### Errors (failed queries)
 
@@ -127,6 +130,10 @@ No warnings
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Geo Times [s] contains no 0 or NaN

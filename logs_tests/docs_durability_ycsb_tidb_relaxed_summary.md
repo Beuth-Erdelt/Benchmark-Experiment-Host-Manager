@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 595s 
-* Code: 1792619082
+* Duration: 513s 
+* Code: 1794619306
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -18,7 +18,7 @@ YCSB SF=1
   * Status is logged every 10s.
   * TiDB uses 3 SUT replica(s) and 3 PD node(s).
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.7.
+  * Experiment uses bexhoma version 0.11.17.
   * Experiment is limited to DBMS ['TiDB'].
   * Import is handled by 8 processes (pods).
   * Loading is tested with [64] threads, split into [8] pods.
@@ -32,74 +32,74 @@ YCSB SF=1
 
 ### Connections
 * tidb-1-1-1-1 uses docker image pingcap/tidb:v8.5.8
-  * RAM:540590792704
-  * CPU:AMD EPYC 7352 24-Core Processor
-  * Cores:96
-  * host:6.8.0-146-generic
-  * node:cl-worker25
-  * disk:155355
-  * cpu_list:0-95
+  * RAM:1077381263360
+  * CPU:AMD EPYC 7742 64-Core Processor
+  * Cores:256
+  * host:6.8.0-137-generic
+  * node:cl-worker27
+  * disk:671783
+  * cpu_list:0-255
   * requests_cpu:4
   * requests_memory:16Gi
   * sut 0
-    * RAM:540590792704
-    * CPU:AMD EPYC 7352 24-Core Processor
-    * Cores:96
-    * host:6.8.0-146-generic
-    * node:cl-worker25
-    * disk:155355
-    * cpu_list:0-95
+    * RAM:1077381263360
+    * CPU:AMD EPYC 7742 64-Core Processor
+    * Cores:256
+    * host:6.8.0-137-generic
+    * node:cl-worker27
+    * disk:671783
+    * cpu_list:0-255
   * sut 1
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:501715
+    * disk:653329
     * cpu_list:0-127
   * sut 2
-    * RAM:540579299328
+    * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker22
-    * disk:271374
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:1323296
     * cpu_list:0-127
   * pd 0
-    * RAM:540579299328
-    * CPU:AMD EPYC 7502 32-Core Processor
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker22
-    * disk:269790
-    * datadisk:123
-    * cpu_list:0-127
-  * pd 1
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:501715
+    * disk:653330
     * datadisk:123
     * cpu_list:0-127
-  * pd 2
+  * pd 1
     * RAM:540590792704
     * CPU:AMD EPYC 7352 24-Core Processor
     * Cores:96
     * host:6.8.0-146-generic
     * node:cl-worker25
-    * disk:155355
+    * disk:164758
     * datadisk:123
     * cpu_list:0-95
-  * tikv 0
-    * RAM:540579299328
+  * pd 2
+    * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:1323296
+    * datadisk:123
+    * cpu_list:0-127
+  * tikv 0
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
     * host:6.8.0-137-generic
-    * node:cl-worker22
-    * disk:271229
-    * datadisk:8597
+    * node:cl-worker37
+    * disk:653329
+    * datadisk:12037
     * cpu_list:0-127
   * tikv 1
     * RAM:540590792704
@@ -107,17 +107,17 @@ YCSB SF=1
     * Cores:96
     * host:6.8.0-146-generic
     * node:cl-worker25
-    * disk:155355
-    * datadisk:5242
+    * disk:164758
+    * datadisk:5260
     * cpu_list:0-95
   * tikv 2
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:501715
-    * datadisk:12154
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:1323296
+    * datadisk:21043
     * cpu_list:0-127
   * resources_total: 24.75 CPU, 97.5 GiB RAM requested in 9 pods
     * pd: 3 x, 0.75 CPU, 1.5 GiB RAM
@@ -125,20 +125,23 @@ YCSB SF=1
     * sut: 3 x, 12.0 CPU, 48.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792619082
+    * code:1794619306
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 
+### Ingestion
+* TiDB-1: 8 of 8 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-tidb-1-1792619082-55977579f4-48hzg: 0
-* bexhoma-sut-tidb-1-1792619082-55977579f4-dhf5v: 0
-* bexhoma-sut-tidb-1-1792619082-55977579f4-k77kk: 0
-* bexhoma-pd-tidb-ycsb-1-0: 0
-* bexhoma-pd-tidb-ycsb-1-1: 0
-* bexhoma-pd-tidb-ycsb-1-2: 0
-* bexhoma-tikv-tidb-ycsb-1-0: 0
-* bexhoma-tikv-tidb-ycsb-1-1: 0
-* bexhoma-tikv-tidb-ycsb-1-2: 0
+* bexhoma-sut-tidb-1-1794619306-658546c4c7-dszsj: 0
+* bexhoma-sut-tidb-1-1794619306-658546c4c7-pxrwg: 0
+* bexhoma-sut-tidb-1-1794619306-658546c4c7-qdqqs: 0
+* bx-pd-ti-1-1794619306-0: 0
+* bx-pd-ti-1-1794619306-1: 0
+* bx-pd-ti-1-1794619306-2: 0
+* bx-tikv-ti-1-1794619306-0: 0
+* bx-tikv-ti-1-1794619306-1: 0
+* bx-tikv-ti-1-1794619306-2: 0
 
 ### Workflow
 
@@ -154,42 +157,47 @@ YCSB SF=1
 
 #### Per Connection
 
-| connection     |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
-|:---------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| tidb-1-1-0-1-1 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1600.25 |                78113.00 |            125000.00 |                             32223.00 | 1.00 |               46.09 |
-| tidb-1-1-0-1-2 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1612.40 |                77524.00 |            125000.00 |                             32271.00 | 1.00 |               46.44 |
-| tidb-1-1-0-1-3 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1607.74 |                77749.00 |            125000.00 |                             32015.00 | 1.00 |               46.30 |
-| tidb-1-1-0-1-4 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1612.72 |                77509.00 |            125000.00 |                             31791.00 | 1.00 |               46.45 |
-| tidb-1-1-0-1-5 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1625.91 |                76880.00 |            125000.00 |                             31295.00 | 1.00 |               46.83 |
-| tidb-1-1-0-1-6 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1608.23 |                77725.00 |            125000.00 |                             31775.00 | 1.00 |               46.32 |
-| tidb-1-1-0-1-7 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1614.95 |                77402.00 |            125000.00 |                             32095.00 | 1.00 |               46.51 |
-| tidb-1-1-0-1-8 |             1.00 |      8.00 |  2048.00 |        8.00 |         0.00 |                         1610.04 |                77638.00 |            125000.00 |                             31631.00 | 1.00 |               46.37 |
+| connection     |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   SF |   Throughput [SF/h] |
+|:---------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| tidb-1-1-0-1-1 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1300.70 |                96102.00 |            125000.00 |                             23935.00 | 1.00 |               37.46 |
+| tidb-1-1-0-1-2 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1301.35 |                96054.00 |            125000.00 |                             23999.00 | 1.00 |               37.48 |
+| tidb-1-1-0-1-3 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1300.84 |                96092.00 |            125000.00 |                             24543.00 | 1.00 |               37.46 |
+| tidb-1-1-0-1-4 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1303.94 |                95863.00 |            125000.00 |                             24207.00 | 1.00 |               37.55 |
+| tidb-1-1-0-1-5 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1300.73 |                96100.00 |            125000.00 |                             24863.00 | 1.00 |               37.46 |
+| tidb-1-1-0-1-6 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1301.66 |                96031.00 |            125000.00 |                             23679.00 | 1.00 |               37.49 |
+| tidb-1-1-0-1-7 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1302.35 |                95980.00 |            125000.00 |                             24367.00 | 1.00 |               37.51 |
+| tidb-1-1-0-1-8 |             1.00 |      8.00 |  2048.00 |        8.00 |     0.00 |                         1299.98 |                96155.00 |            125000.00 |                             24639.00 | 1.00 |               37.44 |
 
 #### Per Run
 
-| DBMS     |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:---------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| TiDB-1-1 |             1.00 |     64.00 | 16384.00 |        8.00 |         0.00 | 1.00 |               46.09 |                        12892.23 |                78113.00 |           1000000.00 |                             31887.00 |
+| DBMS     |   experiment_run |   threads |   target |   pod_count |   errors |   SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:---------|-----------------:|----------:|---------:|------------:|---------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| TiDB-1-1 |             1.00 |     64.00 | 16384.00 |        8.00 |     0.00 | 1.00 |               37.44 |                        10411.56 |                96155.00 |           1000000.00 |                             24279.00 |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS           | phase      | job          | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:---------------|:-----------|:-------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| tidb-1-1-1-1-1 | tidb-1-1-1 | tidb-1-1-1-1 | TiDB-1          |                1 |        1 |               1 |       1 |        64 |    16384 |           1 |            0 |                        13103.76 |                76314.00 |             499780 |                            2547.00 |               500220 |                            108031.00 |
+| connection     | phase      | job          |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:---------------|:-----------|:-------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| tidb-1-1-1-1-1 | tidb-1-1-1 | tidb-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    16384 |        0 |                        11462.63 |                87240.00 |             500686 |                            3557.00 |               499314 |                            120575.00 |
 
 #### Per Phase
 
-| DBMS       | phase      |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:-----------|:-----------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| tidb-1-1-1 | tidb-1-1-1 |                1 |        64 |    16384 |               1 |           1 |            0 |                        13103.76 |                76314.00 |             499780 |                            2547.00 |               500220 |                            108031.00 |
+| DBMS       | phase      |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-----------|:-----------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| tidb-1-1-1 | tidb-1-1-1 |                1 |        1 |               1 |           1 |        64 |    16384 |        0 |                        11462.63 |                87240.00 |             500686 |                            3557.00 |               499314 |                            120575.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
