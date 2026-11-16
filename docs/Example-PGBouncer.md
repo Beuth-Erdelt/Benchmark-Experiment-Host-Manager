@@ -601,8 +601,8 @@ bexhoma ycsb \
 ### Workload
 YCSB SF=16
 * Type: ycsb
-* Duration: 689s 
-* Code: 1793861553
+* Duration: 736s 
+* Code: 1794778724
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'C'.
@@ -615,7 +615,7 @@ YCSB SF=16
   * Factors for benchmarking are [11].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.18.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PGBouncer'].
@@ -638,39 +638,42 @@ YCSB SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:813008
-  * datadisk:38199
+  * disk:1091350
+  * datadisk:38200
   * volume_size:1.8T
-  * volume_used:794G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * pool 0
-    * node:cl-worker29
-    * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
-  * pool 1
     * node:cl-worker37
     * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
+  * pool 1
+    * node:cl-worker29
+    * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * pool 2
-    * node:cl-worker27
+    * node:cl-worker39
     * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * pool 3
-    * node:cl-worker22
+    * node:cl-worker27
     * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793861553
+    * code:1794778724
+
+### Ingestion
+* PGBouncer-1: 16 of 16 units ok
 
 ### SUT Container Restarts
-* bexhoma-pool-pgbouncer-1-1793861553-5664b88544-79xg6: 0
-* bexhoma-pool-pgbouncer-1-1793861553-5664b88544-7jqzs: 0
-* bexhoma-pool-pgbouncer-1-1793861553-5664b88544-gg92f: 0
-* bexhoma-pool-pgbouncer-1-1793861553-5664b88544-v7vb9: 0
-* bexhoma-sut-pgbouncer-1-1793861553-6f9c4bf59c-64sxk: 0
+* bexhoma-pool-pgbouncer-1-1794778724-8b49548fb-4zfp4: 0
+* bexhoma-pool-pgbouncer-1-1794778724-8b49548fb-7vpnw: 0
+* bexhoma-pool-pgbouncer-1-1794778724-8b49548fb-dp6bp: 0
+* bexhoma-pool-pgbouncer-1-1794778724-8b49548fb-g6jxg: 0
+* bexhoma-sut-pgbouncer-1-1794778724-6c797f9857-7d6b7: 0
 
 ### Workflow
 
@@ -686,59 +689,59 @@ YCSB SF=16
 
 #### Per Connection
 
-| connection           |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |    sf |   Throughput [SF/h] |
-|:---------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|------:|--------------------:|
-| pgbouncer-1-1-0-1-1  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         5850.31 |               170931.00 |           1000000.00 |                              2281.00 | 16.00 |              336.98 |
-| pgbouncer-1-1-0-1-2  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7849.97 |               127389.00 |           1000000.00 |                              2051.00 | 16.00 |              452.16 |
-| pgbouncer-1-1-0-1-3  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         5855.97 |               170766.00 |           1000000.00 |                              2167.00 | 16.00 |              337.30 |
-| pgbouncer-1-1-0-1-4  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         6494.05 |               153987.00 |           1000000.00 |                              2083.00 | 16.00 |              374.06 |
-| pgbouncer-1-1-0-1-5  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         6576.22 |               152063.00 |           1000000.00 |                              2169.00 | 16.00 |              378.79 |
-| pgbouncer-1-1-0-1-6  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7306.36 |               136867.00 |           1000000.00 |                              2269.00 | 16.00 |              420.85 |
-| pgbouncer-1-1-0-1-7  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         6096.07 |               164040.00 |           1000000.00 |                              2111.00 | 16.00 |              351.13 |
-| pgbouncer-1-1-0-1-8  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         6181.65 |               161769.00 |           1000000.00 |                              2111.00 | 16.00 |              356.06 |
-| pgbouncer-1-1-0-1-9  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         6000.78 |               166645.00 |           1000000.00 |                              2255.00 | 16.00 |              345.64 |
-| pgbouncer-1-1-0-1-10 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         6018.19 |               166163.00 |           1000000.00 |                              2119.00 | 16.00 |              346.65 |
-| pgbouncer-1-1-0-1-11 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         8051.53 |               124200.00 |           1000000.00 |                              1967.00 | 16.00 |              463.77 |
-| pgbouncer-1-1-0-1-12 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         6271.01 |               159464.00 |           1000000.00 |                              2069.00 | 16.00 |              361.21 |
-| pgbouncer-1-1-0-1-13 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         5929.58 |               168646.00 |           1000000.00 |                              2159.00 | 16.00 |              341.54 |
-| pgbouncer-1-1-0-1-14 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         6274.23 |               159382.00 |           1000000.00 |                              2093.00 | 16.00 |              361.40 |
-| pgbouncer-1-1-0-1-15 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         6501.95 |               153800.00 |           1000000.00 |                              2020.00 | 16.00 |              374.51 |
-| pgbouncer-1-1-0-1-16 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         6181.69 |               161768.00 |           1000000.00 |                              2177.00 | 16.00 |              356.07 |
+| connection           |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |    SF |   Throughput [SF/h] |
+|:---------------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|------:|--------------------:|
+| pgbouncer-1-1-0-1-1  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6325.95 |               158079.00 |           1000000.00 |                              1864.00 | 16.00 |              364.37 |
+| pgbouncer-1-1-0-1-2  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6309.27 |               158497.00 |           1000000.00 |                              2107.00 | 16.00 |              363.41 |
+| pgbouncer-1-1-0-1-3  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6969.81 |               143476.00 |           1000000.00 |                              2153.00 | 16.00 |              401.46 |
+| pgbouncer-1-1-0-1-4  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6299.61 |               158740.00 |           1000000.00 |                              2273.00 | 16.00 |              362.86 |
+| pgbouncer-1-1-0-1-5  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6418.36 |               155803.00 |           1000000.00 |                              1884.00 | 16.00 |              369.70 |
+| pgbouncer-1-1-0-1-6  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6521.41 |               153341.00 |           1000000.00 |                              1992.00 | 16.00 |              375.63 |
+| pgbouncer-1-1-0-1-7  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         7406.58 |               135015.00 |           1000000.00 |                              1853.00 | 16.00 |              426.62 |
+| pgbouncer-1-1-0-1-8  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6480.92 |               154299.00 |           1000000.00 |                              2071.00 | 16.00 |              373.30 |
+| pgbouncer-1-1-0-1-9  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6365.13 |               157106.00 |           1000000.00 |                              1964.00 | 16.00 |              366.63 |
+| pgbouncer-1-1-0-1-10 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6364.85 |               157113.00 |           1000000.00 |                              2137.00 | 16.00 |              366.62 |
+| pgbouncer-1-1-0-1-11 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6316.24 |               158322.00 |           1000000.00 |                              2051.00 | 16.00 |              363.82 |
+| pgbouncer-1-1-0-1-12 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6447.74 |               155093.00 |           1000000.00 |                              2179.00 | 16.00 |              371.39 |
+| pgbouncer-1-1-0-1-13 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         7575.93 |               131997.00 |           1000000.00 |                              1964.00 | 16.00 |              436.37 |
+| pgbouncer-1-1-0-1-14 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         8630.96 |               115862.00 |           1000000.00 |                              1884.00 | 16.00 |              497.14 |
+| pgbouncer-1-1-0-1-15 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         6278.45 |               159275.00 |           1000000.00 |                              2343.00 | 16.00 |              361.64 |
+| pgbouncer-1-1-0-1-16 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         8150.89 |               122686.00 |           1000000.00 |                              1819.00 | 16.00 |              469.49 |
 
 #### Per Run
 
-| DBMS          |   experiment_run |   threads |    target |   pod_count |   exceptions |    sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|----------:|------------:|-------------:|------:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| PGBouncer-1-1 |             1.00 |     64.00 | 180224.00 |       16.00 |         0.00 | 16.00 |              336.98 |                       103439.58 |               170931.00 |          16000000.00 |                              2131.31 |
+| DBMS          |   experiment_run |   threads |    target |   pod_count |   errors |    SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:--------------|-----------------:|----------:|----------:|------------:|---------:|------:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| PGBouncer-1-1 |             1.00 |     64.00 | 180224.00 |       16.00 |     0.00 | 16.00 |              361.64 |                       108862.10 |               159275.00 |          16000000.00 |                              2033.62 |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | phase           | job               | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |
-|:---------------------|:----------------|:------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|
-| pgbouncer-1-1-1-1-1  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       1 |         8 |    11264 |          16 |            0 |                         7326.71 |               136487.00 |            1000000 |                            1401.00 |
-| pgbouncer-1-1-1-1-2  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       2 |         8 |    11264 |          16 |            0 |                         7275.27 |               137452.00 |            1000000 |                            1395.00 |
-| pgbouncer-1-1-1-1-3  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       3 |         8 |    11264 |          16 |            0 |                         7322.31 |               136569.00 |            1000000 |                            1406.00 |
-| pgbouncer-1-1-1-1-4  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       4 |         8 |    11264 |          16 |            0 |                         7502.49 |               133289.00 |            1000000 |                            1334.00 |
-| pgbouncer-1-1-1-1-5  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       5 |         8 |    11264 |          16 |            0 |                         7726.96 |               129417.00 |            1000000 |                            1350.00 |
-| pgbouncer-1-1-1-1-6  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       6 |         8 |    11264 |          16 |            0 |                         7430.97 |               134572.00 |            1000000 |                            1302.00 |
-| pgbouncer-1-1-1-1-7  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       7 |         8 |    11264 |          16 |            0 |                         7376.92 |               135558.00 |            1000000 |                            1354.00 |
-| pgbouncer-1-1-1-1-8  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       8 |         8 |    11264 |          16 |            0 |                         7262.96 |               137685.00 |            1000000 |                            1419.00 |
-| pgbouncer-1-1-1-1-9  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       9 |         8 |    11264 |          16 |            0 |                         7369.14 |               135701.00 |            1000000 |                            1373.00 |
-| pgbouncer-1-1-1-1-10 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      10 |         8 |    11264 |          16 |            0 |                         7259.16 |               137757.00 |            1000000 |                            1453.00 |
-| pgbouncer-1-1-1-1-11 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      11 |         8 |    11264 |          16 |            0 |                         7491.65 |               133482.00 |            1000000 |                            1302.00 |
-| pgbouncer-1-1-1-1-12 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      12 |         8 |    11264 |          16 |            0 |                         7292.72 |               137123.00 |            1000000 |                            1375.00 |
-| pgbouncer-1-1-1-1-13 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      13 |         8 |    11264 |          16 |            0 |                         7421.76 |               134739.00 |            1000000 |                            1304.00 |
-| pgbouncer-1-1-1-1-14 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      14 |         8 |    11264 |          16 |            0 |                         7346.19 |               136125.00 |            1000000 |                            1341.00 |
-| pgbouncer-1-1-1-1-15 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      15 |         8 |    11264 |          16 |            0 |                         7430.86 |               134574.00 |            1000000 |                            1309.00 |
-| pgbouncer-1-1-1-1-16 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      16 |         8 |    11264 |          16 |            0 |                         7246.48 |               137998.00 |            1000000 |                            1462.00 |
+| connection           | phase           | job               |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |
+|:---------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|
+| pgbouncer-1-1-1-1-1  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       1 |         8 |    11264 |        0 |                         6840.37 |               146191.00 |            1000000 |                            1444.00 |
+| pgbouncer-1-1-1-1-2  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       2 |         8 |    11264 |        0 |                         8777.47 |               113928.00 |            1000000 |                            1186.00 |
+| pgbouncer-1-1-1-1-3  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       3 |         8 |    11264 |        0 |                         6714.88 |               148923.00 |            1000000 |                            1511.00 |
+| pgbouncer-1-1-1-1-4  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       4 |         8 |    11264 |        0 |                         6829.62 |               146421.00 |            1000000 |                            1469.00 |
+| pgbouncer-1-1-1-1-5  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       5 |         8 |    11264 |        0 |                         6816.54 |               146702.00 |            1000000 |                            1413.00 |
+| pgbouncer-1-1-1-1-6  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       6 |         8 |    11264 |        0 |                         6802.21 |               147011.00 |            1000000 |                            1505.00 |
+| pgbouncer-1-1-1-1-7  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       7 |         8 |    11264 |        0 |                         6795.51 |               147156.00 |            1000000 |                            1433.00 |
+| pgbouncer-1-1-1-1-8  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       8 |         8 |    11264 |        0 |                         6920.75 |               144493.00 |            1000000 |                            1337.00 |
+| pgbouncer-1-1-1-1-9  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       9 |         8 |    11264 |        0 |                         6752.15 |               148101.00 |            1000000 |                            1483.00 |
+| pgbouncer-1-1-1-1-10 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      10 |         8 |    11264 |        0 |                         6861.30 |               145745.00 |            1000000 |                            1437.00 |
+| pgbouncer-1-1-1-1-11 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      11 |         8 |    11264 |        0 |                         6785.46 |               147374.00 |            1000000 |                            1547.00 |
+| pgbouncer-1-1-1-1-12 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      12 |         8 |    11264 |        0 |                         8973.92 |               111434.00 |            1000000 |                            1100.00 |
+| pgbouncer-1-1-1-1-13 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      13 |         8 |    11264 |        0 |                         6870.40 |               145552.00 |            1000000 |                            1427.00 |
+| pgbouncer-1-1-1-1-14 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      14 |         8 |    11264 |        0 |                         8825.58 |               113307.00 |            1000000 |                            1209.00 |
+| pgbouncer-1-1-1-1-15 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      15 |         8 |    11264 |        0 |                         6863.23 |               145704.00 |            1000000 |                            1462.00 |
+| pgbouncer-1-1-1-1-16 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      16 |         8 |    11264 |        0 |                         6808.93 |               146866.00 |            1000000 |                            1488.00 |
 
 #### Per Phase
 
-| DBMS            | phase           |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |
-|:----------------|:----------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|
-| pgbouncer-1-1-1 | pgbouncer-1-1-1 |                1 |       128 |   180224 |               1 |          16 |            0 |                       118082.52 |               137998.00 |           16000000 |                            1462.00 |
+| DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |
+|:----------------|:----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|
+| pgbouncer-1-1-1 | pgbouncer-1-1-1 |                1 |        1 |               1 |          16 |       128 |   180224 |        0 |                       115238.31 |               148923.00 |           16000000 |                            1547.00 |
 
 ### Monitoring
 
@@ -746,37 +749,37 @@ YCSB SF=16
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |         0.63 |      0.00 |           0.08 |                  0.08 |
+| pgbouncer-1-1-1-1 |         1.18 |      0.01 |           0.08 |                  0.08 |
 
 ### Loading phase: SUT deployment
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |      1232.85 |      9.75 |          24.05 |                 42.30 |
+| pgbouncer-1-1-1-1 |      1261.40 |     10.11 |          24.65 |                 42.92 |
 
 ### Loading phase: component loader
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |       850.44 |      6.99 |           0.17 |                  0.17 |
+| pgbouncer-1-1-1-1 |       744.93 |      6.21 |           0.43 |                  0.44 |
 
 ### Benchmarking phase: component pool
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |         0.23 |      0.00 |           0.09 |                  0.09 |
+| pgbouncer-1-1-1-1 |         0.40 |      0.01 |           0.09 |                  0.09 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |       850.23 |      7.40 |          26.76 |                 45.03 |
+| pgbouncer-1-1-1-1 |       789.08 |      7.70 |          26.74 |                 45.01 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |       326.03 |      2.85 |           0.10 |                  0.11 |
+| pgbouncer-1-1-1-1 |       717.88 |      6.68 |           0.20 |                  0.21 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -793,6 +796,8 @@ YCSB SF=16
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on I/O [sessions] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (I/O Wait) [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolloading.log, expected: series exists only while non-zero)
@@ -804,19 +809,19 @@ YCSB SF=16
 
 | DBMS              |   PgBouncer Query Throughput [queries/s] |   PgBouncer Client Wait Time [s] |   PgBouncer Waiting Clients [clients] |   PgBouncer Idle Connections [connections] |   PgBouncer Pool Utilization, Active Server Connections [%] |
 |:------------------|-----------------------------------------:|---------------------------------:|--------------------------------------:|-------------------------------------------:|------------------------------------------------------------:|
-| pgbouncer-1-1-1-1 |                                 56052.20 |                             0.28 |                                  0.00 |                                     192.00 |                                                       26.56 |
+| pgbouncer-1-1-1-1 |                                 56822.81 |                             0.63 |                                  0.00 |                                     181.00 |                                                       26.79 |
 
 #### Loading phase: SUT deployment
 
 | DBMS              |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
 |:------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
-| pgbouncer-1-1-1-1 |                               257.00 |                                                0.00 |                                                        0.00 |                                  12.00 |                                              12.00 |
+| pgbouncer-1-1-1-1 |                               257.00 |                                                0.00 |                                                        0.00 |                                  31.00 |                                              31.00 |
 
 #### Benchmarking phase: component pool
 
 | DBMS              |   PgBouncer Query Throughput [queries/s] |   PgBouncer Client Wait Time [s] |   PgBouncer Waiting Clients [clients] |   PgBouncer Idle Connections [connections] |   PgBouncer Pool Utilization, Active Server Connections [%] |
 |:------------------|-----------------------------------------:|---------------------------------:|--------------------------------------:|-------------------------------------------:|------------------------------------------------------------:|
-| pgbouncer-1-1-1-1 |                                 55686.04 |                             0.16 |                                  0.00 |                                      63.00 |                                                       50.00 |
+| pgbouncer-1-1-1-1 |                                 57876.32 |                             0.18 |                                  0.00 |                                      78.00 |                                                       50.00 |
 
 #### Benchmarking phase: SUT deployment
 
@@ -828,6 +833,8 @@ YCSB SF=16
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: component pool contains no 0 or NaN in CPU [CPUs]
@@ -1522,14 +1529,14 @@ bexhoma benchbase \
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1479s 
-* Code: 1793878379
+* Duration: 1586s 
+* Code: 1794779515
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction. Benchmarking runs for 10 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.18.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PGBouncer'].
@@ -1553,55 +1560,58 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:954294
+  * disk:1057463
   * datadisk:4308
   * volume_size:1.8T
-  * volume_used:932G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
   * requests_memory:16Gi
   * pool 0
-    * node:cl-worker37
+    * node:cl-worker29
     * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * pool 1
-    * node:cl-worker29
+    * node:cl-worker27
     * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793878379
+    * code:1794779515
 * pgbouncer-1-1-2-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1015472
+  * disk:1060949
   * datadisk:4585
   * volume_size:1.8T
-  * volume_used:992G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
   * requests_memory:16Gi
   * pool 0
-    * node:cl-worker37
+    * node:cl-worker29
     * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * pool 1
-    * node:cl-worker29
+    * node:cl-worker27
     * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793878379
+    * code:1794779515
+
+### Ingestion
+* PGBouncer-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-pool-pgbouncer-1-1793878379-67767b6f56-fxmbn: 0
-* bexhoma-pool-pgbouncer-1-1793878379-67767b6f56-r6vjp: 0
-* bexhoma-sut-pgbouncer-1-1793878379-657d8574d8-cbf45: 0
+* bexhoma-pool-pgbouncer-1-1794779515-66ff998d6c-9dql8: 0
+* bexhoma-pool-pgbouncer-1-1794779515-66ff998d6c-gv76s: 0
+* bexhoma-sut-pgbouncer-1-1794779515-7d6c84df-lv6cz: 0
 
 ### Workflow
 
@@ -1619,26 +1629,26 @@ Benchbase Workload tpcc SF=16
 
 #### Per Run
 
-|               |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:--------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PGBouncer-1-1 |                1 |   16 |       87.00 |           2.00 |            0.00 |         67.00 |           18.00 |              1 |           1 |             | None           |             0 | False         |              662.07 | False               |
+| DBMS          |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:--------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PGBouncer-1-1 |                1 |   16 |       97.00 |           4.00 |            0.00 |         70.00 |           23.00 |              1 |         1 |             | None           |             0 | False         |              593.81 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                | phase           | job               |   experiment_run |   terminals |   target |   client |   benchmark_run |   child |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
-|:--------------------|:----------------|:------------------|-----------------:|------------:|---------:|---------:|----------------:|--------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| pgbouncer-1-1-1-1-1 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |          32 |    16384 |        1 |               1 |       1 |          -1 | 600.00 |            0 |                        1414.93 |                      467.32 |         0.00 |                                                      36357.00 |                                              22605.00 |
-| pgbouncer-1-1-2-1-1 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       1 |          -1 | 600.00 |            1 |                         987.49 |                      449.26 |         0.00 |                                                      35897.00 |                                              16195.00 |
-| pgbouncer-1-1-2-1-2 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |          16 |     8192 |        2 |               1 |       2 |          -1 | 600.00 |            1 |                        1010.86 |                      449.63 |         0.00 |                                                      34350.00 |                                              15822.00 |
+| connection          | phase           | job               |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:--------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| pgbouncer-1-1-1-1-1 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       1 |        32 |    16384 |          -1 | 600.00 |        2 |                        1276.21 |                      467.14 |         0.00 |                                                      36326.00 |                                              25067.00 |
+| pgbouncer-1-1-2-1-1 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |        2 |               1 |       1 |        16 |     8192 |          -1 | 600.00 |        0 |                         654.98 |                      459.70 |         0.00 |                                                      51562.00 |                                              24420.00 |
+| pgbouncer-1-1-2-1-2 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |        2 |               1 |       2 |        16 |     8192 |          -1 | 600.00 |        0 |                         658.55 |                      460.02 |         0.00 |                                                      51350.00 |                                              24287.00 |
 
 #### Per Phase
 
-| DBMS            | phase           |   experiment_run |   terminals |   target |   benchmark_run |   pod_count |   tenant_id |   time |   num_errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
-|:----------------|:----------------|-----------------:|------------:|---------:|----------------:|------------:|------------:|-------:|-------------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| pgbouncer-1-1-1 | pgbouncer-1-1-1 |                1 |          32 |    16384 |               1 |           1 |          -1 | 600.00 |            0 |                        1414.93 |                      467.32 |         0.00 |                                                      36357.00 |                                              22605.00 |
-| pgbouncer-1-1-2 | pgbouncer-1-1-2 |                1 |          32 |    16384 |               1 |           2 |          -1 | 600.00 |            2 |                        1998.35 |                      898.90 |         0.00 |                                                      35897.00 |                                              16008.50 |
+| DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:----------------|:----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| pgbouncer-1-1-1 | pgbouncer-1-1-1 |                1 |        1 |               1 |           1 |        32 |    16384 |          -1 | 600.00 |        2 |                        1276.21 |                      467.14 |         0.00 |                                                      36326.00 |                                              25067.00 |
+| pgbouncer-1-1-2 | pgbouncer-1-1-2 |                1 |        2 |               1 |           2 |        32 |    16384 |          -1 | 600.00 |        0 |                        1313.53 |                      919.72 |         0.00 |                                                      51562.00 |                                              24353.50 |
 
 ### Monitoring
 
@@ -1646,75 +1656,75 @@ Benchbase Workload tpcc SF=16
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |         0.45 |      0.00 |           0.03 |                  0.03 |
-| pgbouncer-1-1-2-1 |         0.45 |      0.00 |           0.03 |                  0.03 |
+| pgbouncer-1-1-1-1 |         0.38 |      0.00 |           0.04 |                  0.04 |
+| pgbouncer-1-1-2-1 |         0.38 |      0.00 |           0.04 |                  0.04 |
 
 ### Loading phase: SUT deployment
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |       178.96 |      3.84 |           4.41 |                  6.05 |
-| pgbouncer-1-1-2-1 |       178.96 |      3.84 |           4.41 |                  6.05 |
+| pgbouncer-1-1-1-1 |       197.20 |      2.73 |           4.41 |                  6.05 |
+| pgbouncer-1-1-2-1 |       197.20 |      2.73 |           4.41 |                  6.05 |
 
 ### Loading phase: component loader
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |       496.62 |     13.83 |           0.29 |                  0.29 |
-| pgbouncer-1-1-2-1 |       496.62 |     13.83 |           0.29 |                  0.29 |
+| pgbouncer-1-1-1-1 |       748.85 |     13.28 |           0.35 |                  0.35 |
+| pgbouncer-1-1-2-1 |       748.85 |     13.28 |           0.35 |                  0.35 |
 
 ### Benchmarking phase: component pool
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |         2.05 |      0.01 |           0.04 |                  0.04 |
-| pgbouncer-1-1-2-1 |         2.15 |      0.01 |           0.04 |                  0.04 |
+| pgbouncer-1-1-1-1 |         1.83 |      0.01 |           0.05 |                  0.05 |
+| pgbouncer-1-1-2-1 |         2.17 |      0.01 |           0.06 |                  0.06 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |       722.42 |      2.77 |           5.03 |                  6.94 |
-| pgbouncer-1-1-2-1 |      1435.65 |      3.80 |           5.56 |                  7.90 |
+| pgbouncer-1-1-1-1 |       703.13 |      3.67 |           5.05 |                  6.96 |
+| pgbouncer-1-1-2-1 |      1311.67 |      4.90 |           5.59 |                  7.94 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |     15062.88 |     32.14 |           0.71 |                  0.71 |
-| pgbouncer-1-1-2-1 |     10618.38 |     27.53 |           0.52 |                  0.52 |
+| pgbouncer-1-1-1-1 |     15695.20 |     32.13 |           0.54 |                  0.54 |
+| pgbouncer-1-1-2-1 |     12841.40 |     30.72 |           0.41 |                  0.41 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on I/O [sessions] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on WAL [sessions] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (I/O Wait) [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (WAL Wait) [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
-* Active Backends Waiting on I/O [sessions] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
-* Active Backends Waiting on WAL [sessions] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * Active Backends Waiting on Locks [sessions] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
-* Max Transaction Duration (I/O Wait) [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
-* Max Transaction Duration (WAL Wait) [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * Max Transaction Duration (Lock Wait) [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolbenchmarking.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolbenchmarking.log, expected: series exists only while non-zero)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolloading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolloading.log, expected: series exists only while non-zero)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolloading.log, expected: series exists only while non-zero)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolloading.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolloading.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on I/O [sessions] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* Active Backends Waiting on WAL [sessions] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (I/O Wait) [s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* Max Transaction Duration (WAL Wait) [s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-poolbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-poolbenchmarking.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-poolbenchmarking.log, expected: series exists only while non-zero)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-poolbenchmarking.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
@@ -1722,34 +1732,36 @@ Benchbase Workload tpcc SF=16
 
 | DBMS              |   PgBouncer Query Throughput [queries/s] |   PgBouncer Client Wait Time [s] |   PgBouncer Waiting Clients [clients] |   PgBouncer Idle Connections [connections] |   PgBouncer Pool Utilization, Active Server Connections [%] |
 |:------------------|-----------------------------------------:|---------------------------------:|--------------------------------------:|-------------------------------------------:|------------------------------------------------------------:|
-| pgbouncer-1-1-1-1 |                                   240.39 |                             0.12 |                                  0.00 |                                      48.00 |                                                       34.38 |
-| pgbouncer-1-1-2-1 |                                   240.39 |                             0.12 |                                  0.00 |                                      48.00 |                                                       34.38 |
+| pgbouncer-1-1-1-1 |                                   239.83 |                             0.21 |                                  0.00 |                                      48.00 |                                                       50.00 |
+| pgbouncer-1-1-2-1 |                                   239.83 |                             0.21 |                                  0.00 |                                      48.00 |                                                       50.00 |
 
 #### Loading phase: SUT deployment
 
 | DBMS              |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
 |:------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
-| pgbouncer-1-1-1-1 |                                   66 |                                                   0 |                                                           0 |                                     14 |                                                 14 |
-| pgbouncer-1-1-2-1 |                                   66 |                                                   0 |                                                           0 |                                     14 |                                                 14 |
+| pgbouncer-1-1-1-1 |                                65.00 |                                                0.00 |                                                        0.00 |                                   9.00 |                                               9.00 |
+| pgbouncer-1-1-2-1 |                                65.00 |                                                0.00 |                                                        0.00 |                                   9.00 |                                               9.00 |
 
 #### Benchmarking phase: component pool
 
 | DBMS              |   PgBouncer Query Throughput [queries/s] |   PgBouncer Client Wait Time [s] |   PgBouncer Waiting Clients [clients] |   PgBouncer Idle Connections [connections] |   PgBouncer Pool Utilization, Active Server Connections [%] |
 |:------------------|-----------------------------------------:|---------------------------------:|--------------------------------------:|-------------------------------------------:|------------------------------------------------------------:|
-| pgbouncer-1-1-1-1 |                                 86214.28 |                             0.94 |                                  0.00 |                                     251.00 |                                                       63.49 |
-| pgbouncer-1-1-2-1 |                                122316.14 |                             0.25 |                                  0.00 |                                     184.00 |                                                       52.38 |
+| pgbouncer-1-1-1-1 |                                  9655.95 |                             0.47 |                                  0.00 |                                      62.00 |                                                       70.97 |
+| pgbouncer-1-1-2-1 |                                 19850.58 |                             0.25 |                                  0.00 |                                      62.00 |                                                       61.29 |
 
 #### Benchmarking phase: SUT deployment
 
 | DBMS              |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
 |:------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
-| pgbouncer-1-1-1-1 |                               320.00 |                                               24.00 |                                                        0.00 |                                  32.00 |                                              32.00 |
-| pgbouncer-1-1-2-1 |                               322.00 |                                               24.00 |                                                        0.00 |                                  30.00 |                                              30.00 |
+| pgbouncer-1-1-1-1 |                                65.00 |                                               23.00 |                                                        0.00 |                                   7.00 |                                               7.00 |
+| pgbouncer-1-1-2-1 |                                65.00 |                                               25.00 |                                                        0.00 |                                   8.00 |                                               8.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: component pool contains no 0 or NaN in CPU [CPUs]

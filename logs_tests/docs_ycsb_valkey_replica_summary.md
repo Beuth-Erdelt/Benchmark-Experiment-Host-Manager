@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 473s 
-* Code: 1794679627
+* Duration: 472s 
+* Code: 1794781184
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -17,7 +17,7 @@ YCSB SF=1
   * Factors for benchmarking are [4].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.11.18.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['Valkey'].
   * Import is handled by 8 processes (pods).
@@ -40,7 +40,7 @@ YCSB SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1041490
+  * disk:1060300
   * datadisk:1
   * cpu_list:0-223
   * args:['--maxclients', '10000', '--io-threads', '64']
@@ -48,22 +48,22 @@ YCSB SF=1
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:660632
-    * datadisk:721
-    * cpu_list:0-127
-  * worker 1
     * RAM:1081742753792
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:1382887
-    * datadisk:806
+    * disk:1385292
+    * datadisk:717
+    * cpu_list:0-127
+  * worker 1
+    * RAM:1081853952000
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:637559
+    * datadisk:803
     * cpu_list:0-127
   * worker 2
     * RAM:1077381263360
@@ -71,42 +71,42 @@ YCSB SF=1
     * Cores:256
     * host:6.8.0-137-generic
     * node:cl-worker27
-    * disk:885359
-    * datadisk:355
+    * disk:894242
+    * datadisk:732
     * cpu_list:0-255
   * worker 3
-    * RAM:540579299328
-    * CPU:AMD EPYC 7502 32-Core Processor
-    * Cores:128
+    * RAM:540597886976
+    * CPU:Intel(R) Xeon(R) 6767P
+    * Cores:256
     * host:6.8.0-137-generic
-    * node:cl-worker22
-    * disk:178246
-    * datadisk:721
-    * cpu_list:0-127
+    * node:cl-worker39
+    * disk:299654
+    * datadisk:720
+    * cpu_list:0-255
   * worker 4
     * RAM:540590792704
     * CPU:AMD EPYC 7352 24-Core Processor
     * Cores:96
     * host:6.8.0-146-generic
     * node:cl-worker25
-    * disk:103775
-    * datadisk:720
+    * disk:164933
+    * datadisk:716
     * cpu_list:0-95
   * worker 5
-    * RAM:540597886976
-    * CPU:Intel(R) Xeon(R) 6767P
-    * Cores:256
+    * RAM:540579299328
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
     * host:6.8.0-137-generic
-    * node:cl-worker39
-    * disk:298328
-    * datadisk:810
-    * cpu_list:0-255
+    * node:cl-worker22
+    * disk:223420
+    * datadisk:797
+    * cpu_list:0-127
   * resources_total: 24.25 CPU, 384.5 GiB RAM requested in 7 pods
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
     * worker: 6 x, 24.0 CPU, 384.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794679627
+    * code:1794781184
     * BEXHOMA_REPLICAS:1
     * BEXHOMA_WORKERS:3
 
@@ -117,13 +117,13 @@ YCSB SF=1
 * Valkey-1: 8 of 8 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-valkey-1-1794679627-8685f7746c-c25zl: 0
-* bx-w-valkey-1-1794679627-0: 0
-* bx-w-valkey-1-1794679627-1: 0
-* bx-w-valkey-1-1794679627-2: 0
-* bx-w-valkey-1-1794679627-3: 0
-* bx-w-valkey-1-1794679627-4: 0
-* bx-w-valkey-1-1794679627-5: 0
+* bexhoma-sut-valkey-1-1794781184-7966b54ff7-wnfsz: 0
+* bx-w-valkey-1-1794781184-0: 0
+* bx-w-valkey-1-1794781184-1: 0
+* bx-w-valkey-1-1794781184-2: 0
+* bx-w-valkey-1-1794781184-3: 0
+* bx-w-valkey-1-1794781184-4: 0
+* bx-w-valkey-1-1794781184-5: 0
 
 ### Workflow
 
@@ -141,20 +141,20 @@ YCSB SF=1
 
 | connection       |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   SF |   Throughput [SF/h] |
 |:-----------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| valkey-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         3827.90 |                32655.00 |            125000.00 |                              3903.00 | 1.00 |              110.24 |
-| valkey-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         3803.21 |                32867.00 |            125000.00 |                              3897.00 | 1.00 |              109.53 |
-| valkey-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         3773.24 |                33128.00 |            125000.00 |                              3927.00 | 1.00 |              108.67 |
-| valkey-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         3755.90 |                33281.00 |            125000.00 |                              3933.00 | 1.00 |              108.17 |
-| valkey-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         3772.79 |                33132.00 |            125000.00 |                              3889.00 | 1.00 |              108.66 |
-| valkey-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         3778.15 |                33085.00 |            125000.00 |                              3919.00 | 1.00 |              108.81 |
-| valkey-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         3755.22 |                33287.00 |            125000.00 |                              3911.00 | 1.00 |              108.15 |
-| valkey-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         3743.64 |                33390.00 |            125000.00 |                              3911.00 | 1.00 |              107.82 |
+| valkey-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         5897.90 |                21194.00 |            125000.00 |                              2681.00 | 1.00 |              169.86 |
+| valkey-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         5963.17 |                20962.00 |            125000.00 |                              2683.00 | 1.00 |              171.74 |
+| valkey-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         5905.14 |                21168.00 |            125000.00 |                              2677.00 | 1.00 |              170.07 |
+| valkey-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         5864.97 |                21313.00 |            125000.00 |                              2707.00 | 1.00 |              168.91 |
+| valkey-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         5895.39 |                21203.00 |            125000.00 |                              2679.00 | 1.00 |              169.79 |
+| valkey-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         5919.12 |                21118.00 |            125000.00 |                              2701.00 | 1.00 |              170.47 |
+| valkey-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         5862.21 |                21323.00 |            125000.00 |                              2669.00 | 1.00 |              168.83 |
+| valkey-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         5910.72 |                21148.00 |            125000.00 |                              2673.00 | 1.00 |              170.23 |
 
 #### Per Run
 
 | DBMS       |   experiment_run |   threads |    target |   pod_count |   errors |   SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:-----------|-----------------:|----------:|----------:|------------:|---------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| Valkey-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |     0.00 | 1.00 |              107.82 |                        30210.03 |                33390.00 |           1000000.00 |                              3911.25 |
+| Valkey-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |     0.00 | 1.00 |              168.83 |                        47218.62 |                21323.00 |           1000000.00 |                              2683.75 |
 
 ### Benchmarking
 
@@ -162,13 +162,13 @@ YCSB SF=1
 
 | connection       | phase        | job            |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:-----------------|:-------------|:---------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| valkey-1-1-1-1-1 | valkey-1-1-1 | valkey-1-1-1-1 |                1 |        1 |               1 |       1 |       128 |    65536 |        0 |                        54338.08 |               184033.00 |            4998787 |                            1721.00 |              5001213 |                              1704.00 |
+| valkey-1-1-1-1-1 | valkey-1-1-1 | valkey-1-1-1-1 |                1 |        1 |               1 |       1 |       128 |    65536 |        0 |                        49946.31 |               200215.00 |            4999180 |                            1474.00 |              5000820 |                              1464.00 |
 
 #### Per Phase
 
 | DBMS         | phase        |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:-------------|:-------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| valkey-1-1-1 | valkey-1-1-1 |                1 |        1 |               1 |           1 |       128 |    65536 |        0 |                        54338.08 |               184033.00 |            4998787 |                            1721.00 |              5001213 |                              1704.00 |
+| valkey-1-1-1 | valkey-1-1-1 |                1 |        1 |               1 |           1 |       128 |    65536 |        0 |                        49946.31 |               200215.00 |            4999180 |                            1474.00 |              5000820 |                              1464.00 |
 
 ### Monitoring
 
@@ -176,25 +176,25 @@ YCSB SF=1
 
 | DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:---------------|-------------:|----------:|---------------:|----------------------:|
-| valkey-1-1-1-1 |       159.27 |      2.97 |           3.03 |                  3.04 |
+| valkey-1-1-1-1 |       138.57 |      2.78 |           3.09 |                  3.10 |
 
 ### Loading phase: component loader
 
 | DBMS           | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:---------------|:-------------|----------:|---------------:|----------------------:|
-| valkey-1-1-1-1 | n/a          |         0 |           0.29 |                  0.29 |
+| valkey-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
 
 ### Benchmarking phase: component worker
 
 | DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:---------------|-------------:|----------:|---------------:|----------------------:|
-| valkey-1-1-1-1 |       451.05 |      3.49 |           3.15 |                  3.16 |
+| valkey-1-1-1-1 |       402.10 |      2.95 |           3.15 |                  3.16 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS           |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:---------------|-------------:|----------:|---------------:|----------------------:|
-| valkey-1-1-1-1 |       649.64 |      5.14 |           1.50 |                  1.50 |
+| valkey-1-1-1-1 |       725.07 |      5.29 |           1.50 |                  1.50 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -202,6 +202,8 @@ YCSB SF=1
 * CPU Utilization [CPUs] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
 * CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection valkey-1-1-1-1 (bexhoma-metrics-valkey-1-1-1-1-workerloading.log, expected: series exists only while non-zero)

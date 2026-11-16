@@ -67,7 +67,7 @@ bexhoma tpch `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -t 1200                       <# query timeout in seconds #> `
+  -t 1800                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
