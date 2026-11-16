@@ -38,5 +38,5 @@ See [images/tpch_refresh/README.md](https://github.com/Beuth-Erdelt/Benchmark-Ex
    the parallel query stream (`benchmark_run=1`).
 5. For each set K from `FIRST_SET` to `LAST_SET`:
    - RF1: `LOAD DATA LOCAL INFILE` (column-mapped with `NULLIF`) for `orders.tbl.uK` and `lineitem.tbl.uK`
-   - RF2: create temp table, load `delete.K`, bulk `DELETE l FROM lineitem l WHERE ...` + same for orders, drop temp table
+   - RF2: create key table `_tpch_refresh_delete_K` in the engine of `lineitem` (so ColumnStore on MariaDBCS, no cross-engine join), load `delete.K`, bulk `DELETE l FROM lineitem l WHERE ...` + same for orders, drop key table
 6. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.

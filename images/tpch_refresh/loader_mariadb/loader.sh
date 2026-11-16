@@ -45,6 +45,13 @@ ls $destination_raw -lh
 ######################## MariaDB connection options ########################
 MYSQL_OPTS="-h $BEXHOMA_HOST -P $BEXHOMA_PORT -u $BEXHOMA_USER -p$BEXHOMA_PASSWORD --local-infile=1"
 
+######################## Engine of the RF2 key table ########################
+# the engine of lineitem (InnoDB, Columnstore, ...); empty: server default
+LINEITEM_ENGINE=$(mysql $MYSQL_OPTS --batch --skip-column-names -e \
+    "SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA='$BEXHOMA_DATABASE' AND TABLE_NAME='lineitem'")
+KEYS_ENGINE=${LINEITEM_ENGINE:+ENGINE=$LINEITEM_ENGINE}
+echo "LINEITEM_ENGINE:$LINEITEM_ENGINE"
+
 ######################## Wait until all pods of job are ready ########################
 echo "Decrementing job counter bexhoma-benchmarker-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
 redis-cli -h 'bexhoma-messagequeue' decr "bexhoma-benchmarker-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT"
@@ -146,14 +153,20 @@ for K in $(seq $FIRST_SET $LAST_SET); do
     #### RF2: delete orders identified in delete file ####
     # no expected count: a set applied again (reused volume) deletes nothing;
     # the client stops at the first error and exits 1
+    # The key table is a regular table in the engine of lineitem: ColumnStore runs a join with a
+    # table of another engine (a TEMPORARY table is never ColumnStore) as a cross-engine join, which
+    # needs credentials in Columnstore.xml and cannot see the temporary tables of this session.
+    # One table per set, dropped first in case a failed run left it behind.
     echo "RF2: deleting rows from delete.$K"
+    KEYS_TABLE=_tpch_refresh_delete_$K
     mysql $MYSQL_OPTS $BEXHOMA_DATABASE &> /tmp/OUTPUT.txt <<SQL
-CREATE TEMPORARY TABLE _tpch_refresh_delete (orderkey BIGINT);
+DROP TABLE IF EXISTS $KEYS_TABLE;
+CREATE TABLE $KEYS_TABLE (orderkey BIGINT) $KEYS_ENGINE;
 LOAD DATA LOCAL INFILE '$destination_raw/delete.$K'
-    INTO TABLE _tpch_refresh_delete FIELDS TERMINATED BY '\n';
-DELETE l FROM lineitem l WHERE l.l_orderkey IN (SELECT orderkey FROM _tpch_refresh_delete);
-DELETE o FROM orders o WHERE o.o_orderkey IN (SELECT orderkey FROM _tpch_refresh_delete);
-DROP TEMPORARY TABLE _tpch_refresh_delete;
+    INTO TABLE $KEYS_TABLE FIELDS TERMINATED BY '\n';
+DELETE l FROM lineitem l WHERE l.l_orderkey IN (SELECT orderkey FROM $KEYS_TABLE);
+DELETE o FROM orders o WHERE o.o_orderkey IN (SELECT orderkey FROM $KEYS_TABLE);
+DROP TABLE $KEYS_TABLE;
 SQL
     RC=$?
     cat /tmp/OUTPUT.txt

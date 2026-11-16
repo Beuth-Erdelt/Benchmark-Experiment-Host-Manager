@@ -4,7 +4,7 @@ metadata:
   labels: {app: bexhoma, component: benchmarker, configuration: default, experiment: default, client: default}
   name: bexhoma-benchmarker
 spec:
-  backoffLimit: 1
+  backoffLimit: 0   # no retry: a second RF1 would insert the rows twice
   completions: 1
   parallelism: 1
   template:

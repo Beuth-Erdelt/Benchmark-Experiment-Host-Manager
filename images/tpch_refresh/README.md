@@ -25,7 +25,7 @@ images/tpch_refresh/
 │   └── README.md          — environment variable reference + execution flow
 ├── loader_mariadb/
 │   ├── Dockerfile         — MariaDB loader image (debian:stable-slim + mariadb-client + redis-cli)
-│   ├── loader.sh          — applies RF1 via LOAD DATA LOCAL INFILE, RF2 via temp table + DELETE
+│   ├── loader.sh          — applies RF1 via LOAD DATA LOCAL INFILE, RF2 via key table (engine of lineitem) + DELETE
 │   └── README.md          — environment variable reference + execution flow
 ├── loader_monetdb/
 │   ├── Dockerfile         — MonetDB loader image (monetdb/monetdb:Dec2025 + redis + yum)
@@ -90,7 +90,7 @@ or reload the database before repeating.
 |---|---|---|---|
 | PostgreSQL | `psql \COPY` | `\COPY orders/lineitem FROM file` | temp table + `DELETE ... IN (SELECT ...)` via heredoc |
 | MySQL | `mysql LOAD DATA LOCAL INFILE` | column-mapped LOAD DATA per table | temp table + `DELETE l FROM lineitem l WHERE ...` |
-| MariaDB | `mysql LOAD DATA LOCAL INFILE` | column-mapped LOAD DATA per table | temp table + `DELETE l FROM lineitem l WHERE ...` |
+| MariaDB | `mysql LOAD DATA LOCAL INFILE` | column-mapped LOAD DATA per table | regular key table `_tpch_refresh_delete_<K>` in the engine of `lineitem` + `DELETE l FROM lineitem l WHERE ...`, table dropped; MariaDBCS: a temporary table is never ColumnStore, and ColumnStore's cross-engine join needs credentials in `Columnstore.xml` and cannot see session temp tables |
 | MonetDB | `mclient COPY N RECORDS INTO ... FROM STDIN` | count lines, pipe file to mclient per table | all statements in one stdin pipeline; temp table persists within the session |
 | ClickHouse | `clickhouse-client` (native port) | `INSERT ... FORMAT CSV` (delimiter `|`) | lightweight `DELETE ... WHERE key IN (...)` in chunks of 10000 keys; `ClickHouseCluster`: on `orders_local` / `lineitem_local` of every host listed in `system.clusters` (a Distributed table cannot be deleted from, and `ON CLUSTER` does not reach the shards from the coordinator) |
 | SQL Server | `bcp`, `sqlcmd` (mssql-tools18) | `bcp ... in` per table, one transaction per file | staging table `tpch_refresh_delete_<K>` (bcp), both DELETEs in one transaction, table dropped |
