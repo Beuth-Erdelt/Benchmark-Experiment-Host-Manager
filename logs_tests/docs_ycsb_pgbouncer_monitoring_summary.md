@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=32
 * Type: ycsb
-* Duration: 1544s 
-* Code: 1793878115
+* Duration: 869s 
+* Code: 1794849659
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'C'.
@@ -17,7 +17,7 @@ YCSB SF=32
   * Factors for benchmarking are [11].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.18.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['PGBouncer'].
   * Import is handled by 16 processes (pods).
@@ -42,10 +42,10 @@ YCSB SF=32
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1027593
-  * datadisk:71079
+  * disk:1396173
+  * datadisk:71058
   * volume_size:1.8T
-  * volume_used:1004G
+  * volume_used:1.4T
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
@@ -67,14 +67,17 @@ YCSB SF=32
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793878115
+    * code:1794849659
+
+### Ingestion
+* PGBouncer-1: 16 of 16 units ok
 
 ### SUT Container Restarts
-* bexhoma-pool-pgbouncer-1-1793878115-5bbf6944b6-lpbwt: 0
-* bexhoma-pool-pgbouncer-1-1793878115-5bbf6944b6-mvjp7: 0
-* bexhoma-pool-pgbouncer-1-1793878115-5bbf6944b6-wmtkg: 0
-* bexhoma-pool-pgbouncer-1-1793878115-5bbf6944b6-zkptz: 0
-* bexhoma-sut-pgbouncer-1-1793878115-5d6c5cdfb7-hn7mn: 0
+* bexhoma-pool-pgbouncer-1-1794849659-df56d9678-5mq6l: 0
+* bexhoma-pool-pgbouncer-1-1794849659-df56d9678-8ctnb: 0
+* bexhoma-pool-pgbouncer-1-1794849659-df56d9678-dnjft: 0
+* bexhoma-pool-pgbouncer-1-1794849659-df56d9678-lhdz2: 0
+* bexhoma-sut-pgbouncer-1-1794849659-86cf4579cf-46qw4: 0
 
 ### Workflow
 
@@ -90,59 +93,59 @@ YCSB SF=32
 
 #### Per Connection
 
-| connection           |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |    sf |   Throughput [SF/h] |
-|:---------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|------:|--------------------:|
-| pgbouncer-1-1-0-1-1  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7907.98 |               252909.00 |           2000000.00 |                              1548.00 | 32.00 |              455.50 |
-| pgbouncer-1-1-0-1-2  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         8196.79 |               243998.00 |           2000000.00 |                              1431.00 | 32.00 |              472.14 |
-| pgbouncer-1-1-0-1-3  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7533.81 |               265470.00 |           2000000.00 |                              1566.00 | 32.00 |              433.95 |
-| pgbouncer-1-1-0-1-4  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7732.19 |               258659.00 |           2000000.00 |                              1555.00 | 32.00 |              445.37 |
-| pgbouncer-1-1-0-1-5  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7964.35 |               251119.00 |           2000000.00 |                              1438.00 | 32.00 |              458.75 |
-| pgbouncer-1-1-0-1-6  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7175.74 |               278717.00 |           2000000.00 |                              1417.00 | 32.00 |              413.32 |
-| pgbouncer-1-1-0-1-7  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7739.88 |               258402.00 |           2000000.00 |                              1695.00 | 32.00 |              445.82 |
-| pgbouncer-1-1-0-1-8  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7658.17 |               261159.00 |           2000000.00 |                              1459.00 | 32.00 |              441.11 |
-| pgbouncer-1-1-0-1-9  |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7558.89 |               264589.00 |           2000000.00 |                              1630.00 | 32.00 |              435.39 |
-| pgbouncer-1-1-0-1-10 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         8353.73 |               239414.00 |           2000000.00 |                              1485.00 | 32.00 |              481.17 |
-| pgbouncer-1-1-0-1-11 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7296.31 |               274111.00 |           2000000.00 |                              1584.00 | 32.00 |              420.27 |
-| pgbouncer-1-1-0-1-12 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         8298.24 |               241015.00 |           2000000.00 |                              1465.00 | 32.00 |              477.98 |
-| pgbouncer-1-1-0-1-13 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7870.20 |               254123.00 |           2000000.00 |                              1479.00 | 32.00 |              453.32 |
-| pgbouncer-1-1-0-1-14 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7823.38 |               255644.00 |           2000000.00 |                              1550.00 | 32.00 |              450.63 |
-| pgbouncer-1-1-0-1-15 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7887.68 |               253560.00 |           2000000.00 |                              1560.00 | 32.00 |              454.33 |
-| pgbouncer-1-1-0-1-16 |             1.00 |      4.00 | 11264.00 |       16.00 |         0.00 |                         7816.19 |               255879.00 |           2000000.00 |                              1404.00 | 32.00 |              450.21 |
+| connection           |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |    SF |   Throughput [SF/h] |
+|:---------------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|------:|--------------------:|
+| pgbouncer-1-1-0-1-1  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5325.25 |               375569.00 |           2000000.00 |                              2179.00 | 32.00 |              306.73 |
+| pgbouncer-1-1-0-1-2  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5293.75 |               377804.00 |           2000000.00 |                              2411.00 | 32.00 |              304.92 |
+| pgbouncer-1-1-0-1-3  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5291.41 |               377971.00 |           2000000.00 |                              2433.00 | 32.00 |              304.79 |
+| pgbouncer-1-1-0-1-4  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5264.54 |               379900.00 |           2000000.00 |                              2283.00 | 32.00 |              303.24 |
+| pgbouncer-1-1-0-1-5  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5300.34 |               377334.00 |           2000000.00 |                              2175.00 | 32.00 |              305.30 |
+| pgbouncer-1-1-0-1-6  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5307.73 |               376809.00 |           2000000.00 |                              2427.00 | 32.00 |              305.73 |
+| pgbouncer-1-1-0-1-7  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5303.00 |               377145.00 |           2000000.00 |                              1986.00 | 32.00 |              305.45 |
+| pgbouncer-1-1-0-1-8  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5320.88 |               375878.00 |           2000000.00 |                              2089.00 | 32.00 |              306.48 |
+| pgbouncer-1-1-0-1-9  |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5303.72 |               377094.00 |           2000000.00 |                              2355.00 | 32.00 |              305.49 |
+| pgbouncer-1-1-0-1-10 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5307.52 |               376824.00 |           2000000.00 |                              2403.00 | 32.00 |              305.71 |
+| pgbouncer-1-1-0-1-11 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5302.52 |               377179.00 |           2000000.00 |                              2593.00 | 32.00 |              305.43 |
+| pgbouncer-1-1-0-1-12 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5321.27 |               375850.00 |           2000000.00 |                              2037.00 | 32.00 |              306.51 |
+| pgbouncer-1-1-0-1-13 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5308.60 |               376747.00 |           2000000.00 |                              2245.00 | 32.00 |              305.78 |
+| pgbouncer-1-1-0-1-14 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5319.04 |               376008.00 |           2000000.00 |                              2243.00 | 32.00 |              306.38 |
+| pgbouncer-1-1-0-1-15 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         5318.26 |               376063.00 |           2000000.00 |                              2355.00 | 32.00 |              306.33 |
+| pgbouncer-1-1-0-1-16 |             1.00 |      4.00 | 11264.00 |       16.00 |     0.00 |                         8487.63 |               235637.00 |           2000000.00 |                              1895.00 | 32.00 |              488.89 |
 
 #### Per Run
 
-| DBMS          |   experiment_run |   threads |    target |   pod_count |   exceptions |    sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|----------:|------------:|-------------:|------:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| PGBouncer-1-1 |             1.00 |     64.00 | 180224.00 |       16.00 |         0.00 | 32.00 |              413.32 |                       124813.54 |               278717.00 |          32000000.00 |                              1516.62 |
+| DBMS          |   experiment_run |   threads |    target |   pod_count |   errors |    SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:--------------|-----------------:|----------:|----------:|------------:|---------:|------:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| PGBouncer-1-1 |             1.00 |     64.00 | 180224.00 |       16.00 |     0.00 | 32.00 |              303.24 |                        88075.46 |               379900.00 |          32000000.00 |                              2256.81 |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                 | phase           | job               | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |
-|:---------------------|:----------------|:------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|
-| pgbouncer-1-1-1-1-1  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       1 |         8 |    11264 |          16 |            0 |                        10458.17 |                95619.00 |            1000000 |                            1110.00 |
-| pgbouncer-1-1-1-1-2  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       2 |         8 |    11264 |          16 |            0 |                        10721.33 |                93272.00 |            1000000 |                            1076.00 |
-| pgbouncer-1-1-1-1-3  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       3 |         8 |    11264 |          16 |            0 |                        10520.00 |                95057.00 |            1000000 |                            1098.00 |
-| pgbouncer-1-1-1-1-4  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       4 |         8 |    11264 |          16 |            0 |                        10443.76 |                95751.00 |            1000000 |                            1101.00 |
-| pgbouncer-1-1-1-1-5  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       5 |         8 |    11264 |          16 |            0 |                        10459.70 |                95605.00 |            1000000 |                            1084.00 |
-| pgbouncer-1-1-1-1-6  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       6 |         8 |    11264 |          16 |            0 |                        10336.77 |                96742.00 |            1000000 |                            1105.00 |
-| pgbouncer-1-1-1-1-7  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       7 |         8 |    11264 |          16 |            0 |                        10466.49 |                95543.00 |            1000000 |                            1096.00 |
-| pgbouncer-1-1-1-1-8  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       8 |         8 |    11264 |          16 |            0 |                        10464.41 |                95562.00 |            1000000 |                            1094.00 |
-| pgbouncer-1-1-1-1-9  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       9 |         8 |    11264 |          16 |            0 |                        10409.19 |                96069.00 |            1000000 |                            1107.00 |
-| pgbouncer-1-1-1-1-10 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      10 |         8 |    11264 |          16 |            0 |                        10498.80 |                95249.00 |            1000000 |                            1091.00 |
-| pgbouncer-1-1-1-1-11 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      11 |         8 |    11264 |          16 |            0 |                        10360.76 |                96518.00 |            1000000 |                            1145.00 |
-| pgbouncer-1-1-1-1-12 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      12 |         8 |    11264 |          16 |            0 |                        10497.92 |                95257.00 |            1000000 |                            1101.00 |
-| pgbouncer-1-1-1-1-13 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      13 |         8 |    11264 |          16 |            0 |                        10493.95 |                95293.00 |            1000000 |                            1095.00 |
-| pgbouncer-1-1-1-1-14 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      14 |         8 |    11264 |          16 |            0 |                        10436.45 |                95818.00 |            1000000 |                            1106.00 |
-| pgbouncer-1-1-1-1-15 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      15 |         8 |    11264 |          16 |            0 |                        10470.00 |                95511.00 |            1000000 |                            1072.00 |
-| pgbouncer-1-1-1-1-16 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |      16 |         8 |    11264 |          16 |            0 |                        10412.33 |                96040.00 |            1000000 |                            1085.00 |
+| connection           | phase           | job               |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |
+|:---------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|
+| pgbouncer-1-1-1-1-1  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       1 |         8 |    11264 |        0 |                         9756.29 |               102498.00 |            1000000 |                            1215.00 |
+| pgbouncer-1-1-1-1-2  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       2 |         8 |    11264 |        0 |                         9725.92 |               102818.00 |            1000000 |                            1236.00 |
+| pgbouncer-1-1-1-1-3  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       3 |         8 |    11264 |        0 |                         9740.42 |               102665.00 |            1000000 |                            1197.00 |
+| pgbouncer-1-1-1-1-4  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       4 |         8 |    11264 |        0 |                         9763.91 |               102418.00 |            1000000 |                            1232.00 |
+| pgbouncer-1-1-1-1-5  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       5 |         8 |    11264 |        0 |                         9688.98 |               103210.00 |            1000000 |                            1229.00 |
+| pgbouncer-1-1-1-1-6  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       6 |         8 |    11264 |        0 |                         9787.90 |               102167.00 |            1000000 |                            1220.00 |
+| pgbouncer-1-1-1-1-7  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       7 |         8 |    11264 |        0 |                         9776.89 |               102282.00 |            1000000 |                            1271.00 |
+| pgbouncer-1-1-1-1-8  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       8 |         8 |    11264 |        0 |                         9766.29 |               102393.00 |            1000000 |                            1262.00 |
+| pgbouncer-1-1-1-1-9  | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       9 |         8 |    11264 |        0 |                         9750.20 |               102562.00 |            1000000 |                            1226.00 |
+| pgbouncer-1-1-1-1-10 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      10 |         8 |    11264 |        0 |                         9765.34 |               102403.00 |            1000000 |                            1219.00 |
+| pgbouncer-1-1-1-1-11 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      11 |         8 |    11264 |        0 |                         9700.73 |               103085.00 |            1000000 |                            1242.00 |
+| pgbouncer-1-1-1-1-12 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      12 |         8 |    11264 |        0 |                         9829.07 |               101739.00 |            1000000 |                            1248.00 |
+| pgbouncer-1-1-1-1-13 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      13 |         8 |    11264 |        0 |                         9781.48 |               102234.00 |            1000000 |                            1182.00 |
+| pgbouncer-1-1-1-1-14 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      14 |         8 |    11264 |        0 |                         9752.77 |               102535.00 |            1000000 |                            1251.00 |
+| pgbouncer-1-1-1-1-15 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      15 |         8 |    11264 |        0 |                         9774.88 |               102303.00 |            1000000 |                            1221.00 |
+| pgbouncer-1-1-1-1-16 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |      16 |         8 |    11264 |        0 |                         9823.18 |               101800.00 |            1000000 |                            1241.00 |
 
 #### Per Phase
 
-| DBMS            | phase           |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |
-|:----------------|:----------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|
-| pgbouncer-1-1-1 | pgbouncer-1-1-1 |                1 |       128 |   180224 |               1 |          16 |            0 |                       167450.03 |                96742.00 |           16000000 |                            1145.00 |
+| DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |
+|:----------------|:----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|
+| pgbouncer-1-1-1 | pgbouncer-1-1-1 |                1 |        1 |               1 |          16 |       128 |   180224 |        0 |                       156184.26 |               103210.00 |           16000000 |                            1271.00 |
 
 ### Monitoring
 
@@ -150,37 +153,37 @@ YCSB SF=32
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |         3.61 |      0.01 |           0.02 |                  0.02 |
+| pgbouncer-1-1-1-1 |         0.42 |      0.00 |           0.01 |                  0.01 |
 
 ### Loading phase: SUT deployment
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |      1901.63 |      9.41 |          44.65 |                 64.00 |
+| pgbouncer-1-1-1-1 |      2625.68 |     10.53 |          44.38 |                 64.00 |
 
 ### Loading phase: component loader
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |      1609.86 |      7.48 |           0.53 |                  0.53 |
+| pgbouncer-1-1-1-1 |      1901.97 |      6.98 |           0.30 |                  0.30 |
 
 ### Benchmarking phase: component pool
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |         0.65 |      0.01 |           0.02 |                  0.02 |
+| pgbouncer-1-1-1-1 |         0.05 |      0.00 |           0.01 |                  0.01 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |       556.42 |      8.00 |          49.59 |                 64.00 |
+| pgbouncer-1-1-1-1 |       540.15 |      7.26 |          49.58 |                 64.00 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |       517.12 |      6.18 |           0.11 |                  0.11 |
+| pgbouncer-1-1-1-1 |       836.11 |      9.06 |           0.10 |                  0.11 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -204,6 +207,8 @@ YCSB SF=32
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: component pool contains no 0 or NaN in CPU [CPUs]
