@@ -47,6 +47,42 @@ function Wait-BexhomaProcess {
     Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss'): bexhoma $ProcessName has terminated."
 }
 
+function Wait-YugabyteDB {
+    # Waits after `helm install` of the YugabyteDB chart (release naming yb-master / yb-tserver)
+    # until the master and tserver StatefulSets are rolled out and every tserver accepts
+    # YSQL connections on port 5433. A fixed sleep is not enough: tservers may still be
+    # pending or starting, and the first loader then fails with "connection refused".
+    # Returns $false on timeout.
+    param([int]$TimeoutSeconds = 900)
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+
+    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') Waiting for YugabyteDB StatefulSets..."
+    # Out-Host: kubectl output must not become part of the return value
+    kubectl rollout status statefulset/yb-master --timeout="$($TimeoutSeconds)s" | Out-Host
+    if ($LASTEXITCODE -ne 0) { return $false }
+    $left = [int][Math]::Max(1, ($deadline - (Get-Date)).TotalSeconds)
+    kubectl rollout status statefulset/yb-tserver --timeout="$($left)s" | Out-Host
+    if ($LASTEXITCODE -ne 0) { return $false }
+
+    $replicas = [int](kubectl get statefulset yb-tserver -o jsonpath='{.spec.replicas}')
+    $i = 0
+    while ($i -lt $replicas) {
+        kubectl exec yb-tserver-0 -c yb-tserver -- /home/yugabyte/bin/ysqlsh `
+            -h "yb-tserver-$i.yb-tservers" -p 5433 -U yugabyte -d yugabyte -At -c "SELECT 1" 2>$null | Out-Null
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') yb-tserver-$i accepts YSQL connections"
+            $i++
+        } elseif ((Get-Date) -ge $deadline) {
+            Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ERROR: yb-tserver-$i does not accept YSQL connections after $($TimeoutSeconds)s"
+            return $false
+        } else {
+            Start-Sleep -Seconds 10
+        }
+    }
+    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') YugabyteDB is ready ($replicas tservers)"
+    return $true
+}
+
 function Write-LogFile {
     # UTF-8 without BOM and with LF, as in the repository. In Windows PowerShell,
     # Set-Content and Out-File -Encoding utf8 write a BOM, Out-File also CRLF.

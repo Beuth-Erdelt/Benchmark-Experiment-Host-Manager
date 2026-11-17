@@ -53,8 +53,7 @@ storage.ephemeral=true,\
 preflight.skipUlimit=true,\
 enableLoadBalancer=true
 
-  echo "Waiting 60s for pods to start..."
-  sleep 60
+  wait_yugabytedb || echo "WARNING: YugabyteDB is not ready, the next experiment will probably fail" >&2
 }
 
 

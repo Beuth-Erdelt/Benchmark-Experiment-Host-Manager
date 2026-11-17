@@ -43,8 +43,7 @@ function Install-YugabyteDB {
     helm @helmArgs
     if ($valuesFile) { Remove-Item $valuesFile -ErrorAction SilentlyContinue }
 
-    Write-Host "Waiting 60s for pods to start..."
-    Start-Sleep -Seconds 60
+    if (-not (Wait-YugabyteDB)) { Write-Host "WARNING: YugabyteDB is not ready, the next experiment will probably fail" }
 }
 
 function Remove-YugabyteDB {
@@ -64,12 +63,6 @@ function Remove-YugabyteDB {
     Write-Host "Waiting 60s for cleanup..."
     Start-Sleep -Seconds 60
 }
-
-Wait-BexhomaProcess "tpch"
-Wait-BexhomaProcess "tpcds"
-Wait-BexhomaProcess "hammerdb"
-Wait-BexhomaProcess "benchbase"
-Wait-BexhomaProcess "ycsb"
 
 
 
