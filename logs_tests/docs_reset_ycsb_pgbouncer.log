@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1792627550
-Experiment                    : starts at 2026-10-22 02:05:51.559335 (39493.4143296)
+Experiment                    : has code 1794817724
+Experiment                    : starts at 2026-11-16 09:28:44.868574 (79196.8137572)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -15,7 +15,7 @@ Factors for loading are [4].
 Factors for benchmarking are [1]. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
 Status is logged every 10s.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.7.
+Experiment uses bexhoma version 0.11.18.
 Experiment is limited to DBMS ['PGBouncer'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker38.
@@ -34,37 +34,37 @@ PGBouncer-1                   : will start now
 PGBouncer-1                   : deployments ['pool', 'sut']
 PGBouncer-1                   : stateful sets []
 PGBouncer-1                   : pvcs ['sut']
-PGBouncer-1                   : name of SUT pods = bexhoma-sut-pgbouncer-1-1792627550
-PGBouncer-1                   : name of SUT service = bexhoma-sut-pgbouncer-1-1792627550
-Loop pass                     : took 4.2s (1 kubectl calls 2.0s, 9 API requests 1.2s)
+PGBouncer-1                   : name of SUT pods = bexhoma-sut-pgbouncer-1-1794817724
+PGBouncer-1                   : name of SUT service = bexhoma-sut-pgbouncer-1-1794817724
+Loop pass                     : took 2.7s (1 kubectl calls 1.2s, 9 API requests 0.7s)
 - waiting 30s -               : done
 PGBouncer-1                   : waits for health check to succeed
-Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 16 API requests 2.0s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 16 API requests 0.9s)
 - waiting 30s -               : done
 PGBouncer-1                   : found 1 / 1 running pool pods
 PGBouncer-1                   : is not loaded yet
 PGBouncer-1                   : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
-PGBouncer-1                   : connect to pod bexhoma-sut-pgbouncer-1-1792627550-d94d64b4c-frzxl to load scripts
+PGBouncer-1                   : connect to pod bexhoma-sut-pgbouncer-1-1794817724-55d9979d9f-tmhl2 to load scripts
 PGBouncer-1                   : start asynch loading scripts of type schema
 PGBouncer-1                   : waits for the Schema scripts (schema=True) before starting the loading jobs
-PGBouncer-1                   : Schema scripts done after 8s
+PGBouncer-1                   : Schema scripts done after 6s
 PGBouncer-1                   : is loading
-Loop pass                     : took 33.9s (8 kubectl calls 18.2s, 42 API requests 6.5s)
+Loop pass                     : took 18.9s (8 kubectl calls 8.9s, 42 API requests 3.1s)
 - waiting 30s -               : done
 PGBouncer-1                   : is loading
-Loop pass                     : took 5.2s (0 kubectl calls 0.0s, 34 API requests 4.1s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 PGBouncer-1                   : showing loader times (ycsb-loader)
 PGBouncer-1                   : generator times (start/end per pod and container) []
-PGBouncer-1                   : loader times (start/end per pod and container) [(1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627696)]
-PGBouncer-1                   : total times (start/end per pod and container) [(1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627697), (1792627664, 1792627696)]
+PGBouncer-1                   : loader times (start/end per pod and container) [(1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850)]
+PGBouncer-1                   : total times (start/end per pod and container) [(1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850), (1794817817, 1794817850)]
 PGBouncer-1                   : loader timespan (first to last [s]) = 33
-PGBouncer-1                   : connect to pod bexhoma-sut-pgbouncer-1-1792627550-d94d64b4c-frzxl to load scripts
+PGBouncer-1                   : connect to pod bexhoma-sut-pgbouncer-1-1794817724-55d9979d9f-tmhl2 to load scripts
 PGBouncer-1                   : start asynch loading scripts of type index
 PGBouncer-1                   : is loading
-Loop pass                     : took 52.9s (24 kubectl calls 44.1s, 62 API requests 7.5s)
+Loop pass                     : took 43.7s (24 kubectl calls 25.6s, 62 API requests 3.3s)
 bexhoma : ERROR:root:invalid literal for int() with base 10: ''
-In C:\Users\Erdelt\eclipse-workspace\Benchmark-Experiment-Host-Manager\scripts\test-docs-reset.ps1:86 Zeichen:1
+In C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\scripts\test-docs-reset.ps1:86 Zeichen:1
 + bexhoma ycsb `
 + ~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: (ERROR:root:inva...ith base 10: '':String) [], RemoteException
@@ -74,58 +74,61 @@ ERROR:root:invalid literal for int() with base 10: ''
 ERROR:root:invalid literal for int() with base 10: ''
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PGBouncer-1-1792627550 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PGBouncer-1-1794817724 initialized to 1.
 PGBouncer-1                   : benchmarks done 0 of 1. This will be client 1
 pgbouncer-1-1-1-1             : start benchmarking (benchmark_run=1)
-PGBouncer-1                   : reset (reset_1_1_1) completed in 10s
-PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1792627550-6465d85599-cbznf
-PGBouncer-1                   : benchmarking results in folder C:\data\benchmarks/1792627550
-PGBouncer-1                   : submitted benchmarker job in 36.9s (17 kubectl calls 26.7s, 40 API requests 10.0s)
-Loop pass                     : took 68.8s (23 kubectl calls 46.8s, 62 API requests 13.5s)
+PGBouncer-1                   : reset (reset_1_1_1) completed in 11s
+PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1794817724-5b6c4fffd7-mfjnr
+PGBouncer-1                   : benchmarking results in folder D:\data\benchmarks/1794817724
+PGBouncer-1                   : submitted benchmarker job in 21.3s (17 kubectl calls 17.3s, 40 API requests 3.8s)
+Loop pass                     : took 40.8s (23 kubectl calls 34.3s, 64 API requests 5.5s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 3.5s (0 kubectl calls 0.0s, 20 API requests 2.9s)
+Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 21 API requests 1.8s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 2.7s (0 kubectl calls 0.0s, 18 API requests 2.1s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 ERROR:root:invalid literal for int() with base 10: ''
 ERROR:root:invalid literal for int() with base 10: ''
 ERROR:root:invalid literal for int() with base 10: ''
 - waiting 30s -               : done
-pgbouncer-1-1-1-1             : wrote benchmarking_timespans to /data/benchmarks/1792627550/pgbouncer-1-1-1-1.config
+pgbouncer-1-1-1-1             : wrote benchmarking_timespans to D:/data/benchmarks/1794817724/pgbouncer-1-1-1-1.config
 pgbouncer-1-1-1-1             : showing benchmarker times
-pgbouncer-1-1-1-1             : benchmarker timespan job from 1792627867 to 1792627974
-pgbouncer-1-1-1-1             : benchmarker timespan pods from 1792627873 to 1792627935
+pgbouncer-1-1-1-1             : benchmarker timespan job from 1794817983 to 1794818081
+pgbouncer-1-1-1-1             : benchmarker timespan pods from 1794817985 to 1794818047
 pgbouncer-1-1-1-1             : benchmarker timespan (start to end single container [s]) = 62
-pgbouncer-1-1-1-1             : benchmarker times (start/end per pod and container) = [(1792627873, 1792627935)]
-pgbouncer-1-1-1-1             : found and updated times {'benchmarker': [(1792627873, 1792627935)]}
-Loop pass                     : took 10.8s (4 kubectl calls 7.2s, 24 API requests 3.0s)
+pgbouncer-1-1-1-1             : benchmarker times (start/end per pod and container) = [(1794817985, 1794818047)]
+pgbouncer-1-1-1-1             : found and updated times {'benchmarker': [(1794817985, 1794818047)]}
+Loop pass                     : took 6.1s (4 kubectl calls 4.3s, 24 API requests 1.0s)
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PGBouncer-1-1792627550 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PGBouncer-1-1794817724 initialized to 2.
 PGBouncer-1                   : benchmarks done 0 of 1. This will be client 2
 pgbouncer-1-1-2-1             : start benchmarking (benchmark_run=1)
-PGBouncer-1                   : reset (reset_1_2_1) completed in 12s
-PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1792627550-6465d85599-cbznf
-PGBouncer-1                   : benchmarking results in folder C:\data\benchmarks/1792627550
-PGBouncer-1                   : submitted benchmarker job in 32.1s (16 kubectl calls 24.9s, 29 API requests 6.6s)
-Loop pass                     : took 56.3s (21 kubectl calls 45.1s, 52 API requests 9.9s)
+PGBouncer-1                   : reset (reset_1_2_1) completed in 11s
+PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1794817724-5b6c4fffd7-mfjnr
+PGBouncer-1                   : benchmarking results in folder D:\data\benchmarks/1794817724
+PGBouncer-1                   : submitted benchmarker job in 18.2s (16 kubectl calls 16.0s, 29 API requests 2.0s)
+Loop pass                     : took 35.7s (21 kubectl calls 32.1s, 53 API requests 3.4s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 3.1s (0 kubectl calls 0.0s, 21 API requests 3.0s)
+Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 22 API requests 1.3s)
 - waiting 30s -               : done
-pgbouncer-1-1-2-1             : wrote benchmarking_timespans to /data/benchmarks/1792627550/pgbouncer-1-1-2-1.config
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 2.9s (2 kubectl calls 2.0s, 21 API requests 0.8s)
+- waiting 30s -               : done
+pgbouncer-1-1-2-1             : wrote benchmarking_timespans to D:/data/benchmarks/1794817724/pgbouncer-1-1-2-1.config
 pgbouncer-1-1-2-1             : showing benchmarker times
-pgbouncer-1-1-2-1             : benchmarker timespan job from 1792628031 to 1792628120
-pgbouncer-1-1-2-1             : benchmarker timespan pods from 1792628035 to 1792628097
+pgbouncer-1-1-2-1             : benchmarker timespan job from 1794818118 to 1794818222
+pgbouncer-1-1-2-1             : benchmarker timespan pods from 1794818122 to 1794818184
 pgbouncer-1-1-2-1             : benchmarker timespan (start to end single container [s]) = 62
-pgbouncer-1-1-2-1             : benchmarker times (start/end per pod and container) = [(1792628036, 1792628097), (1792628035, 1792628067)]
-pgbouncer-1-1-2-1             : found and updated times {'benchmarker': [(1792628036, 1792628097), (1792628035, 1792628067)]}
-Loop pass                     : took 26.4s (6 kubectl calls 10.5s, 28 API requests 4.5s)
+pgbouncer-1-1-2-1             : benchmarker times (start/end per pod and container) = [(1794818122, 1794818184), (1794818122, 1794818153)]
+pgbouncer-1-1-2-1             : found and updated times {'benchmarker': [(1794818122, 1794818184), (1794818122, 1794818153)]}
+Loop pass                     : took 9.7s (4 kubectl calls 4.3s, 26 API requests 1.2s)
 PGBouncer-1                   : can be stopped
-PGBouncer-1                   : had 0 restarts at worker bexhoma-pool-pgbouncer-1-1792627550-6465d85599-cbznf
-PGBouncer-1                   : had 0 restarts at worker bexhoma-sut-pgbouncer-1-1792627550-d94d64b4c-frzxl
-Loop pass                     : took 18.0s (8 kubectl calls 12.9s, 36 API requests 4.6s)
-Experiment                    : ends at 2026-10-22 02:15:42.884727 (40084.7383582) - 591.32s total
+PGBouncer-1                   : had 0 restarts at worker bexhoma-pool-pgbouncer-1-1794817724-5b6c4fffd7-mfjnr
+PGBouncer-1                   : had 0 restarts at worker bexhoma-sut-pgbouncer-1-1794817724-55d9979d9f-tmhl2
+Loop pass                     : took 10.3s (8 kubectl calls 8.3s, 36 API requests 1.5s)
+Experiment                    : ends at 2026-11-16 09:37:15.136486 (79707.0731294) - 510.26s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -136,8 +139,8 @@ Result workflow complete
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 592s 
-* Code: 1792627550
+* Duration: 511s 
+* Code: 1794817724
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -150,7 +153,7 @@ YCSB SF=1
   * Factors for benchmarking are [1]. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.7.
+  * Experiment uses bexhoma version 0.11.18.
   * Experiment is limited to DBMS ['PGBouncer'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -167,53 +170,56 @@ YCSB SF=1
 
 ### Connections
 * pgbouncer-1-1-1-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:909746
+  * disk:1059174
   * datadisk:2393
   * volume_size:1.8T
-  * volume_used:889G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
   * requests_memory:16Gi
   * pool 0
-    * node:cl-worker22
+    * node:cl-worker29
     * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792627550
+    * code:1794817724
 * pgbouncer-1-1-2-1 uses docker image postgres:18.6
-  * RAM:2164173172736
+  * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
-  * host:6.8.0-137-generic
+  * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:909959
-  * datadisk:2603
+  * disk:1055659
+  * datadisk:2602
   * volume_size:1.8T
-  * volume_used:889G
+  * volume_used:1.1T
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
   * requests_memory:16Gi
   * pool 0
-    * node:cl-worker22
+    * node:cl-worker29
     * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1792627550
+    * code:1794817724
+
+### Ingestion
+* PGBouncer-1: 8 of 8 units ok
 
 ### SUT Container Restarts
-* bexhoma-pool-pgbouncer-1-1792627550-6465d85599-cbznf: 0
-* bexhoma-sut-pgbouncer-1-1792627550-d94d64b4c-frzxl: 0
+* bexhoma-pool-pgbouncer-1-1794817724-5b6c4fffd7-mfjnr: 0
+* bexhoma-sut-pgbouncer-1-1794817724-55d9979d9f-tmhl2: 0
 
 ### Workflow
 
@@ -231,52 +237,57 @@ YCSB SF=1
 
 #### Per Connection
 
-| connection          |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
-|:--------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| pgbouncer-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         3800.43 |                32891.00 |            125000.00 |                              2565.00 | 1.00 |              109.45 |
-| pgbouncer-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         3761.43 |                33232.00 |            125000.00 |                              2581.00 | 1.00 |              108.33 |
-| pgbouncer-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         3857.79 |                32402.00 |            125000.00 |                              2563.00 | 1.00 |              111.10 |
-| pgbouncer-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         3836.83 |                32579.00 |            125000.00 |                              2573.00 | 1.00 |              110.50 |
-| pgbouncer-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         3829.30 |                32643.00 |            125000.00 |                              2533.00 | 1.00 |              110.28 |
-| pgbouncer-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         3832.24 |                32618.00 |            125000.00 |                              2585.00 | 1.00 |              110.37 |
-| pgbouncer-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         3826.84 |                32664.00 |            125000.00 |                              2503.00 | 1.00 |              110.21 |
-| pgbouncer-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         3869.37 |                32305.00 |            125000.00 |                              2417.00 | 1.00 |              111.44 |
+| connection          |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   SF |   Throughput [SF/h] |
+|:--------------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| pgbouncer-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         3800.55 |                32890.00 |            125000.00 |                              2589.00 | 1.00 |              109.46 |
+| pgbouncer-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         3866.86 |                32326.00 |            125000.00 |                              2651.00 | 1.00 |              111.37 |
+| pgbouncer-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         3842.49 |                32531.00 |            125000.00 |                              2613.00 | 1.00 |              110.66 |
+| pgbouncer-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         3804.13 |                32859.00 |            125000.00 |                              2573.00 | 1.00 |              109.56 |
+| pgbouncer-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         3744.98 |                33378.00 |            125000.00 |                              2667.00 | 1.00 |              107.86 |
+| pgbouncer-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         3821.11 |                32713.00 |            125000.00 |                              2651.00 | 1.00 |              110.05 |
+| pgbouncer-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         3815.98 |                32757.00 |            125000.00 |                              2633.00 | 1.00 |              109.90 |
+| pgbouncer-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         3802.86 |                32870.00 |            125000.00 |                              2547.00 | 1.00 |              109.52 |
 
 #### Per Run
 
-| DBMS          |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:--------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| PGBouncer-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 1.00 |              108.33 |                        30614.24 |                33232.00 |           1000000.00 |                              2540.00 |
+| DBMS          |   experiment_run |   threads |   target |   pod_count |   errors |   SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:--------------|-----------------:|----------:|---------:|------------:|---------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| PGBouncer-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |     0.00 | 1.00 |              107.86 |                        30498.96 |                33378.00 |           1000000.00 |                              2615.50 |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                | phase           | job               | configuration   |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:--------------------|:----------------|:------------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| pgbouncer-1-1-1-1-1 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 | PGBouncer-1     |                1 |        1 |               1 |       1 |        64 |    16384 |           1 |            0 |                        16290.62 |                61385.00 |             499257 |                            1315.00 |               500743 |                              2233.00 |
-| pgbouncer-1-1-2-1-1 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 | PGBouncer-1     |                1 |        2 |               1 |       1 |        64 |    16384 |           2 |            0 |                        16190.66 |                30882.00 |             250033 |                            1528.00 |               249967 |                              2397.00 |
-| pgbouncer-1-1-2-1-2 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 | PGBouncer-1     |                1 |        2 |               1 |       2 |        64 |    16384 |           2 |            0 |                         8237.91 |                60695.00 |             250145 |                            1056.00 |               249855 |                              1878.00 |
+| connection          | phase           | job               |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:--------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| pgbouncer-1-1-1-1-1 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    16384 |        0 |                        16284.52 |                61408.00 |             500243 |                            1610.00 |               499757 |                              1633.00 |
+| pgbouncer-1-1-2-1-1 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |        2 |               1 |       1 |        64 |    16384 |        0 |                        16170.76 |                30920.00 |             250325 |                            2099.00 |               249675 |                              2167.00 |
+| pgbouncer-1-1-2-1-2 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |        2 |               1 |       2 |        64 |    16384 |        0 |                         8221.66 |                60815.00 |             250092 |                            1061.00 |               249908 |                              1509.00 |
 
 #### Per Phase
 
-| DBMS            | phase           |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:----------------|:----------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| pgbouncer-1-1-1 | pgbouncer-1-1-1 |                1 |        64 |    16384 |               1 |           1 |            0 |                        16290.62 |                61385.00 |             499257 |                            1315.00 |               500743 |                              2233.00 |
-| pgbouncer-1-1-2 | pgbouncer-1-1-2 |                1 |       128 |    32768 |               1 |           2 |            0 |                        24428.57 |                60695.00 |             500178 |                            1528.00 |               499822 |                              2397.00 |
+| DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:----------------|:----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| pgbouncer-1-1-1 | pgbouncer-1-1-1 |                1 |        1 |               1 |           1 |        64 |    16384 |        0 |                        16284.52 |                61408.00 |             500243 |                            1610.00 |               499757 |                              1633.00 |
+| pgbouncer-1-1-2 | pgbouncer-1-1-2 |                1 |        2 |               1 |           2 |       128 |    32768 |        0 |                        24392.42 |                60815.00 |             500417 |                            2099.00 |               499583 |                              2167.00 |
 
 #### Reset
 
 | phase           | job               |   experiment_run |   client |   benchmark_run |   time_reset | reset_failed   |
 |:----------------|:------------------|-----------------:|---------:|----------------:|-------------:|:---------------|
-| pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |        10.00 |                |
-| pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |        2 |               1 |        12.00 |                |
+| pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |        11.00 |                |
+| pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |        2 |               1 |        11.00 |                |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column

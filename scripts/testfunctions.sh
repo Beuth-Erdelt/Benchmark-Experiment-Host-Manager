@@ -63,6 +63,39 @@ wait_process() {
 }
 
 
+# wait_yugabytedb [timeout_seconds]
+#   Waits after `helm install` of the YugabyteDB chart (release naming yb-master / yb-tserver)
+#   until the master and tserver StatefulSets are rolled out and every tserver accepts
+#   YSQL connections on port 5433. A fixed sleep is not enough: tservers may still be
+#   pending or starting, and the first loader then fails with "connection refused".
+#   Returns 1 on timeout (default 900s).
+wait_yugabytedb() {
+    local timeout=${1:-900}
+    local deadline=$(( $(date +%s) + timeout ))
+
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Waiting for YugabyteDB StatefulSets..."
+    kubectl rollout status statefulset/yb-master --timeout=${timeout}s || return 1
+    kubectl rollout status statefulset/yb-tserver --timeout=$(( deadline - $(date +%s) ))s || return 1
+
+    local replicas
+    replicas=$(kubectl get statefulset yb-tserver -o jsonpath='{.spec.replicas}')
+    local i=0
+    while [[ $i -lt $replicas ]]; do
+        if kubectl exec yb-tserver-0 -c yb-tserver -- /home/yugabyte/bin/ysqlsh \
+            -h yb-tserver-$i.yb-tservers -p 5433 -U yugabyte -d yugabyte -At -c "SELECT 1" > /dev/null 2>&1; then
+            echo "$(date '+%Y-%m-%d %H:%M:%S') yb-tserver-$i accepts YSQL connections"
+            i=$(( i + 1 ))
+        elif [[ $(date +%s) -ge $deadline ]]; then
+            echo "$(date '+%Y-%m-%d %H:%M:%S') ERROR: yb-tserver-$i does not accept YSQL connections after ${timeout}s" >&2
+            return 1
+        else
+            sleep 10
+        fi
+    done
+    echo "$(date '+%Y-%m-%d %H:%M:%S') YugabyteDB is ready ($replicas tservers)"
+}
+
+
 clean_logs() {
     export MYDIR=$(pwd)
 

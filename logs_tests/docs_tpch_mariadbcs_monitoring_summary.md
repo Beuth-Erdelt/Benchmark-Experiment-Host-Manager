@@ -4,7 +4,7 @@
 TPC-H Queries SF=10
 * Type: tpch
 * Duration: 1087s 
-* Code: 1793713025
+* Code: 1794817775
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=10) data is loaded and benchmark is executed.
@@ -13,7 +13,7 @@ TPC-H Queries SF=10
   * Timeout per query is 1800.
   * Import sets statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.11.18.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MariaDBCS'].
   * Import is handled by 8 processes (pods).
@@ -27,14 +27,14 @@ TPC-H Queries SF=10
 
 ### Connections
 * mariadbcs-1-1-1-1-1 uses docker image mariadb:12.3.3
-  * RAM:540590792704
-  * CPU:AMD EPYC 7352 24-Core Processor
-  * Cores:96
-  * host:6.8.0-146-generic
-  * node:cl-worker25
-  * disk:136009
+  * RAM:1077381263360
+  * CPU:AMD EPYC 7742 64-Core Processor
+  * Cores:256
+  * host:6.8.0-137-generic
+  * node:cl-worker27
+  * disk:909497
   * datadisk:4531
-  * cpu_list:0-95
+  * cpu_list:0-255
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin']
   * requests_cpu:4
   * requests_memory:64Gi
@@ -43,10 +43,13 @@ TPC-H Queries SF=10
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793713025
+    * code:1794817775
+
+### Ingestion
+* MariaDBCS-1: 8 of 8 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadbcs-1-1793713025-59885fd897-jnd2l: 0
+* bexhoma-sut-mariadbcs-1-1794817775-7657444dc7-hbfvw: 0
 
 ### Workflow
 
@@ -62,23 +65,23 @@ TPC-H Queries SF=10
 
 #### Per Run
 
-|               |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:--------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MariaDBCS-1-1 |                1 |   10 |      751.00 |           1.00 |            0.00 |        726.00 |           10.00 |              1 |           0 |             | None           |             0 | False         |               47.94 | False               |
+| DBMS          |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:--------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MariaDBCS-1-1 |                1 |   10 |      747.00 |           4.00 |            0.00 |        714.00 |           21.00 |              1 |         0 |             | None           |             0 | False         |               48.19 | False               |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                | configuration   | phase           | job               |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                 |
-|:--------------------|:----------------|:----------------|:------------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:--------------------|
-| mariadbcs-1-1-1-1-1 | MariaDBCS-1     | mariadbcs-1-1-1 | mariadbcs-1-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               22 |                  22 |         82 |            2.39 |            15038.07 |           9658.54 |          -1 | mariadbcs-1-1-1-1-1 |
+| connection          | phase           | job               |   experiment_run |   client |   benchmark_run |   child |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:--------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mariadbcs-1-1-1-1-1 | mariadbcs-1-1-1 | mariadbcs-1-1-1-1 |                1 |        1 |               1 |       1 | 10.00 |               22 |                  22 |         90 |            2.74 |            13131.66 |           8800.00 |          -1 |
 
 #### Per Phase
 
-|                 | phase           |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:----------------|:----------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mariadbcs-1-1-1 | mariadbcs-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               22 |                  22 |         82 |            2.39 |            15038.07 |           9658.54 |          -1 |
+| mariadbcs-1-1-1 | mariadbcs-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               22 |                  22 |         90 |            2.74 |            13131.66 |           8800.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -91,28 +94,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   mariadbcs-1-1-1-1-1 |
 |:----------------------------------------------------|----------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |               4598.64 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |               2510.90 |
-| Shipping Priority (TPC-H Q3)                        |               1644.15 |
-| Order Priority Checking Query (TPC-H Q4)            |               5304.96 |
-| Local Supplier Volume (TPC-H Q5)                    |               1454.13 |
-| Forecasting Revenue Change (TPC-H Q6)               |                228.82 |
-| Volume Shipping Query (TPC-H Q7)                    |               4663.94 |
-| National Market Share (TPC-H Q8)                    |               1290.62 |
-| Product Type Profit Measure (TPC-H Q9)              |               5229.48 |
-| Returned Item Reporting Query (TPC-H Q10)           |               4556.60 |
-| Important Stock Identification (TPC-H Q11)          |                843.84 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |               1877.48 |
-| Customer Distribution (TPC-H Q13)                   |              13129.13 |
-| Promotion Effect Query (TPC-H Q14)                  |               1405.45 |
-| Top Supplier Query (TPC-H Q15)                      |                664.12 |
-| Parts/Supplier Relationship (TPC-H Q16)             |                858.34 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |               3068.59 |
-| Large Volume Customer (TPC-H Q18)                   |               2845.55 |
-| Discounted Revenue (TPC-H Q19)                      |               2127.23 |
-| Potential Part Promotion (TPC-H Q20)                |               5562.60 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |              10770.84 |
-| Global Sales Opportunity Query (TPC-H Q22)          |               2456.75 |
+| Pricing Summary Report (TPC-H Q1)                   |               3303.77 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |               4396.74 |
+| Shipping Priority (TPC-H Q3)                        |               2198.75 |
+| Order Priority Checking Query (TPC-H Q4)            |               5563.13 |
+| Local Supplier Volume (TPC-H Q5)                    |               1919.73 |
+| Forecasting Revenue Change (TPC-H Q6)               |                671.14 |
+| Volume Shipping Query (TPC-H Q7)                    |              10830.87 |
+| National Market Share (TPC-H Q8)                    |               1658.93 |
+| Product Type Profit Measure (TPC-H Q9)              |               5301.58 |
+| Returned Item Reporting Query (TPC-H Q10)           |               4893.75 |
+| Important Stock Identification (TPC-H Q11)          |               1105.09 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |               1495.39 |
+| Customer Distribution (TPC-H Q13)                   |              12915.39 |
+| Promotion Effect Query (TPC-H Q14)                  |               1062.06 |
+| Top Supplier Query (TPC-H Q15)                      |                639.77 |
+| Parts/Supplier Relationship (TPC-H Q16)             |               1204.71 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |               3672.33 |
+| Large Volume Customer (TPC-H Q18)                   |               2964.53 |
+| Discounted Revenue (TPC-H Q19)                      |               1012.88 |
+| Potential Part Promotion (TPC-H Q20)                |               6922.03 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |              11384.01 |
+| Global Sales Opportunity Query (TPC-H Q22)          |               2667.45 |
 
 ### Errors (failed queries)
 
@@ -128,7 +131,7 @@ No warnings
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| mariadbcs-1-1-1-1 |      1029.66 |      1.80 |           2.04 |                  6.57 |
+| mariadbcs-1-1-1-1 |      1174.54 |      6.52 |           6.14 |                 10.73 |
 
 ### Loading phase: component data generator
 
@@ -140,27 +143,27 @@ No warnings
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| mariadbcs-1-1-1-1 |        18.99 |      0.11 |           0.03 |                 10.40 |
+| mariadbcs-1-1-1-1 |        17.82 |      0.07 |           0.03 |                 10.39 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| mariadbcs-1-1-1-1 |       726.07 |     15.24 |          12.43 |                 17.06 |
+| mariadbcs-1-1-1-1 |      1495.69 |     22.40 |          16.67 |                 20.77 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| mariadbcs-1-1-1-1 |        11.52 |      0.01 |           0.27 |                  0.28 |
+| mariadbcs-1-1-1-1 |        11.93 |      0.37 |           0.38 |                  0.39 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Memory Usage, Working Set [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* Memory Usage incl. Page Cache [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization [CPUs] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU User Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
@@ -169,8 +172,6 @@ No warnings
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loading.log, expected: series exists only while non-zero)
 
@@ -178,6 +179,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]

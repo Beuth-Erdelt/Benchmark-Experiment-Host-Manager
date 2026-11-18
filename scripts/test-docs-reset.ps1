@@ -38,8 +38,7 @@ function Install-YugabyteDB {
     $settings = "gflags.tserver.ysql_enable_packed_row=true,gflags.tserver.ysql_max_connections=1280,resource.master.limits.cpu=2,resource.master.limits.memory=16Gi,resource.master.requests.cpu=2,resource.master.requests.memory=16Gi,resource.tserver.limits.cpu=8,resource.tserver.limits.memory=16Gi,resource.tserver.requests.cpu=8,resource.tserver.requests.memory=16Gi,storage.ephemeral=true,preflight.skipUlimit=true,enableLoadBalancer=true"
     helm install bexhoma yugabytedb/yugabyte --version 2025.2.7 --set $settings
 
-    Write-Host "Waiting 60s for pods to start..."
-    Start-Sleep -Seconds 60
+    if (-not (Wait-YugabyteDB)) { Write-Host "WARNING: YugabyteDB is not ready, the next experiment will probably fail" }
 }
 
 function Remove-YugabyteDB {

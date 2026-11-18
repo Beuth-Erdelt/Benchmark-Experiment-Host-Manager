@@ -444,7 +444,12 @@ class LoadingCoordinator:
         :param experiment: Experiment code.
         :param configuration: DBMS configuration name.
         :param interval: Seconds between two checks of the label.
-        :return: False if the loading timeout ran out before the label was set.
+        If a Schema script failed (label ``errors_schema``), the load ends with
+        :meth:`fail_loading_fatally`, so the experiment aborts with that reason
+        instead of starting loaders that fail the same way.
+
+        :return: False if the loading timeout ran out before the label was set,
+            or a Schema script failed.
         :rtype: bool
         """
         cfg = self._config
@@ -455,7 +460,16 @@ class LoadingCoordinator:
         while True:
             pod_labels = cfg.experiment.cluster.get_pods_labels(
                 app=app, component='sut', experiment=experiment, configuration=configuration)
-            if any(labels.get('schema') == 'True' for labels in pod_labels.values()):
+            done = [labels for labels in pod_labels.values() if labels.get('schema') == 'True']
+            if done:
+                failed = loading_script_errors(done[0]).get('schema', 0)
+                if failed:
+                    # the loaders need what the scripts create (and usually the same
+                    # connection): starting them only turns this into a loader failure
+                    reason = "{} Schema script(s) failed (see *-loading-*.stderr.log)".format(failed)
+                    print("{:30s}: {}, loading jobs not started".format(configuration, reason))
+                    self.fail_loading_fatally(reason)
+                    return False
                 break
             if cfg.loading_finished:
                 # start_exec() could not upload the scripts: no label will come

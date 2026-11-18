@@ -73,6 +73,23 @@ class WaitForSchemaTest(unittest.TestCase):
         self.assertIn('WARNING', out.getvalue())
         self.assertIsNotNone(loader._config.loading_started_at)
 
+    def test_failed_schema_script_ends_the_load(self):
+        """A failed Schema script (e.g. connection refused) aborts before the loaders start."""
+        loader, calls = self._loader([{'sut': {'schema': 'True', 'errors_schema': '1'}}])
+        loader._config.loading_failed = []
+        with mock.patch('bexhoma.configurations.loading.time.sleep'), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            self.assertFalse(loader.wait_for_schema(app='a', experiment='1', configuration='c'))
+        self.assertIn('1 Schema script(s) failed', out.getvalue())
+        self.assertIn('Schema script(s) failed', loader._config.loading_failed_fatal)
+        self.assertTrue(loader._config.loading_finished)
+
+    def test_no_schema_errors_label_zero(self):
+        loader, calls = self._loader([{'sut': {'schema': 'True', 'errors_schema': '0'}}])
+        with mock.patch('bexhoma.configurations.loading.time.sleep'), \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertTrue(loader.wait_for_schema(app='a', experiment='1', configuration='c'))
+
     def test_no_jobs_after_timeout(self):
         cfg = mock.Mock()
         cfg.appname, cfg.code, cfg.configuration = 'bexhoma', '1', 'MySQL-1'

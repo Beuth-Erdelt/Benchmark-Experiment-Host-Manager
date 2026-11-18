@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1793491402
-Experiment                    : starts at 2026-11-01 01:03:22.148242 (186792.0943455)
+Experiment                    : has code 1794823279
+Experiment                    : starts at 2026-11-16 11:01:20.015899 (84751.8837226)
 Experiment                    : This experiment compares run time and resource consumption of SSB queries in different DBMS.
 Schema is the flat table lineorder_flat (-xsv flat).
 SSB (SF=1) data is loaded and benchmark is executed.
@@ -12,7 +12,7 @@ Query ordering is Q1.1 - Q4.3.
 Timeout per query is 1800. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
 Import sets statistics recomputation after loading.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.11.
+Experiment uses bexhoma version 0.11.18.
 System metrics are monitored by sidecar containers.
 Experiment is limited to DBMS ['MariaDBCS'].
 Import is handled by 1 processes (pods).
@@ -30,136 +30,142 @@ MariaDBCS-1                   : deployments ['sut']
 MariaDBCS-1                   : stateful sets []
 MariaDBCS-1                   : pvcs ['sut']
 MariaDBCS-1                   : found labels on pvc = []
-MariaDBCS-1                   : name of SUT pods = bexhoma-sut-mariadbcs-1-1793491402
-MariaDBCS-1                   : name of SUT service = bexhoma-sut-mariadbcs-1-1793491402
+MariaDBCS-1                   : name of SUT pods = bexhoma-sut-mariadbcs-1-1794823279
+MariaDBCS-1                   : name of SUT service = bexhoma-sut-mariadbcs-1-1794823279
 MariaDBCS-1                   : name of SUT PVC name = bexhoma-storage-mc-nvme-ssb-flat-1
 MariaDBCS-1                   : storage bexhoma-storage-mc-nvme-ssb-flat-1 should be removed
 - waiting 10s -               : done
 MariaDBCS-1                   : storage bexhoma-storage-mc-nvme-ssb-flat-1 is gone
-Loop pass                     : took 12.0s (1 kubectl calls 0.7s, 12 API requests 0.8s)
+Loop pass                     : took 12.9s (1 kubectl calls 1.1s, 12 API requests 0.8s)
 - waiting 30s -               : done
 MariaDBCS-1                   : waits for health check to succeed
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.8s)
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MariaDBCS-1                   : is not loaded yet
-MariaDBCS-1                   : will start loading but not before 2026-11-01 00:05:37 (that is in 60 secs)
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 16 API requests 1.0s)
+MariaDBCS-1                   : will start loading but not before 2026-11-16 10:03:38 (that is in 60 secs)
+Loop pass                     : took 3.8s (0 kubectl calls 0.0s, 16 API requests 0.5s)
 - waiting 30s -               : done
 MariaDBCS-1                   : is not loaded yet
-MariaDBCS-1                   : will start loading but not before 2026-11-01 00:05:37
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 13 API requests 0.7s)
+MariaDBCS-1                   : will start loading but not before 2026-11-16 10:03:38
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 13 API requests 0.4s)
 - waiting 30s -               : done
 MariaDBCS-1                   : is not loaded yet
 MariaDBCS-1                   : load durability relaxed, scripts []
-MariaDBCS-1                   : connect to pod bexhoma-sut-mariadbcs-1-1793491402-66d9b795c4-sth5z to load scripts
+MariaDBCS-1                   : connect to pod bexhoma-sut-mariadbcs-1-1794823279-564fbbfbf8-65jbm to load scripts
 MariaDBCS-1                   : list of pvcs ['bexhoma-storage-mc-nvme-ssb-flat-1']
 MariaDBCS-1                   : will be labeling bexhoma-storage-mc-nvme-ssb-flat-1
 MariaDBCS-1                   : start asynch loading scripts of type schema
 MariaDBCS-1                   : waits for the Schema scripts (schema=True) before starting the loading jobs
-MariaDBCS-1                   : Schema scripts done after 4s
+MariaDBCS-1                   : Schema scripts done after 6s
 MariaDBCS-1                   : is loading
-Loop pass                     : took 10.5s (5 kubectl calls 3.7s, 34 API requests 2.5s)
+Loop pass                     : took 16.3s (5 kubectl calls 6.9s, 36 API requests 2.5s)
 - waiting 30s -               : done
 MariaDBCS-1                   : is loading
-Loop pass                     : took 3.7s (0 kubectl calls 0.0s, 20 API requests 3.6s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 20 API requests 0.9s)
+- waiting 30s -               : done
+MariaDBCS-1                   : is loading
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 20 API requests 0.7s)
+- waiting 30s -               : done
+MariaDBCS-1                   : is loading
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 20 API requests 0.7s)
 - waiting 30s -               : done
 MariaDBCS-1                   : showing loader times (ssb-loader)
-MariaDBCS-1                   : generator times (start/end per pod and container) [(1793491551, 1793491551)]
-MariaDBCS-1                   : loader times (start/end per pod and container) [(1793491553, 1793491604)]
-MariaDBCS-1                   : total times (start/end per pod and container) [(1793491551, 1793491551), (1793491553, 1793491604)]
+MariaDBCS-1                   : generator times (start/end per pod and container) [(1794823446, 1794823446)]
+MariaDBCS-1                   : loader times (start/end per pod and container) [(1794823447, 1794823552)]
+MariaDBCS-1                   : total times (start/end per pod and container) [(1794823446, 1794823446), (1794823447, 1794823552)]
 MariaDBCS-1                   : generator timespan (first to last [s]) = 0
-MariaDBCS-1                   : loader timespan (first to last [s]) = 51
-MariaDBCS-1                   : total timespan (first to last [s]) = 53
+MariaDBCS-1                   : loader timespan (first to last [s]) = 105
+MariaDBCS-1                   : total timespan (first to last [s]) = 106
 MariaDBCS-1                   : list of pvcs ['bexhoma-storage-mc-nvme-ssb-flat-1']
 MariaDBCS-1                   : will be labeling bexhoma-storage-mc-nvme-ssb-flat-1
-MariaDBCS-1                   : connect to pod bexhoma-sut-mariadbcs-1-1793491402-66d9b795c4-sth5z to load scripts
+MariaDBCS-1                   : connect to pod bexhoma-sut-mariadbcs-1-1794823279-564fbbfbf8-65jbm to load scripts
 MariaDBCS-1                   : list of pvcs ['bexhoma-storage-mc-nvme-ssb-flat-1']
 MariaDBCS-1                   : will be labeling bexhoma-storage-mc-nvme-ssb-flat-1
 MariaDBCS-1                   : start asynch loading scripts of type index
 MariaDBCS-1                   : is loading
-Loop pass                     : took 14.7s (12 kubectl calls 12.6s, 27 API requests 1.7s)
+Loop pass                     : took 16.5s (12 kubectl calls 14.4s, 27 API requests 1.2s)
 - waiting 30s -               : done
 MariaDBCS-1                   : list of pvcs ['bexhoma-storage-mc-nvme-ssb-flat-1']
 MariaDBCS-1                   : will be labeling bexhoma-storage-mc-nvme-ssb-flat-1
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDBCS-1-1793491402 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDBCS-1-1794823279 initialized to 1.
 MariaDBCS-1                   : benchmarks done 0 of 2. This will be client 1
 mariadbcs-1-1-1-1             : start benchmarking (benchmark_run=1)
-MariaDBCS-1                   : reset (reset_1_1_1) completed in 1s
+MariaDBCS-1                   : reset (reset_1_1_1) completed in 2s
 mariadbcs-1-1-1-1             : needs monitoring (common metrics) for deployment sut
-MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793491402-66d9b795c4-sth5z and write to pvc bexhoma-storage-mc-nvme-ssb-flat-1
-MariaDBCS-1                   : benchmarking results in folder C:\data\benchmarks/1793491402
-MariaDBCS-1                   : submitted benchmarker job in 12.1s (5 kubectl calls 3.5s, 30 API requests 5.3s)
+MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1794823279-564fbbfbf8-65jbm and write to pvc bexhoma-storage-mc-nvme-ssb-flat-1
+MariaDBCS-1                   : benchmarking results in folder D:\data\benchmarks/1794823279
+MariaDBCS-1                   : submitted benchmarker job in 9.7s (5 kubectl calls 5.6s, 30 API requests 2.5s)
 mariadbcs-1-1-1-1             : needs monitoring (common metrics) for deployment sut
 mariadbcs-1-1-1-1             : collecting loading metrics of SUT at connection mariadbcs-1-1-1-1
 mariadbcs-1-1-1-1             : collecting metrics of data generator at connection mariadbcs-1-1-1-1
 mariadbcs-1-1-1-1             : collecting metrics of data injector at connection mariadbcs-1-1-1-1
-mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491402(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491402(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793491402-1-.+", namespace="perdelt", container="datagenerator"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793491402-1-.+", namespace="perdelt", container="datagenerator"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793491402-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1793491402-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
+mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1794823279(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1794823279(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1794823279-1-.+", namespace="perdelt", container="datagenerator"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1794823279-1-.+", namespace="perdelt", container="datagenerator"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1794823279-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-mariadbcs-1-1794823279-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadbcs-1-1-1-1             : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+mariadbcs-1-1-1-1             : WARNING metric missing for loader: CPU Throttled Time [s]
+mariadbcs-1-1-1-1             : WARNING metric missing for loader: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+mariadbcs-1-1-1-1             : WARNING metric missing for loader: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: Memory Usage, Working Set [MiB]
+mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: Memory Usage incl. Page Cache [MiB]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU Utilization [CPUs]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU Throttling Rate [s/s]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU Throttled Time [s]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU Utilization Time [s]
-mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU System Time [s]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU User Time [s]
+mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: CPU System Time [s]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
 mariadbcs-1-1-1-1             : WARNING metric missing for datagenerator: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
 mariadbcs-1-1-1-1             : WARNING metric missing for loading: CPU Throttling Rate [s/s]
 mariadbcs-1-1-1-1             : WARNING metric missing for loading: CPU Throttled Time [s]
-mariadbcs-1-1-1-1             : WARNING metric missing for loader: CPU Throttling Rate [s/s]
-mariadbcs-1-1-1-1             : WARNING metric missing for loader: CPU Throttled Time [s]
-mariadbcs-1-1-1-1             : WARNING metric missing for loader: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
-mariadbcs-1-1-1-1             : WARNING metric missing for loader: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
-Experiment                    : fetched 3 metric sets in 5s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 13.4s, 0 API requests 0.0s)
-Loop pass                     : took 30.4s (18 kubectl calls 25.2s, 52 API requests 6.9s)
+Experiment                    : fetched 3 metric sets in 5s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 11.5s, 0 API requests 0.0s)
+Loop pass                     : took 28.5s (18 kubectl calls 26.9s, 54 API requests 4.1s)
 - waiting 30s -               : done
-mariadbcs-1-1-1-1             : wrote benchmarking_timespans to /data/benchmarks/1793491402/mariadbcs-1-1-1-1.config
+mariadbcs-1-1-1-1             : wrote benchmarking_timespans to D:/data/benchmarks/1794823279/mariadbcs-1-1-1-1.config
 mariadbcs-1-1-1-1             : showing benchmarker times
-mariadbcs-1-1-1-1             : benchmarker timespan job from 1793491677 to 1793491720
-mariadbcs-1-1-1-1             : benchmarker timespan pods from 1793491690 to 1793491700
-mariadbcs-1-1-1-1             : benchmarker timespan (start to end single container [s]) = 10
-mariadbcs-1-1-1-1             : benchmarker times (start/end per pod and container) = [(1793491690, 1793491700)]
-mariadbcs-1-1-1-1             : found and updated times {'benchmarker': [(1793491690, 1793491700)]}
+mariadbcs-1-1-1-1             : benchmarker timespan job from 1794823623 to 1794823667
+mariadbcs-1-1-1-1             : benchmarker timespan pods from 1794823630 to 1794823638
+mariadbcs-1-1-1-1             : benchmarker timespan (start to end single container [s]) = 8
+mariadbcs-1-1-1-1             : benchmarker times (start/end per pod and container) = [(1794823630, 1794823638)]
+mariadbcs-1-1-1-1             : found and updated times {'benchmarker': [(1794823630, 1794823638)]}
 mariadbcs-1-1-1-1             : needs monitoring (common metrics) for deployment sut
 mariadbcs-1-1-1-1             : collecting execution metrics of SUT at connection mariadbcs-1-1-1-1
 mariadbcs-1-1-1-1             : collecting metrics of benchmarker at connection mariadbcs-1-1-1-1
-MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793491402-66d9b795c4-sth5z and write to pvc bexhoma-storage-mc-nvme-ssb-flat-1
-mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491402(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491402(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793491402-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793491402-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
-mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: Memory Usage incl. Page Cache [MiB]
+MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1794823279-564fbbfbf8-65jbm and write to pvc bexhoma-storage-mc-nvme-ssb-flat-1
+mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1794823279(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1794823279(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadbcs-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1794823279-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1794823279-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: Memory Usage, Working Set [MiB]
 mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: CPU Utilization [CPUs]
-mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: CPU User Time [s]
+mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: Memory Usage incl. Page Cache [MiB]
+mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: CPU System Time [s]
-mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: CPU Utilization Time [s]
 mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: CPU User Time [s]
+mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: CPU Utilization Time [s]
 mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: Network Tx Total [MiB]
-mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
 mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: Network Rx Total [MiB]
+mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
 mariadbcs-1-1-1-1             : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
 mariadbcs-1-1-1-1             : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 mariadbcs-1-1-1-1             : WARNING metric missing for benchmarking: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 6.7s, 0 API requests 0.0s)
-Loop pass                     : took 9.5s (9 kubectl calls 10.1s, 26 API requests 1.9s)
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.8s, 0 API requests 0.0s)
+Loop pass                     : took 14.1s (9 kubectl calls 15.2s, 26 API requests 1.6s)
 MariaDBCS-1                   : can be stopped
-MariaDBCS-1                   : had 0 restarts at worker bexhoma-sut-mariadbcs-1-1793491402-66d9b795c4-sth5z
-Loop pass                     : took 3.8s (3 kubectl calls 1.8s, 31 API requests 1.7s)
+MariaDBCS-1                   : had 0 restarts at worker bexhoma-sut-mariadbcs-1-1794823279-564fbbfbf8-65jbm
+Loop pass                     : took 4.8s (3 kubectl calls 3.1s, 31 API requests 1.2s)
 - waiting 30s -               : done
 MariaDBCS-1                   : starts again
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 7 API requests 0.5s)
+Loop pass                     : took 0.3s (0 kubectl calls 0.0s, 7 API requests 0.3s)
 MariaDBCS-1                   : will start now
 MariaDBCS-1                   : deployments ['sut']
 MariaDBCS-1                   : stateful sets []
 MariaDBCS-1                   : pvcs ['sut']
 MariaDBCS-1                   : list of pvcs ['bexhoma-storage-mc-nvme-ssb-flat-1']
 MariaDBCS-1                   : storage bexhoma-storage-mc-nvme-ssb-flat-1 exists
-MariaDBCS-1                   : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '5', 'time_ingested': '51', 'time_initschema': '2', 'time_initstatistics': '2', 'time_loading': '61', 'time_loading_end': '1793491631', 'time_loading_start': '1793491542', 'time_schema': '3'}
-MariaDBCS-1                   : name of SUT pods = bexhoma-sut-mariadbcs-1-1793491402
-MariaDBCS-1                   : name of SUT service = bexhoma-sut-mariadbcs-1-1793491402
+MariaDBCS-1                   : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '8', 'time_ingested': '105', 'time_initschema': '2', 'time_initstatistics': '4', 'time_loading': '118', 'time_loading_end': '1794823582', 'time_loading_start': '1794823426', 'time_schema': '4'}
+MariaDBCS-1                   : name of SUT pods = bexhoma-sut-mariadbcs-1-1794823279
+MariaDBCS-1                   : name of SUT service = bexhoma-sut-mariadbcs-1-1794823279
 MariaDBCS-1                   : name of SUT PVC name = bexhoma-storage-mc-nvme-ssb-flat-1
 MariaDBCS-1                   : loading values taken from the volume: script=Schema_flat, indexing=Statistics_flat
 MariaDBCS-1                   : copied label data = True
@@ -167,70 +173,70 @@ MariaDBCS-1                   : copied label index = True
 MariaDBCS-1                   : copied label loaded = True
 MariaDBCS-1                   : copied label schema = True
 MariaDBCS-1                   : copied label time_generated = 0
-MariaDBCS-1                   : copied label time_index = 5
-MariaDBCS-1                   : copied label time_ingested = 51
+MariaDBCS-1                   : copied label time_index = 8
+MariaDBCS-1                   : copied label time_ingested = 105
 MariaDBCS-1                   : copied label time_initschema = 2
-MariaDBCS-1                   : copied label time_initstatistics = 2
-MariaDBCS-1                   : copied label time_loading = 61
-MariaDBCS-1                   : copied label time_loading_end = 1793491631
-MariaDBCS-1                   : copied label time_loading_start = 1793491542
-MariaDBCS-1                   : copied label time_schema = 3
+MariaDBCS-1                   : copied label time_initstatistics = 4
+MariaDBCS-1                   : copied label time_loading = 118
+MariaDBCS-1                   : copied label time_loading_end = 1794823582
+MariaDBCS-1                   : copied label time_loading_start = 1794823426
+MariaDBCS-1                   : copied label time_schema = 4
 MariaDBCS-1                   : loading is set to finished
-Loop pass                     : took 1.6s (1 kubectl calls 0.7s, 12 API requests 0.8s)
+Loop pass                     : took 1.8s (1 kubectl calls 1.1s, 12 API requests 0.5s)
 - waiting 30s -               : done
 MariaDBCS-1                   : waits for health check to succeed
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 15 API requests 0.8s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 15 API requests 0.7s)
 - waiting 30s -               : done
-MariaDBCS-1                   : will start benchmarking but not before 2026-11-01 00:11:24 (that is in 60 secs)
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 15 API requests 1.0s)
+MariaDBCS-1                   : will start benchmarking but not before 2026-11-16 10:10:37 (that is in 60 secs)
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 15 API requests 0.5s)
 - waiting 30s -               : done
-MariaDBCS-1                   : will start benchmarking but not before 2026-11-01 00:11:24
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 12 API requests 0.6s)
+MariaDBCS-1                   : will start benchmarking but not before 2026-11-16 10:10:37
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 12 API requests 0.3s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MariaDBCS-1-1793491402 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MariaDBCS-1-1794823279 initialized to 1.
 MariaDBCS-1                   : benchmarks done 1 of 2. This will be client 1
 mariadbcs-1-2-1-1             : start benchmarking (benchmark_run=1)
-MariaDBCS-1                   : reset (reset_2_1_1) completed in 1s
+MariaDBCS-1                   : reset (reset_2_1_1) completed in 2s
 mariadbcs-1-2-1-1             : needs monitoring (common metrics) for deployment sut
-MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793491402-697cb9f897-f5287 and write to pvc bexhoma-storage-mc-nvme-ssb-flat-1
-MariaDBCS-1                   : benchmarking results in folder C:\data\benchmarks/1793491402
-MariaDBCS-1                   : submitted benchmarker job in 5.6s (3 kubectl calls 2.2s, 27 API requests 3.1s)
-Loop pass                     : took 12.7s (9 kubectl calls 7.4s, 47 API requests 4.6s)
+MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1794823279-77cf7774b4-ngq8c and write to pvc bexhoma-storage-mc-nvme-ssb-flat-1
+MariaDBCS-1                   : benchmarking results in folder D:\data\benchmarks/1794823279
+MariaDBCS-1                   : submitted benchmarker job in 6.4s (3 kubectl calls 3.5s, 27 API requests 2.3s)
+Loop pass                     : took 16.0s (9 kubectl calls 11.9s, 48 API requests 3.5s)
 - waiting 30s -               : done
-mariadbcs-1-2-1-1             : wrote benchmarking_timespans to /data/benchmarks/1793491402/mariadbcs-1-2-1-1.config
+mariadbcs-1-2-1-1             : wrote benchmarking_timespans to D:/data/benchmarks/1794823279/mariadbcs-1-2-1-1.config
 mariadbcs-1-2-1-1             : showing benchmarker times
-mariadbcs-1-2-1-1             : benchmarker timespan job from 1793491897 to 1793491930
-mariadbcs-1-2-1-1             : benchmarker timespan pods from 1793491906 to 1793491915
-mariadbcs-1-2-1-1             : benchmarker timespan (start to end single container [s]) = 9
-mariadbcs-1-2-1-1             : benchmarker times (start/end per pod and container) = [(1793491906, 1793491915)]
-mariadbcs-1-2-1-1             : found and updated times {'benchmarker': [(1793491906, 1793491915)]}
+mariadbcs-1-2-1-1             : benchmarker timespan job from 1794823853 to 1794823888
+mariadbcs-1-2-1-1             : benchmarker timespan pods from 1794823864 to 1794823874
+mariadbcs-1-2-1-1             : benchmarker timespan (start to end single container [s]) = 10
+mariadbcs-1-2-1-1             : benchmarker times (start/end per pod and container) = [(1794823864, 1794823874)]
+mariadbcs-1-2-1-1             : found and updated times {'benchmarker': [(1794823864, 1794823874)]}
 mariadbcs-1-2-1-1             : needs monitoring (common metrics) for deployment sut
 mariadbcs-1-2-1-1             : collecting execution metrics of SUT at connection mariadbcs-1-2-1-1
 mariadbcs-1-2-1-1             : collecting metrics of benchmarker at connection mariadbcs-1-2-1-1
-MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1793491402-697cb9f897-f5287 and write to pvc bexhoma-storage-mc-nvme-ssb-flat-1
-mariadbcs-1-2-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491402(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1793491402(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mariadbcs-1-2-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793491402-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1793491402-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+MariaDBCS-1                   : get size via pod bexhoma-sut-mariadbcs-1-1794823279-77cf7774b4-ngq8c and write to pvc bexhoma-storage-mc-nvme-ssb-flat-1
+mariadbcs-1-2-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1794823279(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mariadbcs-1-1794823279(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mariadbcs-1-2-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1794823279-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mariadbcs-1-1794823279-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mariadbcs-1-2-1-1             : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 mariadbcs-1-2-1-1             : WARNING metric missing for benchmarking: CPU Throttled Time [s]
 mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: Memory Usage, Working Set [MiB]
-mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: Memory Usage incl. Page Cache [MiB]
-mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: CPU Utilization [CPUs]
 mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: CPU Utilization [CPUs]
+mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: Memory Usage incl. Page Cache [MiB]
+mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: CPU Throttled Time [s]
 mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: CPU Utilization Time [s]
 mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: CPU User Time [s]
 mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: CPU System Time [s]
-mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: Network Tx Total [MiB]
 mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: Network Rx Total [MiB]
 mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
-mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: Network Tx Total [MiB]
-mariadbcs-1-2-1-1             : WARNING metric missing for benchmarker: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
-Experiment                    : fetched 2 metric sets in 5s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 8.1s, 0 API requests 0.0s)
-Loop pass                     : took 9.9s (9 kubectl calls 11.8s, 24 API requests 1.2s)
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.2s, 0 API requests 0.0s)
+Loop pass                     : took 13.4s (9 kubectl calls 14.7s, 24 API requests 1.3s)
 MariaDBCS-1                   : can be stopped
-MariaDBCS-1                   : had 0 restarts at worker bexhoma-sut-mariadbcs-1-1793491402-697cb9f897-f5287
-Loop pass                     : took 3.4s (3 kubectl calls 1.9s, 29 API requests 1.3s)
-Experiment                    : ends at 2026-11-01 01:12:22.072856 (187332.017286) - 539.92s total
+MariaDBCS-1                   : had 0 restarts at worker bexhoma-sut-mariadbcs-1-1794823279-77cf7774b4-ngq8c
+Loop pass                     : took 4.5s (3 kubectl calls 3.2s, 29 API requests 0.9s)
+Experiment                    : ends at 2026-11-16 11:11:42.475636 (85374.3352656) - 622.45s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
@@ -243,8 +249,8 @@ Result workflow complete
 ### Workload
 SSB Queries SF=1
 * Type: ssb
-* Duration: 540s 
-* Code: 1793491402
+* Duration: 623s 
+* Code: 1794823279
 * This includes the 13 queries of the Star Schema Benchmark (O'Neil et al., revision 3, 2009) with the constants of the specification (Q2.3: brand 'MFGR#2239', as used by ClickHouse and Doris; the specification's text and SQL disagree there). The queries read the denormalized table lineorder_flat; year, month and week come from lo_orderdate.
 * This experiment compares run time and resource consumption of SSB queries in different DBMS.
   * Schema is the flat table lineorder_flat (-xsv flat).
@@ -254,7 +260,7 @@ SSB Queries SF=1
   * Timeout per query is 1800. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
   * Import sets statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.11.
+  * Experiment uses bexhoma version 0.11.18.
   * System metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['MariaDBCS'].
   * Import is handled by 1 processes (pods).
@@ -269,16 +275,16 @@ SSB Queries SF=1
 
 ### Connections
 * mariadbcs-1-1-1-1-1 uses docker image mariadb:12.3.3
-  * RAM:2164173156352
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-147-generic
-  * node:cl-worker36
-  * disk:669929
-  * datadisk:797
+  * RAM:1077381263360
+  * CPU:AMD EPYC 7742 64-Core Processor
+  * Cores:256
+  * host:6.8.0-137-generic
+  * node:cl-worker27
+  * disk:906316
+  * datadisk:798
   * volume_size:20G
   * volume_used:959M
-  * cpu_list:0-223
+  * cpu_list:0-255
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin']
   * requests_cpu:4
   * requests_memory:16Gi
@@ -287,18 +293,18 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793491402
+    * code:1794823279
 * mariadbcs-1-2-1-1-1 uses docker image mariadb:12.3.3
-  * RAM:2164173156352
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-147-generic
-  * node:cl-worker36
-  * disk:670149
-  * datadisk:797
+  * RAM:1077381263360
+  * CPU:AMD EPYC 7742 64-Core Processor
+  * Cores:256
+  * host:6.8.0-137-generic
+  * node:cl-worker27
+  * disk:906315
+  * datadisk:798
   * volume_size:20G
   * volume_used:959M
-  * cpu_list:0-223
+  * cpu_list:0-255
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin']
   * requests_cpu:4
   * requests_memory:16Gi
@@ -307,7 +313,7 @@ SSB Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793491402
+    * code:1794823279
 
 ### Inherited Loading
 * loading skipped, loading times copied from an earlier repetition: MariaDBCS-1-2
@@ -315,9 +321,12 @@ SSB Queries SF=1
 ### Data Parameters of Reused Volumes
 * MariaDBCS-1: loading values of the volume: script=Schema_flat, indexing=Statistics_flat
 
+### Ingestion
+* MariaDBCS-1: 1 of 1 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-mariadbcs-1-1793491402-66d9b795c4-sth5z: 0
-* bexhoma-sut-mariadbcs-1-1793491402-697cb9f897-f5287: 0
+* bexhoma-sut-mariadbcs-1-1794823279-564fbbfbf8-65jbm: 0
+* bexhoma-sut-mariadbcs-1-1794823279-77cf7774b4-ngq8c: 0
 
 ### Workflow
 
@@ -335,26 +344,26 @@ SSB Queries SF=1
 
 #### Per Run
 
-|               |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   terminals | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
-|:--------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|------------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MariaDBCS-1-1 |                1 |    1 |       61.00 |           3.00 |            0.00 |         51.00 |            5.00 |              1 |           0 |             | None           |             0 | False         |               59.02 | False               |
-| MariaDBCS-1-2 |                2 |    1 |       61.00 |           3.00 |            0.00 |         51.00 |            5.00 |              1 |           0 |             | None           |             0 | False         |               59.02 | True                |
+| DBMS          |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:--------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| MariaDBCS-1-1 |                1 |    1 |      118.00 |           4.00 |            0.00 |        105.00 |            8.00 |              1 |         0 |             | None           |             0 | False         |               30.51 | False               |
+| MariaDBCS-1-2 |                2 |    1 |      118.00 |           4.00 |            0.00 |        105.00 |            8.00 |              1 |         0 |             | None           |             0 | False         |               30.51 | True                |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                | configuration   | phase           | job               |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id | pod                 |
-|:--------------------|:----------------|:----------------|:------------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|:--------------------|
-| mariadbcs-1-1-1-1-1 | MariaDBCS-1     | mariadbcs-1-1-1 | mariadbcs-1-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         10 |            0.25 |            14473.89 |           4680.00 |          -1 | mariadbcs-1-1-1-1-1 |
-| mariadbcs-1-2-1-1-1 | MariaDBCS-1     | mariadbcs-1-2-1 | mariadbcs-1-2-1-1 |                2 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          9 |            0.28 |            12707.34 |           5200.00 |          -1 | mariadbcs-1-2-1-1-1 |
+| connection          | phase           | job               |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+|:--------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
+| mariadbcs-1-1-1-1-1 | mariadbcs-1-1-1 | mariadbcs-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               13 |                  13 |          8 |            0.30 |            12065.51 |           5850.00 |          -1 |
+| mariadbcs-1-2-1-1-1 | mariadbcs-1-2-1 | mariadbcs-1-2-1-1 |                2 |        1 |               1 |       1 | 1.00 |               13 |                  13 |         10 |            0.31 |            11697.67 |           4680.00 |          -1 |
 
 #### Per Phase
 
-|                 | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
+| DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:----------------|:----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mariadbcs-1-1-1 | mariadbcs-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         10 |            0.25 |            14473.89 |           4680.00 |          -1 |
-| mariadbcs-1-2-1 | mariadbcs-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          9 |            0.28 |            12707.34 |           5200.00 |          -1 |
+| mariadbcs-1-1-1 | mariadbcs-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               13 |                  13 |          8 |            0.30 |            12065.51 |           5850.00 |          -1 |
+| mariadbcs-1-2-1 | mariadbcs-1-2-1 |                2 |        1 |               1 |           1 | 1.00 |               13 |                  13 |         10 |            0.31 |            11697.67 |           4680.00 |          -1 |
 
 #### Query Completion per Phase
 
@@ -369,25 +378,25 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 
 | phase           | job               |   experiment_run |   client |   benchmark_run |   time_reset | reset_failed   |
 |:----------------|:------------------|-----------------:|---------:|----------------:|-------------:|:---------------|
-| mariadbcs-1-1-1 | mariadbcs-1-1-1-1 |                1 |        1 |               1 |         1.00 |                |
-| mariadbcs-1-2-1 | mariadbcs-1-2-1-1 |                2 |        1 |               1 |         1.00 |                |
+| mariadbcs-1-1-1 | mariadbcs-1-1-1-1 |                1 |        1 |               1 |         2.00 |                |
+| mariadbcs-1-2-1 | mariadbcs-1-2-1-1 |                2 |        1 |               1 |         2.00 |                |
 
 ### Latency of Timer Execution [ms]
 | Queries                                                                                |   mariadbcs-1-1-1-1-1 |   mariadbcs-1-2-1-1-1 |
 |:---------------------------------------------------------------------------------------|----------------------:|----------------------:|
-| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                632.72 |                628.96 |
-| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                 27.96 |                 17.88 |
-| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                 17.41 |                 35.57 |
-| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                509.10 |                623.35 |
-| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                522.34 |                741.88 |
-| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                370.28 |                422.51 |
-| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                536.17 |                555.79 |
-| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                521.72 |                562.26 |
-| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                170.35 |                205.73 |
-| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                 90.67 |                 89.04 |
-| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                515.32 |                554.63 |
-| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                383.37 |                379.24 |
-| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                538.53 |                804.75 |
+| Q1.1: Revenue increase from eliminating discounts in a year (SSB Q1.1)                 |                866.53 |                845.45 |
+| Q1.2: Revenue increase from eliminating discounts in a month (SSB Q1.2)                |                 24.03 |                 33.06 |
+| Q1.3: Revenue increase from eliminating discounts in a week (SSB Q1.3)                 |                 20.91 |                 18.99 |
+| Q2.1: Revenue by year and brand for a product category and supplier region (SSB Q2.1)  |                634.02 |                669.85 |
+| Q2.2: Revenue by year and brand for a brand range and supplier region (SSB Q2.2)       |                664.76 |                648.76 |
+| Q2.3: Revenue by year for one brand and supplier region (SSB Q2.3)                     |                499.78 |                549.22 |
+| Q3.1: Revenue by customer and supplier nation and year within a region (SSB Q3.1)      |                721.28 |                751.42 |
+| Q3.2: Revenue by customer and supplier city and year within a nation (SSB Q3.2)        |                701.63 |                598.65 |
+| Q3.3: Revenue by customer and supplier city and year for two cities (SSB Q3.3)         |                210.15 |                214.55 |
+| Q3.4: Revenue by customer and supplier city for two cities in one month (SSB Q3.4)     |                 77.56 |                 80.49 |
+| Q4.1: Profit by year and customer nation for a region and two manufacturers (SSB Q4.1) |                631.56 |                726.73 |
+| Q4.2: Profit by year, supplier nation and category for two years (SSB Q4.2)            |                472.95 |                498.74 |
+| Q4.3: Profit by year, supplier city and brand for a nation and category (SSB Q4.3)     |                657.41 |                623.07 |
 
 ### Errors (failed queries)
 
@@ -403,7 +412,7 @@ No warnings
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| mariadbcs-1-1-1-1 |        98.19 |      2.04 |           2.15 |                  3.03 |
+| mariadbcs-1-1-1-1 |       154.23 |      1.79 |           2.24 |                  2.96 |
 
 ### Loading phase: component data generator
 
@@ -415,14 +424,14 @@ No warnings
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| mariadbcs-1-1-1-1 |         1.55 |      0.03 |           0.00 |                  0.00 |
+| mariadbcs-1-1-1-1 |         5.01 |      0.07 |           0.01 |                  1.95 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS              | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|:-------------|----------:|---------------:|----------------------:|
-| mariadbcs-1-1-1-1 | n/a          |      0.07 |           3.65 |                  4.62 |
-| mariadbcs-1-2-1-1 | n/a          |      1.17 |           1.72 |                  1.91 |
+| mariadbcs-1-1-1-1 | n/a          |      0.24 |           3.89 |                  4.87 |
+| mariadbcs-1-2-1-1 | n/a          |      1.42 |           1.63 |                  1.82 |
 
 ### Benchmarking phase: component benchmarker
 
@@ -432,48 +441,48 @@ No warnings
 | mariadbcs-1-2-1-1 | n/a          |      0.00 |           0.00 |                  0.00 |
 
 ### Missing Monitoring Metrics
-* CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* Memory Usage incl. Page Cache [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
 * Memory Usage, Working Set [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
 * CPU Utilization [CPUs] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU User Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Memory Usage incl. Page Cache [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU System Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU Utilization Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU User Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU Utilization Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
 * Network Tx Total [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * Network Rx Total [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* Memory Usage incl. Page Cache [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Memory Usage, Working Set [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization [CPUs] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU System Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU User Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU System Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mariadbcs-1-1-1-1 (bexhoma-metrics-mariadbcs-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * Memory Usage, Working Set [MiB] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Memory Usage incl. Page Cache [MiB] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU Utilization [CPUs] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Memory Usage incl. Page Cache [MiB] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU Throttled Time [s] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Utilization Time [s] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
 * CPU User Time [s] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
 * CPU System Time [s] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU Throttled Time [s] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Network Tx Total [MiB] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
 * Network Rx Total [MiB] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
-* Network Tx Total [MiB] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: phase shorter than scrape interval)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mariadbcs-1-2-1-1 (bexhoma-metrics-mariadbcs-1-2-1-1-benchmarking.log, expected: series exists only while non-zero)
 
@@ -481,6 +490,8 @@ No warnings
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]

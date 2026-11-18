@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 594s 
-* Code: 1793443002
+* Duration: 535s 
+* Code: 1794818794
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -17,7 +17,7 @@ YCSB SF=1
   * Factors for benchmarking are [4]. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.11.
+  * Experiment uses bexhoma version 0.11.18.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['Cassandra'].
@@ -36,66 +36,69 @@ YCSB SF=1
 
 ### Connections
 * cassandracluster-1-1-1-1 uses docker image cassandra:5.0.9
-  * RAM:540590809088
-  * CPU:AMD EPYC 7352 24-Core Processor
-  * Cores:96
-  * host:6.8.0-137-generic
-  * node:cl-worker23
-  * disk:1276698
+  * RAM:1081742753792
+  * CPU:AMD EPYC 7502 32-Core Processor
+  * Cores:128
+  * host:6.8.0-146-generic
+  * node:cl-worker29
+  * disk:1388538
   * datadisk:1
   * volume_size:1.8T
-  * volume_used:1.3T
-  * cpu_list:0-95
+  * volume_used:1.4T
+  * cpu_list:0-127
   * args:['-c', 'while true; do echo hello; sleep 10;done']
   * requests_cpu:4
   * requests_memory:16Gi
   * limits_memory:16Gi
   * worker 0
-    * RAM:2164173156352
-    * CPU:INTEL(R) XEON(R) PLATINUM 8570
-    * Cores:224
-    * host:6.8.0-147-generic
-    * node:cl-worker36
-    * disk:863054
-    * datadisk:379
+    * RAM:1081742753792
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:1388538
+    * datadisk:381
     * volume_size:1.8T
-    * volume_used:843G
-    * cpu_list:0-223
+    * volume_used:1.4T
+    * cpu_list:0-127
   * worker 1
     * RAM:1081853952000
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:539381
+    * disk:642283
     * datadisk:393
     * volume_size:879G
-    * volume_used:527G
+    * volume_used:628G
     * cpu_list:0-127
   * worker 2
-    * RAM:1081742753792
-    * CPU:AMD EPYC 7502 32-Core Processor
-    * Cores:128
-    * host:6.8.0-146-generic
-    * node:cl-worker29
-    * disk:574988
-    * datadisk:417
+    * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
+    * Cores:224
+    * host:6.8.0-147-generic
+    * node:cl-worker36
+    * disk:1088193
+    * datadisk:415
     * volume_size:1.8T
-    * volume_used:562G
-    * cpu_list:0-127
+    * volume_used:1.1T
+    * cpu_list:0-223
   * resources_total: 12.25 CPU, 48.5 GiB RAM requested in 4 pods
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
     * worker: 3 x, 12.0 CPU, 48.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793443002
+    * code:1794818794
     * BEXHOMA_WORKERS:3
 
+### Ingestion
+* CassandraCluster-1: 8 of 8 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-cassandracluster-1-1793443002-67475b988d-29h5c: 0
-* bx-w-cassandracluster-1-1793443002-0: 0
-* bx-w-cassandracluster-1-1793443002-1: 0
-* bx-w-cassandracluster-1-1793443002-2: 0
+* bexhoma-sut-cassandracluster-1-1794818794-779545f4c-jwbjg: 0
+* bx-w-cassandracluster-1-1794818794-0: 0
+* bx-w-cassandracluster-1-1794818794-1: 0
+* bx-w-cassandracluster-1-1794818794-2: 0
 
 ### Workflow
 
@@ -111,42 +114,42 @@ YCSB SF=1
 
 #### Per Connection
 
-| connection                 |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
-|:---------------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| cassandracluster-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        11091.39 |                11270.00 |            125000.00 |                              1860.00 | 1.00 |              319.43 |
-| cassandracluster-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8674.53 |                14410.00 |            125000.00 |                              1871.00 | 1.00 |              249.83 |
-| cassandracluster-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8953.51 |                13961.00 |            125000.00 |                              1842.00 | 1.00 |              257.86 |
-| cassandracluster-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        11137.84 |                11223.00 |            125000.00 |                              1767.00 | 1.00 |              320.77 |
-| cassandracluster-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         8829.55 |                14157.00 |            125000.00 |                              2031.00 | 1.00 |              254.29 |
-| cassandracluster-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                        10641.01 |                11747.00 |            125000.00 |                              1732.00 | 1.00 |              306.46 |
-| cassandracluster-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         9246.93 |                13518.00 |            125000.00 |                              1951.00 | 1.00 |              266.31 |
-| cassandracluster-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |         0.00 |                         9083.64 |                13761.00 |            125000.00 |                              2020.00 | 1.00 |              261.61 |
+| connection                 |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   SF |   Throughput [SF/h] |
+|:---------------------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| cassandracluster-1-1-0-1-1 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         9617.60 |                12997.00 |            125000.00 |                              1401.00 | 1.00 |              276.99 |
+| cassandracluster-1-1-0-1-2 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                        10275.38 |                12165.00 |            125000.00 |                              1315.00 | 1.00 |              295.93 |
+| cassandracluster-1-1-0-1-3 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         9530.34 |                13116.00 |            125000.00 |                              1451.00 | 1.00 |              274.47 |
+| cassandracluster-1-1-0-1-4 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                        11585.87 |                10789.00 |            125000.00 |                              1280.00 | 1.00 |              333.67 |
+| cassandracluster-1-1-0-1-5 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         9344.40 |                13377.00 |            125000.00 |                              1562.00 | 1.00 |              269.12 |
+| cassandracluster-1-1-0-1-6 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         8850.81 |                14123.00 |            125000.00 |                              1524.00 | 1.00 |              254.90 |
+| cassandracluster-1-1-0-1-7 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                         9841.74 |                12701.00 |            125000.00 |                              1405.00 | 1.00 |              283.44 |
+| cassandracluster-1-1-0-1-8 |             1.00 |      8.00 | 24576.00 |        8.00 |     0.00 |                        10762.87 |                11614.00 |            125000.00 |                              1333.00 | 1.00 |              309.97 |
 
 #### Per Run
 
-| DBMS                 |   experiment_run |   threads |    target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:---------------------|-----------------:|----------:|----------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| CassandraCluster-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |         0.00 | 1.00 |              249.83 |                        77658.42 |                14410.00 |           1000000.00 |                              1884.25 |
+| DBMS                 |   experiment_run |   threads |    target |   pod_count |   errors |   SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:---------------------|-----------------:|----------:|----------:|------------:|---------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| CassandraCluster-1-1 |             1.00 |     64.00 | 196608.00 |        8.00 |     0.00 | 1.00 |              254.90 |                        79809.03 |                14123.00 |           1000000.00 |                              1408.88 |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                       | phase                  | job                      | configuration      |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:---------------------------|:-----------------------|:-------------------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| cassandracluster-1-1-1-1-1 | cassandracluster-1-1-1 | cassandracluster-1-1-1-1 | CassandraCluster-1 |                1 |        1 |               1 |       1 |       128 |    65536 |           1 |            0 |                        63057.27 |                79293.00 |            2499474 |                            3419.00 |              2500526 |                              2993.00 |
+| connection                 | phase                  | job                      |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:---------------------------|:-----------------------|:-------------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| cassandracluster-1-1-1-1-1 | cassandracluster-1-1-1 | cassandracluster-1-1-1-1 |                1 |        1 |               1 |       1 |       128 |    65536 |        0 |                        62985.78 |                79383.00 |            2499686 |                            2791.00 |              2500314 |                              2549.00 |
 
 #### Per Phase
 
-| DBMS                   | phase                  |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:-----------------------|:-----------------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| cassandracluster-1-1-1 | cassandracluster-1-1-1 |                1 |       128 |    65536 |               1 |           1 |            0 |                        63057.27 |                79293.00 |            2499474 |                            3419.00 |              2500526 |                              2993.00 |
+| DBMS                   | phase                  |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-----------------------|:-----------------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| cassandracluster-1-1-1 | cassandracluster-1-1-1 |                1 |        1 |               1 |           1 |       128 |    65536 |        0 |                        62985.78 |                79383.00 |            2499686 |                            2791.00 |              2500314 |                              2549.00 |
 
 #### Reset
 
 | phase                  | job                      |   experiment_run |   client |   benchmark_run |   time_reset | reset_failed   |
 |:-----------------------|:-------------------------|-----------------:|---------:|----------------:|-------------:|:---------------|
-| cassandracluster-1-1-1 | cassandracluster-1-1-1-1 |                1 |        1 |               1 |        11.00 |                |
+| cassandracluster-1-1-1 | cassandracluster-1-1-1-1 |                1 |        1 |               1 |         7.00 |                |
 
 ### Monitoring
 
@@ -154,7 +157,7 @@ YCSB SF=1
 
 | DBMS                     |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------------|-------------:|----------:|---------------:|----------------------:|
-| cassandracluster-1-1-1-1 |       324.24 |      9.15 |          14.78 |                 15.65 |
+| cassandracluster-1-1-1-1 |       291.22 |      6.52 |          14.59 |                 15.53 |
 
 ### Loading phase: component loader
 
@@ -166,13 +169,13 @@ YCSB SF=1
 
 | DBMS                     |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------------|-------------:|----------:|---------------:|----------------------:|
-| cassandracluster-1-1-1-1 |       987.96 |     13.21 |          15.63 |                 16.71 |
+| cassandracluster-1-1-1-1 |       687.35 |     10.97 |          15.14 |                 16.22 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS                     |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------------|-------------:|----------:|---------------:|----------------------:|
-| cassandracluster-1-1-1-1 |       375.98 |      7.29 |           1.44 |                  1.45 |
+| cassandracluster-1-1-1-1 |       541.02 |      8.79 |           1.46 |                  1.46 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection cassandracluster-1-1-1-1 (bexhoma-metrics-cassandracluster-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -193,18 +196,20 @@ YCSB SF=1
 
 | DBMS                     |   Read Requests [ops/s] |   Write Requests [ops/s] |   Read Latency p99, Slowest Node [ms] |   Write Latency p99, Slowest Node [ms] |   Read and Write Timeouts [count] |
 |:-------------------------|------------------------:|-------------------------:|--------------------------------------:|---------------------------------------:|----------------------------------:|
-| cassandracluster-1-1-1-1 |                    1.23 |                 20539.60 |                                 51.01 |                                   0.64 |                              0.00 |
+| cassandracluster-1-1-1-1 |                    1.07 |                 22774.37 |                                 42.51 |                                   0.45 |                              0.00 |
 
 #### Benchmarking phase: component worker
 
 | DBMS                     |   Read Requests [ops/s] |   Write Requests [ops/s] |   Read Latency p99, Slowest Node [ms] |   Write Latency p99, Slowest Node [ms] |   Read and Write Timeouts [count] |
 |:-------------------------|------------------------:|-------------------------:|--------------------------------------:|---------------------------------------:|----------------------------------:|
-| cassandracluster-1-1-1-1 |                33858.53 |                 33872.50 |                                  2.30 |                                   0.64 |                              0.00 |
+| cassandracluster-1-1-1-1 |                38318.43 |                 38407.17 |                                  2.30 |                                   0.45 |                              0.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
