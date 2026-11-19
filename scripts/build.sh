@@ -20,6 +20,30 @@ _LOGFILES=()
 
 trap 'rm -rf "$_LOGDIR"' EXIT
 
+# At most this many docker pushes run at the same time; builds are not limited.
+_MAX_PARALLEL_PUSHES=10
+_PUSH_SLOTS="$_LOGDIR/push_slots"
+mkdir -p "$_PUSH_SLOTS"
+
+_push() {
+  # docker push, limited to _MAX_PARALLEL_PUSHES concurrent pushes.
+  # Usage: _push <image:tag>
+  # A slot is a directory; mkdir is atomic, so it works as a lock across
+  # the background subshells. Returns the exit code of docker push.
+  local image="$1" slot rc
+  while true; do
+    for ((slot = 1; slot <= _MAX_PARALLEL_PUSHES; slot++)); do
+      if mkdir "$_PUSH_SLOTS/$slot" 2>/dev/null; then
+        # && / || keep set -e from exiting before the slot is released
+        docker push "$image" && rc=0 || rc=$?
+        rmdir "$_PUSH_SLOTS/$slot"
+        return $rc
+      fi
+    done
+    sleep 2
+  done
+}
+
 _next_log() {
   # Return the log file path for the next job to be registered.
   # Evaluated before the background process is launched, so ${#_PIDS[@]}
@@ -84,7 +108,7 @@ build_and_push_dbmsbenchmarker() {
     set -e
     cd images/evaluator_dbmsbenchmarker
     python create_Dockerfiles.py --version "$dbmsbenchmarker" --image-tag "$version"
-    docker push "bexhoma/evaluator_dbmsbenchmarker:$version"
+    _push "bexhoma/evaluator_dbmsbenchmarker:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/evaluator_dbmsbenchmarker:$version"
 
@@ -92,7 +116,7 @@ build_and_push_dbmsbenchmarker() {
     set -e
     cd images/benchmarker_dbmsbenchmarker
     python create_Dockerfiles.py --version "$dbmsbenchmarker" --image-tag "$version"
-    docker push "bexhoma/benchmarker_dbmsbenchmarker:$version"
+    _push "bexhoma/benchmarker_dbmsbenchmarker:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/benchmarker_dbmsbenchmarker:$version"
 }
@@ -111,7 +135,7 @@ build_and_push_tpcds() {
     set -e
     cd images/tpcds/generator
     docker build -f Dockerfile -t "bexhoma/generator_tpcds:$version" .
-    docker push "bexhoma/generator_tpcds:$version"
+    _push "bexhoma/generator_tpcds:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/generator_tpcds:$version"
 
@@ -119,7 +143,7 @@ build_and_push_tpcds() {
     set -e
     cd images/tpcds/loader_postgresql
     docker build -f Dockerfile -t "bexhoma/loader_tpcds_postgresql:$version" .
-    docker push "bexhoma/loader_tpcds_postgresql:$version"
+    _push "bexhoma/loader_tpcds_postgresql:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpcds_postgresql:$version"
 
@@ -127,7 +151,7 @@ build_and_push_tpcds() {
     set -e
     cd images/tpcds/loader_db2
     docker build -f Dockerfile -t "bexhoma/loader_tpcds_db2:$version" .
-    docker push "bexhoma/loader_tpcds_db2:$version"
+    _push "bexhoma/loader_tpcds_db2:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpcds_db2:$version"
 
@@ -135,7 +159,7 @@ build_and_push_tpcds() {
     set -e
     cd images/tpcds/loader_mysql
     docker build -f Dockerfile -t "bexhoma/loader_tpcds_mysql:$version" .
-    docker push "bexhoma/loader_tpcds_mysql:$version"
+    _push "bexhoma/loader_tpcds_mysql:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpcds_mysql:$version"
 
@@ -143,7 +167,7 @@ build_and_push_tpcds() {
     set -e
     cd images/tpcds/loader_mariadb
     docker build -f Dockerfile -t "bexhoma/loader_tpcds_mariadb:$version" .
-    docker push "bexhoma/loader_tpcds_mariadb:$version"
+    _push "bexhoma/loader_tpcds_mariadb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpcds_mariadb:$version"
 
@@ -151,7 +175,7 @@ build_and_push_tpcds() {
     set -e
     cd images/tpcds/loader_monetdb
     docker build -f Dockerfile -t "bexhoma/loader_tpcds_monetdb:$version" .
-    docker push "bexhoma/loader_tpcds_monetdb:$version"
+    _push "bexhoma/loader_tpcds_monetdb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpcds_monetdb:$version"
 
@@ -159,7 +183,7 @@ build_and_push_tpcds() {
     set -e
     cd images/tpcds/loader_clickhouse
     docker build -f Dockerfile -t "bexhoma/loader_tpcds_clickhouse:$version" .
-    docker push "bexhoma/loader_tpcds_clickhouse:$version"
+    _push "bexhoma/loader_tpcds_clickhouse:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpcds_clickhouse:$version"
 }
@@ -177,7 +201,7 @@ build_and_push_ssb() {
     set -e
     cd images/ssb/generator
     docker build -f Dockerfile -t "bexhoma/generator_ssb:$version" .
-    docker push "bexhoma/generator_ssb:$version"
+    _push "bexhoma/generator_ssb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/generator_ssb:$version"
 
@@ -185,7 +209,7 @@ build_and_push_ssb() {
     set -e
     cd images/ssb/loader_postgresql
     docker build -f Dockerfile -t "bexhoma/loader_ssb_postgresql:$version" .
-    docker push "bexhoma/loader_ssb_postgresql:$version"
+    _push "bexhoma/loader_ssb_postgresql:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_ssb_postgresql:$version"
 
@@ -193,7 +217,7 @@ build_and_push_ssb() {
     set -e
     cd images/ssb/loader_monetdb
     docker build -f Dockerfile -t "bexhoma/loader_ssb_monetdb:$version" .
-    docker push "bexhoma/loader_ssb_monetdb:$version"
+    _push "bexhoma/loader_ssb_monetdb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_ssb_monetdb:$version"
 
@@ -201,7 +225,7 @@ build_and_push_ssb() {
     set -e
     cd images/ssb/loader_clickhouse
     docker build -f Dockerfile -t "bexhoma/loader_ssb_clickhouse:$version" .
-    docker push "bexhoma/loader_ssb_clickhouse:$version"
+    _push "bexhoma/loader_ssb_clickhouse:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_ssb_clickhouse:$version"
 
@@ -209,7 +233,7 @@ build_and_push_ssb() {
     set -e
     cd images/ssb/loader_mysql
     docker build -f Dockerfile -t "bexhoma/loader_ssb_mysql:$version" .
-    docker push "bexhoma/loader_ssb_mysql:$version"
+    _push "bexhoma/loader_ssb_mysql:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_ssb_mysql:$version"
 
@@ -217,7 +241,7 @@ build_and_push_ssb() {
     set -e
     cd images/ssb/loader_mariadb
     docker build -f Dockerfile -t "bexhoma/loader_ssb_mariadb:$version" .
-    docker push "bexhoma/loader_ssb_mariadb:$version"
+    _push "bexhoma/loader_ssb_mariadb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_ssb_mariadb:$version"
 }
@@ -236,7 +260,7 @@ build_and_push_tpch() {
     set -e
     cd images/tpch/generator
     docker build -f Dockerfile -t "bexhoma/generator_tpch:$version" .
-    docker push "bexhoma/generator_tpch:$version"
+    _push "bexhoma/generator_tpch:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/generator_tpch:$version"
 
@@ -244,7 +268,7 @@ build_and_push_tpch() {
     set -e
     cd images/tpch/loader_postgresql
     docker build -f Dockerfile -t "bexhoma/loader_tpch_postgresql:$version" .
-    docker push "bexhoma/loader_tpch_postgresql:$version"
+    _push "bexhoma/loader_tpch_postgresql:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_postgresql:$version"
 
@@ -252,7 +276,7 @@ build_and_push_tpch() {
     set -e
     cd images/tpch/loader_mysql
     docker build -f Dockerfile -t "bexhoma/loader_tpch_mysql:$version" .
-    docker push "bexhoma/loader_tpch_mysql:$version"
+    _push "bexhoma/loader_tpch_mysql:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_mysql:$version"
 
@@ -260,7 +284,7 @@ build_and_push_tpch() {
     set -e
     cd images/tpch/loader_mariadb
     docker build -f Dockerfile -t "bexhoma/loader_tpch_mariadb:$version" .
-    docker push "bexhoma/loader_tpch_mariadb:$version"
+    _push "bexhoma/loader_tpch_mariadb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_mariadb:$version"
 
@@ -268,7 +292,7 @@ build_and_push_tpch() {
     set -e
     cd images/tpch/loader_monetdb
     docker build -f Dockerfile -t "bexhoma/loader_tpch_monetdb:$version" .
-    docker push "bexhoma/loader_tpch_monetdb:$version"
+    _push "bexhoma/loader_tpch_monetdb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_monetdb:$version"
 
@@ -276,7 +300,7 @@ build_and_push_tpch() {
     set -e
     cd images/tpch/loader_clickhouse
     docker build -f Dockerfile -t "bexhoma/loader_tpch_clickhouse:$version" .
-    docker push "bexhoma/loader_tpch_clickhouse:$version"
+    _push "bexhoma/loader_tpch_clickhouse:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_clickhouse:$version"
 
@@ -284,7 +308,7 @@ build_and_push_tpch() {
     set -e
     cd images/tpch/loader_sqlserver
     docker build -f Dockerfile -t "bexhoma/loader_tpch_sqlserver:$version" .
-    docker push "bexhoma/loader_tpch_sqlserver:$version"
+    _push "bexhoma/loader_tpch_sqlserver:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_sqlserver:$version"
 
@@ -292,7 +316,7 @@ build_and_push_tpch() {
     set -e
     cd images/tpch/loader_oracle
     docker build -f Dockerfile -t "bexhoma/loader_tpch_oracle:$version" .
-    docker push "bexhoma/loader_tpch_oracle:$version"
+    _push "bexhoma/loader_tpch_oracle:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_oracle:$version"
 
@@ -300,7 +324,7 @@ build_and_push_tpch() {
     set -e
     cd images/tpch/loader_db2
     docker build -f Dockerfile -t "bexhoma/loader_tpch_db2:$version" .
-    docker push "bexhoma/loader_tpch_db2:$version"
+    _push "bexhoma/loader_tpch_db2:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_db2:$version"
 }
@@ -318,7 +342,7 @@ build_and_push_monitoring() {
     set -e
     cd images/monitoring
     docker build -f Dockerfile -t "bexhoma/monitoring:$version" .
-    docker push "bexhoma/monitoring:$version"
+    _push "bexhoma/monitoring:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/monitoring:$version"
 }
@@ -335,7 +359,7 @@ build_and_push_hammerdb() {
     set -e
     cd images/hammerdb/benchmarker
     docker build -f Dockerfile -t "bexhoma/benchmarker_hammerdb:$version" .
-    docker push "bexhoma/benchmarker_hammerdb:$version"
+    _push "bexhoma/benchmarker_hammerdb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/benchmarker_hammerdb:$version"
 
@@ -343,7 +367,7 @@ build_and_push_hammerdb() {
     set -e
     cd images/hammerdb/generator
     docker build -f Dockerfile -t "bexhoma/generator_hammerdb:$version" .
-    docker push "bexhoma/generator_hammerdb:$version"
+    _push "bexhoma/generator_hammerdb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/generator_hammerdb:$version"
 }
@@ -360,7 +384,7 @@ build_and_push_ycsb() {
     set -e
     cd images/ycsb/benchmarker
     docker build -f Dockerfile -t "bexhoma/benchmarker_ycsb:$version" .
-    docker push "bexhoma/benchmarker_ycsb:$version"
+    _push "bexhoma/benchmarker_ycsb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/benchmarker_ycsb:$version"
 
@@ -368,7 +392,7 @@ build_and_push_ycsb() {
     set -e
     cd images/ycsb/generator
     docker build -f Dockerfile -t "bexhoma/generator_ycsb:$version" .
-    docker push "bexhoma/generator_ycsb:$version"
+    _push "bexhoma/generator_ycsb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/generator_ycsb:$version"
 }
@@ -385,7 +409,7 @@ build_and_push_tpch_refresh() {
     set -e
     cd images/tpch_refresh/generator
     docker build -f Dockerfile -t "bexhoma/generator_tpch_refresh:$version" .
-    docker push "bexhoma/generator_tpch_refresh:$version"
+    _push "bexhoma/generator_tpch_refresh:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/generator_tpch_refresh:$version"
 
@@ -393,7 +417,7 @@ build_and_push_tpch_refresh() {
     set -e
     cd images/tpch_refresh/loader_postgresql
     docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_postgresql:$version" .
-    docker push "bexhoma/loader_tpch_refresh_postgresql:$version"
+    _push "bexhoma/loader_tpch_refresh_postgresql:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_postgresql:$version"
 
@@ -401,7 +425,7 @@ build_and_push_tpch_refresh() {
     set -e
     cd images/tpch_refresh/loader_mysql
     docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_mysql:$version" .
-    docker push "bexhoma/loader_tpch_refresh_mysql:$version"
+    _push "bexhoma/loader_tpch_refresh_mysql:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_mysql:$version"
 
@@ -409,7 +433,7 @@ build_and_push_tpch_refresh() {
     set -e
     cd images/tpch_refresh/loader_mariadb
     docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_mariadb:$version" .
-    docker push "bexhoma/loader_tpch_refresh_mariadb:$version"
+    _push "bexhoma/loader_tpch_refresh_mariadb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_mariadb:$version"
 
@@ -417,14 +441,14 @@ build_and_push_tpch_refresh() {
     set -e
     cd images/tpch_refresh/loader_monetdb
     docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_monetdb:$version" .
-    docker push "bexhoma/loader_tpch_refresh_monetdb:$version"
+    _push "bexhoma/loader_tpch_refresh_monetdb:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_monetdb:$version"
   (
     set -e
     cd images/tpch_refresh/loader_clickhouse
     docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_clickhouse:$version" .
-    docker push "bexhoma/loader_tpch_refresh_clickhouse:$version"
+    _push "bexhoma/loader_tpch_refresh_clickhouse:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_clickhouse:$version"
 
@@ -432,7 +456,7 @@ build_and_push_tpch_refresh() {
     set -e
     cd images/tpch_refresh/loader_sqlserver
     docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_sqlserver:$version" .
-    docker push "bexhoma/loader_tpch_refresh_sqlserver:$version"
+    _push "bexhoma/loader_tpch_refresh_sqlserver:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_sqlserver:$version"
 
@@ -440,7 +464,7 @@ build_and_push_tpch_refresh() {
     set -e
     cd images/tpch_refresh/loader_oracle
     docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_oracle:$version" .
-    docker push "bexhoma/loader_tpch_refresh_oracle:$version"
+    _push "bexhoma/loader_tpch_refresh_oracle:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_oracle:$version"
 
@@ -448,7 +472,7 @@ build_and_push_tpch_refresh() {
     set -e
     cd images/tpch_refresh/loader_db2
     docker build -f Dockerfile -t "bexhoma/loader_tpch_refresh_db2:$version" .
-    docker push "bexhoma/loader_tpch_refresh_db2:$version"
+    _push "bexhoma/loader_tpch_refresh_db2:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/loader_tpch_refresh_db2:$version"
 }
@@ -465,7 +489,7 @@ build_and_push_hardware() {
     set -e
     cd images/hardware/benchmarker
     docker build -f Dockerfile -t "bexhoma/benchmarker_hardware:$version" .
-    docker push "bexhoma/benchmarker_hardware:$version"
+    _push "bexhoma/benchmarker_hardware:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/benchmarker_hardware:$version"
 
@@ -473,7 +497,7 @@ build_and_push_hardware() {
     set -e
     cd images/hardware/sut
     docker build -f Dockerfile -t "bexhoma/sut_hardware:$version" .
-    docker push "bexhoma/sut_hardware:$version"
+    _push "bexhoma/sut_hardware:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/sut_hardware:$version"
 }
@@ -490,7 +514,7 @@ build_and_push_benchbase() {
     set -e
     cd images/benchbase
     docker build -f Dockerfile_generator -t "bexhoma/generator_benchbase:$version" .
-    docker push "bexhoma/generator_benchbase:$version"
+    _push "bexhoma/generator_benchbase:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/generator_benchbase:$version"
 
@@ -498,7 +522,7 @@ build_and_push_benchbase() {
     set -e
     cd images/benchbase
     docker build -f Dockerfile_benchmarker -t "bexhoma/benchmarker_benchbase:$version" .
-    docker push "bexhoma/benchmarker_benchbase:$version"
+    _push "bexhoma/benchmarker_benchbase:$version"
   ) >"$(_next_log)" 2>&1 &
   _bg "bexhoma/benchmarker_benchbase:$version"
 }
