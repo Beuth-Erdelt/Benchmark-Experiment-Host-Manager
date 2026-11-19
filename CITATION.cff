@@ -14,7 +14,7 @@ authors:
     given-names: Patrick K.
     orcid: "https://orcid.org/0000-0002-3359-2386"
     affiliation: "Berliner Hochschule für Technik (BHT)"
-version: "0.11.18"
+version: "0.12.0"
 license: AGPL-3.0-or-later
 repository-code: "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager"
 url: "https://bexhoma.readthedocs.io"
