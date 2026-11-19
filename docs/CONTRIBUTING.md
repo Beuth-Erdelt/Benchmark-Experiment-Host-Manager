@@ -128,3 +128,20 @@ New features and bug fixes must include a test.
 - `test-more.sh` — extended tests covering additional DBMS and longer runs.
 
 Run the relevant test cases against a live Kubernetes cluster before submitting. Log output from `test.sh` goes to `logs_tests/`; include a representative log in your PR if the change affects experiment execution.
+
+---
+
+## Third-party material
+
+If your contribution includes material from others (code, images, queries, data, JDBC drivers or tools built into an image), add it to [THIRD_PARTY.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/THIRD_PARTY.md) with its source and licence.
+
+---
+
+## Authorship
+
+Bexhoma distinguishes authors from contributors, see [AUTHORS.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/AUTHORS.md).
+
+- **Authors** made a scientific contribution: the concept or method, the design of benchmark experiments, measurements or evaluations. They are named in the citation metadata.
+- **Contributors** made other contributions, such as implementation, maintenance, bug fixes, documentation or tests. They are acknowledged in `AUTHORS.md`.
+
+For work done within a funded project, authorship and rights are agreed in writing at the start of the project.

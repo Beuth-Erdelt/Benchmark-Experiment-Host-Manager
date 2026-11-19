@@ -58,6 +58,7 @@
     ./Concept.md
     ./TestCases.md
     ./CONTRIBUTING.md
+    ./FAIR4RS.md
     ./Test-Reset.md
     ./Test-Durability.md
     ./Agent.md
