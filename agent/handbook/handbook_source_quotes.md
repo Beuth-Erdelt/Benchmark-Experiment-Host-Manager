@@ -268,4 +268,4 @@ through its labels (26 unmarked, 23 Application, 1 Policy).
 ---
 
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
-This document is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (text: `LICENSES/CC-BY-4.0.txt` in the Bexhoma repository), separately from the AGPL-licensed code of Bexhoma. Credit: Bexhoma, Patrick K. Erdelt and contributors, see AUTHORS.md. Excepted are quotations of other works: they remain under the rights of their authors and are cited with their sources.
+This document is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (text: `LICENSES/CC-BY-4.0.txt` in the Bexhoma repository), separately from the AGPL-licensed code of Bexhoma. Credit: Experiment Design Handbook of Bexhoma, Patrick K. Erdelt and Leonhard Liu. Excepted are quotations of other works: they remain under the rights of their authors and are cited with their sources.
