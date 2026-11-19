@@ -2969,8 +2969,8 @@ bexhoma hardware \
 ### Workload
 Hardware Benchmark (fio)
 * Type: hardware
-* Duration: 153s 
-* Code: 1794937898
+* Duration: 152s 
+* Code: 1795122330
 * fio/sysbench driver runs the experiment.
 * This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
   * Benchmark tool: fio.
@@ -2983,7 +2983,7 @@ Hardware Benchmark (fio)
   * Fdatasync interval(s) swept: [1].
   * Overwrite (prefilled test file) swept: ['1'].
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.0.
   * System metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['Hardware'].
   * Benchmarking is fixed to cl-worker38.
@@ -2997,13 +2997,13 @@ Hardware Benchmark (fio)
   * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
-* hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.11.18
+* hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.12.0
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1058083
+  * disk:825183
   * volume_size:48.9G
   * volume_used:24.0K
   * cpu_list:0-223
@@ -3012,10 +3012,10 @@ Hardware Benchmark (fio)
   * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * eval_parameters
-    * code:1794937898
+    * code:1795122330
 
 ### SUT Container Restarts
-* bexhoma-sut-hardware-1-1794937898-bd5c57cd4-jbxtg: 0
+* bexhoma-sut-hardware-1-1795122330-7d5fddf7bd-g9r6q: 0
 
 ### Workflow
 
@@ -3033,13 +3033,13 @@ Hardware Benchmark (fio)
 
 | connection         | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_overwrite |   hardware_fio_rwmixread |   hardware_fio_numjobs |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   threads |   errors |
 |:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|-----------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|----------:|---------:|
-| hardware-1-1-1-1-1 | hardware-1-1-1 | hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         68 | write             | 8k                |                      1 | libaio                |                    0 |                        1 |                        1 |                       50 |                      1 |                     0.00 |                   1902.07 |                           0.00 |                            0.78 |                           0.00 |                            1.03 |         1 |        0 |
+| hardware-1-1-1-1-1 | hardware-1-1-1 | hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         68 | write             | 8k                |                      1 | libaio                |                    0 |                        1 |                        1 |                       50 |                      1 |                     0.00 |                   1918.37 |                           0.00 |                            0.86 |                           0.00 |                            1.12 |         1 |        0 |
 
 #### Per Phase
 
 | DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration | hardware_fio_rw   | hardware_fio_bs   |   hardware_fio_iodepth | hardware_fio_engine   |   hardware_fio_fsync |   hardware_fio_fdatasync |   hardware_fio_overwrite |   hardware_fio_rwmixread |   hardware_fio_read_iops |   hardware_fio_write_iops |   hardware_fio_read_lat_p95_ms |   hardware_fio_write_lat_p95_ms |   hardware_fio_read_lat_p99_ms |   hardware_fio_write_lat_p99_ms |   threads |   errors | hardware_type   |
 |:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|:------------------|:------------------|-----------------------:|:----------------------|---------------------:|-------------------------:|-------------------------:|-------------------------:|-------------------------:|--------------------------:|-------------------------------:|--------------------------------:|-------------------------------:|--------------------------------:|----------:|---------:|:----------------|
-| hardware-1-1-1 | hardware-1-1-1 |                1 |        1 |               1 |           1 |         68 | write             | 8k                |                      1 | libaio                |                    0 |                        1 |                        1 |                       50 |                     0.00 |                   1902.07 |                           0.00 |                            0.78 |                           0.00 |                            1.03 |         1 |        0 | fio             |
+| hardware-1-1-1 | hardware-1-1-1 |                1 |        1 |               1 |           1 |         68 | write             | 8k                |                      1 | libaio                |                    0 |                        1 |                        1 |                       50 |                     0.00 |                   1918.37 |                           0.00 |                            0.86 |                           0.00 |                            1.12 |         1 |        0 | fio             |
 
 ### Monitoring
 
@@ -3047,19 +3047,19 @@ Hardware Benchmark (fio)
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| hardware-1-1-1-1 |        70.55 |      2.70 |           0.22 |                  0.22 |
+| hardware-1-1-1-1 |        59.65 |      1.65 |           0.25 |                  0.25 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-----------------|-------------:|----------:|---------------:|----------------------:|
-| hardware-1-1-1-1 |         0.83 |      0.03 |           0.00 |                  0.00 |
+| hardware-1-1-1-1 |         0.88 |      0.00 |           0.00 |                  0.00 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 
