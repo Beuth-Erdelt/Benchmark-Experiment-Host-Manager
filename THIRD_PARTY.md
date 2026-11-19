@@ -71,7 +71,7 @@ The loaders for SQL Server and Oracle use the vendors' client tools (terms check
 Bexhoma deploys DBMS from the images of their vendors (see the manifests in `k8s/`); none of them is part of Bexhoma.
 Each DBMS is subject to the licence of its vendor.
 Some licences restrict the publication of benchmark results: the Developer edition of SQL Server requires Microsoft's prior written approval.
-Bexhoma keeps the results of SQL Server, Oracle Database Free, IBM Db2 Community Edition and CedarDB internal; the repository describes how to run them but contains no results (checked by `tests/test_unpublished_results.py`).
+Bexhoma keeps the results of SQL Server, Oracle Database Free, IBM Db2 Community Edition and CedarDB internal; the repository describes how to run them but contains no results (checked by `tests/test_unpublished_results.py`). The rules are in [docs/Publishing-Results.md](docs/Publishing-Results.md).
 
 ## Note on TPC
 

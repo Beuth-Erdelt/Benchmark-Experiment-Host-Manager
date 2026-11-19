@@ -157,6 +157,12 @@ If your contribution includes material from others (code, images, queries, data,
 
 ---
 
+## Publishing results
+
+Results of some DBMS must not be published, and result folders contain credentials and names of the infrastructure. Follow [Publishing Results](Publishing-Results.md) before committing logs or publishing results, and when adding a DBMS.
+
+---
+
 ## Authorship
 
 Bexhoma distinguishes authors from contributors, see [AUTHORS.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/AUTHORS.md).
