@@ -203,7 +203,12 @@ function Build-AndPush-Hardware {
 
 #### Main ####
 
-$dbmsbenchmarker = "v0.15.6"
+# The DBMS-Benchmarker images use the installed version (set by requirements.txt);
+# its git tags have the form vX.Y.Z.
+$dbmsbenchmarkerVersion = (pip show dbmsbenchmarker | Select-String "^Version:" | ForEach-Object { ($_ -split '\s+')[1] })
+if (-not $dbmsbenchmarkerVersion) { throw "dbmsbenchmarker is not installed" }
+$dbmsbenchmarker = "v$dbmsbenchmarkerVersion"
+Write-Output "DBMS-Benchmarker $dbmsbenchmarker"
 $version = (pip show bexhoma | Select-String "^Version:" | ForEach-Object { ($_ -split '\s+')[1] })
 Write-Output $version
 

@@ -35,10 +35,10 @@ While the major version is 0, a minor release may contain incompatible changes; 
 ### Release checklist
 
 1. Set the version with `python bump_version.py X.Y.Z`; it writes `bexhoma/__version__.py`, `CITATION.cff` and `codemeta.json`, and the tests check that they agree.
-2. Set the DBMS-Benchmarker version of the images (`dbmsbenchmarker=` in `scripts/build.sh` and `scripts/build.ps1`) and, if needed, the minimum version in `requirements.txt`.
+2. If the release needs a newer DBMS-Benchmarker, raise its minimum version in `requirements.txt`.
 3. For a minor release only: the test cases affected by the changes ([TestCases](TestCases.md)) have been run with the release candidate on a cluster and their logs show no failed checks.
 4. Merge `dev` into `master` by a pull request and create a GitHub release with the tag `vX.Y.Z`. Use *Generate release notes*. Publishing uploads the package to PyPI.
-5. Build and push the images with `scripts/build.sh` (or `scripts/build.ps1`); they are tagged with the installed version and `latest`. The licence texts of their components must be up to date (see [images/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/README.md)).
+5. Build and push the images with `scripts/build.sh` (or `scripts/build.ps1`) in an environment where the release is installed (`pip install -e .`): they are tagged with the installed Bexhoma version and `latest`, and the DBMS-Benchmarker images get the installed DBMS-Benchmarker version. The licence texts of their components must be up to date (see [images/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/README.md)).
 
 ---
 

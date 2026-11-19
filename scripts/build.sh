@@ -508,7 +508,14 @@ build_and_push_benchbase() {
 
 _any_failed=0
 
-dbmsbenchmarker="v0.15.6"
+# The DBMS-Benchmarker images use the installed version (set by requirements.txt);
+# its git tags have the form vX.Y.Z.
+dbmsbenchmarker="v$(python -m pip show dbmsbenchmarker | awk '/^Version:/ {print $2}')"
+if [[ "$dbmsbenchmarker" == "v" ]]; then
+  echo "dbmsbenchmarker is not installed" >&2
+  exit 1
+fi
+echo "DBMS-Benchmarker $dbmsbenchmarker"
 version=$(python -m pip show bexhoma | awk '/^Version:/ {print $2}')
 echo "$version"
 
