@@ -18,7 +18,27 @@ Contributions are welcome. Areas where help is most useful:
 - Reference the relevant issue number in the PR description where applicable.
 - Make sure all checks pass and review feedback is resolved before merging.
 - PRs are merged into `dev` via **squash merge**.
-- By submitting a PR you agree to license your contribution under the **GNU Affero General Public License v3**.
+- By submitting a PR you agree to license your contribution under the **GNU Affero General Public License v3.0 or later** (AGPL-3.0-or-later).
+- Changes are recorded in the notes of the [GitHub releases](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/releases), which are generated from the pull requests. So give each pull request a title that says what changes for users.
+- If a change alters measured or evaluated numbers, the pull request names the affected metrics: units, aggregation, formulas, rounding, what a timer measures, renamed metrics or columns.
+
+---
+
+## Versions and releases
+
+Versions have the form `MAJOR.MINOR.PATCH`; git tags have the form `vMAJOR.MINOR.PATCH`, and the Docker images of a release are tagged `MAJOR.MINOR.PATCH` and `latest`.
+While the major version is 0, a minor release may contain incompatible changes; they are named in their pull requests.
+
+- **Minor release** (`0.12.0`): changes what an experiment executes or records. This includes the catalog and result contracts, the result format, collectors, the Docker images and Kubernetes manifests, and the meaning of command line options.
+- **Patch release** (`0.11.19`): everything else, including bug fixes in evaluations and reports, and documentation. If a fix changes evaluated numbers, its pull request names the affected metrics.
+
+### Release checklist
+
+1. Set the version with `python bump_version.py X.Y.Z`; it writes `bexhoma/__version__.py`, `CITATION.cff` and `codemeta.json`, and the tests check that they agree.
+2. If the release needs a newer DBMS-Benchmarker, raise its minimum version in `requirements.txt`.
+3. For a minor release only: run the reference experiments with the release candidate installed, `scripts/test-reference-experiments.sh` (or `.ps1`). They are one experiment per benchmark on PostgreSQL, plus monitoring, application monitoring and persistent storage, taken from the `test-docs-*` scripts; `BEXHOMA_PARALLEL` sets how many run at the same time (default 4). The script checks every log for passed and no failed tests and for the release version, and ends with `all passed with bexhoma X.Y.Z`. Their logs replace those of the documentation in `logs_tests/` and are committed with the release.
+4. Merge `dev` into `master` by a pull request and create a GitHub release with the tag `vX.Y.Z`. Use *Generate release notes*. Publishing uploads the package to PyPI.
+5. Build and push the images with `scripts/build.sh` (or `scripts/build.ps1`) in an environment where the release is installed (`pip install -e .`): they are tagged with the installed Bexhoma version and `latest`, and the DBMS-Benchmarker images get the installed DBMS-Benchmarker version. The licence texts of their components must be up to date (see [images/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/README.md)).
 
 ---
 
@@ -128,3 +148,26 @@ New features and bug fixes must include a test.
 - `test-more.sh` — extended tests covering additional DBMS and longer runs.
 
 Run the relevant test cases against a live Kubernetes cluster before submitting. Log output from `test.sh` goes to `logs_tests/`; include a representative log in your PR if the change affects experiment execution.
+
+---
+
+## Third-party material
+
+If your contribution includes material from others (code, images, queries, data, JDBC drivers or tools built into an image), add it to [THIRD_PARTY.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/THIRD_PARTY.md) with its source and licence.
+
+---
+
+## Publishing results
+
+Results of some DBMS must not be published, and result folders contain credentials and names of the infrastructure. Follow [Publishing Results](Publishing-Results.md) before committing logs or publishing results, and when adding a DBMS.
+
+---
+
+## Authorship
+
+Bexhoma distinguishes authors from contributors, see [AUTHORS.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/AUTHORS.md).
+
+- **Authors** made a scientific contribution: the concept or method, the design of benchmark experiments, measurements or evaluations. They are named in the citation metadata.
+- **Contributors** made other contributions, such as implementation, maintenance, bug fixes, documentation or tests. They are acknowledged in `AUTHORS.md`.
+
+For work done within a funded project, authorship and rights are agreed in writing at the start of the project.

@@ -132,6 +132,11 @@ RUN apk add --no-cache openssh-client bash redis jq libstdc++
 COPY --from=sockperf-builder /src/sockperf /usr/local/bin/sockperf
 COPY --from=netperf-builder /src/src/netperf /usr/local/bin/netperf
 
+# Licences of the software of others in this image, see NOTICE
+COPY --from=sockperf-builder /src/copying /licenses/sockperf-copying
+COPY --from=netperf-builder /src/COPYING /licenses/netperf-COPYING
+COPY ./NOTICE /licenses/NOTICE
+
 ######################################################################################
 # Install SSH private key for SUT access
 ######################################################################################

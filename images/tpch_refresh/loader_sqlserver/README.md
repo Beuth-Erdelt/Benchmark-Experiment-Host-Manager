@@ -19,6 +19,11 @@ As the [PostgreSQL refresh loader](../loader_postgresql/README.md#environment-va
 | `BEXHOMA_DATABASE` | `tpch` | Target database |
 | `BEXHOMA_SCHEMA` | empty | Target schema; empty = `dbo` |
 | `BEXHOMA_CONNECTION` | `sqlserver` | Connection name (Redis counter key) |
+| `MSSQL_TOOLS_VERSION` | `18.7.1.1-1` | Version of `msodbcsql18` and `mssql-tools18` |
+| `MSSQL_TOOLS_CACHE` | `/data/drivers` | Cache of the downloaded packages on the data volume (`/tmp/drivers` if not writable) |
+
+The image contains no Microsoft software: the licence terms of `msodbcsql18` and `mssql-tools18` do not allow publishing them in an image.
+[`install-tools.sh`](install-tools.sh) (a copy of `images/tpch/loader_sqlserver/install-tools.sh`), sourced at the start of `loader.sh`, downloads both packages from `packages.microsoft.com` into the cache, once per version, and installs them with `ACCEPT_EULA=Y`.
 
 ## Execution flow
 

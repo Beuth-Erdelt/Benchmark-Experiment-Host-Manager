@@ -36,7 +36,8 @@ images/tpch_refresh/
 │   ├── loader.sh          — applies RF1 via INSERT ... FORMAT CSV, RF2 via lightweight DELETE by order key
 │   └── README.md          — environment variable reference + execution flow
 ├── loader_sqlserver/
-│   ├── Dockerfile         — SQL Server loader image (ubuntu:22.04 + mssql-tools18 + redis-cli)
+│   ├── Dockerfile         — SQL Server loader image (ubuntu:22.04 + redis-cli, no Microsoft software)
+│   ├── install-tools.sh   — copy of images/tpch/loader_sqlserver/install-tools.sh
 │   ├── loader.sh          — applies RF1 via bcp, RF2 via staging table + DELETE
 │   └── README.md          — environment variable reference + execution flow
 ├── loader_oracle/

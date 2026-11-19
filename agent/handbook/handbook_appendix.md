@@ -213,3 +213,8 @@ section and page (§1.3, p. 5; §1.5, p. 8).
 [erdelt2020]: https://link.springer.com/chapter/10.1007/978-3-030-84924-5_6
 [erdelt2021]: https://link.springer.com/chapter/10.1007/978-3-030-94437-7_6
 [erdelt2023]: https://link.springer.com/chapter/10.1007/978-3-031-68031-1_9
+
+---
+
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+This document is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (text: `LICENSES/CC-BY-4.0.txt` in the Bexhoma repository), separately from the AGPL-licensed code of Bexhoma. Credit: Experiment Design Handbook of Bexhoma, Patrick K. Erdelt and Leonhard Liu. Excepted are quotations of other works: they remain under the rights of their authors and are cited with their sources.

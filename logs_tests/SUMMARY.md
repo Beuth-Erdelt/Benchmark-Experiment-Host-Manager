@@ -32,7 +32,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_pgbouncer_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 1586s |  |
 | passed | docs_benchbase_pgbouncer_newconn.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 1555s |  |
 | passed | docs_benchbase_pgbouncer_newconn_pool.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 1531s |  |
-| passed | docs_benchbase_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 1054s |  |
+| passed | docs_benchbase_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-19 | 0.12.0 | 984s |  |
 | passed | docs_benchbase_postgresql_auctionmark_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 391s |  |
 | passed | docs_benchbase_postgresql_chbenchmark_scale.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 7452s |  |
 | passed | docs_benchbase_postgresql_chbenchmark_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 629s |  |
@@ -51,7 +51,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_postgresql_otmetrics_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 439s |  |
 | passed | docs_benchbase_postgresql_reset.log | Example-Benchbase.md | 2026-11-13 | 0.11.17 | 911s |  |
 | passed | docs_benchbase_postgresql_resourcestresser_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 441s |  |
-| passed | docs_benchbase_postgresql_run.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 641s |  |
+| passed | docs_benchbase_postgresql_run.log | Prepare-Testbeds.md | 2026-11-19 | 0.12.0 | 571s |  |
 | passed | docs_benchbase_postgresql_scale.log | Example-Benchbase.md | 2026-11-13 | 0.11.17 | 1067s |  |
 | passed | docs_benchbase_postgresql_seats_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 435s |  |
 | passed | docs_benchbase_postgresql_sibench_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 370s |  |
@@ -126,7 +126,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_hammerdb_postgresql_keytime.log | Example-HammerDB.md | 2026-11-13 | 0.11.17 | 6559s |  |
 | passed | docs_hammerdb_postgresql_load.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 278s |  |
 | passed | docs_hammerdb_postgresql_monitoring.log | Example-HammerDB.md | 2026-11-13 | 0.11.17 | 1281s |  |
-| passed | docs_hammerdb_postgresql_run.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 734s |  |
+| passed | docs_hammerdb_postgresql_run.log | Prepare-Testbeds.md | 2026-11-19 | 0.12.0 | 719s |  |
 | passed | docs_hammerdb_postgresql_scale.log | Example-HammerDB.md | 2026-11-13 | 0.11.17 | 1225s |  |
 | passed | docs_hammerdb_postgresql_start.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 141s |  |
 | passed | docs_hammerdb_postgresql_storage.log | Example-HammerDB.md | 2026-11-13 | 0.11.17 | 1429s |  |
@@ -141,7 +141,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_hardware_fio_random_page_cost.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 256s |  |
 | passed | docs_hardware_fio_wal_group_commit.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 867s |  |
 | passed | docs_hardware_fio_wal_record_size.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 570s |  |
-| passed | docs_hardware_fio_wal_sync_fdatasync.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 153s |  |
+| passed | docs_hardware_fio_wal_sync_fdatasync.log | Example-Hardware.md | 2026-11-19 | 0.12.0 | 152s |  |
 | passed | docs_hardware_fio_wal_sync_fsync.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 157s |  |
 | passed | docs_hardware_netperf_postgresql_connection_scaling_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 563s |  |
 | passed | docs_hardware_netperf_postgresql_pod_scaling_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 245s |  |
@@ -203,7 +203,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_ssb_monitoring.log | Example-SSB.md | 2026-10-25 | 0.11.9 | 400s |  |
 | passed | docs_ssb_mysql.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 598s |  |
 | passed | docs_ssb_pgduckdb.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 426s |  |
-| passed | docs_ssb_postgresql.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 418s |  |
+| passed | docs_ssb_postgresql.log | Example-SSB.md | 2026-11-19 | 0.12.0 | 359s |  |
 | passed | docs_ssb_profiling.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 492s |  |
 | passed | docs_ssb_random.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 421s |  |
 | passed | docs_ssb_storage.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 706s |  |
@@ -224,7 +224,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpcds_mysql_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 2439s |  |
 | passed | docs_tpcds_mysql_monitoring.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 2263s |  |
 | passed | docs_tpcds_mysql_storage.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 2263s |  |
-| passed | docs_tpcds_postgresql.log | Example-TPC-DS.md | 2026-11-14 | 0.11.17 | 756s |  |
+| passed | docs_tpcds_postgresql.log | Example-TPC-DS.md | 2026-11-19 | 0.12.0 | 632s |  |
 | passed | docs_tpcds_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 1231s |  |
 | passed | docs_tpcds_postgresql_load.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 406s |  |
 | passed | docs_tpcds_postgresql_monitoring.log | Example-TPC-DS.md | 2026-11-13 | 0.11.17 | 2273s |  |
@@ -286,12 +286,12 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpch_postgresql_collector_tenants_schema.log | Example-Collectors.md | 2026-11-02 | 0.11.12 | 1515s |  |
 | passed | docs_tpch_postgresql_fractional.log | Example-TPC-H.md | 2026-11-13 | 0.11.17 | 630s |  |
 | passed | docs_tpch_postgresql_load.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 326s |  |
-| passed | docs_tpch_postgresql_monitoring.log | Example-PostgreSQL.md | 2026-11-13 | 0.11.17 | 815s |  |
+| passed | docs_tpch_postgresql_monitoring.log | Example-PostgreSQL.md | 2026-11-19 | 0.12.0 | 836s |  |
 | passed | docs_tpch_postgresql_ramdisk.log | Example-PostgreSQL.md | 2026-11-13 | 0.11.17 | 439s |  |
-| passed | docs_tpch_postgresql_refresh.log | Example-TPC-H.md | 2026-11-13 | 0.11.17 | 391s |  |
+| passed | docs_tpch_postgresql_refresh.log | Example-TPC-H.md | 2026-11-19 | 0.12.0 | 370s |  |
 | passed | docs_tpch_postgresql_run.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 361s |  |
 | passed | docs_tpch_postgresql_start.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 174s |  |
-| passed | docs_tpch_postgresql_storage.log | Example-PostgreSQL.md | 2026-11-13 | 0.11.17 | 662s |  |
+| passed | docs_tpch_postgresql_storage.log | Example-PostgreSQL.md | 2026-11-19 | 0.12.0 | 687s |  |
 | passed | docs_tpch_postgresql_subset.log | Example-TPC-H.md | 2026-11-13 | 0.11.17 | 725s |  |
 | passed | docs_tpch_postgresql_tenants_container.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 457s |  |
 | passed | docs_tpch_postgresql_tenants_database.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 430s |  |
@@ -350,7 +350,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_ycsb_postgresql_load.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 358s |  |
 | passed | docs_ycsb_postgresql_loading.log | Example-YCSB.md | 2026-11-13 | 0.11.17 | 528s |  |
 | passed | docs_ycsb_postgresql_loading_patch.log | Example-YCSB.md | 2026-11-13 | 0.11.17 | 394s |  |
-| passed | docs_ycsb_postgresql_monitoring.log | Example-YCSB.md | 2026-11-13 | 0.11.17 | 799s |  |
+| passed | docs_ycsb_postgresql_monitoring.log | Example-YCSB.md | 2026-11-19 | 0.12.0 | 747s |  |
 | passed | docs_ycsb_postgresql_reset.log | Example-YCSB.md | 2026-11-13 | 0.11.17 | 2780s |  |
 | passed | docs_ycsb_postgresql_run.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 501s |  |
 | passed | docs_ycsb_postgresql_start.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 170s |  |

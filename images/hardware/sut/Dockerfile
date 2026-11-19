@@ -71,6 +71,12 @@ RUN apk add --no-cache openssh fio sysbench libstdc++ \
 COPY --from=sockperf-builder /src/sockperf /usr/local/bin/sockperf
 COPY --from=netperf-builder /src/src/netserver /usr/local/bin/netserver
 
+# Licences of the software of others in this image, see NOTICE
+COPY --from=sockperf-builder /src/copying /licenses/sockperf-copying
+COPY --from=netperf-builder /src/COPYING /licenses/netperf-COPYING
+COPY ./NOTICE /licenses/NOTICE
+RUN wget -q -O /licenses/GPL-2.0-only.txt https://raw.githubusercontent.com/spdx/license-list-data/v3.25.0/text/GPL-2.0-only.txt
+
 ######################################################################################
 # Install benchmarker public key for passwordless SSH access
 ######################################################################################

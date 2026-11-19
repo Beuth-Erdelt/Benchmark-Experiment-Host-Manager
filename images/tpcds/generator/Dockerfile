@@ -29,6 +29,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy TPC-DS generator files
 ######################################################################################
 COPY ./tpc_eula.txt ./tpc_eula.txt
+
+# Licences of the software of others in this image, see NOTICE. TPC EULA
+# clause 9: every copy carries the complete EULA and the legend below.
+COPY ./tpc_eula.txt /licenses/tpc_eula.txt
+COPY ./NOTICE /licenses/NOTICE
+LABEL org.opencontainers.image.licenses="AGPL-3.0-or-later AND LicenseRef-TPC-EULA" \
+      org.opencontainers.image.description="THE TPC SOFTWARE IS AVAILABLE WITHOUT CHARGE FROM TPC."
 COPY ./tpcds.idx /tmp/tpcds.idx
 COPY ./dsdgen /tmp/dsdgen
 RUN chmod +x /tmp/dsdgen

@@ -19,6 +19,15 @@ loading data and for running the workload as in [4].
 
 ---
 
+## Licences of third-party components
+
+The images are published on Docker Hub, so they redistribute the software of others they contain.
+An image that adds such components (JDBC drivers, YCSB, redis-cli, TPC data generators, ...) has a `NOTICE` next to its Dockerfile, which is copied to `/licenses/NOTICE`, and its Dockerfile puts the licence texts of the versions used into `/licenses/`.
+When you add or update a component, update the `NOTICE`, the licence texts in the Dockerfile and [THIRD_PARTY.md](../THIRD_PARTY.md).
+The generator images of TPC-H, TPC-DS and SSB must keep the TPC EULA and the legend "THE TPC SOFTWARE IS AVAILABLE WITHOUT CHARGE FROM TPC." (TPC EULA, clause 9).
+
+---
+
 ## Subfolders
 
 ### Analytical query workloads

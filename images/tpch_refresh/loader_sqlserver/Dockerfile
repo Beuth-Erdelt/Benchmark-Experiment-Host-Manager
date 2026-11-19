@@ -16,21 +16,25 @@
 # TPCH_REFRESH_STREAM_OFFSET+1. Uses bcp for RF1 and a staging table for RF2
 # (mssql-tools18 from packages.microsoft.com). Synchronises with the query-stream
 # benchmarker via Redis round counter. Emits BEXHOMA_DURATION/START/END.
+# The image contains no Microsoft software: their licence terms do not allow
+# publishing msodbcsql18 and mssql-tools18 in an image. install-tools.sh installs
+# them from packages.microsoft.com at the start of the container (ACCEPT_EULA).
 ######################################################################################
 FROM ubuntu:22.04
 
 ######################################################################################
 # Install dependencies
 ######################################################################################
-# packages-microsoft-prod.deb installs the signing key and the source list together
-# (the prod.list alone names no keyring: apt then fails with NO_PUBKEY EB3E94ADBE1229CF)
+# packages-microsoft-prod.deb (MIT) installs the signing key and the source list together
+# (the prod.list alone names no keyring: apt then fails with NO_PUBKEY EB3E94ADBE1229CF).
+# The other packages are the dependencies of msodbcsql18 and mssql-tools18, so that
+# install-tools.sh only needs dpkg -i.
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates redis-tools \
+        libkrb5-3 openssl debconf unixodbc odbcinst \
     && curl -fsSL -o /tmp/packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb \
     && dpkg -i /tmp/packages-microsoft-prod.deb \
     && rm /tmp/packages-microsoft-prod.deb \
-    && apt-get update \
-    && ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql18 mssql-tools18 unixodbc \
     && rm -rf /var/lib/apt/lists/*
 ENV PATH="${PATH}:/opt/mssql-tools18/bin"
 
@@ -70,6 +74,7 @@ WORKDIR /tmp
 # Loader script
 ######################################################################################
 COPY ./loader.sh /tmp/loader.sh
+COPY ./install-tools.sh /tmp/install-tools.sh
 RUN chmod +x /tmp/loader.sh
 
 ######################################################################################

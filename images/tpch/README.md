@@ -31,7 +31,8 @@ images/tpch/
 │   ├── loader.sh          — loads .tbl via mclient COPY FROM STDIN
 │   └── README.md          — environment variable reference + execution flow
 ├── loader_sqlserver/
-│   ├── Dockerfile         — SQL Server loader image
+│   ├── Dockerfile         — SQL Server loader image (ubuntu:22.04, no Microsoft software)
+│   ├── install-tools.sh   — installs msodbcsql18 and mssql-tools18 at the start
 │   ├── loader.sh          — loads .tbl via bcp
 │   └── README.md          — environment variable reference + execution flow
 ├── loader_oracle/

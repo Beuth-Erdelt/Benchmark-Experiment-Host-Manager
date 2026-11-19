@@ -1,0 +1,17 @@
+Third-party components in this image
+====================================
+
+This image is part of Bexhoma (https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager),
+licensed under the GNU Affero General Public License v3.0 or later.
+It contains the following software of others, unmodified; their licence texts
+are in /licenses/. Sources are at the addresses given.
+
+DBMS-Benchmarker (https://github.com/Beuth-Erdelt/DBMS-Benchmarker)
+  Licence: AGPL-3.0-or-later, /licenses/DBMS-Benchmarker-LICENSE
+
+Packages installed with the package manager of the base image bring their own
+copyright files (e.g. /usr/share/doc/<package>/copyright).
+
+See THIRD_PARTY.md in the Bexhoma repository for all images.
+Python packages installed with pip carry their licences in their
+*.dist-info folders.

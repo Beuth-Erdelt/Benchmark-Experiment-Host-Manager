@@ -13,6 +13,25 @@ $script:RootDir = if ($PSScriptRoot) { Split-Path $PSScriptRoot } else { $PWD.Pa
 $script:Jobs    = [System.Collections.Generic.List[hashtable]]::new()
 $script:AnyFailed = $false
 
+# At most this many docker pushes run at the same time; builds are not limited.
+# The jobs are separate processes, so they share a named system semaphore.
+$script:MaxParallelPushes = 10
+$script:PushSemaphore     = "bexhoma_build_push_$PID"
+
+# Runs inside each job: docker push, holding one semaphore slot while it runs.
+$script:PushCode = {
+    param($image, $semName, $maxPushes)
+    $sem = New-Object System.Threading.Semaphore($maxPushes, $maxPushes, $semName)
+    $null = $sem.WaitOne()
+    try {
+        & docker push $image
+        if ($LASTEXITCODE -ne 0) { throw "docker push failed (exit $LASTEXITCODE)" }
+    } finally {
+        $null = $sem.Release()
+        $sem.Dispose()
+    }
+}.ToString()
+
 
 #### Job tracking helpers ####
 
@@ -28,13 +47,12 @@ function _BgDockerJob {
     )
     $rootDir = $script:RootDir
     $job = Start-Job -ScriptBlock {
-        param($rootDir, $workDir, $image, $version, $dockerfile)
+        param($rootDir, $workDir, $image, $version, $dockerfile, $pushCode, $semName, $maxPushes)
         Set-Location (Join-Path $rootDir $workDir)
         & docker build -f $dockerfile -t "bexhoma/${image}:${version}" .
         if ($LASTEXITCODE -ne 0) { throw "docker build failed (exit $LASTEXITCODE)" }
-        & docker push "bexhoma/${image}:${version}"
-        if ($LASTEXITCODE -ne 0) { throw "docker push failed (exit $LASTEXITCODE)" }
-    } -ArgumentList $rootDir, $WorkDir, $Image, $Version, $Dockerfile
+        & ([scriptblock]::Create($pushCode)) "bexhoma/${image}:${version}" $semName $maxPushes
+    } -ArgumentList $rootDir, $WorkDir, $Image, $Version, $Dockerfile, $script:PushCode, $script:PushSemaphore, $script:MaxParallelPushes
     $script:Jobs.Add(@{ Job = $job; Label = $Label })
 }
 
@@ -51,13 +69,12 @@ function _BgPyJob {
     )
     $rootDir = $script:RootDir
     $job = Start-Job -ScriptBlock {
-        param($rootDir, $workDir, $image, $version, $dbmsbenchmarker)
+        param($rootDir, $workDir, $image, $version, $dbmsbenchmarker, $pushCode, $semName, $maxPushes)
         Set-Location (Join-Path $rootDir $workDir)
         & python create_Dockerfiles.py --version $dbmsbenchmarker --image-tag $version
         if ($LASTEXITCODE -ne 0) { throw "create_Dockerfiles.py failed (exit $LASTEXITCODE)" }
-        & docker push "bexhoma/${image}:${version}"
-        if ($LASTEXITCODE -ne 0) { throw "docker push failed (exit $LASTEXITCODE)" }
-    } -ArgumentList $rootDir, $WorkDir, $Image, $Version, $DbmsBenchmarker
+        & ([scriptblock]::Create($pushCode)) "bexhoma/${image}:${version}" $semName $maxPushes
+    } -ArgumentList $rootDir, $WorkDir, $Image, $Version, $DbmsBenchmarker, $script:PushCode, $script:PushSemaphore, $script:MaxParallelPushes
     $script:Jobs.Add(@{ Job = $job; Label = $Label })
 }
 
@@ -146,16 +163,7 @@ function Build-AndPush-TpchRefresh {
     param([string]$Version)
     if (-not $Version) { Write-Host "Usage: Build-AndPush-TpchRefresh <image_tag>"; return }
     # Generator needs dbgen/dists.dss/tpc_eula.txt copied from images/tpch/generator first.
-    $rootDir = $script:RootDir
-    $job = Start-Job -ScriptBlock {
-        param($rootDir, $version)
-        Set-Location (Join-Path $rootDir "images/tpch_refresh/generator")
-        & docker build -f Dockerfile -t "bexhoma/generator_tpch_refresh:${version}" .
-        if ($LASTEXITCODE -ne 0) { throw "docker build failed (exit $LASTEXITCODE)" }
-        & docker push "bexhoma/generator_tpch_refresh:${version}"
-        if ($LASTEXITCODE -ne 0) { throw "docker push failed (exit $LASTEXITCODE)" }
-    } -ArgumentList $rootDir, $Version
-    $script:Jobs.Add(@{ Job = $job; Label = "bexhoma/generator_tpch_refresh:$Version" })
+    _BgDockerJob "bexhoma/generator_tpch_refresh:$Version"        "images/tpch_refresh/generator"        "generator_tpch_refresh"         $Version
     _BgDockerJob "bexhoma/loader_tpch_refresh_postgresql:$Version" "images/tpch_refresh/loader_postgresql" "loader_tpch_refresh_postgresql" $Version
     _BgDockerJob "bexhoma/loader_tpch_refresh_mysql:$Version"      "images/tpch_refresh/loader_mysql"      "loader_tpch_refresh_mysql"      $Version
     _BgDockerJob "bexhoma/loader_tpch_refresh_mariadb:$Version"    "images/tpch_refresh/loader_mariadb"    "loader_tpch_refresh_mariadb"    $Version
@@ -203,7 +211,12 @@ function Build-AndPush-Hardware {
 
 #### Main ####
 
-$dbmsbenchmarker = "v0.15.6"
+# The DBMS-Benchmarker images use the installed version (set by requirements.txt);
+# its git tags have the form vX.Y.Z.
+$dbmsbenchmarkerVersion = (pip show dbmsbenchmarker | Select-String "^Version:" | ForEach-Object { ($_ -split '\s+')[1] })
+if (-not $dbmsbenchmarkerVersion) { throw "dbmsbenchmarker is not installed" }
+$dbmsbenchmarker = "v$dbmsbenchmarkerVersion"
+Write-Output "DBMS-Benchmarker $dbmsbenchmarker"
 $version = (pip show bexhoma | Select-String "^Version:" | ForEach-Object { ($_ -split '\s+')[1] })
 Write-Output $version
 

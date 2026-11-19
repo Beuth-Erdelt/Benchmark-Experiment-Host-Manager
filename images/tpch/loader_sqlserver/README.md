@@ -27,7 +27,13 @@ As the [PostgreSQL loader](../loader_postgresql/README.md#environment-variables)
 * `BEXHOMA_PASSWORD`: empty, set by bexhoma from the JDBC `auth` of `cluster.config`
 * `BEXHOMA_DATABASE`: `tpch`
 * `BEXHOMA_SCHEMA`: empty (= `dbo`)
+* `MSSQL_TOOLS_VERSION`: `18.7.1.1-1`, version of `msodbcsql18` and `mssql-tools18`
+* `MSSQL_TOOLS_CACHE`: `/data/drivers`, cache of the downloaded packages on the data volume (`/tmp/drivers` if not writable)
 
 ## Image
 
-Base `ubuntu:22.04`; `msodbcsql18`, `mssql-tools18` (with `ACCEPT_EULA=Y`) from `packages.microsoft.com`, and `redis-tools`.
+Base `ubuntu:22.04` with `redis-tools`, the repository configuration of `packages.microsoft.com` and the open-source dependencies of Microsoft's tools.
+
+The image contains no Microsoft software: the licence terms of `msodbcsql18` and `mssql-tools18` do not allow publishing them in an image.
+[`install-tools.sh`](install-tools.sh), sourced at the start of `loader.sh`, downloads both packages (`MSSQL_TOOLS_VERSION`) from `packages.microsoft.com` into `MSSQL_TOOLS_CACHE`, once per version, and installs them with `ACCEPT_EULA=Y`.
+Running the loader means accepting Microsoft's licence terms, as deploying SQL Server does.
