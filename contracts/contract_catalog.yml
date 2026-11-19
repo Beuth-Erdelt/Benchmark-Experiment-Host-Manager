@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: CC-BY-4.0 (LICENSES/CC-BY-4.0.txt), unlike the AGPL code
 # Self-contained input contract for building a valid experiment.yml — every
 # field an agent needs is data below (catalog_concepts/experiment_schema/
 # workloads/systems), not comments. Design rationale and provenance (not

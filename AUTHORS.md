@@ -10,7 +10,7 @@ Authors made scientific contributions to Bexhoma (concept, method, design of ben
 
 Contributors improved the software, its documentation or its publication without being authors.
 
-- Leonhard Liu ([Lsacy](https://github.com/Lsacy)): prototype of the contract-driven benchmark agent (`agent/`, experiment design handbook, verdict procedure, agent tests), 2026
+- Leonhard Liu ([Lsacy](https://github.com/Lsacy)): co-author of the experiment design handbook (`agent/handbook/`, with its verdict procedure); prototype of the contract-driven benchmark agent (`agent/`, agent tests), 2026
 
 Automated dependency updates by Dependabot and Snyk are not listed.
 
