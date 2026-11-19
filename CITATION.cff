@@ -1,0 +1,78 @@
+cff-version: 1.2.0
+message: "If you use Bexhoma, please cite the software version you used and the article below."
+type: software
+title: "Bexhoma: Benchmark Experiment Host Manager"
+abstract: >-
+  Bexhoma (Benchmark Experiment Host Manager) is a Python tool that manages
+  benchmark experiments of Database Management Systems (DBMS) in Kubernetes
+  clusters. It deploys the systems under test, runs data generators, loaders
+  and benchmark drivers (DBMS-Benchmarker, HammerDB, Benchbase, YCSB) as
+  containers, collects hardware metrics, and evaluates and reports the results,
+  so that experiments can be repeated over varying configurations.
+authors:
+  - family-names: Erdelt
+    given-names: Patrick K.
+    orcid: "https://orcid.org/0000-0002-3359-2386"
+    affiliation: "Berliner Hochschule für Technik (BHT)"
+version: "0.11.18"
+license: AGPL-3.0-or-later
+repository-code: "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager"
+url: "https://bexhoma.readthedocs.io"
+keywords:
+  - DBMS
+  - benchmarking
+  - performance evaluation
+  - Kubernetes
+  - cloud-native
+  - reproducibility
+preferred-citation:
+  type: conference-paper
+  title: "Orchestrating DBMS Benchmarking in the Cloud with Kubernetes"
+  authors:
+    - family-names: Erdelt
+      given-names: Patrick K.
+      orcid: "https://orcid.org/0000-0002-3359-2386"
+  collection-title: "Performance Evaluation and Benchmarking. TPCTC 2021. Lecture Notes in Computer Science, vol 13169"
+  publisher:
+    name: Springer
+  year: 2022
+  doi: "10.1007/978-3-030-94437-7_6"
+references:
+  - type: conference-paper
+    title: "A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking"
+    authors:
+      - family-names: Erdelt
+        given-names: Patrick K.
+    collection-title: "Performance Evaluation and Benchmarking. TPCTC 2020. Lecture Notes in Computer Science, vol 12752"
+    publisher:
+      name: Springer
+    year: 2021
+    doi: "10.1007/978-3-030-84924-5_6"
+  - type: conference-paper
+    title: "A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools"
+    authors:
+      - family-names: Erdelt
+        given-names: Patrick K.
+    collection-title: "Performance Evaluation and Benchmarking. TPCTC 2023. Lecture Notes in Computer Science, vol 14247"
+    publisher:
+      name: Springer
+    year: 2024
+    doi: "10.1007/978-3-031-68031-1_9"
+  - type: conference-paper
+    title: "Benchmarking Multi-Tenant Architectures in PostgreSQL"
+    authors:
+      - family-names: Erdelt
+        given-names: Patrick K.
+      - family-names: Rabl
+        given-names: Tilmann
+    collection-title: "Proceedings of the International Conference on Extending Database Technology (EDBT 2026)"
+    year: 2026
+    doi: "10.48786/edbt.2026.46"
+  - type: software
+    title: "DBMS-Benchmarker"
+    authors:
+      - family-names: Erdelt
+        given-names: Patrick K.
+      - family-names: Jestel
+        given-names: Jascha
+    doi: "10.5281/zenodo.6382235"

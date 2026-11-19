@@ -1,5 +1,6 @@
 [build-system]
-requires        = ["setuptools>=67", "wheel"]
+# setuptools 77 reads the licence as an SPDX expression (PEP 639)
+requires        = ["setuptools>=77", "wheel"]
 build-backend   = "setuptools.build_meta"
 
 [project]
@@ -7,20 +8,27 @@ name            = "bexhoma"
 dynamic         = ["version", "dependencies"]
 description     = "This python tools helps managing DBMS benchmarking experiments in a Kubernetes-based HPC cluster environment. It enables users to configure hardware / software setups for easily repeating tests over varying configurations."
 readme          = { file = "README.md", content-type = "text/markdown" }
-license         = { text = "GNU Affero General Public License v3" }
+license         = "AGPL-3.0-or-later"
+license-files   = ["LICENSE"]
 requires-python = ">=3.10.2"
 authors         = [
     { name = "Patrick K. Erdelt", email = "patrick.erdelt@bht-berlin.de" }
 ]
+keywords        = ["DBMS", "benchmarking", "performance evaluation", "Kubernetes", "cloud-native", "reproducibility"]
 classifiers     = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GNU Affero General Public License v3",
     "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Database",
+    "Topic :: System :: Benchmark",
 ]
 
 [project.urls]
-Homepage   = "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager"
-Repository = "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager"
+Homepage      = "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager"
+Repository    = "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager"
+Documentation = "https://bexhoma.readthedocs.io"
+Changelog     = "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/releases"
+Issues        = "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues"
 
 # ---- Console scripts ----
 [project.scripts]

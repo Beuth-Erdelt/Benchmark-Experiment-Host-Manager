@@ -1,0 +1,38 @@
+{
+  "@context": "https://w3id.org/codemeta/3.0",
+  "@type": "SoftwareSourceCode",
+  "name": "Bexhoma: Benchmark Experiment Host Manager",
+  "description": "Bexhoma (Benchmark Experiment Host Manager) is a Python tool that manages benchmark experiments of Database Management Systems (DBMS) in Kubernetes clusters. It deploys the systems under test, runs data generators, loaders and benchmark drivers (DBMS-Benchmarker, HammerDB, Benchbase, YCSB) as containers, collects hardware metrics, and evaluates and reports the results, so that experiments can be repeated over varying configurations.",
+  "version": "0.11.18",
+  "license": "https://spdx.org/licenses/AGPL-3.0-or-later",
+  "codeRepository": "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager",
+  "issueTracker": "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues",
+  "softwareHelp": "https://bexhoma.readthedocs.io",
+  "downloadUrl": "https://pypi.org/project/bexhoma/",
+  "programmingLanguage": "Python 3",
+  "runtimePlatform": "Python >=3.10.2, Kubernetes",
+  "operatingSystem": "OS Independent",
+  "developmentStatus": "active",
+  "dateCreated": "2019-09-14",
+  "keywords": ["DBMS", "benchmarking", "performance evaluation", "Kubernetes", "cloud-native", "reproducibility"],
+  "author": [
+    {
+      "@type": "Person",
+      "@id": "https://orcid.org/0000-0002-3359-2386",
+      "givenName": "Patrick K.",
+      "familyName": "Erdelt",
+      "affiliation": {"@type": "Organization", "name": "Berliner Hochschule für Technik (BHT)"}
+    }
+  ],
+  "contributor": [
+    {"@type": "Person", "givenName": "Leonhard", "familyName": "Liu"}
+  ],
+  "maintainer": {"@id": "https://orcid.org/0000-0002-3359-2386"},
+  "softwareRequirements": ["https://github.com/Beuth-Erdelt/DBMS-Benchmarker"],
+  "referencePublication": [
+    {"@type": "ScholarlyArticle", "@id": "https://doi.org/10.1007/978-3-030-94437-7_6", "name": "Orchestrating DBMS Benchmarking in the Cloud with Kubernetes"},
+    {"@type": "ScholarlyArticle", "@id": "https://doi.org/10.1007/978-3-030-84924-5_6", "name": "A Framework for Supporting Repetition and Evaluation in the Process of Cloud-Based DBMS Performance Benchmarking"},
+    {"@type": "ScholarlyArticle", "@id": "https://doi.org/10.1007/978-3-031-68031-1_9", "name": "A Cloud-Native Adoption of Classical DBMS Performance Benchmarks and Tools"},
+    {"@type": "ScholarlyArticle", "@id": "https://doi.org/10.48786/edbt.2026.46", "name": "Benchmarking Multi-Tenant Architectures in PostgreSQL"}
+  ]
+}
