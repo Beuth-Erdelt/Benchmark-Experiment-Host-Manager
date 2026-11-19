@@ -61,10 +61,10 @@ Packages installed with the package manager of a base image (apt, apk, dnf) brin
 
 Drivers of IBM Db2 are not built into the images; they are downloaded when a container starts.
 
-The loader images for SQL Server and Oracle install the vendors' client tools from their package repositories (terms checked on 2026-11-19 in the installed packages):
+The loaders for SQL Server and Oracle use the vendors' client tools (terms checked on 2026-11-19 in the installed packages):
 
-* Oracle Instant Client (`loader_tpch_oracle`, `loader_tpch_refresh_oracle`): Oracle Free Distribution, Hosting, and Use Terms and Conditions. They allow redistributing the unmodified programs without charge, with a copy of the licence; the packages install it in `/usr/share/oracle/23/client64/doc/`.
-* `msodbcsql18` and `mssql-tools18` (`loader_tpch_sqlserver`, `loader_tpch_refresh_sqlserver`): Microsoft Software License Terms, accepted with `ACCEPT_EULA=Y`. They do not allow publishing these images. The terms of `mssql-tools18` forbid publishing the software for others to copy and distributing it to run on a platform other than Windows; the ODBC driver may be distributed only as code on Microsoft's REDIST list inside one's own application, with end-user terms and an indemnity for Microsoft.
+* Oracle Instant Client (`loader_tpch_oracle`, `loader_tpch_refresh_oracle`): Oracle Free Distribution, Hosting, and Use Terms and Conditions. They allow redistributing the unmodified programs without charge, with a copy of the licence; the images contain Instant Client, and its packages install the licence in `/usr/share/oracle/23/client64/doc/`.
+* `msodbcsql18` and `mssql-tools18` (`loader_tpch_sqlserver`, `loader_tpch_refresh_sqlserver`): Microsoft Software License Terms. They do not allow publishing these packages in an image: the terms of `mssql-tools18` forbid publishing the software for others to copy and distributing it to run on a platform other than Windows; the ODBC driver may be distributed only as code on Microsoft's REDIST list inside one's own application, with end-user terms and an indemnity for Microsoft. So the images contain no Microsoft software, only the repository configuration (`packages-microsoft-prod`, MIT). `install-tools.sh` installs both packages from `packages.microsoft.com` at the start of the container, with `ACCEPT_EULA=Y`, and caches them on the data volume. Images up to version 0.11.18 still contained them.
 
 ## Not included: the DBMS under test
 

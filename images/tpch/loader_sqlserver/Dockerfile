@@ -14,23 +14,26 @@
 # Description: This container loads pre-generated TPC-H .tbl files into SQL Server
 # via bcp (mssql-tools18). The child index is read from /tmp/tpch/BEXHOMA_CHILD
 # written by the generator pod. nation and region are only loaded by pod 1.
-# The tools are installed from packages.microsoft.com (ACCEPT_EULA of msodbcsql18
-# and mssql-tools18); redis-tools is installed for the synchronisation counters.
+# The image contains no Microsoft software: their licence terms do not allow
+# publishing msodbcsql18 and mssql-tools18 in an image. install-tools.sh installs
+# them from packages.microsoft.com at the start of the container (ACCEPT_EULA);
+# redis-tools is installed for the synchronisation counters.
 ######################################################################################
 FROM ubuntu:22.04
 
 ######################################################################################
 # Install dependencies
 ######################################################################################
-# packages-microsoft-prod.deb installs the signing key and the source list together
-# (the prod.list alone names no keyring: apt then fails with NO_PUBKEY EB3E94ADBE1229CF)
+# packages-microsoft-prod.deb (MIT) installs the signing key and the source list together
+# (the prod.list alone names no keyring: apt then fails with NO_PUBKEY EB3E94ADBE1229CF).
+# The other packages are the dependencies of msodbcsql18 and mssql-tools18, so that
+# install-tools.sh only needs dpkg -i.
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates redis-tools \
+        libkrb5-3 openssl debconf unixodbc odbcinst \
     && curl -fsSL -o /tmp/packages-microsoft-prod.deb https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb \
     && dpkg -i /tmp/packages-microsoft-prod.deb \
     && rm /tmp/packages-microsoft-prod.deb \
-    && apt-get update \
-    && ACCEPT_EULA=Y apt-get install -y --no-install-recommends msodbcsql18 mssql-tools18 unixodbc \
     && rm -rf /var/lib/apt/lists/*
 ENV PATH="${PATH}:/opt/mssql-tools18/bin"
 
@@ -82,6 +85,7 @@ RUN mkdir -p /tmp/tpch
 # Loader script
 ######################################################################################
 COPY ./loader.sh /tmp/loader.sh
+COPY ./install-tools.sh /tmp/install-tools.sh
 RUN chmod +x /tmp/loader.sh
 
 ######################################################################################

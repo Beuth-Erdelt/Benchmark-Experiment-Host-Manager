@@ -5,6 +5,10 @@ DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
 echo "NOW: $DATEANDTIME"
 SECONDS_START_SCRIPT=$SECONDS
 
+######################## SQL Server tools (not part of the image) ########################
+# installs msodbcsql18 and mssql-tools18 from packages.microsoft.com (cache on the data volume)
+source /tmp/install-tools.sh
+
 ################### Turn Some Parameters into Numbers ###################
 BEXHOMA_CHILD=${BEXHOMA_CHILD//[^0-9]/}
 BEXHOMA_TENANT_NUM=${BEXHOMA_TENANT_NUM//[^0-9]/}

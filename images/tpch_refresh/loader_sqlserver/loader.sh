@@ -4,6 +4,10 @@
 DATEANDTIME=$(date '+%d.%m.%Y %H:%M:%S');
 echo "NOW: $DATEANDTIME"
 SECONDS_START_SCRIPT=$SECONDS
+
+######################## SQL Server tools (not part of the image) ########################
+# installs msodbcsql18 and mssql-tools18 from packages.microsoft.com (cache on the data volume)
+source /tmp/install-tools.sh
 bexhoma_start_epoch=$(date -u +%s)
 
 ######################## Show general parameters ########################
