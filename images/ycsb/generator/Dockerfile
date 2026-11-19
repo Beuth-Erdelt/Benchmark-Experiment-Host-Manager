@@ -102,6 +102,7 @@ RUN git clone https://github.com/jemalloc/jemalloc.git /tmp/jemalloc && \
     ./configure --prefix=/usr/local && \
     make -j$(nproc) && \
     make install && \
+    mkdir -p /licenses && cp COPYING /licenses/jemalloc-COPYING && \
     rm -rf /tmp/jemalloc
 
 ######################################################################################
@@ -114,6 +115,8 @@ RUN cd /tmp && \
     make redis-cli && \
     cp src/redis-cli /usr/local/bin/ && \
     chmod 755 /usr/local/bin/redis-cli && \
+    mkdir -p /licenses/redis && cp LICENSE.txt /licenses/redis/ && \
+    { cp REDISCONTRIBUTIONS.txt /licenses/redis/ || true; } && \
     rm -rf /tmp/redis-stable /tmp/redis-stable.tar.gz
 
 ######################################################################################
@@ -173,6 +176,22 @@ RUN wget https://repo1.maven.org/maven2/com/microsoft/sqlserver/mssql-jdbc/9.4.1
 # which Oracle does not have, so workload E does not run
 RUN wget https://repo1.maven.org/maven2/com/oracle/database/jdbc/ojdbc8/23.26.3.0.0/ojdbc8-23.26.3.0.0.jar && \
     cp ojdbc8-23.26.3.0.0.jar jars/
+
+# Licences of the software of others in this image, see NOTICE
+# (texts of the versions above; standard licence texts from SPDX)
+COPY ./NOTICE /licenses/NOTICE
+RUN mkdir -p /licenses/jdbc /licenses/ycsb && \
+    cp LICENSE.txt NOTICE.txt /licenses/ycsb/ && \
+    cp mysql-connector-j-8.0.31/LICENSE /licenses/jdbc/mysql-connector-j-LICENSE && \
+    cp kinetica-client-jdbc-7.1.8.7/LICENSE /licenses/jdbc/kinetica-jdbc-LICENSE && \
+    cd /licenses/jdbc && \
+    wget -q -O postgresql-jdbc-LICENSE https://raw.githubusercontent.com/pgjdbc/pgjdbc/REL42.5.0/LICENSE && \
+    wget -q -O mariadb-java-client-LGPL-2.1-or-later.txt https://raw.githubusercontent.com/spdx/license-list-data/v3.25.0/text/LGPL-2.1-or-later.txt && \
+    wget -q -O monetdb-jdbc-MPL-2.0.txt https://raw.githubusercontent.com/spdx/license-list-data/v3.25.0/text/MPL-2.0.txt && \
+    wget -q -O singlestore-jdbc-LICENSE https://raw.githubusercontent.com/memsql/S2-JDBC-Connector/v1.1.4/LICENSE && \
+    wget -q -O yugabytedb-jdbc-LICENSE https://raw.githubusercontent.com/yugabyte/pgjdbc/v42.3.5-yb-2/LICENSE && \
+    wget -q -O mssql-jdbc-LICENSE https://raw.githubusercontent.com/microsoft/mssql-jdbc/v9.4.1/LICENSE && \
+    wget -q -O ojdbc8-oracle-free-use-terms.html https://www.oracle.com/downloads/licenses/oracle-free-license.html
 
 ######################################################################################
 # Copy workload templates and entrypoint script

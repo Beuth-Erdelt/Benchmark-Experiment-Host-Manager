@@ -65,6 +65,13 @@ RUN apt-get update -y \
 # Copy SSB generator files
 ######################################################################################
 COPY ./tpc_eula.txt ./tpc_eula.txt
+
+# Licences of the software of others in this image, see NOTICE. TPC EULA
+# clause 9: every copy carries the complete EULA and the legend below.
+COPY ./tpc_eula.txt /licenses/tpc_eula.txt
+COPY ./NOTICE /licenses/NOTICE
+LABEL org.opencontainers.image.licenses="AGPL-3.0-or-later AND LicenseRef-TPC-EULA" \
+      org.opencontainers.image.description="THE TPC SOFTWARE IS AVAILABLE WITHOUT CHARGE FROM TPC."
 COPY --from=build /src/build/dbgen /tmp/dbgen
 COPY --from=build /src/dists.dss /tmp/dists.dss
 RUN chmod +x /tmp/dbgen
@@ -89,6 +96,7 @@ RUN chmod +x /tmp/compare-flat.sh \
         && wget -q https://github.com/duckdb/duckdb/releases/download/v$DUCKDB_VERSION/duckdb_cli-linux-amd64.zip -O /tmp/duckdb.zip \
         && echo "$DUCKDB_SHA256  /tmp/duckdb.zip" | sha256sum -c - \
         && unzip -q /tmp/duckdb.zip -d /usr/local/bin \
+        && wget -q https://raw.githubusercontent.com/duckdb/duckdb/v$DUCKDB_VERSION/LICENSE -O /licenses/duckdb-LICENSE \
         && rm /tmp/duckdb.zip \
         && rm -rf /var/lib/apt/lists/*; \
     fi

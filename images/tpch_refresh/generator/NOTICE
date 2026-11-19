@@ -1,0 +1,20 @@
+THE TPC SOFTWARE IS AVAILABLE WITHOUT CHARGE FROM TPC.
+
+Third-party components in this image
+====================================
+
+This image is part of Bexhoma (https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager),
+licensed under the GNU Affero General Public License v3.0 or later.
+It contains the following software of others; their licence texts are in /licenses/.
+
+TPC-H dbgen and dists.dss (https://www.tpc.org/tpch/)
+  Licence: TPC End User License Agreement, /licenses/tpc_eula.txt
+  It is distributed under the TPC EULA, clause 9, unchanged except as stated
+  in the build files of this image, and without charge.
+
+redis-cli, built from redis-stable (https://redis.io)
+  Licence: RSALv2, SSPLv1 or AGPL-3.0 at the user's choice, /licenses/redis/
+
+Results obtained with this software are not TPC benchmark results.
+
+See THIRD_PARTY.md in the Bexhoma repository for all images.

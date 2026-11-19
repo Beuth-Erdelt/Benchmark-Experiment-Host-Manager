@@ -1,0 +1,42 @@
+Third-party components in this image
+====================================
+
+This image is part of Bexhoma (https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager),
+licensed under the GNU Affero General Public License v3.0 or later.
+It contains the following software of others, unmodified; their licence texts
+are in /licenses/. Sources are at the addresses given.
+
+YCSB 0.17.0 (https://github.com/brianfrankcooper/YCSB), in /opt/ycsb
+  Licence: Apache-2.0, /licenses/ycsb/
+
+jemalloc (https://github.com/jemalloc/jemalloc), built from source
+  Licence: BSD-2-Clause, /licenses/jemalloc-COPYING
+
+redis-cli, built from redis-stable (https://github.com/redis/redis)
+  Licence: RSALv2, SSPLv1 or AGPL-3.0 at the user's choice, /licenses/redis/
+
+JDBC drivers in jars/
+  PostgreSQL JDBC 42.5.0 (https://github.com/pgjdbc/pgjdbc)
+    Licence: BSD-2-Clause, /licenses/jdbc/postgresql-jdbc-LICENSE
+  MySQL Connector/J 8.0.31 (https://github.com/mysql/mysql-connector-j)
+    Licence: GPL-2.0 with the Universal FOSS Exception, /licenses/jdbc/mysql-connector-j-LICENSE
+  MariaDB Connector/J 3.1.0 (https://github.com/mariadb-corporation/mariadb-connector-j)
+    Licence: LGPL-2.1-or-later, /licenses/jdbc/mariadb-java-client-LGPL-2.1-or-later.txt
+  MonetDB JDBC 3.2 (https://github.com/MonetDB/monetdb-java)
+    Licence: MPL-2.0, /licenses/jdbc/monetdb-jdbc-MPL-2.0.txt
+  SingleStore JDBC 1.1.4 (https://github.com/memsql/S2-JDBC-Connector)
+    Licence: LGPL-2.1, /licenses/jdbc/singlestore-jdbc-LICENSE
+  Kinetica JDBC 7.1.8.7 (https://github.com/kineticadb/kinetica-client-jdbc)
+    Licence: MIT, /licenses/jdbc/kinetica-jdbc-LICENSE
+  YugabyteDB JDBC 42.3.5-yb-2 (https://github.com/yugabyte/pgjdbc)
+    Licence: BSD-2-Clause, /licenses/jdbc/yugabytedb-jdbc-LICENSE
+  Microsoft JDBC Driver for SQL Server 9.4.1 (https://github.com/microsoft/mssql-jdbc)
+    Licence: MIT, /licenses/jdbc/mssql-jdbc-LICENSE
+  Oracle JDBC ojdbc8 23.26.3.0.0 (Maven Central, com.oracle.database.jdbc)
+    Licence: Oracle Free Use Terms and Conditions, /licenses/jdbc/ojdbc8-oracle-free-use-terms.html
+    Redistributed unmodified and without charge.
+
+Packages installed with the package manager of the base image bring their own
+copyright files (e.g. /usr/share/doc/<package>/copyright).
+
+See THIRD_PARTY.md in the Bexhoma repository for all images.

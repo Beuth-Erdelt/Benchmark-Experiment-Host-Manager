@@ -33,6 +33,8 @@ RUN wget -q http://download.redis.io/redis-stable.tar.gz \
     && make redis-cli \
     && cp src/redis-cli /usr/local/bin/ \
     && chmod 755 /usr/local/bin/redis-cli \
+    && mkdir -p /licenses/redis && cp LICENSE.txt /licenses/redis/ \
+    && { cp REDISCONTRIBUTIONS.txt /licenses/redis/ || true; } \
     && cd / \
     && rm -rf redis-stable redis-stable.tar.gz
 

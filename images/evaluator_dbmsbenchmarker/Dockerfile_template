@@ -41,6 +41,12 @@ RUN git clone --branch {version} https://github.com/Beuth-Erdelt/DBMS-Benchmarke
 WORKDIR /usr/src/app/DBMS-Benchmarker
 
 ######################################################################################
+# Licences of the software of others in this image, see NOTICE
+######################################################################################
+COPY ./NOTICE /licenses/NOTICE
+RUN cp LICENSE /licenses/DBMS-Benchmarker-LICENSE
+
+######################################################################################
 # Create and activate a Python virtualenv, then reinstall DBMSBenchmarker inside it
 ######################################################################################
 SHELL ["/bin/bash", "-c"]

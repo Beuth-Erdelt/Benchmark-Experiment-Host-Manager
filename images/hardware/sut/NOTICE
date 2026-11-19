@@ -1,0 +1,22 @@
+Third-party components in this image
+====================================
+
+This image is part of Bexhoma (https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager),
+licensed under the GNU Affero General Public License v3.0 or later.
+It contains the following software of others; their licence texts are in /licenses/.
+
+sockperf (https://github.com/Mellanox/sockperf), built from the default branch
+  at build time; patched for musl as stated in the Dockerfile
+  Licence: BSD-3-Clause, /licenses/sockperf-copying
+
+netserver of netperf (https://github.com/HewlettPackard/netperf), built from the default branch at build time
+  Licence: MIT, /licenses/netperf-COPYING
+
+fio (https://github.com/axboe/fio) and sysbench (https://github.com/akopytov/sysbench),
+  installed with apk
+  Licence: GPL-2.0, /licenses/GPL-2.0-only.txt
+
+Packages installed with apk come from Alpine Linux; their sources are at
+https://gitlab.alpinelinux.org/alpine/aports.
+
+See THIRD_PARTY.md in the Bexhoma repository for all images.

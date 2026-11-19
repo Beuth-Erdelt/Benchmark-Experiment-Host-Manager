@@ -19,7 +19,11 @@ They are built from the kits downloaded from the TPC and copied into the build c
 
 ## Built into the Docker images
 
-The images are not part of the Python package; they are built from `images/` and pulled by the Kubernetes manifests.
+The images are not part of the Python package; they are built from `images/`, published on [Docker Hub](https://hub.docker.com/u/bexhoma) as `bexhoma/*` and pulled by the Kubernetes manifests.
+Publishing them redistributes the components below, under the licences listed.
+Each image that adds components of others contains a folder `/licenses/` with a `NOTICE` (components, versions, licences, sources; kept as `NOTICE` next to the Dockerfile) and the licence texts of the versions used.
+The generator images of TPC-H, TPC-DS and SSB carry the complete TPC EULA and the legend required by its clause 9 ("THE TPC SOFTWARE IS AVAILABLE WITHOUT CHARGE FROM TPC.") in `/licenses/` and in an image label.
+Packages installed with the package manager of a base image (apt, apk, dnf) bring their own copyright files; the base images carry their own licences.
 
 | Image | Component | Source | Licence |
 |---|---|---|---|
@@ -52,9 +56,13 @@ The images are not part of the Python package; they are built from `images/` and
 | SingleStore JDBC | [memsql/S2-JDBC-Connector](https://github.com/memsql/S2-JDBC-Connector) | LGPL-2.1 |
 | Kinetica JDBC | [kineticadb/kinetica-client-jdbc](https://github.com/kineticadb/kinetica-client-jdbc) | MIT |
 | Microsoft JDBC Driver for SQL Server | [microsoft/mssql-jdbc](https://github.com/microsoft/mssql-jdbc) | MIT |
-| Oracle JDBC (`ojdbc8`) | Maven Central | Oracle Free Use Terms and Conditions |
+| ClickHouse JDBC | [ClickHouse/clickhouse-java](https://github.com/ClickHouse/clickhouse-java) | Apache-2.0 |
+| Oracle JDBC (`ojdbc8`) | Maven Central | [Oracle Free Use Terms and Conditions](https://www.oracle.com/downloads/licenses/oracle-free-license.html): redistribution of the unmodified jar without charge, with a copy of the terms |
 
 Drivers of IBM Db2 are not built into the images; they are downloaded when a container starts.
+
+The loader images for SQL Server and Oracle install the vendors' client tools from their package repositories: `msodbcsql18` and `mssql-tools18` (Microsoft licence terms, accepted with `ACCEPT_EULA=Y`) and Oracle Instant Client.
+Whether these terms allow publishing the images has not been checked yet.
 
 ## Not included: the DBMS under test
 
