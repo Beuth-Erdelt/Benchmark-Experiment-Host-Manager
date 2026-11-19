@@ -127,8 +127,3 @@ of its ancestors, never their reports.
 ```{literalinclude} ../contracts/contract_result.yml
 :language: yaml
 ```
-
----
-
-<!-- SPDX-License-Identifier: CC-BY-4.0 -->
-This specification is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (text: `LICENSES/CC-BY-4.0.txt` in the Bexhoma repository), separately from the AGPL-licensed code of Bexhoma. Credit: Bexhoma, Patrick K. Erdelt and contributors, see AUTHORS.md.

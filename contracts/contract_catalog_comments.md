@@ -777,8 +777,3 @@ orphaned directory by wiring it back in without knowing why it was unused.
 - `contracts/contract_catalog.yml` — the actual contract.
 - `contracts/contract_result.yml` — what a completed run's result folder
   contains.
-
----
-
-<!-- SPDX-License-Identifier: CC-BY-4.0 -->
-This specification is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (text: `LICENSES/CC-BY-4.0.txt` in the Bexhoma repository), separately from the AGPL-licensed code of Bexhoma. Credit: Bexhoma, Patrick K. Erdelt and contributors, see AUTHORS.md.

@@ -220,6 +220,5 @@ https://doi.org/10.48786/edbt.2026.46
 
 ## License
 
-Bexhoma's code is licensed under the [GNU Affero General Public License v3.0 or later](LICENSE).
-The specifications of the catalog and result contracts (`contracts/`, and their documentation pages) and the experiment design handbook (`agent/handbook/`) are licensed under [CC BY 4.0](LICENSES/CC-BY-4.0.txt), so that other tools can adopt them; quotations of other works in the handbook remain under the rights of their authors.
+Bexhoma's code is licensed under the [GNU Affero General Public License v3](LICENSE).
 The logo and other brand assets in [docs/logo](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/docs/logo) are licensed separately under [CC BY 4.0](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/logo/README.md).
