@@ -10,6 +10,7 @@ Scripts connect to a Kubernetes cluster and invoke the Python bexhoma CLI (`bexh
 ```
 scripts/
 ├── test-docs-*.sh / *.ps1   # paired experiment-runner scripts (one per topic)
+├── test-reference-experiments.sh / .ps1  # release gate of minor releases: 10 runs copied from test-docs-*, BEXHOMA_PARALLEL at a time
 ├── testfunctions.sh / .ps1  # shared helper functions (sourced at script start)
 ├── build.sh / build.ps1     # Docker image build and push helpers
 ├── run_collector_validations.sh / .ps1
