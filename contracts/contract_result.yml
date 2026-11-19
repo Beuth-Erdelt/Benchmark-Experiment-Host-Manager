@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: CC-BY-4.0 (LICENSES/CC-BY-4.0.txt), unlike the AGPL code
 # contract_result.yml — machine-readable description of what a completed
 # experiment run's result folder contains and how to decode its filenames.
 # Self-contained: every field an agent needs is data below (entry_point/

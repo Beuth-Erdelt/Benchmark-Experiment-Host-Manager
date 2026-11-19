@@ -118,3 +118,8 @@ Bexhoma keys). BibTeX stubs are at the end of `handbook_source_map_multi.md`.
 **No longer cited by the handbook:** `kounev2020systems`,
 `kistowski2015benchmark`. `vanderkouwe2018crimes` survives only as the preprint
 of `vanderkouwe2020flaws`.
+
+---
+
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+This document is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) (text: `LICENSES/CC-BY-4.0.txt` in the Bexhoma repository), separately from the AGPL-licensed code of Bexhoma. Credit: Bexhoma, Patrick K. Erdelt and contributors, see AUTHORS.md. Excepted are quotations of other works: they remain under the rights of their authors and are cited with their sources.
