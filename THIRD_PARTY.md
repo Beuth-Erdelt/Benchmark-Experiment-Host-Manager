@@ -61,8 +61,10 @@ Packages installed with the package manager of a base image (apt, apk, dnf) brin
 
 Drivers of IBM Db2 are not built into the images; they are downloaded when a container starts.
 
-The loader images for SQL Server and Oracle install the vendors' client tools from their package repositories: `msodbcsql18` and `mssql-tools18` (Microsoft licence terms, accepted with `ACCEPT_EULA=Y`) and Oracle Instant Client.
-Whether these terms allow publishing the images has not been checked yet.
+The loader images for SQL Server and Oracle install the vendors' client tools from their package repositories (terms checked on 2026-11-19 in the installed packages):
+
+* Oracle Instant Client (`loader_tpch_oracle`, `loader_tpch_refresh_oracle`): Oracle Free Distribution, Hosting, and Use Terms and Conditions. They allow redistributing the unmodified programs without charge, with a copy of the licence; the packages install it in `/usr/share/oracle/23/client64/doc/`.
+* `msodbcsql18` and `mssql-tools18` (`loader_tpch_sqlserver`, `loader_tpch_refresh_sqlserver`): Microsoft Software License Terms, accepted with `ACCEPT_EULA=Y`. They do not allow publishing these images. The terms of `mssql-tools18` forbid publishing the software for others to copy and distributing it to run on a platform other than Windows; the ODBC driver may be distributed only as code on Microsoft's REDIST list inside one's own application, with end-user terms and an indemnity for Microsoft.
 
 ## Not included: the DBMS under test
 
