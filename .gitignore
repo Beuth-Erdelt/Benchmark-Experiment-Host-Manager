@@ -46,3 +46,8 @@ agent/trajectories/*
 **/.DS_Store
 docs/FEATURES.md
 agent/analysis/
+
+# coverage data of the tests
+.coverage
+.coverage.*
+coverage.txt

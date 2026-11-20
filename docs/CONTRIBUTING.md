@@ -144,6 +144,14 @@ Using a code copilot (GitHub Copilot, Claude, etc.) to write or review code is f
 
 New features and bug fixes must include a test.
 
+Every pull request runs in CI (`.github/workflows/tests.yml`):
+
+- the unit tests in `tests/` (`python -m pytest tests`);
+- the collector validations on the archived results in `tests/validations/` (`scripts/validate_collector_*.py --zips`, see [scripts/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/README.md)); after a new run of `test-docs-collector`, commit the new zips;
+- the test coverage of `bexhoma` and `agent`, which must not fall below the floor in `pyproject.toml` (`python -m coverage run -m pytest tests`, then `python -m coverage combine` and `python -m coverage report`).
+
+On a cluster:
+
 - `test.sh` — basic functional test cases; see [TestCases](TestCases.md) for the full list.
 - `test-more.sh` — extended tests covering additional DBMS and longer runs.
 

@@ -58,6 +58,19 @@ include = ["bexhoma*", "agent*"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
+# Coverage of the package and the agent. The collector validations run as
+# subprocesses (tests/test_collector_validations.py); they are measured too.
+[tool.coverage.run]
+source = ["bexhoma", "agent"]
+patch = ["subprocess"]
+
+[tool.coverage.report]
+# Floor below the coverage reached (70% locally on 2026-11-20); set it to the
+# CI value after the first run there, and raise it when tests are added.
+fail_under = 68
+show_missing = false
+skip_empty = true
+
 # ---- Dynamic metadata sources ----
 [tool.setuptools.dynamic]
 version = { attr = "bexhoma.__version__.__version__" }
