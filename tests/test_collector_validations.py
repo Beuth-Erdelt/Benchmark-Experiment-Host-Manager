@@ -16,8 +16,8 @@ import sys
 
 import pytest
 
-_SCRIPTS = os.path.join(os.path.dirname(os.path.dirname(
-    os.path.abspath(__file__))), "scripts")
+_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_SCRIPTS = os.path.join(_REPO, "scripts")
 sys.path.insert(0, _SCRIPTS)
 from validate_collector_common import (  # noqa: E402
     LOGS, VALIDATIONS_DIR, code_from_log)
@@ -58,9 +58,14 @@ def test_every_zip_belongs_to_a_log():
 @pytest.mark.parametrize("name", sorted(LOGS))
 def test_validator(name):
     script = os.path.join(_SCRIPTS, f"validate_collector_{name}.py")
+    # a script starts with scripts/ on sys.path; without the repository first,
+    # it would import an installed bexhoma instead of the code under test
+    python_path = os.pathsep.join(
+        filter(None, [_REPO, os.environ.get("PYTHONPATH")]))
     result = subprocess.run(
         [sys.executable, script, "--zips"], capture_output=True,
         text=True, encoding="utf-8", errors="replace",
-        env={**os.environ, "PYTHONIOENCODING": "utf-8"})
+        env={**os.environ, "PYTHONIOENCODING": "utf-8",
+             "PYTHONPATH": python_path})
     output = (result.stdout + result.stderr).splitlines()
     assert result.returncode == 0, "\n".join(output[-_TAIL:])

@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-PYTHON="python"
+# the Python of the bexhoma environment, e.g. PYTHON=/path/to/env/python.exe
+PYTHON="${PYTHON:-python}"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 TESTS=(

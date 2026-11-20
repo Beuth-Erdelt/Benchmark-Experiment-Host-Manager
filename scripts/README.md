@@ -209,6 +209,9 @@ The results are kept as one zip per code in `tests/validations/`:
 - `--preview` shows `head()` of every DataFrame.
 
 Run individually or via `run_collector_validations.sh` / `run_collector_validations.ps1`; both pass their options to every script, e.g. `run_collector_validations.sh --zips`.
+`PYTHON` sets the interpreter of the runners (default `python`), e.g. `PYTHON=/path/to/env/python.exe scripts/run_collector_validations.sh`.
+
+A script starts with `scripts/` on its import path, so it imports the bexhoma that is installed in the environment. That is the working copy only after `pip install -e .`; otherwise set `PYTHONPATH` to the repository root, as `tests/test_collector_validations.py` does.
 
 ---
 
