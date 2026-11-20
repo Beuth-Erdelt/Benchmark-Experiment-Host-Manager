@@ -15,7 +15,7 @@ scripts/
 ├── build.sh / build.ps1     # Docker image build and push helpers
 ├── run_collector_validations.sh / .ps1
 │                            # run all validate_collector_*.py scripts
-├── validate_collector_*.py  # unit-level validators for collector output
+├── validate_collector_*.py  # unit-level validators for collector output (zips in tests/validations/)
 ├── compare-commands.py      # cross-check flags between .sh, .ps1, and docs
 ├── scan-docs.py             # report experiment metadata for every doc log reference
 ├── demo-runs.py             # summary of all recorded demo runs: logs_tests/SUMMARY.md and the README badge
@@ -199,9 +199,16 @@ The Python sync scripts (`_reorder_flags.py`, `_sync_docs.py`, `_sync_ps.py`, `_
 ### `validate_collector_*.py`
 
 Unit-level validators for the collector evaluation notebooks.
-Each script loads an experiment result from `logs_tests/` and the matching result folder, runs the corresponding `collectors.*` class, and checks that all expected DataFrames are non-empty and contain the required columns.
+Each script reads the experiment codes from the collector logs of `test-docs-collector` in `logs_tests/`, runs the corresponding collector class on their results, and checks that all expected DataFrames are non-empty and contain the required columns.
+The logs per script, the shared setup and the checks are in `validate_collector_common.py`.
 
-Run individually or via `run_collector_validations.sh` / `run_collector_validations.ps1`.
+The results are kept as one zip per code in `tests/validations/`:
+
+- By default (locally), the results are read from the result folder of `cluster.config`. A result without zip is archived to `tests/validations/`, a zip without result folder is extracted there. After a new run of `test-docs-collector`, commit the new zips and delete the old ones.
+- With `--zips`, neither `cluster.config` nor the result folder is used: the zips are extracted into a temporary folder, and a code without zip fails. This is how CI runs them (`tests/test_collector_validations.py`), which also checks that every code in the logs has a zip and every zip belongs to a log.
+- `--preview` shows `head()` of every DataFrame.
+
+Run individually or via `run_collector_validations.sh` / `run_collector_validations.ps1`; both pass their options to every script, e.g. `run_collector_validations.sh --zips`.
 
 ---
 
