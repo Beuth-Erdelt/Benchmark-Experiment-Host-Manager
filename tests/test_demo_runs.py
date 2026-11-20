@@ -48,5 +48,35 @@ class ScanDocTest(unittest.TestCase):
         self.assertEqual([rec["logfile"] for rec in records], ["docs_a.log", "docs_b.log"])
 
 
+class ReleaseGateTest(unittest.TestCase):
+    PASSED = "bexhoma version 0.13.0\nTEST passed: a\n"
+
+    def test_reference_logs_come_from_the_reference_script(self):
+        import os
+        cwd = os.getcwd()
+        os.chdir(SCRIPT.parent.parent)
+        try:
+            logs = demo_runs.reference_logs()
+        finally:
+            os.chdir(cwd)
+        self.assertEqual(len(logs), 10)
+        self.assertIn("docs_tpch_postgresql_monitoring", logs)
+
+    def test_a_passed_log_of_the_version(self):
+        self.assertEqual(demo_runs.gate_problems(self.PASSED, "0.13.0"), [])
+
+    def test_problems_of_a_log(self):
+        self.assertEqual(demo_runs.gate_problems("bexhoma version 0.13.0\n", "0.13.0"), ["no passed test"])
+        self.assertEqual(demo_runs.gate_problems(self.PASSED + "TEST failed: b\n", "0.13.0"), ["failed test"])
+        self.assertEqual(demo_runs.gate_problems(self.PASSED + "Traceback (most recent call last):\n", "0.13.0"),
+                         ["traceback"])
+
+    def test_the_version_must_match_exactly(self):
+        self.assertEqual(demo_runs.gate_problems(self.PASSED, "0.12.0"), ["not bexhoma 0.12.0"])
+        self.assertEqual(demo_runs.gate_problems(self.PASSED, "0.13"), ["not bexhoma 0.13"])
+        self.assertEqual(demo_runs.gate_problems(self.PASSED.replace("0.13.0", "0.13.01"), "0.13.0"),
+                         ["not bexhoma 0.13.0"])
+
+
 if __name__ == "__main__":
     unittest.main()

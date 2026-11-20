@@ -19,10 +19,17 @@ which gives the date of a run.
 Run from the repo root:
     python scripts/demo-runs.py            # write the two files
     python scripts/demo-runs.py --check    # exit 1 if they are not up to date (CI)
+    python scripts/demo-runs.py --release-gate 0.13.0
+        # exit 1 unless every reference experiment passed with that version
+
+The release gate reads the reference logs from scripts/test-reference-experiments.sh
+and checks each as that script does: at least one passed test, no failed test, no
+traceback, and the given bexhoma version. The publish workflow runs it for X.Y.0.
 """
 
 import importlib.util
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,6 +37,10 @@ from pathlib import Path
 SUMMARY = Path("logs_tests/SUMMARY.md")
 BADGE = Path("logs_tests/demo-runs-badge.json")
 ORDER = ("failed", "warn", "unchecked", "passed")
+LOG_DIR = Path("logs_tests")
+REFERENCE_SCRIPT = Path("scripts/test-reference-experiments.sh")
+#: Line of the reference script listing the logs it checks.
+_REFERENCE_LOGS = re.compile(r"^for log in ((?:docs_\w+ ?)+); do$", re.MULTILINE)
 
 
 def load_scanner():
@@ -117,7 +128,52 @@ def summary_md(runs: list[dict]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def reference_logs() -> list[str]:
+    """Names of the logs of the reference experiments, from the reference script."""
+    match = _REFERENCE_LOGS.search(REFERENCE_SCRIPT.read_text(encoding="utf-8"))
+    if match is None:
+        raise ValueError(f"no 'for log in ...; do' line in {REFERENCE_SCRIPT}")
+    return match.group(1).split()
+
+
+def gate_problems(text: str, version: str) -> list[str]:
+    """What keeps a reference log from passing the release gate of a version."""
+    problems = []
+    if "TEST passed" not in text:
+        problems.append("no passed test")
+    if "TEST failed" in text:
+        problems.append("failed test")
+    if re.search(r"^Traceback", text, re.MULTILINE):
+        problems.append("traceback")
+    # the log line ends with a full stop: "bexhoma version 0.12.0."
+    if not re.search(rf"bexhoma version {re.escape(version)}(?!\.?\d)", text):
+        problems.append(f"not bexhoma {version}")
+    return problems
+
+
+def release_gate(version: str) -> int:
+    """Check every reference log for the release of a version; 1 if one fails."""
+    failed = 0
+    for log in reference_logs():
+        path = LOG_DIR / f"{log}.log"
+        text = path.read_text(encoding="utf-8", errors="replace") if path.exists() else ""
+        problems = gate_problems(text, version) if text else ["log missing"]
+        if problems:
+            print(f"FAILED  {log}: {', '.join(problems)}")
+            failed = 1
+        else:
+            print(f"passed  {log}")
+    print(f"Reference experiments: {'FAILED' if failed else 'all passed'} with bexhoma {version}")
+    return failed
+
+
 def main() -> int:
+    if "--release-gate" in sys.argv:
+        index = sys.argv.index("--release-gate")
+        if index + 1 >= len(sys.argv):
+            print("usage: demo-runs.py --release-gate X.Y.Z", file=sys.stderr)
+            return 2
+        return release_gate(sys.argv[index + 1])
     scanner = load_scanner()
     runs = collect(scanner)
     if not runs:
