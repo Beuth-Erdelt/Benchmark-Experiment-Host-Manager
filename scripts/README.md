@@ -18,7 +18,7 @@ scripts/
 ├── validate_collector_*.py  # unit-level validators for collector output (zips in tests/validations/)
 ├── compare-commands.py      # cross-check flags between .sh, .ps1, and docs
 ├── scan-docs.py             # report experiment metadata for every doc log reference
-├── demo-runs.py             # summary of all recorded demo runs: logs_tests/SUMMARY.md and the README badge; --release-gate X.Y.Z checks the reference logs
+├── demo-runs.py             # summary of all recorded demo runs: logs_tests/SUMMARY.md and the README badge; --release-gate X.Y.Z checks the reference logs, --performance-table prints their key metrics
 ├── replace-docs.py          # patch docs with fresh summary content from logs_tests/
 ├── result_baseline.py       # record/compare what bexhoma makes of finished runs (guards a refactoring)
 ├── convert-to-lf.ps1        # normalize line endings to LF + UTF-8 no-BOM (Windows)
