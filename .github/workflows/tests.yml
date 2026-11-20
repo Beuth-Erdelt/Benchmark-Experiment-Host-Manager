@@ -16,3 +16,27 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt pytest -e ".[agent]"
       - run: python -m pytest tests -q
+
+  # On a pull request into master (the release PR): would the merge publish?
+  # Same rule as the publish workflow, without the tag. Informational only, the
+  # job never fails the workflow.
+  release-gate:
+    if: github.event_name == 'pull_request' && github.base_ref == 'master'
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Minor release X.Y.0 needs the reference experiments
+        run: |
+          VERSION=$(python -c "exec(open('bexhoma/__version__.py').read()); print(__version__)")
+          if [[ "$VERSION" == *.0 ]]; then
+            status=0
+            python scripts/demo-runs.py --release-gate "$VERSION" > gate.txt || status=$?
+            cat gate.txt
+            { echo '```'; cat gate.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+            exit "$status"
+          fi
+          echo "patch release $VERSION: the reference experiments are not required" | tee -a "$GITHUB_STEP_SUMMARY"
