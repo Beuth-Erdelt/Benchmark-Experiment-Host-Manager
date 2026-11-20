@@ -16,7 +16,9 @@ Contributions are welcome. Areas where help is most useful:
 - Open your pull request against `dev`, not `master`.
 - Keep each PR focused on one change. Unrelated fixes belong in a separate PR.
 - Reference the relevant issue number in the PR description where applicable.
-- Make sure all checks pass and review feedback is resolved before merging.
+- The description starts from the [pull request template](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/.github/PULL_REQUEST_TEMPLATE.md); its checklist asks for tests, cluster runs, changed metrics, the type of change for the next release and third-party material.
+- Every pull request requests a review from the maintainer (`.github/CODEOWNERS`).
+- Make sure all checks pass (see [Testing](#testing)) and review feedback is resolved before merging.
 - PRs are merged into `dev` via **squash merge**.
 - By submitting a PR you agree to license your contribution under the **GNU Affero General Public License v3.0 or later** (AGPL-3.0-or-later).
 - Changes are recorded in the notes of the [GitHub releases](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/releases), which are generated from the pull requests. So give each pull request a title that says what changes for users.
@@ -144,10 +146,29 @@ Using a code copilot (GitHub Copilot, Claude, etc.) to write or review code is f
 
 New features and bug fixes must include a test.
 
-- `test.sh` — basic functional test cases; see [TestCases](TestCases.md) for the full list.
-- `test-more.sh` — extended tests covering additional DBMS and longer runs.
+### Checks of a pull request
 
-Run the relevant test cases against a live Kubernetes cluster before submitting. Log output from `test.sh` goes to `logs_tests/`; include a representative log in your PR if the change affects experiment execution.
+Every pull request runs two workflows; neither needs a Kubernetes cluster.
+
+- `tests.yml`: the unit tests in `tests/` on Python 3.12, `python -m pytest tests` (one file: `python -m pytest tests/test_cli.py`). They build experiments against a stub cluster (`tests/stubs.py`) and include the collector validations on the archived results in `tests/validations/`. Bexhoma requires Python 3.10.2 or later, but CI tests only 3.12.
+- `demo-runs.yml`: `logs_tests/SUMMARY.md` and the badge file match the committed logs. After committing logs, run `python scripts/demo-runs.py` and commit both files.
+
+### When a test fails
+
+Some tests compare the code with recorded data. A deliberate change is accepted by updating that data in the same pull request:
+
+| Test | Fails when | Deliberate change |
+|---|---|---|
+| `test_dbms_snapshots.py` | an entry script builds a different experiment than recorded in `tests/snapshots/` | `BEXHOMA_UPDATE_SNAPSHOTS=1 python -m pytest tests/test_dbms_snapshots.py`, then review the diff of `tests/snapshots/` |
+| `test_no_dbms_in_python.py`, `test_no_benchmark_in_generic.py` | a file names a DBMS or a benchmark more (or less) often than its baseline in `tests/` allows | more: move the detail to `cluster.config`'s `dockers:` section or the benchmark's folder `bexhoma/benchmarks/<name>/`; less: shrink the baseline with `BEXHOMA_UPDATE_SNAPSHOTS=1` and the same test |
+| `test_collector_validations.py` | a collector gives other results for an archived run | after a new run of `test-docs-collector`, commit the new zips of `tests/validations/` |
+| `test_reference_experiments.py` | a command of a `test-docs-*` script differs from its copy in `scripts/test-reference-experiments.sh` / `.ps1` | copy the changed command |
+| `test_unpublished_results.py` | `logs_tests/` contains results of a DBMS that must not be published | keep them in the git-ignored `logs_tests/local/`, see [Publishing Results](Publishing-Results.md) |
+| `test_metadata.py` | the version differs between `bexhoma/__version__.py`, `CITATION.cff` and `codemeta.json` | `python bump_version.py X.Y.Z` |
+
+### On a cluster
+
+The examples of the documentation are produced by the `scripts/test-docs-*.sh` / `.ps1` scripts, listed in [TestCases](TestCases.md); `scripts/test-reference-experiments.sh` / `.ps1` runs one experiment per benchmark for a release. If a change affects experiment execution, run the relevant scripts against a live Kubernetes cluster before submitting. They write their logs to `logs_tests/`; link a representative log in your PR.
 
 ---
 
