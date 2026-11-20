@@ -78,5 +78,28 @@ class ReleaseGateTest(unittest.TestCase):
                          ["not bexhoma 0.13.0"])
 
 
+class PerformanceTableTest(unittest.TestCase):
+    SUMMARY = (
+        "## Show Summary\n\n### Benchmarking\n\n#### Per Connection\n\n"
+        "| connection | phase | NOPM |\n|:--|:--|--:|\n| c-1 | p-1 | 5 |\n\n"
+        "#### Per Phase\n\n"
+        "| DBMS | phase | NOPM | hardware_fio_read_iops |\n|:--|:--|--:|--:|\n"
+        "| p-1 | p-1 | 58048.00 | 0 |\n| p-2 | p-2 | 100.00 | 0 |\n\n"
+        "### Monitoring\n\n| DBMS | phase | NOPM |\n|:--|:--|--:|\n| x | x | 1 |\n")
+
+    def test_rows_of_the_per_phase_table(self):
+        phases = demo_runs.benchmarking_phases(self.SUMMARY)
+        self.assertEqual([p["phase"] for p in phases], ["p-1", "p-2"])
+        self.assertEqual(phases[0]["NOPM"], "58048.00")
+
+    def test_no_benchmarking_section(self):
+        self.assertEqual(demo_runs.benchmarking_phases("## Show Summary\n\n### Loading\n"), [])
+
+    def test_key_metrics_skip_zero_and_missing(self):
+        self.assertEqual(demo_runs.key_metrics({"NOPM": "58048.00", "hardware_fio_read_iops": "0"}),
+                         "NOPM 58048.00")
+        self.assertEqual(demo_runs.key_metrics({}), "—")
+
+
 if __name__ == "__main__":
     unittest.main()

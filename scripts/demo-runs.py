@@ -22,9 +22,17 @@ Run from the repo root:
     python scripts/demo-runs.py --release-gate 0.13.0
         # exit 1 unless every reference experiment passed with that version
 
+    python scripts/demo-runs.py --performance-table
+        # Markdown table of the reference experiments for the release notes
+
 The release gate reads the reference logs from scripts/test-reference-experiments.sh
 and checks each as that script does: at least one passed test, no failed test, no
 traceback, and the given bexhoma version. The publish workflow runs it for X.Y.0.
+
+The performance table reports the key metrics of every benchmarking phase of the
+reference experiments, read from the "Per Phase" table of their summaries, with
+duration and version. Performance varies between runs, so the numbers are
+reported, never checked.
 """
 
 import importlib.util
@@ -128,6 +136,80 @@ def summary_md(runs: list[dict]) -> str:
     return "\n".join(lines) + "\n"
 
 
+#: Key metrics of the benchmarks in the "Per Phase" tables, and their names in
+#: the performance table. A phase shows those of its columns that are not zero.
+KEY_METRICS = {
+    "Power@Size [~Q/h]": "Power@Size [~Q/h]",
+    "Throughput@Size": "Throughput@Size",
+    "Goodput (requests/second)": "Goodput [req/s]",
+    "NOPM": "NOPM",
+    "[OVERALL].Throughput(ops/sec)": "Throughput [ops/s]",
+    "hardware_fio_read_iops": "read IOPS",
+    "hardware_fio_write_iops": "write IOPS",
+}
+
+
+def _cells(line: str) -> list[str]:
+    """Cells of a row of a Markdown table."""
+    return [cell.strip() for cell in line.strip().strip("|").split("|")]
+
+
+def benchmarking_phases(summary: str) -> list[dict[str, str]]:
+    """Rows of the "Per Phase" table of the benchmarking section of a summary."""
+    section = summary.split("\n### Benchmarking\n", 1)
+    if len(section) < 2:
+        return []
+    body = section[1].split("\n### ", 1)[0]
+    table = body.split("#### Per Phase", 1)[-1] if "#### Per Phase" in body else body
+    rows = [line for line in table.splitlines() if line.startswith("| DBMS") or (
+        line.startswith("|") and not line.startswith("|:") and not line.startswith("|-"))]
+    if not rows or not rows[0].startswith("| DBMS"):
+        return []
+    header = _cells(rows[0])
+    phases = []
+    for line in rows[1:]:
+        if line.startswith("| DBMS"):
+            break
+        cells = _cells(line)
+        if len(cells) == len(header):
+            phases.append(dict(zip(header, cells)))
+    return phases
+
+
+def key_metrics(phase: dict[str, str]) -> str:
+    """The key metrics of one phase, e.g. "Power@Size [~Q/h] 11623.87"."""
+    values = []
+    for column, name in KEY_METRICS.items():
+        value = phase.get(column)
+        try:
+            if value is None or float(value) == 0:
+                continue
+        except ValueError:
+            continue
+        values.append(f"{name} {value}")
+    return ", ".join(values) or "—"
+
+
+def performance_table() -> str:
+    """Markdown table of the key metrics of the reference experiments."""
+    scanner = load_scanner()
+    lines = [
+        "| Experiment | Phase | Key metrics | Duration | Version |",
+        "|---|---|---|---|---|",
+    ]
+    for log in reference_logs():
+        log_path = LOG_DIR / f"{log}.log"
+        summary_path = LOG_DIR / f"{log}_summary.md"
+        text = log_path.read_text(encoding="utf-8", errors="replace") if log_path.exists() else ""
+        meta = scanner.extract_metadata(text)
+        duration, version = meta["duration"] or "—", (meta["version"] or "—").rstrip(".")
+        summary = summary_path.read_text(encoding="utf-8", errors="replace") if summary_path.exists() else ""
+        phases = benchmarking_phases(summary) or [{}]
+        for phase in phases:
+            lines.append(f"| {log} | {phase.get('phase', '—')} | {key_metrics(phase)} | {duration} | {version} |")
+    return "\n".join(lines) + "\n"
+
+
 def reference_logs() -> list[str]:
     """Names of the logs of the reference experiments, from the reference script."""
     match = _REFERENCE_LOGS.search(REFERENCE_SCRIPT.read_text(encoding="utf-8"))
@@ -174,6 +256,9 @@ def main() -> int:
             print("usage: demo-runs.py --release-gate X.Y.Z", file=sys.stderr)
             return 2
         return release_gate(sys.argv[index + 1])
+    if "--performance-table" in sys.argv:
+        print(performance_table(), end="")
+        return 0
     scanner = load_scanner()
     runs = collect(scanner)
     if not runs:
