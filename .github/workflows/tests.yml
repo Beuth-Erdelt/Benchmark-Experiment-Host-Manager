@@ -3,6 +3,8 @@ on:
   pull_request:
   push:
     branches: [master, dev]
+  # the publish workflow runs the tests before it uploads
+  workflow_call:
 jobs:
   pytest:
     runs-on: ubuntu-latest
