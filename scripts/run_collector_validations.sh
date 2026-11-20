@@ -21,7 +21,7 @@ echo "============================================================"
 for t in "${TESTS[@]}"; do
     echo ""
     echo "[$t]"
-    "$PYTHON" "$DIR/$t"
+    "$PYTHON" "$DIR/$t" "$@"
     if [ $? -ne 0 ]; then
         ((failed++))
         results+=("FAIL: $t")

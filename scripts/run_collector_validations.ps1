@@ -20,7 +20,7 @@ Write-Host "============================================================"
 foreach ($t in $tests) {
     Write-Host ""
     Write-Host "[$t]"
-    & $PYTHON "$DIR\$t"
+    & $PYTHON "$DIR\$t" @args
     if ($LASTEXITCODE -ne 0) {
         $failed++
         $results += "FAIL: $t"
