@@ -2515,6 +2515,8 @@ resources:
         self.assertEqual(
             summary["verdict"]["evidence_paths"], ["report/index.md"],
         )
+        self.assertEqual(summary["model"]["model"], "fake")
+        self.assertFalse(summary["model"]["pinned"])
         self.assertEqual(outcome["agent_summary_path"], str(summary_path))
 
     def test_followup_author_receives_only_compact_ancestor_summaries(self) -> None:
@@ -2523,6 +2525,7 @@ resources:
         parent_directory.mkdir()
         parent_summary = {
             "agent_summary_version": "1.0.0",
+            "model": {"model": "ancestor-model", "pinned": False},
             "experiment_code": "123",
             "follow_up_of": None,
             "hypothesis": "CPU is the limiting factor.",
@@ -2587,6 +2590,7 @@ resources:
         )
         self.assertIn("CPU is the limiting factor", author_prompt)
         self.assertIn("Additional CPU did not improve throughput", author_prompt)
+        self.assertNotIn("ancestor-model", author_prompt)
         self.assertEqual(outcome["ancestor_summaries_loaded"], 1)
 
     def test_interpretation_dry_run_validates_without_submit(self) -> None:
@@ -4371,9 +4375,11 @@ class BaselineTest(unittest.TestCase):
                 self.assertEqual(agent_main(), 0)
 
                 investigation = _only_investigation(root / "investigations")
+                # the answer ends with the model that wrote it
                 self.assertEqual(
                     (investigation / "answer.md").read_text().strip(),
-                    "A direct answer.",
+                    "A direct answer.\n\n---\n\n_Model: qwen3.5:9b. The weights are "
+                    "not pinned: the provider may serve other weights under this name._",
                 )
                 self.assertTrue(
                     (investigation / "reports" / "01-baseline.md").is_file()
@@ -4772,9 +4778,9 @@ class PhaseTest(unittest.TestCase):
             ], [investigation])
             self.assertTrue((investigation / "reports" / "01-design.md").is_file())
             self.assertTrue((investigation / "reports" / "02-interpret.md").is_file())
-            self.assertEqual(
-                (investigation / "answer.md").read_text(),
-                "# Result interpretation\n\nCurrent result only\n",
+            self.assertTrue(
+                (investigation / "answer.md").read_text().startswith(
+                    "# Result interpretation\n\nCurrent result only\n\n---\n\n_Model: ")
             )
             phases = [
                 json.loads(line).get("phase")
@@ -4831,8 +4837,9 @@ class PhaseTest(unittest.TestCase):
                 self.assertEqual(agent_main(), 0)
 
             investigation = _only_investigation(root / "investigations")
-            self.assertEqual(
-                (investigation / "answer.md").read_text(), "One-result answer\n"
+            self.assertTrue(
+                (investigation / "answer.md").read_text().startswith(
+                    "One-result answer\n\n---\n\n_Model: ")
             )
 
     def test_only_completed_interpretation_creates_answer(self) -> None:

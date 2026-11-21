@@ -19,9 +19,11 @@ from __future__ import annotations
 import json
 import re
 import sys
+import ipaddress
 import time
 from dataclasses import dataclass, field
 from typing import Any
+from urllib.parse import urlparse
 
 import httpx
 from openai import (
@@ -31,11 +33,17 @@ from openai import (
 
 __all__ = [
     "ModelNotServed", "ModelUnreachable", "ContextWindowExhausted", "ToolCall",
-    "Reply", "ChatModel",
+    "Reply", "ChatModel", "model_provenance", "provenance_line",
 ]
 
 #: vLLM does not check credentials, but the OpenAI client insists on a key.
 _PLACEHOLDER_API_KEY = "EMPTY"
+
+#: Served name of a self-hosted model whose weights are pinned, as the vLLM
+#: manifests in agent/k8s/ build it: "<Hugging Face repository>@<commit prefix>".
+_PINNED_ALIAS = re.compile(r"^(?P<repository>[\w.-]+/[\w.-]+)@(?P<revision>[0-9a-f]{7,40})$")
+#: Host name endings of endpoints inside a cluster or a private network.
+_PRIVATE_HOST_SUFFIXES = (".local", ".svc", ".internal", ".lan")
 
 #: Held back from the context window, because the served chat template adds
 #: tokens no client-side estimate can see.
@@ -101,6 +109,67 @@ class ModelUnreachable(RuntimeError):
     one that knows which server is behind the endpoint, and callers report a
     misconfigured endpoint the way they report any other setup mistake.
     """
+
+
+def _endpoint_host(base_url: str) -> str | None:
+    """The host of a public endpoint, or None for a local or private one.
+
+    The host of a hosted API (e.g. ``openrouter.ai``) names the provider; the
+    host of a port forward or a cluster service names only infrastructure,
+    which reports must not carry.
+    """
+    host = (urlparse(base_url).hostname or "") if isinstance(base_url, str) else ""
+    if not host or host == "localhost" or "." not in host:
+        return None
+    if host.endswith(_PRIVATE_HOST_SUFFIXES):
+        return None
+    try:
+        address = ipaddress.ip_address(host)
+    except ValueError:
+        return host
+    return None if address.is_private or address.is_loopback else host
+
+
+def model_provenance(served_model: str, base_url: str) -> dict[str, Any]:
+    """Which weights answered: model, their source and whether they are pinned.
+
+    The vLLM manifests in ``agent/k8s/`` serve a model under its Hugging Face
+    repository and the commit they downloaded, which identifies the weights
+    exactly. Any other name is the provider's: it may serve other weights under
+    it later, so results made with it cannot be repeated with certainty.
+
+    :param served_model: The model identifier the endpoint serves.
+    :param base_url: The endpoint's base URL.
+    :return: ``model``, ``pinned``, ``weights_source``, ``weights_revision`` and
+        ``endpoint`` (the host of a public endpoint, else None).
+    :rtype: dict[str, Any]
+    """
+    served_model = str(served_model)
+    match = _PINNED_ALIAS.match(served_model)
+    if match is None:
+        return {"model": served_model, "pinned": False, "weights_source": None,
+                "weights_revision": None, "endpoint": _endpoint_host(base_url)}
+    repository = match.group("repository")
+    return {"model": repository, "pinned": True,
+            "weights_source": f"https://huggingface.co/{repository}",
+            "weights_revision": match.group("revision"),
+            "endpoint": _endpoint_host(base_url)}
+
+
+def provenance_line(provenance: dict[str, Any]) -> str:
+    """One sentence naming the model of a phase, for the end of its report.
+
+    :param provenance: As returned by :func:`model_provenance`.
+    :return: e.g. "Model: Qwen/Qwen3.8-27B-FP8, weights revision 1a2b3c4d5e6f
+        from https://huggingface.co/Qwen/Qwen3.8-27B-FP8."
+    :rtype: str
+    """
+    if provenance["pinned"]:
+        return (f"Model: {provenance['model']}, weights revision "
+                f"{provenance['weights_revision']} from {provenance['weights_source']}.")
+    via = f" via {provenance['endpoint']}" if provenance["endpoint"] else ""
+    return (f"Model: {provenance['model']}{via}. The weights are not pinned: the "
+            "provider may serve other weights under this name.")
 
 
 class ModelNotServed(RuntimeError):
