@@ -25,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from bexhoma import *
-from bexhoma.cli_args import make_base_parser
+from bexhoma.cli_args import make_base_parser, threads_per_pod_error
 import itertools
 import logging
 import urllib3
@@ -73,6 +73,11 @@ def main() -> None:
     parser.add_argument('-xnpp', '--xnetperf-protocol', help='comma-separated netperf protocols to sweep, each in {tcp, udp} (selects TCP_RR/UDP_RR)', default='tcp', dest='netperf_protocol')
     # evaluate args
     args = parser.parse_args()
+    # sockperf runs one client per pod and ignores the thread count
+    if args.hardware_type != 'sockperf':
+        reason = threads_per_pod_error(args.num_benchmarking_threads, args.num_benchmarking_pods, '-nbt', '-nbp')
+        if reason:
+            parser.error(reason)
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
     if args.debug:

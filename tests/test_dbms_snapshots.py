@@ -62,7 +62,7 @@ VARIANTS = {
     # of the throughput target, the connection pooler (PGBouncer) and the replicas of TiDB
     'type-ycsb': ['-xbt', 'ycsb', '-xwl', 'b', '-nw', '2'],
     'type-twitter': ['-xbt', 'twitter'],
-    'factors': ['-xnbf', '1,2', '-xtb', '100', '-nbp', '2'],
+    'factors': ['-xnbf', '1,2', '-xtb', '100', '-nbp', '2', '-nbt', '2'],
     'pooling': ['-xnpp', '1,2', '-xnpi', '100,200', '-xnpo', '10'],
     'replicas': ['-xnsr', '2', '-xnpd', '5', '-nw', '3', '-nwr', '2', '-nws', '3'],
     # YCSB: workers without replicas (cluster mode of the key-value systems), the workload and its sizes
@@ -91,7 +91,7 @@ ONLY_VARIANTS = {'hardware.py': {'default', 'ram-sweep', 'benchmarking', 'storag
                                  'hw-sysbench', 'hw-sockperf', 'hw-netperf', 'hw-fio-sweep'}}
 
 #: Variant argv of a script that differs from the common one.
-SCRIPT_ARGV = {('ycsb.py', 'factors'): ['-xnlf', '1,2', '-xnbf', '1,2', '-xtb', '100', '-nbp', '2', '-nlp', '2'],
+SCRIPT_ARGV = {('ycsb.py', 'factors'): ['-xnlf', '1,2', '-xnbf', '1,2', '-xtb', '100', '-nbp', '2', '-nbt', '2', '-nlp', '2', '-nlt', '2'],
                ('benchbase.py', 'tenants'): ['-mtn', '2', '-mtb', 'database', '-dbms', 'PostgreSQL', 'MySQL'],
                ('benchbase.py', 'tenants-schema'): ['-mtn', '2', '-mtb', 'schema', '-dbms', 'PostgreSQL'],
                ('benchbase.py', 'tenants-container'): ['-mtn', '2', '-mtb', 'container', '-dbms', 'PostgreSQL', 'MySQL'],
