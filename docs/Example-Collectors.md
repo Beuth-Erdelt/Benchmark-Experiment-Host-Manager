@@ -7,7 +7,7 @@ This page shows examples for running benchmarks with all three collector types a
 * `-ma`: Application metrics collected by sidecar containers attached to the SUT pod
 * `-mc`: Cluster-wide metrics collected by the cluster-wide Prometheus installation
 
-The script `scripts/test-docs-collector.sh` runs 18 experiments covering Benchbase TPC-C, TPC-H, YCSB, and HammerDB — each in single-tenant and multi-tenant configurations. Each benchmark group runs three experiments: two with a fresh persistent volume (`-rsr`) to test data generation and loading, and a third that reuses the existing volume to test repeated benchmarking runs.
+The script `scripts/test-docs-collector.sh` runs 28 experiments covering Benchbase TPC-C, TPC-H, YCSB, and HammerDB — each in single-tenant and multi-tenant configurations — as well as TPC-DS, SSB and Hardware. Each benchmark group runs three experiments: two with a fresh persistent volume (`-rsr`) to test data generation and loading, and a third that reuses the existing volume to test repeated benchmarking runs. TPC-DS runs 22 of its 99 queries (`-xaq`), SSB's second experiment uses the flat schema (`-xsv flat`), and Hardware runs one experiment per tool (fio, sysbench, sockperf, netperf), since each tool has its own result columns.
 
 **The results are not official benchmark results.
 Exact performance depends on a number of parameters.
