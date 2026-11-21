@@ -668,6 +668,7 @@ def _write_agent_summary(
     root: Path,
     incomplete: dict[str, Any] | None = None,
     restriction: str = "",
+    provenance: dict[str, Any] | None = None,
 ) -> tuple[Path, dict[str, Any]]:
     """Persist one compact, portable interpretation beside its result.
 
@@ -681,6 +682,8 @@ def _write_agent_summary(
         incomplete, or ``None`` for a complete record.
     :param restriction: The harness's qualification of a measurement in this
         result, or an empty string when there is none.
+    :param provenance: The model of the interpretation
+        (:func:`model_client.model_provenance`), or ``None`` when unknown.
     :return: Written path and summary object.
     :rtype: tuple[Path, dict[str, Any]]
     """
@@ -725,6 +728,9 @@ def _write_agent_summary(
     # overruling the verdict.
     if restriction:
         summary["measurement_restriction"] = restriction
+    # Which weights wrote the verdict travels with the result folder.
+    if provenance:
+        summary["model"] = provenance
     target = result_directory / _AGENT_SUMMARY_NAME
     temporary = result_directory / f".{_AGENT_SUMMARY_NAME}.tmp"
     temporary.write_text(
@@ -786,7 +792,9 @@ def _load_ancestor_summaries(
             or not isinstance(summary.get("verdict"), dict)
         ):
             break
-        summaries.append(summary)
+        # The model of an earlier verdict is provenance for readers, not
+        # evidence for the next design, so the prompt does not see it.
+        summaries.append({key: value for key, value in summary.items() if key != "model"})
         experiment_code = summary.get("follow_up_of")
     summaries.reverse()
     return summaries
@@ -830,6 +838,8 @@ def run_baseline(
     """
     messages = prompts.baseline_messages(task)
     trajectory.record("meta", phase="baseline", model=model.model,
+                      model_provenance=model_client.model_provenance(
+                          model.model, model.base_url),
                       harness=_harness_revision(),
                       params={"base_url": model.base_url,
                               "temperature": model.temperature,
@@ -912,6 +922,8 @@ def run_design(
         method_path=method_path, inbox=workspace.inbox.name, attempts=attempts,
         followups=followups, dry_run=dry_run)
     trajectory.record("meta", phase="design", model=model.model,
+                      model_provenance=model_client.model_provenance(
+                          model.model, model.base_url),
                       harness=_harness_revision(),
                       params={"base_url": model.base_url,
                               "temperature": model.temperature,
@@ -1934,6 +1946,8 @@ def run_interpret(
         task=task, report_path=report_path, result_contract_path=result_contract_path,
         specification=specification, method_path=method_path, followups=followups)
     trajectory.record("meta", phase="interpret", model=model.model,
+                      model_provenance=model_client.model_provenance(
+                          model.model, model.base_url),
                       harness=_harness_revision(),
                       params={"base_url": model.base_url,
                               "temperature": model.temperature,
@@ -1987,6 +2001,7 @@ def run_interpret(
         hypothesis_verdict=hypothesis_verdict, validity=validity_assessment,
         follow_up=decision, root=workspace.root, incomplete=record_incomplete,
         restriction=rate_notice,
+        provenance=model_client.model_provenance(model.model, model.base_url),
     )
     trajectory.record("artifact", phase="interpret",
                       agent_summary=str(agent_summary_path))
@@ -2477,10 +2492,17 @@ def _write_reports(
     phase: str,
     summary: str,
     final: bool,
+    model_line: str | None = None,
 ) -> tuple[Path, Path | None]:
-    """Preserve a phase account and expose a completed interpretation as the answer."""
+    """Preserve a phase account and expose a completed interpretation as the answer.
+
+    :param model_line: The model of the phase (:func:`model_client.provenance_line`),
+        appended to both reports so that each names the weights behind it.
+    """
     reports = run_directory / "reports"
     reports.mkdir(parents=True, exist_ok=True)
+    if model_line:
+        summary = f"{summary}\n\n---\n\n_{model_line}_"
     phase_report = reports / f"{phase_number:02d}-{phase}.md"
     phase_report.write_text(summary + "\n", encoding="utf-8")
     reasoning_trace = _write_reasoning_trace(
@@ -2774,6 +2796,8 @@ def main() -> int:
             _record_run_directory(args.run_record, run_directory)
     phase_report, _ = _write_reports(
         run_directory, trajectory, phase_number, args.phase, summary_text, final,
+        model_client.provenance_line(
+            model_client.model_provenance(model.model, model.base_url)),
     )
 
     print(f"investigation: {run_directory}")

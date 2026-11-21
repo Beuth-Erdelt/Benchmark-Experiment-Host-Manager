@@ -1,33 +1,52 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Publish Python 🐍 distributions 📦 to PyPI and TestPyPI
 
-# Controls when the workflow will run
+# Publishing a GitHub release uploads the package. GitHub ignores branch and tag
+# filters on release events, so the gate job checks the tag itself.
 on:
-  # Triggers the workflow on release events but only for the master branch
   release:
     types: [published]
-    branches: [ master ]
-    tags:
-      - "v*"
-
-  # Allows you to run this workflow manually from the Actions tab
+  # manual rerun of a release: start it on the tag, not on a branch
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "release"
-  release:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+  tests:
+    uses: ./.github/workflows/tests.yml
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  gate:
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Tag vX.Y.Z equals the version of the package
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          VERSION=$(python -c "exec(open('bexhoma/__version__.py').read()); print(__version__)")
+          if [[ "$REF_TYPE" != "tag" || "$TAG" != "v$VERSION" ]]; then
+            echo "::error::release tag '$TAG' ($REF_TYPE) does not match the package version v$VERSION"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+      - name: Minor release X.Y.0 needs the reference experiments
+        run: |
+          if [[ "$VERSION" == *.0 ]]; then
+            python scripts/demo-runs.py --release-gate "$VERSION"
+          else
+            echo "patch release $VERSION: the reference experiments are not required"
+          fi
+
+  release:
+    needs: [tests, gate]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v5
     - name: Set up Python 3.13
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
-        python-version: 3.13
+        python-version: "3.13"
     - name: Install pypa/build
       run: >-
         python -m
@@ -43,13 +62,11 @@ jobs:
         --outdir dist/
         .
     - name: Publish distribution 📦 to Test PyPI
-      #if: startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         password: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository_url: https://test.pypi.org/legacy/
     - name: Publish distribution 📦 to PyPI
-      #if: startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}

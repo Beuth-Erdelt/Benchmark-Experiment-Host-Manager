@@ -1,4 +1,5 @@
-$PYTHON = "python.exe"
+# the Python of the bexhoma environment, e.g. $env:PYTHON = "C:\path\to\env\python.exe"
+if ($env:PYTHON) { $PYTHON = $env:PYTHON } else { $PYTHON = "python.exe" }
 $DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $tests = @(
@@ -20,7 +21,7 @@ Write-Host "============================================================"
 foreach ($t in $tests) {
     Write-Host ""
     Write-Host "[$t]"
-    & $PYTHON "$DIR\$t"
+    & $PYTHON "$DIR\$t" @args
     if ($LASTEXITCODE -ne 0) {
         $failed++
         $results += "FAIL: $t"

@@ -1,8 +1,7 @@
 """
 Characterization (golden-master) tests for the DBMS-specific parts of the entry scripts.
 
-Phase 0 of the plan to remove DBMS-specific code from Python (see the project
-memory ``dbms-generic-plan``): while the per-DBMS ``if "X" in args.dbms:``
+Phase 0 of the plan to remove DBMS-specific code from Python: while the per-DBMS ``if "X" in args.dbms:``
 blocks of the root scripts are replaced by data in ``cluster.config``'s
 ``dockers:`` section and one generic builder, the experiments they build must
 not change. For every entry script and every ``-dbms`` choice the test builds

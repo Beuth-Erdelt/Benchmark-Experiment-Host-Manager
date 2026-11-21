@@ -3,6 +3,8 @@ on:
   pull_request:
   push:
     branches: [master, dev]
+  # the publish workflow runs the tests before it uploads
+  workflow_call:
 jobs:
   pytest:
     runs-on: ubuntu-latest
@@ -12,5 +14,37 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -r requirements.txt pytest -e ".[agent]"
-      - run: python -m pytest tests -q
+      - run: pip install -r requirements.txt pytest "coverage[toml]>=7.10" -e ".[agent]"
+      - run: python -m coverage run -m pytest tests -q
+      # Coverage of bexhoma and agent, including the collector validations that
+      # run as subprocesses; fails below the floor set in pyproject.toml.
+      - name: Coverage
+        run: |
+          set -o pipefail
+          python -m coverage combine -q
+          python -m coverage report | tee coverage.txt
+          tail -1 coverage.txt | awk '{print "Coverage: " $NF}' >> "$GITHUB_STEP_SUMMARY"
+
+  # On a pull request into master (the release PR): would the merge publish?
+  # Same rule as the publish workflow, without the tag. Informational only, the
+  # job never fails the workflow.
+  release-gate:
+    if: github.event_name == 'pull_request' && github.base_ref == 'master'
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Minor release X.Y.0 needs the reference experiments
+        run: |
+          VERSION=$(python -c "exec(open('bexhoma/__version__.py').read()); print(__version__)")
+          if [[ "$VERSION" == *.0 ]]; then
+            status=0
+            python scripts/demo-runs.py --release-gate "$VERSION" > gate.txt || status=$?
+            cat gate.txt
+            { echo '```'; cat gate.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+            exit "$status"
+          fi
+          echo "patch release $VERSION: the reference experiments are not required" | tee -a "$GITHUB_STEP_SUMMARY"
