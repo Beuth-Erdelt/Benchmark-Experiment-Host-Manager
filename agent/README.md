@@ -780,11 +780,29 @@ interpretation and follow-up appends to the same directory:
 - `task.txt`: the original question;
 - `phases/<number>-<phase>/`: immutable submitted specification, validation
   inputs, and Bexhoma log for that phase, when it submitted an experiment;
-- `reports/<number>-<phase>.md`: each phase's own account;
+- `reports/<number>-<phase>.md`: each phase's own account, ending with the
+  model of that phase (see [Which model answered](#which-model-answered));
 - `reports/<number>-<phase>-reasoning.md`: that phase's model-authored
   turn-by-turn reasoning trace, rendered verbatim from the trajectory;
 - `answer.md`: created only after the final interpretation and containing its
   one-result answer according to the archived result contract.
+
+### Which model answered
+
+The agent works with any model behind an OpenAI-compatible endpoint. Each phase
+records which one it used, in the `meta` record of the trajectory
+(`model_provenance`), at the end of its report and of `answer.md`, and in the
+`model` field of `agent_summary.yml`:
+
+- A model served by a manifest in `agent/k8s/` is published as
+  `<Hugging Face repository>@<commit>`, so the record names the repository and
+  the revision of the weights, e.g. _Model: Qwen/Qwen3.8-27B-FP8, weights
+  revision 1a2b3c4d5e6f from https://huggingface.co/Qwen/Qwen3.8-27B-FP8._
+  The same weights can be downloaded again to repeat a run.
+- Any other name is the provider's, e.g. on OpenRouter: _Model:
+  google/gemma-4-31b-it via openrouter.ai. The weights are not pinned: the
+  provider may serve other weights under this name._ Only the host of a public
+  endpoint is named; local and cluster endpoints are not.
 
 Each submitted result folder archives the exact experiment, input catalog,
 result contract, and environment descriptor used for validation.
