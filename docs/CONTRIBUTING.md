@@ -7,6 +7,8 @@ Contributions are welcome. Areas where help is most useful:
 - **Bug fixes and testing** — report bugs via the [issue tracker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues) or open a pull request.
 - **Documentation** — corrections, clarifications, and new examples are all welcome.
 
+[Architecture](Architecture.md) shows how the code is organised and where a change belongs.
+
 ---
 
 ## Pull requests
@@ -46,7 +48,7 @@ While the major version is 0, a minor release may contain incompatible changes; 
 
 ## Code style
 
-Bexhoma follows [PEP 8](https://peps.python.org/pep-0008/) and [PEP 257](https://peps.python.org/pep-0257/). These rules apply to all Python code in the repository. When cleaning up existing code: do not change logic or public names (classes, public methods, public attributes), verify that all references (imports, call sites, attribute accesses) still resolve correctly after the change, and check how similar things are already done elsewhere in the codebase before introducing a new pattern.
+Bexhoma follows [PEP 8](https://peps.python.org/pep-0008/) and [PEP 257](https://peps.python.org/pep-0257/). These rules apply to the Python code you write or change. No tool checks them yet, and older code does not follow all of them (line length, f-strings, `__all__`, type annotations); do not reformat code you do not otherwise touch, and put clean-ups in their own pull request. When cleaning up existing code: do not change logic or public names (classes, public methods, public attributes), verify that all references (imports, call sites, attribute accesses) still resolve correctly after the change, and check how similar things are already done elsewhere in the codebase before introducing a new pattern.
 
 **Naming**
 - `snake_case` for functions, methods, and variables; `PascalCase` for classes; `UPPER_CASE` for constants.
@@ -119,20 +121,7 @@ def my_method(self, param='default'):
 
 ## Brand assets
 
-- Logo/icon files live in `docs/logo/` (`bexhoma-banner.png` for light mode,
-  `bexhoma-logo-1-lockup-dark.svg` for dark mode, plus icon/favicon variants).
-- Brand colors: `#326CE5` (blue, icon/accent), `#F5A623` (orange, accent),
-  `#1B2A4A` (dark navy, light-mode wordmark text).
-- Referenced from `README.md` via a `<picture>` element with
-  `prefers-color-scheme` sources so the logo adapts to GitHub's dark mode.
-  PyPI's README renderer strips `<picture>` and doesn't resolve relative
-  paths, so the fallback `<img>` inside it must use an absolute
-  `raw.githubusercontent.com` URL — that fallback is what PyPI ends up
-  showing.
-- Referenced from `docs/conf.py` (`html_logo`, `html_favicon`) for the
-  Sphinx/Read the Docs build.
-- Licensed separately from the AGPL v3 code, under CC BY 4.0 — see the
-  [logo README](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/logo/README.md).
+The logo, icons and brand colours are in `docs/logo/`, licensed under CC BY 4.0, separately from the code; see the [logo README](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/docs/logo/README.md), which also says where they are referenced.
 
 ---
 

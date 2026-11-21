@@ -6,7 +6,7 @@ benchmarking to teardown. The method is a single `while` loop that polls Kuberne
 state every `intervals` seconds and advances each configuration through a pipeline
 of phases.
 
-**Source:** [`bexhoma/experiments/base.py:1441`](../bexhoma/experiments/base.py#L1441)
+**Source:** `ExperimentBase.work_benchmark_list()` in [`bexhoma/experiments/base.py`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/bexhoma/experiments/base.py). The pseudocode simplifies the code; the method names are those of the code. A configuration delegates to its helpers: `config.lifecycle` (SUT, monitoring), `config.loader` (loading), `config.runner` (benchmarker jobs), `config.host` (volumes, restarts), `config.status` (pod states), see [Architecture](Architecture.md).
 
 ---
 
@@ -98,6 +98,9 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
 
         FOR each config IN self.configurations:
 
+            IF config.sut_removing AND self._sut_still_removing(config):
+                CONTINUE   # SUT of the previous repetition is still terminating
+
             # ── Phase 1: Start SUT ────────────────────────────────────────
 
             IF SUT is NOT running:
@@ -115,10 +118,10 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
                             we_can_start = False
                             print "has to wait"
                         IF we_can_start:
-                            config.start_sut()
+                            self._start_sut_or_abort(config)   # config.lifecycle.start_sut()
                             increment pod counters
                     ELSE:
-                        config.start_sut()
+                        self._start_sut_or_abort(config)   # config.lifecycle.start_sut()
                         increment pod counters
                 ELSE:
                     print "is pending"
@@ -129,13 +132,13 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
 
             # ── Phase 2 / 3: Wait for monitoring, health, then load ───────
 
-            config.check_load_data()    # refreshes loading_started / loading_finished
+            config.loader.check()    # refreshes loading_started / loading_finished
 
             IF NOT config.loading_started:
 
                 IF config has benchmarks AND monitoring_active AND monitoring NOT running:
                     IF monitoring NOT pending:
-                        config.start_monitoring()
+                        config.lifecycle.start_monitoring()
                     CONTINUE   # wait for monitoring
 
                 IF SUT is running but NOT healthy:
@@ -166,10 +169,10 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
                     # Real start is deferred until ALL containers are ready (see below)
                 ELSE:
                     IF config.loading_active:
-                        config.start_loading()
-                        config.start_loading_pod(parallelism, num_pods)
+                        config.loader.start_exec()
+                        config.loader.start_pod(parallelism, num_pods)
                     ELSE:
-                        config.start_loading()   # schema / DDL only
+                        config.loader.start_exec()   # schema / DDL only
 
             IF config.loading_finished AND config has benchmarks:
                 IF monitoring needed but not running:
@@ -229,7 +232,7 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
                         connection_name = "<config>-<run>-<client>-<benchmark_index>"
                         IF bench_entry has parameters:
                             config.benchmarking_parameters = bench_entry["parameters"]
-                        config.run_benchmarker_pod(
+                        config.runner.run_pod(
                             connection  = connection_name,
                             parallelism = bench_entry["parallelism"],
                             benchmark_run = benchmark_index,
@@ -247,7 +250,7 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
                         benchmarking_parameters = config.benchmarking_parameters_list.pop(0)
                         config.set_benchmarking_parameters(**benchmarking_parameters)
                     connection_name = "<config>-<run>-<client>"
-                    config.run_benchmarker_pod(connection, parallelism)
+                    config.runner.run_pod(connection, parallelism)
                     _benchmark_just_submitted = True
 
                 # ── Phase 5: All benchmarks done — stop or repeat ─────────
@@ -267,18 +270,20 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
                         FOR each statefulset pod:
                             store pod log, description, restart count
 
-                        config.stop_sut()
+                        config.lifecycle.stop_sut()
                         config.num_experiment_to_apply_done += 1
 
                         IF more repetitions remain (num_experiment_to_apply_done < num_experiment_to_apply):
-                            WAIT until SUT is fully removed
-                            # Reset and restart for next repetition.
+                            # self._prepare_next_repetition(config): no waiting here
                             IF NOT experiment_dict driven:
                                 restore benchmark_list from template
                                 restore benchmarking_parameters_list from template
                             self.client = 0
                             config.reset_sut()
-                            config.start_sut()
+                            config.sut_removing = True
+                            # Later passes skip the configuration until its old SUT is
+                            # gone (_sut_still_removing), then Phase 1 starts it again,
+                            # so the -mse / -ms / max_sut_dbms limits are checked anew.
                         ELSE:
                             config.experiment_done = True
 
@@ -322,7 +327,7 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
                             delete pod
                     end_benchmarking(job, config)   # record timing, result metadata
                     delete job
-                    config.check_volumes()
+                    config.host.check_volumes()
 
         # ── Loop termination check ─────────────────────────────────────────
 
@@ -419,11 +424,11 @@ continues until `num_experiment_to_apply_done == num_experiment_to_apply`.
 
 | Attribute | Set when |
 |---|---|
-| `loading_started` | `start_loading()` is called |
-| `loading_finished` | `check_load_data()` confirms the load job completed |
+| `loading_started` | `loader.start_exec()` is called |
+| `loading_finished` | `loader.check()` confirms the load job completed |
 | `experiment_done` | All repetitions of this configuration are complete |
 | `client` | Incremented each time a benchmark job is submitted |
-| `num_experiment_to_apply_done` | Incremented each time `stop_sut()` is called after a full benchmark sequence |
+| `num_experiment_to_apply_done` | Incremented each time `lifecycle.stop_sut()` is called after a full benchmark sequence |
 
 ---
 
