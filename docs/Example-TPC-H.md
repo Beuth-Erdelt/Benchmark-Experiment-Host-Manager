@@ -1798,6 +1798,39 @@ No warnings
 
 The added `### tpch_refresh` section shows the wall-clock timing of the parallel refresh stream job: when it started, when it ended, and the total duration in seconds.
 
+### Refresh Stream on two DBMS
+
+With several DBMS in one experiment, each DBMS gets its own refresh stream, running against its own SUT beside its own query streams.
+All of them use the same refresh job template, so the DBMS must declare the same `refresh_template`; bexhoma refuses the run otherwise.
+PostgreSQL and PgDuckDB both use the job of PostgreSQL:
+
+```bash
+bexhoma tpch \
+  -dbms PostgreSQL PgDuckDB \
+  -xdfe \
+  -sf 1 \
+  -ne 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -xrs 3 \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_tpch_refresh_two_dbms.log
+```
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_refresh_two_dbms_summary.md" target="_blank" rel="noopener">docs_tpch_refresh_two_dbms.log</a></summary>
+
+```markdown
+(not run yet)
+```
+
+</details>
+
 
 ## Run a Subset of Queries
 

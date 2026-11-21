@@ -362,3 +362,23 @@ memory: "Docs fixes + agent summary plan").
    copying.
 8. Manual smoke test against a real (or kind/minikube) cluster:
    `bexhoma experiment dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml`.
+
+## Example Run
+
+The worked example compares PostgreSQL and PgDuckDB at SF 1 in rounds of 1, 2 and 4 clients.
+PostgreSQL has the alias set in the YAML (`DBMS A2`), PgDuckDB the `template.alias` of its DBMS, and its SUT runs with `DUCKDB_FORCE_EXECUTION=true`.
+The YAML has no keys for node pinning or `-tr`, so the pods go to any node and the result is not checked as with `-tr`.
+The run is part of `scripts/test-docs-tpch.sh`:
+
+```bash
+bexhoma experiment dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml &>$LOG_DIR/docs_tpch_yaml_experiment.log
+```
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_yaml_experiment_summary.md" target="_blank" rel="noopener">docs_tpch_yaml_experiment.log</a></summary>
+
+```markdown
+(not run yet)
+```
+
+</details>

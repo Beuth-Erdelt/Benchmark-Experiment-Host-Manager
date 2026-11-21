@@ -4,11 +4,15 @@ Last recorded runs of the examples in `docs/`, one row per log in `logs_tests/`.
 Nothing is run to create this page: it is read from the committed logs by `scripts/demo-runs.py`,
 so it shows what the runs looked like when they were recorded, not whether the current code still passes.
 
-**377 passed, 0 failed, 1 warn, 0 unchecked** (378 runs)
+**377 passed, 0 failed, 1 warn, 4 unchecked** (382 runs)
 
 | Status | Log | Page | Date | Version | Duration | Failed tests / warnings |
 |---|---|---|---|---|---|---|
 | warn | docs_ycsb_dragonfly_cluster.log | Example-Dragonfly.md | 2026-11-07 | 0.11.13 | 416s | Monitoring metrics missing (Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] of workerloading: no activity seen, the pods were scraped; Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] of workerloading: no activity seen, the pods were scraped) |
+| unchecked | docs_benchbase_pgbouncer_pool_sweep.log (missing) | Example-PGBouncer.md | — | — | — |  |
+| unchecked | docs_tpch_refresh_two_dbms.log (missing) | Example-TPC-H.md | — | — | — |  |
+| unchecked | docs_tpch_yaml_experiment.log (missing) | Design-Yaml-Experiment-Entry-Script.md | — | — | — |  |
+| unchecked | docs_ycsb_pgbouncer_pool_default.log (missing) | Example-PGBouncer.md | — | — | — |  |
 | passed | docs_benchbase_citus.log | Example-Citus.md | 2026-10-31 | 0.11.11 | 1301s |  |
 | passed | docs_benchbase_citus_keytime.log | Example-Citus.md | 2026-11-04 | 0.11.12 | 12705s |  |
 | passed | docs_benchbase_citus_scale.log | Example-Citus.md | 2026-10-31 | 0.11.11 | 7549s |  |

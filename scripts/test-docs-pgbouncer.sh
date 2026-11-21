@@ -283,6 +283,94 @@ bexhoma benchbase \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase new-connection PGBouncer  sf=16  nbp=1,2"
 
 
+# Benchbase TPC-C: sweep of pooler pods and inbound connections, one configuration per combination
+# Check: 4 configurations (1 and 2 pooler pods x 32 and 64 inbound), each with its pooler pod count.
+# -dbms PGBouncer               DBMS under test
+# -sf 16                        scaling factor (controls database size)
+# -xsd 5                        benchmark duration in minutes
+# -xtb 1024                     base ops/s used to compute the throughput target (2^10)
+# -xnbf 16                      throughput target as a multiple of the base ops/s
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 32                       threads per benchmarking pod
+# -xnpp 1,2                     numbers of PGBouncer proxy pods to sweep
+# -xnpi 32,64                   maximum incoming connections to sweep
+# -xnpo 32                      maximum outgoing connections
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rss 50Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnp $BEXHOMA_NODE_LOAD       schedule pooling pods on this node (same as loaders)
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma benchbase \
+  -dbms PGBouncer \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
+  -nbp 1 \
+  -nbt 32 \
+  -xnpp 1,2 \
+  -xnpi 32,64 \
+  -xnpo 32 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnp $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_pgbouncer_pool_sweep.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PGBouncer pool sweep  sf=16  xnpp=1,2  xnpi=32,64"
+
+
+# YCSB: default pool size (no -xnpi/-xnpo) follows the loader threads of each configuration
+# Check: 2 configurations, pool sizes 16 and 64 (before the DBMS-generic refactor both got the first value).
+# -dbms PGBouncer               DBMS under test
+# -sf 1                         scaling factor (number of records in millions)
+# -xwl c                        YCSB workload template (c = 100%% read)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 4                       throughput target as a multiple of the base ops/s
+# -xnlf 4                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 1                        number of data loader pods
+# -nlt 16,64                    total loader threads to sweep, also the default pool sizes
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 16                       threads per benchmarking pod (fits the smaller pool)
+# -xnpp 1                       number of PGBouncer proxy pods
+# -xop 1                        number of operations for the benchmark phase (in millions)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnp $BEXHOMA_NODE_LOAD       schedule pooling pods on this node (same as loaders)
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ycsb \
+  -dbms PGBouncer \
+  -sf 1 \
+  -xwl c \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 1 \
+  -nlt 16,64 \
+  -nbp 1 \
+  -nbt 16 \
+  -xnpp 1 \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnp $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ycsb_pgbouncer_pool_default.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer default pool  sf=1  nlt=16,64"
+
+
 ###########################################
 ############## Clean Folder ###############
 ###########################################

@@ -1903,3 +1903,82 @@ Benchbase Workload tpcc SF=16
 ```
 
 </details>
+
+
+## Sweeping the Pool
+
+`-xnpp`, `-xnpi` and `-xnpo` take comma-separated lists.
+There is one configuration for each combination of pooler pods, inbound connections (`MAX_CLIENT_CONN` of PgBouncer) and outbound connections (`DEFAULT_POOL_SIZE` and `MIN_POOL_SIZE`).
+
+### Pooler Pods and Inbound Connections
+
+TPC-C is performed at 16 warehouses for 5 minutes with 32 threads in one pod.
+The pool is run by 1 and 2 pods of PGBouncer, accepting 32 and 64 inbound connections, with 32 outbound connections.
+This gives 4 configurations.
+
+```bash
+bexhoma benchbase \
+  -dbms PGBouncer \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 1024 \
+  -xnbf 16 \
+  -nbp 1 \
+  -nbt 32 \
+  -xnpp 1,2 \
+  -xnpi 32,64 \
+  -xnpo 32 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnp $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_pgbouncer_pool_sweep.log
+```
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_pgbouncer_pool_sweep_summary.md" target="_blank" rel="noopener">docs_benchbase_pgbouncer_pool_sweep.log</a></summary>
+
+```markdown
+(not run yet)
+```
+
+</details>
+
+### Default Pool Size
+
+Without `-xnpi` and `-xnpo`, the pool takes the number of loader threads of its configuration as inbound and outbound connections.
+YCSB loads with 16 and 64 threads (`-nlt 16,64`), so the two configurations have pools of 16 and 64 connections.
+The benchmark uses 16 threads, which fits both pools.
+
+```bash
+bexhoma ycsb \
+  -dbms PGBouncer \
+  -sf 1 \
+  -xwl c \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 1 \
+  -nlt 16,64 \
+  -nbp 1 \
+  -nbt 16 \
+  -xnpp 1 \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnp $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ycsb_pgbouncer_pool_default.log
+```
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_pgbouncer_pool_default_summary.md" target="_blank" rel="noopener">docs_ycsb_pgbouncer_pool_default.log</a></summary>
+
+```markdown
+(not run yet)
+```
+
+</details>
