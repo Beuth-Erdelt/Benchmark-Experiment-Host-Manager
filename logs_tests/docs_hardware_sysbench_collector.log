@@ -1,0 +1,239 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1795271534
+Experiment                    : starts at 2026-11-21 15:32:14.888143 (532998.3805789)
+Experiment                    : This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
+Benchmark tool: sysbench.
+Duration per round is 60s, capping each of the CPU and memory phases (see images/hardware/benchmarker/run_sysbench.sh).
+Total sysbench thread count(s) swept: [1, 2], split across pod count(s): [1].
+CPU phase: sysbench cpu --cpu-max-prime=20000 (fixed).
+Memory phase: sysbench memory --memory-block-size=1K --memory-total-size=10G (fixed; may finish before the duration cap if this transfers first).
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.12.2.
+System metrics are monitored by a cluster-wide installation.
+Experiment is limited to DBMS ['Hardware'].
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Benchmarking is tested with [1, 2] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Maximum DBMS across the whole cluster is 10.
+Results are validated against basic correctness requirements.
+SUT requests 2 CPU and 16Gi RAM. CPU limit is 2.
+Cluster monitoring            : is running
+Hardware-1                    : will start now
+Hardware-1                    : deployments ['sut']
+Hardware-1                    : stateful sets []
+Hardware-1                    : pvcs ['sut']
+Hardware-1                    : name of SUT pods = bexhoma-sut-hardware-1-1795271534
+Hardware-1                    : name of SUT service = bexhoma-sut-hardware-1-1795271534
+Loop pass                     : took 1.6s (1 kubectl calls 0.6s, 9 API requests 0.5s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-Hardware-1-1795271534 initialized to 1.
+Hardware-1                    : benchmarks done 0 of 1. This will be client 1
+hardware-1-1-1-1              : start benchmarking (benchmark_run=1)
+hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1795271534
+Hardware-1                    : submitted benchmarker job in 6.0s (4 kubectl calls 2.2s, 24 API requests 3.5s)
+Loop pass                     : took 7.3s (4 kubectl calls 2.2s, 45 API requests 4.7s)
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+- waiting 30s -               : done
+hardware-1-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1795271534/hardware-1-1-1-1.config
+hardware-1-1-1-1              : showing benchmarker times
+hardware-1-1-1-1              : benchmarker timespan job from 1795271573 to 1795271668
+hardware-1-1-1-1              : benchmarker timespan pods from 1795271576 to 1795271639
+hardware-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 63
+hardware-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1795271576, 1795271639)]
+hardware-1-1-1-1              : found and updated times {'benchmarker': [(1795271576, 1795271639)]}
+hardware-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-1-1-1              : collecting execution metrics of SUT at connection hardware-1-1-1-1
+hardware-1-1-1-1              : collecting metrics of benchmarker at connection hardware-1-1-1-1
+hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)hardware-1-1795271534(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1795271534(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-hardware-1-1795271534-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-hardware-1-1795271534-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-1-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-1-1-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 3s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 5.7s, 0 API requests 0.0s)
+Loop pass                     : took 6.9s (9 kubectl calls 8.0s, 21 API requests 0.8s)
+Experiment                    : Reset experiment counter. This is first run of client number 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-Hardware-1-1795271534 initialized to 1.
+Hardware-1                    : benchmarks done 0 of 1. This will be client 2
+hardware-1-1-2-1              : start benchmarking (benchmark_run=1)
+hardware-1-1-2-1              : needs monitoring (common metrics) for deployment sut
+Hardware-1                    : benchmarking results in folder D:\data\benchmarks/1795271534
+Hardware-1                    : submitted benchmarker job in 2.8s (3 kubectl calls 1.6s, 13 API requests 1.0s)
+Loop pass                     : took 3.6s (3 kubectl calls 1.6s, 31 API requests 1.8s)
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+- waiting 30s -               : done
+Hardware-1                    : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 16 API requests 0.6s)
+- waiting 30s -               : done
+hardware-1-1-2-1              : wrote benchmarking_timespans to D:/data/benchmarks/1795271534/hardware-1-1-2-1.config
+hardware-1-1-2-1              : showing benchmarker times
+hardware-1-1-2-1              : benchmarker timespan job from 1795271676 to 1795271770
+hardware-1-1-2-1              : benchmarker timespan pods from 1795271678 to 1795271741
+hardware-1-1-2-1              : benchmarker timespan (start to end single container [s]) = 63
+hardware-1-1-2-1              : benchmarker times (start/end per pod and container) = [(1795271678, 1795271741)]
+hardware-1-1-2-1              : found and updated times {'benchmarker': [(1795271678, 1795271741)]}
+hardware-1-1-2-1              : needs monitoring (common metrics) for deployment sut
+hardware-1-1-2-1              : collecting execution metrics of SUT at connection hardware-1-1-2-1
+hardware-1-1-2-1              : collecting metrics of benchmarker at connection hardware-1-1-2-1
+hardware-1-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)hardware-1-1795271534(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)hardware-1-1795271534(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-2-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-hardware-1-1795271534-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-hardware-1-1795271534-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+hardware-1-1-2-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+hardware-1-1-2-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 5.9s, 0 API requests 0.0s)
+Loop pass                     : took 7.2s (9 kubectl calls 8.7s, 21 API requests 0.6s)
+Hardware-1                    : can be stopped
+Hardware-1                    : had 0 restarts at worker bexhoma-sut-hardware-1-1795271534-845f7f76ff-tc8sj
+Loop pass                     : took 2.2s (3 kubectl calls 1.3s, 21 API requests 0.8s)
+Experiment                    : ends at 2026-11-21 15:36:18.608079 (533242.0971699) - 243.72s total
+Experiment                    : transforming metrics for loading
+Experiment                    : transforming metrics for loading completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for loader
+Experiment                    : transforming metrics for loader completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+Hardware Benchmark (sysbench)
+* Type: hardware
+* Duration: 244s 
+* Code: 1795271534
+* fio/sysbench driver runs the experiment.
+* This experiment measures raw hardware I/O (fio), CPU/memory (sysbench), single-connection network latency/throughput (sockperf), or many-connection network throughput (netperf) performance.
+  * Benchmark tool: sysbench.
+  * Duration per round is 60s, capping each of the CPU and memory phases (see images/hardware/benchmarker/run_sysbench.sh).
+  * Total sysbench thread count(s) swept: [1, 2], split across pod count(s): [1].
+  * CPU phase: sysbench cpu --cpu-max-prime=20000 (fixed).
+  * Memory phase: sysbench memory --memory-block-size=1K --memory-total-size=10G (fixed; may finish before the duration cap if this transfers first).
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.12.2.
+  * System metrics are monitored by a cluster-wide installation.
+  * Experiment is limited to DBMS ['Hardware'].
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Benchmarking is tested with [1, 2] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 2 CPU and 16Gi RAM. CPU limit is 2.
+
+### Connections
+* hardware-1-1-1-1 uses docker image bexhoma/sut_hardware:0.12.2
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:877264
+  * cpu_list:0-223
+  * requests_cpu:2
+  * requests_memory:16Gi
+  * limits_cpu:2
+  * resources_total: 2.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 2.0 CPU, 16.0 GiB RAM
+  * eval_parameters
+    * code:1795271534
+* hardware-1-1-2-1 uses docker image bexhoma/sut_hardware:0.12.2
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:877264
+  * cpu_list:0-223
+  * requests_cpu:2
+  * requests_memory:16Gi
+  * limits_cpu:2
+  * resources_total: 2.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 2.0 CPU, 16.0 GiB RAM
+  * eval_parameters
+    * code:1795271534
+
+### SUT Container Restarts
+* bexhoma-sut-hardware-1-1795271534-845f7f76ff-tc8sj: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+
+#### Planned
+
+* DBMS Hardware-1 - Experiment 1 Client 1: hardware (1 pods)
+* DBMS Hardware-1 - Experiment 1 Client 2: hardware (1 pods)
+
+### Benchmarking
+
+#### Per Connection
+
+| connection         | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   duration |   threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|-----------:|----------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|
+| hardware-1-1-1-1-1 | hardware-1-1-1 | hardware-1-1-1-1 |                1 |        1 |               1 |       1 |         63 |         1 |                                1125.38 |                                60.00 |                               1.30 |                             5248590.21 |                                     5125.58 |                                  0.00 |        0 |
+| hardware-1-1-2-1-1 | hardware-1-1-2 | hardware-1-1-2-1 |                1 |        2 |               1 |       1 |         63 |         2 |                                2284.67 |                                60.00 |                               1.27 |                             6387339.64 |                                     6237.64 |                                  0.00 |        0 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   duration |   threads |   hardware_sysbench_cpu_events_per_sec |   hardware_sysbench_cpu_total_time_s |   hardware_sysbench_cpu_lat_p95_ms |   hardware_sysbench_memory_ops_per_sec |   hardware_sysbench_memory_throughput_mibps |   hardware_sysbench_memory_lat_p95_ms |   errors | hardware_type   |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|-----------:|----------:|---------------------------------------:|-------------------------------------:|-----------------------------------:|---------------------------------------:|--------------------------------------------:|--------------------------------------:|---------:|:----------------|
+| hardware-1-1-1 | hardware-1-1-1 |                1 |        1 |               1 |           1 |         63 |         1 |                                1125.38 |                                60.00 |                               1.30 |                             5248590.21 |                                     5125.58 |                                  0.00 |        0 | sysbench        |
+| hardware-1-1-2 | hardware-1-1-2 |                1 |        2 |               1 |           1 |         63 |         2 |                                2284.67 |                                60.00 |                               1.27 |                             6387339.64 |                                     6237.64 |                                  0.00 |        0 | sysbench        |
+
+### Monitoring
+
+### Benchmarking phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| hardware-1-1-1-1 |        45.39 |      1.00 |           0.21 |                  0.21 |
+| hardware-1-1-2-1 |        80.32 |      2.00 |           0.21 |                  0.21 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| hardware-1-1-1-1 |         0.62 |      0.02 |           0.00 |                  0.00 |
+| hardware-1-1-2-1 |         0.58 |      0.03 |           0.00 |                  0.00 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-1-1 (bexhoma-metrics-hardware-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection hardware-1-1-2-1 (bexhoma-metrics-hardware-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Loading completed without failures
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: every round has non-zero CPU events/sec

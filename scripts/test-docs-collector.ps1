@@ -762,7 +762,7 @@ bexhoma hardware `
   -xfe libaio                   <# fio ioengine #> `
   -xffd 1                       <# fdatasync after every write #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
-  -nbt 1                        <# threads per benchmarking pod #> `
+  -nbt 2                        <# threads in total, split across the pods: 1 pod x 2, 2 pods x 1 #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -821,7 +821,7 @@ bexhoma hardware `
   -xtd 60                       <# seconds per round #> `
   -xnpp tcp                     <# netperf protocol: tcp (TCP_RR) #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
-  -nbt 1                        <# threads per benchmarking pod #> `
+  -nbt 2                        <# threads in total, split across the pods: 1 pod x 2, 2 pods x 1 #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `

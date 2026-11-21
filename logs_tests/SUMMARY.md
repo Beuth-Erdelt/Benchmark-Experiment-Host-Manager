@@ -4,7 +4,7 @@ Last recorded runs of the examples in `docs/`, one row per log in `logs_tests/`.
 Nothing is run to create this page: it is read from the committed logs by `scripts/demo-runs.py`,
 so it shows what the runs looked like when they were recorded, not whether the current code still passes.
 
-**377 passed, 0 failed, 1 warn, 0 unchecked** (378 runs)
+**387 passed, 0 failed, 1 warn, 0 unchecked** (388 runs)
 
 | Status | Log | Page | Date | Version | Duration | Failed tests / warnings |
 |---|---|---|---|---|---|---|
@@ -133,6 +133,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_hammerdb_postgresql_timeseries.log | Example-HammerDB.md | 2026-11-14 | 0.11.17 | 1189s |  |
 | passed | docs_hardware_fio_blocksize_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 1518s |  |
 | passed | docs_hardware_fio_checkpoint_writeback.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 677s |  |
+| passed | docs_hardware_fio_collector.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 260s |  |
 | passed | docs_hardware_fio_depth_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 1723s |  |
 | passed | docs_hardware_fio_depth_sweep_8k.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 1727s |  |
 | passed | docs_hardware_fio_depth_sweep_refine.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 1101s |  |
@@ -143,13 +144,16 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_hardware_fio_wal_record_size.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 570s |  |
 | passed | docs_hardware_fio_wal_sync_fdatasync.log | Example-Hardware.md | 2026-11-19 | 0.12.0 | 152s |  |
 | passed | docs_hardware_fio_wal_sync_fsync.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 157s |  |
+| passed | docs_hardware_netperf_collector.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 219s |  |
 | passed | docs_hardware_netperf_postgresql_connection_scaling_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 563s |  |
 | passed | docs_hardware_netperf_postgresql_pod_scaling_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 245s |  |
 | passed | docs_hardware_netperf_postgresql_query_latency.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 140s |  |
+| passed | docs_hardware_sockperf_collector.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 249s |  |
 | passed | docs_hardware_sockperf_pod_scaling_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 588s |  |
 | passed | docs_hardware_sockperf_postgresql_latency_scaling_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 589s |  |
 | passed | docs_hardware_sockperf_postgresql_query_latency.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 144s |  |
 | passed | docs_hardware_sockperf_postgresql_streaming_throughput.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 141s |  |
+| passed | docs_hardware_sysbench_collector.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 244s |  |
 | passed | docs_hardware_sysbench_cpu_quota_calibration.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 448s |  |
 | passed | docs_hardware_sysbench_nbp_overhead_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 358s |  |
 | passed | docs_hardware_sysbench_ne_saturation_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 461s |  |
@@ -204,6 +208,9 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_ssb_mysql.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 598s |  |
 | passed | docs_ssb_pgduckdb.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 426s |  |
 | passed | docs_ssb_postgresql.log | Example-SSB.md | 2026-11-19 | 0.12.0 | 359s |  |
+| passed | docs_ssb_postgresql_collector_1.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 705s |  |
+| passed | docs_ssb_postgresql_collector_2.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 856s |  |
+| passed | docs_ssb_postgresql_collector_3.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 540s |  |
 | passed | docs_ssb_profiling.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 492s |  |
 | passed | docs_ssb_random.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 421s |  |
 | passed | docs_ssb_storage.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 706s |  |
@@ -226,6 +233,9 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpcds_mysql_storage.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 2263s |  |
 | passed | docs_tpcds_postgresql.log | Example-TPC-DS.md | 2026-11-19 | 0.12.0 | 632s |  |
 | passed | docs_tpcds_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 1231s |  |
+| passed | docs_tpcds_postgresql_collector_1.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 914s |  |
+| passed | docs_tpcds_postgresql_collector_2.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 1050s |  |
+| passed | docs_tpcds_postgresql_collector_3.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 715s |  |
 | passed | docs_tpcds_postgresql_load.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 406s |  |
 | passed | docs_tpcds_postgresql_monitoring.log | Example-TPC-DS.md | 2026-11-13 | 0.11.17 | 2273s |  |
 | passed | docs_tpcds_postgresql_profiling.log | Example-TPC-DS.md | 2026-11-14 | 0.11.17 | 2673s |  |
