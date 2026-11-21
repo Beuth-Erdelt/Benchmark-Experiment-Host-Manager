@@ -9,6 +9,16 @@ This directory contains the Bexhoma logo, icon, and favicon files.
 
 Brand colors: `#326CE5` (blue), `#F5A623` (orange), `#1B2A4A` (dark navy, light-mode wordmark text).
 
+## Where they are used
+
+- `README.md` shows the logo through a `<picture>` element with
+  `prefers-color-scheme` sources, so it adapts to GitHub's dark mode.
+  PyPI's README renderer strips `<picture>` and does not resolve relative
+  paths, so the fallback `<img>` inside it must use an absolute
+  `raw.githubusercontent.com` URL; that fallback is what PyPI shows.
+- `docs/conf.py` uses them as `html_logo` and `html_favicon` for the
+  Sphinx / Read the Docs build.
+
 ## License
 
 These assets are an original work by Patrick K. Erdelt and are licensed under

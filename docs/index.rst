@@ -13,6 +13,8 @@
 
     ../README.md
     ./Concepts.md
+    ./Architecture.md
+    ./WorkBenchmarkList.md
     ./Config.md
     ./DBMS.md
     ./Monitoring.md
@@ -55,7 +57,6 @@
     ./Example-Multi-Tenant.md
     ./Example-Metrics.md
     ./Tool.md
-    ./Concept.md
     ./TestCases.md
     ./CONTRIBUTING.md
     ./FAIR4RS.md

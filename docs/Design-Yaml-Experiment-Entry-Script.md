@@ -1,10 +1,13 @@
 # Design: YAML-driven experiment entry script
 
-> Status: **planned, not implemented**. This document is the full plan agreed
-> with the user on 2026-07-27; hand it to Claude Code on any machine and say
-> "implement this plan" to pick up the work.
+> Status: **implemented; kept as a design note.** The plan dates from
+> 2026-07-27. `experiment.py`, `bexhoma/benchmarks/tpch/loader.py`,
+> `bexhoma/benchmarks/tpch/builder.py` and
+> `dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml` exist. Where this note
+> and the code disagree, the code is right. For the current structure see
+> [Architecture](Architecture.md).
 >
-> Update: the entry script `experiment.py` exists. The per-workload registry of section 2
+> Since then: the entry script `experiment.py` exists. The per-workload registry of section 2
 > (`DBMS_DEFAULTS`, `DEFAULT_REFRESH_TEMPLATE`) no longer exists as a Python table: what it held
 > (docker entry, SQL dialect, job templates, storage prefix) is part of the `dockers` section of
 > `cluster.config` now, see [Benchmarks of a DBMS](DBMS.md#benchmarks-of-a-dbms). A DBMS may be named
