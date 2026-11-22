@@ -24,6 +24,23 @@ The four new blocks of b2a26bfc run one after the other, log to `logs_tests/`:
 
 Runner: a copy of exactly these blocks (scratchpad `run_new_blocks.sh`), so the commands equal the scripts.
 
+Results (2026-11-22, bexhoma 0.12.2, 11:27-13:04):
+
+- [x] 1.1 passed (7 min): `tpch_refresh` job per DBMS (`pgduckdb-1-1-1-2`, `postgresql-1-1-1-2`), no SQL errors.
+  The summary shows only the refresh job times, not RF1/RF2 row counts, so that part of the check is not visible.
+- [ ] 1.5 **failed** (73 min): `SQL errors` and `Some active queries missing from the totals`: PostgreSQL
+  Q17 and Q20 cancelled by the 600 s timeout in every phase (`canceling statement due to user request`).
+  Cause: the YAML sets `init_indexes/init_constraints/init_statistics: false`; the command line examples use
+  `-xii -xic -xis`. The rest is right (checked in the result folder): alias `DBMS A2` for PostgreSQL,
+  `General-F` (template) for PgDuckDB; storage `postgresql` and `PgDuckDB`; `DUCKDB_FORCE_EXECUTION=true` in
+  the PgDuckDB SUT manifest. Side finding: the workload note "PgDuckDB queries are forced through the DuckDB
+  execution engine" is missing, because the note follows only the global `tpch.duckdb_force_execution`, not a
+  system's own `sut_parameters`.
+  Fix proposal: indexes, constraints, statistics `true` in the YAML, then rerun only this block.
+- [x] 3.1 passed (11 min): 4 configurations; pooler pods 1, 1, 2, 2; MAX_CLIENT_CONN 32, 64, 32, 64;
+  DEFAULT/MIN_POOL_SIZE 32 everywhere (from the pool pods' describe logs; the summary does not show pool sizes).
+- [x] 3.2 passed (4 min): DEFAULT/MIN_POOL_SIZE and MAX_CLIENT_CONN = 16 for PGBouncer-1, 64 for PGBouncer-2.
+
 After the runs:
 
 - [ ] Check every log against its "Check:" column; any failed test is a finding, not a doc edit.
