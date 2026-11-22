@@ -1,7 +1,12 @@
 # Plan: OLTP SUTs in bexhoma - current images, settings, CLI and placement
 
-Status: **WP1-WP9 implemented 2026-10-17, committed (`7ed91c36`, released in v0.11.5); WP10 implemented 2026-10-20
-(uncommitted, cluster checks open, see WP10 "Implementation").** Unit tests:
+Status: **done.** WP1-WP9 implemented 2026-10-17, committed (`7ed91c36`, released in v0.11.5); WP10 (`-xld`)
+committed in `daed9c02` (2026-10-21), released in v0.11.7. Checked 2026-11-22: the WP10 cluster checks are covered
+by `scripts/test-docs-durability` (30 runs `docs_durability_*`, page `docs/Test-Durability.md`, including MySQL
+relaxed/unsafe, PostgreSQL unsafe, Citus relaxed and `-mtb schema`); the section 3 smoke runs by the `test-docs-*`
+runs since v0.11.5; WP9's YugabyteDB PVC selector exists (`pvc_selector: 'app=yb-tserver'` in `k8s-cluster.config`,
+`SutConfiguration.set_pvc_selector`). Later changes on top: #848 (no silent load failures, v0.11.14) made the
+durability scripts check that their values took effect. Text below is the history. Unit tests:
 `tests/test_set_arg_styles.py` (WP2/WP3), `tests/test_tls_secret.py` (WP5),
 `tests/test_cluster_sut_settings.py` (WP4/WP6/WP7/WP8/WP9). The WP8 init/check scripts were run on
 PostgreSQL 18.6, MySQL 9.7.2, MariaDB 12.3.3, Citus 14.2.0 and MonetDB Dec2025-SP3 pods (MySQL: startup
@@ -392,7 +397,7 @@ import is always visible in the results.
 Tested earlier on MySQL 9.7.2: redo OFF/ON works; `ENABLE` when enabled and `DISABLE` twice are no-ops;
 `root@localhost` and `root@'%'` hold `INNODB_REDO_LOG_ENABLE`; MySQL logs a warning while off.
 
-**Implementation (2026-10-20, uncommitted).**
+**Implementation (2026-10-20, committed 2026-10-21 in `daed9c02`).**
 - Code: `bexhoma/load_durability.py` (levels, `resolve_load_durability`, `insert_durability_scripts`);
   `-xld/--load-durability` in `cli_args.make_base_parser` (default `relaxed`); `ExperimentBase.prepare_testbed`
   sets `experiment.load_durability` and an info line; `SutConfiguration.apply_load_durability()` runs once in
@@ -455,7 +460,7 @@ Tested earlier on MySQL 9.7.2: redo OFF/ON works; `ENABLE` when enabled and `DIS
   (fk/unique checks off). Their loading times are not directly comparable to earlier runs; `-xld durable`
   reproduces the old behavior for them (but not for TPC-H/TPC-DS/TPC-C/YCSB on MySQL and TPC-H/TPC-DS on
   PostgreSQL, which relaxed before).
-- Open cluster checks (smoke, `-sf 1`, `-nc 1`): MySQL TPC-H and YCSB with `relaxed` and `unsafe` (redo
+- Cluster checks (done since, see `docs/Test-Durability.md`; listed as open on 2026-10-20) (smoke, `-sf 1`, `-nc 1`): MySQL TPC-H and YCSB with `relaxed` and `unsafe` (redo
   status in the check log, settings restored), PostgreSQL TPC-H `unsafe` (`fsync`/`full_page_writes` back on,
   `sync` log), Citus TPC-C `relaxed` (`run_command_on_workers` with `ALTER SYSTEM`),
   tenancy `-mtb schema` with PostgreSQL.

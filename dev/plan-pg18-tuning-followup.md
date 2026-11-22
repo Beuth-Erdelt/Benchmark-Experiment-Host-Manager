@@ -2,6 +2,13 @@
 
 Status: **not implemented, held as a plan**. No script changes have been made yet.
 
+Checked 2026-11-22: still not run, `dev/test-postgres18-tuning.ps1` unchanged. Two things changed around it:
+- The default per-query timeout `-t` is now 1800 s (`cli_args.py`), so item 3's first point is met by default
+  for a rerun (an explicit `-t` is still clearer at SF 100).
+- The TPC-H and TPC-DS docs runs now use the tuned PostgreSQL block including
+  `--set ...io_method=io_uring` (`scripts/test-docs-tpch.sh`, TPC-DS since cb441ff9). Item 2 (does
+  `io_uring` hurt TPC-DS?) therefore also concerns the published examples.
+
 ## Background
 
 `dev/test-postgres18-tuning.ps1` ran once (5 workloads x Default/Tuned, `-nc 1`

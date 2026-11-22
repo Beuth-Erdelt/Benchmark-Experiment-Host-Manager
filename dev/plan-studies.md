@@ -4,6 +4,11 @@ Status: **planned, nothing implemented** (2026-10-10; planned series added
 2026-10-14). The first increment uses citations as *context* only; see
 "Scope of the first increment".
 
+Checked 2026-11-22: still nothing implemented. M0's read-scope hole is still open:
+`agent/harness/tools.py` (`Workspace.__init__`, about line 292) still adds `results_root` to
+`_readable_roots`. `bexhoma/hardware_baseline.py` moved to `bexhoma/benchmarks/hardware/baseline.py`
+(2026-11-13); the agent reports now name the model of each phase (#895), which a `study.yml` can reuse.
+
 ## Goal
 
 The agent carries out a *study*: one question, answered by zero or more

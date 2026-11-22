@@ -1,8 +1,10 @@
 # Plan: drop the per-stream SUT metrics of DBMS-Benchmarker pods (#239)
 
 Status: **implemented, committed, image rebuilt, verified on the cluster**
-(2026-10-18, 1792347080; see "Verify"). Open: release-notes line (no
-release-notes file in the repo). Belongs to issue #239 ("Monitoring when
+(2026-10-18, 1792347080; see "Verify"), released in v0.11.6. Open:
+release-notes line. Checked 2026-11-22: releases now use GitHub's generated
+notes (`docs/CONTRIBUTING.md`), and the v0.11.6 notes do not mention the change;
+add a line to them by hand or drop this point. Belongs to issue #239 ("Monitoring when
 PVC is active"), comment 4 (2024-01-31): stream metrics are collected twice,
 once per stream and once per parallel set of streams; are SUT metrics per
 stream needed? Answer here: no.

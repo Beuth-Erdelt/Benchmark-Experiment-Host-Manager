@@ -4,6 +4,8 @@ Status: **done (2026-10-21).** M0-M11 implemented, committed and checked on the 
 (`scripts/test-docs-reset.sh`); fixes from the M11 run in 979506a3 and 1c3be9b9 (MonetDB persist n/a),
 the HammerDB MySQL load race it exposed in d48712b6. Details in section 6. Optional: watch the
 MySQL/MariaDB flush time at larger SF (600 s timeout); YugabyteDB persist needs `yb-admin`.
+Checked 2026-11-22: the TPC-DS runs listed as pending in section 6 exist (`docs_reset_tpcds_*`, v0.11.7,
+MariaDB v0.11.13) and are in `docs/Test-Reset.md`; YCSB and Benchbase resets were rerun with v0.11.18.
 
 Goal: with `-ar`, every benchmark runs a reset before each benchmarking round for every DBMS in scope,
 and the reset does the same steps everywhere, so results are comparable between systems and

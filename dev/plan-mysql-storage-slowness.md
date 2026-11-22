@@ -1,6 +1,13 @@
 # Plan: why MySQL on persistent storage is so slow (TPC-H, TPC-DS, SF 10)
 
-Status: not started (2026-11-08). Evidence below; nothing implemented.
+Status: **resolved 2026-11-10.** Cause: the template's 8G buffer pool, not temp tables and not the volume
+(quick checks below). Fix as proposed: the TPC-H and TPC-DS storage runs in `scripts/test-docs-mysql.{sh,ps1}`
+pass `--set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G` (TPC-DS also got
+sort/join buffers, a larger tmpfs and a MySQL variant of Q6). Checked 2026-11-22: current logs
+`docs_tpch_mysql_storage` 4505 s and `docs_tpcds_mysql_storage` 2263 s (was > 22 h), no failed test.
+Not done, and not needed for the fix: the other causes in "Other causes to separate out" (items 4-10).
+Still a separate decision: whether the template default of 8G should rise or follow the container limit
+(options A1/A2/A4/A5 in [plan-load-failure-and-sizing.md](plan-load-failure-and-sizing.md)).
 
 ## Evidence
 

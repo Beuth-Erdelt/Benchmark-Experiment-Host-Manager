@@ -4,6 +4,10 @@ Status: **planned, not implemented** (2026-11-07). Findings verified on the
 cluster with a PgDuckDB SUT (`bexhoma tpch -dbms PgDuckDB ... start`, code
 1794055373); the end-to-end effect on a reused volume (step 1 below) is
 derived from those findings, not reproduced yet.
+Checked 2026-11-22: unchanged, the problem still exists (`k8s/deploymenttemplate-PgDuckDB.yml`
+still runs `ALTER ROLE postgres SET duckdb.force_execution = true` in `postStart`, `option_parameters`
+in `k8s-cluster.config` still map `DUCKDB_FORCE_EXECUTION`). Since 2026-11-13 `tpch_catalog.option_flags()`
+is in `bexhoma/benchmarks/tpch/catalog.py`, and the `-xdfe` flags in `bexhoma/benchmarks/{tpch,ssb}/cli.py`.
 
 ## Problem
 

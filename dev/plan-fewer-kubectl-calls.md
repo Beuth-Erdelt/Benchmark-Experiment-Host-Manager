@@ -6,7 +6,11 @@ Status: M0-M4 and M7-M14 implemented and committed 2026-10-18 (`9152423e`,
 then the exec client pool and the init pod fix), cluster check done: tenancy_8 88.8 ->
 78.7 min, SUT idle between rounds 212 -> 114 s (see "M6: result"). M15
 (repetition boundaries side by side) planned 2026-10-19, not implemented. M5
-and the optional section not done. Note
+and the optional section not done. Checked 2026-11-22: still so (no
+`_stop_repetition`; `execute_command_in_pod_api()` is used only by the host
+probes and the Redis message queue); released in v0.11.6. The optional
+section is continued in [plan-shorter-phase-gaps.md](plan-shorter-phase-gaps.md).
+`experiments/base.py` below means `bexhoma/experiments/base.py`. Note
 2026-10-18: `extend` never took effect (`configurations/metrics.py` read
 `grafanaextend`); it is now read and defaults to 0, so O1's `time_end +
 extend` is `time_end` unless a cluster sets it. Deviations from the text below:
