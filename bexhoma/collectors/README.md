@@ -43,8 +43,9 @@ The driver script that generates the collector test data is:
 bash scripts/test-docs-collector.sh
 ```
 
-This script runs experiments for Benchbase, TPC-H (DBMSBenchmarker), YCSB, and HammerDB
-and writes logs to `logs_tests/`:
+This script runs experiments for Benchbase, TPC-H, TPC-DS and SSB (DBMSBenchmarker), YCSB,
+HammerDB and Hardware (one per tool: fio, sysbench, sockperf, netperf) and writes logs to
+`logs_tests/`:
 
 ```
 logs_tests/docs_benchbase_postgresql_collector_1.log
@@ -55,6 +56,10 @@ logs_tests/docs_ycsb_postgresql_collector_1.log
 logs_tests/docs_ycsb_postgresql_collector_2.log
 logs_tests/docs_hammerdb_postgresql_collector_1.log
 logs_tests/docs_hammerdb_postgresql_collector_2.log
+logs_tests/docs_tpcds_postgresql_collector_1.log
+logs_tests/docs_ssb_postgresql_collector_1.log
+logs_tests/docs_hardware_fio_collector.log
+...
 ```
 
 Multi-tenant variants (schema / database / container tenancy) are also generated:

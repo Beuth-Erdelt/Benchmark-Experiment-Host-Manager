@@ -907,6 +907,462 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 3/3  sf=16  nbp=1,2
 
 
 ###########################################
+################# TPC-DS ##################
+###########################################
+
+
+
+#### TPC-DS collector, Test 1: SF=1, fresh PVC (Example-Collectors.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size in GB)
+# -nc 2                         number of repeated runs per configuration
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod count
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 22 of the 99 queries, as many as TPC-H has
+# -m                            collect SUT resource metrics
+# -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       per-query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete and recreate the PVC at experiment start
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -nc 2 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nbp 1 \
+  -xii -xic -xis \
+  -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_tpcds_postgresql_collector_1.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS collector 1/3  sf=1  ne=1,2"
+
+#### TPC-DS collector, Test 2: SF=3, fresh PVC (Example-Collectors.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 3                         scaling factor (controls database size in GB)
+# -nc 2                         number of repeated runs per configuration
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod count
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 22 of the 99 queries, as many as TPC-H has
+# -m                            collect SUT resource metrics
+# -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       per-query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete and recreate the PVC at experiment start
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds \
+  -dbms PostgreSQL \
+  -sf 3 \
+  -nc 2 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nbp 1 \
+  -xii -xic -xis \
+  -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_tpcds_postgresql_collector_2.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS collector 2/3  sf=3  ne=1,2"
+
+#### TPC-DS collector, Test 3: SF=3, reuse PVC (Example-Collectors.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 3                         scaling factor (controls database size in GB)
+# -nc 2                         number of repeated runs per configuration
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod count
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 22 of the 99 queries, as many as TPC-H has
+# -m                            collect SUT resource metrics
+# -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       per-query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds \
+  -dbms PostgreSQL \
+  -sf 3 \
+  -nc 2 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nbp 1 \
+  -xii -xic -xis \
+  -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_tpcds_postgresql_collector_3.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS collector 3/3  sf=3  reuse PVC"
+
+
+
+###########################################
+################### SSB ###################
+###########################################
+
+
+
+#### SSB collector, Test 1: SF=1, star schema, fresh PVC (Example-Collectors.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size in GB)
+# -nc 2                         number of repeated runs per configuration
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod count
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -m                            collect SUT resource metrics
+# -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       per-query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete and recreate the PVC at experiment start
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ssb \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -nc 2 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nbp 1 \
+  -xii -xic -xis \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ssb_postgresql_collector_1.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB collector 1/3  sf=1  star schema"
+
+#### SSB collector, Test 2: SF=3, flat schema, fresh PVC (Example-Collectors.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 3                         scaling factor (controls database size in GB)
+# -xsv flat                     denormalized flat table lineorder_flat instead of the star schema
+# -nc 2                         number of repeated runs per configuration
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod count
+# -xii                          create indexes after data load
+# -xis                          run ANALYZE after data load
+# -m                            collect SUT resource metrics
+# -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       per-query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rsr                          delete and recreate the PVC at experiment start
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ssb \
+  -dbms PostgreSQL \
+  -sf 3 \
+  -xsv flat \
+  -nc 2 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nbp 1 \
+  -xii -xis \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ssb_postgresql_collector_2.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB collector 2/3  sf=3  flat schema"
+
+#### SSB collector, Test 3: SF=1, star schema, reuse PVC (Example-Collectors.md)
+# -dbms PostgreSQL              DBMS under test
+# -sf 1                         scaling factor (controls database size in GB)
+# -nc 2                         number of repeated runs per configuration
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nbp 1                        benchmarking pod count
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -m                            collect SUT resource metrics
+# -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       per-query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ssb \
+  -dbms PostgreSQL \
+  -sf 1 \
+  -nc 2 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nbp 1 \
+  -xii -xic -xis \
+  -m \
+  -ma \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -t 1200 \
+  -tr \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ssb_postgresql_collector_3.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB collector 3/3  sf=1  reuse PVC"
+
+
+
+###########################################
+################ Hardware #################
+###########################################
+
+
+
+#### Hardware collector, Test 1: fio, nbp=1,2 (Example-Collectors.md)
+# -dbms Hardware                hardware target to test
+# -xht fio                      benchmark tool: fio (disk I/O)
+# -xts 4G                       fio test file size
+# -xtd 60                       seconds per round
+# -xfrw write                   sequential write
+# -xfbs 8k                      fio block size
+# -xfid 1                       queue depth
+# -xfe libaio                   fio ioengine
+# -xffd 1                       fdatasync after every write
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 2                        threads in total, split across the pods: 1 pod x 2, 2 pods x 1
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -m                            collect SUT resource metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rsr                          delete and recreate the PVC at experiment start
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma hardware \
+  -dbms Hardware \
+  -xht fio \
+  -xts 4G \
+  -xtd 60 \
+  -xfrw write \
+  -xfbs 8k \
+  -xfid 1 \
+  -xfe libaio \
+  -xffd 1 \
+  -nbp 1,2 \
+  -nbt 2 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rsr \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_fio_collector.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 1/4  fio  nbp=1,2"
+
+#### Hardware collector, Test 2: sysbench, nbt=1,2 (Example-Collectors.md)
+# -dbms Hardware                hardware target to test
+# -xht sysbench                 benchmark tool: sysbench (CPU/memory)
+# -xtd 60                       seconds per round
+# -nbp 1                        benchmarking pod count
+# -nbt 1,2                      threads per benchmarking pod to sweep (comma-separated)
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -lc 2                         CPU limit for the SUT container
+# -rc 2                         CPU request for the SUT container, matches -lc
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma hardware \
+  -dbms Hardware \
+  -xht sysbench \
+  -xtd 60 \
+  -nbp 1 \
+  -nbt 1,2 \
+  -ne 1 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -lc 2 \
+  -rc 2 \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_sysbench_collector.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 2/4  sysbench  nbt=1,2"
+
+#### Hardware collector, Test 3: sockperf, nbp=1,2 (Example-Collectors.md)
+# -dbms Hardware                hardware target to test
+# -xht sockperf                 benchmark tool: sockperf (network latency/throughput)
+# -xtd 60                       seconds per round
+# -xspm pp                      sockperf mode: ping-pong (synchronous request/reply)
+# -xspr max                     message rate: uncapped
+# -xsps 64                      message payload size in bytes
+# -xspp tcp                     sockperf protocol: tcp
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 1                        threads per benchmarking pod
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -m                            collect SUT resource metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma hardware \
+  -dbms Hardware \
+  -xht sockperf \
+  -xtd 60 \
+  -xspm pp \
+  -xspr max \
+  -xsps 64 \
+  -xspp tcp \
+  -nbp 1,2 \
+  -nbt 1 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_sockperf_collector.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 3/4  sockperf  nbp=1,2"
+
+#### Hardware collector, Test 4: netperf, nbp=1,2 (Example-Collectors.md)
+# -dbms Hardware                hardware target to test
+# -xht netperf                  benchmark tool: netperf (request/response)
+# -xtd 60                       seconds per round
+# -xnpp tcp                     netperf protocol: tcp (TCP_RR)
+# -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 2                        threads in total, split across the pods: 1 pod x 2, 2 pods x 1
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -m                            collect SUT resource metrics
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma hardware \
+  -dbms Hardware \
+  -xht netperf \
+  -xtd 60 \
+  -xnpp tcp \
+  -nbp 1,2 \
+  -nbt 2 \
+  -ne 1 \
+  -m \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hardware_netperf_collector.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 4/4  netperf  nbp=1,2"
+
+
+###########################################
 ############## Clean Folder ###############
 ###########################################
 

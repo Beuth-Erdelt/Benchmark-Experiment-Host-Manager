@@ -62,6 +62,23 @@ LOGS = {
         "docs_hammerdb_postgresql_collector_2.log",
         "docs_hammerdb_postgresql_collector_3.log",
     ],
+    # one experiment per tool: each tool has its own log parser and columns
+    "hardware": [
+        "docs_hardware_fio_collector.log",
+        "docs_hardware_sysbench_collector.log",
+        "docs_hardware_sockperf_collector.log",
+        "docs_hardware_netperf_collector.log",
+    ],
+    "ssb": [
+        "docs_ssb_postgresql_collector_1.log",
+        "docs_ssb_postgresql_collector_2.log",
+        "docs_ssb_postgresql_collector_3.log",
+    ],
+    "tpcds": [
+        "docs_tpcds_postgresql_collector_1.log",
+        "docs_tpcds_postgresql_collector_2.log",
+        "docs_tpcds_postgresql_collector_3.log",
+    ],
     "tpch": [
         "docs_tpch_postgresql_collector_1.log",
         "docs_tpch_postgresql_collector_2.log",
