@@ -2,8 +2,12 @@
 
 Status: **implemented** (2026-10-11, branch `feature/storage-class-sweep`),
 M1–M5, released in v0.11.3. First cluster run 2026-10-15/16 (1792091105,
-1792099970, 1792116019, 1792123892): CSVs filled and plausible; the summary
-report has no Ceph table yet. Queries below were run against the
+1792099970, 1792116019, 1792123892): CSVs filled and plausible. Checked
+2026-11-22: the agent report has the Ceph Storage tables
+(`report_writer._build_ceph_storage_section`, `monitoring.md`); the text
+summary of the experiment log (`bexhoma summary`) still has none. YugabyteDB's
+chart PVCs are covered since OLTP WP9 (`pvc_selector`). Still open: the lag
+decision (below). Queries below were run against the
 reference cluster's Prometheus on 2026-10-11.
 
 Where it landed: `bexhoma/ceph_storage.py` (pure helpers shared by all

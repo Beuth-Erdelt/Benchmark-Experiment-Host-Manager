@@ -2,6 +2,25 @@
 
 Status: **not implemented, held as a plan**. No code has been written for this yet.
 
+Checked 2026-11-22: still not implemented, and the code layout below is outdated (benchmark folders
+since 2026-11-13). Before implementing, read the sections below with this mapping:
+- `bexhoma/experiments/tpch.py::enable_refresh_stream()` is `bexhoma/benchmarks/tpch/experiment.py`;
+  `RefreshStreamBenchmark` is still generic in `bexhoma/benchmarks/refresh.py`.
+- `experiments/ycsb.py` is `bexhoma/benchmarks/ycsb/experiment.py` (CLI in `.../ycsb/cli.py`).
+- `bexhoma/evaluators/hardware.py` / `evaluators.hardware(...)` is
+  `bexhoma/benchmarks/hardware/evaluator.py::HardwareEvaluator`.
+- Line numbers of `experiments/base.py`, `cli_args.py`, `manifest.py` are outdated.
+
+**New constraint:** `tests/test_benchmark_contract.py` allows a benchmark folder to import only generic code
+and the `dbmsbenchmarker` folder. A `NoisyNeighborBenchmark` used by YCSB therefore cannot live in, or import
+from, `bexhoma/benchmarks/hardware/`. Options: a generic co-located-job benchmark next to `refresh.py` that
+gets the hardware evaluator through the registry, or adding `hardware` to `_SHARED_FOLDERS` (a decision).
+
+Overlap: [plan-per-config-overrides.md](plan-per-config-overrides.md) and
+[plan-tenancy-sweep.md](plan-tenancy-sweep.md) cover a synchronized noisy neighbor for container tenancy
+(fio, per-tenant workload); this plan covers a sysbench job next to one YCSB SUT. YCSB has no container
+tenancy yet.
+
 ## Goal
 
 Run sysbench (via the existing `HARDWARE_TYPE=sysbench` Hardware benchmark) as a

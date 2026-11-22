@@ -2,7 +2,9 @@
 
 Status: **PARKED** (2026-10-29), split out of
 [plan-ddl-parameters.md](plan-ddl-parameters.md). Depends on its M1 (config
-file per script folder, safe fill function).
+file per script folder, safe fill function), which is done (04a57300, released
+in v0.11.10), so nothing blocks it any more. Checked 2026-11-22: still parked,
+nothing implemented; the recommended method below still works.
 
 ## Recommended method today (no code change)
 

@@ -1,6 +1,8 @@
 # Plan: report the MariaDB ColumnStore bugs to MariaDB
 
 Status: **plan only (2026-11-01).** Nothing written, nothing filed.
+Checked 2026-11-22: nothing in the repository points to a filed ticket; the template still uses
+`mariadb:12.3.3`, so the scope below is current. Whether anything was filed outside the repo is not known here.
 
 Goal: every problem found in #827 that is a bug of ColumnStore goes to MariaDB as its own ticket, with a
 script that runs on a plain install, so that the maintainers can reproduce it without TPC-DS or bexhoma.

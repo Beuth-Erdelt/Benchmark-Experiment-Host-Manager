@@ -1,13 +1,17 @@
 # Plan: tenancy sweep on the `nvme` pool
 
 Status: **planned** (2026-10-11), not run. One small code change (M0a fio
-overwrite, added 2026-10-16, **implemented 2026-10-17**, image rebuild and
-validation run open); placements A, B and D with the
+overwrite, added 2026-10-16, **implemented 2026-10-17**; checked 2026-11-22:
+image rebuilt with v0.11.7 and `-xfow` used in the `docs_hardware_fio_*` runs of
+`scripts/test-docs-hardware`, so M0a is done); placements A, B and D with the
 same workload for all tenants are then measurement with `hardware.py`.
 Placement C and the synchronized noisy neighbor need per-tenant placement and
 workload, which is a separate, generic plan:
 [plan-per-config-overrides.md](plan-per-config-overrides.md) (split out
-2026-10-16; formerly M1 and M2 here).
+2026-10-16; formerly M1 and M2 here), still not implemented.
+Paths moved 2026-11-13: `hardware.py`, `bexhoma/benchmarks/hardware.py`,
+`bexhoma/evaluators/hardware.py` and `bexhoma/hardware_baseline.py` are now
+`bexhoma/benchmarks/hardware/{cli,benchmark,evaluator,baseline}.py`.
 
 ## Goal
 

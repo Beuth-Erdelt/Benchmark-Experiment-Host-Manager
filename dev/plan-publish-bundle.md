@@ -4,6 +4,18 @@ Status: **planned, nothing implemented** (2026-10-10). This is a future
 extension, separate from the study plan (`dev/plan-studies.md`) and not
 required by it. Related to issue #795.
 
+Checked 2026-11-22: still nothing implemented (`scripts/publish_bundle.py` does not exist). New since
+the plan was written, to be added to "Leftover checks" and "Rules" when it is implemented:
+- **Results of internal DBMS.** [docs/Publishing-Results.md](../docs/Publishing-Results.md) (2026-11-19)
+  keeps the results of SQLServer, OracleDB, DB2 and CedarDB internal. The exporter must refuse a run
+  that contains one of them, using the same markers as `tests/test_unpublished_results.py`
+  (configuration and pod names, `Experiment is limited to DBMS [...]`), and the bundle README must
+  carry the TPC note of `THIRD_PARTY.md`.
+- **Release metadata.** The repository now has `CITATION.cff` and `codemeta.json`; the bundle can
+  cite the Bexhoma and DBMS-Benchmarker versions from the run (`bexhoma_version` in the report,
+  DBMS-Benchmarker's version per connection in `protocol.json` since 0.16.0).
+- Zenodo deposits of the software itself are tracked in the research-software work, not here.
+
 ## Goal
 
 Turn one or more runs into a directory that can be published, e.g. on Zenodo

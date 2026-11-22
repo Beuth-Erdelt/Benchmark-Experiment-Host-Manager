@@ -1,7 +1,14 @@
 # Plan: Star Schema Benchmark (SSB)
 
 Status: **implemented and run on the cluster** (2026-10-25, branch
-`feature/ssb`): M0-M9 and M1b done (SF10 and bash vs DuckDB on 2026-10-27).
+`feature/ssb`): M0-M9 and M1b done (SF10 and bash vs DuckDB on 2026-10-27),
+released in v0.11.9. Checked 2026-11-22: ClickHouseCluster (C1-C6 below) is done
+too, with replicated (`docs_ssb_clickhousecluster`) and distributed dimensions
+(`docs_ssb_clickhousecluster_distributed`), and MariaDB ColumnStore runs SSB
+(`docs_ssb_mariadbcs`, `_flat`). Still open: the SF10 comparison replicated vs
+distributed (both logs are SF 1); multi-tenancy (`-mtn` is still refused).
+Code moved 2026-11-13: `ssb.py`, `bexhoma/benchmarks/ssb.py` and
+`bexhoma/experiments/ssb.py` are now `bexhoma/benchmarks/ssb/{cli,benchmark,experiment}.py`.
 Tracks issue
 #348 ("Try SSB"). Decisions of 2026-10-24 are in "Decisions" at the end; what
 changed during the implementation is in "Implementation notes (2026-10-25)"
