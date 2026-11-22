@@ -4,7 +4,7 @@ Last recorded runs of the examples in `docs/`, one row per log in `logs_tests/`.
 Nothing is run to create this page: it is read from the committed logs by `scripts/demo-runs.py`,
 so it shows what the runs looked like when they were recorded, not whether the current code still passes.
 
-**387 passed, 0 failed, 1 warn, 0 unchecked** (388 runs)
+**391 passed, 0 failed, 1 warn, 0 unchecked** (392 runs)
 
 | Status | Log | Page | Date | Version | Duration | Failed tests / warnings |
 |---|---|---|---|---|---|---|
