@@ -4,7 +4,7 @@ Last recorded runs of the examples in `docs/`, one row per log in `logs_tests/`.
 Nothing is run to create this page: it is read from the committed logs by `scripts/demo-runs.py`,
 so it shows what the runs looked like when they were recorded, not whether the current code still passes.
 
-**387 passed, 0 failed, 1 warn, 0 unchecked** (388 runs)
+**391 passed, 0 failed, 1 warn, 0 unchecked** (392 runs)
 
 | Status | Log | Page | Date | Version | Duration | Failed tests / warnings |
 |---|---|---|---|---|---|---|
@@ -32,6 +32,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_pgbouncer_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 1586s |  |
 | passed | docs_benchbase_pgbouncer_newconn.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 1555s |  |
 | passed | docs_benchbase_pgbouncer_newconn_pool.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 1531s |  |
+| passed | docs_benchbase_pgbouncer_pool_sweep.log | Example-PGBouncer.md | 2026-11-22 | 0.12.2 | 665s |  |
 | passed | docs_benchbase_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-19 | 0.12.0 | 984s |  |
 | passed | docs_benchbase_postgresql_auctionmark_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 391s |  |
 | passed | docs_benchbase_postgresql_chbenchmark_scale.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 7452s |  |
@@ -308,6 +309,8 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpch_postgresql_tenants_database_multiload.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 474s |  |
 | passed | docs_tpch_postgresql_tenants_schema.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 448s |  |
 | passed | docs_tpch_postgresql_throughput.log | Example-TPC-H.md | 2026-11-13 | 0.11.17 | 501s |  |
+| passed | docs_tpch_refresh_two_dbms.log | Example-TPC-H.md | 2026-11-22 | 0.12.2 | 454s |  |
+| passed | docs_tpch_yaml_experiment.log | Design-Yaml-Experiment-Entry-Script.md | 2026-11-22 | 0.12.2 | 544s |  |
 | passed | docs_ycsb_cassandra.log | Example-Cassandra.md | 2026-11-16 | 0.11.18 | 297s |  |
 | passed | docs_ycsb_cassandra_cluster.log | Example-Cassandra.md | 2026-11-16 | 0.11.18 | 535s |  |
 | passed | docs_ycsb_cassandra_monitoring.log | Example-Cassandra.md | 2026-11-16 | 0.11.18 | 452s |  |
@@ -351,6 +354,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_ycsb_pgbouncer.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 349s |  |
 | passed | docs_ycsb_pgbouncer_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 736s |  |
 | passed | docs_ycsb_pgbouncer_monitoring.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 869s |  |
+| passed | docs_ycsb_pgbouncer_pool_default.log | Example-PGBouncer.md | 2026-11-22 | 0.12.2 | 253s |  |
 | passed | docs_ycsb_pgbouncer_storage.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 1129s |  |
 | passed | docs_ycsb_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 826s |  |
 | passed | docs_ycsb_postgresql_benchmarking.log | Example-YCSB.md | 2026-11-13 | 0.11.17 | 630s |  |

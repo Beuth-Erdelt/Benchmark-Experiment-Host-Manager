@@ -420,6 +420,54 @@ bexhoma tpch \
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H query subset  sf=10  xaq=1,9,14,18"
 
+
+#### TCP-H Refresh Stream on two DBMS (Example-TPC-H.md)
+# Each DBMS gets its own refresh stream; both use the same refresh job template.
+# Check: a tpch_refresh section per DBMS, RF1 inserts = RF2 deletes in orders/lineitem for each.
+# -dbms PostgreSQL PgDuckDB     DBMS under test (both)
+# -xdfe                         run PgDuckDB queries in the DuckDB engine (PgDuckDB only)
+# -sf 1                         scaling factor (controls database size in GB)
+# -ne 3                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -xrs 3                        parallel refresh stream applying 3 RF1+RF2 pairs per round
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch \
+  -dbms PostgreSQL PgDuckDB \
+  -xdfe \
+  -sf 1 \
+  -ne 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -xrs 3 \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_tpch_refresh_two_dbms.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H refresh on two DBMS  sf=1  ne=3"
+
+
+#### TCP-H from a YAML definition (Design-Yaml-Experiment-Entry-Script.md)
+# PostgreSQL vs PgDuckDB as defined in the YAML file; the YAML has no node pinning and no -tr.
+# Check: alias of PostgreSQL = "DBMS A2" (set in the YAML), PgDuckDB = its template alias,
+# DUCKDB_FORCE_EXECUTION=true in the PgDuckDB SUT, storage prefix of each DBMS.
+bexhoma experiment tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml &>$LOG_DIR/docs_tpch_yaml_experiment.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H from YAML  sf=1  ne=1,2,4"
+
 ###########################################
 ############# TPC-H MonetDB ###############
 ###########################################

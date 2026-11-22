@@ -71,6 +71,13 @@ class SelectionTest(unittest.TestCase):
     def test_named_dbms_in_config_order_not_argument_order(self) -> None:
         self.assertEqual(builder.selected_dockers(_dockers(), 'x', ['C', 'A']), ['A', 'C'])
 
+    def test_real_dbms_start_in_the_order_of_the_cluster_configuration(self) -> None:
+        # `-dbms MySQL PostgreSQL` and `-dbms PostgreSQL MySQL` build (and start) the same sequence
+        dockers = sd.load_dockers('k8s-cluster.config')
+        in_config = [name for name in dockers if name in ('MySQL', 'PostgreSQL')]
+        for argument_order in (['MySQL', 'PostgreSQL'], ['PostgreSQL', 'MySQL']):
+            self.assertEqual(builder.selected_dockers(dockers, 'tpch', argument_order), in_config)
+
     def test_incompatible_dbms_is_refused(self) -> None:
         with self.assertRaisesRegex(sd.IncompatibleBenchmark, r"D is not compatible with benchmark 'x'"):
             builder.selected_dockers(_dockers(), 'x', ['B', 'D'])

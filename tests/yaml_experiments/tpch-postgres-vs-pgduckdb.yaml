@@ -1,6 +1,6 @@
 # Worked example for the YAML-driven experiment entry script.
-# Run with: bexhoma experiment dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml
-# or:       python experiment.py dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml
+# Run with: bexhoma experiment tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml
+# or:       python experiment.py tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml
 #
 # See docs/Design-Yaml-Experiment-Entry-Script.md for the full schema.
 
@@ -32,9 +32,9 @@ loading:
 tpch:                        # TPC-H's own -x flags
   recreate_parameter: false
   shuffle_queries: false
-  init_indexes: false
-  init_constraints: false
-  init_statistics: false
+  init_indexes: true
+  init_constraints: true
+  init_statistics: true
   init_columns: false
   datatransfer: false
   active_queries: []
