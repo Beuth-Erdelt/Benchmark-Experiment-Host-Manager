@@ -19,7 +19,7 @@ from bexhoma.benchmarks.tpch import loader as experiment_loader
 _CATALOG_DRIVEN_FILE = 'dev/catalog/experiment.yml'
 _CATALOG_DRIVEN_YCSB_FILE = 'dev/catalog/experiment-ycsb.yml'
 _CATALOG_FILE = 'contracts/contract_catalog.yml'
-_SELF_SPECIFIED_FILE = 'dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml'
+_SELF_SPECIFIED_FILE = 'tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml'
 
 
 class IsCatalogDrivenTest(unittest.TestCase):

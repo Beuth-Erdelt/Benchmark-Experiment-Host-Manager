@@ -464,7 +464,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H refresh on two DBMS  sf=1  ne=3"
 # PostgreSQL vs PgDuckDB as defined in the YAML file; the YAML has no node pinning and no -tr.
 # Check: alias of PostgreSQL = "DBMS A2" (set in the YAML), PgDuckDB = its template alias,
 # DUCKDB_FORCE_EXECUTION=true in the PgDuckDB SUT, storage prefix of each DBMS.
-bexhoma experiment dev/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml &>$LOG_DIR/docs_tpch_yaml_experiment.log
+bexhoma experiment tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml &>$LOG_DIR/docs_tpch_yaml_experiment.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H from YAML  sf=1  ne=1,2,4"
 
