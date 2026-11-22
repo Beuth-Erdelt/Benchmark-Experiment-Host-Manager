@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 from bexhoma import *
-from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
+from bexhoma.cli_args import make_base_parser, resolve_scaling_factor, threads_per_pod_error
 from bexhoma.experiments.system_builder import (build_configuration, entry_of, entry_parameters, pooling_variants,
                                                 selected_dockers, tenancy_error)
 from bexhoma.system_descriptors import dbms_choices
@@ -292,6 +292,12 @@ def main() -> None:
     reason = tenancy_error('ycsb', args)
     if reason:
         parser.error(reason)
+    for threads, pods, threads_option, pods_option in (
+            (args.num_loading_threads, args.num_loading_pods, '-nlt', '-nlp'),
+            (args.num_benchmarking_threads, args.num_benchmarking_pods, '-nbt', '-nbp')):
+        reason = threads_per_pod_error(threads, pods, threads_option, pods_option)
+        if reason:
+            parser.error(reason)
     run(args)
     exit()
 

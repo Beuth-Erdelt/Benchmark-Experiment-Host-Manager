@@ -24,6 +24,7 @@ __all__ = [
     "storage_suffix", "abbreviate_storage_name", "limit_name", "MAX_STATEFULSET_NAME",
     "set_cell_storage", "resource_cells",
     "KEEP_SUT_CHOICES", "resolve_keep_sut", "split_worker_nodes",
+    "threads_per_pod_error",
 ]
 
 #: ``-rnw`` value that stands for the SUT's node (``-rnn``).
@@ -91,6 +92,38 @@ def split_worker_nodes(value, sut_node=None) -> list:
                 nodes.append(node)
         cells.append(nodes)
     return cells
+
+
+def threads_per_pod_error(threads: str, pods: str, threads_option: str, pods_option: str) -> str:
+    """Why a thread total cannot be split evenly across the pods, or ``''``.
+
+    ``-nbt``/``-nlt`` count the threads of all pods together; each pod runs
+    ``threads // pods`` of them. With fewer threads than pods a pod gets 0
+    threads and measures nothing, without an error; with a remainder the pods
+    run fewer threads than requested. For the entry scripts to refuse right
+    after parsing, before a cluster object exists.
+
+    :param threads: Comma-separated thread totals, e.g. ``args.num_benchmarking_threads``.
+    :param pods: Comma-separated pod counts, e.g. ``args.num_benchmarking_pods``.
+    :param threads_option: Name of the threads option in the message, e.g. ``-nbt``.
+    :param pods_option: Name of the pods option in the message, e.g. ``-nbp``.
+    :return: The message for ``parser.error``, ``''`` when every combination splits evenly.
+    """
+    try:
+        thread_totals = [int(value) for value in str(threads).split(',') if value]
+        pod_counts = [int(value) for value in str(pods).split(',') if value]
+    except ValueError:
+        return f"{threads_option} {threads} and {pods_option} {pods} must be comma-separated integers"
+    if any(count < 1 for count in pod_counts):
+        return f"{pods_option} {pods} must be at least 1"
+    uneven = [f"{total} threads on {count} pods"
+              for total in thread_totals for count in pod_counts
+              if total < count or total % count != 0]
+    if uneven:
+        return (f"{threads_option} {threads} is the total across the pods of {pods_option} {pods} "
+                f"and must be a multiple of each pod count: {', '.join(uneven)} "
+                f"(a pod would get 0 threads or the total would shrink)")
+    return ''
 
 
 def check_tenant_loading_pods(num_loading_pods, num_tenants: int, tenant_by: str,

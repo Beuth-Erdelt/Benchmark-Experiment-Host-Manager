@@ -7,7 +7,14 @@ init script fixes it found committed afterwards; M3b and research item 9
 committed (47aabae1). Rollout done (reinstall, 115 old volumes deleted),
 cluster checks A–R OK. Item 14 (`-xdim` for TPC-H, ClickHouseCluster only)
 committed (91f96682). M4 batches 1-4 committed (da4121ee, 3ee48d99). All keys per DBMS are in docs/DBMS.md (kept by a test). Open:
-rest of M4, M5, 13b, ClickHouse docs rerun. Non-DDL
+rest of M4, M5, 13b. Checked 2026-11-22: the ClickHouse docs rerun is done
+(`docs_tpch_clickhouse_cluster`, 2026-11-05, "Dimensions ... a full copy on every
+node (-xdim replicated)"); the catalog is now 54,087 characters (LF-counted) of
+the 56,000 whole-read limit, and the test margin was lowered to 500 (51650340,
+"until the contract is split"), so the "53,990 / 53,975" numbers in the table are
+outdated; item 11's comment is in 229 init scripts plus 250 durability copies, not
+~30. Code paths below from before the move into `bexhoma/benchmarks/<name>/`
+(2026-11-13): `tpch.py` etc. are now `bexhoma/benchmarks/<name>/cli.py`. Non-DDL
 settings (planner knobs, isolation level, client options):
 [plan-session-parameters.md](plan-session-parameters.md) (parked; today:
 one experiment per value with `--set` on the same `-rst` PVC).

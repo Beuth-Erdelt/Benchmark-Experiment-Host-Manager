@@ -3,6 +3,14 @@
 Status: **proposal**, nothing implemented. Written 2026-10-30 after the TPC-H and TPC-DS
 cross-DBMS comparison at SF=3 (experiments 1793305221, 1793360424, 1793379736).
 
+Checked 2026-11-22: still nothing of sections 4-6 implemented. Since then in DBMS-Benchmarker
+(now 0.16.1): 49f94dc (2026-11-05) converts only single numbers to floats and stores a result-set
+processing error in the protocol instead of counting the query as compared; 0.16.0 handles config files also
+as JSON and records its version per connection in `protocol.json`. The bexhoma paths of section 5 moved on 2026-11-13:
+`bexhoma/benchmarks/{tpch,tpcds,ssb}.py` are now `bexhoma/benchmarks/<name>/{benchmark,builder,cli}.py`,
+`bexhoma/evaluators/dbmsbenchmarker.py` and `bexhoma/collectors/dbmsbenchmarker.py` are
+`bexhoma/benchmarks/dbmsbenchmarker/{evaluator,collector}.py`; line numbers in section 5 are outdated.
+
 Touches **two repositories**: `DBMS-Benchmarker` (the comparison itself) and
 `Benchmark-Experiment-Host-Manager` (bexhoma: query configs, summary, tests, contracts, docs).
 

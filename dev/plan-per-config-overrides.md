@@ -5,6 +5,18 @@ Status: **planned** (2026-10-16), not implemented. Split out of
 and M2 (`-xtw`) as `hardware.py`-only flags. Decided 2026-10-17: a separate
 flag `--set-tenant`; `--set` stays a pure manifest patch and is not changed.
 
+Checked 2026-11-22: not implemented. Some facts below changed with the DBMS-generic refactor
+(v0.11.13) and the benchmark folders (2026-11-13):
+- The tenant loop is generic now: `system_builder.tenant_ids()` gives one configuration per tenant for a
+  DBMS whose `cluster.config` entry lists `container` in `multi_tenancy`; each benchmark adds its own
+  `tenant_parameters()` (`bexhoma/benchmarks/{benchbase,tpch,hardware}/cli.py`), which sets
+  `BEXHOMA_TENANT_ID`. M1 can therefore set `config.tenant_id` in one place (`build_configuration` or right
+  after it) instead of in every script.
+- Still true: `SutConfiguration` has no tenant id; YCSB (and TPC-DS, SSB, HammerDB) have no container tenancy.
+- Paths: `benchbase.py`, `tpch.py`, `hardware.py` are `bexhoma/benchmarks/<name>/cli.py`;
+  `experiments/ycsb_catalog.py` is `bexhoma/benchmarks/ycsb/catalog.py`; `SELECTOR_RE` is still in
+  `bexhoma/experiments/base.py`. Line numbers below are outdated.
+
 ## Goal
 
 Let the tenants of one experiment differ in **where the SUT runs** and

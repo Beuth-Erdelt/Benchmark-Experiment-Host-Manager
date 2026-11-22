@@ -1,11 +1,13 @@
 # Design (draft): Catalog Contract
 
-> **Status: draft, partially prototyped.** This is a design proposal for
+> **Status: draft, phase 1 implemented.** This is a design proposal for
 > [issue #764](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues/764).
-> A working prototype now exists for the TPC-H/PostgreSQL/PgDuckDB slice —
+> Phase 1 is implemented for the TPC-H and YCSB workloads on PostgreSQL and
+> PgDuckDB (each workload's `argv_builder` in its `catalog.py`) —
 > see "Near-term implementation scope" below for exactly what's built vs.
 > still just designed. Not linked from `docs/index.rst` on purpose — it's a
-> working note, not published documentation.
+> working note, not published documentation; [Architecture](Architecture.md)
+> links it as a design note.
 >
 > This revision widens the catalog to bexhoma's **full** current surface
 > area (all 6 workloads, all ~19 deployable systems) specifically to find
@@ -21,8 +23,8 @@
 > The real, active contract lives at `contracts/contract_catalog.yml`
 > (promoted out of `dev/catalog/` once it graduated from prototype to the
 > input contract `bexhoma/spec.py` actually consumes) and is a trimmed
-> subset (`tpch` + `PostgreSQL` + `PgDuckDB` only, and — per explicit
-> instruction — without the `oltp-large-node`/`legacy-baseline` profiles the
+> subset (workloads `tpch` and `ycsb`, systems `PostgreSQL` and `PgDuckDB`,
+> and — per explicit instruction — without the `oltp-large-node`/`legacy-baseline` profiles the
 > sketch below still shows). Treat the sketch as "does the schema
 > generalize", and `contracts/contract_catalog.yml` as "what actually runs".
 >
@@ -268,7 +270,11 @@ audit, not as something implemented.
 
 ### `docs/DBMS.md` is stale in places — verify against templates, not prose
 
-`docs/DBMS.md:292` claims PostgreSQL's "only active argument is
+> Resolved since: `docs/DBMS.md` now has sections for PgDuckDB and CedarDB
+> and no longer states a single active PostgreSQL argument. The advice to
+> verify defaults against the templates still holds.
+
+At the time of the audit, `docs/DBMS.md:292` claimed PostgreSQL's "only active argument is
 `max_connections=640`" — the live template has **17** active knobs, not 1.
 The doc has **no section for CedarDB or PgDuckDB at all**, despite both
 being live `-dbms` choices — i.e. the two systems this project is about to

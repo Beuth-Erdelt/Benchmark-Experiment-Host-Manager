@@ -45,7 +45,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -62,7 +62,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -81,7 +81,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -98,7 +98,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -135,7 +135,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -166,7 +166,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -197,7 +197,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -221,7 +221,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -318,7 +318,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -335,7 +335,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -354,7 +354,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -371,7 +371,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -408,7 +408,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -439,7 +439,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -470,7 +470,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -494,7 +494,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -591,7 +591,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -608,7 +608,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -627,7 +627,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -644,7 +644,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -678,7 +678,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -709,7 +709,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -740,7 +740,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -764,7 +764,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -858,7 +858,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -875,7 +875,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -894,7 +894,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -911,7 +911,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -945,7 +945,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -976,7 +976,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -1007,7 +1007,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -1031,7 +1031,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -1125,7 +1125,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_USE_HOSTLIST": "true",
      "YCSB_WORKLOAD": ""
     },
@@ -1143,7 +1143,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_USE_HOSTLIST": "true",
      "YCSB_WORKLOAD": ""
     }
@@ -1163,7 +1163,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_USE_HOSTLIST": "true",
      "YCSB_WORKLOAD": ""
     },
@@ -1181,7 +1181,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_USE_HOSTLIST": "true",
      "YCSB_WORKLOAD": ""
     }
@@ -1219,7 +1219,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_USE_HOSTLIST": "true",
         "YCSB_WORKLOAD": ""
        },
@@ -1251,7 +1251,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_USE_HOSTLIST": "true",
         "YCSB_WORKLOAD": ""
        },
@@ -1283,7 +1283,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_USE_HOSTLIST": "true",
        "YCSB_WORKLOAD": ""
       },
@@ -1308,7 +1308,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_USE_HOSTLIST": "true",
     "YCSB_WORKLOAD": ""
    },
@@ -1406,7 +1406,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_USE_HOSTLIST": "true",
      "YCSB_WORKLOAD": ""
     },
@@ -1424,7 +1424,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_USE_HOSTLIST": "true",
      "YCSB_WORKLOAD": ""
     }
@@ -1444,7 +1444,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_USE_HOSTLIST": "true",
      "YCSB_WORKLOAD": ""
     },
@@ -1462,7 +1462,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_USE_HOSTLIST": "true",
      "YCSB_WORKLOAD": ""
     }
@@ -1500,7 +1500,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_USE_HOSTLIST": "true",
         "YCSB_WORKLOAD": ""
        },
@@ -1532,7 +1532,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_USE_HOSTLIST": "true",
         "YCSB_WORKLOAD": ""
        },
@@ -1564,7 +1564,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_USE_HOSTLIST": "true",
        "YCSB_WORKLOAD": ""
       },
@@ -1589,7 +1589,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_USE_HOSTLIST": "true",
     "YCSB_WORKLOAD": ""
    },
@@ -1687,7 +1687,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -1704,7 +1704,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -1723,7 +1723,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -1740,7 +1740,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -1777,7 +1777,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -1808,7 +1808,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -1839,7 +1839,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -1863,7 +1863,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": 1,
@@ -1960,7 +1960,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -1977,7 +1977,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -1996,7 +1996,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -2013,7 +2013,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -2050,7 +2050,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -2081,7 +2081,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -2112,7 +2112,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -2136,7 +2136,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": 1,
@@ -2234,7 +2234,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -2252,7 +2252,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -2272,7 +2272,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -2290,7 +2290,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -2325,7 +2325,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -2357,7 +2357,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -2389,7 +2389,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -2414,7 +2414,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -2509,7 +2509,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -2527,7 +2527,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -2547,7 +2547,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -2565,7 +2565,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -2600,7 +2600,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -2632,7 +2632,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -2664,7 +2664,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -2689,7 +2689,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -2782,7 +2782,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -2798,7 +2798,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -2816,7 +2816,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -2832,7 +2832,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -2865,7 +2865,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [],
@@ -2893,7 +2893,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [],
@@ -2921,7 +2921,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -2944,7 +2944,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -3037,7 +3037,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -3053,7 +3053,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -3071,7 +3071,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -3087,7 +3087,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -3120,7 +3120,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [],
@@ -3148,7 +3148,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [],
@@ -3176,7 +3176,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -3199,7 +3199,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -3293,7 +3293,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -3310,7 +3310,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -3329,7 +3329,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -3346,7 +3346,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -3383,7 +3383,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -3414,7 +3414,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -3445,7 +3445,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -3469,7 +3469,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -3566,7 +3566,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -3583,7 +3583,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -3602,7 +3602,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -3619,7 +3619,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -3656,7 +3656,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -3687,7 +3687,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -3718,7 +3718,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -3742,7 +3742,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -3839,7 +3839,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -3856,7 +3856,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -3875,7 +3875,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -3892,7 +3892,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -3929,7 +3929,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -3960,7 +3960,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -3991,7 +3991,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -4015,7 +4015,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -4112,7 +4112,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -4129,7 +4129,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -4148,7 +4148,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -4165,7 +4165,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -4202,7 +4202,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -4233,7 +4233,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -4264,7 +4264,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -4288,7 +4288,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -4384,7 +4384,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -4400,7 +4400,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -4418,7 +4418,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -4434,7 +4434,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -4467,7 +4467,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -4498,7 +4498,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -4529,7 +4529,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -4552,7 +4552,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -4647,7 +4647,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -4663,7 +4663,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -4681,7 +4681,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -4697,7 +4697,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -4730,7 +4730,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -4761,7 +4761,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -4792,7 +4792,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -4815,7 +4815,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -4910,7 +4910,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -4926,7 +4926,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -4944,7 +4944,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -4960,7 +4960,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -4993,7 +4993,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -5024,7 +5024,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -5055,7 +5055,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -5078,7 +5078,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -5171,7 +5171,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -5187,7 +5187,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -5205,7 +5205,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -5221,7 +5221,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -5254,7 +5254,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -5285,7 +5285,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -5316,7 +5316,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -5339,7 +5339,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -5432,7 +5432,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -5448,7 +5448,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -5466,7 +5466,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -5482,7 +5482,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -5515,7 +5515,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -5545,7 +5545,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -5575,7 +5575,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -5598,7 +5598,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -5691,7 +5691,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -5707,7 +5707,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -5725,7 +5725,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -5741,7 +5741,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -5774,7 +5774,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -5804,7 +5804,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -5834,7 +5834,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -5857,7 +5857,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -5950,7 +5950,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -5966,7 +5966,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -5984,7 +5984,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -6000,7 +6000,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -6033,7 +6033,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -6063,7 +6063,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -6093,7 +6093,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -6116,7 +6116,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -6159,9 +6159,9 @@
    "sut_container_name": "dbms",
    "sut_has_pool": true,
    "sut_parameters": {
-    "DEFAULT_POOL_SIZE": 1,
-    "MAX_CLIENT_CONN": 1,
-    "MIN_POOL_SIZE": 1
+    "DEFAULT_POOL_SIZE": 2,
+    "MAX_CLIENT_CONN": 2,
+    "MIN_POOL_SIZE": 2
    },
    "sut_pod_name": "",
    "sut_role": "data",
@@ -6214,7 +6214,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -6230,7 +6230,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -6248,7 +6248,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -6264,7 +6264,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -6297,7 +6297,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -6327,7 +6327,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -6357,7 +6357,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -6380,7 +6380,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -6423,9 +6423,9 @@
    "sut_container_name": "dbms",
    "sut_has_pool": true,
    "sut_parameters": {
-    "DEFAULT_POOL_SIZE": 1,
-    "MAX_CLIENT_CONN": 1,
-    "MIN_POOL_SIZE": 1
+    "DEFAULT_POOL_SIZE": 2,
+    "MAX_CLIENT_CONN": 2,
+    "MIN_POOL_SIZE": 2
    },
    "sut_pod_name": "",
    "sut_role": "data",
@@ -6479,7 +6479,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -6496,7 +6496,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -6515,7 +6515,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -6532,7 +6532,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -6566,7 +6566,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -6597,7 +6597,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -6628,7 +6628,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -6652,7 +6652,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -6746,7 +6746,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -6763,7 +6763,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -6782,7 +6782,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -6799,7 +6799,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -6833,7 +6833,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -6864,7 +6864,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -6895,7 +6895,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -6919,7 +6919,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -7013,7 +7013,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -7030,7 +7030,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -7049,7 +7049,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -7066,7 +7066,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -7103,7 +7103,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -7134,7 +7134,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -7165,7 +7165,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -7189,7 +7189,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -7286,7 +7286,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -7303,7 +7303,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -7322,7 +7322,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -7339,7 +7339,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -7376,7 +7376,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -7407,7 +7407,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -7438,7 +7438,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -7462,7 +7462,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -7560,7 +7560,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -7578,7 +7578,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -7598,7 +7598,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -7616,7 +7616,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -7651,7 +7651,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -7683,7 +7683,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -7715,7 +7715,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -7740,7 +7740,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -7835,7 +7835,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -7853,7 +7853,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -7873,7 +7873,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -7891,7 +7891,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -7926,7 +7926,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -7958,7 +7958,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -7990,7 +7990,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -8015,7 +8015,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -8109,7 +8109,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -8126,7 +8126,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -8145,7 +8145,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -8162,7 +8162,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -8201,7 +8201,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -8232,7 +8232,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -8263,7 +8263,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -8287,7 +8287,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -8386,7 +8386,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -8403,7 +8403,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -8422,7 +8422,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -8439,7 +8439,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -8478,7 +8478,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -8509,7 +8509,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -8540,7 +8540,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -8564,7 +8564,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -8663,7 +8663,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -8680,7 +8680,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -8699,7 +8699,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -8716,7 +8716,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -8753,7 +8753,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -8784,7 +8784,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -8815,7 +8815,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -8839,7 +8839,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -8936,7 +8936,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -8953,7 +8953,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -8972,7 +8972,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -8989,7 +8989,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -9026,7 +9026,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -9057,7 +9057,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -9088,7 +9088,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -9112,7 +9112,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -9208,7 +9208,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -9224,7 +9224,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -9242,7 +9242,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -9258,7 +9258,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -9291,7 +9291,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -9322,7 +9322,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -9353,7 +9353,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 50,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -9376,7 +9376,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 50,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,
@@ -9469,7 +9469,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -9485,7 +9485,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -9503,7 +9503,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 50,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     },
     {
@@ -9519,7 +9519,7 @@
      "YCSB_STATUS": 1,
      "YCSB_STATUS_INTERVAL": 10,
      "YCSB_TARGET": 100,
-     "YCSB_THREADCOUNT": 0,
+     "YCSB_THREADCOUNT": 1,
      "YCSB_WORKLOAD": ""
     }
    ],
@@ -9552,7 +9552,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 50,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -9583,7 +9583,7 @@
         "YCSB_STATUS": 1,
         "YCSB_STATUS_INTERVAL": 10,
         "YCSB_TARGET": 100,
-        "YCSB_THREADCOUNT": 0,
+        "YCSB_THREADCOUNT": 1,
         "YCSB_WORKLOAD": ""
        },
        "resetscript": [
@@ -9614,7 +9614,7 @@
        "YCSB_STATUS": 1,
        "YCSB_STATUS_INTERVAL": 10,
        "YCSB_TARGET": 100,
-       "YCSB_THREADCOUNT": 0,
+       "YCSB_THREADCOUNT": 1,
        "YCSB_WORKLOAD": ""
       },
       "target": "sut",
@@ -9637,7 +9637,7 @@
     "YCSB_STATUS": 1,
     "YCSB_STATUS_INTERVAL": 10,
     "YCSB_TARGET": 100,
-    "YCSB_THREADCOUNT": 0,
+    "YCSB_THREADCOUNT": 1,
     "YCSB_WORKLOAD": ""
    },
    "max_sut_dbms": null,

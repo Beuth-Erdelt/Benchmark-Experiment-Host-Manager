@@ -1,6 +1,8 @@
 # Plan: shorter gaps between loading and benchmarking, and between rounds
 
-Status: plan only, written 2026-10-19. Nothing implemented.
+Status: plan only, written 2026-10-19. Nothing implemented (checked
+2026-11-22: no gap file, index scripts of tenants still one after another).
+Line numbers below are from 2026-10-19 and have moved since.
 
 Builds on [plan-fewer-kubectl-calls.md](plan-fewer-kubectl-calls.md) (M11
 follow-up wait, M4 more fetches at once, M6 parallel submit/end: done) and

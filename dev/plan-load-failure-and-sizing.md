@@ -1,7 +1,21 @@
 # Plan: failed loads are detected, MySQL/MariaDB sizing fits the container
 
-Status: **parked 2026-10-22.** P1 implemented as option A3 and committed (`8a530999`); cluster
-check done 2026-10-22 (section 3, "Pending test runs": passed). P2-P6 open.
+Status: **parked 2026-10-22, partly done since.** Checked 2026-11-22:
+- P1 done: option A3 committed (`8a530999`), cluster check passed 2026-10-22 (section 3).
+- P3 and P4 done by [plan-848-no-silent-load-failures.md](plan-848-no-silent-load-failures.md) (W2, W4, W7;
+  released in v0.11.14): loaders exit 1 on any unit that fails, script errors fail the test
+  `Init scripts without errors`, a volume gets `loaded=True` only after a clean load and an unfinished one is
+  refused before reuse, a SUT restart during loading is a `loading_failed` reason, the index `upload_file` error
+  aborts with diagnostics. Decided there (open decision 3 below): no PVC is deleted automatically.
+- P6 done: #709 is closed with a comment.
+- Still open: **P2** (`/mysqltmp` is still `emptyDir` `medium: Memory`, `sizeLimit: 32Gi`; the TPC-DS storage
+  runs raise it by `--set ...volume[mysqltmp].sizeLimit`), **P5** (`-nlt` is still ignored: the image runs
+  `loader.sh`, only the unused `loader-parallel.sh` reads `MYSQL_LOADING_THREADS`, while `docs/Example-MySQL.md`
+  says "8 threads each (`-nlt`)"), and the **loader barrier hang** of section 3 (a loader pod that stays
+  `Pending`, e.g. "Too many pods", blocks the job forever; no timeout). A4 (start check pool vs. limit) is
+  still a candidate guard.
+- WP10 point 6 of the OLTP plan ("bexhoma already detects SUT restarts and marks the load as failed") is true
+  since #848 W7.
 
 Origin: #709 follow-up. The `-xld relaxed` vs `-xld unsafe` comparison (TPC-H MySQL SF 10, nvme,
 `-nlp 16`, SUT cl-worker36) failed twice by OOM kill, and bexhoma did not notice. The rerun with a
@@ -193,7 +207,8 @@ MySQL with 8G vs. the 10G run 1792540834 (same nodes, `-xld relaxed`): 970 s vs.
 ## 4. Open decisions (user)
 
 1. P1: decided A3 (static 8G) on 2026-10-22; A1/A2/A4/A5 kept as later options.
-2. P2: tmpdir on disk (a) or sized tmpfs (b)?
-3. P4: on a failed load, delete the PVC always, or only with `-xld unsafe` / `-rsr`?
-4. P5: implement `-nlt` for MySQL/MariaDB or drop it?
-5. Order: proposal P4 + P3 first (wrong results are worse than slow ones), then P1/P2, then P5/P6.
+2. P2: tmpdir on disk (a) or sized tmpfs (b)? **Open.**
+3. P4: ~~on a failed load, delete the PVC always, or only with `-xld unsafe` / `-rsr`?~~ Decided in #848 W7:
+   never delete automatically; a failed or unfinished volume is refused with "remove it (-rsr)".
+4. P5: implement `-nlt` for MySQL/MariaDB or drop it? **Open** (proposal: drop it from the docs).
+5. Order: ~~P4 + P3 first~~ done (#848); left: P2, P5, loader barrier timeout.

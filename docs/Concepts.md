@@ -91,6 +91,7 @@ A **benchmark setting** describes how the workload is driven:
 ## Architecture
 
 Bexhoma deploys a set of cooperating components inside a Kubernetes cluster.
+How the Python code that orchestrates them is organised is described in [Architecture](Architecture.md).
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
