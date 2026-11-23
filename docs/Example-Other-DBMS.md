@@ -168,6 +168,44 @@ bexhoma tpch \
 
 `-xii`, `-xic` and `-xis` create the indexes, add the foreign keys and collect the optimizer statistics (`RUNSTATS`) after loading.
 
+## OrioleDB
+
+OrioleDB is a storage engine for PostgreSQL: a table access method with an undo log instead of dead row versions in the heap, so its tables need no `VACUUM` [5].
+Bexhoma runs OrioleDB 1.10.3 on PostgreSQL 18.6 from the image `orioledb/orioledb` with the template [deploymenttemplate-OrioleDB.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OrioleDB.yml), the PostgreSQL template with OrioleDB as the default table access method.
+It uses the scripts and clients of PostgreSQL; bexhoma offers it for the OLTP workloads only.
+
+The results of OrioleDB are not part of the repository: there are no results of it on this page or in the documentation.
+
+| Workload | Runs | Note |
+|---|---|---|
+| YCSB | yes | JDBC binding, scripts of PostgreSQL |
+| Benchbase `tpcc` | yes | profile `postgres` |
+| Benchbase, other benchmarks | not tested | `twitter` runs `SERIALIZABLE`, which OrioleDB executes with table locks |
+| HammerDB TPC-C | yes | `HAMMERDB_TYPE=postgresql` |
+| TPC-H, TPC-DS, SSB | no | not offered, OLTP only |
+
+See [DBMS](DBMS.html#orioledb) for the deployment and the differences to PostgreSQL.
+
+The test scripts [`scripts/test-docs-orioledb.sh`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-orioledb.sh) and [`scripts/test-docs-orioledb.ps1`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-orioledb.ps1) run YCSB (persistent storage, reset; monitoring with application metrics), Benchbase TPC-C and HammerDB TPC-C, one after the other.
+They write their logs to `logs_tests/local`, which is not part of the repository.
+
+An example call, YCSB workload A at SF 1 on a persistent volume:
+
+```bash
+bexhoma ycsb \
+  -dbms OrioleDB \
+  -sf 1 \
+  -xwl a \
+  -nlp 4 -nlt 16 \
+  -nbp 1 -nbt 32 \
+  -rst $BEXHOMA_STORAGE_CLASS -rss 50Gi \
+  -nc 2 \
+  -ar \
+  -ks no \
+  -tr \
+  run
+```
+
 [1] https://cedardb.com
 
 [2] https://www.microsoft.com/sql-server
@@ -175,3 +213,5 @@ bexhoma tpch \
 [3] https://www.oracle.com/database/free/
 
 [4] https://www.ibm.com/products/db2/developers
+
+[5] https://www.orioledb.com

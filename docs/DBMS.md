@@ -16,6 +16,7 @@ Each supported DBMS has a short section below; configuration, deployment, script
 | Relational / SQL | [PostgreSQL](#postgresql) | `PostgreSQL` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-PostgreSQL](Example-PostgreSQL.md) |
 | Relational / SQL | [PostgreSQL + PGBouncer](#pgbouncer) | `PGBouncer` | YCSB, Benchbase | [Example-PGBouncer](Example-PGBouncer.md) |
 | Relational / SQL | [PgDuckDB](#pgduckdb) | `PgDuckDB` | TPC-H, SSB | [Example-PgDuckDB](Example-PgDuckDB.md) |
+| Relational / SQL | [OrioleDB](#orioledb) | `OrioleDB` | YCSB, Benchbase, HammerDB | [Example-Other-DBMS](Example-Other-DBMS.md#orioledb) (no results) |
 | Relational / SQL | [MySQL](#mysql) | `MySQL` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-MySQL](Example-MySQL.md) |
 | Relational / SQL | [MariaDB](#mariadb) | `MariaDB` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-MariaDB](Example-MariaDB.md) |
 | Relational / SQL | [MariaDB ColumnStore](#mariadb-columnstore) | `MariaDBCS` | TPC-H, TPC-DS, SSB | [Example-MariaDBCS](Example-MariaDBCS.md) |
@@ -66,7 +67,7 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 | `storage_prefix` | yes² | Name of the storage (volume) of the DBMS, the same for every benchmark (e.g. `postgresql`, `PgDuckDB`) |
 | `abbreviation` | no | Short name of the DBMS in the names of volumes and worker stateful sets (`pg`, `chc`, `df`, ...): a storage name that starts with the DBMS name gets it instead (`postgresql-schema-16` → `pg-schema-16`), since Kubernetes and some DBMS limit the length of these names |
 | `tls` | no | `{'secret': True}`: a CA and server certificate Secret is created per SUT, for the server and the benchmark client (MySQL with HammerDB, see [MySQL](Example-MySQL.md)) |
-| `base_system` | no | DBMS whose script folder `experiments/<benchmark>/<base_system>` this DBMS uses, if it is not its own (PgDuckDB and PGBouncer use `PostgreSQL`) |
+| `base_system` | no | DBMS whose script folder `experiments/<benchmark>/<base_system>` this DBMS uses, if it is not its own (PgDuckDB, OrioleDB and PGBouncer use `PostgreSQL`) |
 | `workers` | no | `True` if the SUT takes `-nw` workers (shards) next to its coordinator |
 | `sut_attributes` | no | How the SUT is set up (placeholder pod, no monitoring, Helm-managed stateful sets, ...); see [Benchmarks of a DBMS](#how-the-sut-is-set-up-sut_attributes) |
 | `initial_cluster` | no | `{component, port, scheme, env}`: the members of this component are passed to the SUT pods as `env`, for a DBMS that bootstraps as a cluster (TiDB: the `pd` nodes) |
@@ -342,7 +343,7 @@ How `PARAM` is written depends on the template:
 
 | Style | Written as | Templates | Chosen by |
 |---|---|---|---|
-| `pg` | `["-c", "PARAM=VALUE"]` | PostgreSQL, PgDuckDB, Citus, PGBouncer backends | `-c` pairs in the args (default) |
+| `pg` | `["-c", "PARAM=VALUE"]` | PostgreSQL, PgDuckDB, OrioleDB, Citus, PGBouncer backends | `-c` pairs in the args (default) |
 | `flag` | `"--PARAM=VALUE"` | MySQL, MariaDB | annotation `bexhoma/arg-style: flag` on the workload, or `--x=y` elements in the args |
 | env | env entry `PARAM=VALUE` | all | `PARAM` = `env.NAME`, e.g. Dragonfly `env.DFLY_maxmemory` |
 
@@ -418,7 +419,7 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 
 | DBMS | 1 Statistics | 2 Persist | 3 Counters |
 |---|---|---|---|
-| PostgreSQL, PGBouncer, PgDuckDB | `VACUUM VERBOSE ANALYZE` (whole database) | `CHECKPOINT` | `pg_stat_reset()`, `pg_stat_reset_shared()` for `bgwriter`, `checkpointer`, `io`, `wal` |
+| PostgreSQL, PGBouncer, PgDuckDB, OrioleDB | `VACUUM VERBOSE ANALYZE` (whole database; `ANALYZE` only for OrioleDB tables, which have no dead rows) | `CHECKPOINT` | `pg_stat_reset()`, `pg_stat_reset_shared()` for `bgwriter`, `checkpointer`, `io`, `wal` |
 | Citus | `VACUUM VERBOSE ANALYZE` on the distributed tables (passed on to the shards) | `CHECKPOINT` on the coordinator and with `run_command_on_workers` on every worker | as PostgreSQL, on the coordinator and every worker |
 | MySQL, MariaDB | `ANALYZE TABLE` (`reset-<benchmark>.sql`) | `reset-flush.sh`: `innodb_max_dirty_pages_pct = 0`, wait until no dirty pages are left (at most 600 s), restore the old value | `FLUSH STATUS` (in `reset-flush.sh`) |
 | MariaDBCS | `ANALYZE TABLE` | n/a (no dirty pages to flush) | n/a (the check scripts read no ColumnStore counter) |
@@ -439,7 +440,7 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | Cassandra | n/a | `save-snapshot.sh`: `nodetool flush`, wait until no compactions are pending (at most 1800 s; single node: SUT pod; cluster: every worker) | n/a (the JMX metrics cannot be reset) |
 
 DatabaseService has no reset.
-Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL, PGBouncer and CedarDB only (the other DBMS have no scripts for them).
+Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL, PGBouncer, OrioleDB and CedarDB only (the other DBMS have no scripts for them).
 With `-ar` on a configuration without a reset, the experiment prints a warning at the start; a listed script missing in the experiment folder is skipped with a message.
 
 Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB, ClickHouse), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis, Cassandra).
@@ -461,7 +462,7 @@ Commands and logs of the test runs: [Test: Load Durability](Test-Durability.md).
 
 | DBMS | durable | relaxed | unsafe |
 |---|---|---|---|
-| PostgreSQL, PgDuckDB, PGBouncer | `synchronous_commit`, `fsync`, `full_page_writes` on | `synchronous_commit=off` | also `fsync`, `full_page_writes` off; restore with `CHECKPOINT` + `sync` |
+| PostgreSQL, PgDuckDB, PGBouncer, OrioleDB | `synchronous_commit`, `fsync`, `full_page_writes` on | `synchronous_commit=off` | also `fsync`, `full_page_writes` off; restore with `CHECKPOINT` + `sync` |
 | Citus (coordinator + workers) | as PostgreSQL | `synchronous_commit=off` | - (= relaxed) |
 | MySQL | flush 1 | flush 2 (TPC-C/YCSB 0), key checks off | also redo log off, doublewrite `DETECT_ONLY` |
 | MariaDB (`.sh`, root) | flush 1, doublewrite on | flush 2 | also doublewrite off |
@@ -570,6 +571,55 @@ See [Example: Benchmark PGBouncer](Example-PGBouncer.md) for configuration, depl
 It uses the DDL, durability and reset scripts of [PostgreSQL](#postgresql).
 
 See [Example: Benchmark PgDuckDB](Example-PgDuckDB.md) for configuration, deployment and examples.
+
+---
+
+## OrioleDB
+
+`OrioleDB` is the configuration key for PostgreSQL 18 with the storage engine OrioleDB [orioledb.com](https://www.orioledb.com), a table access method with an undo log instead of dead row versions in the heap, index-organized tables (rows in the B-tree of the primary key) and its own buffer cache (YCSB, Benchbase, HammerDB TPC-C).
+It is a single Deployment without operator; analytical workloads (TPC-H, TPC-DS, SSB) are not offered.
+
+**License:** OrioleDB is dual-licensed under Apache-2.0 and the PostgreSQL License, the image ships a patched PostgreSQL (PostgreSQL License); neither has a benchmark clause.
+OrioleDB calls itself public beta, "recommended for experiments, testing, benchmarking", not for production.
+The results of OrioleDB are not part of the repository: its test script writes to `logs_tests/local`.
+
+**Deployment template:** [`k8s/deploymenttemplate-OrioleDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OrioleDB.yml)
+
+The template is the one of [PostgreSQL](#postgresql) with the image `orioledb/orioledb:v1.10.3-pg18` (OrioleDB 1.10.3 on PostgreSQL 18.6, Alpine).
+It differs in these points:
+
+| Point | Handling | Without it |
+|---|---|---|
+| Engine | `-c shared_preload_libraries=orioledb` and `-c default_table_access_method=orioledb`: every table that a script or a benchmark client creates is an OrioleDB table, without `USING orioledb` in the DDL | the tables are heap tables of PostgreSQL |
+| Extension | the `initdb` of the image creates the extension `orioledb` in `template1` and `postgres`, so every database has it, also those created by a benchmark | `CREATE TABLE` of an OrioleDB table fails |
+| Configuration | the arguments start with `-c`, so the entrypoint runs `postgres -c ...` on `$PGDATA` (`/var/lib/postgresql/data/pgdata`, as PostgreSQL) | the default command of the image, `postgres -D /etc/postgresql`, fixes `data_directory` to the mount point of the volume |
+| Memory | `orioledb.main_buffers=16GB` (the cache of OrioleDB tables) and `shared_buffers=1GB` (only system catalogs and sequences are heap tables), instead of `shared_buffers=16GB`; `orioledb.undo_buffers=256MB` as in the image; `orioledb.checkpoint_completion_ratio=1.0`, as OrioleDB recommends when only OrioleDB tables are used | the cache of OrioleDB tables is 64 MB |
+| User | the image runs as `postgres` with UID 70 (not 999): `fix-permissions` changes the owner of tenant folders to `70:70`; `preStop` uses `su-exec` and `/usr/local/bin/pg_ctl` | - |
+
+All other settings (connections, WAL, checkpoints, `autovacuum=off`, locks) are those of PostgreSQL; `--set` works in the `pg` style.
+Monitoring uses the `postgres-exporter` sidecar and the metric set `postgresql` of PostgreSQL (`-ma`); counters of dead rows and HOT updates stay 0 for OrioleDB tables.
+
+**Scripts:** OrioleDB has no script folder of its own (`base_system: PostgreSQL`): DDL, checks, durability, reset and DDL parameters are those of PostgreSQL, for YCSB ([`experiments/ycsb/PostgreSQL`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/PostgreSQL)), Benchbase and HammerDB.
+The clients are the PostgreSQL ones: YCSB JDBC binding with `postgresql-42.5.0.jar`, Benchbase profile `postgres`, HammerDB `HAMMERDB_TYPE=postgresql`; no image is changed.
+What differs for OrioleDB tables:
+
+| Script step | Effect on OrioleDB tables |
+|---|---|
+| `VACUUM` (reset, `checkschema`) | nothing to remove (old row versions are in the undo log); `ANALYZE` collects statistics as for heap tables |
+| `CHECKPOINT` | also writes the OrioleDB checkpoint |
+| `-xld` | `synchronous_commit`, `fsync` and `full_page_writes` are the settings of PostgreSQL; OrioleDB writes no full page images, so `full_page_writes` only concerns heap tables |
+| `-xddl fillfactor` (YCSB) | OrioleDB supports `fillfactor` on tables and indexes: it reserves space in the B-tree leaf pages against page splits (inserts and updates), not for HOT updates |
+| `-xddl autovacuum_scale` (YCSB) | stored, without effect (no autovacuum of OrioleDB tables) |
+
+Isolation: OrioleDB has no serializable snapshot isolation.
+With `orioledb.serializable=table_lock` (the default, kept by the template) a `SERIALIZABLE` transaction locks every table it touches, so concurrent serializable transactions on a table run one after the other.
+Bexhoma runs Benchbase with `TRANSACTION_READ_COMMITTED`, but Benchbase `twitter` fixes `SERIALIZABLE` in the PostgreSQL profile.
+
+```bash
+bexhoma ycsb -dbms OrioleDB -sf 1 -xwl a -nlp 4 -nlt 16 -nbp 1 -nbt 32 -tr run
+```
+
+See [Example: Other DBMS](Example-Other-DBMS.md#orioledb) for the workloads and the test script; its logs stay in the git-ignored `logs_tests/local`.
 
 ---
 

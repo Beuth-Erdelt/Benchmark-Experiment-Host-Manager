@@ -5,6 +5,7 @@ SQL Server: the license terms of the Developer edition (section "Benchmark
 testing") require Microsoft's prior written approval to disclose benchmark
 results (issue #834). CedarDB, Oracle Database Free (#828) and IBM Db2
 Community Edition (#829): their results are kept internal as well.
+OrioleDB (#821): its results are kept out of the repository.
 For these DBMS the repository may describe how to deploy and run them, but
 holds no results:
 
@@ -40,6 +41,7 @@ UNPUBLISHED = {
     'CedarDB': ('cedardb', 'results are kept internal'),
     'OracleDB': ('oracledb', 'results are kept internal (#828)'),
     'DB2': ('db2', 'results are kept internal (#829)'),
+    'OrioleDB': ('orioledb', 'results are kept out of the repository (#821)'),
 }
 
 #: Directory of the logs of these DBMS (git-ignored), as the scripts write it.
