@@ -64,10 +64,11 @@ bexhoma ycsb \
   -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_citus.log
 ```
 
@@ -297,7 +298,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 This run uses 10.000.000 operations (`-xop`).
 
@@ -327,10 +328,11 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_citus_monitoring.log
 ```
 
@@ -569,7 +571,7 @@ YCSB SF=5
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 Example:
 ```bash
@@ -594,12 +596,13 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rsr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_citus_storage.log
 ```
 
@@ -1062,10 +1065,11 @@ bexhoma benchbase \
   -nws 48 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_citus.log
 ```
 
@@ -1306,12 +1310,13 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rsr \
-  -rss 100Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_benchbase_citus_scale.log
 ```
 
@@ -1853,11 +1858,12 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 100Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   --set deployment[bexhoma-deployment-citus].container[dbms].max_connections=2000 \
   --set statefulset[bexhoma-worker].container[dbms].max_connections=2000 \
   run &>$LOG_DIR/docs_benchbase_citus_keytime.log
@@ -2725,10 +2731,11 @@ bexhoma hammerdb \
   -xlat \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_hammerdb_citus.log
 ```
 
@@ -2899,12 +2906,13 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rsr \
-  -rss 100Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_hammerdb_citus_scale.log
 ```
 
@@ -3465,12 +3473,13 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rsr \
-  -rss 200Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 200Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_hammerdb_citus_paper.log
 ```
 
@@ -4386,10 +4395,11 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_tpch_citus.log
 ```
 
@@ -4629,12 +4639,13 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -tr \
-  -rsr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_tpch_citus_storage.log
 ```
 
@@ -5225,12 +5236,13 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -tr \
-  -rsr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_tpch_citus_columnar.log
 ```
 
@@ -5802,15 +5814,13 @@ Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 bexhoma tpch \
   -dbms Citus \
   -sf 1 \
+  -ne 3 \
+  -xrs 3 \
   -nlp 8 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
-  -xii \
-  -xic \
-  -xis \
-  -ne 3 \
-  -xrs 3 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \

@@ -11,18 +11,18 @@ Copyright (C) 2023 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from bexhoma import *
+from bexhoma import *  # noqa: F403
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.benchmarks.dbmsbenchmarker.benchmark import DIMENSION_VARIANTS, dimension_folder
-from bexhoma.system_descriptors import (dbms_choices, default_dockers, dimension_dockers, load_dockers,
-                                        refresh_template, storage_prefix, unsupported_dimension)
+from bexhoma.system_descriptors import (IncompatibleBenchmark, dbms_choices, default_dockers, dimension_dockers,
+                                        load_dockers, refresh_template, storage_prefix, unsupported_dimension)
 from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, loading_layouts,
                                                 tenancy_error, tenant_ids)
 from bexhoma.cli_args import storage_suffix as _storage_suffix, set_cell_storage as _set_cell_storage
 # resource sweeps (-rc/-lc/-rr/-lr/-rst lists) are expanded for every DBMS by
 # ExperimentBase.expand_resource_cells(); kept here under its old name
 from bexhoma.cli_args import resource_cells as _resource_cells
-from dbmsbenchmarker import *
+from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
@@ -156,7 +156,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
     # should results be tested for validity?
-    test_result = args.test_result
+    test_result = args.test_result  # noqa: F841
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
@@ -189,16 +189,16 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     ##############
     aws = args.aws
     if aws:
-        cluster = clusters.AWS(context=args.context)
+        cluster = clusters.AWS(context=args.context)  # noqa: F405
         # scale up
-        node_sizes = {
+        node_sizes = {  # noqa: F841
             'auxiliary': 1,
             'sut-mid': 1,
             'benchmarker': 1
         }
         #cluster.scale_nodegroups(node_sizes)
     else:
-        cluster = clusters.Kubernetes(context=args.context)
+        cluster = clusters.Kubernetes(context=args.context)  # noqa: F405
     # the DBMS -xdim applies to
     dimension_dbms = dimension_dockers(cluster.dockers, 'tpch')
     # limit number of sut
@@ -229,8 +229,8 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     num_loading_pods = experiment.get_parameter_as_list('num_loading_pods')
     num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
     num_loading_split = experiment.get_parameter_as_list('num_loading_split')
-    num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
-    num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
+    num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')  # noqa: F841
+    num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')  # noqa: F841
     # resource sweep: -rc/-lc/-rr/-lr/-rst may each carry a comma-separated
     # list; experiment.process() then clones every configuration built below
     # once per cell, e.g. -rr 32Gi,64Gi -lr 32Gi,64Gi gives PostgreSQL-1 and
@@ -273,9 +273,11 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
             TRANSFORM_RAW_DATA = 1,
             STORE_RAW_DATA = 1,
         )
-        # one refresh job for all DBMS of the run (the default set without -dbms)
-        dbms_list = args.dbms if args.dbms else default_dockers(cluster.dockers, 'tpch')
-        experiment.enable_refresh_stream(template=refresh_template(cluster.dockers, dbms_list, 'tpch'))
+        # one refresh job per DBMS, each from its own refresh_template; refuse a DBMS without
+        # one before any configuration is built (the default set without -dbms)
+        for docker in (args.dbms if args.dbms else default_dockers(cluster.dockers, 'tpch')):
+            refresh_template(cluster.dockers, docker, 'tpch')
+        experiment.enable_refresh_stream()
     ##############
     ### add configs of dbms to be tested
     ##############
@@ -339,6 +341,13 @@ def main() -> None:
         reason = unsupported_dimension(dockers, docker, 'tpch', args.dimensions)
         if reason:
             parser.error(f'-xdim {args.dimensions} is not supported for {docker} in TPC-H: {reason}')
+    if args.num_refresh_streams > 0:
+        # every DBMS needs a refresh job of its own; refuse before run() reaches the cluster
+        for docker in (args.dbms or default_dockers(dockers, 'tpch')):
+            try:
+                refresh_template(dockers, docker, 'tpch')
+            except IncompatibleBenchmark as error:
+                parser.error(f'-xrs {args.num_refresh_streams}: {error}')
     run(args)
     exit()
 

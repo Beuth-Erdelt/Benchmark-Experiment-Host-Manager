@@ -445,8 +445,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -474,8 +474,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld unsafe \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -503,8 +503,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld durable \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -532,8 +532,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld unsafe \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -561,8 +561,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -590,8 +590,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld unsafe \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -622,8 +622,8 @@ bexhoma ycsb \
   -nw 3 \
   -nwr 1 \
   -nws 48 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -653,12 +653,12 @@ bexhoma ycsb \
   -nbt 64 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
   -nwr 3 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
-  -xnpd 3 \
   run &>$LOG_DIR/docs_durability_ycsb_tidb_relaxed.log
 ```
 

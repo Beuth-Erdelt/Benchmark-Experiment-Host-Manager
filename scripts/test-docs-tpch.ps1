@@ -167,15 +167,15 @@ bexhoma tpch `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ma                           <# collect metrics for the whole experiment #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -rst ramdisk                  <# storage class for persistent volumes #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst ramdisk                  <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

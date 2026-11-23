@@ -59,12 +59,10 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse.log
 ```
@@ -270,7 +268,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 At SF=1, the 22 queries take about 10 seconds on ClickHouse and at SF=10 about 14 seconds, so this run uses SF=10 (`-sf`) and runs each query 10 times (`-xqr`).
 At SF=1 the loaders also finish within a few seconds, shorter than the scrape interval of 30 seconds; their CPU utilization (a rate over two scrapes) is then missing, and the test `Monitoring metrics missing` fails for that metric only.
@@ -281,9 +279,9 @@ For a cluster, monitoring sums the metrics of coordinator and shards (components
 bexhoma tpch \
   -dbms ClickHouse \
   -sf 10 \
+  -xqr 10 \
   -nc 1 \
   -ne 1 \
-  -xqr 10 \
   -nlp 8 \
   -xdt \
   -m \
@@ -292,12 +290,10 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse_monitoring.log
 ```
@@ -530,14 +526,14 @@ No warnings
 Collecting application metrics for ClickHouse is supported and included in the run above.
 It is activated by `-ma`: ClickHouse has its own Prometheus endpoint (port 9363), so there is no exporter sidecar.
 The metric set `clickhouse` contains queries per second, running queries, failed queries, rows and data read per second, rows inserted per second, memory tracked by ClickHouse, running merges and the number of parts of MergeTree tables.
-See [Metrics](Example-Metrics.html) for application metrics of all DBMS.
+See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
 
 ## Persistent Storage
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 ```bash
 bexhoma tpch \
@@ -552,15 +548,13 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse_storage.log
 ```
@@ -840,26 +834,24 @@ No warnings
 ```bash
 bexhoma tpch \
   -dbms ClickHouseCluster \
-  -nw 3 \
   -sf 10 \
   -nc 2 \
   -ne 1 \
   -nlp 8 \
+  -nw 3 \
   -xdt \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse_cluster.log
@@ -1321,7 +1313,7 @@ DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)), th
 The query files have variants with the key `Clickhouse` where ClickHouse differs from standard SQL, and where a query has a correlated subquery, which ClickHouse cannot run on Distributed tables.
 Every variant returns the same result as the original query.
 
-* TPC-H: Q2, Q4, Q11, Q14, Q17, Q20, Q21, Q22 (see [TPC-H Queries](Queries-TPC-H.html))
+* TPC-H: Q2, Q4, Q11, Q14, Q17, Q20, Q21, Q22 (see [TPC-H Queries](Queries-TPC-H.md))
 * TPC-DS: Q1, Q6, Q10, Q16, Q30, Q32, Q35, Q41, Q47, Q49, Q57, Q58, Q66, Q69, Q81, Q92, Q94
 
 | Reason | Rewrite | Queries |
@@ -1366,15 +1358,13 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_tpcds_clickhouse.log
 ```
@@ -1686,26 +1676,24 @@ The same for the cluster:
 ```bash
 bexhoma tpcds \
   -dbms ClickHouseCluster \
-  -nw 3 \
   -sf 3 \
   -nc 1 \
   -ne 1 \
   -nlp 8 \
+  -nw 3 \
   -xdt \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
   -ks no \
   run &>$LOG_DIR/docs_tpcds_clickhouse_cluster.log
@@ -2075,14 +2063,14 @@ Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 bexhoma tpch \
   -dbms ClickHouse \
   -sf 1 \
-  -nlp 8 \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -2297,16 +2285,16 @@ This holds for both placements of the dimension tables (`-xdim replicated` and `
 ```bash
 bexhoma tpch \
   -dbms ClickHouseCluster \
-  -nw 3 \
   -sf 1 \
-  -nlp 8 \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nw 3 \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \

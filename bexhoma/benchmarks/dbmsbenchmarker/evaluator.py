@@ -17,20 +17,20 @@ import shutil
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-import pickle
-import json
-import traceback
-import ast
-from dbmsbenchmarker import monitor
-from dbmsbenchmarker import parameter, inspector
-from datetime import datetime
-import glob
-from pathlib import Path
-from scipy.stats import gmean
-import numpy as np
+import pickle  # noqa: E402
+import json  # noqa: E402
+import traceback  # noqa: E402
+import ast  # noqa: E402
+from dbmsbenchmarker import monitor  # noqa: E402
+from dbmsbenchmarker import parameter, inspector  # noqa: E402
+from datetime import datetime  # noqa: E402
+import glob  # noqa: E402
+from pathlib import Path  # noqa: E402
+from scipy.stats import gmean  # noqa: E402
+import numpy as np  # noqa: E402
 
-from bexhoma.evaluators.base import natural_sort, resolve_within_result_folder
-from bexhoma.evaluators.logger import LogEvaluator
+from bexhoma.evaluators.base import natural_sort, resolve_within_result_folder  # noqa: E402
+from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
 
 __all__ = ["DbmsBenchmarkerEvaluator", "map_index_to_queryname"]
 
@@ -300,7 +300,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         df = grouped.sum().astype(int)
         df.insert(0, 'pods', grouped.size())
         return df.reindex(index=natural_sort(df.index))
-    def get_summary_benchmark_per_phase_complete(self, df_completion=None, columns=['phase']):
+    def get_summary_benchmark_per_phase_complete(self, df_completion=None, columns=['phase']):  # noqa: B006
         """
         Returns per-phase results for the phases in which every pod completed
         every active query.
@@ -342,7 +342,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         phase_complete = complete_pods.groupby(df_completion['phase']).all()
         complete_phases = set(phase_complete[phase_complete].index)
         return [c for c, phase in df_completion['phase'].items() if phase in complete_phases]
-    def _reduce_per_phase(self, df, columns=['phase']):
+    def _reduce_per_phase(self, df, columns=['phase']):  # noqa: B006
         """
         Aggregates per-pod rows over parallel pods and keeps the per-phase columns.
 
@@ -512,7 +512,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         if 'tenant_id' not in df.columns:
             return df.assign(tenant_id=-1)
         return df
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):  # noqa: B006
         """
         Aggregates parallel-pod DBMSBenchmarker result rows into one row per group.
 
@@ -548,10 +548,10 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         query_properties = self.evaluation.get_experiment_query_properties()
         num_of_queries = 0
         df_stats = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
-        if not df_stats is None:
+        if not df_stats is None:  # noqa: E714
             df_stats = df_stats.sort_index().T.round(2)
             df_stats.index = df_stats.index.map(map_index_to_queryname)
-            num_of_queries = len(df_stats.index)
+            num_of_queries = len(df_stats.index)  # noqa: F841
         df_aggregated = pd.DataFrame()
         has_tenant_id = 'tenant_id' in df.columns
         # Frames pickled before num_of_executions existed count each query once.

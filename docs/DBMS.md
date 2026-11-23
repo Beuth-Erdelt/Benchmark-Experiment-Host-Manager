@@ -117,7 +117,7 @@ The keys of an entry of `benchmarks`:
 |---|---|
 | `default` | `True`: the DBMS runs if `-dbms` is not given. Without it the DBMS has to be named. |
 | `loading_template` | Job template in `k8s/` that loads the data (TPC-H, TPC-DS, SSB). A DBMS that loads needs one: there is no default job. HammerDB, Benchbase and YCSB bring a loading job of their own. |
-| `refresh_template` | Job template of the TPC-H refresh stream (`-xrs`), see [TPC-H](Example-TPC-H.md#refresh-stream). All DBMS of one run need the same job. |
+| `refresh_template` | Job template of the TPC-H refresh stream (`-xrs`), see [TPC-H](Example-TPC-H.md#refresh-stream). Each DBMS of a run gets its own refresh job from its own template. |
 | `reset_scripts` | Scripts run before each benchmarking round with `-ar`, see [Reset scripts](#reset-scripts--ar) |
 | `loading_parameters`, `benchmarking_parameters` | Environment of the loading and benchmarking jobs |
 | `sut_parameters` | Environment of the SUT container; a value you set yourself wins |

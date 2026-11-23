@@ -9716,9 +9716,9 @@ bexhoma hardware \
   -xfid 1 \
   -xfe libaio \
   -xffd 1 \
+  -ne 1 \
   -nbp 1,2 \
   -nbt 2 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -9890,9 +9890,9 @@ bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
   -xtd 60 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1,2 \
-  -ne 1 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -10052,9 +10052,9 @@ bexhoma hardware \
   -xspr max \
   -xsps 64 \
   -xspp tcp \
+  -ne 1 \
   -nbp 1,2 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -10210,10 +10210,10 @@ bexhoma hardware \
   -dbms Hardware \
   -xht netperf \
   -xtd 60 \
-  -xnpp tcp \
+  -ne 1 \
   -nbp 1,2 \
   -nbt 2 \
-  -ne 1 \
+  -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
   -tr \

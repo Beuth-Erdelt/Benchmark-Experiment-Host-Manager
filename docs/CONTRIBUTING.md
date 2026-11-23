@@ -48,7 +48,14 @@ While the major version is 0, a minor release may contain incompatible changes; 
 
 ## Code style
 
-Bexhoma follows [PEP 8](https://peps.python.org/pep-0008/) and [PEP 257](https://peps.python.org/pep-0257/). These rules apply to the Python code you write or change. No tool checks them yet, and older code does not follow all of them (line length, f-strings, `__all__`, type annotations); do not reformat code you do not otherwise touch, and put clean-ups in their own pull request. When cleaning up existing code: do not change logic or public names (classes, public methods, public attributes), verify that all references (imports, call sites, attribute accesses) still resolve correctly after the change, and check how similar things are already done elsewhere in the codebase before introducing a new pattern.
+Bexhoma follows [PEP 8](https://peps.python.org/pep-0008/) and [PEP 257](https://peps.python.org/pep-0257/). These rules apply to the Python code you write or change. [Ruff](https://docs.astral.sh/ruff/) checks part of them in CI (rules and version in `pyproject.toml` and `.github/workflows/tests.yml`); run it before a pull request:
+
+```bash
+pip install ruff==0.17.6
+ruff check bexhoma agent experiment.py
+```
+
+Existing findings carry a `# noqa: <rule>` comment so that only new code fails; do not add such comments to new code, fix it instead. Line length (120), f-strings and unused imports are not checked yet. Older code does not follow all of the rules (line length, f-strings, `__all__`, type annotations); do not reformat code you do not otherwise touch, and put clean-ups in their own pull request. When cleaning up existing code: do not change logic or public names (classes, public methods, public attributes), verify that all references (imports, call sites, attribute accesses) still resolve correctly after the change, and check how similar things are already done elsewhere in the codebase before introducing a new pattern.
 
 **Naming**
 - `snake_case` for functions, methods, and variables; `PascalCase` for classes; `UPPER_CASE` for constants.
@@ -150,7 +157,7 @@ No Kubernetes cluster is needed. On Windows, a few tests that need a POSIX shell
 
 Every pull request runs two workflows; neither needs a Kubernetes cluster.
 
-- `tests.yml`: the unit tests in `tests/` on Python 3.12, `python -m pytest tests` (one file: `python -m pytest tests/test_cli.py`). They build experiments against a stub cluster (`tests/stubs.py`) and include the collector validations on the archived results in `tests/validations/` (`scripts/validate_collector_*.py --zips`, see [scripts/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/README.md)). The workflow also measures the test coverage of `bexhoma` and `agent`, which must not fall below the floor in `pyproject.toml` (`python -m coverage run -m pytest tests`, then `python -m coverage combine` and `python -m coverage report`). Bexhoma requires Python 3.10.2 or later, but CI tests only 3.12.
+- `tests.yml`: ruff (see Code style), and the unit tests in `tests/` on Python 3.10 (the oldest that `pyproject.toml` allows) and 3.12, `python -m pytest tests` (one file: `python -m pytest tests/test_cli.py`). They build experiments against a stub cluster (`tests/stubs.py`) and include the collector validations on the archived results in `tests/validations/` (`scripts/validate_collector_*.py --zips`, see [scripts/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/README.md)). The workflow also measures the test coverage of `bexhoma` and `agent`, which must not fall below the floor in `pyproject.toml` (`python -m coverage run -m pytest tests`, then `python -m coverage combine` and `python -m coverage report`), on 3.12. On a pull request into `dev` it also reports the coverage of the changed lines (`diff-cover`, 80%); this does not fail the build yet.
 - `demo-runs.yml`: `logs_tests/SUMMARY.md` and the badge file match the committed logs. After committing logs, run `python scripts/demo-runs.py` and commit both files.
 
 A pull request into `master` also runs the job `release-gate` of `tests.yml`. It shows whether the merge would qualify for a release, see the [release checklist](#release-checklist), and never blocks the merge.

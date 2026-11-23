@@ -64,7 +64,7 @@ def load_data_asynch(
     app, component, experiment, configuration, pod_sut, scriptfolder,
     commands, loadData, path, volume, context, service_name,
     time_offset=0, time_start_int=0, script_type='schema',
-    namespace='', num_tenants=0, id_tenant=0, database=[],
+    namespace='', num_tenants=0, id_tenant=0, database=[],  # noqa: B006
 ):
     """Execute loading scripts inside the SUT pod in a background thread.
 
@@ -372,7 +372,7 @@ class LoadingCoordinator:
             return
         loader_entries = cfg.experiment_dict['loader'] or [
             {'parallelism': parallelism, 'num_pods': num_pods}]
-        num_data_jobs = len(loader_entries)
+        num_data_jobs = len(loader_entries)  # noqa: F841
         # Always initialised (even for a single entry) so loader/generator pods can
         # unconditionally wait on this key without needing to know num_data_jobs
         # themselves; with one entry it just equals that entry's own job counter.
@@ -787,7 +787,7 @@ class LoadingCoordinator:
                             stored_pods(cfg.experiment.cluster).add(pod)
                 if success:
                     cfg.experiment.cluster.logger.debug(
-                        'job {} will be suspended and parallel loading will be considered finished'
+                        'job {} will be suspended and parallel loading will be considered finished'  # noqa: F523
                         .format(job, success))
                     pod_labels = cfg.experiment.cluster.get_pods_labels(
                         app=app, component='sut',

@@ -15,18 +15,18 @@ import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-import pickle
-import json
-import traceback
-import ast
-from dbmsbenchmarker import monitor
-from datetime import datetime
-import glob
-from pathlib import Path
+import pickle  # noqa: E402
+import json  # noqa: E402
+import traceback  # noqa: E402
+import ast  # noqa: E402
+from dbmsbenchmarker import monitor  # noqa: E402
+from datetime import datetime  # noqa: E402
+import glob  # noqa: E402
+from pathlib import Path  # noqa: E402
 
 
-from bexhoma.evaluators.base import natural_sort
-from bexhoma.evaluators.logger import LogEvaluator
+from bexhoma.evaluators.base import natural_sort  # noqa: E402
+from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
 
 __all__ = ["HammerdbEvaluator"]
 
@@ -127,8 +127,8 @@ class HammerdbEvaluator(LogEvaluator):
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
             benchmark_run = re.findall('BEXHOMA_BENCHMARK_RUN:(.+?)\n', stdout)
             benchmark_run = benchmark_run[0] if benchmark_run else '1'
-            timeprofile = re.findall('HAMMERDB_TIMEPROFILE:(.+?)\n', stdout)[0]
-            allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES:(.+?)\n', stdout)[0]
+            timeprofile = re.findall('HAMMERDB_TIMEPROFILE:(.+?)\n', stdout)[0]  # noqa: F841
+            allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES:(.+?)\n', stdout)[0]  # noqa: F841
             keyandthink = re.findall('HAMMERDB_KEYANDTHINK:(.+?)\n', stdout)[0]
             child = re.findall('BEXHOMA_CHILD:(.+?)\n', stdout)[0]
             error_timesynch = re.findall('start time has already passed', stdout)
@@ -284,7 +284,7 @@ class HammerdbEvaluator(LogEvaluator):
         if 'tenant_id' not in df_typed.columns:
             df_typed = df_typed.assign(tenant_id=-1)
         return df_typed
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):  # noqa: B006
         """
         Aggregates parallel-pod TPC-C result rows into one row per group.
 

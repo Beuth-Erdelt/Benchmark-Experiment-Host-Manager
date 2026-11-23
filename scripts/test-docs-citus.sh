@@ -39,9 +39,9 @@ source ./scripts/testfunctions.sh
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 50Gi                     size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -65,10 +65,11 @@ bexhoma ycsb \
   -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_citus.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=1  nw=3"
@@ -100,9 +101,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=1  nw=3"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 50Gi                     size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -128,10 +129,11 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_citus_monitoring.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=5  nbp=1"
@@ -166,10 +168,10 @@ sleep 30
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rsr                          delete any existing PVC for the SUT before starting
-# -rss 50Gi                     size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rsr                          delete any existing PVC for the SUT before starting
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -196,12 +198,13 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rsr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_citus_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
@@ -225,9 +228,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
 # -nws 48                       number of shards per worker node
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 50Gi                     size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -245,10 +248,11 @@ bexhoma benchbase \
   -nws 48 \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_citus.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus  sf=16  nbp=1,2"
@@ -272,10 +276,10 @@ sleep 30
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rsr                          delete any existing PVC for the SUT before starting
-# -rss 100Gi                    size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rsr                          delete any existing PVC for the SUT before starting
+# -rss 100Gi                    size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -296,12 +300,13 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rsr \
-  -rss 100Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_benchbase_citus_scale.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2,4,8"
@@ -325,9 +330,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 100Gi                    size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rss 100Gi                    size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -353,11 +358,12 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 100Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   --set deployment[bexhoma-deployment-citus].container[dbms].max_connections=2000 \
   --set statefulset[bexhoma-worker].container[dbms].max_connections=2000 \
   run &>$LOG_DIR/docs_benchbase_citus_keytime.log
@@ -384,9 +390,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus keytime  sf=128  nbp=1
 # -xlat                         collect per-operation latency histograms
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rss 50Gi                     size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -405,10 +411,11 @@ bexhoma hammerdb \
   -xlat \
   -ms $BEXHOMA_MS \
   -tr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_hammerdb_citus.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus  sf=16  nbp=1"
@@ -435,10 +442,10 @@ sleep 30
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rsr                          delete any existing PVC for the SUT before starting
-# -rss 100Gi                    size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rsr                          delete any existing PVC for the SUT before starting
+# -rss 100Gi                    size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -462,12 +469,13 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rsr \
-  -rss 100Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_hammerdb_citus_scale.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus scale  sf=128  nbp=1,2,4,8"
@@ -494,10 +502,10 @@ sleep 30
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -rsr                          delete any existing PVC for the SUT before starting
-# -rss 200Gi                    size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rsr                          delete any existing PVC for the SUT before starting
+# -rss 200Gi                    size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -521,12 +529,13 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -tr \
-  -rsr \
-  -rss 200Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 200Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_hammerdb_citus_paper.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,5,10  nc=2"
@@ -554,9 +563,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
-# -rss 50Gi                     size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -576,10 +585,11 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_tpch_citus.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus  sf=1  nbp=1"
@@ -607,10 +617,10 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
-# -rsr                          delete any existing PVC for the SUT before starting
-# -rss 50Gi                     size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rsr                          delete any existing PVC for the SUT before starting
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -633,12 +643,13 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -tr \
-  -rsr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_tpch_citus_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus storage  sf=10  ne=1,1  nc=2"
@@ -664,10 +675,10 @@ sleep 30
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
-# -rsr                          delete any existing PVC for the SUT before starting
-# -rss 50Gi                     size of the persistent volume claim
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
+# -rsr                          delete any existing PVC for the SUT before starting
+# -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -690,12 +701,13 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -tr \
-  -rsr \
-  -rss 50Gi \
   -lr 64Gi \
   -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER_4 \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER_4 \
   run &>$LOG_DIR/docs_tpch_citus_columnar.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus columnar  sf=10  ne=1,1  nc=2"
@@ -710,6 +722,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus columnar  sf=10  ne=1,1  n
 # TPC-H with a refresh stream on Citus: the loader image of PostgreSQL applies RF1 and RF2 on the coordinator
 # -dbms Citus                   DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
+# -ne 3                         parallel query streams
+# -xrs 3                        refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams
 # -nlp 8                        number of data loader pods
 # -nw 4                         number of worker nodes
 # -nwr 1                        number of replicas per shard
@@ -717,27 +731,25 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus columnar  sf=10  ne=1,1  n
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -ne 3                         parallel query streams
-# -xrs 3                        refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
-# -rnn/-rnl/-rnb $BEXHOMA_NODE_* schedule SUT, loader and benchmarker pods on these nodes
+# -rnn $BEXHOMA_NODE_SUT
+# -rnl $BEXHOMA_NODE_LOAD
+# -rnb $BEXHOMA_NODE_BENCHMARK
 # -rnw $BEXHOMA_NODES_WORKER_4  schedule worker pods on these nodes (joined by '+')
 bexhoma tpch \
   -dbms Citus \
   -sf 1 \
+  -ne 3 \
+  -xrs 3 \
   -nlp 8 \
   -nw 4 \
   -nwr 1 \
   -nws 48 \
-  -xii \
-  -xic \
-  -xis \
-  -ne 3 \
-  -xrs 3 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \

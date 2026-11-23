@@ -35,7 +35,7 @@ from pathlib import Path
 
 from urllib3.util.retry import Retry
 
-from dbmsbenchmarker import *
+from dbmsbenchmarker import *  # noqa: F403
 from .__version__ import __version__
 from . import ceph_storage
 from .cluster_calls import CALL_STATS, ThrottledTokenRefresh

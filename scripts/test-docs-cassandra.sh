@@ -60,9 +60,7 @@ bexhoma ycsb \
   -lr 16Gi \
   -rr 16Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single  sf=1  nbp=1"
@@ -120,9 +118,7 @@ bexhoma ycsb \
   -lr 16Gi \
   -rr 16Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_monitoring.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single monitoring  sf=3  nbp=1"
@@ -184,9 +180,7 @@ bexhoma ycsb \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single PVC  sf=1  nbp=1  nc=2"
@@ -247,8 +241,7 @@ bexhoma ycsb \
   -rr 16Gi \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_cluster.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3  sf=1  nbp=1"
@@ -306,8 +299,7 @@ bexhoma ycsb \
   -rr 16Gi \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_replica.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3 replication 3  sf=1  nbp=1"
@@ -369,8 +361,7 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnw $BEXHOMA_NODES_WORKER \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_replica_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3 replication 3 PVC  sf=1  nbp=1  nc=2"

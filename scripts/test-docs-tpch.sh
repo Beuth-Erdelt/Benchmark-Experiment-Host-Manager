@@ -262,15 +262,15 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H storage  sf=1  nc=2"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ma                           collect metrics for the whole experiment
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rst ramdisk                  storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
+# -rst ramdisk                  storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -282,15 +282,15 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rst ramdisk \
   -rss 50Gi \
+  -rst ramdisk \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_ramdisk.log
 
@@ -335,6 +335,33 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H fractional  sf=0.1  nc=2"
 
 
 #### TCP-H Refresh Stream (Example-TPC-H.md)
+# -dbms PostgreSQL
+# -sf 1
+# -ne 3
+# -nlp 8
+# -nlt 8
+# -xii
+# -xic
+# -xis
+# -ms $BEXHOMA_MS
+# -tr
+# -xrs 3
+# -lr 64Gi
+# -rr 64Gi
+# -rss 50Gi
+# -rnn $BEXHOMA_NODE_SUT
+# -rnl $BEXHOMA_NODE_LOAD
+# -rnb $BEXHOMA_NODE_BENCHMARK
+# --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200
+# --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4
+# --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6
+# --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB
+# --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB
+# --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB
+# --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB
 bexhoma tpch \
   -dbms PostgreSQL \
   -sf 1 \

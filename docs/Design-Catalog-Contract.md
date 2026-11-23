@@ -1006,7 +1006,7 @@ same experiment) showed the two-axis model couldn't express it at all:
    columnar` is a real workload concept — checked here regardless of which
    system is targeted.) Legality is checked against each system's
    *effective* post_load — its own `systems[].post_load` override if it has
-   one, else the shared `loading.post_load` default (`_effective_post_load()`
+   one, else the shared `loading.post_load` default (`effective_post_load()`
    in `bexhoma/spec.py`) — not against one experiment-wide dict.
 2. **Support** — for each system, is that value present in
    `systems.<name>.physical_design.<key>`? (`storage_format: columnar`

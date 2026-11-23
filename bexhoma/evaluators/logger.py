@@ -17,16 +17,16 @@ import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-import pickle
-import json
-import traceback
-import ast
-from dbmsbenchmarker import monitor
-from datetime import datetime
-import glob
-from pathlib import Path
+import pickle  # noqa: E402
+import json  # noqa: E402
+import traceback  # noqa: E402
+import ast  # noqa: E402
+from dbmsbenchmarker import monitor  # noqa: E402
+from datetime import datetime  # noqa: E402
+import glob  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-from .base import EvaluatorBase, natural_sort, resolve_within_result_folder
+from .base import EvaluatorBase, natural_sort, resolve_within_result_folder  # noqa: E402
 
 __all__ = ["LogEvaluator"]
 
@@ -392,7 +392,7 @@ class LogEvaluator(EvaluatorBase):
         """
         return df
 
-    def benchmarking_aggregate_by_parallel_pods(self, df: pd.DataFrame, columns: list = ["phase"]) -> pd.DataFrame:
+    def benchmarking_aggregate_by_parallel_pods(self, df: pd.DataFrame, columns: list = ["phase"]) -> pd.DataFrame:  # noqa: B006
         """
         Aggregate the typed per-pod DataFrame to one row per group of parallel pods.
 

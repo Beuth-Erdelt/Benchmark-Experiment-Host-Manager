@@ -364,7 +364,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 replication  
 
 # Technical details: cluster of 3 Dragonfly instances with a changed setting (--set)
 # -dbms Dragonfly               DBMS under test
-# -sf 1                         scaling factor (number of records in millions)
+# -sf 10                        scaling factor (number of records in millions)
 # -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
@@ -389,7 +389,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 replication  
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
-# --set ...                     8 io threads per worker instead of 16 (template), see "Settings of Dragonfly"
+# --set "statefulset[bexhoma-worker].container[dbms].env.DFLY_proactor_threads=8" 8 io threads per worker instead of 16 (template), see "Settings of Dragonfly"
 bexhoma ycsb \
   -dbms Dragonfly \
   -sf 10 \

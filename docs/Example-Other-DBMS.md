@@ -3,7 +3,7 @@
 This page introduces DBMS that bexhoma can run, but that have no worked example with results.
 Each section says what the DBMS is, which workloads run on it, which test script covers them, and shows one example call.
 
-See [DBMS](DBMS.html) for the configuration of each DBMS.
+See [DBMS](DBMS.md) for the configuration of each DBMS.
 
 ## CedarDB
 
@@ -22,7 +22,7 @@ The Community Edition turns read-only above 64 GiB of data.
 
 CedarDB does not wait on a write conflict, the transaction fails.
 With YCSB workload A this fails the test `Execution Phase: contains FAILED column`.
-See [DBMS](DBMS.html#cedardb) for the reasons of these limits.
+See [DBMS](DBMS.md#cedardb) for the reasons of these limits.
 
 The test scripts [`scripts/test-docs-cedardb.sh`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-cedardb.sh) and [`scripts/test-docs-cedardb.ps1`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-cedardb.ps1) run all these workloads except `twitter`, one after the other.
 They write their logs to `logs_tests/local`, which is not part of the repository.
@@ -62,7 +62,7 @@ Bexhoma therefore runs SQL Server for internal tests only: there are no results 
 | HammerDB TPC-C | yes | ODBC Driver 18 for SQL Server |
 | TPC-DS, SSB | no | the query files have no `TSQL` variants |
 
-See [DBMS](DBMS.html#sql-server) for the deployment, the loaders and the scripts.
+See [DBMS](DBMS.md#sql-server) for the deployment, the loaders and the scripts.
 
 The test scripts [`scripts/test-docs-sqlserver.sh`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-sqlserver.sh) and [`scripts/test-docs-sqlserver.ps1`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-sqlserver.ps1) run all these workloads, one after the other.
 They write their logs to `logs_tests/local`, which is not part of the repository; the logs must not be passed on.
@@ -101,7 +101,7 @@ The results of Oracle are kept internal: there are no results of it on this page
 | HammerDB TPC-C | yes | Oracle Instant Client of the HammerDB image |
 | TPC-DS, SSB | no | the query files have no `Oracle` variants |
 
-See [DBMS](DBMS.html#oracle-database-free) for the deployment, the loaders and the scripts.
+See [DBMS](DBMS.md#oracle-database-free) for the deployment, the loaders and the scripts.
 
 The test scripts [`scripts/test-docs-oracledb.sh`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-oracledb.sh) and [`scripts/test-docs-oracledb.ps1`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-oracledb.ps1) run all these workloads, one after the other.
 They write their logs to `logs_tests/local`, which is not part of the repository; the logs must not be passed on.
@@ -144,7 +144,7 @@ The results of Db2 are kept internal: there are no results of it on this page, i
 | SSB | no | not ported |
 | HammerDB TPC-C | no | the HammerDB image has no Db2 client |
 
-See [DBMS](DBMS.html#ibm-db2-community-edition) for the deployment, the loaders and the scripts.
+See [DBMS](DBMS.md#ibm-db2-community-edition) for the deployment, the loaders and the scripts.
 
 The test scripts [`scripts/test-docs-db2.sh`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-db2.sh) and [`scripts/test-docs-db2.ps1`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-db2.ps1) run all these workloads, one after the other.
 They write their logs to `logs_tests/local`, which is not part of the repository; the logs must not be passed on.

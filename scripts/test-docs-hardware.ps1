@@ -23,25 +23,25 @@
 
 #### 1. Hardware fio queue-depth sweep
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw randread,randwrite         <# I/O patterns to sweep (comma-separated) #> `
-  -xfbs 4k                         <# fio block size #> `
-  -xfid 1,2,4,8,16,32,64,128       <# queue depths to sweep (comma-separated) #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1                           <# threads per benchmarking pod (fio numjobs) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw randread,randwrite      <# I/O patterns to sweep (comma-separated) #> `
+  -xfbs 4k                      <# fio block size #> `
+  -xfid 1,2,4,8,16,32,64,128    <# queue depths to sweep (comma-separated) #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_depth_sweep.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 1. Hardware fio depth sweep  rw=randread,randwrite  iodepth=1..128"
@@ -53,25 +53,25 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 1. Hardware fio dep
 # shows where the workload shifts from IOPS-bound (small blocks) to
 # bandwidth-bound (large blocks).
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw randread,randwrite         <# I/O patterns to sweep (comma-separated) #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw randread,randwrite      <# I/O patterns to sweep (comma-separated) #> `
   -xfbs 4k,8k,16k,64k,128k,256k,1M <# block sizes to sweep (comma-separated) #> `
-  -xfid 64                         <# queue depth, fixed at the elbow found earlier #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1                           <# threads per benchmarking pod (fio numjobs), fixed #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -xfid 64                      <# queue depth, fixed at the elbow found earlier #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1                        <# threads per benchmarking pod (fio numjobs), fixed #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_blocksize_sweep.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 2. Hardware fio block-size sweep  rw=randread,randwrite  iodepth=64  bs=4k..1M"
@@ -90,25 +90,25 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 2. Hardware fio blo
 # number to replace random_page_cost's spinning-disk-era default of 4.0
 # (relative to seq_page_cost=1.0) — often closer to 1.1-1.5 on NVMe.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw read,randread              <# sequential vs. random read (comma-separated) #> `
-  -xfbs 8k                         <# fio block size, fixed at PostgreSQL's page size (BLCKSZ) #> `
-  -xfid 64                         <# queue depth, fixed at the elbow found earlier #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1                           <# threads per benchmarking pod (fio numjobs) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw read,randread           <# sequential vs. random read (comma-separated) #> `
+  -xfbs 8k                      <# fio block size, fixed at PostgreSQL's page size (BLCKSZ) #> `
+  -xfid 64                      <# queue depth, fixed at the elbow found earlier #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_random_page_cost.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 3. Hardware fio random_page_cost calibration  rw=read,randread  iodepth=64"
@@ -127,27 +127,27 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 3. Hardware fio ran
 # is "how fast can one backend commit with synchronous_commit=on and no
 # batching" - max TPS is approximately 1/latency. wal_sync_method=fsync.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw write                      <# sequential write, simulating WAL append #> `
-  -xfbs 8k                         <# fio block size, one WAL page per write #> `
-  -xfid 1                          <# queue depth, fixed (single outstanding write) #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -xfsy 1                          <# fsync after every write (wal_sync_method=fsync) #> `
-  -xfow 1                          <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1                           <# threads per benchmarking pod, fixed (single backend) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw write                   <# sequential write, simulating WAL append #> `
+  -xfbs 8k                      <# fio block size, one WAL page per write #> `
+  -xfid 1                       <# queue depth, fixed (single outstanding write) #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -xfsy 1                       <# fsync after every write (wal_sync_method=fsync) #> `
+  -xfow 1                       <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1                        <# threads per benchmarking pod, fixed (single backend) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_sync_fsync.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 4. Hardware fio WAL sync-write fsync  bs=8k  iodepth=1"
@@ -164,25 +164,25 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 4. Hardware fio WAL
 # covers a wide range). This does a linear pass inside that bracket to
 # pinpoint the actual knee instead of just the bracket containing it.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw randread,randwrite         <# I/O patterns to sweep (comma-separated) #> `
-  -xfbs 4k                         <# fio block size, fixed #> `
-  -xfid 64,80,96,112,128           <# linear refinement around the elbow (comma-separated) #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1                           <# threads per benchmarking pod (fio numjobs) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw randread,randwrite      <# I/O patterns to sweep (comma-separated) #> `
+  -xfbs 4k                      <# fio block size, fixed #> `
+  -xfid 64,80,96,112,128        <# linear refinement around the elbow (comma-separated) #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_depth_sweep_refine.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 1. Hardware fio depth sweep refine  rw=randread,randwrite  iodepth=64,80,96,112,128"
@@ -194,25 +194,25 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 1. Hardware fio dep
 # depth, 64 was a per-queue submission limit, not a real device ceiling; if
 # IOPS stay flat, 64 is the actual hardware limit.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw randread,randwrite         <# I/O patterns to sweep (comma-separated) #> `
-  -xfbs 4k                         <# fio block size, fixed #> `
-  -xfid 64                         <# queue depth, fixed at the elbow found earlier #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1,2,4,8,16                  <# numjobs per pod to sweep (comma-separated) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 80Gi                        <# fio makes one -xts-sized file per numjobs thread; 16*4G=64G peak, so 50Gi is not enough #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw randread,randwrite      <# I/O patterns to sweep (comma-separated) #> `
+  -xfbs 4k                      <# fio block size, fixed #> `
+  -xfid 64                      <# queue depth, fixed at the elbow found earlier #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1,2,4,8,16               <# numjobs per pod to sweep (comma-separated) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 80Gi                     <# fio makes one -xts-sized file per numjobs thread; 16*4G=64G peak, so 50Gi is not enough #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_numjobs_sweep.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 2. Hardware fio numjobs sweep  rw=randread,randwrite  iodepth=64  numjobs=1..16"
@@ -223,25 +223,25 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 2. Hardware fio num
 # number that actually calibrates effective_io_concurrency /
 # maintenance_io_concurrency, PostgreSQL's own prefetch-depth knobs.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw randread,randwrite         <# I/O patterns to sweep (comma-separated) #> `
-  -xfbs 8k                         <# fio block size, fixed at PostgreSQL's page size (BLCKSZ) #> `
-  -xfid 1,2,4,8,16,32,64,128       <# queue depths to sweep (comma-separated) #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1                           <# threads per benchmarking pod (fio numjobs) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw randread,randwrite      <# I/O patterns to sweep (comma-separated) #> `
+  -xfbs 8k                      <# fio block size, fixed at PostgreSQL's page size (BLCKSZ) #> `
+  -xfid 1,2,4,8,16,32,64,128    <# queue depths to sweep (comma-separated) #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_depth_sweep_8k.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 3. Hardware fio depth sweep 8k  rw=randread,randwrite  iodepth=1..128"
@@ -254,27 +254,27 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 3. Hardware fio dep
 # compare its latency against that fsync result to confirm it is actually
 # cheaper on this storage.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw write                      <# sequential write, simulating WAL append #> `
-  -xfbs 8k                         <# fio block size, one WAL page per write #> `
-  -xfid 1                          <# queue depth, fixed (single outstanding write) #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -xffd 1                          <# fdatasync after every write (wal_sync_method=fdatasync) #> `
-  -xfow 1                          <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1                           <# threads per benchmarking pod, fixed (single backend) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw write                   <# sequential write, simulating WAL append #> `
+  -xfbs 8k                      <# fio block size, one WAL page per write #> `
+  -xfid 1                       <# queue depth, fixed (single outstanding write) #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -xffd 1                       <# fdatasync after every write (wal_sync_method=fdatasync) #> `
+  -xfow 1                       <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1                        <# threads per benchmarking pod, fixed (single backend) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_sync_fdatasync.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 4. Hardware fio WAL sync-write fdatasync  bs=8k  iodepth=1"
@@ -288,27 +288,27 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 4. Hardware fio WAL
 # commits well; if it flattens immediately, tune commit_delay/commit_siblings
 # in Postgres to force batching in software instead.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw write                      <# sequential write, simulating WAL append #> `
-  -xfbs 8k                         <# fio block size, one WAL page per write #> `
-  -xfid 1                          <# queue depth, fixed (single outstanding write per thread) #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -xfsy 1                          <# fsync after every write (wal_sync_method=fsync) #> `
-  -xfow 1                          <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1,2,4,8,16,32               <# concurrent committing backends to sweep (comma-separated) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 150Gi                       <# fio makes one -xts-sized file per backend; 32*4G=128G peak, so 50Gi is not enough #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw write                   <# sequential write, simulating WAL append #> `
+  -xfbs 8k                      <# fio block size, one WAL page per write #> `
+  -xfid 1                       <# queue depth, fixed (single outstanding write per thread) #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -xfsy 1                       <# fsync after every write (wal_sync_method=fsync) #> `
+  -xfow 1                       <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1,2,4,8,16,32            <# concurrent committing backends to sweep (comma-separated) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 150Gi                    <# fio makes one -xts-sized file per backend; 32*4G=128G peak, so 50Gi is not enough #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_group_commit.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 5. Hardware fio WAL group commit  bs=8k  iodepth=1  backends=1..32"
@@ -320,27 +320,27 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 5. Hardware fio WAL
 # write more before fsync - this shows how sync-write latency grows with
 # record size.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw write                      <# sequential write, simulating WAL append #> `
-  -xfbs 1k,8k,16k,32k,64k          <# WAL record sizes to sweep (comma-separated) #> `
-  -xfid 1                          <# queue depth, fixed (single outstanding write) #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -xfsy 1                          <# fsync after every write (wal_sync_method=fsync) #> `
-  -xfow 1                          <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1                           <# threads per benchmarking pod, fixed (single backend) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw write                   <# sequential write, simulating WAL append #> `
+  -xfbs 1k,8k,16k,32k,64k       <# WAL record sizes to sweep (comma-separated) #> `
+  -xfid 1                       <# queue depth, fixed (single outstanding write) #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -xfsy 1                       <# fsync after every write (wal_sync_method=fsync) #> `
+  -xfow 1                       <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1                        <# threads per benchmarking pod, fixed (single backend) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_record_size.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 6. Hardware fio WAL record size  bs=1k..64k  iodepth=1"
@@ -350,26 +350,26 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 6. Hardware fio WAL
 # Large-block sequential writes without a per-write fsync, approximating how
 # fast checkpointer/bgwriter can flush dirty pages during a checkpoint.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw write                      <# sequential write, simulating checkpoint writeback #> `
-  -xfbs 1M,4M,16M                  <# checkpoint writeback block sizes to sweep (comma-separated) #> `
-  -xfid 4,16                       <# queue depths to sweep (comma-separated) #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -xfow 1                          <# prefilled test file: writes go into written blocks, like existing relation files #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1                           <# threads per benchmarking pod (fio numjobs) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw write                   <# sequential write, simulating checkpoint writeback #> `
+  -xfbs 1M,4M,16M               <# checkpoint writeback block sizes to sweep (comma-separated) #> `
+  -xfid 4,16                    <# queue depths to sweep (comma-separated) #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -xfow 1                       <# prefilled test file: writes go into written blocks, like existing relation files #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_checkpoint_writeback.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 7. Hardware fio checkpoint writeback  bs=1M..16M  iodepth=4,16"
@@ -384,28 +384,28 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 7. Hardware fio che
 # achievable with the single-profile-per-round model used throughout this
 # script.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-  -xts 4G                          <# fio test file size #> `
-  -xtd 60                          <# seconds per fio round #> `
-  -xfrw randrw                     <# mixed random read/write, one queue, one profile #> `
-  -xfmx 70                         <# read percentage: 70% OLTP reads, 30% WAL-like writes #> `
-  -xfbs 8k                         <# fio block size, fixed at PostgreSQL's page size (BLCKSZ) #> `
-  -xfid 64                         <# queue depth, fixed at the elbow found earlier #> `
-  -xfe libaio                      <# fio ioengine #> `
-  -xfsy 1                          <# fsync after every write (approximates WAL flush contention) #> `
-  -xfow 1                          <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
-  -nbp 1                           <# benchmarking pod count #> `
-  -nbt 1                           <# threads per benchmarking pod (fio numjobs) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-  -rss 50Gi                        <# size of the persistent volume claim #> `
-  -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw randrw                  <# mixed random read/write, one queue, one profile #> `
+  -xfmx 70                      <# read percentage: 70% OLTP reads, 30% WAL-like writes #> `
+  -xfbs 8k                      <# fio block size, fixed at PostgreSQL's page size (BLCKSZ) #> `
+  -xfid 64                      <# queue depth, fixed at the elbow found earlier #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -xfsy 1                       <# fsync after every write (approximates WAL flush contention) #> `
+  -xfow 1                       <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_oltp_wal_contention_proxy.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 8. Hardware fio OLTP/WAL contention proxy  randrw 70/30  bs=8k  iodepth=64"
@@ -443,20 +443,20 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 8. Hardware fio OLT
 # events/sec first plateaus is the "saturation point" used as a fixed
 # parameter in commands 14-16.
 bexhoma hardware `
-  -dbms Hardware                    <# hardware target(s) to test #> `
-  -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
-  -xtd 60                           <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
-  -nbp 1                             <# benchmarking pod count, fixed #> `
-  -nbt 1,2,4,8                       <# sysbench --threads to sweep (comma-separated) #> `
-  -ne 1                              <# parallel client counts to sweep (comma-separated) #> `
-  -m                                 <# collect SUT resource metrics #> `
-  -mc                                <# collect node-level cluster metrics (CPU throttling) #> `
-  -ms $BEXHOMA_MS                    <# max simultaneous DBMS configurations #> `
-  -tr                                <# verify result meets basic sanity requirements #> `
-  -lc 2                              <# CPU limit for the SUT pod: calibration ceiling #> `
-  -rc 2                              <# CPU request for the SUT pod, matches -lc #> `
-  -rnn $BEXHOMA_NODE_SUT             <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht sysbench                 <# benchmark tool: sysbench (CPU/memory) #> `
+  -xtd 60                       <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count, fixed #> `
+  -nbt 1,2,4,8                  <# sysbench --threads to sweep (comma-separated) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect node-level cluster metrics (CPU throttling) #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lc 2                         <# CPU limit for the SUT pod: calibration ceiling #> `
+  -rc 2                         <# CPU request for the SUT pod, matches -lc #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_cpu_quota_calibration.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 5. Hardware sysbench CPU quota calibration  lc=2  threads=1,2,4,8"
@@ -471,20 +471,20 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 5. Hardware sysbenc
 # measurable drop as -nbp grows would point to benchmarker-side overhead
 # (extra SSH sessions, extra pod-sync latency), not a hardware/cgroup finding.
 bexhoma hardware `
-  -dbms Hardware                    <# hardware target(s) to test #> `
-  -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
-  -xtd 60                           <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
-  -nbp 1,2,4                         <# benchmarking pod counts to sweep (comma-separated) #> `
-  -nbt 4                             <# total sysbench threads, fixed, split across -nbp #> `
-  -ne 1                              <# parallel client counts to sweep (comma-separated) #> `
-  -m                                 <# collect SUT resource metrics #> `
-  -mc                                <# collect node-level cluster metrics (CPU throttling) #> `
-  -ms $BEXHOMA_MS                    <# max simultaneous DBMS configurations #> `
-  -tr                                <# verify result meets basic sanity requirements #> `
-  -lc 2                              <# CPU limit for the SUT pod, fixed #> `
-  -rc 2                              <# CPU request for the SUT pod, matches -lc #> `
-  -rnn $BEXHOMA_NODE_SUT             <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht sysbench                 <# benchmark tool: sysbench (CPU/memory) #> `
+  -xtd 60                       <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1,2,4                    <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 4                        <# total sysbench threads, fixed, split across -nbp #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect node-level cluster metrics (CPU throttling) #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lc 2                         <# CPU limit for the SUT pod, fixed #> `
+  -rc 2                         <# CPU request for the SUT pod, matches -lc #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_nbp_overhead_sweep.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 6. Hardware sysbench nbp overhead sweep  lc=2  threads=4  pods=1,2,4"
@@ -500,20 +500,20 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 6. Hardware sysbenc
 # demand exceeds ~2 cores' worth of throughput; this is the oversubscription
 # curve for a single shared cgroup, the baseline command 8 compares against.
 bexhoma hardware `
-  -dbms Hardware                    <# hardware target(s) to test #> `
-  -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
-  -xtd 60                           <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
-  -nbp 1                             <# benchmarking pod count, fixed #> `
-  -nbt 2                             <# threads per benchmarking pod, fixed at the saturation point #> `
-  -ne 1,2,4,8                        <# parallel client counts to sweep (comma-separated) #> `
-  -m                                 <# collect SUT resource metrics #> `
-  -mc                                <# collect node-level cluster metrics (CPU throttling) #> `
-  -ms $BEXHOMA_MS                    <# max simultaneous DBMS configurations #> `
-  -tr                                <# verify result meets basic sanity requirements #> `
-  -lc 2                              <# CPU limit for the SUT pod, fixed #> `
-  -rc 2                              <# CPU request for the SUT pod, matches -lc #> `
-  -rnn $BEXHOMA_NODE_SUT             <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht sysbench                 <# benchmark tool: sysbench (CPU/memory) #> `
+  -xtd 60                       <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
+  -ne 1,2,4,8                   <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count, fixed #> `
+  -nbt 2                        <# threads per benchmarking pod, fixed at the saturation point #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect node-level cluster metrics (CPU throttling) #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lc 2                         <# CPU limit for the SUT pod, fixed #> `
+  -rc 2                         <# CPU request for the SUT pod, matches -lc #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_ne_saturation_sweep.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 7. Hardware sysbench ne saturation sweep  lc=2  threads=2  clients=1,2,4,8"
@@ -534,22 +534,22 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 7. Hardware sysbenc
 # co-located pods on this node; a per-tenant dip points to contention the
 # quotas don't cover (shared LLC, memory bandwidth).
 bexhoma hardware `
-  -dbms Hardware                    <# hardware target(s) to test #> `
-  -xht sysbench                     <# benchmark tool: sysbench (CPU/memory) #> `
-  -xtd 60                           <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
-  -nbp 1                             <# benchmarking pod count per tenant, fixed #> `
-  -nbt 2                             <# threads per benchmarking pod, fixed at the saturation point #> `
-  -ne 1                              <# parallel client counts to sweep (comma-separated) #> `
-  -m                                 <# collect SUT resource metrics #> `
-  -mc                                <# collect node-level cluster metrics (CPU throttling) #> `
-  -ms $BEXHOMA_MS                    <# max simultaneous DBMS configurations #> `
-  -tr                                <# verify result meets basic sanity requirements #> `
-  -lc 2                              <# CPU limit per tenant SUT pod #> `
-  -rc 2                              <# CPU request per tenant SUT pod, matches -lc #> `
-  -mtb container                     <# tenancy granularity: one SUT pod per tenant #> `
-  -mtn 4                             <# number of co-located tenants (SUT pods) #> `
-  -rnn $BEXHOMA_NODE_SUT             <# schedule every tenant's SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK       <# schedule benchmarker pods on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht sysbench                 <# benchmark tool: sysbench (CPU/memory) #> `
+  -xtd 60                       <# seconds per phase (CPU, then memory); long enough for -m/-mc to sample #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count per tenant, fixed #> `
+  -nbt 2                        <# threads per benchmarking pod, fixed at the saturation point #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect node-level cluster metrics (CPU throttling) #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lc 2                         <# CPU limit per tenant SUT pod #> `
+  -rc 2                         <# CPU request per tenant SUT pod, matches -lc #> `
+  -mtb container                <# tenancy granularity: one SUT pod per tenant #> `
+  -mtn 4                        <# number of co-located tenants (SUT pods) #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule every tenant's SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_noisy_neighbor.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 8. Hardware sysbench noisy-neighbor test  lc=2  threads=2  tenants=4"
@@ -587,18 +587,18 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 8. Hardware sysbenc
 # command 13 (ping-pong) targets with a different tool. This is the baseline
 # command 10 scales up from.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht netperf                     <# benchmark tool: netperf (many-concurrent-connection request/response) #> `
-  -xtd 60                          <# seconds per netperf round #> `
-  -xnpp tcp                        <# netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol) #> `
-  -nbp 1                           <# benchmarking pod count, fixed (single connection) #> `
-  -nbt 1                           <# concurrent TCP_RR connections, fixed (single-connection baseline) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht netperf                  <# benchmark tool: netperf (many-concurrent-connection request/response) #> `
+  -xtd 60                       <# seconds per netperf round #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count, fixed (single connection) #> `
+  -nbt 1                        <# concurrent TCP_RR connections, fixed (single-connection baseline) #> `
+  -xnpp tcp                     <# netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_netperf_postgresql_query_latency.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 9. Hardware netperf PostgreSQL query round-trip latency  protocol=tcp  nbt=1"
@@ -618,18 +618,18 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 9. Hardware netperf
 # forward (netperf opens a fresh listening socket per test session, not one
 # shared listener - see run_netperf.sh), so the pool size is the hard ceiling.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht netperf                     <# benchmark tool: netperf (many-concurrent-connection request/response) #> `
-  -xtd 60                          <# seconds per netperf round #> `
-  -xnpp tcp                        <# netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol) #> `
-  -nbp 1                           <# benchmarking pod count, fixed - isolates connection-count from pod-count #> `
-  -nbt 1,8,16,32,64                <# concurrent TCP_RR connections to sweep, all within one pod #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht netperf                  <# benchmark tool: netperf (many-concurrent-connection request/response) #> `
+  -xtd 60                       <# seconds per netperf round #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count, fixed - isolates connection-count from pod-count #> `
+  -nbt 1,8,16,32,64             <# concurrent TCP_RR connections to sweep, all within one pod #> `
+  -xnpp tcp                     <# netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_netperf_postgresql_connection_scaling_sweep.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 10. Hardware netperf PostgreSQL connection scaling  protocol=tcp  nbt=1,8,16,32,64"
@@ -646,18 +646,18 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 10. Hardware netper
 # noticeably from 1x64 to 2x32, the network path is implicated; if it stays
 # flat, the benchbase-side degradation is not a Kubernetes-networking effect.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht netperf                     <# benchmark tool: netperf (many-concurrent-connection request/response) #> `
-  -xtd 60                          <# seconds per netperf round #> `
-  -xnpp tcp                        <# netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol) #> `
-  -nbp 1,2                         <# benchmarking pod counts to compare #> `
-  -nbt 64                          <# total concurrent TCP_RR connections, split evenly across pods #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod(s) on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht netperf                  <# benchmark tool: netperf (many-concurrent-connection request/response) #> `
+  -xtd 60                       <# seconds per netperf round #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1,2                      <# benchmarking pod counts to compare #> `
+  -nbt 64                       <# total concurrent TCP_RR connections, split evenly across pods #> `
+  -xnpp tcp                     <# netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod(s) on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_netperf_postgresql_pod_scaling_sweep.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 11. Hardware netperf PostgreSQL pod scaling  protocol=tcp  nbp=1,2  nbt=64"
@@ -701,21 +701,21 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 11. Hardware netper
 # with server-side contention instead of measuring pure client/network
 # scaling.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht sockperf                    <# benchmark tool: sockperf (network latency/throughput) #> `
-  -xtd 60                          <# seconds per sockperf round #> `
-  -xspm ul                         <# sockperf mode: under-load (continuous send at target rate) #> `
-  -xspr max                        <# message rate: uncapped #> `
-  -xsps 64                         <# message payload size in bytes #> `
-  -xspp tcp                        <# protocol: tcp, matches PostgreSQL's wire protocol #> `
-  -nbp 1,2,4,8,16                  <# benchmarking pod counts to sweep, capped at the server pool size #> `
-  -nbt 1                           <# threads per benchmarking pod, fixed (unused by sockperf, one process per pod) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod(s) on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht sockperf                 <# benchmark tool: sockperf (network latency/throughput) #> `
+  -xtd 60                       <# seconds per sockperf round #> `
+  -xspm ul                      <# sockperf mode: under-load (continuous send at target rate) #> `
+  -xspr max                     <# message rate: uncapped #> `
+  -xsps 64                      <# message payload size in bytes #> `
+  -xspp tcp                     <# protocol: tcp, matches PostgreSQL's wire protocol #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1,2,4,8,16               <# benchmarking pod counts to sweep, capped at the server pool size #> `
+  -nbt 1                        <# threads per benchmarking pod, fixed (unused by sockperf, one process per pod) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod(s) on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sockperf_pod_scaling_sweep.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 12. Hardware sockperf pod scaling sweep  mode=ul  protocol=tcp  msgsize=64  mps=max  nbp=1,2,4,8,16"
@@ -728,21 +728,21 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 12. Hardware sockpe
 # connection round-trip latency ceiling. This is the network-latency analogue
 # of the WAL fsync "single outstanding write" tests in the fio section above.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht sockperf                    <# benchmark tool: sockperf (network latency/throughput) #> `
-  -xtd 60                          <# seconds per sockperf round #> `
-  -xspm pp                         <# sockperf mode: ping-pong (synchronous request/reply) #> `
-  -xspr max                        <# message rate: uncapped (next request right after each reply) #> `
-  -xsps 64                         <# message payload size in bytes #> `
-  -xspp tcp                        <# protocol: tcp, matches PostgreSQL's wire protocol #> `
-  -nbp 1                           <# benchmarking pod count, fixed (single connection) #> `
-  -nbt 1                           <# threads per benchmarking pod, fixed (unused by sockperf) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht sockperf                 <# benchmark tool: sockperf (network latency/throughput) #> `
+  -xtd 60                       <# seconds per sockperf round #> `
+  -xspm pp                      <# sockperf mode: ping-pong (synchronous request/reply) #> `
+  -xspr max                     <# message rate: uncapped (next request right after each reply) #> `
+  -xsps 64                      <# message payload size in bytes #> `
+  -xspp tcp                     <# protocol: tcp, matches PostgreSQL's wire protocol #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count, fixed (single connection) #> `
+  -nbt 1                        <# threads per benchmarking pod, fixed (unused by sockperf) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sockperf_postgresql_query_latency.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 13. Hardware sockperf PostgreSQL query round-trip latency  mode=pp  protocol=tcp  msgsize=64"
@@ -756,21 +756,21 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 13. Hardware sockpe
 # counterpart to those page-sized fio numbers. Unlike fio's -xfbs, -xsps casts
 # to a plain int, so it must be written as 8192, not "8k".
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht sockperf                    <# benchmark tool: sockperf (network latency/throughput) #> `
-  -xtd 60                          <# seconds per sockperf round #> `
-  -xspm ul                         <# sockperf mode: under-load (continuous one-way stream) #> `
-  -xspr max                        <# message rate: uncapped, find the throughput ceiling #> `
-  -xsps 8192                       <# message payload size in bytes, PostgreSQL's page size (BLCKSZ) #> `
-  -xspp tcp                        <# protocol: tcp, matches PostgreSQL's wire protocol #> `
-  -nbp 1                           <# benchmarking pod count, fixed (single stream) #> `
-  -nbt 1                           <# threads per benchmarking pod, fixed (unused by sockperf) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht sockperf                 <# benchmark tool: sockperf (network latency/throughput) #> `
+  -xtd 60                       <# seconds per sockperf round #> `
+  -xspm ul                      <# sockperf mode: under-load (continuous one-way stream) #> `
+  -xspr max                     <# message rate: uncapped, find the throughput ceiling #> `
+  -xsps 8192                    <# message payload size in bytes, PostgreSQL's page size (BLCKSZ) #> `
+  -xspp tcp                     <# protocol: tcp, matches PostgreSQL's wire protocol #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count, fixed (single stream) #> `
+  -nbt 1                        <# threads per benchmarking pod, fixed (unused by sockperf) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sockperf_postgresql_streaming_throughput.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 14. Hardware sockperf PostgreSQL streaming throughput  mode=ul  protocol=tcp  msgsize=8192"
@@ -788,21 +788,21 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 14. Hardware sockpe
 # still be a bad experience per-query if per-connection latency creeps up.
 # Capped at -nbp 16 for the same server-pool reason as command 12.
 bexhoma hardware `
-  -dbms Hardware                   <# hardware target(s) to test #> `
-  -xht sockperf                    <# benchmark tool: sockperf (network latency/throughput) #> `
-  -xtd 60                          <# seconds per sockperf round #> `
-  -xspm pp                         <# sockperf mode: ping-pong (synchronous request/reply) #> `
-  -xspr max                        <# message rate: uncapped (next request right after each reply) #> `
-  -xsps 64                         <# message payload size in bytes #> `
-  -xspp tcp                        <# protocol: tcp, matches PostgreSQL's wire protocol #> `
-  -nbp 1,2,4,8,16                  <# benchmarking pod counts to sweep, capped at the server pool size #> `
-  -nbt 1                           <# threads per benchmarking pod, fixed (unused by sockperf, one process per pod) #> `
-  -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-  -m                               <# collect SUT resource metrics #> `
-  -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
-  -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-  -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod(s) on this node #> `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht sockperf                 <# benchmark tool: sockperf (network latency/throughput) #> `
+  -xtd 60                       <# seconds per sockperf round #> `
+  -xspm pp                      <# sockperf mode: ping-pong (synchronous request/reply) #> `
+  -xspr max                     <# message rate: uncapped (next request right after each reply) #> `
+  -xsps 64                      <# message payload size in bytes #> `
+  -xspp tcp                     <# protocol: tcp, matches PostgreSQL's wire protocol #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1,2,4,8,16               <# benchmarking pod counts to sweep, capped at the server pool size #> `
+  -nbt 1                        <# threads per benchmarking pod, fixed (unused by sockperf, one process per pod) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod(s) on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sockperf_postgresql_latency_scaling_sweep.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] 15. Hardware sockperf PostgreSQL query latency under concurrency  mode=pp  protocol=tcp  msgsize=64  nbp=1,2,4,8,16"

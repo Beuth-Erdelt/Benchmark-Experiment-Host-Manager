@@ -318,12 +318,12 @@ bexhoma ycsb \
   -nbt 64 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
+  -ar \
   -nwr 3 \
   -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
-  -xnpd 3 \
-  -ar \
   run &>$LOG_DIR/docs_reset_ycsb_tidb.log
 ```
 
@@ -684,11 +684,11 @@ bexhoma benchbase \
   -nbt 40 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
+  -ar \
   -nwr 3 \
   -ms $BEXHOMA_MS \
   -tr \
-  -xnpd 3 \
-  -ar \
   run &>$LOG_DIR/docs_reset_benchbase_tidb.log
 ```
 

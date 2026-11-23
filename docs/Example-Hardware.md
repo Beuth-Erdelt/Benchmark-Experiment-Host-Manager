@@ -110,9 +110,9 @@ bexhoma hardware \
   -xfbs 4k \
   -xfid 1,2,4,8,16,32,64,128 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -698,9 +698,9 @@ bexhoma hardware \
   -xfbs 4k,8k,16k,64k,128k,256k,1M \
   -xfid 64 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1216,9 +1216,9 @@ bexhoma hardware \
   -xfbs 8k \
   -xfid 64 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1400,9 +1400,9 @@ bexhoma hardware \
   -xfe libaio \
   -xfsy 1 \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1554,9 +1554,9 @@ bexhoma hardware \
   -xfbs 4k \
   -xfid 64,80,96,112,128 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1963,9 +1963,9 @@ bexhoma hardware \
   -xfbs 4k \
   -xfid 64 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1,2,4,8,16 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -2370,9 +2370,9 @@ bexhoma hardware \
   -xfbs 8k \
   -xfid 1,2,4,8,16,32,64,128 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -2945,9 +2945,9 @@ bexhoma hardware \
   -xfe libaio \
   -xffd 1 \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -3102,9 +3102,9 @@ bexhoma hardware \
   -xfe libaio \
   -xfsy 1 \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1,2,4,8,16,32 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -3397,9 +3397,9 @@ bexhoma hardware \
   -xfe libaio \
   -xfsy 1 \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -3662,9 +3662,9 @@ bexhoma hardware \
   -xfid 4,16 \
   -xfe libaio \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -3963,9 +3963,9 @@ bexhoma hardware \
   -xfe libaio \
   -xfsy 1 \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -4152,9 +4152,9 @@ bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
   -xtd 60 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1,2,4,8 \
-  -ne 1 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -4364,9 +4364,9 @@ bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
   -xtd 60 \
+  -ne 1 \
   -nbp 1,2,4 \
   -nbt 4 \
-  -ne 1 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -4558,9 +4558,9 @@ bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
   -xtd 60 \
+  -ne 1,2,4,8 \
   -nbp 1 \
   -nbt 2 \
-  -ne 1,2,4,8 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -4784,9 +4784,9 @@ bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
   -xtd 60 \
+  -ne 1 \
   -nbp 1 \
   -nbt 2 \
-  -ne 1 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -5036,10 +5036,10 @@ bexhoma hardware \
   -dbms Hardware \
   -xht netperf \
   -xtd 60 \
-  -xnpp tcp \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
+  -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -5172,10 +5172,10 @@ bexhoma hardware \
   -dbms Hardware \
   -xht netperf \
   -xtd 60 \
-  -xnpp tcp \
+  -ne 1 \
   -nbp 1 \
   -nbt 1,8,16,32,64 \
-  -ne 1 \
+  -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -5404,10 +5404,10 @@ bexhoma hardware \
   -dbms Hardware \
   -xht netperf \
   -xtd 60 \
-  -xnpp tcp \
+  -ne 1 \
   -nbp 1,2 \
   -nbt 64 \
-  -ne 1 \
+  -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -5596,9 +5596,9 @@ bexhoma hardware \
   -xspr max \
   -xsps 64 \
   -xspp tcp \
+  -ne 1 \
   -nbp 1,2,4,8,16 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -5866,9 +5866,9 @@ bexhoma hardware \
   -xspr max \
   -xsps 64 \
   -xspp tcp \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -6013,9 +6013,9 @@ bexhoma hardware \
   -xspr max \
   -xsps 8192 \
   -xspp tcp \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -6161,9 +6161,9 @@ bexhoma hardware \
   -xspr max \
   -xsps 64 \
   -xspp tcp \
+  -ne 1 \
   -nbp 1,2,4,8,16 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \

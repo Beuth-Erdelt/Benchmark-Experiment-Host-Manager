@@ -68,6 +68,18 @@ class ReorderFlagsTest(unittest.TestCase):
         # -ar followed -dbms; it must not move to the end
         self.assertEqual(commands[commands.index('-dbms PostgreSQL PgDuckDB \\') + 1], '-ar \\')
 
+    def test_a_second_run_changes_nothing(self) -> None:
+        """A flag without comment gets '# -flag value'; reading that back must not make it a description."""
+        text = SH_MULTI.replace('# -sf 1                         scaling factor\n', '')
+        once = self.run_on(text)
+        self.assertIn('# -sf 1\n', once)
+        self.assertEqual(self.run_on(once), once)
+
+    def test_a_comment_of_a_flag_with_several_values_keeps_them_once(self) -> None:
+        once = self.run_on(SH_MULTI)
+        self.assertRegex(once, r'# -dbms PostgreSQL PgDuckDB +DBMS to test\n')
+        self.assertEqual(self.run_on(once), once)
+
     def test_one_line_call_is_left_alone(self) -> None:
         text = "# comment\n" + SH_ONE_LINE
         self.assertEqual(self.run_on(text), text)

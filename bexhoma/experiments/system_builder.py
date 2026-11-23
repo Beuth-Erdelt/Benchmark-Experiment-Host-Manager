@@ -228,7 +228,7 @@ def limit_loading_pods(entry: dict, docker: str, total: int, parallel: int) -> t
     if limit is None or (total <= limit and parallel <= limit):
         return total, parallel
     if total > limit:
-        print('%s: loads with %d pod, ignoring -nlp %s' % (docker, limit, total))
+        print('%s: loads with %d pod, ignoring -nlp %s' % (docker, limit, total))  # noqa: UP031
     return min(total, limit), min(parallel, limit)
 
 
@@ -250,7 +250,7 @@ def loading_variants(entry: dict, threads: list, docker: str = None) -> list:
     if not declared:
         ignored = sorted({int(count) for count in threads if int(count) != 1})
         if docker and ignored:
-            print('%s: the loader does not use loading threads, ignoring -nlt %s' % (
+            print('%s: the loader does not use loading threads, ignoring -nlt %s' % (  # noqa: UP031
                 docker, ",".join(str(count) for count in ignored)))
         return [{}]
     return [descriptors.expand(declared, {'threads': int(count)}) for count in threads]

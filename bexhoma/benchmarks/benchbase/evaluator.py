@@ -16,17 +16,17 @@ import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-import pickle
-import json
-import traceback
-import ast
-from dbmsbenchmarker import monitor
-from datetime import datetime
-import glob
-from pathlib import Path
+import pickle  # noqa: E402
+import json  # noqa: E402
+import traceback  # noqa: E402
+import ast  # noqa: E402
+from dbmsbenchmarker import monitor  # noqa: E402
+from datetime import datetime  # noqa: E402
+import glob  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-from bexhoma.evaluators.base import natural_sort
-from bexhoma.evaluators.logger import LogEvaluator
+from bexhoma.evaluators.base import natural_sort  # noqa: E402
+from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
 
 __all__ = ["BenchbaseEvaluator"]
 
@@ -239,7 +239,7 @@ class BenchbaseEvaluator(LogEvaluator):
             'tenant_id': 'int',
         })
         return df_typed
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):  # noqa: B006
         """
         Aggregates parallel-pod result rows into one row per group.
 

@@ -317,7 +317,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Garnet cluster 3 replication  sf=
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rnn/-rnl/-rnb $BEXHOMA_NODE_*      schedule SUT, loader and benchmarker pods on these nodes
+# -rnn $BEXHOMA_NODE_SUT
+# -rnl $BEXHOMA_NODE_LOAD
+# -rnb $BEXHOMA_NODE_BENCHMARK
 bexhoma ycsb \
   -dbms Garnet \
   -sf 3 \

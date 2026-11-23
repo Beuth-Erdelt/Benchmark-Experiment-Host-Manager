@@ -179,7 +179,7 @@ def _configure_system(experiment: TpchExperiment, spec: dict, system: dict, tpch
     if max_pods is not None and (loading_pods_total > max_pods or loading_pods_split > max_pods):
         # e.g. concurrent LOAD DATA into a ColumnStore table fails and the loader goes on, so rows
         # would be missing: the DBMS tolerates one loader pod only
-        print('%s: loads with %d pod, ignoring loading.pods=%d, loading.split=%d' % (
+        print('%s: loads with %d pod, ignoring loading.pods=%d, loading.split=%d' % (  # noqa: UP031
             dbms, max_pods, loading_pods_total, loading_pods_split))
         loading_pods_total = min(loading_pods_total, max_pods)
         loading_pods_split = min(loading_pods_split, max_pods)
@@ -292,9 +292,10 @@ def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
             TPCH_REFRESH_STREAM_OFFSET=tpch_cfg.get('refresh_stream_offset', 0),
             TRANSFORM_RAW_DATA=1, STORE_RAW_DATA=1,
         )
-        experiment.enable_refresh_stream(
-            template=refresh_template(cluster.dockers, [system['dbms'] for system in spec['systems']], 'tpch')
-        )
+        # one refresh job per system, each from its DBMS's refresh_template
+        for system in spec['systems']:
+            refresh_template(cluster.dockers, system['dbms'], 'tpch')
+        experiment.enable_refresh_stream()
 
     parameter = _build_prepare_testbed_parameter(spec, tpch_module)
     experiment.prepare_testbed(parameter)

@@ -88,12 +88,22 @@ unknown), so `storage_reused` is False and the test is recorded as passed.
 
 ## 4. Phase 0: local refusals (no cluster; kubectl context without access)
 
-- [ ] 0.1 `bexhoma hammerdb -h`, `bexhoma ycsb -h`: `-dbms` choices = DBMS whose cluster.config
-  `benchmarks:` lists the benchmark.
-- [ ] 0.2 Refused early with a clear reason, before any Kubernetes call:
+Done 2026-11-23 as unit tests (branch `software-quality-p2`), `tests/test_early_refusals.py`; each case runs
+the entry script's `__main__` with a `Kubernetes` constructor that fails the test if it is called.
+
+- [x] 0.1 `bexhoma hammerdb -h`, `bexhoma ycsb -h`: `-dbms` choices = DBMS whose cluster.config
+  `benchmarks:` lists the benchmark, in its order.
+- [x] 0.2 Refused early with a clear reason, before any Kubernetes call:
   `tpch -dbms MySQL -mtn 2 -mtb database`; `benchbase -dbms MySQL -mtn 2 -mtb schema`;
   `tpch -dbms Citus -xdim distributed`; `tpch -dbms PostgreSQL ClickHouse -xrs 1` ("need different ones").
-- [ ] If they pass: turn them into unit tests next to `tests/test_system_builder.py`, so they need no rerun.
+  Finding: `-xrs` was refused only in `run()`, after `clusters.Kubernetes(...)` and after the experiment was
+  built. `tpch` `main()` now checks `refresh_template()` right after parsing, like `-mtb` and `-xdim`.
+  Changed the same day (user): the refusal of DBMS with different refresh jobs is gone. Each configuration's
+  refresh entry gets the `refresh_template` of its own DBMS (`TpchExperiment.add_configuration()`), so
+  `-dbms PostgreSQL ClickHouse -xrs 1` runs, each DBMS with its own job. Only a DBMS without a refresh job is
+  refused (none in TPC-H). Not yet run on the cluster: `bexhoma tpch -dbms PostgreSQL ClickHouse MySQL -sf 1
+  -xrs 1 -ne 1 run`, check one `tpch_refresh` job per DBMS with its own template and no SQL errors.
+- [x] Unit tests instead of runs, so they need no rerun.
 
 ## 5. Decisions for the user (before any run)
 

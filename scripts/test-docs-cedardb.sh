@@ -20,6 +20,7 @@ prepare_logs
 #### TPC-H Monitoring (Example-TPC-H.md)
 # -dbms CedarDB                 DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
+# -nc 2                         two runs, the second restarts the SUT on the same data
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
 # -xii                          create indexes after data load
@@ -32,10 +33,9 @@ prepare_logs
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
-# -rss 50Gi                     size of the persistent volume claim
 # -rsr                          delete any existing PVC for the SUT before starting
-# -nc 2                         two runs, the second restarts the SUT on the same data
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -44,11 +44,10 @@ prepare_logs
 bexhoma tpch \
   -dbms CedarDB \
   -sf 3 \
+  -nc 2 \
   -nlp 8 \
   -nlt 8 \
-  -xii \
-  -xic \
-  -xis \
+  -xii -xic -xis \
   -xdt \
   -m \
   -mc \
@@ -56,13 +55,10 @@ bexhoma tpch \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
   -rsr \
-  -nc 2 \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   -ks no \
   run &>$LOG_DIR/doc_tpch_testcase_cedardb_monitoring.log
@@ -73,19 +69,19 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H CedarDB monitoring  sf=3"
 #### SSB normal schema
 # -dbms CedarDB                 DBMS under test
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
+# -nc 2                         two runs, the second restarts the SUT on the same data
+# -nlp 8                        number of loader pods
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run statistics after data load
-# -nlp 8                        number of loader pods
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
-# -rss 50Gi                     size of the persistent volume claim
 # -rsr                          delete any existing PVC for the SUT before starting
-# -nc 2                         two runs, the second restarts the SUT on the same data
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -94,22 +90,18 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H CedarDB monitoring  sf=3"
 bexhoma ssb \
   -dbms CedarDB \
   -sf 1 \
-  -xii \
-  -xic \
-  -xis \
+  -nc 2 \
   -nlp 8 \
+  -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
   -rsr \
-  -nc 2 \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   -ks no \
   run &>$LOG_DIR/doc_ssb_testcase_cedardb_normal.log
@@ -121,18 +113,18 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB CedarDB normal  sf=1"
 # -dbms CedarDB                 DBMS under test
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
 # -xsv flat                     one denormalized table lineorder_flat
+# -nc 2                         two runs, the second restarts the SUT on the same data
+# -nlp 8                        number of loader pods
 # -xii                          create indexes after data load
 # -xis                          run statistics after data load
-# -nlp 8                        number of loader pods
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
-# -rss 50Gi                     size of the persistent volume claim
 # -rsr                          delete any existing PVC for the SUT before starting
-# -nc 2                         two runs, the second restarts the SUT on the same data
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -142,21 +134,18 @@ bexhoma ssb \
   -dbms CedarDB \
   -sf 1 \
   -xsv flat \
-  -xii \
-  -xis \
+  -nc 2 \
   -nlp 8 \
+  -xii -xis \
   -xdt \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
   -rsr \
-  -nc 2 \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   -ks no \
   run &>$LOG_DIR/doc_ssb_testcase_cedardb_flat.log
@@ -172,6 +161,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB CedarDB flat  sf=1"
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2                       throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s
+# -nc 2                         two runs, the second restarts the SUT on the same data
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
 # -nlt 64                       threads per loader pod
@@ -181,10 +171,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB CedarDB flat  sf=1"
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
-# -rss 50Gi                     size of the persistent volume claim
 # -rsr                          delete any existing PVC for the SUT before starting
-# -nc 2                         two runs, the second restarts the SUT on the same data
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -197,6 +186,7 @@ bexhoma ycsb \
   -xtb 16384 \
   -xnbf 2 \
   -xnlf 1 \
+  -nc 2 \
   -ne 1 \
   -nlp 8 \
   -nlt 64 \
@@ -206,13 +196,10 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
   -rsr \
-  -nc 2 \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   -ks no \
   run &>$LOG_DIR/doc_ycsb_testcase_cedardb_read.log
@@ -229,6 +216,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CedarDB workload c  sf=1"
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2                       throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s
+# -nc 2                         two runs, the second restarts the SUT on the same data
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
 # -nlt 64                       threads per loader pod
@@ -238,10 +226,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CedarDB workload c  sf=1"
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
-# -rss 50Gi                     size of the persistent volume claim
 # -rsr                          delete any existing PVC for the SUT before starting
-# -nc 2                         two runs, the second restarts the SUT on the same data
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -254,6 +241,7 @@ bexhoma ycsb \
   -xtb 16384 \
   -xnbf 2 \
   -xnlf 1 \
+  -nc 2 \
   -ne 1 \
   -nlp 8 \
   -nlt 64 \
@@ -263,13 +251,10 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
   -rsr \
-  -nc 2 \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   -ks no \
   run &>$LOG_DIR/doc_ycsb_testcase_cedardb_update.log
@@ -316,9 +301,7 @@ bexhoma ycsb \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/doc_ycsb_testcase_cedardb_loading.log
 
@@ -334,16 +317,16 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CedarDB loading  sf=1  nlp=1,8"
 # -xsd 5                        benchmark duration in minutes
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       throughput target as a multiple of the base ops/s
+# -nc 2                         two runs, the second restarts the SUT on the same data
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
-# -rss 50Gi                     size of the persistent volume claim
 # -rsr                          delete any existing PVC for the SUT before starting
-# -nc 2                         two runs, the second restarts the SUT on the same data
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -356,19 +339,17 @@ bexhoma benchbase \
   -xsd 5 \
   -xtb 16384 \
   -xnbf 1 \
+  -nc 2 \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
   -rsr \
-  -nc 2 \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   -ks no \
   run &>$LOG_DIR/doc_benchbase_testcase_tpcc_cedardb_simple.log
@@ -384,16 +365,16 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB tpcc  sf=16"
 # -xsd 5                        benchmark duration in minutes
 # -xtb 1024                     base ops/s used to compute the throughput target
 # -xnbf 16                      throughput target as a multiple of the base ops/s
+# -nc 2                         two runs, the second restarts the SUT on the same data
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 100                      threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
-# -rss 50Gi                     size of the persistent volume claim
 # -rsr                          delete any existing PVC for the SUT before starting
-# -nc 2                         two runs, the second restarts the SUT on the same data
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -407,19 +388,17 @@ bexhoma benchbase \
   -xsd 5 \
   -xtb 1024 \
   -xnbf 16 \
+  -nc 2 \
   -nbp 1 \
   -nbt 100 \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
   -rsr \
-  -nc 2 \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   -ks no \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_cedardb_simple.log
@@ -436,16 +415,16 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB ycsb  sf=1"
 # -xsd 5                        benchmark duration in minutes
 # -xtb 1024                     base ops/s used to compute the throughput target
 # -xnbf 16                      throughput target as a multiple of the base ops/s
+# -nc 2                         two runs, the second restarts the SUT on the same data
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 100                      threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
-# -rss 50Gi                     size of the persistent volume claim
 # -rsr                          delete any existing PVC for the SUT before starting
-# -nc 2                         two runs, the second restarts the SUT on the same data
+# -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -458,19 +437,17 @@ bexhoma benchbase \
   -xsd 5 \
   -xtb 1024 \
   -xnbf 16 \
+  -nc 2 \
   -nbp 1 \
   -nbt 100 \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 50Gi \
   -rsr \
-  -nc 2 \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   -ks no \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_cedardb_simple.log
@@ -487,30 +464,30 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB chbenchmark  sf=10"
 # TPC-H with a refresh stream on CedarDB: the loader image of PostgreSQL applies RF1 and RF2, since CedarDB speaks the PostgreSQL protocol
 # -dbms CedarDB                 DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
+# -ne 3                         parallel query streams
+# -xrs 3                        refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -ne 3                         parallel query streams
-# -xrs 3                        refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
-# -rnn/-rnl/-rnb $BEXHOMA_NODE_* schedule SUT, loader and benchmarker pods on these nodes
+# -rnn $BEXHOMA_NODE_SUT
+# -rnl $BEXHOMA_NODE_LOAD
+# -rnb $BEXHOMA_NODE_BENCHMARK
 # -ks no                        remove the SUT at the end
 bexhoma tpch \
   -dbms CedarDB \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii \
-  -xic \
-  -xis \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \

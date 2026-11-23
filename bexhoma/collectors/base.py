@@ -181,7 +181,7 @@ class CollectorBase:
             print(evaluation.code, "is empty")
         return df
 
-    def get_performance_aggregated_per_phase(self, type="benchmarking"):
+    def get_performance_aggregated_per_phase(self, type="benchmarking"):  # noqa: A002
         """
         Combines aggregated performance results per phase from all experiment codes.
 
@@ -216,7 +216,7 @@ class CollectorBase:
             df_performance = pd.concat([df_performance, df_aggregated])
         return df_performance
 
-    def get_performance_aggregated_per_job(self, type="benchmarking"):
+    def get_performance_aggregated_per_job(self, type="benchmarking"):  # noqa: A002
         """
         Combines aggregated performance results per job from all experiment codes.
 
@@ -254,7 +254,7 @@ class CollectorBase:
             df_performance = pd.concat([df_performance, df_aggregated])
         return df_performance
 
-    def get_performance_aggregated_per_phase_multitenant(self, type="benchmarking"):
+    def get_performance_aggregated_per_phase_multitenant(self, type="benchmarking"):  # noqa: A002
         """
         Combines aggregated multi-tenant performance results from all experiment codes into one DataFrame.
 
@@ -325,7 +325,7 @@ class CollectorBase:
         return [self.df_metrics.loc[key, 'title'] for key in self.SHARED_METRICS
                 if key in self.df_metrics.index]
 
-    def get_monitoring_aggregated_per_phase_multitenant(self, type="benchmarking"):
+    def get_monitoring_aggregated_per_phase_multitenant(self, type="benchmarking"):  # noqa: A002
         """
         Combines aggregated multi-tenant monitoring metrics from all experiment codes into one DataFrame.
 
@@ -478,7 +478,7 @@ class CollectorBase:
                 df['job'] = code_str + '-' + df['job'].astype(str)
             return df
 
-    def show_summary_monitoring_table(self, evaluation, type='benchmarking'):
+    def show_summary_monitoring_table(self, evaluation, type='benchmarking'):  # noqa: A002
         """
         Collects all active monitoring metrics for a given component without aggregation.
 
@@ -502,7 +502,7 @@ class CollectorBase:
         path = getattr(evaluation, 'path', None)
         connections = read_connections(path) if path else []
         for metric_key, row in self.df_metrics.iterrows():
-            if row["active"] is False or row["active"] == False:
+            if row["active"] is False or row["active"] == False:  # noqa: E712
                 continue
             reduction = {'counter': 'diff', 'ratio': 'max'}.get(row["metric"], 'mean')
             col_name = row["title"]
@@ -544,7 +544,7 @@ class CollectorBase:
         df.index = code + '-' + df.index.astype(str)
         return df.T
 
-    def get_monitoring_aggregated_per_job(self, type="benchmarking"):
+    def get_monitoring_aggregated_per_job(self, type="benchmarking"):  # noqa: A002
         """
         Combines aggregated monitoring metrics from all experiment codes into one DataFrame.
 
@@ -575,7 +575,7 @@ class CollectorBase:
         df_monitoring_all.drop('connection', axis=1, inplace=True, errors='ignore')
         return df_monitoring_all
 
-    def get_monitoring_aggregated_per_phase(self, type="benchmarking"):
+    def get_monitoring_aggregated_per_phase(self, type="benchmarking"):  # noqa: A002
         """
         Combines aggregated monitoring metrics per phase from all experiment codes.
 

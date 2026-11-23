@@ -17,13 +17,13 @@ import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-import pickle
-import json
-import traceback
-import ast
-from dbmsbenchmarker import monitor
-from datetime import datetime
-from pathlib import Path
+import pickle  # noqa: E402
+import json  # noqa: E402
+import traceback  # noqa: E402
+import ast  # noqa: E402
+from dbmsbenchmarker import monitor  # noqa: E402
+from datetime import datetime  # noqa: E402
+from pathlib import Path  # noqa: E402
 
 __all__ = ["EvaluatorBase", "natural_sort", "resolve_within_result_folder"]
 
@@ -40,8 +40,8 @@ def natural_sort(items):
     :return: Sorted list.
     :rtype: list
     """
-    convert = lambda text: int(text) if text.isdigit() else text.lower()
-    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', str(key))]
+    convert = lambda text: int(text) if text.isdigit() else text.lower()  # noqa: E731
+    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', str(key))]  # noqa: E731
     return sorted(items, key=alphanum_key)
 
 

@@ -278,7 +278,7 @@ class HardwareEvaluator(LogEvaluator):
         df_typed = df.astype(dtype_map)
         return df_typed
 
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):  # noqa: B006
         """
         Aggregates parallel-pod Hardware result rows into one row per group.
 
