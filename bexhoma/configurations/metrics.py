@@ -12,7 +12,8 @@ from bexhoma.monitoring_math import JOB_QUERY_SETS
 if TYPE_CHECKING:
     from .base import SutConfiguration
 
-__all__ = ['MetricsCollector', 'apply_metric_override', 'switch_off_unresolved', 'uses_storage_placeholders']
+__all__ = ['MetricsCollector', 'apply_metric_override', 'switch_off_unresolved', 'uses_storage_placeholders',
+           'worker_host_values']
 
 
 def apply_metric_override(metricname: str, metricdata: dict, overrides: dict) -> dict:
@@ -51,6 +52,28 @@ def switch_off_unresolved(metric: dict, values: dict) -> dict:
         metric['active'] = False
         metric['inactive_reason'] = 'storage placeholder unresolved: ' + ', '.join(unresolved)
     return metric
+
+
+def worker_host_values(workers: list, node: str, gpuid: str) -> tuple:
+    """``{host}`` and ``{gpuid}`` for the metrics of one worker component.
+
+    A worker component may run on several nodes (``-rnw``), so ``{host}`` is a
+    regex alternation of those nodes, for ``instance=~"{host}"``, and
+    ``{gpuid}`` joins the GPU UUIDs of all of them. A single node gives its
+    plain name, as for the SUT.
+
+    :param workers: Host infos of the component's pods (``c['worker'][component]``).
+    :param node: Node of the SUT, used when no worker node is known.
+    :param gpuid: GPU UUIDs of the SUT, used when no worker node is known.
+    :return: ``(host, gpuid)``.
+    :rtype: tuple[str, str]
+    """
+    nodes = list(dict.fromkeys(w['node'] for w in workers if w.get('node')))
+    if not nodes:
+        return node, gpuid
+    gpuids = list(dict.fromkeys(g for w in workers for g in (w.get('GPUIDs') or [])))
+    host = nodes[0] if len(nodes) == 1 else '(' + '|'.join(nodes) + ')'
+    return host, '|'.join(gpuids)
 
 
 def uses_storage_placeholders(monitor: dict) -> bool:
@@ -269,13 +292,15 @@ class MetricsCollector:
                             connection, name))
                         metrics_type = f"metrics_{name}"
                         c['monitoring'][metrics_type] = {}
+                        host_worker, gpuid_worker = worker_host_values(
+                            c['worker'].get(name, []), node, gpuid)
                         for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                             c['monitoring'][metrics_type][metricname] = switch_off_unresolved(
                                 apply_metric_override(metricname, metricdata, overrides), storage_values)
                             c['monitoring'][metrics_type][metricname]['query'] = (
                                 cfg.set_metric_of_config(
                                     metric=c['monitoring'][metrics_type][metricname]['query'],
-                                    host=node, gpuid=gpuid, schema=schema,
+                                    host=host_worker, gpuid=gpuid_worker, schema=schema,
                                     database=database, component=name))
                 for metricname, metricdata in config_K8s['monitor']['metrics'].items():
                     c['monitoring']['metrics'][metricname] = switch_off_unresolved(
@@ -316,6 +341,8 @@ class MetricsCollector:
                         if 'statefulset' in cfg.deployment_infos:
                             for name, statefulset in cfg.deployment_infos['statefulset'].items():
                                 metrics_type = f"metrics_{name}"
+                                host_worker, gpuid_worker = worker_host_values(
+                                    c['worker'].get(name, []), node, gpuid)
                                 for metricname, metricdata in metrics_template.items():
                                     c['monitoring'][metrics_type][metricname] = switch_off_unresolved(
                                         metricdata.copy(), storage_values)
@@ -323,7 +350,7 @@ class MetricsCollector:
                                     c['monitoring'][metrics_type][metricname]['query'] = (
                                         cfg.set_metric_of_config(
                                             metric=c['monitoring'][metrics_type][metricname]['query'],
-                                            host=node, gpuid=gpuid, schema=schema,
+                                            host=host_worker, gpuid=gpuid_worker, schema=schema,
                                             database=database, component=name))
                     else:
                         print("{:30s}: application metrics of type {} not found!".format(
