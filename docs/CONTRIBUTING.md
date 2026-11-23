@@ -3,7 +3,7 @@
 Contributions are welcome. Areas where help is most useful:
 
 - **New workloads** — a benchmark is one folder `bexhoma/benchmarks/<name>/`, plus its scripts in `experiments/`, job templates in `k8s/` and Docker images in `images/`, see [Adding a Benchmark](Adding-a-Benchmark.md).
-- **New DBMS** — a DBMS is added by configuration: an entry in the `dockers` section of the cluster configuration, a deployment manifest in `k8s/` and DDL scripts in `experiments/`, see [Add a New DBMS](DBMS.md#add-a-new-dbms).
+- **New DBMS** — a DBMS is added by configuration: an entry in the `dockers` section of the cluster configuration, a deployment manifest in `k8s/` and DDL scripts in `experiments/`, see [Adding a DBMS](Adding-a-DBMS.md).
 - **Bug fixes and testing** — report bugs via the [issue tracker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues) or open a pull request.
 - **Documentation** — corrections, clarifications, and new examples are all welcome.
 

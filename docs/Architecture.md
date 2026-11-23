@@ -2,7 +2,7 @@
 
 This page describes how the Python code of Bexhoma is organised, so that you know where a change belongs.
 For what runs inside the Kubernetes cluster (SUT, loaders, benchmarkers, monitoring, dashboard), see [Concepts](Concepts.md#architecture).
-For adding a benchmark or a DBMS, see [Adding a Benchmark](Adding-a-Benchmark.md) and [Add a New DBMS](DBMS.md#add-a-new-dbms).
+For adding a benchmark or a DBMS, see [Adding a Benchmark](Adding-a-Benchmark.md) and [Adding a DBMS](Adding-a-DBMS.md).
 
 Bexhoma is an orchestrator. It runs on your machine, talks to the cluster through `kubectl` and the Kubernetes API, and never runs a benchmark itself: every loader, benchmarker and evaluation runs in a pod.
 
