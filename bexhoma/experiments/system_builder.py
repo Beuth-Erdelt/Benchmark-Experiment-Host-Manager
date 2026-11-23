@@ -232,19 +232,26 @@ def limit_loading_pods(entry: dict, docker: str, total: int, parallel: int) -> t
     return min(total, limit), min(parallel, limit)
 
 
-def loading_variants(entry: dict, threads: list) -> list:
+def loading_variants(entry: dict, threads: list, docker: str = None) -> list:
     """The loading parameters of the configurations to build for a DBMS: one set, or one per ``-nlt`` value.
 
     A DBMS whose entry declares ``per_loading_threads`` gets a configuration per thread count
-    (``{threads}`` is that count); every other DBMS gets one without extra parameters.
+    (``{threads}`` is that count); every other DBMS gets one without extra parameters, and its
+    loader does not use the thread count: with ``docker`` given, a value other than 1 is
+    reported as ignored, so a command line with ``-nlt`` does not promise what is not done.
 
     :param entry: The DBMS's entry for the benchmark.
     :param threads: The values of ``-nlt``.
+    :param docker: Name of the DBMS (for the message); None prints nothing.
     :return: A list of parameter dicts.
     :rtype: list
     """
     declared = entry.get('per_loading_threads')
     if not declared:
+        ignored = sorted({int(count) for count in threads if int(count) != 1})
+        if docker and ignored:
+            print('%s: the loader does not use loading threads, ignoring -nlt %s' % (
+                docker, ",".join(str(count) for count in ignored)))
         return [{}]
     return [descriptors.expand(declared, {'threads': int(count)}) for count in threads]
 
@@ -266,6 +273,7 @@ def loading_layouts(dockers: dict, benchmark: str, args, splits: list, pods: lis
         holds ``PODS_TOTAL``, ``PODS_PARALLEL`` and the thread variant's parameters.
     :rtype: generator
     """
+    reported = set()   # DBMS whose ignored -nlt was reported (once, not per layout)
     for split in splits:
         for total in pods:
             if total < split:
@@ -273,7 +281,8 @@ def loading_layouts(dockers: dict, benchmark: str, args, splits: list, pods: lis
             for docker in selected_dockers(dockers, benchmark, args.dbms, args):
                 entry = descriptors.benchmark_entry(dockers, docker, benchmark)
                 pods_total, pods_parallel = limit_loading_pods(entry, docker, total, int(total / split))
-                for thread_parameters in loading_variants(entry, threads):
+                for thread_parameters in loading_variants(entry, threads, None if docker in reported else docker):
+                    reported.add(docker)
                     yield docker, entry, pods_total, pods_parallel, {
                         'PODS_TOTAL': str(pods_total), 'PODS_PARALLEL': str(pods_parallel), **thread_parameters}
 

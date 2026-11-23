@@ -4,7 +4,16 @@ Reorder flags in bexhoma test-script calls to match the canonical ordering
 defined in scripts/README.md.  Handles both .sh and .ps1 formats.
 
 Run from the repo root:
-    python scripts/_reorder_flags.py
+    python scripts/_reorder_flags.py            # rewrite the scripts
+    python scripts/_reorder_flags.py --check    # only list the files it would change (exit 1 if any)
+
+Rules that keep a call's meaning:
+- every value of a flag is kept (``-dbms PostgreSQL PgDuckDB``);
+- a repeated flag (``--set a --set b``) is kept every time, in its order;
+- a flag missing from FLAG_ORDER stays right after the flag it followed,
+  instead of moving to the end;
+- a call that is not a multi-line call of flags and a mode (e.g.
+  ``bexhoma experiment <yaml> &>log`` on one line) is left as it is.
 """
 
 import re
@@ -29,7 +38,7 @@ FLAG_ORDER = [
     # G: Benchmarking parallelism
     '-nbp', '-nbt',
     # H: SUT topology
-    '-xnsr', '-nw', '-nwr', '-nws',
+    '-xnsr', '-nw', '-xnpd', '-nwr', '-nws',
     # I: Connection pooling
     '-xnpp', '-xnpi', '-xnpo',
     # J: Post-load init (logical order)
@@ -49,14 +58,14 @@ FLAG_ORDER = [
     # P: Multi-tenancy
     '-mtb', '-mtn', '-mtv',
     # Q: Node pinning
-    '-rnn', '-rnl', '-rnb',
+    '-rnn', '-rnl', '-rnp', '-rnb',
 ]
 
 FLAG_RANK = {f: i for i, f in enumerate(FLAG_ORDER)}
 
 # Flags that are grouped on one line in .sh output (in this order)
 INIT_FLAGS = ['-xii', '-xic', '-xis', '-xcol']
-NODE_FLAGS = ['-rnn', '-rnl', '-rnb']
+NODE_FLAGS = ['-rnn', '-rnl', '-rnp', '-rnb']
 
 MODES = frozenset({'run', 'load', 'start', 'profiling', 'empty', 'summary'})
 
@@ -85,39 +94,46 @@ def is_flag(tok: str) -> bool:
     return bool(re.match(r'^--?[a-zA-Z]', tok))
 
 
-def parse_flag_pairs(tokens: list[str]) -> list[tuple[str, str | None]]:
-    """Convert a flat token list into [(flag, value_or_None), ...], stopping at mode."""
+def is_redirect(tok: str) -> bool:
+    return tok.startswith('&>') or tok.startswith('>') or tok == '2>&1'
+
+
+def parse_flag_pairs(tokens: list[str]) -> list[tuple[str, str | None]] | None:
+    """Convert a flat token list into [(flag, value_or_None), ...], stopping at mode.
+
+    Every non-flag token up to the next flag or mode belongs to the flag before it
+    (``-dbms PostgreSQL PgDuckDB``). Returns None when a token belongs to no flag
+    (a positional argument), so the call is left unchanged.
+    """
     pairs: list[tuple[str, str | None]] = []
-    i = 0
-    while i < len(tokens):
-        t = tokens[i]
+    for t in tokens:
         if t in MODES:
             break
-        if t.startswith('&>') or t.startswith('>>') or t == '2>&1':
-            i += 1
+        if is_redirect(t):
             continue
         if is_flag(t):
-            f = nrm(t)
-            nxt = tokens[i + 1] if i + 1 < len(tokens) else None
-            if nxt and not is_flag(nxt) and nxt not in MODES and not nxt.startswith('&>'):
-                pairs.append((f, nxt))
-                i += 2
-            else:
-                pairs.append((f, None))
-                i += 1
+            pairs.append((nrm(t), None))
+        elif pairs:
+            flag, value = pairs[-1]
+            pairs[-1] = (flag, t if value is None else value + ' ' + t)
         else:
-            i += 1
+            return None
     return pairs
 
 
-def reorder_and_dedup(pairs: list[tuple[str, str | None]]) -> list[tuple[str, str | None]]:
-    seen: set[str] = set()
-    result = []
-    for flag, value in sorted(pairs, key=lambda p: rank(p[0])):
-        if flag not in seen:
-            seen.add(flag)
-            result.append((flag, value))
-    return result
+def ordered(items: list) -> list:
+    """Sort tuples whose first element is a flag by FLAG_ORDER: stable, repeated flags kept.
+
+    A flag missing from FLAG_ORDER gets the rank of the flag before it, so it
+    stays right after that flag instead of moving to the end.
+    """
+    ranks = []
+    previous = -1
+    for item in items:
+        flag = nrm(item[0])
+        previous = FLAG_RANK[flag] if flag in FLAG_RANK else previous
+        ranks.append(previous)
+    return [item for _, item in sorted(zip(ranks, items), key=lambda pair: pair[0])]
 
 
 def fmt_comment_sh(flag: str, value: str | None, description: str, col: int = 32) -> str:
@@ -182,7 +198,7 @@ def build_sh_cmd(name: str, pairs: list[tuple[str, str | None]],
     pair_dict = {f: v for f, v in pairs}
     init_present = [f for f in INIT_FLAGS if f in pair_dict]
     node_present = [f for f in NODE_FLAGS if f in pair_dict]
-    emitted: set[str] = set()
+    emitted: set[str] = set()   # only the grouped flags, so a repeated flag is written every time
 
     for flag, value in pairs:
         if flag in emitted:
@@ -200,7 +216,6 @@ def build_sh_cmd(name: str, pairs: list[tuple[str, str | None]],
                 lines.append(f'  {parts} \\')
                 emitted.update(node_present)
         else:
-            emitted.add(flag)
             val = f' {value}' if value is not None else ''
             lines.append(f'  {flag}{val} \\')
 
@@ -222,10 +237,10 @@ def get_mode_sh(lines: list[str]) -> str:
     for w in reversed(last.split()):
         if w in MODES:
             return w
-    return 'run'
+    return None
 
 
-def process_sh_file(path: Path) -> bool:
+def process_sh_file(path: Path, write: bool = True) -> bool:
     text = path.read_text(encoding='utf-8')
     src_lines = text.splitlines(keepends=True)
     out: list[str] = []
@@ -252,6 +267,16 @@ def process_sh_file(path: Path) -> bool:
             redirect = get_redirect_sh(cmd_lines)
             mode = get_mode_sh(cmd_lines)
 
+            def keep_as_is():
+                out.extend(l + '\n' for l in comment_lines)
+                out.extend(l + '\n' for l in cmd_lines)
+
+            if len(cmd_lines) == 1 or mode is None:
+                # one line, or no mode (e.g. bexhoma experiment <yaml>): not ours to rewrite
+                keep_as_is()
+                i += 1
+                continue
+
             all_tokens = ' '.join(
                 l.rstrip().rstrip('\\').strip() for l in cmd_lines
             ).split()
@@ -263,18 +288,24 @@ def process_sh_file(path: Path) -> bool:
                 all_tokens = all_tokens[skip:]
 
             pairs = parse_flag_pairs(all_tokens)
-            pairs = reorder_and_dedup(pairs)
+            if pairs is None:
+                keep_as_is()
+                i += 1
+                continue
+            pairs = ordered(pairs)
 
             # Build description map from comment block
-            desc_map: dict[str, str] = {}
+            desc_map: dict[tuple[str, str | None], str] = {}   # by flag and value: --set repeats
             for cl in comment_lines:
                 parsed = parse_sh_comment(cl)
                 if parsed:
-                    desc_map[parsed[0]] = parsed[2]
+                    desc_map[(parsed[0], parsed[1])] = parsed[2]
+                    desc_map.setdefault((parsed[0], None), parsed[2])
 
             # Reconstruct
             for flag, value in pairs:
-                out.append(fmt_comment_sh(flag, value, desc_map.get(flag, '')) + '\n')
+                description = desc_map.get((flag, value), desc_map.get((flag, None), ''))
+                out.append(fmt_comment_sh(flag, value, description) + '\n')
             for cl in build_sh_cmd(name, pairs, mode, redirect):
                 out.append(cl + '\n')
         else:
@@ -283,7 +314,8 @@ def process_sh_file(path: Path) -> bool:
 
     new_text = ''.join(out)
     if new_text != text:
-        path.write_text(new_text, encoding='utf-8', newline='\n')
+        if write:
+            path.write_text(new_text, encoding='utf-8', newline='\n')
         return True
     return False
 
@@ -310,7 +342,7 @@ def parse_ps1_flag_line(line: str) -> tuple[str, str | None, str] | None:
     return flag, value, description
 
 
-def process_ps1_file(path: Path) -> bool:
+def process_ps1_file(path: Path, write: bool = True) -> bool:
     text = path.read_text(encoding='utf-8')
     src_lines = text.splitlines(keepends=True)
     out: list[str] = []
@@ -350,15 +382,8 @@ def process_ps1_file(path: Path) -> bool:
                 if parsed:
                     triples.append(parsed)
 
-            # Sort
-            triples = sorted(triples, key=lambda t: rank(t[0]))
-            seen: set[str] = set()
-            deduped = []
-            for t in triples:
-                if t[0] not in seen:
-                    seen.add(t[0])
-                    deduped.append(t)
-            triples = deduped
+            # Sort (stable, repeated flags kept, unknown flags stay after their predecessor)
+            triples = ordered(triples)
 
             # Reconstruct
             out.append(f'{cmd_name} `\n')
@@ -371,7 +396,8 @@ def process_ps1_file(path: Path) -> bool:
 
     new_text = ''.join(out)
     if new_text != text:
-        path.write_text(new_text, encoding='utf-8', newline='\n')
+        if write:
+            path.write_text(new_text, encoding='utf-8', newline='\n')
         return True
     return False
 
@@ -385,26 +411,22 @@ SKIP = {
     '_reorder_flags.py',
 }
 
-if __name__ == '__main__':
+def main(argv: list[str]) -> int:
+    check = '--check' in argv
     root = Path(__file__).parent
     changed = 0
+    for pattern, process in (('test*.sh', process_sh_file), ('test*.ps1', process_ps1_file)):
+        for p in sorted(root.glob(pattern)):
+            if p.name in SKIP:
+                continue
+            if process(p, write=not check):
+                print(f'  {"would update" if check else "updated"}  {p.name}')
+                changed += 1
+            elif not check:
+                print(f'  no change {p.name}')
+    print(f'\n{changed} file(s) {"would be " if check else ""}updated.')
+    return 1 if check and changed else 0
 
-    for p in sorted(root.glob('test*.sh')):
-        if p.name in SKIP:
-            continue
-        if process_sh_file(p):
-            print(f'  updated  {p.name}')
-            changed += 1
-        else:
-            print(f'  no change {p.name}')
 
-    for p in sorted(root.glob('test*.ps1')):
-        if p.name in SKIP:
-            continue
-        if process_ps1_file(p):
-            print(f'  updated  {p.name}')
-            changed += 1
-        else:
-            print(f'  no change {p.name}')
-
-    print(f'\n{changed} file(s) updated.')
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))

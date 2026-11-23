@@ -19,7 +19,7 @@ from os import makedirs, path
 import time
 from timeit import default_timer
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import re
 import pandas as pd
 import json
@@ -116,6 +116,12 @@ SECONDS_PER_MINUTE = 60
 #: would otherwise leave the others waiting for it forever. The benchmark
 #: itself, once started, has no limit.
 BENCHMARK_START_TIMEOUT_MINUTES = 15
+
+#: Minutes a loading pod may stay unschedulable (``PodScheduled=False``,
+#: reason ``Unschedulable``, e.g. "Too many pods") before its load is aborted.
+#: The loaders of a job wait for each other at a barrier, so one pod that is
+#: never placed leaves the others waiting forever, also without ``-lt``.
+LOADING_UNSCHEDULABLE_TIMEOUT_MINUTES = 15
 
 #: Container waiting reasons that mean a loading pod cannot pull its image.
 IMAGE_PULL_WAITING_REASONS = frozenset({'ErrImagePull', 'ImagePullBackOff'})
@@ -1908,17 +1914,37 @@ class ExperimentBase():
         A repetition that found the volume of an earlier repetition loaded
         (without ``-rsrp``) is listed too, informational only.
 
+        Loading switched off by ``-sl`` (or ``skip_loading`` of a YAML system)
+        measured nothing either: ``-sl`` is for a DBMS bexhoma does not manage,
+        so there is no volume and its state is unknown. Such configurations make
+        the test skipped as well. Results written before ``loading_deactivated``
+        was recorded fall back to the workload note "Loading is skipped."
+
         :param connections_sorted: Connection dicts of ``connections.config``.
         """
+        if any('loading_deactivated' in c for c in connections_sorted):
+            deactivated = sorted({c.get('configuration', c['name'])
+                                  for c in connections_sorted if c.get('loading_deactivated')})
+        elif "\nLoading is skipped." in (getattr(self, 'workload', None) or {}).get('info', ''):
+            deactivated = sorted({c.get('configuration', c['name']) for c in connections_sorted})
+        else:
+            deactivated = []
         recorded = [c for c in connections_sorted if 'storage_reused' in c]
-        if recorded:
-            reused = sorted({c.get('configuration', c['name']) for c in recorded if c['storage_reused']})
-            if reused:
-                print("\n### Reused Storage")
-                print("* loading skipped, loading times inherited from an earlier experiment: {}".format(", ".join(reused)))
-                self._record_skipped_test("Loading measured in this experiment (storage reused, loading times inherited: {})".format(", ".join(reused)))
-            else:
-                self._record_test(True, "Loading measured in this experiment")
+        reused = sorted({c.get('configuration', c['name']) for c in recorded
+                         if c['storage_reused'] and c.get('configuration', c['name']) not in deactivated})
+        reasons = []
+        if deactivated:
+            print("\n### Loading Skipped")
+            print("* loading skipped by -sl, DBMS not managed by bexhoma, nothing loaded or measured: {}".format(", ".join(deactivated)))
+            reasons.append("loading skipped by -sl, DBMS not managed by bexhoma: {}".format(", ".join(deactivated)))
+        if reused:
+            print("\n### Reused Storage")
+            print("* loading skipped, loading times inherited from an earlier experiment: {}".format(", ".join(reused)))
+            reasons.append("storage reused, loading times inherited: {}".format(", ".join(reused)))
+        if reasons:
+            self._record_skipped_test("Loading measured in this experiment ({})".format("; ".join(reasons)))
+        elif recorded:
+            self._record_test(True, "Loading measured in this experiment")
         # its loading times are copies, so they are no further sample of loading
         inherited = sorted({
             "{}-{}".format(c.get('configuration', c['name']), c.get('parameter', {}).get('numExperiment', '?'))
@@ -2215,6 +2241,9 @@ class ExperimentBase():
                     f"Loading job {job} for {config.configuration} reached "
                     "Kubernetes' terminal Failed condition"
                 )
+        reason = self._unschedulable_loading_pod(config, now)
+        if reason:
+            return reason
 
         if config.loading_started_at is None:
             config.loading_started_at = now
@@ -2226,6 +2255,37 @@ class ExperimentBase():
                 f"Loading for {config.configuration} exceeded its "
                 f"{self.max_loading_minutes} minute timeout"
             )
+        return None
+
+    def _unschedulable_loading_pod(self, config: "SutConfiguration", now: datetime) -> Optional[str]:
+        """Return why the load must abort because a loading pod cannot be placed, or ``None``.
+
+        A loading pod that stays ``Pending`` with ``PodScheduled=False`` (reason
+        ``Unschedulable``) for :data:`LOADING_UNSCHEDULABLE_TIMEOUT_MINUTES`
+        since the scheduler first refused it blocks the other pods of its job at
+        the loader barrier. Only ``Pending`` pods are read, so a load whose pods
+        all run costs one list call per pass.
+
+        :param config: Configuration whose loading pods are checked.
+        :param now: Current time (UTC, naive, as the experiment loop passes it).
+        :return: The abort reason, with the scheduler's message; ``None`` otherwise.
+        """
+        pending = self.cluster.get_pods(
+            app=config.appname, component='loading', experiment=config.code,
+            configuration=config.configuration, status='Pending') or []
+        for pod in pending:
+            unschedulable = self.cluster.get_pod_unschedulable(pod)
+            if not unschedulable:
+                continue
+            since, message = unschedulable
+            if since.tzinfo is not None:
+                since = since.astimezone(timezone.utc).replace(tzinfo=None)
+            if (now - since).total_seconds() >= LOADING_UNSCHEDULABLE_TIMEOUT_MINUTES * SECONDS_PER_MINUTE:
+                return (
+                    f"Loading pod {pod} of {config.configuration} could not be scheduled for "
+                    f"{LOADING_UNSCHEDULABLE_TIMEOUT_MINUTES} minutes ({message.strip() or 'Unschedulable'}); "
+                    "the other loading pods wait for it"
+                )
         return None
 
     def _start_sut_or_abort(self, config: "SutConfiguration") -> bool:

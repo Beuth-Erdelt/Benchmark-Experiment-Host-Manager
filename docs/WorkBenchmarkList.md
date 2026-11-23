@@ -35,27 +35,27 @@ def work_benchmark_list(
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Pre-loop                                                        │
-│    • Check cluster monitoring health                             │
-│    • Write experiment_dict JSON files for each config            │
+│  Pre-loop                                                       │
+│    • Check cluster monitoring health                            │
+│    • Write experiment_dict JSON files for each config           │
 └────────────────────────────┬────────────────────────────────────┘
                              │
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│  MAIN LOOP  (repeat every `intervals` seconds)                   │
-│                                                                  │
-│  Part A — for each configuration:                                │
-│    Phase 1  Start SUT                                            │
-│    Phase 2  Start monitoring (if needed)                         │
-│    Phase 3  Wait for SUT health; start loading                   │
-│    Phase 4  Submit benchmarker job(s)                            │
-│    Phase 5  Collect SUT logs; stop / restart / mark done         │
-│                                                                  │
-│  Part B — for each configuration:                                │
-│    Harvest completed benchmarker job pods (store logs, describe) │
-│    On job success: call end_benchmarking(), delete job           │
-│                                                                  │
-│  Loop termination check                                          │
+│  MAIN LOOP  (repeat every `intervals` seconds)                  │
+│                                                                 │
+│  Part A — for each configuration:                               │
+│    Phase 1  Start SUT                                           │
+│    Phase 2  Start monitoring (if needed)                        │
+│    Phase 3  Wait for SUT health; start loading                  │
+│    Phase 4  Submit benchmarker job(s)                           │
+│    Phase 5  Collect SUT logs; stop / restart / mark done        │
+│                                                                 │
+│  Part B — for each configuration:                               │
+│    Harvest completed benchmarker job pods (store logs, describe)│
+│    On job success: call end_benchmarking(), delete job          │
+│                                                                 │
+│  Loop termination check                                         │
 └─────────────────────────────────────────────────────────────────┘
 ```
 

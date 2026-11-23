@@ -4,6 +4,16 @@ Status: **open, 2026-11-22.** The refactor (branch dbms-agnostic-code, #850) is 
 test-docs suite (~490 logs, 2026-11-11..18) passed and covers most of the old checklist. This plan lists only
 what was never checked after the refactor, and what follows from it.
 
+Checked 2026-11-23: section 1 is **done** and merged in #901 (v0.12.2). The 1.5 rerun with indexes,
+constraints and statistics `true` (`tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml`) passed every test;
+the docs placeholders are filled, `logs_tests/SUMMARY.md` has no unchecked row.
+Done 2026-11-23 on branch `small-corrections` (local, not pushed): section 3 in code (a87f1894, `-sl` makes the
+loading test skipped; result contract 1.15.0), section 7 (48b41866, both sync tools fixed, with tests).
+Still open: section 2 (CedarDB SSB never ran; `docs_tpch_databaseservice_execution.log` is still 0.11.12, and its
+rerun is also the cluster check of section 3), sections 4 and 5.
+Side finding of 1.5, not fixed: the PgDuckDB force-execution workload note ignores a system's own `sut_parameters`
+(belongs to [plan-pgduckdb-force-execution.md](plan-pgduckdb-force-execution.md), deferred by the user 2026-11-23).
+
 Already covered, do not re-propose: refresh for CedarDB/Citus/ClickHouseCluster/DatabaseService; tenancy
 container/database/schema; `-xdim distributed`; `-xcol`; `-xdfe`; TiDB/YugabyteDB/CockroachDB/Cassandra;
 key-value cluster and replica modes; MariaDBCS `-nlp` notice; PGBouncer pooling with single values;
@@ -11,7 +21,7 @@ key-value cluster and replica modes; MariaDBCS `-nlp` notice; PGBouncer pooling 
 
 Branch: `dbms-generic-verification-runs` (from dev, commit b2a26bfc, not pushed).
 
-## 1. Running now (started 2026-11-22)
+## 1. New blocks (run 2026-11-22, done, #901)
 
 The four new blocks of b2a26bfc run one after the other, log to `logs_tests/`:
 
@@ -67,11 +77,13 @@ Cause: `_show_loading_provenance()` (`bexhoma/experiments/base.py:1898-1921`) on
 which comes from the PVC `loaded=True` gate. `-sl` is for DBMS bexhoma does not manage (no PVC, state
 unknown), so `storage_reused` is False and the test is recorded as passed.
 
-- [ ] Fix: when loading was skipped by `-sl`, record the test as skipped with the reason
-  ("loading skipped by -sl, DBMS not managed by bexhoma"), not passed. Same mechanism as the reused-storage
-  case, no new test name.
-- [ ] Unit test with a fake connection list (with and without `-sl`); `report_writer.py:256` describes the
-  skipped variant, extend that text.
+- [x] Fix (2026-11-23): `connections.config` gets `loading_deactivated` per connection
+  (`configurations/metrics.py`); `_show_loading_provenance()` records the test as skipped
+  "(loading skipped by -sl, DBMS not managed by bexhoma: <configurations>)", combined with the reuse reason when
+  both apply. Results without the field fall back to the workload note "Loading is skipped.". Result contract
+  1.15.0 (`skipped_when` extended).
+- [x] Unit tests in `tests/test_storage_classes.py::LoadingProvenanceTest` (with/without `-sl`, both reasons,
+  old results); the report's interpretation text in `report_writer.py` describes the skipped variant.
 - [ ] Verified by the 2.1 rerun (section 2): the summary must show the skipped test.
 
 ## 4. Phase 0: local refusals (no cluster; kubectl context without access)
@@ -102,11 +114,17 @@ unknown), so `storage_reused` is False and the test is recorded as passed.
 
 ## 7. Tooling found broken on the way
 
-- [ ] `scripts/_reorder_flags.py` is stale: moves `-rnp` and `-ar` to the end of each call; one run rewrote
-  53 files. Fix the flag order it expects, or remove it. Do not run it until then.
-- [ ] `scripts/_sync_ps.py`: drops the second value of `-dbms A B`, and mangles a call without flags
-  (`bexhoma experiment <yaml>`). Both fixed by hand in b2a26bfc; fix the tool and add a test case for both.
+- [x] `scripts/_reorder_flags.py` (fixed 2026-11-23): keeps every value (`-dbms A B`) and every
+  repeated flag (`--set`, each with its own comment), a flag missing from the table stays after its predecessor
+  instead of moving to the end, one-line calls and calls without mode are left alone; `-rnp` and `-xnpd` added
+  to the order as in the README; `--check` writes nothing. Checked on a copy of all scripts: no command token
+  changes. Still: 44 files do not follow the README order and would be reordered (comments rebuilt from the
+  commands); running it is a separate decision, docs would need `_sync_docs.py` afterwards.
+- [x] `scripts/_sync_ps.py` (fixed 2026-11-23): compares subcommand, positional arguments, flags
+  with all values in order and mode; carries `-dbms A B`, repeated `--set`, `load`/`start` and one-line calls over;
+  `--check`. Finds no difference in the current scripts.
+- Tests for both: `tests/test_script_sync_tools.py`.
 
 ## Order
 
-1 (running) → 3 (small fix, then verified by 2.1) → 2 → 7 → 4 → 5 after decisions.
+1 (done) → 3 (code done; verified by 2.1) → 2 → 7 (done) → 4 → 5 after decisions.

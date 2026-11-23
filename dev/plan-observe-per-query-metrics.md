@@ -15,8 +15,8 @@ Not done: the refresh on agent start, the staleness check (`source_sha256`
 is written but not compared), and application metrics in the catalog
 (waits for the catalog split). Builds on `observe:` being re-enabled in catalog
 contract 1.9.1. Checked 2026-11-22: all three still open (`source_sha256` is
-only written in `environment.py`); the catalog is not split and is at 54,087 of
-56,000 characters, so the application metrics still wait.
+only written in `environment.py`); the catalog is not split and is at 53,633 of
+56,000 characters (2026-11-23, catalog 1.13.1), so the application metrics still wait.
 
 ## Goal
 

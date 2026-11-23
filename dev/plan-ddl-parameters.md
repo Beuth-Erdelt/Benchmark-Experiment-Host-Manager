@@ -9,7 +9,7 @@ cluster checks A–R OK. Item 14 (`-xdim` for TPC-H, ClickHouseCluster only)
 committed (91f96682). M4 batches 1-4 committed (da4121ee, 3ee48d99). All keys per DBMS are in docs/DBMS.md (kept by a test). Open:
 rest of M4, M5, 13b. Checked 2026-11-22: the ClickHouse docs rerun is done
 (`docs_tpch_clickhouse_cluster`, 2026-11-05, "Dimensions ... a full copy on every
-node (-xdim replicated)"); the catalog is now 54,087 characters (LF-counted) of
+node (-xdim replicated)"); the catalog is now 53,633 characters (LF-counted, 2026-11-23, catalog 1.13.1) of
 the 56,000 whole-read limit, and the test margin was lowered to 500 (51650340,
 "until the contract is split"), so the "53,990 / 53,975" numbers in the table are
 outdated; item 11's comment is in 229 init scripts plus 250 durability copies, not

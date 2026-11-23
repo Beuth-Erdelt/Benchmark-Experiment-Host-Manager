@@ -372,7 +372,7 @@ PostgreSQL-1
 
 Key parameters:
 - `-nlp 8`: 8 parallel loader pods
-- `-nlt 64`: 64 threads per loader pod
+- `-nlt 64`: 64 loader threads in total, 64/8 = 8 per pod
 
 The summary's **Loading** table shows aggregate throughput across all loader pods.
 The **Ingestion** tables show how much CPU and RAM the SUT and loader consumed.

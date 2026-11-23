@@ -9,11 +9,19 @@ Status: **parked 2026-10-22, partly done since.** Checked 2026-11-22:
   aborts with diagnostics. Decided there (open decision 3 below): no PVC is deleted automatically.
 - P6 done: #709 is closed with a comment.
 - Still open: **P2** (`/mysqltmp` is still `emptyDir` `medium: Memory`, `sizeLimit: 32Gi`; the TPC-DS storage
-  runs raise it by `--set ...volume[mysqltmp].sizeLimit`), **P5** (`-nlt` is still ignored: the image runs
-  `loader.sh`, only the unused `loader-parallel.sh` reads `MYSQL_LOADING_THREADS`, while `docs/Example-MySQL.md`
-  says "8 threads each (`-nlt`)"), and the **loader barrier hang** of section 3 (a loader pod that stays
-  `Pending`, e.g. "Too many pods", blocks the job forever; no timeout). A4 (start check pool vs. limit) is
-  still a candidate guard.
+  runs raise it by `--set ...volume[mysqltmp].sizeLimit`). A4 (start check pool vs. limit) is still a
+  candidate guard.
+- Done 2026-11-23 on branch `small-corrections` (local, not pushed; no cluster run yet): P5 in 7e98b8b7, the
+  barrier timeout in 270d5342.
+  - **P5**, decided as proposed (drop): MySQL's tpch/tpcds entries no longer declare `per_loading_threads`
+    (no extra `MYSQL_LOADING_*` env, no configuration per `-nlt` value). Any DBMS without it now prints
+    "<DBMS>: the loader does not use loading threads, ignoring -nlt N" (`system_builder.loading_variants`,
+    once per DBMS). Docs (MySQL, MariaDB, MonetDB, TPC-H, TPC-DS, DBMS.md) say `-nlt` is ignored there; catalog
+    1.13.1 says threads are ignored by every TPC-H loader. Images unchanged (`loader-parallel.sh` stays unused).
+  - **Loader barrier hang**: a loading pod `Pending` with `PodScheduled=False/Unschedulable` for 15 minutes
+    (`LOADING_UNSCHEDULABLE_TIMEOUT_MINUTES`, counted from the condition's transition time) aborts the load
+    with the scheduler's message, also without `-lt`: diagnostics, failed test, experiment removed, like a
+    Failed loading job. Only `Pending` pods are read (`Kubernetes.get_pod_unschedulable`).
 - WP10 point 6 of the OLTP plan ("bexhoma already detects SUT restarts and marks the load as failed") is true
   since #848 W7.
 
@@ -210,5 +218,5 @@ MySQL with 8G vs. the 10G run 1792540834 (same nodes, `-xld relaxed`): 970 s vs.
 2. P2: tmpdir on disk (a) or sized tmpfs (b)? **Open.**
 3. P4: ~~on a failed load, delete the PVC always, or only with `-xld unsafe` / `-rsr`?~~ Decided in #848 W7:
    never delete automatically; a failed or unfinished volume is refused with "remove it (-rsr)".
-4. P5: implement `-nlt` for MySQL/MariaDB or drop it? **Open** (proposal: drop it from the docs).
-5. Order: ~~P4 + P3 first~~ done (#848); left: P2, P5, loader barrier timeout.
+4. P5: implement `-nlt` for MySQL/MariaDB or drop it? **Dropped** 2026-11-23 (bexhoma reports it as ignored).
+5. Order: ~~P4 + P3 first~~ done (#848); P5 and the loader barrier timeout done 2026-11-23; left: P2.
