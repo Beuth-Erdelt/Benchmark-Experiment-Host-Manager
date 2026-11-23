@@ -146,7 +146,7 @@ class BenchbaseEvaluator(LogEvaluator):
                         df["efficiency"] = 0.45 * 60. * 100. * df['Goodput (requests/second)'] / 12.86 / df['sf']
                     return df
                 else:
-                    print("no results found in log file {}".format(filename))
+                    print(f"no results found in log file {filename}")
                     return df_header
             else:
                 return df_header
@@ -173,7 +173,7 @@ class BenchbaseEvaluator(LogEvaluator):
         else:
             has_result = pd.Series(False, index=df.index)
         for pod in df.loc[~has_result, 'pod'] if 'pod' in df.columns else []:
-            print("no benchbase results for pod {}, left out of the summary".format(pod))
+            print(f"no benchbase results for pod {pod}, left out of the summary")
         return df[has_result]
     def benchmarking_set_datatypes(self, df):
         """
@@ -383,7 +383,7 @@ class BenchbaseEvaluator(LogEvaluator):
             df_total = pd.DataFrame()
         num_logs = 0
         for file_logs in list_logs:
-            pattern = 'bexhoma-benchmarker-*-{}.log'.format(file_logs)
+            pattern = f'bexhoma-benchmarker-*-{file_logs}.log'
             matching_files = find_matching_files(self.path, pattern)
             for file in matching_files:
                 num_logs = num_logs + 1

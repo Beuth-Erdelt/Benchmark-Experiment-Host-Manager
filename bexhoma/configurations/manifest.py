@@ -383,17 +383,13 @@ class ManifestBuilder:
                 if any(c.get("name") == container for c in containers):
                     found_container = True
             if not found_doc:
-                print("{:30s}: {}[{}] not found in file".format(
-                    self._config.configuration, kind, workload))
+                print(f"{self._config.configuration:30s}: {kind}[{workload}] not found in file")
             elif not found_container:
-                print("{:30s}: container[{}] not found in {}[{}]".format(
-                    self._config.configuration, container, kind, workload))
+                print(f"{self._config.configuration:30s}: container[{container}] not found in {kind}[{workload}]")
             elif changed_this:
-                print("{:30s}: updated {}[{}].container[{}].{} = {}".format(
-                    self._config.configuration, kind, workload, container, param, val))
+                print(f"{self._config.configuration:30s}: updated {kind}[{workload}].container[{container}].{param} = {val}")
             else:
-                print("{:30s}: {}[{}].container[{}].{} already set to desired value".format(
-                    self._config.configuration, kind, workload, container, param))
+                print(f"{self._config.configuration:30s}: {kind}[{workload}].container[{container}].{param} already set to desired value")
         return yaml_docs
 
     def patch_volume_op(self, yaml_docs: List[dict], sel: dict, val: str) -> None:
@@ -410,7 +406,7 @@ class ManifestBuilder:
         workload = sel["workload"]
         volume_name = sel["volume"]
         field = sel["field"]
-        selector = "{}[{}].volume[{}].{}".format(kind, workload, volume_name, field)
+        selector = f"{kind}[{workload}].volume[{volume_name}].{field}"
         found_doc = False
         volumes = []
         for doc in yaml_docs:
@@ -421,27 +417,25 @@ class ManifestBuilder:
             if volume is not None:
                 volumes.append(volume)
         if not found_doc:
-            print("{:30s}: {}[{}] not found in file".format(self._config.configuration, kind, workload))
+            print(f"{self._config.configuration:30s}: {kind}[{workload}] not found in file")
             return
         if not volumes:
-            print("{:30s}: volume[{}] not found in {}[{}]".format(
-                self._config.configuration, volume_name, kind, workload))
+            print(f"{self._config.configuration:30s}: volume[{volume_name}] not found in {kind}[{workload}]")
             return
         changed = False
         for volume in volumes:
             try:
                 changed = patch_volume(volume, field, val) or changed
             except ValueError as e:
-                print("{:30s}: {}[{}]: {}, not changed".format(self._config.configuration, kind, workload, e))
+                print(f"{self._config.configuration:30s}: {kind}[{workload}]: {e}, not changed")
                 return
         if changed:
-            print("{:30s}: updated {} = {}".format(self._config.configuration, selector, val))
+            print(f"{self._config.configuration:30s}: updated {selector} = {val}")
         else:
-            print("{:30s}: {} already set to desired value".format(self._config.configuration, selector))
+            print(f"{self._config.configuration:30s}: {selector} already set to desired value")
         memory_limit = ((getattr(self._config, "resources", None) or {}).get("limits") or {}).get("memory")
         if any(memory_volume_exceeds_limit(volume, memory_limit) for volume in volumes):
-            print("{:30s}: warning: volume[{}] is in RAM and may grow beyond the memory limit {} (-lr)".format(
-                self._config.configuration, volume_name, memory_limit))
+            print(f"{self._config.configuration:30s}: warning: volume[{volume_name}] is in RAM and may grow beyond the memory limit {memory_limit} (-lr)")
 
     def create_manifest_job(
         self,
@@ -531,9 +525,7 @@ class ManifestBuilder:
         name_service_headless = name_worker
         list_of_workers = []
         for worker in range(cfg.num_worker):
-            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(
-                name_worker=name_worker, worker_number=worker,
-                worker_service=name_service_headless)
+            worker_full_name = f"{name_worker}-{worker}.{name_service_headless}"
             list_of_workers.append(worker_full_name)
         list_of_workers_as_string = ",".join(list_of_workers)
         env_default['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
@@ -581,13 +573,11 @@ class ManifestBuilder:
             env_default['BEXHOMA_USER'] = c['auth'][0]
             env_default['BEXHOMA_PASSWORD'] = c['auth'][1]
         if cfg.num_worker > 0:
-            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(
-                name_worker=name_worker, worker_number=0,
-                worker_service=name_service_headless)
+            worker_full_name = f"{name_worker}-{0}.{name_service_headless}"
             env_default['BEXHOMA_WORKER_FIRST'] = worker_full_name
         env_default.update(cfg.dockertemplate.get('client_env', {}))
         env = {**env_default, **env}
-        cfg.logger.debug('ManifestBuilder.create_manifest_job({})'.format(jobname))
+        cfg.logger.debug(f'ManifestBuilder.create_manifest_job({jobname})')
         cfg.logger.debug(env)
         # Suffixed by benchmark_run (when given) so that two entries sharing the same
         # (app, component, configuration, experiment_run, client) — e.g. two parallel
@@ -595,13 +585,10 @@ class ManifestBuilder:
         # or two parallel benchmarker entries in the same client round — get their own
         # manifest file on disk instead of the later one silently overwriting the earlier
         # one's.
-        benchmark_run_suffix = '-{}'.format(benchmark_run) if benchmark_run else ''
+        benchmark_run_suffix = f'-{benchmark_run}' if benchmark_run else ''
         job_experiment = (
             cfg.experiment.path
-            + '/{app}-{component}-{configuration}-{experiment}-{experiment_run}-{client}{benchmark_run_suffix}.yml'.format(
-                app=app, component=component, configuration=configuration,
-                experiment=code, experiment_run=experiment_run, client=client,
-                benchmark_run_suffix=benchmark_run_suffix).lower()
+            + f'/{app}-{component}-{configuration}-{code}-{experiment_run}-{client}{benchmark_run_suffix}.yml'.lower()
         )
         try:
             result = self.get_patched_yaml(
@@ -644,7 +631,7 @@ class ManifestBuilder:
                         env_manifest[e['name']] = e['value']
                     env_merged = {**env_manifest, **env}
                     cfg.logger.debug(
-                        'ManifestBuilder.create_manifest_job({})'.format(str(env_merged)))
+                        f'ManifestBuilder.create_manifest_job({str(env_merged)})')
                     dep['spec']['template']['spec']['containers'][i_container]['env'] = []
                     for i, e in env_merged.items():
                         dep['spec']['template']['spec']['containers'][i_container]['env'].append(
@@ -816,7 +803,7 @@ class ManifestBuilder:
         if len(cfg.loading_parameters):
             cfg.connection_parameter['loading_parameters'] = cfg.loading_parameters
         env = {**base_env, **cfg.loading_parameters, **env}
-        cfg.logger.debug("create_manifest_loading:env={}".format(env))
+        cfg.logger.debug(f"create_manifest_loading:env={env}")
         template = "jobtemplate-loading.yml"
         if len(cfg.experiment.jobtemplate_loading) > 0:
             template = cfg.experiment.jobtemplate_loading

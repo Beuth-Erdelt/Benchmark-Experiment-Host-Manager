@@ -683,7 +683,7 @@ class YcsbEvaluator(LogEvaluator):
             df_total = pd.DataFrame()
         num_logs = 0
         for file_logs in list_logs:
-            pattern = 'bexhoma-{}-*-{}.log'.format(filetype, file_logs)
+            pattern = f'bexhoma-{filetype}-*-{file_logs}.log'
             matching_files = find_matching_files(self.path, pattern)
             for file in matching_files:
                 num_logs = num_logs + 1
@@ -1158,7 +1158,7 @@ class YcsbEvaluator(LogEvaluator):
         experiment._record_test(
             bool((missing == 0).all()),
             "Loading Phase: all rows inserted" if (missing == 0).all()
-            else "Loading Phase: {} of {} rows not inserted".format(int(missing.max()), int(rows.max())),
+            else f"Loading Phase: {int(missing.max())} of {int(rows.max())} rows not inserted",
         )
 
 

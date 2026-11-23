@@ -340,13 +340,13 @@ def _node_nodeselector_patch(node: str) -> str:
     :return: YAML patch string for :meth:`SutConfiguration.patch_benchmarking`.
     :rtype: str
     """
-    return """
+    return f"""
     spec:
       template:
         spec:
           nodeSelector:
             kubernetes.io/hostname: {node}
-    """.format(node=node)
+    """
 
 
 def run_hardware_baseline(

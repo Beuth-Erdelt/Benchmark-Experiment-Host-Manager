@@ -287,7 +287,7 @@ class LogEvaluator(EvaluatorBase):
         if plot_by is None:
             fig, ax = plt.subplots()
             for key, grp in df.groupby(column):
-                labels = "{} {}".format(key, column)
+                labels = f"{key} {column}"
                 ax = grp.plot(ax=ax, kind=kind, x=x, y=y, title=y, label=labels, figsize=figsize)
                 ax.set_ylim(0,df[y].max())
             plt.legend(loc='best')
@@ -300,7 +300,7 @@ class LogEvaluator(EvaluatorBase):
             fig, axes = plt.subplots(nrows=num_rows, ncols=2, sharex=True, squeeze=False, figsize=(figsize[0], figsize[1] * num_rows))
             for key1, grp in groups:
                 for key2, grp2 in grp.groupby(column):
-                    labels = "{} {}, {} {}".format(key1, plot_by, key2, column)
+                    labels = f"{key1} {plot_by}, {key2} {column}"
                     if dict_colors is not None and len(dict_colors):
                         ax = grp2.plot(ax=axes[row_idx, col_idx], kind=kind, x=x, y=y, label=labels, title=y, figsize=figsize, layout=(num_rows, 2), color=dict_colors)
                     else:
@@ -523,15 +523,13 @@ class LogEvaluator(EvaluatorBase):
         connections_sorted = self.get_connection_config()
         metric_keys = self.get_monitoring_metrics()
         for metric_key in metric_keys:
-            out_filename = "query_{component}_metric_{metric}.csv".format(component=component, metric=metric_key)
+            out_filename = f"query_{component}_metric_{metric_key}.csv"
             df_all = monitor.metrics.loadMetricsDataframe(self.path + "/" + out_filename)
             connection_filenames = []
             processed_names = set()
             for connection in connections_sorted:
                 connectionname = connection.get('orig_name', connection['name'])
-                filename = "query_{component}_metric_{metric}_{connection}.csv".format(
-                    component=component, metric=metric_key, connection=connectionname
-                )
+                filename = f"query_{component}_metric_{metric_key}_{connectionname}.csv"
                 connection_filenames.append(filename)
                 own_filename = filename
                 if connection['name'] != connectionname:
@@ -575,7 +573,7 @@ class LogEvaluator(EvaluatorBase):
         :return: Wide-format DataFrame, or empty DataFrame if the file does not exist.
         :rtype: pandas.DataFrame
         """
-        filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
+        filename = f'/query_{component}_metric_{metric}.csv'
         if os.path.isfile(self.path+"/"+filename):
             df = pd.read_csv(self.path+"/"+filename).T
             df = df.reindex(index=natural_sort(df.index))

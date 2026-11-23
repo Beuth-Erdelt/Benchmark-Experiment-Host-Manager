@@ -241,7 +241,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         """
         if self.evaluation is None:
             return []
-        return ['Q{}'.format(i + 1) for i in self.evaluation.get_survey_successful(timername='run')]
+        return [f'Q{i + 1}' for i in self.evaluation.get_survey_successful(timername='run')]
     def get_query_completion(self):
         """
         Returns which active query each connection of this benchmark completed.
@@ -264,7 +264,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         rows = {}
         for connection, phase in phases.items():
             successful = {
-                'Q{}'.format(i + 1)
+                f'Q{i + 1}'
                 for i in self.evaluation.get_survey_successful(timername='run', dbms_filter=[connection])
             }
             failed = (set(df_errors.columns[df_errors.loc[connection].astype(bool)])

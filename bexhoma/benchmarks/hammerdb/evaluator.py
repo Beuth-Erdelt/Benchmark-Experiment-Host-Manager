@@ -407,7 +407,7 @@ class HammerdbEvaluator(LogEvaluator):
                     skip_next = False
                     continue
                 tpm, month, day, time, year = match.groups()
-                dt = datetime.strptime('{} {} {} {}'.format(year, month, day, time), '%Y %b %d %H:%M:%S')
+                dt = datetime.strptime(f'{year} {month} {day} {time}', '%Y %b %d %H:%M:%S')
                 if datetime_first_measure is None:
                     datetime_first_measure = dt
                 elapsed = (dt - datetime_first_measure).total_seconds()
@@ -440,7 +440,7 @@ class HammerdbEvaluator(LogEvaluator):
             return glob.glob(os.path.abspath(os.path.normpath(os.path.join(directory, pattern))))
         list_df = []
         for file_logs in list_logs:
-            pattern = 'bexhoma-benchmarker-*-{}.log'.format(file_logs)
+            pattern = f'bexhoma-benchmarker-*-{file_logs}.log'
             for file in find_matching_files(self.path, pattern):
                 parsed_results = self.parse_log_file(file)
                 if not parsed_results:

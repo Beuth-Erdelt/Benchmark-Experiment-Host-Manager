@@ -734,8 +734,7 @@ class SutConfiguration:
         self.initscript = expand_durability_placeholders(self.initscript, self.load_durability, folder)
         self.indexscript = expand_durability_placeholders(self.indexscript, self.load_durability, folder)
         self.load_durability_scripts = [s for s in self.initscript + self.indexscript if s not in before]
-        print("{:30s}: load durability {}, scripts {}".format(
-            self.configuration, self.load_durability, self.load_durability_scripts))
+        print(f"{self.configuration:30s}: load durability {self.load_durability}, scripts {self.load_durability_scripts}")
         self.connection_parameter['load_durability'] = self.load_durability
         return self.load_durability_scripts
 
@@ -906,7 +905,7 @@ class SutConfiguration:
         :return: Number of replicas to run for this component.
         :rtype: int
         """
-        return self.resources.get('replicas_{}'.format(component), self.num_worker)
+        return self.resources.get(f'replicas_{component}', self.num_worker)
 
     def get_worker_pods(self, component: str = 'worker', only_stateful: bool = False) -> list:
         """Return a list of all worker pod names for the current SUT.
@@ -934,10 +933,9 @@ class SutConfiguration:
             configuration=self.configuration,
         )
         if self.num_worker > 0:
-            print("{:30s}: worker pods found: {}".format(self.configuration, pods_worker))
+            print(f"{self.configuration:30s}: worker pods found: {pods_worker}")
             pods_worker_stateful = [pod for pod in pods_worker if re.search(r"-\d+$", pod)]
-            print("{:30s}: worker pods found (only stateful set pods): {}".format(
-                self.configuration, pods_worker_stateful))
+            print(f"{self.configuration:30s}: worker pods found (only stateful set pods): {pods_worker_stateful}")
         if only_stateful:
             return pods_worker_stateful
         return pods_worker
@@ -956,13 +954,13 @@ class SutConfiguration:
         if self.statefulset_name:
             for pod in pods_worker:
                 endpoints.append(pod)
-                print("{:30s}: worker endpoint: {}".format(self.configuration, pod))
+                print(f"{self.configuration:30s}: worker endpoint: {pod}")
         else:
             name_worker = self.get_worker_name()
             for pod in pods_worker:
                 endpoint = f'{pod}.{name_worker}'
                 endpoints.append(endpoint)
-                print("{:30s}: worker endpoint: {}".format(self.configuration, endpoint))
+                print(f"{self.configuration:30s}: worker endpoint: {endpoint}")
         self.logger.debug(f"get_worker_endpoints({endpoints})")
         return endpoints
 
@@ -1176,15 +1174,15 @@ class SutConfiguration:
         if (self.num_worker > 0
                 and 'attachWorker' in self.dockertemplate
                 and len(self.dockertemplate['attachWorker']) > 0):
-            print("{:30s}: try to attach workers to master".format(self.configuration))
+            print(f"{self.configuration:30s}: try to attach workers to master")
             pods = self.experiment.cluster.get_pods(
                 component='sut', configuration=self.configuration, experiment=self.code)
             name_worker = self.get_worker_name()
             if len(pods) > 0:
-                print("{:30s}: master found".format(self.configuration))
+                print(f"{self.configuration:30s}: master found")
                 pod_sut = pods[0]
                 num_worker = 0
-                print("{:30s}: looking for worker pods".format(self.configuration))
+                print(f"{self.configuration:30s}: looking for worker pods")
                 while num_worker < self.num_worker:
                     self.wait(5)
                     num_worker = 0
@@ -1193,11 +1191,9 @@ class SutConfiguration:
                         status = self.experiment.cluster.get_pod_status(pod)
                         if status == "Running":
                             num_worker += 1
-                            print("{:30s}: found running worker {}".format(
-                                self.configuration, num_worker))
-                    print("{:30s}: found {} running workers of {}".format(
-                        self.configuration, num_worker, self.num_worker))
-                print("{:30s}: list of workers".format(self.configuration))
+                            print(f"{self.configuration:30s}: found running worker {num_worker}")
+                    print(f"{self.configuration:30s}: found {num_worker} running workers of {self.num_worker}")
+                print(f"{self.configuration:30s}: list of workers")
                 pods_worker = self.get_worker_pods()
                 resultfolder = (
                     self.experiment.cluster.config['benchmarker']['resultfolder']
@@ -1205,11 +1201,9 @@ class SutConfiguration:
                     .replace("C:", "")
                 )
                 for pod in pods_worker:
-                    print("{:30s}: worker {}.{} attached".format(
-                        self.configuration, pod, name_worker))
+                    print(f"{self.configuration:30s}: worker {pod}.{name_worker} attached")
                     self.logger.debug(
-                        'Worker attached: {worker}.{service_sut}'.format(
-                            worker=pod, service_sut=name_worker))
+                        f'Worker attached: {pod}.{name_worker}')
                     _, stdout, _ = self.execute_command_in_pod_sut(
                         self.dockertemplate['attachWorker'].format(
                             worker=pod, service_sut=name_worker),
@@ -1555,8 +1549,8 @@ class SutConfiguration:
                 print("{:30s}: {} values taken from the volume: {}".format(
                     self.configuration, kind, ", ".join(f"{k}={v}" for k, v in report['from_volume'].items())))
             for key, (wanted, found) in report['differences'].items():
-                print("{:30s}: volume loaded with {}={} (requested {}): the run uses the volume's value; "
-                      "-rsr reloads".format(self.configuration, key, found, wanted))
+                print(f"{self.configuration:30s}: volume loaded with {key}={found} (requested {wanted}): the run uses the volume's value; "
+                      "-rsr reloads")
             if report['assumed']:
                 print("{:30s}: volume has no {} label for {}: assumed as requested/default".format(
                     self.configuration, kind, ", ".join(report['assumed'])))

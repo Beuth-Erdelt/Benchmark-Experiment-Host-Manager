@@ -130,5 +130,5 @@ def conflicting_set_args(required: dict, set_args: list, configuration: str) -> 
             continue
         name = selector.get('param', '')
         if name in required and _normalize(value) != _normalize(required[name]):
-            conflicts.append('{}={} (--set), the load needs {}'.format(name, value, required[name]))
+            conflicts.append(f'{name}={value} (--set), the load needs {required[name]}')
     return conflicts

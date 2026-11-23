@@ -101,7 +101,7 @@ def load_data_asynch(
             'kubectl --context {context} exec {pod} --container=dbms -- bash -c "{command}"'
             .format(context=context, pod=pod,
                     command=command.replace('"', '\\"').replace('\n', '\\n')))
-        logger.debug('execute_command_in_pod_sut({})'.format(fullcommand))
+        logger.debug(f'execute_command_in_pod_sut({fullcommand})')
         proc = start_process(
             subprocess.Popen,
             fullcommand, stdin=subprocess.PIPE,
@@ -114,9 +114,8 @@ def load_data_asynch(
     def kubectl(command, context):
         # Only used for reading and (over)writing labels, which is safe to
         # repeat; a lost "phase done" label would stall loading for good.
-        fullcommand = 'kubectl --context {context} {command}'.format(
-            context=context, command=command)
-        logger.debug('execute_command_in_pod_sut({})'.format(fullcommand))
+        fullcommand = f'kubectl --context {context} {command}'
+        logger.debug(f'execute_command_in_pod_sut({fullcommand})')
         deadline = time.monotonic() + CLUSTER_OUTAGE_BUDGET_SECONDS
         while True:
             proc = start_process(
@@ -156,15 +155,15 @@ def load_data_asynch(
         # no time_ prefix: pod labels time_* are read back as script times
         labels['loading_phase_start'] = time_phase_start
         labels['num_tenants_ready'] = 0
-        labels['errors_{script_type}'.format(script_type=script_type)] = 0
+        labels[f'errors_{script_type}'] = 0
     fullcommand = 'label pods ' + pod_sut + ' --overwrite '
     for key, value in labels.items():
-        fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
+        fullcommand = fullcommand + f" {key}={value}"
     kubectl(fullcommand, context)
     if len(volume) > 0:
         fullcommand = 'label pvc ' + volume + ' --overwrite '
         for key, value in labels.items():
-            fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
+            fullcommand = fullcommand + f" {key}={value}"
         kubectl(fullcommand, context)
     # execute scripts
     times_script = dict()
@@ -183,18 +182,14 @@ def load_data_asynch(
                                     namespace=namespace, database=db),
                     pod_sut, context)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stdout.log'
-                    .format(app=app, configuration=configuration,
-                            filename=filename, database=db,
-                            extension=file_extension.lower()).lower())
+                    path + f'/{app}-loading-{configuration}-{filename}-{db}{file_extension.lower()}.stdout.log'
+                    .lower())
                 if len(stdout) > 0:
                     with open(filename_log, 'w', encoding='utf-8') as file:
                         file.write(stdout)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stderr.log'
-                    .format(app=app, configuration=configuration,
-                            filename=filename, database=db,
-                            extension=file_extension.lower()).lower())
+                    path + f'/{app}-loading-{configuration}-{filename}-{db}{file_extension.lower()}.stderr.log'
+                    .lower())
                 if len(stderr) > 0:
                     with open(filename_log, 'w', encoding='utf-8') as file:
                         file.write(stderr)
@@ -205,18 +200,14 @@ def load_data_asynch(
                                         namespace=namespace, database=db),
                     pod_sut, context)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stdout.log'
-                    .format(app=app, configuration=configuration,
-                            filename=filename, database=db,
-                            extension=file_extension.lower()).lower())
+                    path + f'/{app}-loading-{configuration}-{filename}-{db}{file_extension.lower()}.stdout.log'
+                    .lower())
                 if len(stdout) > 0:
                     with open(filename_log, 'w', encoding='utf-8') as file:
                         file.write(stdout)
                 filename_log = (
-                    path + '/{app}-loading-{configuration}-{filename}-{database}{extension}.stderr.log'
-                    .format(app=app, configuration=configuration,
-                            filename=filename, database=db,
-                            extension=file_extension.lower()).lower())
+                    path + f'/{app}-loading-{configuration}-{filename}-{db}{file_extension.lower()}.stderr.log'
+                    .lower())
                 if len(stderr) > 0:
                     with open(filename_log, 'w', encoding='utf-8') as file:
                         file.write(stderr)
@@ -224,8 +215,7 @@ def load_data_asynch(
                 stdout, stderr = '', ''
             if script_failed(stdout, stderr):
                 num_failed += 1
-                logger.warning("{}: loading script {} failed (see {}-loading-{}-{}-*.stderr.log)".format(
-                    configuration, c, app, configuration, filename))
+                logger.warning(f"{configuration}: loading script {c} failed (see {app}-loading-{configuration}-{filename}-*.stderr.log)")
             time_scrip_end = default_timer()
             sep = filename.find("-")
             if sep > 0:
@@ -238,8 +228,7 @@ def load_data_asynch(
     num_tenants_ready = 0
     if num_tenants > 0:
         while True:
-            fullcommand = 'get pod {pod_sut} -o jsonpath="{{.metadata.labels}}"'.format(
-                pod_sut=pod_sut)
+            fullcommand = f'get pod {pod_sut} -o jsonpath="{{.metadata.labels}}"'
             labels_raw = kubectl(fullcommand, context)
             labels_pod = json.loads(labels_raw)
             logger.debug(f"#### Found labels {id_tenant}: {labels_pod}")
@@ -266,25 +255,25 @@ def load_data_asynch(
     logger.debug("#### time_loading after scripts: " + str(time_loading))
     labels = dict()
     labels['num_tenants_ready'] = id_tenant + 1
-    labels['time_{script_type}'.format(script_type=script_type)] = time_phase
+    labels[f'time_{script_type}'] = time_phase
     labels['time_loading_end'] = time_loading_end
     if num_failed > 0:
         # only written when > 0, so a tenant without errors keeps another tenant's count
-        labels['errors_{script_type}'.format(script_type=script_type)] = num_failed
+        labels[f'errors_{script_type}'] = num_failed
     if (num_tenants > 0 and id_tenant == num_tenants - 1) or num_tenants == 0:
         logger.debug(f"#### Last tenant {id_tenant} marks loading as finished")
         labels[script_type] = 'True'
         labels['time_loading'] = time_loading
     for subscript_type, time_subscript_type in times_script.items():
-        labels['time_{script_type}'.format(script_type=subscript_type)] = ceil(time_subscript_type)
-    fullcommand = 'label pods {pod_sut} --overwrite '.format(pod_sut=pod_sut)
+        labels[f'time_{subscript_type}'] = ceil(time_subscript_type)
+    fullcommand = f'label pods {pod_sut} --overwrite '
     for key, value in labels.items():
-        fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
+        fullcommand = fullcommand + f" {key}={value}"
     kubectl(fullcommand, context)
     if len(volume) > 0:
-        fullcommand = 'label pvc {volume} --overwrite '.format(volume=volume)
+        fullcommand = f'label pvc {volume} --overwrite '
         for key, value in labels.items():
-            fullcommand = fullcommand + " {key}={value}".format(key=key, value=value)
+            fullcommand = fullcommand + f" {key}={value}"
         kubectl(fullcommand, context)
 
 
@@ -364,7 +353,7 @@ class LoadingCoordinator:
         # queue from a previous run's population can desynchronise which
         # chunk index a pod gets (see delete + length-check below).
         experiment_run = str(cfg.num_experiment_to_apply_done + 1)
-        cfg.logger.debug("LoadingCoordinator.start_pod({})".format(configuration))
+        cfg.logger.debug(f"LoadingCoordinator.start_pod({configuration})")
         if not self.wait_for_schema(app=app, experiment=experiment, configuration=configuration):
             return
         if getattr(cfg, 'loading_failed_fatal', ''):
@@ -376,8 +365,7 @@ class LoadingCoordinator:
         # Always initialised (even for a single entry) so loader/generator pods can
         # unconditionally wait on this key without needing to know num_data_jobs
         # themselves; with one entry it just equals that entry's own job counter.
-        round_key = '{}-loader-podcount-round-{}-{}'.format(
-            app, cfg.configuration, cfg.code)
+        round_key = f'{app}-loader-podcount-round-{cfg.configuration}-{cfg.code}'
         total_pods = sum(
             entry.get('num_pods', entry.get('parallelism', 1))
             for entry in loader_entries)
@@ -393,9 +381,8 @@ class LoadingCoordinator:
             # script can unconditionally use $BEXHOMA_DATA_JOB, with no
             # "only if there's more than one entry" branch to forget to add.
             benchmark_run = str(data_job)
-            suffix = '-{}'.format(data_job)
-            queue_name = '{}-{}-{}-{}-{}{}'.format(
-                app, component, cfg.configuration, cfg.code, experiment_run, suffix)
+            suffix = f'-{data_job}'
+            queue_name = f'{app}-{component}-{cfg.configuration}-{cfg.code}-{experiment_run}{suffix}'
             # Clear any leftover entries before repopulating, then verify the
             # queue ends up at exactly entry_parallelism items (retrying on a
             # transient kubectl-exec failure). A short queue would make one
@@ -466,8 +453,8 @@ class LoadingCoordinator:
                 if failed:
                     # the loaders need what the scripts create (and usually the same
                     # connection): starting them only turns this into a loader failure
-                    reason = "{} Schema script(s) failed (see *-loading-*.stderr.log)".format(failed)
-                    print("{:30s}: {}, loading jobs not started".format(configuration, reason))
+                    reason = f"{failed} Schema script(s) failed (see *-loading-*.stderr.log)"
+                    print(f"{configuration:30s}: {reason}, loading jobs not started")
                     self.fail_loading_fatally(reason)
                     return False
                 break
@@ -475,17 +462,16 @@ class LoadingCoordinator:
                 # start_exec() could not upload the scripts: no label will come
                 break
             if timeout_minutes is not None and default_timer() - t_start >= timeout_minutes * 60:
-                print("{:30s}: WARNING - no schema=True after the {} minute loading timeout, "
-                      "loading jobs not started".format(configuration, timeout_minutes))
+                print(f"{configuration:30s}: WARNING - no schema=True after the {timeout_minutes} minute loading timeout, "
+                      "loading jobs not started")
                 cfg.loading_started_at = wait_started_at
                 return False
             if not waiting:
-                print("{:30s}: waits for the Schema scripts (schema=True) before starting the loading jobs".format(
-                    configuration))
+                print(f"{configuration:30s}: waits for the Schema scripts (schema=True) before starting the loading jobs")
                 waiting = True
             time.sleep(interval)
         if waiting:
-            print("{:30s}: Schema scripts done after {}s".format(configuration, int(default_timer() - t_start)))
+            print(f"{configuration:30s}: Schema scripts done after {int(default_timer() - t_start)}s")
         return True
 
     def start_exec(self, delay: int = 0) -> bool:
@@ -499,14 +485,14 @@ class LoadingCoordinator:
         app = cfg.appname
         component = 'sut'
         configuration = cfg.configuration
-        cfg.logger.debug("LoadingCoordinator.start_exec({})".format(configuration))
+        cfg.logger.debug(f"LoadingCoordinator.start_exec({configuration})")
         pods = cfg.experiment.cluster.get_pods(app, component, cfg.experiment.code, configuration)
         if len(pods) > 0:
             pod_sut = pods[0]
             status = cfg.experiment.cluster.get_pod_status(pod_sut)
             if status != "Running":
                 return False
-            cfg.logger.debug("check if {} is running".format(pod_sut))
+            cfg.logger.debug(f"check if {pod_sut} is running")
             self.check()
             if not cfg.loading_started:
                 # restarts during the load make it a failed load (see check())
@@ -518,14 +504,14 @@ class LoadingCoordinator:
                     # nothing loaded yet: the experiment aborts with diagnostics
                     # (ExperimentBase._loading_abort_reason), no load time is spent
                     reason = "-xld {} cannot take effect: {}".format(cfg.load_durability, "; ".join(conflicts))
-                    print("{:30s}: {}".format(cfg.configuration, reason))
+                    print(f"{cfg.configuration:30s}: {reason}")
                     self.fail_loading_fatally(reason)
                     return False
                 try:
                     self.load_data(scripts=cfg.initscript)
                 except RuntimeError as exc:
-                    reason = "init scripts could not be uploaded: {}".format(exc)
-                    print("{:30s}: {}".format(cfg.configuration, reason))
+                    reason = f"init scripts could not be uploaded: {exc}"
+                    print(f"{cfg.configuration:30s}: {reason}")
                     self.fail_loading_fatally(reason)
                     return False
             if delay > 0:
@@ -563,10 +549,10 @@ class LoadingCoordinator:
             experiment=cfg.storage_label, configuration=storageConfiguration)
         volume = name_pvc
         list_of_pvc = self.get_list_of_pvc()
-        print("{:30s}: list of pvcs {}".format(cfg.configuration, list_of_pvc))
+        print(f"{cfg.configuration:30s}: list of pvcs {list_of_pvc}")
         if len(list_of_pvc) > 0:
             volume = list_of_pvc[0]
-            print("{:30s}: will be labeling {}".format(cfg.configuration, volume))
+            print(f"{cfg.configuration:30s}: will be labeling {volume}")
         return volume
 
     def copy_log(self) -> None:
@@ -649,7 +635,7 @@ class LoadingCoordinator:
             filename_local=filename_in_resultfolder,
             pod=cfg.pod_sut, container="dbms")
         cfg.execute_command_in_pod_sut(
-            "sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
+            f"sed -i 's/\\r$//' {filename_in_container}")
         return True
 
     def prepare_init_dbms(self, scripts: list) -> None:
@@ -667,7 +653,7 @@ class LoadingCoordinator:
         values = self.ddl_fill_values()
         if cfg.num_tenants > 0 and cfg.tenant_per == 'schema':
             for tenant in range(cfg.num_tenants):
-                print("{:30s}: scripts for tenant #{}".format(cfg.configuration, tenant))
+                print(f"{cfg.configuration:30s}: scripts for tenant #{tenant}")
                 for script in scripts:
                     filename_base, file_extension = os.path.splitext(script)
                     self.upload_script(
@@ -675,22 +661,15 @@ class LoadingCoordinator:
                         filename_in_container=scriptfolder + f'/{tenant}-{script}',
                         filename_in_resultfolder=(
                             cfg.experiment.path
-                            + '/{app}-loading-{configuration}-{tenant}-{filename}'
-                              '-{database}{extension}.log'.format(
-                                app=cfg.appname, configuration=cfg.configuration,
-                                filename=filename_base, database=database,
-                                tenant=tenant,
-                                extension=file_extension.lower()).lower()))
+                            + f'/{cfg.appname}-loading-{cfg.configuration}-{tenant}-{filename_base}'
+                              f'-{database}{file_extension.lower()}.log'.lower()))
             return
         if cfg.num_tenants > 0 and cfg.tenant_per == 'database':
             script = 'initdatabases.sql'
             filename_base, file_extension = os.path.splitext(script)
             filename_in_resultfolder = (
                 cfg.experiment.path
-                + '/{app}-loading-{configuration}-{filename}-{database}{extension}.log'.format(
-                    app=cfg.appname, configuration=cfg.configuration,
-                    filename=filename_base, database=database,
-                    extension=file_extension.lower()).lower())
+                + f'/{cfg.appname}-loading-{cfg.configuration}-{filename_base}-{database}{file_extension.lower()}.log'.lower())
             filename_in_container = scriptfolder + script
             script_create_database = ''
             for tenant in range(cfg.num_tenants):
@@ -708,7 +687,7 @@ class LoadingCoordinator:
                 filename_local=filename_in_resultfolder,
                 pod=cfg.pod_sut, container="dbms")
             cfg.execute_command_in_pod_sut(
-                "sed -i 's/\\r$//' {to_name}".format(to_name=filename_in_container))
+                f"sed -i 's/\\r$//' {filename_in_container}")
         for script in scripts:
             filename_base, file_extension = os.path.splitext(script)
             self.upload_script(
@@ -716,10 +695,7 @@ class LoadingCoordinator:
                 filename_in_container=scriptfolder + script,
                 filename_in_resultfolder=(
                     cfg.experiment.path
-                    + '/{app}-loading-{configuration}-{filename}-{database}{extension}.log'.format(
-                        app=cfg.appname, configuration=cfg.configuration,
-                        filename=filename_base, database=database,
-                        extension=file_extension.lower()).lower()))
+                    + f'/{cfg.appname}-loading-{cfg.configuration}-{filename_base}-{database}{file_extension.lower()}.log'.lower()))
 
     def check(self) -> None:
         """Check loading status, update timing attributes, and clean up finished jobs.
@@ -749,10 +725,10 @@ class LoadingCoordinator:
                 app, component, cfg.code, configuration)
             for job in jobs:
                 cfg.experiment.cluster.logger.debug(
-                    "Found running job {}".format(job))
+                    f"Found running job {job}")
                 success = cfg.experiment.cluster.get_job_status(job)
                 cfg.experiment.cluster.logger.debug(
-                    'job {} has success status {}'.format(job, success))
+                    f'job {job} has success status {success}')
                 # only this job's pods: a finished job deletes them below, while
                 # parallel loading jobs of the same configuration may still run
                 pods = cfg.experiment.cluster.get_job_pods(
@@ -764,7 +740,7 @@ class LoadingCoordinator:
                         continue
                     status = cfg.experiment.cluster.get_pod_status(pod)
                     cfg.experiment.cluster.logger.debug(
-                        "Pod {} has status {}".format(pod, status))
+                        f"Pod {pod} has status {status}")
                     if status in ("Succeeded", "Failed"):
                         containers = cfg.experiment.cluster.get_pod_containers(pod)
                         all_stored = len(containers) > 0
@@ -773,22 +749,21 @@ class LoadingCoordinator:
                                 if not cfg.experiment.cluster.pod_log_exists(
                                         pod_name=pod, container=container):
                                     cfg.experiment.cluster.logger.debug(
-                                        "Store logs of job {} pod {} container {}".format(
-                                            job, pod, container))
+                                        f"Store logs of job {job} pod {pod} container {container}")
                                     cfg.experiment.cluster.store_pod_log(
                                         pod_name=pod, container=container)
                                 all_stored = all_stored and cfg.experiment.cluster.pod_log_exists(
                                     pod_name=pod, container=container) is True
                         if not cfg.experiment.cluster.pod_description_exists(pod_name=pod):
                             cfg.experiment.cluster.logger.debug(
-                                "Store description of job {} pod {}".format(job, pod))
+                                f"Store description of job {job} pod {pod}")
                             cfg.experiment.cluster.store_pod_description(pod_name=pod)
                         if all_stored and cfg.experiment.cluster.pod_description_exists(pod_name=pod) is True:
                             stored_pods(cfg.experiment.cluster).add(pod)
                 if success:
                     cfg.experiment.cluster.logger.debug(
-                        'job {} will be suspended and parallel loading will be considered finished'
-                        .format(job))
+                        f'job {job} will be suspended and parallel loading will be considered finished'
+                        )
                     pod_labels = cfg.experiment.cluster.get_pods_labels(
                         app=app, component='sut',
                         experiment=experiment, configuration=configuration)
@@ -829,12 +804,11 @@ class LoadingCoordinator:
                             new_ready = int(pod_labels[pod].get('num_data_jobs_ready', 0)) + 1
                             is_last_data_job = new_ready >= num_data_jobs
                             done_label = (
-                                ' data_job_{}_done=True'.format(data_job_idx)
+                                f' data_job_{data_job_idx}_done=True'
                                 if data_job_idx is not None else ''
                             )
                             cfg.experiment.cluster.kubectl(
-                                'label pods {} --overwrite num_data_jobs={} num_data_jobs_ready={}{}'.format(
-                                    pod, num_data_jobs, new_ready, done_label))
+                                f'label pods {pod} --overwrite num_data_jobs={num_data_jobs} num_data_jobs_ready={new_ready}{done_label}')
                             # Per-entry data_job_{i}_done labels (written above, persisted on the
                             # pod, and read back here from the labels fetched at the top of this
                             # iteration) let us name exactly which entries remain, rather than just
@@ -843,7 +817,7 @@ class LoadingCoordinator:
                             still_loading = [
                                 entry.get('name', str(i))
                                 for i, entry in enumerate(cfg.experiment_dict['loader'], start=1)
-                                if i != data_job_idx and pod_labels[pod].get('data_job_{}_done'.format(i)) != 'True'
+                                if i != data_job_idx and pod_labels[pod].get(f'data_job_{i}_done') != 'True'
                             ] if not is_last_data_job else []
                             print("{:30s}: loader '{}' finished ({}/{} parallel loading jobs done{})".format(
                                 cfg.configuration, loader_name or job, new_ready, num_data_jobs,
@@ -851,9 +825,9 @@ class LoadingCoordinator:
                     for pod in pods:
                         status = cfg.experiment.cluster.get_pod_status(pod)
                         cfg.experiment.cluster.logger.debug(
-                            "Pod {} has status {}".format(pod, status))
+                            f"Pod {pod} has status {status}")
                         cfg.experiment.cluster.logger.debug(
-                            "Store logs of job {} pod {}".format(job, pod))
+                            f"Store logs of job {job} pod {pod}")
                         containers = cfg.experiment.cluster.get_pod_containers(pod)
                         for container in containers:
                             if len(container) > 0:
@@ -861,12 +835,12 @@ class LoadingCoordinator:
                                     pod_name=pod, container=container)
                         if not cfg.experiment.cluster.pod_description_exists(pod_name=pod):
                             cfg.experiment.cluster.logger.debug(
-                                "Store description of job {} pod {}".format(job, pod))
+                                f"Store description of job {job} pod {pod}")
                             cfg.experiment.cluster.store_pod_description(pod_name=pod)
                         cfg.experiment.cluster.delete_pod(pod)
                     if not cfg.experiment.cluster.job_description_exists(jobname=job):
                         cfg.experiment.cluster.logger.debug(
-                            "Store description of job {}".format(job))
+                            f"Store description of job {job}")
                         # Captured just before deletion (not on an earlier poll) so the
                         # Job's own Events include every Pod it ever spawned over its
                         # full lifetime -- e.g. a failed Pod's replacement -- which
@@ -883,15 +857,12 @@ class LoadingCoordinator:
                     if len(pods_sut) > 0:
                         pod_sut = pods_sut[0]
                         print("{:30s}: showing loader times{}".format(
-                            cfg.configuration, " ({})".format(loader_name) if loader_name else ""))
+                            cfg.configuration, f" ({loader_name})" if loader_name else ""))
                         timing_datagenerator, timing_sensor, timing_total = (
                             cfg.experiment.get_job_timing_loading(job))
-                        print("{:30s}: generator times (start/end per pod and container) {}".format(
-                            cfg.configuration, timing_datagenerator))
-                        print("{:30s}: loader times (start/end per pod and container) {}".format(
-                            cfg.configuration, timing_sensor))
-                        print("{:30s}: total times (start/end per pod and container) {}".format(
-                            cfg.configuration, timing_total))
+                        print(f"{cfg.configuration:30s}: generator times (start/end per pod and container) {timing_datagenerator}")
+                        print(f"{cfg.configuration:30s}: loader times (start/end per pod and container) {timing_sensor}")
+                        print(f"{cfg.configuration:30s}: total times (start/end per pod and container) {timing_total}")
                         generator_time = 0
                         loader_time = 0
                         total_time = 0
@@ -901,34 +872,28 @@ class LoadingCoordinator:
                         cfg.loading_timespans['total'] = timing_total
                         if len(timing_datagenerator) > 0:
                             cfg.experiment.cluster.logger.debug(
-                                "Generator times (duration per pod [s]): {}".format(
-                                    [end - start for (start, end) in timing_datagenerator]))
+                                f"Generator times (duration per pod [s]): {[end - start for (start, end) in timing_datagenerator]}")
                             timing_start = min([start for (start, end) in timing_datagenerator])
                             timing_end = max([end for (start, end) in timing_datagenerator])
                             total_time = timing_end - timing_start
                             generator_time = total_time
-                            print("{:30s}: generator timespan (first to last [s]) = {}".format(
-                                cfg.configuration, total_time))
+                            print(f"{cfg.configuration:30s}: generator timespan (first to last [s]) = {total_time}")
                         if len(timing_sensor) > 0:
                             cfg.experiment.cluster.logger.debug(
-                                "Loader times (duration per pod [s]): {}".format(
-                                    [end - start for (start, end) in timing_sensor]))
+                                f"Loader times (duration per pod [s]): {[end - start for (start, end) in timing_sensor]}")
                             timing_start = min([start for (start, end) in timing_sensor])
                             timing_end = max([end for (start, end) in timing_sensor])
                             total_time = timing_end - timing_start
                             loader_time = total_time
-                            print("{:30s}: loader timespan (first to last [s]) = {}".format(
-                                cfg.configuration, total_time))
+                            print(f"{cfg.configuration:30s}: loader timespan (first to last [s]) = {total_time}")
                         if len(timing_datagenerator) > 0 and len(timing_sensor) > 0:
                             timing_total = timing_datagenerator + timing_sensor
                             cfg.experiment.cluster.logger.debug(
-                                "Total times (start/end per pod and container): {}".format(
-                                    timing_total))
+                                f"Total times (start/end per pod and container): {timing_total}")
                             timing_start = min([start for (start, end) in timing_total])
                             timing_end = max([end for (start, end) in timing_total])
                             total_time = timing_end - timing_start
-                            print("{:30s}: total timespan (first to last [s]) = {}".format(
-                                cfg.configuration, total_time))
+                            print(f"{cfg.configuration:30s}: total timespan (first to last [s]) = {total_time}")
                         time_now = str(datetime.now())
                         time_now_int = int(datetime.timestamp(
                             datetime.strptime(time_now, '%Y-%m-%d %H:%M:%S.%f')))
@@ -949,10 +914,8 @@ class LoadingCoordinator:
                         data_label = ' data=True' if is_last_data_job else ''
                         fullcommand = (
                             'label pods ' + pod_sut
-                            + ' --overwrite time_loading_end="{}" time_loading_start="{}"'
-                              ' time_ingested={} time_loading={} time_generated={}{}'.format(
-                                cfg.time_loading_end, cfg.time_loading_start,
-                                loader_time, cfg.time_loading, generator_time, data_label))
+                            + f' --overwrite time_loading_end="{cfg.time_loading_end}" time_loading_start="{cfg.time_loading_start}"'
+                              f' time_ingested={loader_time} time_loading={cfg.time_loading} time_generated={generator_time}{data_label}')
                         cfg.experiment.cluster.kubectl(fullcommand)
                         use_storage = cfg.use_storage()
                         use_ramdisk = cfg.use_ramdisk()
@@ -961,11 +924,9 @@ class LoadingCoordinator:
                             if volume:
                                 fullcommand = (
                                     'label pvc ' + volume
-                                    + ' --overwrite time_loading_end="{}"'
-                                      ' time_loading_start="{}" time_ingested={}'
-                                      ' time_loading={} time_generated={}{}'.format(
-                                        cfg.time_loading_end, cfg.time_loading_start,
-                                        loader_time, cfg.time_loading, generator_time, data_label))
+                                    + f' --overwrite time_loading_end="{cfg.time_loading_end}"'
+                                      f' time_loading_start="{cfg.time_loading_start}" time_ingested={loader_time}'
+                                      f' time_loading={cfg.time_loading} time_generated={generator_time}{data_label}')
                                 cfg.experiment.cluster.kubectl(fullcommand)
                     if is_last_data_job and len(cfg.indexscript):
                         if cfg.tenant_per == 'container' and not cfg.loading_finished:
@@ -980,8 +941,8 @@ class LoadingCoordinator:
                             except RuntimeError as exc:
                                 # no 'index' label will come: the experiment aborts
                                 # with diagnostics (see ExperimentBase._loading_abort_reason)
-                                reason = "index scripts could not be uploaded: {}".format(exc)
-                                print("{:30s}: {}".format(cfg.configuration, reason))
+                                reason = f"index scripts could not be uploaded: {exc}"
+                                print(f"{cfg.configuration:30s}: {reason}")
                                 cfg.loading_failed.append(reason)
                                 cfg.loading_failed_fatal = reason
         else:
@@ -1020,7 +981,7 @@ class LoadingCoordinator:
                 # the phase is over for the pod either way; the volume is marked
                 # loaded only after a clean load, so a failed one is never reused
                 cfg.experiment.cluster.kubectl(
-                    'label pod {} --overwrite loaded=True'.format(pod))
+                    f'label pod {pod} --overwrite loaded=True')
                 self.check_sut_restarts_during_loading(pod)
                 script_errors = loading_script_errors(pod_labels[pod])
                 failed = bool(cfg.loading_failed or script_errors)
@@ -1028,10 +989,10 @@ class LoadingCoordinator:
                     print("{:30s}: loading failed ({}), the volume is not marked as loaded".format(
                         cfg.configuration, "; ".join(
                             cfg.loading_failed
-                            + ["failed {} scripts: {}".format(phase, count)
+                            + [f"failed {phase} scripts: {count}"
                                for phase, count in script_errors.items()])))
                     cfg.experiment.cluster.kubectl(
-                        'label pod {} --overwrite loading_failed=True'.format(pod))
+                        f'label pod {pod} --overwrite loading_failed=True')
                 use_storage = cfg.use_storage()
                 use_ramdisk = cfg.use_ramdisk()
                 # an inherited volume keeps the labels of the load that filled it
@@ -1040,11 +1001,11 @@ class LoadingCoordinator:
                     if volume:
                         # what the volume holds: DDL and loading values, shape (see
                         # SutConfiguration.volume_parameter_labels); a reuse reads them
-                        labels = ''.join(' {}={}'.format(key, value)
+                        labels = ''.join(f' {key}={value}'
                                          for key, value in cfg.volume_parameter_labels().items())
                         status = 'loaded=False loading_failed=True' if failed else 'loaded=True'
                         cfg.experiment.cluster.kubectl(
-                            'label pvc {} --overwrite {}{}'.format(volume, status, labels))
+                            f'label pvc {volume} --overwrite {status}{labels}')
             if 'time_loading_start' in pod_labels[pod]:
                 cfg.time_loading_start = int(pod_labels[pod]['time_loading_start'])
             if 'time_loading_end' in pod_labels[pod]:
@@ -1147,8 +1108,7 @@ class LoadingCoordinator:
             return 0
         pods = cfg.get_worker_pods(only_stateful=True)
         if not pods:
-            print("{:30s}: no worker pods found for scripts {}".format(
-                cfg.configuration, [s for s, _ in sources]))
+            print(f"{cfg.configuration:30s}: no worker pods found for scripts {[s for s, _ in sources]}")
             return 0
         elapsed_per_pod = {}
 
@@ -1159,20 +1119,17 @@ class LoadingCoordinator:
                 cfg.experiment.cluster.upload_file(
                     filename_remote=target, filename_local=source, pod=pod, container='dbms')
                 cfg.experiment.cluster.execute_command_in_pod(
-                    "sed -i 's/\\r$//' {}".format(target), pod=pod, container='dbms')
+                    f"sed -i 's/\\r$//' {target}", pod=pod, container='dbms')
                 _, stdout, stderr = cfg.experiment.cluster.execute_command_in_pod(
-                    'sh -e {}'.format(target), pod=pod, container='dbms', retry_interrupted=False)
+                    f'sh -e {target}', pod=pod, container='dbms', retry_interrupted=False)
                 if script_failed(stdout, stderr):
-                    self.workers_failed.append('{} ({})'.format(script, pod))
+                    self.workers_failed.append(f'{script} ({pod})')
                 filename, file_extension = os.path.splitext(script)
                 for suffix, content in (('.stdout.log', stdout), ('.stderr.log', stderr)):
                     if content:
                         log_path = (
                             cfg.experiment.path
-                            + '/{app}-{script_type}-{configuration}-{filename}-{pod}{ext}{suffix}'.format(
-                                app=cfg.appname, script_type=script_type,
-                                configuration=cfg.configuration, filename=filename, pod=pod,
-                                ext=file_extension.lower(), suffix=suffix).lower())
+                            + f'/{cfg.appname}-{script_type}-{cfg.configuration}-{filename}-{pod}{file_extension.lower()}{suffix}'.lower())
                         with open(log_path, 'w', encoding='utf-8') as fh:
                             fh.write(content)
             elapsed_per_pod[pod] = default_timer() - t_start
@@ -1183,8 +1140,7 @@ class LoadingCoordinator:
         for thread in threads:
             thread.join()
         elapsed = int(max(elapsed_per_pod.values())) if elapsed_per_pod else 0
-        print("{:30s}: scripts {} ran on {} worker pods in {}s".format(
-            cfg.configuration, [s for s, _ in sources], len(pods), elapsed))
+        print(f"{cfg.configuration:30s}: scripts {[s for s, _ in sources]} ran on {len(pods)} worker pods in {elapsed}s")
         return elapsed
 
     def _report_reset(self, script_type: str, elapsed: int) -> None:
@@ -1246,7 +1202,7 @@ class LoadingCoordinator:
         if not scripts:
             return 0
         if 'loadData' not in cfg.dockertemplate:
-            print("{:30s}: no loadData command found, skipping reset".format(cfg.configuration))
+            print(f"{cfg.configuration:30s}: no loadData command found, skipping reset")
             return 0
         folder = cfg.experiment.cluster.experiments_configfolder + '/' + cfg.path_experiment_docker
         missing = [s for s in scripts if not os.path.isfile(folder + '/' + s)]
@@ -1267,8 +1223,7 @@ class LoadingCoordinator:
             cfg.pod_sut = cfg.experiment.cluster.get_pods(
                 component='sut', configuration=cfg.configuration, experiment=cfg.code)[0]
             cfg.experiment.cluster.kubectl(
-                'label pod {} --overwrite {}=True time_{}={}'.format(
-                    cfg.pod_sut, script_type, script_type, elapsed_workers))
+                f'label pod {cfg.pod_sut} --overwrite {script_type}=True time_{script_type}={elapsed_workers}')
             return elapsed_workers
         self.prepare_init_dbms(scripts)
         pods = cfg.experiment.cluster.get_pods(
@@ -1313,7 +1268,7 @@ class LoadingCoordinator:
             # so it is only retried if it never reached the pod.
             _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd, retry_interrupted=False)
             if script_failed(stdout, stderr):
-                name = '{} ({})'.format(script, tenant_tag) if tenant_tag else script
+                name = f'{script} ({tenant_tag})' if tenant_tag else script
                 if name not in self.last_reset_failed:
                     self.last_reset_failed.append(name)
             for suffix, content in (('.stdout.log', stdout), ('.stderr.log', stderr)):
@@ -1321,18 +1276,14 @@ class LoadingCoordinator:
                     tenant_infix = f'-{tenant_tag}' if tenant_tag else ''
                     log_path = (
                         cfg.experiment.path
-                        + '/{app}-{script_type}-{configuration}{tenant}-{filename}-{database}'
-                          '{ext}{suffix}'.format(
-                              app=cfg.appname, script_type=script_type, configuration=cfg.configuration,
-                              tenant=tenant_infix, filename=filename, database=database,
-                              ext=file_extension.lower(), suffix=suffix).lower())
+                        + f'/{cfg.appname}-{script_type}-{cfg.configuration}{tenant_infix}-{filename}-{database}'
+                          f'{file_extension.lower()}{suffix}'.lower())
                     with open(log_path, 'w', encoding='utf-8') as fh:
                         fh.write(content)
         elapsed = int(default_timer() - t_start) + elapsed_workers
         self._report_reset(script_type, elapsed)
         cfg.experiment.cluster.kubectl(
-            'label pod {} --overwrite {}=True time_{}={}'.format(
-                cfg.pod_sut, script_type, script_type, elapsed))
+            f'label pod {cfg.pod_sut} --overwrite {script_type}=True time_{script_type}={elapsed}')
         return elapsed
 
     def load_data(
@@ -1376,7 +1327,7 @@ class LoadingCoordinator:
         pods = cfg.experiment.cluster.get_pods(
             component='sut', configuration=cfg.configuration, experiment=cfg.code)
         cfg.pod_sut = pods[0]
-        print("{:30s}: connect to pod {} to load scripts".format(cfg.configuration, cfg.pod_sut))
+        print(f"{cfg.configuration:30s}: connect to pod {cfg.pod_sut} to load scripts")
         scriptfolder = '/tmp/'
         commands = scripts.copy()
         database = self.script_database()
@@ -1387,10 +1338,9 @@ class LoadingCoordinator:
             volume = self.get_volume_to_label()
         else:
             volume = ''
-        print("{:30s}: start asynch loading scripts of type {}".format(
-            cfg.configuration, script_type))
+        print(f"{cfg.configuration:30s}: start asynch loading scripts of type {script_type}")
         if 'loadData' not in cfg.dockertemplate:
-            print("{:30s}: no load command found in config".format(cfg.configuration))
+            print(f"{cfg.configuration:30s}: no load command found in config")
             return
         if cfg.num_tenants > 0:
             if cfg.tenant_per == 'schema':
@@ -1412,7 +1362,7 @@ class LoadingCoordinator:
                         'database': databases,
                     }
                     cfg.logger.debug(
-                        "load_data_asynch - run schema-wise scripts {}".format(thread_args))
+                        f"load_data_asynch - run schema-wise scripts {thread_args}")
                     thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
                     thread.start()
                     time.sleep(1)
@@ -1433,7 +1383,7 @@ class LoadingCoordinator:
                         'num_tenants': 0, 'id_tenant': 0, 'database': databases,
                     }
                     cfg.logger.debug(
-                        "load_data_asynch - run create database scripts {}".format(thread_args))
+                        f"load_data_asynch - run create database scripts {thread_args}")
                     load_data_asynch(**thread_args)
                 for tenant in range(cfg.num_tenants):
                     tenant_databases = [f'tenant_{tenant}']
@@ -1453,7 +1403,7 @@ class LoadingCoordinator:
                         'database': tenant_databases,
                     }
                     cfg.logger.debug(
-                        "load_data_asynch - run database-wise scripts {}".format(thread_args))
+                        f"load_data_asynch - run database-wise scripts {thread_args}")
                     thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
                     thread.start()
                     time.sleep(1)
@@ -1473,10 +1423,10 @@ class LoadingCoordinator:
                     'num_tenants': 0, 'id_tenant': 0, 'database': databases,
                 }
                 cfg.logger.debug(
-                    "load_data_asynch - run container-wise scripts {}".format(thread_args))
+                    f"load_data_asynch - run container-wise scripts {thread_args}")
                 thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
                 thread.start()
-            print("{:30s}: runs scripts {}".format(cfg.configuration, commands))
+            print(f"{cfg.configuration:30s}: runs scripts {commands}")
         else:
             thread_args = {
                 'app': cfg.appname, 'component': 'sut',
@@ -1492,7 +1442,7 @@ class LoadingCoordinator:
                 'namespace': cfg.experiment.cluster.namespace,
                 'num_tenants': 0, 'id_tenant': 0, 'database': databases,
             }
-            cfg.logger.debug("load_data_asynch - run scripts {}".format(thread_args))
+            cfg.logger.debug(f"load_data_asynch - run scripts {thread_args}")
             thread = threading.Thread(target=load_data_asynch, kwargs=thread_args)
             thread.start()
             return
