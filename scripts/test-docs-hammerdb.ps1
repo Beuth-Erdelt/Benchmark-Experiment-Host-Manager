@@ -72,8 +72,8 @@ bexhoma hammerdb `
   -sf 16                        <# scaling factor (number of warehouses) #> `
   -xrt 1                        <# rampup time in minutes #> `
   -xsd 5                        <# benchmark duration in minutes #> `
-  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nlt 16                       <# threads per loader pod #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 16                       <# threads per benchmarking pod (virtual users) #> `

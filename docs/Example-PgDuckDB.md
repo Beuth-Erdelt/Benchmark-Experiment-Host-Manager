@@ -939,13 +939,11 @@ Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 bexhoma tpch \
   -dbms PgDuckDB \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii \
-  -xic \
-  -xis \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \

@@ -235,8 +235,7 @@ It never changes what a call does: every value of a flag is kept (`-dbms Postgre
 (`--set`) is kept every time with its own comment, a flag missing from the table stays right after the flag it
 followed, and a one-line call or a call without mode (`bexhoma experiment <yaml>`) is left as it is
 (`tests/test_script_sync_tools.py`).
-Many scripts no longer follow the table exactly (2026-11-23: 44 files would be reordered), so check with
-`--check` and review the diff before running it on all scripts.
+All scripts follow the table since 2026-11-23, so `--check` lists only files with new or moved flags.
 
 ### `_sync_docs.py`
 

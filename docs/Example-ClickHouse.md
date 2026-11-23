@@ -59,12 +59,10 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse.log
 ```
@@ -281,9 +279,9 @@ For a cluster, monitoring sums the metrics of coordinator and shards (components
 bexhoma tpch \
   -dbms ClickHouse \
   -sf 10 \
+  -xqr 10 \
   -nc 1 \
   -ne 1 \
-  -xqr 10 \
   -nlp 8 \
   -xdt \
   -m \
@@ -292,12 +290,10 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse_monitoring.log
 ```
@@ -552,15 +548,13 @@ bexhoma tpch \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse_storage.log
 ```
@@ -840,26 +834,24 @@ No warnings
 ```bash
 bexhoma tpch \
   -dbms ClickHouseCluster \
-  -nw 3 \
   -sf 10 \
   -nc 2 \
   -ne 1 \
   -nlp 8 \
+  -nw 3 \
   -xdt \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse_cluster.log
@@ -1366,15 +1358,13 @@ bexhoma tpcds \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_tpcds_clickhouse.log
 ```
@@ -1686,26 +1676,24 @@ The same for the cluster:
 ```bash
 bexhoma tpcds \
   -dbms ClickHouseCluster \
-  -nw 3 \
   -sf 3 \
   -nc 1 \
   -ne 1 \
   -nlp 8 \
+  -nw 3 \
   -xdt \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
   -ks no \
   run &>$LOG_DIR/docs_tpcds_clickhouse_cluster.log
@@ -2075,14 +2063,14 @@ Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 bexhoma tpch \
   -dbms ClickHouse \
   -sf 1 \
-  -nlp 8 \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -2297,16 +2285,16 @@ This holds for both placements of the dimension tables (`-xdim replicated` and `
 ```bash
 bexhoma tpch \
   -dbms ClickHouseCluster \
-  -nw 3 \
   -sf 1 \
-  -nlp 8 \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nw 3 \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rsr \
   -rss 50Gi \

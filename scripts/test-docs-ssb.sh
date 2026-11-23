@@ -23,10 +23,10 @@ source ./scripts/testfunctions.sh
 #### SSB PostgreSQL (Example-SSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run ANALYZE after data load
-# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
@@ -51,10 +51,8 @@ source ./scripts/testfunctions.sh
 bexhoma ssb \
   -dbms PostgreSQL \
   -sf 1 \
-  -xii \
-  -xic \
-  -xis \
   -nlp 8 \
+  -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -62,9 +60,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
@@ -84,10 +80,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB PostgreSQL  sf=1"
 #### SSB MonetDB (Example-SSB.md)
 # -dbms MonetDB                 DBMS under test
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run ANALYZE after data load
-# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
@@ -102,10 +98,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB PostgreSQL  sf=1"
 bexhoma ssb \
   -dbms MonetDB \
   -sf 1 \
-  -xii \
-  -xic \
-  -xis \
   -nlp 8 \
+  -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -113,9 +107,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_ssb_monetdb.log
 
@@ -148,9 +140,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_ssb_clickhouse.log
 
@@ -158,23 +148,23 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB ClickHouse  sf=1"
 
 
 #### SSB Flat (Example-SSB.md)
-# -dbms PostgreSQL MonetDB ClickHouse  DBMS under test (all three)
-# -sf 1                                scaling factor (lineorder has about 6 million rows per SF)
-# -xsv flat                            one denormalized table lineorder_flat, generated as flat files
-# -xii                                 create indexes after data load
-# -xis                                 run ANALYZE after data load
-# -nlp 8                               number of loader pods (lineorder is generated in 8 chunks)
-# -xdt                                 also measure data transfer volume per query
-# -ms $BEXHOMA_MS                      max simultaneous DBMS configurations
-# -t 1200                              query timeout in seconds
-# -tr                                  verify result meets basic sanity requirements
-# -lr 64Gi                             RAM limit for the SUT container
-# -rr 64Gi                             RAM requested for the SUT container
-# -rss 50Gi                            size of the persistent volume claim
-# -rnn $BEXHOMA_NODE_SUT               schedule SUT pod on this node
-# -rnl $BEXHOMA_NODE_LOAD              schedule loader pods on this node
-# -rnb $BEXHOMA_NODE_BENCHMARK         schedule benchmarker pods on this node
-# -ks no                               remove the SUT at the end
+# -dbms PostgreSQL MonetDB ClickHouse DBMS under test (all three)
+# -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
+# -xsv flat                     one denormalized table lineorder_flat, generated as flat files
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
+# -xii                          create indexes after data load
+# -xis                          run ANALYZE after data load
+# -xdt                          also measure data transfer volume per query
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -ks no                        remove the SUT at the end
 # --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 lower planner cost for random reads (SSD)
 # --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 allow more concurrent prefetch I/O requests (SSD)
 # --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring use io_uring for asynchronous I/O
@@ -189,9 +179,8 @@ bexhoma ssb \
   -dbms PostgreSQL MonetDB ClickHouse \
   -sf 1 \
   -xsv flat \
-  -xii \
-  -xis \
   -nlp 8 \
+  -xii -xis \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -199,9 +188,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
@@ -222,12 +209,12 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB flat  sf=1"
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
 # -xqv random                   random query parameters that keep the filter factor of each query
-# -xrcp                         new random parameters for each stream
 # -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run ANALYZE after data load
-# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
+# -xrcp                         new random parameters for each stream
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
@@ -253,12 +240,10 @@ bexhoma ssb \
   -dbms PostgreSQL \
   -sf 1 \
   -xqv random \
-  -xrcp \
   -ne 1,2 \
-  -xii \
-  -xic \
-  -xis \
   -nlp 8 \
+  -xii -xic -xis \
+  -xrcp \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -266,9 +251,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
@@ -289,10 +272,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB random  sf=1  ne=1,2"
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
 # -nc 2                         number of repeated runs per configuration (2nd run: data survives the SUT restart)
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run ANALYZE after data load
-# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
@@ -320,10 +303,8 @@ bexhoma ssb \
   -dbms PostgreSQL \
   -sf 1 \
   -nc 2 \
-  -xii \
-  -xic \
-  -xis \
   -nlp 8 \
+  -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -333,9 +314,7 @@ bexhoma ssb \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
@@ -355,10 +334,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB storage  sf=1  nc=2"
 #### SSB Load (Example-SSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run ANALYZE after data load
-# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
@@ -383,10 +362,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB storage  sf=1  nc=2"
 bexhoma ssb \
   -dbms PostgreSQL \
   -sf 1 \
-  -xii \
-  -xic \
-  -xis \
   -nlp 8 \
+  -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -394,9 +371,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
@@ -414,20 +389,20 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB load  sf=1"
 
 
 #### SSB Profiling (Example-SSB.md)
-# -dbms PostgreSQL MonetDB ClickHouse  DBMS under test (all three)
-# -sf 1                                scaling factor (lineorder has about 6 million rows per SF)
-# -nlp 8                               number of loader pods (lineorder is generated in 8 chunks)
-# -xdt                                 also measure data transfer volume per query
-# -ms $BEXHOMA_MS                      max simultaneous DBMS configurations
-# -t 1200                              query timeout in seconds
-# -tr                                  verify result meets basic sanity requirements
-# -lr 64Gi                             RAM limit for the SUT container
-# -rr 64Gi                             RAM requested for the SUT container
-# -rss 50Gi                            size of the persistent volume claim
-# -rnn $BEXHOMA_NODE_SUT               schedule SUT pod on this node
-# -rnl $BEXHOMA_NODE_LOAD              schedule loader pods on this node
-# -rnb $BEXHOMA_NODE_BENCHMARK         schedule benchmarker pods on this node
-# -ks no                               remove the SUT at the end
+# -dbms PostgreSQL MonetDB ClickHouse DBMS under test (all three)
+# -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
+# -xdt                          also measure data transfer volume per query
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -t 1200                       query timeout in seconds
+# -tr                           verify result meets basic sanity requirements
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
+# -rss 50Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -ks no                        remove the SUT at the end
 # --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 lower planner cost for random reads (SSD)
 # --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 allow more concurrent prefetch I/O requests (SSD)
 # --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring use io_uring for asynchronous I/O
@@ -449,9 +424,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 \
@@ -470,9 +443,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB profiling  sf=1"
 
 #### SSB ClickHouseCluster (Example-SSB.md)
 # -dbms ClickHouseCluster       DBMS under test
-# -nw 3                         number of worker nodes (shards)
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
 # -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
+# -nw 3                         number of worker nodes (shards)
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
@@ -487,9 +460,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB profiling  sf=1"
 # -ks no                        remove the SUT at the end
 bexhoma ssb \
   -dbms ClickHouseCluster \
-  -nw 3 \
   -sf 1 \
   -nlp 8 \
+  -nw 3 \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -497,9 +470,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
   -ks no \
   run &>$LOG_DIR/docs_ssb_clickhousecluster.log
@@ -509,10 +480,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB ClickHouseCluster  sf=1  nw=3"
 
 #### SSB ClickHouseCluster distributed dimensions (Example-SSB.md)
 # -dbms ClickHouseCluster       DBMS under test
-# -nw 3                         number of worker nodes (shards)
-# -xdim distributed             dimensions spread over the shards like lineorder (default: a copy on every node)
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
 # -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
+# -nw 3                         number of worker nodes (shards)
+# -xdim distributed             dimensions spread over the shards like lineorder (default: a copy on every node)
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
@@ -527,10 +498,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB ClickHouseCluster  sf=1  nw=3"
 # -ks no                        remove the SUT at the end
 bexhoma ssb \
   -dbms ClickHouseCluster \
-  -nw 3 \
-  -xdim distributed \
   -sf 1 \
   -nlp 8 \
+  -nw 3 \
+  -xdim distributed \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -538,9 +509,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
   -ks no \
   run &>$LOG_DIR/docs_ssb_clickhousecluster_distributed.log
@@ -552,10 +521,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB ClickHouseCluster distributed dime
 # -dbms PgDuckDB                DBMS under test
 # -xdfe                         run the queries in pg_duckdb's DuckDB engine
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run statistics after data load
-# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
@@ -571,10 +540,8 @@ bexhoma ssb \
   -dbms PgDuckDB \
   -xdfe \
   -sf 1 \
-  -xii \
-  -xic \
-  -xis \
   -nlp 8 \
+  -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -582,9 +549,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_ssb_pgduckdb.log
 
@@ -593,12 +558,12 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB PgDuckDB  sf=1"
 
 #### SSB Citus (Example-SSB.md)
 # -dbms Citus                   DBMS under test
-# -nw 3                         number of worker nodes
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
+# -nw 3                         number of worker nodes
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run statistics after data load
-# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
@@ -613,12 +578,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB PgDuckDB  sf=1"
 # -ks no                        remove the SUT at the end
 bexhoma ssb \
   -dbms Citus \
-  -nw 3 \
   -sf 1 \
-  -xii \
-  -xic \
-  -xis \
   -nlp 8 \
+  -nw 3 \
+  -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -626,9 +589,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
   -ks no \
   run &>$LOG_DIR/docs_ssb_citus.log
@@ -639,10 +600,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB Citus  sf=1  nw=3"
 #### SSB MySQL (Example-SSB.md)
 # -dbms MySQL                   DBMS under test
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run statistics after data load
-# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
@@ -657,10 +618,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB Citus  sf=1  nw=3"
 bexhoma ssb \
   -dbms MySQL \
   -sf 1 \
-  -xii \
-  -xic \
-  -xis \
   -nlp 8 \
+  -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -668,9 +627,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_ssb_mysql.log
 
@@ -680,10 +637,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MySQL  sf=1"
 #### SSB MariaDB (Example-SSB.md)
 # -dbms MariaDB                 DBMS under test
 # -sf 1                         scaling factor (lineorder has about 6 million rows per SF)
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run statistics after data load
-# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
@@ -698,10 +655,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MySQL  sf=1"
 bexhoma ssb \
   -dbms MariaDB \
   -sf 1 \
-  -xii \
-  -xic \
-  -xis \
   -nlp 8 \
+  -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
@@ -709,9 +664,7 @@ bexhoma ssb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ks no \
   run &>$LOG_DIR/docs_ssb_mariadb.log
 
@@ -720,12 +673,12 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDB  sf=1"
 
 #### SSB Monitoring (Example-SSB.md)
 # SSB with monitoring: a scaling factor large enough that loading and benchmarking last more than a minute
-# -dbms PostgreSQL MonetDB ClickHouse DBMS under test
+# -dbms PostgreSQL MonetDB ClickHouse MonetDB ClickHouse DBMS under test
 # -sf 10                        scaling factor (lineorder has about 6 million rows per SF)
+# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run statistics after data load
-# -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms 1                         one DBMS at a time, so the metrics of one SUT are not disturbed by another
@@ -735,14 +688,14 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDB  sf=1"
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 100Gi                    size of the persistent volume claim
 # -ks no                        remove the SUT at the end
-# -rnn/-rnl/-rnb $BEXHOMA_NODE_*      schedule SUT, loader and benchmarker pods on these nodes
+# -rnn $BEXHOMA_NODE_SUT
+# -rnl $BEXHOMA_NODE_LOAD
+# -rnb $BEXHOMA_NODE_BENCHMARK
 bexhoma ssb \
   -dbms PostgreSQL MonetDB ClickHouse \
   -sf 10 \
-  -xii \
-  -xic \
-  -xis \
   -nlp 8 \
+  -xii -xic -xis \
   -m \
   -mc \
   -ms 1 \

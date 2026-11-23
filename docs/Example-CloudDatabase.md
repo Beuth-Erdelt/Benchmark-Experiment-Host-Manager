@@ -1896,13 +1896,11 @@ Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 bexhoma tpch \
   -dbms DatabaseService \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii \
-  -xic \
-  -xis \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

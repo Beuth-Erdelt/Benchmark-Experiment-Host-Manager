@@ -63,9 +63,7 @@ bexhoma ycsb \
   -lr 16Gi \
   -rr 16Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra.log
 ```
 
@@ -291,9 +289,7 @@ bexhoma ycsb \
   -lr 16Gi \
   -rr 16Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_monitoring.log
 ```
 
@@ -551,9 +547,7 @@ bexhoma ycsb \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_storage.log
 ```
 
@@ -832,8 +826,7 @@ bexhoma ycsb \
   -rr 16Gi \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_cluster.log
 ```
 
@@ -1102,8 +1095,7 @@ bexhoma ycsb \
   -rr 16Gi \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_replica.log
 ```
 
@@ -1377,8 +1369,7 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnw $BEXHOMA_NODES_WORKER \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_replica_storage.log
 ```
 

@@ -567,8 +567,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS durability MySQL unsafe"
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -xop 1                        number of operations for the benchmark phase (in millions)
 # -xld relaxed                  load durability (default)
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -587,8 +587,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -610,8 +610,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability PostgreSQL relaxed"
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -xop 1                        number of operations for the benchmark phase (in millions)
 # -xld unsafe                   load durability
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -630,8 +630,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld unsafe \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -653,8 +653,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability PGBouncer unsafe"
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -xop 1                        number of operations for the benchmark phase (in millions)
 # -xld durable                  load durability
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -673,8 +673,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld durable \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -696,8 +696,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability OrioleDB durable"
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -xop 1                        number of operations for the benchmark phase (in millions)
 # -xld unsafe                   load durability
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -716,8 +716,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld unsafe \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -739,8 +739,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability OrioleDB unsafe"
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -xop 1                        number of operations for the benchmark phase (in millions)
 # -xld relaxed                  load durability (default)
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -759,8 +759,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -782,8 +782,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability MySQL relaxed"
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
-# -xop 1                        number of operations for the benchmark phase (in millions)
 # -xld unsafe                   load durability
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -802,8 +802,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld unsafe \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -828,8 +828,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability MySQL unsafe"
 # -nw 3                         number of worker nodes
 # -nwr 1                        replication factor
 # -nws 48                       number of shards
-# -xop 1                        number of operations for the benchmark phase (in millions)
 # -xld relaxed                  load durability (default)
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -851,8 +851,8 @@ bexhoma ycsb \
   -nw 3 \
   -nwr 1 \
   -nws 48 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -876,12 +876,12 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability Citus relaxed"
 # -nbt 64                       threads per benchmarking pod
 # -xnsr 3                       number of TiDB SUT replicas
 # -nw 3                         number of worker nodes
+# -xnpd 3                       number of PD nodes
 # -nwr 3                        replication factor
-# -xop 1                        number of operations for the benchmark phase (in millions)
 # -xld relaxed                  load durability (default)
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -xnpd 3                       number of PD nodes
 bexhoma ycsb \
   -dbms TiDB \
   -sf 1 \
@@ -897,12 +897,12 @@ bexhoma ycsb \
   -nbt 64 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
   -nwr 3 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
-  -xnpd 3 \
   run &>$LOG_DIR/docs_durability_ycsb_tidb_relaxed.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability TiDB relaxed"

@@ -166,9 +166,9 @@ bexhoma benchbase `
   -xsd 5                        <# benchmark duration in minutes #> `
   -xtb 1024                     <# base ops/s used to compute the throughput target (2^10) #> `
   -xnbf 16                      <# throughput target as a multiple of the base ops/s #> `
+  -nc 2                         <# number of repeated runs per configuration (2nd reuses the volumes) #> `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 16                       <# threads per benchmarking pod #> `
-  -nc 2                         <# number of repeated runs per configuration (2nd reuses the volumes) #> `
   -xnsr 3                       <# number of TiDB server (SQL frontend) replicas #> `
   -nw 3                         <# number of worker nodes #> `
   -xnpd 3                       <# number of PD (Placement Driver) nodes #> `
@@ -180,9 +180,9 @@ bexhoma benchbase `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes (PD and TiKV) #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes (PD and TiKV) #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tidb_storage.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB  sf=16  nbp=1,2  nc=2  nvme"

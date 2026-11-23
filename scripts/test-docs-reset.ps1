@@ -261,12 +261,12 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -xnsr 3                       <# number of TiDB SUT replicas #> `
   -nw 3                         <# number of worker nodes #> `
+  -xnpd 3                       <# number of PD nodes #> `
+  -ar                           <# activate configured reset scripts before each round #> `
   -nwr 3                        <# replication factor (Dragonfly: replica mode) #> `
   -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  -xnpd 3                       <# number of PD nodes #> `
-  -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_tidb.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset TiDB"
@@ -592,11 +592,11 @@ bexhoma benchbase `
   -nbt 40                       <# threads per benchmarking pod #> `
   -xnsr 3                       <# number of TiDB SUT replicas #> `
   -nw 3                         <# number of worker nodes #> `
+  -xnpd 3                       <# number of PD nodes #> `
+  -ar                           <# activate configured reset scripts before each round #> `
   -nwr 3                        <# replication factor (Dragonfly: replica mode) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  -xnpd 3                       <# number of PD nodes #> `
-  -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_benchbase_tidb.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset TPC-C TiDB"

@@ -48,13 +48,13 @@ Example:
 bexhoma tpch \
   -dbms MySQL \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 8 \
   -nbp 1 \
+  -xii -xic -xis \
+  -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
@@ -277,13 +277,13 @@ Metrics are sampled every few seconds, so the benchmarking phase should take at 
 bexhoma tpch \
   -dbms MySQL \
   -sf 10 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 8 \
   -nbp 1 \
+  -xii -xic -xis \
+  -xdt \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -780,13 +780,13 @@ This is a throughput test: one round with 1 stream and one with 2 parallel strea
 bexhoma tpch \
   -dbms MySQL \
   -sf 10 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
   -nc 2 \
   -ne 1,2 \
+  -nlp 8 \
+  -nlt 8 \
   -nbp 1 \
+  -xii -xic -xis \
+  -xdt \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -795,9 +795,9 @@ bexhoma tpch \
   -lr 128Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 128Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 150Gi \
   -rsr \
+  -rss 150Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mysql_storage.log
 ```
@@ -1168,15 +1168,15 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
-  -rst ramdisk \
   -rss 150Gi \
+  -rst ramdisk \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mysql_ramdisk.log
 ```
@@ -1420,13 +1420,11 @@ Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 bexhoma tpch \
   -dbms MySQL \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii \
-  -xic \
-  -xis \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 128Gi \
@@ -1740,13 +1738,13 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 bexhoma tpcds \
   -dbms MySQL \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 8 \
   -nbp 1 \
+  -xii -xic -xis \
+  -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
@@ -1996,13 +1994,13 @@ No warnings
 bexhoma tpcds \
   -dbms MySQL \
   -sf 3 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 8 \
   -nbp 1 \
+  -xii -xic -xis \
+  -xdt \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -2357,13 +2355,13 @@ No warnings
 bexhoma tpcds \
   -dbms MySQL \
   -sf 10 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
   -nc 2 \
   -ne 1,2 \
+  -nlp 8 \
+  -nlt 8 \
   -nbp 1 \
+  -xii -xic -xis \
+  -xdt \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -2379,8 +2377,8 @@ bexhoma tpcds \
   --set deployment[bexhoma-deployment-mysql].container[dbms].temptable_max_ram=4G \
   -rr 128Gi \
   -rsr \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 150Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_mysql_storage.log
 ```
@@ -4010,11 +4008,11 @@ bexhoma benchbase \
   -sf 16 \
   -xsd 5 \
   -xtb 1024 \
+  -xnbf 8 \
   -nc 1 \
   -ne 1 \
   -nbp 1 \
   -nbt 160 \
-  -xnbf 8 \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
@@ -4143,18 +4141,18 @@ bexhoma benchbase \
   -sf 16 \
   -xsd 1 \
   -xtb 1024 \
+  -xnbf 8 \
   -nc 2 \
   -ne 1 \
   -nbp 1 \
   -nbt 160 \
-  -xnbf 8 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rsr \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql_storage.log
 ```
@@ -4306,11 +4304,11 @@ bexhoma benchbase \
   -sf 16 \
   -xsd 5 \
   -xtb 1024 \
+  -xnbf 8 \
   -nc 1 \
   -ne 1 \
   -nbp 1 \
   -nbt 160 \
-  -xnbf 8 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -4483,19 +4481,19 @@ bexhoma benchbase \
   -sf 16 \
   -xsd 2 \
   -xtb 1024 \
+  -xnbf 8 \
   -nc 2 \
   -ne 1,2 \
   -nbp 1,2 \
   -nbt 160 \
-  -xnbf 8 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql_scale.log
 ```
@@ -4858,9 +4856,9 @@ See [Example: HammerDB](Example-HammerDB.md) for the parameters.
 bexhoma hammerdb \
   -dbms MySQL \
   -sf 16 \
-  -nlt 8 \
   -nc 1 \
   -ne 1 \
+  -nlt 8 \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
@@ -4985,9 +4983,9 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 bexhoma hammerdb \
   -dbms MySQL \
   -sf 16 \
-  -nlt 8 \
   -nc 1 \
   -ne 1 \
+  -nlt 8 \
   -nbp 1 \
   -nbt 16 \
   -m \
@@ -4996,9 +4994,9 @@ bexhoma hammerdb \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 128Gi \
   -rsr \
+  -rss 128Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_mysql_monitoring.log
 ```
@@ -5189,9 +5187,9 @@ bexhoma hammerdb \
   -dbms MySQL \
   -sf 16 \
   -xsd 2 \
-  -nlt 8 \
   -nc 2 \
   -ne 1,2 \
+  -nlt 8 \
   -nbp 1,2 \
   -nbt 16 \
   -m \
@@ -5200,8 +5198,8 @@ bexhoma hammerdb \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_mysql_scale.log
 ```
@@ -5559,14 +5557,14 @@ bexhoma ycsb \
   -sf 1 \
   -xwl a \
   -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
   -nc 1 \
   -ne 1 \
   -nlp 4,8 \
   -nlt 32,64 \
-  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
@@ -5809,21 +5807,21 @@ bexhoma ycsb \
   -sf 1 \
   -xwl a \
   -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
   -nc 2 \
   -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rsr \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_storage.log
 ```
@@ -5996,20 +5994,20 @@ bexhoma ycsb \
   -sf 1 \
   -xwl a \
   -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
   -nc 2 \
   -ne 1,2 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_scale.log
 ```
@@ -6329,20 +6327,20 @@ bexhoma ycsb \
   -sf 1 \
   -xwl e \
   -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
   -nc 1 \
   -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 1 \
   -nbp 8 \
   -nbt 64 \
-  -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_workload_e.log
 ```
@@ -6468,22 +6466,22 @@ bexhoma ycsb \
   -sf 1 \
   -xwl a \
   -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
   -nc 1 \
   -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -xnbf 1 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_monitoring.log
 ```

@@ -42,14 +42,14 @@ Example:
 bexhoma tpch \
   -dbms MariaDBCS \
   -sf 1 \
+  -nc 1 \
+  -ks no \
   -nlp 8 \
   -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 16Gi \
   -rr 16Gi \
-  -nc 1 \
-  -ks no \
   run &>$LOG_DIR/docs_tpch_mariadbcs.log
 ```
 
@@ -262,6 +262,8 @@ ColumnStore has no Prometheus exporter in bexhoma, so there are no application m
 bexhoma tpch \
   -dbms MariaDBCS \
   -sf 10 \
+  -nc 1 \
+  -ks no \
   -nlp 8 \
   -xis \
   -m \
@@ -270,8 +272,6 @@ bexhoma tpch \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -nc 1 \
-  -ks no \
   run &>$LOG_DIR/docs_tpch_mariadbcs_monitoring.log
 ```
 
@@ -495,22 +495,20 @@ With repetitions (`-nc`), `-rsr` removes an existing volume only before the firs
 bexhoma tpch \
   -dbms MariaDB MariaDBCS \
   -sf 1 \
+  -nc 2 \
+  -ar \
+  -ks no \
   -nlp 8 \
-  -xii \
-  -xic \
-  -xis \
+  -xii -xic -xis \
   -xdt \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 16Gi \
   -rr 16Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 20Gi \
   -rsr \
-  -nc 2 \
-  -ar \
-  -ks no \
+  -rss 20Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_tpch_mariadbcs_storage.log
 ```
 
@@ -893,13 +891,11 @@ Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 bexhoma tpch \
   -dbms MariaDBCS \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii \
-  -xic \
-  -xis \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
@@ -1217,21 +1213,19 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 bexhoma tpcds \
   -dbms MariaDB MariaDBCS \
   -sf 1 \
-  -xii \
-  -xic \
-  -xis \
+  -nc 2 \
+  -ar \
+  -ks no \
+  -xii -xic -xis \
   -xdt \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 32Gi \
   -rr 32Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
   -rsr \
-  -nc 2 \
-  -ar \
-  -ks no \
+  -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_tpcds_mariadbcs.log
 ```
 
@@ -1669,18 +1663,18 @@ For performing the experiment we can run the [ssb file](https://github.com/Beuth
 bexhoma ssb \
   -dbms MariaDBCS \
   -sf 1 \
+  -nc 2 \
+  -ar \
+  -ks no \
   -xis \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 16Gi \
   -rr 16Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 20Gi \
   -rsr \
-  -nc 2 \
-  -ar \
-  -ks no \
+  -rss 20Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_ssb_mariadbcs.log
 ```
 
@@ -1950,18 +1944,18 @@ bexhoma ssb \
   -dbms MariaDBCS \
   -sf 1 \
   -xsv flat \
+  -nc 2 \
+  -ar \
+  -ks no \
   -xis \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 16Gi \
   -rr 16Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 20Gi \
   -rsr \
-  -nc 2 \
-  -ar \
-  -ks no \
+  -rss 20Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_ssb_mariadbcs_flat.log
 ```
 

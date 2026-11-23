@@ -402,8 +402,8 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld relaxed                  <# load durability (default) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -428,8 +428,8 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld unsafe                   <# load durability #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -454,8 +454,8 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld durable                  <# load durability #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -480,8 +480,8 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld unsafe                   <# load durability #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -506,8 +506,8 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld relaxed                  <# load durability (default) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -532,8 +532,8 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld unsafe                   <# load durability #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -561,8 +561,8 @@ bexhoma ycsb `
   -nw 3                         <# number of worker nodes #> `
   -nwr 1                        <# replication factor #> `
   -nws 48                       <# number of shards #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld relaxed                  <# load durability (default) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -589,12 +589,12 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -xnsr 3                       <# number of TiDB SUT replicas #> `
   -nw 3                         <# number of worker nodes #> `
+  -xnpd 3                       <# number of PD nodes #> `
   -nwr 3                        <# replication factor #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld relaxed                  <# load durability (default) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  -xnpd 3                       <# number of PD nodes #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_tidb_relaxed.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability TiDB relaxed"

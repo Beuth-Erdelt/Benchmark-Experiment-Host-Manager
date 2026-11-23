@@ -732,8 +732,8 @@ bexhoma hammerdb \
   -sf 16 \
   -xrt 1 \
   -xsd 5 \
-  -ne 1 \
   -nc 1 \
+  -ne 1 \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \

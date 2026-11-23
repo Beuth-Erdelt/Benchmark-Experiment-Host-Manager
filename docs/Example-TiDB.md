@@ -2041,9 +2041,9 @@ bexhoma benchbase \
   -xsd 5 \
   -xtb 1024 \
   -xnbf 16 \
+  -nc 2 \
   -nbp 1,2 \
   -nbt 16 \
-  -nc 2 \
   -xnsr 3 \
   -nw 3 \
   -xnpd 3 \
@@ -2055,9 +2055,9 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_benchbase_tidb_storage.log
 ```
 

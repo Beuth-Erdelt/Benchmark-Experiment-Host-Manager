@@ -23,15 +23,15 @@
 bexhoma tpch `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
+  -nbp 1                        <# number of benchmarking pods #> `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
-  -nc 1                         <# number of repeated runs per configuration #> `
-  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-  -nbp 1                        <# number of benchmarking pods #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
@@ -55,15 +55,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MySQL simple 
 bexhoma tpch `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 10                        <# scaling factor (controls database size in GB) #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
+  -nbp 1                        <# number of benchmarking pods #> `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
-  -nc 1                         <# number of repeated runs per configuration #> `
-  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-  -nbp 1                        <# number of benchmarking pods #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -92,15 +92,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MySQL monitor
 bexhoma tpch `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 10                        <# scaling factor (controls database size in GB) #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
+  -nbp 1                        <# number of benchmarking pods #> `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
-  -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
-  -nbp 1                        <# number of benchmarking pods #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -109,9 +109,9 @@ bexhoma tpch `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  -rss 150Gi                    <# size of the persistent volume claim #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -rss 150Gi                    <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -131,15 +131,15 @@ bexhoma tpch `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ma                           <# collect metrics for the whole experiment #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
-  -rst ramdisk                  <# storage class for persistent volumes #> `
   -rss 150Gi                    <# size of the persistent volume claim #> `
+  -rst ramdisk                  <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -157,15 +157,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MySQL ramdisk
 bexhoma tpcds `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
+  -nbp 1                        <# number of benchmarking pods #> `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
-  -nc 1                         <# number of repeated runs per configuration #> `
-  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-  -nbp 1                        <# number of benchmarking pods #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -tr                           <# verify result meets basic sanity requirements #> `
@@ -184,15 +184,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL simple
 bexhoma tpcds `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 3                         <# scaling factor (controls database size in GB) #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
+  -nbp 1                        <# number of benchmarking pods #> `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
-  -nc 1                         <# number of repeated runs per configuration #> `
-  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-  -nbp 1                        <# number of benchmarking pods #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -218,15 +218,15 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL monito
 bexhoma tpcds `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 10                        <# scaling factor (controls database size in GB) #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
+  -nbp 1                        <# number of benchmarking pods #> `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
-  -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
-  -nbp 1                        <# number of benchmarking pods #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -242,8 +242,8 @@ bexhoma tpcds `
   --set deployment[bexhoma-deployment-mysql].container[dbms].temptable_max_ram=4G <# RAM of the TempTable engine (default 1G) #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rss 150Gi                    <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -263,11 +263,11 @@ bexhoma benchbase `
   -sf 16                        <# scaling factor (controls database size in GB) #> `
   -xsd 5                        <# benchmark duration in minutes #> `
   -xtb 1024                     <# target throughput (ops/s) #> `
+  -xnbf 8                       <# benchmarking thread multiplier factor #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nbp 1                        <# number of benchmarking pods #> `
   -nbt 160                      <# total benchmarking threads #> `
-  -xnbf 8                       <# benchmarking thread multiplier factor #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
@@ -288,18 +288,18 @@ bexhoma benchbase `
   -sf 16                        <# scaling factor (controls database size in GB) #> `
   -xsd 1                        <# benchmark duration in minutes #> `
   -xtb 1024                     <# target throughput (ops/s) #> `
+  -xnbf 8                       <# benchmarking thread multiplier factor #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nbp 1                        <# number of benchmarking pods #> `
   -nbt 160                      <# total benchmarking threads #> `
-  -xnbf 8                       <# benchmarking thread multiplier factor #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -314,11 +314,11 @@ bexhoma benchbase `
   -sf 16                        <# scaling factor (controls database size in GB) #> `
   -xsd 5                        <# benchmark duration in minutes #> `
   -xtb 1024                     <# target throughput (ops/s) #> `
+  -xnbf 8                       <# benchmarking thread multiplier factor #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nbp 1                        <# number of benchmarking pods #> `
   -nbt 160                      <# total benchmarking threads #> `
-  -xnbf 8                       <# benchmarking thread multiplier factor #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -341,19 +341,19 @@ bexhoma benchbase `
   -sf 16                        <# scaling factor (controls database size in GB) #> `
   -xsd 2                        <# benchmark duration in minutes #> `
   -xtb 1024                     <# target throughput (ops/s) #> `
+  -xnbf 8                       <# benchmarking thread multiplier factor #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
   -nbp 1,2                      <# number of benchmarking pods #> `
   -nbt 160                      <# total benchmarking threads #> `
-  -xnbf 8                       <# benchmarking thread multiplier factor #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -371,9 +371,9 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MySQL com
 bexhoma hammerdb `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 16                        <# scaling factor (controls database size in GB) #> `
-  -nlt 8                        <# threads per loader pod #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlt 8                        <# threads per loader pod #> `
   -nbp 1                        <# number of benchmarking pods #> `
   -nbt 16                       <# total benchmarking threads #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
@@ -394,9 +394,9 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB MySQL simp
 bexhoma hammerdb `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 16                        <# scaling factor (controls database size in GB) #> `
-  -nlt 8                        <# threads per loader pod #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlt 8                        <# threads per loader pod #> `
   -nbp 1                        <# number of benchmarking pods #> `
   -nbt 16                       <# total benchmarking threads #> `
   -m                            <# collect SUT resource metrics #> `
@@ -405,9 +405,9 @@ bexhoma hammerdb `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-  -rss 128Gi                    <# size of the persistent volume claim #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -rss 128Gi                    <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -421,9 +421,9 @@ bexhoma hammerdb `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 16                        <# scaling factor (controls database size in GB) #> `
   -xsd 2                        <# benchmark duration in minutes #> `
-  -nlt 8                        <# threads per loader pod #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
+  -nlt 8                        <# threads per loader pod #> `
   -nbp 1,2                      <# number of benchmarking pods #> `
   -nbt 16                       <# total benchmarking threads #> `
   -m                            <# collect SUT resource metrics #> `
@@ -432,8 +432,8 @@ bexhoma hammerdb `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -453,14 +453,14 @@ bexhoma ycsb `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   -xwl a                        <# YCSB workload letter #> `
   -xtb 1024                     <# target throughput (ops/s) #> `
+  -xnbf 1                       <# benchmarking thread multiplier factor #> `
+  -xnlf 1                       <# loader thread multiplier factor #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nlp 4,8                      <# number of loader pods #> `
   -nlt 32,64                    <# total loader threads #> `
-  -xnlf 1                       <# loader thread multiplier factor #> `
   -nbp 1                        <# number of benchmarking pods #> `
   -nbt 64                       <# total benchmarking threads #> `
-  -xnbf 1                       <# benchmarking thread multiplier factor #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
@@ -481,21 +481,21 @@ bexhoma ycsb `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   -xwl a                        <# YCSB workload letter #> `
   -xtb 1024                     <# target throughput (ops/s) #> `
+  -xnbf 1                       <# benchmarking thread multiplier factor #> `
+  -xnlf 1                       <# loader thread multiplier factor #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of loader pods #> `
   -nlt 64                       <# total loader threads #> `
-  -xnlf 1                       <# loader thread multiplier factor #> `
   -nbp 1                        <# number of benchmarking pods #> `
   -nbt 64                       <# total benchmarking threads #> `
-  -xnbf 1                       <# benchmarking thread multiplier factor #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -510,20 +510,20 @@ bexhoma ycsb `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   -xwl a                        <# YCSB workload letter #> `
   -xtb 1024                     <# target throughput (ops/s) #> `
+  -xnbf 1                       <# benchmarking thread multiplier factor #> `
+  -xnlf 1                       <# loader thread multiplier factor #> `
   -nc 2                         <# number of repeated runs per configuration #> `
   -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of loader pods #> `
   -nlt 64                       <# total loader threads #> `
-  -xnlf 1                       <# loader thread multiplier factor #> `
   -nbp 1,8                      <# number of benchmarking pods #> `
   -nbt 64                       <# total benchmarking threads #> `
-  -xnbf 1                       <# benchmarking thread multiplier factor #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -538,20 +538,20 @@ bexhoma ycsb `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   -xwl e                        <# YCSB workload letter #> `
   -xtb 1024                     <# target throughput (ops/s) #> `
+  -xnbf 1                       <# benchmarking thread multiplier factor #> `
+  -xnlf 1                       <# loader thread multiplier factor #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of loader pods #> `
   -nlt 64                       <# total loader threads #> `
-  -xnlf 1                       <# loader thread multiplier factor #> `
   -nbp 8                        <# number of benchmarking pods #> `
   -nbt 64                       <# total benchmarking threads #> `
-  -xnbf 1                       <# benchmarking thread multiplier factor #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -566,22 +566,22 @@ bexhoma ycsb `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
   -xwl a                        <# YCSB workload letter #> `
   -xtb 1024                     <# target throughput (ops/s) #> `
+  -xnbf 1                       <# benchmarking thread multiplier factor #> `
+  -xnlf 1                       <# loader thread multiplier factor #> `
   -nc 1                         <# number of repeated runs per configuration #> `
   -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of loader pods #> `
   -nlt 64                       <# total loader threads #> `
-  -xnlf 1                       <# loader thread multiplier factor #> `
   -nbp 1,8                      <# number of benchmarking pods #> `
   -nbt 64                       <# total benchmarking threads #> `
-  -xnbf 1                       <# benchmarking thread multiplier factor #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
-  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -595,13 +595,13 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MySQL monitori
 bexhoma tpch `
   -dbms MySQL                   <# DBMS under test #> `
   -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -ne 3                         <# parallel query streams #> `
+  -xrs 3                        <# refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -ne 3                         <# parallel query streams #> `
-  -xrs 3                        <# refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `

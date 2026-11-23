@@ -67,7 +67,8 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_cockroachdb.log
 ```
 
@@ -311,7 +312,8 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_cockroachdb_monitoring.log
 ```
 
@@ -545,7 +547,8 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_cockroachdb_appmetrics.log
 ```
 
@@ -795,7 +798,8 @@ bexhoma ycsb \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_cockroachdb_storage.log
 ```
 
@@ -1189,7 +1193,8 @@ bexhoma ycsb \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_cockroachdb_scale.log
 ```
 
@@ -1418,7 +1423,8 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_cockroachdb.log
 ```
 
@@ -1632,7 +1638,8 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rss 100Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_cockroachdb_scale.log
 ```
 
@@ -2037,7 +2044,8 @@ bexhoma benchbase \
   -rsr \
   -rss 100Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_cockroachdb_scale_storage.log
 ```
 
@@ -2460,7 +2468,8 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   -tr \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK -rnw $BEXHOMA_NODES_WORKER \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_cockroachdb_appmetrics.log
 ```
 

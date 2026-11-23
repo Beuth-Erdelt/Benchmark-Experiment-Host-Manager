@@ -721,18 +721,16 @@ Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 bexhoma tpch \
   -dbms MonetDB \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii \
-  -xic \
-  -xis \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_monetdb_refresh.log
@@ -1952,12 +1950,12 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 3 \
-  -nlp 8 \
-  -nlt 1 \
-  -xii -xic -xis \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 1 \
   -nbp 1 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 128Gi \
@@ -2205,12 +2203,12 @@ At SF=3 the 99 queries take about 35 s, so this is shorter than the minute that 
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 3 \
-  -nlp 8 \
-  -nlt 1 \
-  -xii -xic -xis \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 1 \
   -nbp 1 \
+  -xii -xic -xis \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -2510,12 +2508,12 @@ No warnings
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 3 \
-  -nlp 8 \
-  -nlt 1 \
-  -xii -xic -xis \
   -nc 2 \
   -ne 1,2 \
+  -nlp 8 \
+  -nlt 1 \
   -nbp 1 \
+  -xii -xic -xis \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -2523,8 +2521,8 @@ bexhoma tpcds \
   -lr 128Gi \
   -rr 128Gi \
   -rsr \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_monetdb_storage.log
 ```

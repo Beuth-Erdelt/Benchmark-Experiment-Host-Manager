@@ -41,289 +41,289 @@ $RUNS = [ordered]@{}
 
 #### 1. TPC-H with monitoring (test-docs-tpch.ps1)
 $RUNS["docs_tpch_postgresql_monitoring"] = {
-    bexhoma tpch `
-      -dbms PostgreSQL              <# DBMS under test #> `
-      -sf 10                        <# scaling factor (controls database size in GB) #> `
-      -nlp 8                        <# number of data loader pods #> `
-      -nlt 8                        <# threads per loader pod #> `
-      -xii                          <# create indexes after data load #> `
-      -xic                          <# enforce constraints after data load #> `
-      -xis                          <# run ANALYZE after data load #> `
-      -xdt                          <# also measure data transfer volume per query #> `
-      -m                            <# collect SUT resource metrics #> `
-      -mc                           <# collect metrics for all cluster nodes #> `
-      -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-      -tr                           <# verify result meets basic sanity requirements #> `
-      -lr 64Gi                      <# RAM limit for the SUT container #> `
-      -rr 64Gi                      <# RAM requested for the SUT container #> `
-      -rss 150Gi                    <# size of the persistent volume claim #> `
-      -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-      -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-      -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 <# lower planner cost for random reads (SSD) #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 <# allow more concurrent prefetch I/O requests (SSD) #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring <# use io_uring for asynchronous I/O #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 <# parallel workers per query node #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 <# total parallel worker pool #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 <# total background worker processes #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB <# PostgreSQL buffer cache size #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB <# planner estimate of OS-level cache size #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB <# per-operation sort/hash memory #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
-      run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_monitoring.log" -Encoding utf8
+bexhoma tpch `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 10                        <# scaling factor (controls database size in GB) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 8                        <# threads per loader pod #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -xdt                          <# also measure data transfer volume per query #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 150Gi                    <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 <# lower planner cost for random reads (SSD) #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 <# allow more concurrent prefetch I/O requests (SSD) #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring <# use io_uring for asynchronous I/O #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 <# parallel workers per query node #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 <# total parallel worker pool #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 <# total background worker processes #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB <# PostgreSQL buffer cache size #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB <# planner estimate of OS-level cache size #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB <# per-operation sort/hash memory #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_monitoring.log" -Encoding utf8
 }
 
 #### 2. TPC-H with persistent storage (test-docs-tpch.ps1)
 $RUNS["docs_tpch_postgresql_storage"] = {
-    bexhoma tpch `
-      -dbms PostgreSQL              <# DBMS under test #> `
-      -sf 1                         <# scaling factor (controls database size in GB) #> `
-      -nc 2                         <# number of repeated runs per configuration #> `
-      -nlp 8                        <# number of data loader pods #> `
-      -nlt 8                        <# threads per loader pod #> `
-      -xii                          <# create indexes after data load #> `
-      -xic                          <# enforce constraints after data load #> `
-      -xis                          <# run ANALYZE after data load #> `
-      -xdt                          <# also measure data transfer volume per query #> `
-      -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-      -tr                           <# verify result meets basic sanity requirements #> `
-      -lr 64Gi                      <# RAM limit for the SUT container #> `
-      -rr 64Gi                      <# RAM requested for the SUT container #> `
-      -rsr                          <# delete any existing PVC for the SUT before starting #> `
-      -rss 50Gi                     <# size of the persistent volume claim #> `
-      -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
-      -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-      -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-      -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 <# lower planner cost for random reads (SSD) #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 <# allow more concurrent prefetch I/O requests (SSD) #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring <# use io_uring for asynchronous I/O #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 <# parallel workers per query node #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 <# total parallel worker pool #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 <# total background worker processes #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB <# PostgreSQL buffer cache size #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB <# planner estimate of OS-level cache size #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB <# per-operation sort/hash memory #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
-      run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_storage.log" -Encoding utf8
+bexhoma tpch `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -nc 2                         <# number of repeated runs per configuration #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 8                        <# threads per loader pod #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -xdt                          <# also measure data transfer volume per query #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rsr                          <# delete any existing PVC for the SUT before starting #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 <# lower planner cost for random reads (SSD) #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 <# allow more concurrent prefetch I/O requests (SSD) #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring <# use io_uring for asynchronous I/O #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 <# parallel workers per query node #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 <# total parallel worker pool #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 <# total background worker processes #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB <# PostgreSQL buffer cache size #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB <# planner estimate of OS-level cache size #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB <# per-operation sort/hash memory #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_storage.log" -Encoding utf8
 }
 
 #### 3. TPC-H refresh stream (test-docs-tpch.ps1)
 $RUNS["docs_tpch_postgresql_refresh"] = {
-    bexhoma tpch `
-      -dbms PostgreSQL              <# DBMS under test #> `
-      -sf 1                         <# scaling factor (controls database size in GB) #> `
-      -ne 3                         <# parallel client counts to sweep (comma-separated) #> `
-      -nlp 8                        <# number of data loader pods #> `
-      -nlt 8                        <# threads per loader pod #> `
-      -xii                          <# create indexes after data load #> `
-      -xic                          <# enforce constraints after data load #> `
-      -xis                          <# run ANALYZE after data load #> `
-      -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-      -tr                           <# verify result meets basic sanity requirements #> `
-      -xrs 3                        <# parallel refresh stream applying 3 RF1+RF2 pairs per round #> `
-      -lr 64Gi                      <# RAM limit for the SUT container #> `
-      -rr 64Gi                      <# RAM requested for the SUT container #> `
-      -rss 50Gi                     <# size of the persistent volume claim #> `
-      -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-      -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-      -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 <# lower planner cost for random reads (SSD) #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 <# allow more concurrent prefetch I/O requests (SSD) #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring <# use io_uring for asynchronous I/O #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 <# parallel workers per query node #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 <# total parallel worker pool #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 <# total background worker processes #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB <# PostgreSQL buffer cache size #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB <# planner estimate of OS-level cache size #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB <# per-operation sort/hash memory #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
-      run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_refresh.log" -Encoding utf8
+bexhoma tpch `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -ne 3                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 8                        <# threads per loader pod #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -xrs 3                        <# parallel refresh stream applying 3 RF1+RF2 pairs per round #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 <# lower planner cost for random reads (SSD) #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 <# allow more concurrent prefetch I/O requests (SSD) #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring <# use io_uring for asynchronous I/O #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 <# parallel workers per query node #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 <# total parallel worker pool #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 <# total background worker processes #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB <# PostgreSQL buffer cache size #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB <# planner estimate of OS-level cache size #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB <# per-operation sort/hash memory #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_refresh.log" -Encoding utf8
 }
 
 #### 4. TPC-DS (test-docs-tpcds.ps1)
 $RUNS["docs_tpcds_postgresql"] = {
-    bexhoma tpcds `
-      -dbms PostgreSQL              <# DBMS under test #> `
-      -sf 1                         <# scaling factor (controls database size in GB) #> `
-      -nlp 8                        <# number of data loader pods #> `
-      -nlt 8                        <# threads per loader pod #> `
-      -xii                          <# create indexes after data load #> `
-      -xic                          <# enforce constraints after data load #> `
-      -xis                          <# run ANALYZE after data load #> `
-      -xdt                          <# also measure data transfer volume per query #> `
-      -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-      -t 1200                       <# query timeout in seconds #> `
-      -tr                           <# verify result meets basic sanity requirements #> `
-      -lr 64Gi                      <# RAM limit for the SUT container #> `
-      -rr 64Gi                      <# RAM requested for the SUT container #> `
-      -rss 50Gi                     <# size of the persistent volume claim #> `
-      -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-      -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-      -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 <# lower planner cost for random reads (SSD) #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 <# allow more concurrent prefetch I/O requests (SSD) #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring <# use io_uring for asynchronous I/O #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 <# parallel workers per query node #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 <# total parallel worker pool #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 <# total background worker processes #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB <# PostgreSQL buffer cache size #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB <# planner estimate of OS-level cache size #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB <# per-operation sort/hash memory #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
-      run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql.log" -Encoding utf8
+bexhoma tpcds `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 8                        <# threads per loader pod #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -xdt                          <# also measure data transfer volume per query #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -t 1200                       <# query timeout in seconds #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 <# lower planner cost for random reads (SSD) #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 <# allow more concurrent prefetch I/O requests (SSD) #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring <# use io_uring for asynchronous I/O #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 <# parallel workers per query node #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 <# total parallel worker pool #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 <# total background worker processes #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB <# PostgreSQL buffer cache size #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB <# planner estimate of OS-level cache size #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB <# per-operation sort/hash memory #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql.log" -Encoding utf8
 }
 
 #### 5. SSB (test-docs-ssb.ps1)
 $RUNS["docs_ssb_postgresql"] = {
-    bexhoma ssb `
-      -dbms PostgreSQL              <# DBMS under test #> `
-      -sf 1                         <# scaling factor (lineorder has about 6 million rows per SF) #> `
-      -xii                          <# create indexes after data load #> `
-      -xic                          <# add primary and foreign keys after data load #> `
-      -xis                          <# run ANALYZE after data load #> `
-      -nlp 8                        <# number of loader pods (lineorder is generated in 8 chunks) #> `
-      -xdt                          <# also measure data transfer volume per query #> `
-      -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-      -t 1200                       <# query timeout in seconds #> `
-      -tr                           <# verify result meets basic sanity requirements #> `
-      -lr 64Gi                      <# RAM limit for the SUT container #> `
-      -rr 64Gi                      <# RAM requested for the SUT container #> `
-      -rss 50Gi                     <# size of the persistent volume claim #> `
-      -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-      -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-      -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-      -ks no                        <# remove the SUT at the end #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 <# lower planner cost for random reads (SSD) #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 <# allow more concurrent prefetch I/O requests (SSD) #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring <# use io_uring for asynchronous I/O #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 <# parallel workers per query node #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 <# total parallel worker pool #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 <# total background worker processes #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB <# PostgreSQL buffer cache size #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB <# planner estimate of OS-level cache size #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB <# per-operation sort/hash memory #> `
-      --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
-      run 2>&1 | Out-File "$LOG_DIR\docs_ssb_postgresql.log" -Encoding utf8
+bexhoma ssb `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 1                         <# scaling factor (lineorder has about 6 million rows per SF) #> `
+  -nlp 8                        <# number of loader pods (lineorder is generated in 8 chunks) #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# add primary and foreign keys after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -xdt                          <# also measure data transfer volume per query #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -t 1200                       <# query timeout in seconds #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  -ks no                        <# remove the SUT at the end #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].random_page_cost=1.1 <# lower planner cost for random reads (SSD) #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=200 <# allow more concurrent prefetch I/O requests (SSD) #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].io_method=io_uring <# use io_uring for asynchronous I/O #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers_per_gather=2 <# parallel workers per query node #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_parallel_workers=4 <# total parallel worker pool #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=6 <# total background worker processes #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].shared_buffers=20GB <# PostgreSQL buffer cache size #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].effective_cache_size=48GB <# planner estimate of OS-level cache size #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].work_mem=1GB <# per-operation sort/hash memory #> `
+  --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ssb_postgresql.log" -Encoding utf8
 }
 
 #### 6. YCSB with monitoring (test-docs-ycsb.ps1)
 $RUNS["docs_ycsb_postgresql_monitoring"] = {
-    bexhoma ycsb `
-      -dbms PostgreSQL              <# DBMS under test #> `
-      -sf 3                         <# scaling factor (number of records in millions) #> `
-      -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
-      -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
-      -xnbf 2,3                     <# benchmarking throughput target as a multiple of the base ops/s #> `
-      -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `
-      -nc 1                         <# number of repeated runs per configuration #> `
-      -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
-      -nlp 8                        <# number of data loader pods #> `
-      -nlt 64                       <# threads per loader pod #> `
-      -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
-      -nbt 64                       <# threads per benchmarking pod #> `
-      -m                            <# collect SUT resource metrics #> `
-      -mc                           <# collect metrics for all cluster nodes #> `
-      -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-      -tr                           <# verify result meets basic sanity requirements #> `
-      -rss 50Gi                     <# size of the persistent volume claim #> `
-      -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-      -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-      -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-      run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_monitoring.log" -Encoding utf8
+bexhoma ycsb `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 3                         <# scaling factor (number of records in millions) #> `
+  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
+  -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
+  -xnbf 2,3                     <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_monitoring.log" -Encoding utf8
 }
 
 #### 7. Benchbase TPC-C (test-docs-modes.ps1)
 $RUNS["docs_benchbase_postgresql_run"] = {
-    bexhoma benchbase `
-      -dbms PostgreSQL              <# DBMS under test #> `
-      -nlp 1                        <# number of data loader pods #> `
-      -nlt 64                       <# threads per loader pod #> `
-      -nbp 8                        <# benchmarking pod counts to sweep (comma-separated) #> `
-      -nbt 64                       <# threads per benchmarking pod #> `
-      -m                            <# collect SUT resource metrics #> `
-      -mc                           <# collect metrics for all cluster nodes #> `
-      -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-      -ss                           <# skip loading phase (reuse existing data) #> `
-      -tr                           <# verify result meets basic sanity requirements #> `
-      -lr 64Gi                      <# RAM limit for the SUT container #> `
-      -rr 64Gi                      <# RAM requested for the SUT container #> `
-      -rss 50Gi                     <# size of the persistent volume claim #> `
-      -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-      -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-      -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-      run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_run.log" -Encoding utf8
+bexhoma benchbase `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -nlp 1                        <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp 8                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -ss                           <# skip loading phase (reuse existing data) #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_run.log" -Encoding utf8
 }
 
 #### 8. HammerDB TPC-C (test-docs-modes.ps1)
 $RUNS["docs_hammerdb_postgresql_run"] = {
-    bexhoma hammerdb `
-      -dbms PostgreSQL              <# DBMS under test #> `
-      -nlp 1                        <# number of data loader pods #> `
-      -nlt 1                        <# threads per loader pod #> `
-      -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
-      -nbt 64                       <# threads per benchmarking pod (virtual users) #> `
-      -m                            <# collect SUT resource metrics #> `
-      -mc                           <# collect metrics for all cluster nodes #> `
-      -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-      -ss                           <# skip loading phase (reuse existing data) #> `
-      -tr                           <# verify result meets basic sanity requirements #> `
-      -lr 64Gi                      <# RAM limit for the SUT container #> `
-      -rr 64Gi                      <# RAM requested for the SUT container #> `
-      -rss 50Gi                     <# size of the persistent volume claim #> `
-      -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-      -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-      -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-      run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_run.log" -Encoding utf8
+bexhoma hammerdb `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -nlp 1                        <# number of data loader pods #> `
+  -nlt 1                        <# threads per loader pod #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod (virtual users) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -ss                           <# skip loading phase (reuse existing data) #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_run.log" -Encoding utf8
 }
 
 #### 9. application monitoring (Benchbase TPC-C) (test-docs-appmetrics.ps1)
 $RUNS["docs_benchbase_postgresql_appmetrics"] = {
-    bexhoma benchbase `
-      -dbms PostgreSQL              <# DBMS under test #> `
-      -sf 16                        <# scaling factor (controls database size) #> `
-      -xsd 5                        <# benchmark duration in minutes #> `
-      -xtb 1024                     <# base ops/s used to compute the throughput target (2^10) #> `
-      -xnbf 16                      <# throughput target as a multiple of the base ops/s #> `
-      -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
-      -nbt 160                      <# threads per benchmarking pod #> `
-      -m                            <# collect SUT resource metrics #> `
-      -ma                           <# collect application-level metrics #> `
-      -mc                           <# collect metrics for all cluster nodes #> `
-      -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-      -tr                           <# verify result meets basic sanity requirements #> `
-      -rss 50Gi                     <# size of the persistent volume claim #> `
-      -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
-      -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
-      -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
-      run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_appmetrics.log" -Encoding utf8
+bexhoma benchbase `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 16                        <# scaling factor (controls database size) #> `
+  -xsd 5                        <# benchmark duration in minutes #> `
+  -xtb 1024                     <# base ops/s used to compute the throughput target (2^10) #> `
+  -xnbf 16                      <# throughput target as a multiple of the base ops/s #> `
+  -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 160                      <# threads per benchmarking pod #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ma                           <# collect application-level metrics #> `
+  -mc                           <# collect metrics for all cluster nodes #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_appmetrics.log" -Encoding utf8
 }
 
 #### 10. hardware (fio, WAL sync writes) (test-docs-hardware.ps1)
 $RUNS["docs_hardware_fio_wal_sync_fdatasync"] = {
-    bexhoma hardware `
-      -dbms Hardware                   <# hardware target(s) to test #> `
-      -xht fio                         <# benchmark tool: fio (disk I/O) #> `
-      -xts 4G                          <# fio test file size #> `
-      -xtd 60                          <# seconds per fio round #> `
-      -xfrw write                      <# sequential write, simulating WAL append #> `
-      -xfbs 8k                         <# fio block size, one WAL page per write #> `
-      -xfid 1                          <# queue depth, fixed (single outstanding write) #> `
-      -xfe libaio                      <# fio ioengine #> `
-      -xffd 1                          <# fdatasync after every write (wal_sync_method=fdatasync) #> `
-      -xfow 1                          <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
-      -nbp 1                           <# benchmarking pod count #> `
-      -nbt 1                           <# threads per benchmarking pod, fixed (single backend) #> `
-      -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
-      -m                               <# collect SUT resource metrics #> `
-      -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
-      -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
-      -rss 50Gi                        <# size of the persistent volume claim #> `
-      -rst $BEXHOMA_STORAGE_CLASS      <# storage class for persistent volumes #> `
-      -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
-      -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod on this node #> `
-      run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_sync_fdatasync.log" -Encoding utf8
+bexhoma hardware `
+  -dbms Hardware                <# hardware target(s) to test #> `
+  -xht fio                      <# benchmark tool: fio (disk I/O) #> `
+  -xts 4G                       <# fio test file size #> `
+  -xtd 60                       <# seconds per fio round #> `
+  -xfrw write                   <# sequential write, simulating WAL append #> `
+  -xfbs 8k                      <# fio block size, one WAL page per write #> `
+  -xfid 1                       <# queue depth, fixed (single outstanding write) #> `
+  -xfe libaio                   <# fio ioengine #> `
+  -xffd 1                       <# fdatasync after every write (wal_sync_method=fdatasync) #> `
+  -xfow 1                       <# prefilled test file: writes go into written blocks, like recycled WAL segments #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nbp 1                        <# benchmarking pod count #> `
+  -nbt 1                        <# threads per benchmarking pod, fixed (single backend) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_wal_sync_fdatasync.log" -Encoding utf8
 }
 
 

@@ -2358,10 +2358,8 @@ The DBMS run one after another (`-ms 1`), which keeps the metrics of one SUT fre
 bexhoma ssb \
   -dbms PostgreSQL MonetDB ClickHouse \
   -sf 10 \
-  -xii \
-  -xic \
-  -xis \
   -nlp 8 \
+  -xii -xic -xis \
   -m \
   -mc \
   -ms 1 \

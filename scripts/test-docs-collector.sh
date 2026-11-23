@@ -1229,9 +1229,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB collector 3/3  sf=1  reuse PVC"
 # -xfid 1                       queue depth
 # -xfe libaio                   fio ioengine
 # -xffd 1                       fdatasync after every write
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 2                        threads in total, split across the pods: 1 pod x 2, 2 pods x 1
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -1250,9 +1250,9 @@ bexhoma hardware \
   -xfid 1 \
   -xfe libaio \
   -xffd 1 \
+  -ne 1 \
   -nbp 1,2 \
   -nbt 2 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1268,9 +1268,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 1/4  fio  nbp=1,2"
 # -dbms Hardware                hardware target to test
 # -xht sysbench                 benchmark tool: sysbench (CPU/memory)
 # -xtd 60                       seconds per round
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1,2                      threads per benchmarking pod to sweep (comma-separated)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -1283,9 +1283,9 @@ bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
   -xtd 60 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1,2 \
-  -ne 1 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -1305,9 +1305,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 2/4  sysbench  nbt=
 # -xspr max                     message rate: uncapped
 # -xsps 64                      message payload size in bytes
 # -xspp tcp                     sockperf protocol: tcp
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 1                        threads per benchmarking pod
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -1321,9 +1321,9 @@ bexhoma hardware \
   -xspr max \
   -xsps 64 \
   -xspp tcp \
+  -ne 1 \
   -nbp 1,2 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1336,10 +1336,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 3/4  sockperf  nbp=
 # -dbms Hardware                hardware target to test
 # -xht netperf                  benchmark tool: netperf (request/response)
 # -xtd 60                       seconds per round
-# -xnpp tcp                     netperf protocol: tcp (TCP_RR)
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 2                        threads in total, split across the pods: 1 pod x 2, 2 pods x 1
-# -ne 1                         parallel client counts to sweep (comma-separated)
+# -xnpp tcp                     netperf protocol: tcp (TCP_RR)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -1349,10 +1349,10 @@ bexhoma hardware \
   -dbms Hardware \
   -xht netperf \
   -xtd 60 \
-  -xnpp tcp \
+  -ne 1 \
   -nbp 1,2 \
   -nbt 2 \
-  -ne 1 \
+  -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
   -tr \

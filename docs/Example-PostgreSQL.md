@@ -1026,15 +1026,15 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -rst ramdisk \
   -rss 50Gi \
+  -rst ramdisk \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_ramdisk.log
 ```
