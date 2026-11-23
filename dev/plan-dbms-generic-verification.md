@@ -112,9 +112,11 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
   Test: `bexhoma ssb -dbms PostgreSQL -xsv flat -ar run`.
 - [ ] 4.2 Container tenancy for MySQL/MariaDB: try `bexhoma tpch -dbms MySQL -mtn 2 -mtb container -nlp 2 run`;
   if it works, add `multi_tenancy: [container]` to their tpch entries in cluster.config.
-- [ ] 4.3 Dragonfly cluster with `-m`: "Monitoring metrics missing" (worker filesystem series absent for
-  in-memory runs). Proposal: DBMS-level `sparse_metrics` {metric: [component types]} merged into
-  `sparse_components` in `metrics.py`. Not implemented.
+- [x] 4.3 Dragonfly cluster with `-m`: "Monitoring metrics missing" (worker filesystem series absent for
+  in-memory runs). Solved differently (user, checked 2026-11-23), no `sparse_metrics`: a missing series of a
+  component whose pods were scraped is a `warning` reason, and a warning needs judgement but is no failure.
+  `docs_ycsb_dragonfly_cluster.log` (0.11.13): `TEST warning: Monitoring metrics missing (Filesystem Read/Write
+  Total ... of workerloading: no activity seen, the pods were scraped)`. The proposal is dropped.
 
 ## 6. Deferred
 
