@@ -26,7 +26,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels: {app: bexhoma, component: sut, configuration: default, experiment: default}
-  name: bexhoma-sut-monetdb
+  name: bexhoma-deployment-monetdb
 spec:
   replicas: 1
   selector:
