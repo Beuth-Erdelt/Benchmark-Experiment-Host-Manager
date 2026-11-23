@@ -1430,6 +1430,8 @@ Benchbase Workload tpcc SF=1
 
 Example for run with 2 tenants for 5 minutes, keying and thinking time activated, 1 warehouse and 10 clients per tenant, each having a dedicated DBMS.
 The execution phase is run twice.
+Before each round, every tenant runs its reset script (`-ar`).
+The tenants start a round only together: bexhoma waits until all of them are ready for it, so the resets run side by side and never while another tenant is still benchmarking.
 ```bash
 bexhoma benchbase \
   -dbms PostgreSQL \
@@ -1440,6 +1442,7 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 10 \
   -xkey \
+  -ar \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
