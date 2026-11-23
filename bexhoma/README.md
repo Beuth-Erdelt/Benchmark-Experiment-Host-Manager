@@ -300,9 +300,9 @@ for loaders (including the YCSB generator which does `ycsb load`) it uses the
 | Loader round counter | `configurations/loading.py::LoadingCoordinator.start_pod()` | Sum of `num_pods` across every entry in `experiment_dict['loader']` |
 | Generator job counter | `configurations/loading.py::LoadingCoordinator.start_pod()` | Per-entry `num_pods` |
 | Benchmarker job counter | `configurations/benchmarking.py::BenchmarkRunner.run_pod()` | `parallelism` |
-| Benchmarker round counter | `experiments/base.py::work_benchmark_list()` at `config.client > self.client` | Sum of `parallelism` across all configs for this round |
+| Benchmarker round counter | `experiments/base.py::_queue_round()`, for every configuration and round | Sum of `parallelism` across the entries of this configuration's round |
 | Loader/generator experiment counter | `experiments/base.py::work_benchmark_list()` when all container-tenancy configs are ready to load | Sum of loader pod counts (across all entries) across all active configs |
-| Benchmarker experiment counter | `experiments/base.py::work_benchmark_list()` at `config.client > self.client`, when `self.tenant_per == 'container'` | Same as round counter value |
+| Benchmarker experiment counter | `experiments/base.py::_queue_round()` at `config.client > self.client`, when `self.tenant_per == 'container'`; the rounds of all container tenants are queued in the same pass (`_release_tenant_rounds()`) | Sum of the round counters of all configurations for this round |
 
 The loader and generator experiment counters are both initialized to `total_loading_pods`
 so that each key can be independently decremented by its own pod type without one type's

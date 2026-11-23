@@ -2551,6 +2551,113 @@ class ExperimentBase():
                 warned.append(config.configuration)
         return warned
 
+    def _next_round_position(self, config) -> Optional[tuple[int, int]]:
+        """Return the client round a configuration runs next, as ``(repetition, client)``.
+
+        A configuration whose rounds of this repetition are all submitted runs
+        round 1 of its next repetition, if there is one.
+
+        :param config: The configuration.
+        :return: ``(repetition, client)``, both 1-based; None when it runs no
+            further round, or uses the legacy ``benchmark_list``.
+        :rtype: tuple[int, int] or None
+        """
+        if config.experiment_done:
+            return None
+        rounds = config.experiment_dict.get("benchmarker") or []
+        if not rounds:
+            return None
+        experiment_run = config.num_experiment_to_apply_done + 1
+        if config.client <= len(rounds):
+            return (experiment_run, config.client)
+        if experiment_run < config.num_experiment_to_apply:
+            return (experiment_run + 1, 1)
+        return None
+
+    def _release_tenant_rounds(self, tenants_ready: dict) -> list:
+        """Return the container tenants whose next client round starts now.
+
+        With ``tenant_per == 'container'`` every tenant is a configuration of its
+        own. A tenant that could start its next round only reports it (in
+        ``tenants_ready``); the round starts when every tenant that still has to
+        run this round, or an earlier one, is ready for it. All tenants of the
+        round then submit in the same pass, so their reset scripts run side by
+        side and none runs while another tenant still benchmarks. A tenant
+        that drops out (done, or no rounds left) is not waited for.
+
+        :param tenants_ready: Configuration name -> ``(repetition, client)`` of
+            the round it is ready for, collected in this pass only: a tenant
+            that is not ready in a pass (e.g. unhealthy) is not counted.
+        :return: The configurations to submit now, in the order of
+            :attr:`configurations`.
+        :rtype: list
+        """
+        released = []
+        for position in sorted(set(tenants_ready.values())):
+            pending = [config for config in self.configurations
+                       if (p := self._next_round_position(config)) is not None and p <= position]
+            waiting_for = [config.configuration for config in pending
+                           if tenants_ready.get(config.configuration) != position]
+            if waiting_for:
+                for name, ready in tenants_ready.items():
+                    if ready == position:
+                        print("{:30s}: waits for tenants {} to be ready for round {}".format(
+                            name, ", ".join(waiting_for), position[1]))
+                continue
+            print("#### Starting round {} of repetition {}".format(position[1], position[0]))
+            released += pending
+        return released
+
+    def _queue_round(self, config, app: str, submit_batch: MetricFetchBatch) -> functools.partial:
+        """Set the pod counters of a configuration's next client round and return its submission.
+
+        Experiment dict path. Advances ``config.client``; the returned step
+        runs :meth:`_submit_round` side by side with the rounds of the other
+        configurations of the pass.
+
+        :param config: The configuration; ``config.client`` names the round to start.
+        :param app: App name of the cluster, part of the counter keys.
+        :param submit_batch: Batch for the loading-metric fetches.
+        :return: The submission step.
+        :rtype: functools.partial
+        """
+        client = str(config.client)
+        experiment_run = str(config.num_experiment_to_apply_done + 1)
+        client_round = config.experiment_dict["benchmarker"][config.client - 1]
+        config.client += 1
+        is_first_in_round = config.client > self.client
+        if is_first_in_round:
+            print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client - 1))
+            self.client = config.client
+        # Round counter is per-configuration: initialize for every config so
+        # each SUT's pods find their own key already set in Redis.
+        round_idx = config.client - 2  # 0-based index of the round just started
+        benchmarker_rounds = config.experiment_dict.get("benchmarker") or []
+        if round_idx < len(benchmarker_rounds):
+            total_round_pods = sum(entry["parallelism"] for entry in benchmarker_rounds[round_idx])
+        else:
+            total_round_pods = 0
+        round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experiment_run, client, config.configuration, self.code)
+        self.cluster.set_pod_counter(queue=round_counter_key, value=total_round_pods)
+        print("{:30s}: Round pod counter {} initialized to {}.".format("Experiment", round_counter_key, total_round_pods))
+        if is_first_in_round and self.tenant_per == 'container':
+            # Experiment counter spans all configurations so every
+            # container-tenancy pod waits for the full cross-SUT cohort.
+            total_exp_pods = sum(
+                sum(entry["parallelism"] for entry in c_rounds[round_idx])
+                for c in self.configurations
+                for c_rounds in [c.experiment_dict.get("benchmarker") or []]
+                if round_idx < len(c_rounds)
+            )
+            exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
+            self.cluster.set_pod_counter(queue=exp_bm_key, value=total_exp_pods)
+            print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, total_exp_pods))
+        print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
+        # counters are set; the jobs of all configurations are submitted together after the loop
+        return functools.partial(
+            self._submit_round, config, client_round, experiment_run, client,
+            round_counter_key, submit_batch)
+
     def _submit_round(self, config, client_round: list, experiment_run: str, client: str,
                       round_counter_key: str, fetch_batch: MetricFetchBatch) -> None:
         """Submit the benchmarker jobs of one client round of a configuration (experiment dict path).
@@ -2790,6 +2897,8 @@ class ExperimentBase():
             submit_batch = MetricFetchBatch()
             # job submissions of this pass, run side by side after the loop (_submit_round())
             submissions: list = []
+            # container tenants ready in this pass for their next round: name -> (run, client)
+            tenants_ready: dict[str, tuple[int, int]] = {}
             for config in self.configurations:
                 # a SUT stopped between repetitions: wait until it is gone
                 if getattr(config, 'sut_removing', False):
@@ -3030,43 +3139,13 @@ class ExperimentBase():
                             print("{:30s}: has running benchmarks".format(config.configuration))
                         continue
                     if _use_experiment_dict and config.client <= len(config.experiment_dict["benchmarker"]):
+                        if self.tenant_per == 'container':
+                            # a container tenant starts a round, and its reset, only together
+                            # with the other tenants: released after this loop
+                            tenants_ready[config.configuration] = self._next_round_position(config)
+                            continue
                         # experiment dict path: submit all parallel entries in this client round
-                        client = str(config.client)
-                        experiment_run = str(config.num_experiment_to_apply_done + 1)
-                        client_round = config.experiment_dict["benchmarker"][config.client - 1]
-                        config.client += 1
-                        is_first_in_round = config.client > self.client
-                        if is_first_in_round:
-                            print("{:30s}: Reset experiment counter. This is first run of client number {}.".format("Experiment", config.client - 1))
-                            self.client = config.client
-                        # Round counter is per-configuration: initialize for every config so
-                        # each SUT's pods find their own key already set in Redis.
-                        round_idx = config.client - 2  # 0-based index of the round just started
-                        benchmarker_rounds = config.experiment_dict.get("benchmarker") or []
-                        if round_idx < len(benchmarker_rounds):
-                            total_round_pods = sum(entry["parallelism"] for entry in benchmarker_rounds[round_idx])
-                        else:
-                            total_round_pods = 0
-                        round_counter_key = '{}-benchmarker-podcount-round-{}-{}-{}-{}'.format(app, experiment_run, client, config.configuration, self.code)
-                        self.cluster.set_pod_counter(queue=round_counter_key, value=total_round_pods)
-                        print("{:30s}: Round pod counter {} initialized to {}.".format("Experiment", round_counter_key, total_round_pods))
-                        if is_first_in_round and self.tenant_per == 'container':
-                            # Experiment counter spans all configurations so every
-                            # container-tenancy pod waits for the full cross-SUT cohort.
-                            total_exp_pods = sum(
-                                sum(entry["parallelism"] for entry in c_rounds[round_idx])
-                                for c in self.configurations
-                                for c_rounds in [c.experiment_dict.get("benchmarker") or []]
-                                if round_idx < len(c_rounds)
-                            )
-                            exp_bm_key = '{}-benchmarker-podcount-exp-{}'.format(app, self.code)
-                            self.cluster.set_pod_counter(queue=exp_bm_key, value=total_exp_pods)
-                            print("{:30s}: Benchmarker experiment counter {} initialized to {}.".format("Experiment", exp_bm_key, total_exp_pods))
-                        print("{:30s}: benchmarks done {} of {}. This will be client {}".format(config.configuration, config.num_experiment_to_apply_done, config.num_experiment_to_apply, client))
-                        # counters are set; the jobs of all configurations are submitted together after this loop
-                        submissions.append(functools.partial(
-                            self._submit_round, config, client_round, experiment_run, client,
-                            round_counter_key, submit_batch))
+                        submissions.append(self._queue_round(config, app, submit_batch))
                         _benchmark_just_submitted = True
                     elif not _use_experiment_dict and len(config.benchmark_list) > 0:
                         # legacy benchmark_list path
@@ -3182,6 +3261,11 @@ class ExperimentBase():
                                 progress = " ({}/{} parallel loading jobs done)".format(
                                     num_data_jobs_ready, num_data_jobs)
                     print("{:30s}: is loading{}".format(config.configuration, progress))
+            # queued after the loop, so that no tenant is looked at again in this pass
+            # while the jobs of its released round are not submitted yet
+            for config in self._release_tenant_rounds(tenants_ready):
+                submissions.append(self._queue_round(config, self.cluster.appname, submit_batch))
+                _benchmark_just_submitted = True
             self._run_parallel_steps(submissions, "submitted {} benchmark rounds")
             submit_batch.run(self.max_parallel_fetches)
             _we_have_running_benchmarks = False
