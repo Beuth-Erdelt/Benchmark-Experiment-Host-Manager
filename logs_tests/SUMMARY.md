@@ -27,7 +27,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_mysql_monitoring.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 810s |  |
 | passed | docs_benchbase_mysql_scale.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 2047s |  |
 | passed | docs_benchbase_mysql_storage.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 1006s |  |
-| passed | docs_benchbase_mysql_tenants_container.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 1154s |  |
+| passed | docs_benchbase_mysql_tenants_container.log | Example-Multi-Tenant.md | 2026-11-23 | 0.12.3 | 1198s |  |
 | passed | docs_benchbase_mysql_tenants_database.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 1178s |  |
 | passed | docs_benchbase_pgbouncer_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 1586s |  |
 | passed | docs_benchbase_pgbouncer_newconn.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 1555s |  |
@@ -40,7 +40,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_postgresql_collector_1.log | Example-Collectors.md | 2026-11-01 | 0.11.12 | 1850s |  |
 | passed | docs_benchbase_postgresql_collector_2.log | Example-Collectors.md | 2026-11-01 | 0.11.12 | 1880s |  |
 | passed | docs_benchbase_postgresql_collector_3.log | Example-Collectors.md | 2026-11-01 | 0.11.12 | 1992s |  |
-| passed | docs_benchbase_postgresql_collector_tenants_container.log | Example-Collectors.md | 2026-11-05 | 0.11.12 | 2917s |  |
+| passed | docs_benchbase_postgresql_collector_tenants_container.log | Example-Collectors.md | 2026-11-23 | 0.12.3 | 2511s |  |
 | passed | docs_benchbase_postgresql_collector_tenants_database.log | Example-Collectors.md | 2026-11-05 | 0.11.12 | 2229s |  |
 | passed | docs_benchbase_postgresql_collector_tenants_schema.log | Example-Collectors.md | 2026-11-05 | 0.11.12 | 2646s |  |
 | passed | docs_benchbase_postgresql_epinions_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 415s |  |
@@ -60,7 +60,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_postgresql_start.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 172s |  |
 | passed | docs_benchbase_postgresql_storage.log | Example-Benchbase.md | 2026-11-13 | 0.11.17 | 1200s |  |
 | passed | docs_benchbase_postgresql_tatp_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 415s |  |
-| passed | docs_benchbase_postgresql_tenants_container.log | Example-Multi-Tenant.md | 2026-11-17 | 0.11.18 | 1041s |  |
+| passed | docs_benchbase_postgresql_tenants_container.log | Example-Multi-Tenant.md | 2026-11-23 | 0.12.3 | 1046s |  |
 | passed | docs_benchbase_postgresql_tenants_database.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 1033s |  |
 | passed | docs_benchbase_postgresql_tenants_schema.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 1060s |  |
 | passed | docs_benchbase_postgresql_twitter_scale.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 5532s |  |
@@ -162,7 +162,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_hardware_sysbench_cpu_quota_calibration.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 448s |  |
 | passed | docs_hardware_sysbench_nbp_overhead_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 358s |  |
 | passed | docs_hardware_sysbench_ne_saturation_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 461s |  |
-| passed | docs_hardware_sysbench_noisy_neighbor.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 162s |  |
+| passed | docs_hardware_sysbench_noisy_neighbor.log | Example-Hardware.md | 2026-11-23 | 0.12.3 | 161s |  |
 | passed | docs_reset_benchbase_citus.log | Test-Reset.md | 2026-11-16 | 0.11.18 | 970s |  |
 | passed | docs_reset_benchbase_cockroachdb.log | Test-Reset.md | 2026-11-16 | 0.11.18 | 724s |  |
 | passed | docs_reset_benchbase_mariadb.log | Test-Reset.md | 2026-11-16 | 0.11.18 | 710s |  |
@@ -297,7 +297,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpch_postgresql_collector_1.log | Example-Collectors.md | 2026-11-02 | 0.11.12 | 1321s |  |
 | passed | docs_tpch_postgresql_collector_2.log | Example-Collectors.md | 2026-11-02 | 0.11.12 | 3032s |  |
 | passed | docs_tpch_postgresql_collector_3.log | Example-Collectors.md | 2026-11-02 | 0.11.12 | 1454s |  |
-| passed | docs_tpch_postgresql_collector_tenants_container.log | Example-Collectors.md | 2026-11-02 | 0.11.12 | 1523s |  |
+| passed | docs_tpch_postgresql_collector_tenants_container.log | Example-Collectors.md | 2026-11-23 | 0.12.3 | 1258s |  |
 | passed | docs_tpch_postgresql_collector_tenants_database.log | Example-Collectors.md | 2026-11-02 | 0.11.12 | 1146s |  |
 | passed | docs_tpch_postgresql_collector_tenants_schema.log | Example-Collectors.md | 2026-11-02 | 0.11.12 | 1515s |  |
 | passed | docs_tpch_postgresql_fractional.log | Example-TPC-H.md | 2026-11-13 | 0.11.17 | 630s |  |
@@ -309,7 +309,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpch_postgresql_start.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 174s |  |
 | passed | docs_tpch_postgresql_storage.log | Example-PostgreSQL.md | 2026-11-19 | 0.12.0 | 687s |  |
 | passed | docs_tpch_postgresql_subset.log | Example-TPC-H.md | 2026-11-13 | 0.11.17 | 725s |  |
-| passed | docs_tpch_postgresql_tenants_container.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 457s |  |
+| passed | docs_tpch_postgresql_tenants_container.log | Example-Multi-Tenant.md | 2026-11-23 | 0.12.3 | 452s |  |
 | passed | docs_tpch_postgresql_tenants_database.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 430s |  |
 | passed | docs_tpch_postgresql_tenants_database_multiload.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 474s |  |
 | passed | docs_tpch_postgresql_tenants_schema.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 448s |  |
