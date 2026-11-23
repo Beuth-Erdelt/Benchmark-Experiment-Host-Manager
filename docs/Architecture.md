@@ -25,21 +25,25 @@ Bexhoma is an orchestrator. It runs on your machine, talks to the cluster throug
 
 ## Package
 
-The package has three layers: benchmark-specific code builds on generic orchestration, which builds on cluster access. Generic code reaches a benchmark only through the registry; the one exception is `environment.py`, which runs the hardware baseline of `benchmarks/hardware/` directly.
+The package has three layers: benchmark-specific code builds on generic orchestration, which builds on cluster access. Generic code reaches benchmark-specific code only through the registry; the one exception is `environment.py`, which runs the hardware baseline of `benchmarks/hardware/` directly.
 
 | Layer | Module | Responsibility |
 |---|---|---|
-| Benchmark-specific | `benchmarks/<name>/` | everything that belongs to one benchmark: CLI, experiment, benchmark, evaluator, collector, catalog argv builder |
+| Benchmark-specific | `benchmarks/<name>/` | everything that belongs to one benchmark, up to: CLI, experiment, benchmark, evaluator, collector, catalog argv builder (`catalog.py`, only `tpch` and `ycsb`); `tpch/` also has `loader.py` and `builder.py` for the YAML-driven entry script |
+| | `benchmarks/dbmsbenchmarker/` | what TPC-H, TPC-DS and SSB share (benchmark, evaluator, collector); not a benchmark of its own: no CLI, no experiment |
 | | `benchmarks/registry.py` | finds the benchmark folders; generic code asks it instead of naming a benchmark |
-| Generic orchestration | `experiments/base.py`, `experiments/mixed.py` | `ExperimentBase` and `MixedExperiment`: the experiment, its configurations, the main loop, evaluation, summary |
+| Generic orchestration | `benchmarks/base.py`, `benchmarks/refresh.py` | the abstract `Benchmark` and the `Section` tree its summary is built from; `RefreshStreamBenchmark` for stream jobs that run beside a benchmark in the same round |
+| | `experiments/base.py`, `experiments/mixed.py` | `ExperimentBase` and `MixedExperiment`: the experiment, its configurations, the main loop, evaluation, summary |
 | | `experiments/system_builder.py` | builds one configuration of a DBMS for a benchmark from the `dockers` entry of the cluster configuration |
 | | `configurations/` | `SutConfiguration`: one DBMS configuration and its helpers, see [Configuration](#configuration) |
-| | `evaluators/`, `collectors/` | generic base classes for the results of one experiment (evaluator) or of several (collector) |
+| | `evaluators/`, `collectors/` | generic base classes for the results of one experiment (evaluator) or of several (collector); `evaluators/logger.py` has `LogEvaluator`, which parses benchmarker logs and is the parent of every benchmark-specific evaluator |
+| | `monitoring_math.py` | reduces monitoring time series to one value per connection (counter metrics across pod restarts and leftover pods) |
 | | `report_writer.py`, `failure_timeline.py`, `sut_restarts.py`, `loading_checks.py`, `missing_metrics.py`, `test_status.py` | the Markdown report and the checks it shows; they read only the result folder |
 | | `spec.py`, `spec_argv.py`, `environment.py` | catalog contract: validate an `experiment.yml`, build the command line, describe the cluster in `environment.yml` |
 | | `system_descriptors.py`, `ddl_parameters.py`, `load_durability.py` | read DBMS-specific settings from the cluster configuration and the script folders |
 | Cluster access | `clusters.py` | `Kubernetes` (and `AWS`): pods, jobs, deployments, PVCs, `kubectl exec`/`cp`, the dashboard and message queue |
 | | `cluster_calls.py`, `parallel_steps.py`, `metric_fetching.py` | counting and timing cluster calls, steps of the main loop that run side by side, parallel Prometheus fetches |
+| | `ceph_storage.py`, `tls.py` | Ceph facts behind a SUT's volumes (StorageClass, pool, RBD images) for monitoring placeholders, `environment.yml` and spec validation; the self-signed CA and server certificate Secret of a SUT |
 | Command line | `scripts/cli.py`, `scripts/experimentsmanager.py`, `cli_args.py` | the `bexhoma` command, the management tool (`status`, `summary`, ...) and the arguments all entry scripts share |
 
 ## Flow of a run
