@@ -502,6 +502,7 @@ class CollectorBase:
         path = getattr(evaluation, 'path', None)
         connections = read_connections(path) if path else []
         for metric_key, row in self.df_metrics.iterrows():
+            # a DataFrame cell holds numpy.bool_, for which `is False` never holds
             if row["active"] is False or row["active"] == False:  # noqa: E712
                 continue
             reduction = {'counter': 'diff', 'ratio': 'max'}.get(row["metric"], 'mean')

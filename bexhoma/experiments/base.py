@@ -3,16 +3,14 @@ Base experiment class and general-purpose experiment types.
 
 Provides :class:`DictToObject`, :class:`ExperimentBase` (the core experiment
 class plugged into a cluster object to manage the full lifecycle of a bexhoma
-experiment), and derived types :class:`IotExperiment`, :class:`TsbsExperiment`,
-:class:`ExampleExperiment`, and :class:`TpcxaiExperiment`. Each experiment
-folder must contain a query file and per-DBMS schema subfolders.
+experiment), and :class:`ExampleExperiment`. Each experiment folder must
+contain a query file and per-DBMS schema subfolders.
 
 Authors: Patrick K. Erdelt
 Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from dbmsbenchmarker import parameter
 import logging
 import urllib3
 from os import makedirs, path
@@ -58,10 +56,7 @@ __all__ = [
     "DictToObject",
     "parse_set_arg",
     "ExperimentBase",
-    "IotExperiment",  # noqa: F822
-    "TsbsExperiment",  # noqa: F822
     "ExampleExperiment",
-    "TpcxaiExperiment",  # noqa: F822
 ]
 
 
@@ -646,7 +641,7 @@ class ExperimentBase():
         filename_remote = '/results/'+str(self.code)+'/'+filename
         return self.cluster.download_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
     def get_parameter_as_list(self,
-                              parameter: str) -> list:  # noqa: F811
+                              parameter: str) -> list:
         """
         Transform comma separated CLI parameters to list.
         This is for example used to transform num_loading_pods.
@@ -665,7 +660,7 @@ class ExperimentBase():
             value = list(int(value))
         return value
     def get_parameter_as_list_str(self,
-                                  parameter: str) -> list:  # noqa: F811
+                                  parameter: str) -> list:
         """
         Transform a comma separated CLI parameter into a list of strings,
         without casting entries to int. This is for parameters whose values
@@ -682,7 +677,7 @@ class ExperimentBase():
             return []
         return [entry for entry in value.split(",") if len(entry) > 0]
     def prepare_testbed(self,
-                        parameter: dict) -> None:  # noqa: F811
+                        parameter: dict) -> None:
         """
         Prepares a testbed.
         It takes the CLI arguments as a dict.
@@ -692,7 +687,7 @@ class ExperimentBase():
 
         :param parameter: Comma separated list of values
         """
-        if (not 'type' in self.workload) or (len(self.workload['type']) == 0):  # noqa: E713
+        if ('type' not in self.workload) or (len(self.workload['type']) == 0):
             # set default workload type
             self.workload['type'] = 'dbmsbenchmarker'
         args = SimpleNamespace(**parameter)
@@ -3610,7 +3605,7 @@ class ExperimentBase():
                             if name=='sut' and config.monitoring_sut:
                                 print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, connection))
                                 fetch(
-                                    title=f"Benchmarking phase: SUT deployment",  # noqa: F541
+                                    title="Benchmarking phase: SUT deployment",
                                     connection=connection,
                                     connection_file=connection+'.config',
                                     container="dbms",
@@ -3731,7 +3726,7 @@ class ExperimentBase():
                     if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
                         print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, connection))
                         fetch(
-                            title=f"Benchmarking phase: component benchmarker",  # noqa: F541
+                            title="Benchmarking phase: component benchmarker",
                             connection=connection,
                             connection_file=connection+'.config',
                             container="dbmsbenchmarker",
@@ -3859,7 +3854,6 @@ class ExperimentBase():
                         if metric['type'] == 'application' and metric['active'] == True:  # noqa: E712
                             df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'benchmarking')#
                             if not df.empty:
-                                list_monitoring_app
                                 if metric['metric'] == 'counter':
                                     df = counter_total(df, component)
                                 else:
@@ -3879,20 +3873,20 @@ class ExperimentBase():
                     # currently: only first component, only benchmarking
                     # TODO: make dynamical
                     #break
-            infos = ["  * {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]  # noqa: E713
+            infos = ["  * {}:{}".format(key,info) for key, info in c['hostsystem'].items() if 'timespan' not in key and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
             if 'sut' in c and len(c['sut']) > 0:
                 for i, sut in enumerate(c['sut']):
                     print("  * sut {}".format(i))
-                    infos = ["    * {}:{}".format(key,info) for key, info in sut.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]  # noqa: E713
+                    infos = ["    * {}:{}".format(key,info) for key, info in sut.items() if 'timespan' not in key and not info=="" and not str(info)=="0" and not info==[]]
                     for info in infos:
                         print(info)
             if 'worker' in c and len(c['worker']) > 0:
                 for worker_type in c['worker'].keys():
                     for i, worker in enumerate(c['worker'][worker_type]):
                         print("  * {} {}".format(worker_type, i))
-                        infos = ["    * {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]  # noqa: E713
+                        infos = ["    * {}:{}".format(key,info) for key, info in worker.items() if 'timespan' not in key and not info=="" and not str(info)=="0" and not info==[]]
                         for info in infos:
                             print(info)
             if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
@@ -3908,7 +3902,7 @@ class ExperimentBase():
                         print("  * load_durability: {}".format(parameters))
                     if i == "eval_parameters":
                         print("  * "+i)
-                        infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]  # noqa: E713
+                        infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if 'timespan' not in key and not info=="" and not str(info)=="0" and not info==[]]
                         for info in infos:
                             print(info)
         self._show_loading_provenance(connections_sorted)

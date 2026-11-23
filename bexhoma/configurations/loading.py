@@ -787,8 +787,8 @@ class LoadingCoordinator:
                             stored_pods(cfg.experiment.cluster).add(pod)
                 if success:
                     cfg.experiment.cluster.logger.debug(
-                        'job {} will be suspended and parallel loading will be considered finished'  # noqa: F523
-                        .format(job, success))
+                        'job {} will be suspended and parallel loading will be considered finished'
+                        .format(job))
                     pod_labels = cfg.experiment.cluster.get_pods_labels(
                         app=app, component='sut',
                         experiment=experiment, configuration=configuration)

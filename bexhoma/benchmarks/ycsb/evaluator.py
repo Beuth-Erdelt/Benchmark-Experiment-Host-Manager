@@ -697,7 +697,7 @@ class YcsbEvaluator(LogEvaluator):
                 parsed_results = self.parse_log_file(file)
                 data = []
                 for result in parsed_results:
-                    if not column in result:  # noqa: E713
+                    if column not in result:
                         result_metrics = flatten_dict(result['metrics'])
                         #print(result_metrics)
                         d = {
@@ -732,7 +732,7 @@ class YcsbEvaluator(LogEvaluator):
                         else:
                             df_total = df_total.add(df, fill_value=0)
         if aggregate:
-            if not metric == "current_ops_per_sec" and not "9" in metric and not "Max" in metric and not "Min" in metric:  # noqa: E713
+            if not metric == "current_ops_per_sec" and "9" not in metric and "Max" not in metric and "Min" not in metric:
                 df_total = df_total / num_logs
             df_total['avg'] = int(df_total[column].mean())
         return df_total

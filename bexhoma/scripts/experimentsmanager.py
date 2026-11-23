@@ -16,7 +16,6 @@ from bexhoma.scripts.cli import EXPERIMENT_MODES
 from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
-import logging  # noqa: F811
 import argparse
 import pandas as pd
 from tabulate import tabulate
@@ -184,7 +183,7 @@ def manage():
             # "all" does not include Secrets (TLS material of the SUTs)
             cluster.kubectl('delete secret -l experiment='+args.experiment+',component=tls')
     elif args.mode == 'summary':
-        if not args.experiment is None:  # noqa: E714
+        if args.experiment is not None:
             # -fe re-evaluates by executing a command inside the running dashboard pod,
             # which needs a live cluster connection; a plain summary only reads local files.
             cluster = clusters.Kubernetes(clusterconfig, context=args.context, connect=args.force_evaluate)  # noqa: F405
@@ -484,7 +483,7 @@ def manage():
                     labels = pod_labels[pod.metadata.name]
                     client_display = '{}. '.format(labels['client']) if 'client' in labels else ''
                     status_extended = "{pod} ({client}{status})".format(pod='', client=client_display, status=status)
-                    num_pods[status_extended] = 1 if not status_extended in num_pods else num_pods[status_extended]+1  # noqa: E713
+                    num_pods[status_extended] = 1 if status_extended not in num_pods else num_pods[status_extended]+1
                 for status in num_pods.keys():
                         apps[configuration][component] += "{num}x{status}".format(num=num_pods[status], status=status)
                 ############

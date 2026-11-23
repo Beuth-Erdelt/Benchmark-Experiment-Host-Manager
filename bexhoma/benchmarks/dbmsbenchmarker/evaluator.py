@@ -548,7 +548,7 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         query_properties = self.evaluation.get_experiment_query_properties()
         num_of_queries = 0
         df_stats = self.evaluation.get_aggregated_query_statistics(type='latency', name='execution', query_aggregate='Mean')
-        if not df_stats is None:  # noqa: E714
+        if df_stats is not None:
             df_stats = df_stats.sort_index().T.round(2)
             df_stats.index = df_stats.index.map(map_index_to_queryname)
             num_of_queries = len(df_stats.index)  # noqa: F841

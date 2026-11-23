@@ -354,9 +354,8 @@ scrape_configs:
     scrape_timeout: {prometheus_timeout}
     metrics_path: /_status/vars
     static_configs:
-      - targets: ['{endpoint}:8080']""".format(  # noqa: F522
+      - targets: ['{endpoint}:8080']""".format(
                                                 endpoint=endpoint,
-                                                client=worker_idx,
                                                 prometheus_interval=cfg.prometheus_interval,
                                                 prometheus_timeout=cfg.prometheus_timeout)
                                             worker_idx += 1
@@ -385,9 +384,8 @@ scrape_configs:
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
-      - targets: ['{endpoint}:9300']""".format(  # noqa: F522
+      - targets: ['{endpoint}:9300']""".format(
                                 endpoint=endpoint,
-                                client=ep_idx,
                                 prometheus_interval=cfg.prometheus_interval,
                                 prometheus_timeout=cfg.prometheus_timeout)
                             ep_idx += 1
@@ -406,9 +404,8 @@ scrape_configs:
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
-      - targets: ['{endpoint}:9300']""".format(  # noqa: F522
+      - targets: ['{endpoint}:9300']""".format(
                                     endpoint=endpoint,
-                                    client=worker_ep_idx,
                                     prometheus_interval=cfg.prometheus_interval,
                                     prometheus_timeout=cfg.prometheus_timeout)
                                 worker_ep_idx += 1
@@ -892,10 +889,8 @@ scrape_configs:
                 worker_service=name_service_headless)
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
             env['STATEFULSET_NAME'] = name_worker
-            env['BEXHOMA_STORE_NAME'] = "{name_store}".format(  # noqa: F522
-                name_store=name_store, worker_service=name_store)
-            env['BEXHOMA_STORE_SERVICE'] = "{worker_service}".format(  # noqa: F522
-                name_store=name_store, worker_service=name_store)
+            env['BEXHOMA_STORE_NAME'] = name_store
+            env['BEXHOMA_STORE_SERVICE'] = name_store
             list_of_stores = []
             for worker in range(cfg.num_worker):
                 store_full_name = "{name_store}-{worker_number}.{worker_service}{worker_port}".format(
