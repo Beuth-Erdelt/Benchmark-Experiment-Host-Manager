@@ -32,7 +32,7 @@ spec:
         #      - ALL
         #  readOnlyRootFilesystem: true
         env:
-        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-clickhouse-1'}
+        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-clickhouse-1234567890'}
         - {name: BEXHOMA_PORT, value: '9091'}
         - {name: BEXHOMA_CONNECTION, value: 'clickhouse'}
         - {name: BEXHOMA_EXPERIMENT, value: '1234'}
@@ -64,7 +64,7 @@ spec:
         #      - ALL
         #  readOnlyRootFilesystem: true
         env:
-        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-clickhouse-1'}
+        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-clickhouse-1234567890'}
         - {name: BEXHOMA_PORT, value: '9091'}
         - {name: BEXHOMA_CONNECTION, value: 'clickhouse'}
         - {name: BEXHOMA_EXPERIMENT, value: '1234'}

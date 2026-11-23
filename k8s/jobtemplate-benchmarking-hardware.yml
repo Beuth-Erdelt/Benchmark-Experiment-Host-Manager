@@ -26,7 +26,7 @@ spec:
         image: bexhoma/benchmarker_hardware:BEXHOMA_PACKAGE_VERSION
         imagePullPolicy: Always
         env:
-        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-hardware-1658676533'}
+        - {name: BEXHOMA_HOST, value: 'bexhoma-sut-hardware-1234567890'}
         - {name: BEXHOMA_CONNECTION, value: 'hardware'}
         - {name: BEXHOMA_EXPERIMENT, value: '1234'}
         - {name: HARDWARE_TYPE, value: 'fio'}

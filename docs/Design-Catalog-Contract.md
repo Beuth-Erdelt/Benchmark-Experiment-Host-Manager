@@ -164,11 +164,11 @@ implied by `arg_style` at the system level, with per-knob overrides for the
 
 ### Deployment/name irregularities
 
-- MonetDB's real Deployment name is `bexhoma-sut-monetdb` — it's the one
-  system that breaks the `bexhoma-deployment-<key>` convention every other
-  template follows (`docs/DBMS.md:121-122` states the convention; MonetDB
-  violates its own docs). This is exactly why `deployment:` must be an
-  explicit literal field per catalog entry, never derived from a naming
+- Every single-component template names its Deployment
+  `bexhoma-deployment-<key>` (MonetDB was the exception, `bexhoma-sut-monetdb`,
+  until it was renamed). The convention is not enforced anywhere, and the
+  multi-component systems below don't fit it, so `deployment:` must still be
+  an explicit literal field per catalog entry, never derived from a naming
   rule.
 - Citus, CockroachDB, TiDB are **multi-component**: a coordinator/SQL-layer
   Deployment plus one or more worker StatefulSets (Citus: `bexhoma-worker`,
@@ -634,7 +634,7 @@ systems:
     physical_design: {indexes: true, constraints: true, statistics: true, storage_format: [heap]}
 
   MonetDB:
-    deployment: bexhoma-sut-monetdb   # breaks the bexhoma-deployment-<key> naming convention every other system follows
+    deployment: bexhoma-deployment-monetdb
     image: monetdb/monetdb:Dec2025-SP3
     arg_style: none
     physical_design: {indexes: true, constraints: true, statistics: true, storage_format: [heap]}
