@@ -1,0 +1,72 @@
+"""
+Tests for the node-level metrics of workers spread over several nodes (#604).
+
+Covers ``worker_host_values()`` (the ``{host}`` and ``{gpuid}`` values of a
+worker component) and the node metrics in ``k8s-cluster.config``: they match
+``{host}`` as a regex and keep the cores of different nodes apart, so a
+query over several nodes still returns one series.
+
+Authors: Patrick K. Erdelt
+Copyright (C) 2026 Patrick K. Erdelt
+SPDX-License-Identifier: AGPL-3.0-or-later
+See LICENSE for details.
+"""
+from __future__ import annotations
+
+import ast
+import unittest
+from pathlib import Path
+
+from bexhoma.configurations.metrics import worker_host_values
+
+_REPO = Path(__file__).resolve().parent.parent
+_NODE_METRICS = ('core_variance', 'max_core_util', 'io_wait_pct', 'io_wait_total')
+
+
+class WorkerHostValuesTest(unittest.TestCase):
+
+    def test_no_workers_fall_back_to_sut(self):
+        self.assertEqual(worker_host_values([], 'sut-node', 'g0'), ('sut-node', 'g0'))
+        self.assertEqual(worker_host_values([{'node': ''}], 'sut-node', 'g0'), ('sut-node', 'g0'))
+
+    def test_single_node_is_plain_name(self):
+        workers = [{'node': 'n1', 'GPUIDs': []}, {'node': 'n1', 'GPUIDs': []}]
+        self.assertEqual(worker_host_values(workers, 'sut-node', 'g0'), ('n1', ''))
+
+    def test_several_nodes_give_alternation_in_order(self):
+        workers = [{'node': 'n2', 'GPUIDs': ['a']}, {'node': 'n1', 'GPUIDs': ['b']},
+                   {'node': 'n2', 'GPUIDs': ['a']}]
+        self.assertEqual(worker_host_values(workers, 'sut-node', ''), ('(n2|n1)', 'a|b'))
+
+
+class NodeMetricQueriesTest(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        config = ast.literal_eval((_REPO / "k8s-cluster.config").read_text(encoding="utf-8"))
+        cls.metrics = config['credentials']['k8s']['monitor']['metrics']
+
+    def test_host_matched_as_regex(self):
+        for name in _NODE_METRICS:
+            query = self.metrics[name]['query']
+            self.assertIn('instance=~"{host}"', query, name)
+            self.assertNotIn('instance="{host}"', query, name)
+
+    def test_cores_grouped_per_node(self):
+        for name in ('core_variance', 'max_core_util'):
+            query = self.metrics[name]['query']
+            self.assertNotIn('by (exported_cpu)', query, name)
+            self.assertIn('by (instance, exported_cpu)', query, name)
+
+    def test_io_wait_share_pooled_over_nodes(self):
+        query = self.metrics['io_wait_pct']['query']
+        self.assertNotIn('by (instance)', query)
+
+    def test_queries_format_with_several_nodes(self):
+        for name in _NODE_METRICS:
+            query = self.metrics[name]['query'].format(host='(n1|n2)')
+            self.assertIn('instance=~"(n1|n2)"', query, name)
+
+
+if __name__ == '__main__':
+    unittest.main()
