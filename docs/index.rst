@@ -13,8 +13,6 @@
 
     ../README.md
     ./Concepts.md
-    ./Architecture.md
-    ./WorkBenchmarkList.md
     ./Config.md
     ./DBMS.md
     ./Monitoring.md
@@ -65,6 +63,8 @@
     ./Test-Reset.md
     ./Test-Durability.md
     ./Agent.md
+    ./Architecture.md
+    ./WorkBenchmarkList.md
     ./bexhoma
 
 

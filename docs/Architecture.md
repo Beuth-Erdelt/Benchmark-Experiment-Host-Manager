@@ -1,4 +1,4 @@
-# Architecture
+# Software Architecture
 
 This page describes how the Python code of Bexhoma is organised, so that you know where a change belongs.
 For what runs inside the Kubernetes cluster (SUT, loaders, benchmarkers, monitoring, dashboard), see [Concepts](Concepts.md#architecture).

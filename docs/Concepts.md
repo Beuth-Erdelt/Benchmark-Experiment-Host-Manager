@@ -189,14 +189,21 @@ A volume whose load did not finish or failed (`loaded=False`, `loading_failed=Tr
 
 ## Supported Benchmarks
 
-| Benchmark | Type | Tool |
-|---|---|---|
-| TPC-H | Analytical | DBMSBenchmarker |
-| TPC-DS | Analytical | DBMSBenchmarker |
-| YCSB | Key-value / transactional | YCSB |
-| TPC-C | Transactional | HammerDB |
-| TPC-C | Transactional | Benchbase |
-| Custom SQL | Analytical / mixed | DBMSBenchmarker |
+| Benchmark | Type | Tool | Example |
+|---|---|---|---|
+| TPC-H | Analytical | DBMSBenchmarker | [TPC-H](Example-TPC-H.md) |
+| TPC-DS | Analytical | DBMSBenchmarker | [TPC-DS](Example-TPC-DS.md) |
+| SSB (Star Schema Benchmark) | Analytical | DBMSBenchmarker | [SSB](Example-SSB.md) |
+| YCSB | Key-value / transactional | YCSB | [YCSB](Example-YCSB.md) |
+| TPC-C | Transactional | HammerDB | [HammerDB](Example-HammerDB.md) |
+| TPC-C | Transactional | Benchbase | [Benchbase](Example-Benchbase.md) |
+| Twitter, CH-benCHmark, YCSB and further Benchbase workloads | Transactional / mixed | Benchbase | [Benchbase's Others](Example-Benchbase-Others.md) |
+| Hardware (fio, sysbench, sockperf, netperf) | Storage, CPU, memory, network | fio, sysbench, sockperf, netperf | [Hardware](Example-Hardware.md) |
+| Custom SQL | Analytical / mixed | DBMSBenchmarker | [Custom SQL](Example-custom.md) |
+
+Further examples show how to run these benchmarks against specific DBMS:
+[PostgreSQL](Example-PostgreSQL.md), [PgDuckDB](Example-PgDuckDB.md), [OrioleDB](Example-OrioleDB.md), [MySQL](Example-MySQL.md), [MariaDB](Example-MariaDB.md), [MariaDB ColumnStore](Example-MariaDBCS.md), [MonetDB](Example-MonetDB.md), [ClickHouse](Example-ClickHouse.md), [Citus](Example-Citus.md), [YugabyteDB](Example-YugaByteDB.md), [CockroachDB](Example-CockroachDB.md), [TiDB](Example-TiDB.md), [Redis](Example-Redis.md), [Dragonfly](Example-Dragonfly.md), [Valkey](Example-Valkey.md), [Garnet](Example-Garnet.md), [Cassandra](Example-Cassandra.md), [cloud databases](Example-CloudDatabase.md) and [other DBMS](Example-Other-DBMS.md).
+Examples for specific features: [PgBouncer](Example-PGBouncer.md), [Multi-Tenancy](Example-Multi-Tenant.md), [Application Metrics](Example-Metrics.md) and [Collectors](Example-Collectors.md).
 
 ---
 
