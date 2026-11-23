@@ -50,7 +50,7 @@ With `-ar` on a configuration without reset scripts, the experiment prints a war
 ## Test Script
 
 The test script runs one experiment per DBMS and benchmark with two client rounds, so every reset script runs twice, the first time right after loading.
-It covers PostgreSQL, PGBouncer, PgDuckDB, MySQL, MariaDB, Citus, MonetDB, CockroachDB, TiDB, YugabyteDB, Dragonfly (standalone, replica) and Redis (standalone, cluster) in the benchmarks that have reset scripts for them, Benchbase `twitter` in addition to `tpcc`, and TPC-H with a refresh stream.
+It covers PostgreSQL, PGBouncer, PgDuckDB, OrioleDB, MySQL, MariaDB, Citus, MonetDB, CockroachDB, TiDB, YugabyteDB, Dragonfly (standalone, replica) and Redis (standalone, cluster) in the benchmarks that have reset scripts for them, Benchbase `twitter` in addition to `tpcc`, and TPC-H with a refresh stream.
 
 You will have to change the node selectors (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
 ```bash
@@ -146,6 +146,35 @@ bexhoma ycsb \
 ```
 
 Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_pgbouncer_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_pgbouncer.log</a>
+
+
+### OrioleDB
+
+Reset of PostgreSQL; `VACUUM` has nothing to remove on OrioleDB tables, `ANALYZE` collects their statistics.
+
+```bash
+bexhoma ycsb \
+  -dbms OrioleDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ar \
+  run &>$LOG_DIR/docs_reset_ycsb_orioledb.log
+```
+
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_orioledb_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_orioledb.log</a>
 
 
 ### MySQL

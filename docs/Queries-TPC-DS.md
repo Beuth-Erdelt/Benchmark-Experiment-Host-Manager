@@ -64,13 +64,13 @@ A `mariadbcs-…` connection (MariaDB ColumnStore) matches the keys `MariaDB` an
 | Query | DBMS overrides | Reason |
 |-------|---------------|--------|
 | Q1 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`store_limit`) |
-| Q5 | Exasol, MariaDB, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround (MariaDB <10.4); `GROUP BY ROLLUP` syntax differences |
+| Q5 | MariaDB, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround (MariaDB <10.4); `GROUP BY ROLLUP` syntax differences |
 | Q6 | ClickHouse, MariaDBCS, MySQL | Correlated scalar subquery rewritten as a join with the per-category average; MariaDBCS: scalar subqueries as derived tables; MySQL (and MariaDB, same dialect): the same text as MariaDBCS (MySQL runs the subquery for every joined row: 63 s at SF 1, 242 s at SF 3, timeout of 1200 s at SF 10; rewritten 11 s at SF 10) |
 | Q7 | MonetDB | Averages computed as `double` (MonetDB averages `DECIMAL` columns with two decimals) |
 | Q8 | MariaDBCS | `INTERSECT` as `GROUP BY ... HAVING count(*) = 2` |
 | Q9 | MariaDBCS | All buckets as conditional aggregates of one scan |
 | Q10 | ClickHouse, MariaDBCS | `EXISTS` rewritten as `IN`; MariaDBCS: `EXISTS ... OR EXISTS` as a join with a `UNION` |
-| Q14a+b | Exasol, MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `INTERSECT` substitute (MariaDB); dialect-specific SQL for the others; MariaDBCS: `INTERSECT` as `GROUP BY ... HAVING count(*) = 3`, rollup by a join with one row per level |
+| Q14a+b | MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `INTERSECT` substitute (MariaDB); dialect-specific SQL for the others; MariaDBCS: `INTERSECT` as `GROUP BY ... HAVING count(*) = 3`, rollup by a join with one row per level |
 | Q16 | ClickHouse | `EXISTS` on another warehouse rewritten as `IN` over `GROUP BY … HAVING` |
 | Q18 | MariaDB, MariaDBCS, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDBCS emulates the rollup with `UNION ALL` |
 | Q22 | MariaDB, MariaDBCS, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDBCS emulates the rollup with `UNION ALL` |
@@ -99,13 +99,13 @@ A `mariadbcs-…` connection (MariaDB ColumnStore) matches the keys `MariaDB` an
 | Q66 | ClickHouse, MonetDB, PostgreSQL | String concatenation `\|\|` → `CONCAT()`; derived-table qualification (ClickHouse) |
 | Q67 | MariaDBCS, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDBCS emulates the rollup with `UNION ALL` |
 | Q69 | ClickHouse | `EXISTS` / `NOT EXISTS` rewritten as `IN` / `NOT IN` |
-| Q70 | Exasol, MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MonetDB emulates the rollup with `UNION ALL` (grand-total rank 1, subtotal ranks across all states); MariaDBCS emulates it too and ranks the levels afterwards |
+| Q70 | MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MonetDB emulates the rollup with `UNION ALL` (grand-total rank 1, subtotal ranks across all states); MariaDBCS emulates it too and ranks the levels afterwards |
 | Q72 | MariaDB, MariaDBCS | MariaDBCS: the days of a week as CTE `date_pairs`. MariaDB: `STRAIGHT_JOIN`; the days of the same week are reached as primary-key lookups (`d_date_sk` ±6 with the same `d_week_seq`) instead of a full scan of `date_dim`, then `inventory` by its primary key (default plan over 15 minutes, now seconds). Assumes the days of a week lie within 6 `d_date_sk` values of each other |
-| Q77 | Exasol, MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP` syntax differences; MariaDBCS: cross join as a join on a constant key, rollup by a join with one row per level |
-| Q80 | Exasol, MariaDB, MemSQL, MonetDB, MySQL, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP`; MariaDB/MySQL use `concat()` because `\|\|` is logical OR there |
+| Q77 | MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP` syntax differences; MariaDBCS: cross join as a join on a constant key, rollup by a join with one row per level |
+| Q80 | MariaDB, MemSQL, MonetDB, MySQL, PostgreSQL | Nested CTE workaround + `GROUP BY ROLLUP`; MariaDB/MySQL use `concat()` because `\|\|` is logical OR there |
 | Q81 | ClickHouse | Correlated scalar subquery rewritten as a joined CTE (`state_limit`) |
 | Q84 | MonetDB, PostgreSQL | String concatenation `\|\|` → `CONCAT()` |
-| Q86 | Exasol, MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDB maps real NULLs to a sentinel because it has no `GROUPING()`; MariaDBCS emulates the rollup with `UNION ALL` |
+| Q86 | MariaDB, MariaDBCS, MemSQL, MonetDB, PostgreSQL | `GROUP BY ROLLUP` syntax differences; MariaDB maps real NULLs to a sentinel because it has no `GROUPING()`; MariaDBCS emulates the rollup with `UNION ALL` |
 | Q87 | MariaDBCS | `EXCEPT` as `GROUP BY ... HAVING` |
 | Q88 | MariaDBCS | Cross join as a join on a constant key |
 | Q90 | MariaDBCS | Cross join as a join on a constant key |
@@ -189,7 +189,7 @@ overrides above; the reasons are:
 | Difference | Queries affected | Notes |
 |------------|-----------------|-------|
 | `GROUP BY … WITH ROLLUP` (MySQL/MariaDB default) vs. `GROUP BY ROLLUP(…)` (standard SQL) | Q5, Q18, Q22, Q27, Q36, Q67, Q70, Q77, Q80, Q86 | Per-DBMS overrides in the `'DBMS'` key handle each target system |
-| `CONCAT('a', ',', 'b')` vs. standard `'a' \|\| ',' \|\| 'b'` | Q5, Q66, Q84 | MySQL/MariaDB default; `\|\|` used in PostgreSQL/MonetDB/Exasol overrides |
+| `CONCAT('a', ',', 'b')` vs. standard `'a' \|\| ',' \|\| 'b'` | Q5, Q66, Q84 | MySQL/MariaDB default; `\|\|` used in PostgreSQL/MonetDB overrides |
 | `interval 'N' day` vs. `+ N days` date arithmetic | Q5, Q21, Q32, Q72, Q77, Q80, Q92 | Both express the same time offset; dialect normalised for portability |
 | `CAST(… AS SIGNED)` vs. `CAST(… AS INT)` | Q54 (MySQL override) | MySQL does not support `INT` as a cast target |
 

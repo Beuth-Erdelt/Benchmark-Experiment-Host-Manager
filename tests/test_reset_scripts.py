@@ -45,6 +45,7 @@ EXPECTED = {
     'ycsb.py': {
         'PostgreSQL': ['reset-ycsb.sql'],
         'PGBouncer': ['reset-ycsb.sql'],
+        'OrioleDB': ['reset-ycsb.sql'],
         'MySQL': ['reset-ycsb.sql', _FLUSH],
         'MariaDB': ['reset-ycsb.sql', _FLUSH],
         'YugabyteDB': ['reset-ycsb.sql', _COUNTERS],
@@ -64,6 +65,7 @@ EXPECTED = {
     'benchbase.py': {
         'PostgreSQL': ['reset-benchbase.sql'],
         'PGBouncer': ['reset-benchbase.sql'],
+        'OrioleDB': ['reset-benchbase.sql'],
         'MySQL': ['reset-benchbase.sql', _FLUSH],
         'MariaDB': ['reset-benchbase.sql', _FLUSH],
         'YugabyteDB': ['reset-benchbase.sql', _COUNTERS],
@@ -77,6 +79,7 @@ EXPECTED = {
     },
     'hammerdb.py': {
         'PostgreSQL': ['reset-hammerdb.sql'],
+        'OrioleDB': ['reset-hammerdb.sql'],
         'MySQL': ['reset-hammerdb.sql', _FLUSH],
         'MariaDB': ['reset-hammerdb.sql', _FLUSH],
         'Citus': ['reset-hammerdb.sql'],
@@ -123,7 +126,7 @@ EXPECTED = {
 }
 
 #: Benchbase benchmarks other than tpcc have folders (and resets) only for these DBMS (R4).
-BENCHBASE_NON_TPCC = {'PostgreSQL', 'PGBouncer', 'CedarDB'}
+BENCHBASE_NON_TPCC = {'PostgreSQL', 'PGBouncer', 'OrioleDB', 'CedarDB'}
 
 
 def _run_script(script: str, *argv: str) -> tuple:

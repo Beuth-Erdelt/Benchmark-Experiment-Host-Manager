@@ -83,6 +83,7 @@ Hardware metrics come from cAdvisor (per container), node-exporter (per node) an
 | Ceph other volumes | `ceph_others_write_rate` MiB/s, `ceph_others_write_ops_rate` / `ceph_others_read_ops_rate` operations/s (`gauge`), every other volume in the same pool | Ceph pool |
 
 Node-level metrics describe the whole node the SUT runs on, including other workloads on it, not only the SUT container.
+The node metrics of workers spread over several nodes (`-rnw`) cover all of these nodes in one series: cores are told apart `by (instance, exported_cpu)`, so `max_core_util` is the busiest core and `core_variance` the variance over all cores of all nodes; `io_wait_pct` is the I/O wait of all nodes over their busy time, `io_wait_total` the sum.
 The Ceph metrics are explained in [Ceph storage metrics](#ceph-storage-metrics) below.
 The filesystem metrics take the largest device per pod because cAdvisor reports a RAID device and each of its member disks; summing over devices would count every read and write several times.
 They count block-device I/O: a volume on a network filesystem (e.g. CephFS, NFS) does its I/O over the network, so it shows in the network metrics instead, and filesystem metrics compare storage backends fairly only when all of them are block devices.
@@ -118,8 +119,8 @@ Bexhoma substitutes the following placeholders at runtime before sending the que
 | `{experiment}` | The numeric experiment code (e.g., `1775855486`) |
 | `{pods}` | A regex of the pods the query is about, per query set (see [Pods of a phase](#pods-of-a-phase)) |
 | `{namespace}` | The namespace of the cluster context |
-| `{host}` | The Kubernetes node hosting the SUT |
-| `{gpuid}` | Pipe-separated list of GPU UUIDs present in the SUT pod |
+| `{host}` | The Kubernetes node hosting the SUT; in `metrics_<statefulset>` the nodes of the workers, as a regex alternation (`(n1\|n2)`) when there are several, so match it with `instance=~"{host}"` |
+| `{gpuid}` | Pipe-separated list of GPU UUIDs present in the SUT pod; in `metrics_<statefulset>` those of all worker nodes |
 | `{database}` | The database name (the tenant's database in database-per-tenant mode) |
 | `{schema}` | The schema name (the tenant's schema in schema-per-tenant mode) |
 | `{storage_class}` | The StorageClass of the configuration's PVC (the cluster default resolved when `-rst ''`) |

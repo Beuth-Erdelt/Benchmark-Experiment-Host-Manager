@@ -1,0 +1,357 @@
+Data Directory                : is running
+Result Directory              : is running
+Dashboard                     : is running
+Message Queue                 : is running
+Experiment                    : has code 1795420281
+Experiment                    : starts at 2026-11-23 08:51:24.238671 (681744.3396638)
+Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
+Workload is 'A'.
+Number of rows to insert is 1000000.
+Ordering of inserts is hashed.
+Number of operations is 10000000.
+Batch size is ''.
+Target is based on multiples of '16384'.
+Factors for loading are [1].
+Factors for benchmarking are [2].
+Status is logged every 10s.
+Load durability is relaxed (-xld; restored after the load).
+Experiment uses bexhoma version 0.12.3.
+System metrics are monitored by a cluster-wide installation.
+Application metrics are monitored by sidecar containers.
+Experiment is limited to DBMS ['OrioleDB'].
+Import is handled by 4 processes (pods).
+Loading is fixed to cl-worker38.
+Benchmarking is fixed to cl-worker38.
+SUT is fixed to cl-worker36.
+Database uses ephemeral storage of size 50Gi.
+Loading is tested with [16] threads, split into [4] pods.
+Benchmarking is tested with [32] threads, split into [1] pods.
+Benchmarking is run as [1] times the number of benchmarking pods.
+Experiment is run once.
+Maximum DBMS across the whole cluster is 10.
+Results are validated against basic correctness requirements.
+SUT requests 4 CPU and 16Gi RAM.
+Cluster monitoring            : is running
+OrioleDB-1                    : will start now
+OrioleDB-1                    : deployments ['sut']
+OrioleDB-1                    : stateful sets []
+OrioleDB-1                    : pvcs ['sut']
+OrioleDB-1                    : name of SUT pods = bexhoma-sut-orioledb-1-1795420281
+OrioleDB-1                    : name of SUT service = bexhoma-sut-orioledb-1-1795420281
+Loop pass                     : took 2.6s (1 kubectl calls 1.2s, 9 API requests 0.4s)
+- waiting 30s -               : done
+OrioleDB-1                    : waits for monitoring
+OrioleDB-1                    : wants to monitor all components in cluster
+OrioleDB-1                    : starts monitoring with prometheus pod
+OrioleDB-1                    : need application monitoring for sut
+Loop pass                     : took 2.8s (2 kubectl calls 2.2s, 14 API requests 0.5s)
+- waiting 30s -               : done
+OrioleDB-1                    : waits for health check to succeed
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 18 API requests 0.5s)
+- waiting 30s -               : done
+OrioleDB-1                    : waits for health check to succeed
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+- waiting 30s -               : done
+OrioleDB-1                    : waits for health check to succeed
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 18 API requests 0.8s)
+- waiting 30s -               : done
+OrioleDB-1                    : is not loaded yet
+OrioleDB-1                    : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
+OrioleDB-1                    : connect to pod bexhoma-sut-orioledb-1-1795420281-774c46bbf6-rd74q to load scripts
+OrioleDB-1                    : start asynch loading scripts of type schema
+OrioleDB-1                    : waits for the Schema scripts (schema=True) before starting the loading jobs
+OrioleDB-1                    : Schema scripts done after 6s
+OrioleDB-1                    : is loading
+Loop pass                     : took 22.5s (8 kubectl calls 14.0s, 41 API requests 2.3s)
+- waiting 30s -               : done
+OrioleDB-1                    : is loading
+Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 26 API requests 0.8s)
+- waiting 30s -               : done
+OrioleDB-1                    : is loading
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 26 API requests 0.9s)
+- waiting 30s -               : done
+OrioleDB-1                    : showing loader times (ycsb-loader)
+OrioleDB-1                    : generator times (start/end per pod and container) []
+OrioleDB-1                    : loader times (start/end per pod and container) [(1795420471, 1795420533), (1795420472, 1795420533), (1795420472, 1795420533), (1795420472, 1795420533)]
+OrioleDB-1                    : total times (start/end per pod and container) [(1795420471, 1795420533), (1795420472, 1795420533), (1795420472, 1795420533), (1795420472, 1795420533)]
+OrioleDB-1                    : loader timespan (first to last [s]) = 62
+OrioleDB-1                    : connect to pod bexhoma-sut-orioledb-1-1795420281-774c46bbf6-rd74q to load scripts
+OrioleDB-1                    : start asynch loading scripts of type index
+OrioleDB-1                    : is loading
+Loop pass                     : took 24.6s (16 kubectl calls 22.0s, 42 API requests 1.4s)
+- waiting 30s -               : done
+Experiment                    : Reset experiment counter. This is first run of client number 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-OrioleDB-1-1795420281 initialized to 1.
+OrioleDB-1                    : benchmarks done 0 of 1. This will be client 1
+orioledb-1-1-1-1              : start benchmarking (benchmark_run=1)
+orioledb-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+OrioleDB-1                    : need application metrics for sut
+OrioleDB-1                    : load application metrics of type postgresql
+OrioleDB-1                    : benchmarking results in folder D:\data\benchmarks/1795420281
+OrioleDB-1                    : submitted benchmarker job in 14.6s (4 kubectl calls 10.7s, 24 API requests 3.3s)
+orioledb-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+orioledb-1-1-1-1              : collecting loading metrics of SUT at connection orioledb-1-1-1-1
+orioledb-1-1-1-1              : collecting metrics of data injector at connection orioledb-1-1-1-1
+orioledb-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)orioledb-1-1795420281(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)orioledb-1-1795420281(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+orioledb-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-orioledb-1-1795420281-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-orioledb-1-1795420281-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+orioledb-1-1-1-1              : WARNING metric missing for loading: CPU Throttling Rate [s/s]
+orioledb-1-1-1-1              : WARNING metric missing for loading: CPU Throttled Time [s]
+orioledb-1-1-1-1              : WARNING metric missing for loading: Active Backends Waiting on I/O [sessions]
+orioledb-1-1-1-1              : WARNING metric missing for loading: Active Backends Waiting on WAL [sessions]
+orioledb-1-1-1-1              : WARNING metric missing for loading: Active Backends Waiting on Locks [sessions]
+orioledb-1-1-1-1              : WARNING metric missing for loading: Max Transaction Duration (I/O Wait) [s]
+orioledb-1-1-1-1              : WARNING metric missing for loading: Max Transaction Duration (WAL Wait) [s]
+orioledb-1-1-1-1              : WARNING metric missing for loading: Max Transaction Duration (Lock Wait) [s]
+orioledb-1-1-1-1              : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+orioledb-1-1-1-1              : WARNING metric missing for loader: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 8s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 11.2s, 0 API requests 0.0s)
+- waiting 2s -                : done
+Loop pass                     : took 33.1s (10 kubectl calls 24.5s, 51 API requests 5.2s)
+- waiting 30s -               : done
+OrioleDB-1                    : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 25 API requests 1.3s)
+- waiting 30s -               : done
+OrioleDB-1                    : has running benchmarks
+Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 23 API requests 1.0s)
+- waiting 30s -               : done
+OrioleDB-1                    : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 23 API requests 0.9s)
+- waiting 30s -               : done
+OrioleDB-1                    : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 23 API requests 0.8s)
+- waiting 30s -               : done
+OrioleDB-1                    : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 23 API requests 0.9s)
+- waiting 30s -               : done
+OrioleDB-1                    : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 23 API requests 0.7s)
+- waiting 30s -               : done
+OrioleDB-1                    : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 23 API requests 0.8s)
+- waiting 30s -               : done
+OrioleDB-1                    : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 23 API requests 0.8s)
+- waiting 30s -               : done
+OrioleDB-1                    : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 23 API requests 1.0s)
+- waiting 30s -               : done
+orioledb-1-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1795420281/orioledb-1-1-1-1.config
+orioledb-1-1-1-1              : showing benchmarker times
+orioledb-1-1-1-1              : benchmarker timespan job from 1795420629 to 1795420966
+orioledb-1-1-1-1              : benchmarker timespan pods from 1795420633 to 1795420939
+orioledb-1-1-1-1              : benchmarker timespan (start to end single container [s]) = 306
+orioledb-1-1-1-1              : benchmarker times (start/end per pod and container) = [(1795420633, 1795420939)]
+orioledb-1-1-1-1              : found and updated times {'benchmarker': [(1795420633, 1795420939)]}
+orioledb-1-1-1-1              : needs monitoring (common metrics) for deployment sut
+orioledb-1-1-1-1              : collecting execution metrics of SUT at connection orioledb-1-1-1-1
+orioledb-1-1-1-1              : collecting metrics of benchmarker at connection orioledb-1-1-1-1
+orioledb-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)orioledb-1-1795420281(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)orioledb-1-1795420281(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+orioledb-1-1-1-1              : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-orioledb-1-1795420281-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-orioledb-1-1795420281-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+orioledb-1-1-1-1              : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+orioledb-1-1-1-1              : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+orioledb-1-1-1-1              : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+orioledb-1-1-1-1              : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 7s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.6s, 0 API requests 0.0s)
+Loop pass                     : took 17.8s (9 kubectl calls 18.5s, 28 API requests 1.2s)
+OrioleDB-1                    : can be stopped
+OrioleDB-1                    : had 0 restarts at worker bexhoma-sut-orioledb-1-1795420281-774c46bbf6-rd74q
+Loop pass                     : took 9.3s (5 kubectl calls 6.6s, 36 API requests 2.2s)
+Experiment                    : ends at 2026-11-23 09:03:07.911863 (682448.0006243) - 703.66s total
+Experiment                    : transforming metrics for loading
+Experiment                    : transforming metrics for loading completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for loader
+Experiment                    : transforming metrics for loader completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : transforming metrics for loading
+Experiment                    : transforming metrics for loading completed
+Experiment                    : transforming metrics for loader
+Experiment                    : transforming metrics for loader completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
+YCSB SF=1
+* Type: ycsb
+* Duration: 704s 
+* Code: 1795420281
+* YCSB driver runs the experiment.
+* This experiment compares run time and resource consumption of YCSB queries.
+  * Workload is 'A'.
+  * Number of rows to insert is 1000000.
+  * Ordering of inserts is hashed.
+  * Number of operations is 10000000.
+  * Batch size is ''.
+  * Target is based on multiples of '16384'.
+  * Factors for loading are [1].
+  * Factors for benchmarking are [2].
+  * Status is logged every 10s.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.12.3.
+  * System metrics are monitored by a cluster-wide installation.
+  * Application metrics are monitored by sidecar containers.
+  * Experiment is limited to DBMS ['OrioleDB'].
+  * Import is handled by 4 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 50Gi.
+  * Loading is tested with [16] threads, split into [4] pods.
+  * Benchmarking is tested with [32] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* orioledb-1-1-1-1 uses docker image orioledb/orioledb:v1.10.3-pg18
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:1037192
+  * volume_size:1.7T
+  * volume_used:1012.9G
+  * cpu_list:0-223
+  * args:['-c', 'listen_addresses=*', '-c', 'shared_preload_libraries=orioledb', '-c', 'default_table_access_method=orioledb', '-c', 'orioledb.main_buffers=16GB', '-c', 'orioledb.undo_buffers=256MB', '-c', 'orioledb.checkpoint_completion_ratio=1.0', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=1GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1795420281
+
+### Ingestion
+* OrioleDB-1: 4 of 4 units ok
+
+### SUT Container Restarts
+* bexhoma-sut-orioledb-1-1795420281-774c46bbf6-rd74q: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS OrioleDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+
+#### Planned
+
+* DBMS OrioleDB-1 - Experiment 1 Client 1: ycsb (1 pods)
+
+### Loading
+
+#### Per Connection
+
+| connection         |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   SF |   Throughput [SF/h] |
+|:-------------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| orioledb-1-1-0-1-1 |             1.00 |      4.00 |  4096.00 |        4.00 |     0.00 |                         4082.63 |                61235.00 |            250000.00 |                               822.00 | 1.00 |               58.79 |
+| orioledb-1-1-0-1-2 |             1.00 |      4.00 |  4096.00 |        4.00 |     0.00 |                         4082.43 |                61238.00 |            250000.00 |                               831.00 | 1.00 |               58.79 |
+| orioledb-1-1-0-1-3 |             1.00 |      4.00 |  4096.00 |        4.00 |     0.00 |                         4082.97 |                61230.00 |            250000.00 |                               835.00 | 1.00 |               58.79 |
+| orioledb-1-1-0-1-4 |             1.00 |      4.00 |  4096.00 |        4.00 |     0.00 |                         4082.97 |                61230.00 |            250000.00 |                               848.00 | 1.00 |               58.79 |
+
+#### Per Run
+
+| DBMS         |   experiment_run |   threads |   target |   pod_count |   errors |   SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:-------------|-----------------:|----------:|---------:|------------:|---------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| OrioleDB-1-1 |             1.00 |     16.00 | 16384.00 |        4.00 |     0.00 | 1.00 |               58.79 |                        16331.00 |                61238.00 |           1000000.00 |                               834.00 |
+
+### Benchmarking
+
+#### Per Connection
+
+| connection         | phase          | job              |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:-------------------|:---------------|:-----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| orioledb-1-1-1-1-1 | orioledb-1-1-1 | orioledb-1-1-1-1 |                1 |        1 |               1 |       1 |        32 |    32768 |        0 |                        32738.05 |               305455.00 |            5000374 |                             520.00 |              4999626 |                              1094.00 |
+
+#### Per Phase
+
+| DBMS           | phase          |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:---------------|:---------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| orioledb-1-1-1 | orioledb-1-1-1 |                1 |        1 |               1 |           1 |        32 |    32768 |        0 |                        32738.05 |               305455.00 |            5000374 |                             520.00 |              4999626 |                              1094.00 |
+
+### Monitoring
+
+### Loading phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| orioledb-1-1-1-1 |        81.92 |      1.36 |           9.20 |                  9.24 |
+
+### Loading phase: component loader
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| orioledb-1-1-1-1 |        82.52 |      2.36 |           0.10 |                  0.10 |
+
+### Benchmarking phase: SUT deployment
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| orioledb-1-1-1-1 |       486.20 |      1.83 |           9.45 |                 11.03 |
+
+### Benchmarking phase: component benchmarker
+
+| DBMS             |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:-----------------|-------------:|----------:|---------------:|----------------------:|
+| orioledb-1-1-1-1 |       888.15 |      3.27 |           0.29 |                  0.29 |
+
+### Missing Monitoring Metrics
+* CPU Throttling Rate [s/s] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on I/O [sessions] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on WAL [sessions] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on Locks [sessions] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (I/O Wait) [s] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (WAL Wait) [s] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (Lock Wait) [s] for connection orioledb-1-1-1-1 (bexhoma-metrics-orioledb-1-1-1-1-loading.log, expected: series exists only while non-zero)
+
+### Application Metrics
+
+#### Loading phase: SUT deployment
+
+| DBMS             |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-----------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| orioledb-1-1-1-1 |                                17.00 |                                                0.00 |                                                        0.00 |                                   1.00 |                                               1.00 |
+
+#### Benchmarking phase: SUT deployment
+
+| DBMS             |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
+|:-----------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
+| orioledb-1-1-1-1 |                                30.00 |                                                0.00 |                                                        0.00 |                                  13.00 |                                              13.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
+* TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Loading Phase: all rows inserted
+* TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
+* TEST passed: Workflow as planned
+* TEST passed: Execution Phase: contains no FAILED column

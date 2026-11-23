@@ -168,7 +168,7 @@ Each DBMS configuration (in `dockers`) references one of these sets by name via 
 
 | Name | Used by |
 |---|---|
-| `postgresql` | PostgreSQL, PgDuckDB, PGBouncer (SUT component) |
+| `postgresql` | PostgreSQL, PgDuckDB, OrioleDB, PGBouncer (SUT component) |
 | `pgbouncer` | PGBouncer (pool component) |
 | `mysql` | MySQL |
 | `tidb` | TiDB (SQL layer) |

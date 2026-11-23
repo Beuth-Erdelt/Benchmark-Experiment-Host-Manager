@@ -37,6 +37,7 @@
     ./Example-PostgreSQL.md
     ./Example-PGBouncer.md
     ./Example-PgDuckDB.md
+    ./Example-OrioleDB.md
     ./Example-MySQL.md
     ./Example-MariaDB.md
     ./Example-MariaDBCS.md

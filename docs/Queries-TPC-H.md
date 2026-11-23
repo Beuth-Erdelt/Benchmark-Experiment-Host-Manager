@@ -240,35 +240,6 @@ l_linestatus
 </details>
 
 <details>
-<summary>SAP HANA — <code>add_days(to_date('1998-12-01'), -{DELTA})</code></summary>
-
-```sql
-select
-l_returnflag,
-l_linestatus,
-cast(sum(l_quantity) as bigint) as sum_qty,
-sum(l_extendedprice) as sum_base_price,
-sum(l_extendedprice*(1-l_discount)) as sum_disc_price,
-sum(l_extendedprice*(1-l_discount)*(1+l_tax)) as sum_charge,
-avg(l_quantity) as avg_qty,
-avg(l_extendedprice) as avg_price,
-avg(l_discount) as avg_disc,
-count(*) as count_order
-from
-lineitem
-where
-l_shipdate <= add_days(to_date('1998-12-01'), -{DELTA})
-group by
-l_returnflag,
-l_linestatus
-order by
-l_returnflag,
-l_linestatus
-```
-
-</details>
-
-<details>
 <summary>DB2 — <code>date '…' - {DELTA} day</code> (no <code>interval</code> keyword)</summary>
 
 ```sql
@@ -706,27 +677,6 @@ order by o_orderpriority
 </details>
 
 <details>
-<summary>SAP HANA — <code>add_months(to_date(…), 3)</code></summary>
-
-```sql
-select
-o_orderpriority,
-count(*) as order_count
-from orders
-where
-o_orderdate >= date '{DATE}'
-and o_orderdate < add_months(to_date('{DATE}'), 3)
-and exists (
-select * from lineitem
-where l_orderkey = o_orderkey and l_commitdate < l_receiptdate
-)
-group by o_orderpriority
-order by o_orderpriority
-```
-
-</details>
-
-<details>
 <summary>DB2 — <code>date '…' + 3 month</code></summary>
 
 ```sql
@@ -892,31 +842,6 @@ order by revenue desc
 </details>
 
 <details>
-<summary>SAP HANA — <code>add_years(to_date(…), 1)</code></summary>
-
-```sql
-select
-n_name,
-sum(l_extendedprice * (1 - l_discount)) as revenue
-from
-customer, orders, lineitem, supplier, nation, region
-where
-c_custkey = o_custkey
-and l_orderkey = o_orderkey
-and l_suppkey = s_suppkey
-and c_nationkey = s_nationkey
-and s_nationkey = n_nationkey
-and n_regionkey = r_regionkey
-and r_name = '{REGION}'
-and o_orderdate >= to_date('{DATE}')
-and o_orderdate < add_years(to_date('{DATE}'),1)
-group by n_name
-order by revenue desc
-```
-
-</details>
-
-<details>
 <summary>DB2 — <code>date '…' + 1 year</code></summary>
 
 ```sql
@@ -1013,22 +938,6 @@ from lineitem
 where
 l_shipdate >= cast('{DATE}' as date)
 and l_shipdate < dateadd(yy, +1, cast('{DATE}' as date))
-and l_discount between {DISCOUNT} - 0.01 and {DISCOUNT} + 0.01
-and l_quantity < {QUANTITY}
-```
-
-</details>
-
-<details>
-<summary>SAP HANA — <code>add_years</code></summary>
-
-```sql
-select
-sum(l_extendedprice*l_discount) as revenue
-from lineitem
-where
-l_shipdate >= to_date('{DATE}')
-and l_shipdate < add_years(to_date('{DATE}'),1)
 and l_discount between {DISCOUNT} - 0.01 and {DISCOUNT} + 0.01
 and l_quantity < {QUANTITY}
 ```
@@ -1682,29 +1591,6 @@ fetch next 20 rows only
 </details>
 
 <details>
-<summary>SAP HANA — <code>add_months(to_date(…), 3)</code></summary>
-
-```sql
-select
-c_custkey, c_name,
-sum(cast(l_extendedprice * (1 - l_discount) as double)) as revenue,
-c_acctbal, n_name, c_address, c_phone, c_comment
-from customer, orders, lineitem, nation
-where
-c_custkey = o_custkey
-and l_orderkey = o_orderkey
-and o_orderdate >= to_date('{DATE}')
-and o_orderdate < add_months(to_date('{DATE}'),3)
-and l_returnflag = 'R'
-and c_nationkey = n_nationkey
-group by c_custkey, c_name, c_acctbal, c_phone, n_name, c_address, c_comment
-order by revenue desc
-limit 20
-```
-
-</details>
-
-<details>
 <summary>DB2 — <code>date '…' + 3 month</code></summary>
 
 ```sql
@@ -2020,34 +1906,6 @@ order by l_shipmode
 </details>
 
 <details>
-<summary>SAP HANA — <code>add_years(to_date(…), 1)</code></summary>
-
-```sql
-select
-l_shipmode,
-sum(case
-when o_orderpriority ='1-URGENT' or o_orderpriority ='2-HIGH' then 1.0
-else 0.0
-end) as high_line_count,
-sum(case
-when o_orderpriority <> '1-URGENT' and o_orderpriority <> '2-HIGH' then 1.0
-else 0.0
-end) as low_line_count
-from orders, lineitem
-where
-o_orderkey = l_orderkey
-and l_shipmode in ('{SHIPMODE1}', '{SHIPMODE2}')
-and l_commitdate < l_receiptdate
-and l_shipdate < l_commitdate
-and l_receiptdate >= to_date('{DATE}')
-and l_receiptdate < add_years(to_date('{DATE}'),1)
-group by l_shipmode
-order by l_shipmode
-```
-
-</details>
-
-<details>
 <summary>DB2 — <code>date '…' + 1 year</code></summary>
 
 ```sql
@@ -2256,25 +2114,6 @@ and l_shipdate < date '{DATE}' + interval '1' month
 </details>
 
 <details>
-<summary>SAP HANA — <code>add_months(to_date(…), 1)</code></summary>
-
-```sql
-select
-100.00 * sum(case
-when p_type like 'PROMO%'
-then l_extendedprice*(1-l_discount)
-else 0
-end) / sum(l_extendedprice * (1 - l_discount)) as promo_revenue
-from lineitem, part
-where
-l_partkey = p_partkey
-and l_shipdate >= to_date('{DATE}')
-and l_shipdate < add_months(to_date('{DATE}'),1)
-```
-
-</details>
-
-<details>
 <summary>Clickhouse — <code>Float64</code> cast on both numerator and denominator</summary>
 
 ```sql
@@ -2425,23 +2264,6 @@ select l_suppkey supplier_no, sum(l_extendedprice * (1 - l_discount)) total_reve
 from lineitem
 where l_shipdate >= cast('{DATE}' as date)
 and l_shipdate < dateadd(mm, +3, cast('{DATE}' as date))
-group by l_suppkey
-```
-
-Statements 2 and 3 identical to Original_view.
-
-</details>
-
-<details>
-<summary>SAP HANA — three-statement view; <code>add_months(to_date(…), 3)</code></summary>
-
-Statement 1:
-```sql
-create view revenue{numRun}{STREAM} as
-select l_suppkey supplier_no, sum(l_extendedprice * (1 - l_discount)) total_revenue
-from lineitem
-where l_shipdate >= to_date('{DATE}')
-and l_shipdate < add_months(to_date('{DATE}'),3)
 group by l_suppkey
 ```
 
@@ -3041,29 +2863,6 @@ order by s_name
 </details>
 
 <details>
-<summary>SAP HANA — <code>add_years(to_date(…), 1)</code></summary>
-
-```sql
-select s_name, s_address
-from supplier, nation
-where s_suppkey in (
-select ps_suppkey from partsupp
-where ps_partkey in (select p_partkey from part where p_name like '{COLOR}%')
-and ps_availqty > (
-select 0.5 * sum(l_quantity) from lineitem
-where l_partkey = ps_partkey and l_suppkey = ps_suppkey
-and l_shipdate >= to_date('{DATE}')
-and l_shipdate < add_years(to_date('{DATE}'),1)
-)
-)
-and s_nationkey = n_nationkey
-and n_name = '{NATION}'
-order by s_name
-```
-
-</details>
-
-<details>
 <summary>DB2 — <code>date '…' + 1 year</code></summary>
 
 ```sql
@@ -3295,7 +3094,7 @@ order by cntrycode
 </details>
 
 <details>
-<summary>Oracle / SAP HANA — <code>substr(c_phone, 1, 2)</code>; subquery alias without <code>as</code></summary>
+<summary>Oracle — <code>substr(c_phone, 1, 2)</code>; subquery alias without <code>as</code></summary>
 
 ```sql
 select cntrycode, count(*) as numcust, sum(c_acctbal) as totacctbal
@@ -3363,30 +3162,30 @@ order by cntrycode
 
 A checkmark means that DBMS has a SQL override in the config; blank means the default SQL is used.
 
-| Query | MySQL | T-SQL | Oracle | SAP HANA | DB2 | MonetDB | Clickhouse | OmniSci | MariaDBCS | Citus | PostgreSQL |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| Q1 | ✓ | ✓ | | ✓ | ✓ | ✓ | | | | | |
-| Q2 | | ✓ | ✓ | | | | ✓ | ✓ | ✓ | | |
-| Q3 | ✓ | ✓ | ✓ | | | | | | | | |
-| Q4 | ✓ | ✓ | | ✓ | ✓ | | ✓ | | | | |
-| Q5 | ✓ | ✓ | | ✓ | ✓ | | | | ✓ | | |
-| Q6 | ✓ | ✓ | | ✓ | ✓ | | | | | | |
-| Q7 | ✓ | ✓ | | | | | | | | | |
-| Q8 | ✓ | ✓ | | | | | | | | ✓ | ✓ |
-| Q9 | ✓ | ✓ | | | | | | ✓ | | | |
-| Q10 | ✓ | ✓ | ✓ | ✓ | ✓ | | | | | ✓ | ✓ |
-| Q11 | ✓ | | | | ✓ | ✓ | ✓ | | | | |
-| Q12 | ✓ | ✓ | | ✓ | ✓ | | | | | | |
-| Q13 | | | | | | | | | | | |
-| Q14 | ✓ | ✓ | | ✓ | ✓ | ✓ | ✓ | ✓ | | | |
-| Q15 | ✓ | ✓ | | ✓ | ✓ | ✓ | | | | | |
-| Q16 | | | | | | | | | | | |
-| Q17 | | | | | | | ✓ | ✓ | ✓ | ✓ | |
-| Q18 | ✓ | ✓ | ✓ | | | | | | | | |
-| Q19 | | | | | | | | | ✓ | | |
-| Q20 | ✓ | ✓ | | ✓ | ✓ | | ✓ | ✓ | | ✓ | |
-| Q21 | | ✓ | ✓ | | | | ✓ | | | | |
-| Q22 | | ✓ | ✓ | ✓ | | | ✓ | | | ✓ | |
+| Query | MySQL | T-SQL | Oracle | DB2 | MonetDB | Clickhouse | OmniSci | MariaDBCS | Citus | PostgreSQL |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Q1 | ✓ | ✓ | | ✓ | ✓ | | | | | |
+| Q2 | | ✓ | ✓ | | | ✓ | ✓ | ✓ | | |
+| Q3 | ✓ | ✓ | ✓ | | | | | | | |
+| Q4 | ✓ | ✓ | | ✓ | | ✓ | | | | |
+| Q5 | ✓ | ✓ | | ✓ | | | | ✓ | | |
+| Q6 | ✓ | ✓ | | ✓ | | | | | | |
+| Q7 | ✓ | ✓ | | | | | | | | |
+| Q8 | ✓ | ✓ | | | | | | | ✓ | ✓ |
+| Q9 | ✓ | ✓ | | | | | ✓ | | | |
+| Q10 | ✓ | ✓ | ✓ | ✓ | | | | | ✓ | ✓ |
+| Q11 | ✓ | | | ✓ | ✓ | ✓ | | | | |
+| Q12 | ✓ | ✓ | | ✓ | | | | | | |
+| Q13 | | | | | | | | | | |
+| Q14 | ✓ | ✓ | | ✓ | ✓ | ✓ | ✓ | | | |
+| Q15 | ✓ | ✓ | | ✓ | ✓ | | | | | |
+| Q16 | | | | | | | | | | |
+| Q17 | | | | | | ✓ | ✓ | ✓ | ✓ | |
+| Q18 | ✓ | ✓ | ✓ | | | | | | | |
+| Q19 | | | | | | | | ✓ | | |
+| Q20 | ✓ | ✓ | | ✓ | | ✓ | ✓ | | ✓ | |
+| Q21 | | ✓ | ✓ | | | ✓ | | | | |
+| Q22 | | ✓ | ✓ | | | ✓ | | | ✓ | |
 
 ---
 
