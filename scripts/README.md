@@ -227,9 +227,16 @@ Also reconstructs the preceding comment block in `.sh` files and the inline `<# 
 
 ```
 python scripts/_reorder_flags.py
+python scripts/_reorder_flags.py --check   # list the files it would change, write nothing
 ```
 
 Run this first whenever flags are added, removed, or reordered.
+It never changes what a call does: every value of a flag is kept (`-dbms PostgreSQL PgDuckDB`), a repeated flag
+(`--set`) is kept every time with its own comment, a flag missing from the table stays right after the flag it
+followed, and a one-line call or a call without mode (`bexhoma experiment <yaml>`) is left as it is
+(`tests/test_script_sync_tools.py`).
+Many scripts no longer follow the table exactly (2026-11-23: 44 files would be reordered), so check with
+`--check` and review the diff before running it on all scripts.
 
 ### `_sync_docs.py`
 
@@ -247,7 +254,12 @@ Descriptions are taken from the `.sh` header comment block.
 
 ```
 python scripts/_sync_ps.py
+python scripts/_sync_ps.py --check   # list the files it would change, write nothing
 ```
+
+A call is compared as subcommand, positional arguments, flags with all their values in order, and mode,
+so `-dbms A B`, a repeated `--set`, `load`/`start` and a one-line `bexhoma experiment <yaml>` call are carried over
+unchanged (`tests/test_script_sync_tools.py`).
 
 ### `_sync_cases_sh.py`
 

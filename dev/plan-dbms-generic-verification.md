@@ -111,11 +111,17 @@ unknown), so `storage_reused` is False and the test is recorded as passed.
 
 ## 7. Tooling found broken on the way
 
-- [ ] `scripts/_reorder_flags.py` is stale: moves `-rnp` and `-ar` to the end of each call; one run rewrote
-  53 files. Fix the flag order it expects, or remove it. Do not run it until then.
-- [ ] `scripts/_sync_ps.py`: drops the second value of `-dbms A B`, and mangles a call without flags
-  (`bexhoma experiment <yaml>`). Both fixed by hand in b2a26bfc; fix the tool and add a test case for both.
+- [x] `scripts/_reorder_flags.py` (fixed 2026-11-23): keeps every value (`-dbms A B`) and every
+  repeated flag (`--set`, each with its own comment), a flag missing from the table stays after its predecessor
+  instead of moving to the end, one-line calls and calls without mode are left alone; `-rnp` and `-xnpd` added
+  to the order as in the README; `--check` writes nothing. Checked on a copy of all scripts: no command token
+  changes. Still: 44 files do not follow the README order and would be reordered (comments rebuilt from the
+  commands); running it is a separate decision, docs would need `_sync_docs.py` afterwards.
+- [x] `scripts/_sync_ps.py` (fixed 2026-11-23): compares subcommand, positional arguments, flags
+  with all values in order and mode; carries `-dbms A B`, repeated `--set`, `load`/`start` and one-line calls over;
+  `--check`. Finds no difference in the current scripts.
+- Tests for both: `tests/test_script_sync_tools.py`.
 
 ## Order
 
-1 (done) → 3 (small fix, then verified by 2.1) → 2 → 7 → 4 → 5 after decisions.
+1 (done) → 3 (code done; verified by 2.1) → 2 → 7 (done) → 4 → 5 after decisions.
