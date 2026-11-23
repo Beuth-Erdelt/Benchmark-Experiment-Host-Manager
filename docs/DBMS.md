@@ -126,7 +126,7 @@ The keys of an entry of `benchmarks`:
 | `option_experiment` | Init and indexing scripts used when a boolean option is set (Citus: `-xcol` switches to columnar storage) |
 | `max_loading_pods` | Number of loading pods the DBMS tolerates; more are reduced with a message (MariaDB ColumnStore: 1) |
 | `max_sut_dbms` | Number of SUT of the DBMS that may run at the same time |
-| `per_loading_threads` | The DBMS gets one configuration per `-nlt` value, with these loading parameters (MySQL) |
+| `per_loading_threads` | The DBMS gets one configuration per `-nlt` value, with these loading parameters. No DBMS declares it: no TPC-H, TPC-DS or SSB loader reads a thread count, so bexhoma reports `-nlt` as ignored |
 | `pooling` | For a DBMS behind a connection pooler: one configuration per combination of `-xnpp`, `-xnpi` and `-xnpo` (PGBouncer) |
 | `dimensions`, `unsupported_dimensions` | `-xdim` applies to the DBMS; or it refuses a variant of it, with the reason |
 | `multi_tenancy`, `tenant_parameters` | The tenancy modes the DBMS supports and the parameters it gets, see [Multi-Tenant](Example-Multi-Tenant.md) |

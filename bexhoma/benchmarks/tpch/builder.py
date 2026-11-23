@@ -189,8 +189,8 @@ def _configure_system(experiment: TpchExperiment, spec: dict, system: dict, tpch
     config.set_loading_parameters(
         PODS_TOTAL=str(loading_pods_total),
         PODS_PARALLEL=str(split_portion),
-        # threads only matter for a DBMS whose entry declares per_loading_threads (e.g. MySQL)
-        **loading_variants(entry, [loading_threads])[0],
+        # threads only matter for a DBMS whose entry declares per_loading_threads; others say they ignore them
+        **loading_variants(entry, [loading_threads], dbms)[0],
         **(system.get('loading_parameters') or {}),
     )
     config.set_benchmarking_parameters(**(system.get('benchmarking_parameters') or {}))

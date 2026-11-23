@@ -63,7 +63,7 @@ This
 * starts a clean instance of MonetDB (`-dbms`) with 16 CPUs and 64 GiB RAM (`-rc`, `-lc`, `-rr`, `-lr`)
   * data directory inside a Docker container
 * creates the TPC-H schema
-* starts 8 loader pods (`-nlp`) with 8 threads each (`-nlt`)
+* starts 8 loader pods (`-nlp`); `-nlt 8` is ignored: the TPC-H loader uses one connection per pod, and bexhoma says so in the log
   * with a data generator (init container) each, which generates a share of TPC-H data of SF=1 (`-sf`)
   * and a loading container each, which loads the data into the DBMS
 * creates indexes (`-xii`), constraints (`-xic`) and statistics (`-xis`)
