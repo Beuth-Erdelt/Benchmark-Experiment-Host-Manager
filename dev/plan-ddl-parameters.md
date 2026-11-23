@@ -530,7 +530,7 @@ version before adding index types; imprints changed between releases.
 - **CedarDB**: PostgreSQL syntax, own storage; no known DDL knobs worth a
   sweep.
 - **Redis, Dragonfly**: no DDL; everything is a server flag → `--set`.
-- **SingleStore, OmniSci, Kinetica, DB2, SAP HANA, SQL Server,
+- **SingleStore, OmniSci, Kinetica, DB2, SQL Server,
   Oracle, MemSQL, MariaDBCS**: script folders without a driver; out of scope.
 
 ### Further DDL options (all DBMS)

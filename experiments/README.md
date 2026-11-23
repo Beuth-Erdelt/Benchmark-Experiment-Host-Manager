@@ -284,7 +284,6 @@ folder declares.
 | Kinetica | varies | SQL | PK; replicated variant | |
 | MemSQL / SingleStore | varies | SQL | PK + FK | |
 | OracleDB | `BEXHOMA` (user `bexhoma`) | SQL*Loader | PK + FK | dialect `Oracle`; scripts run as SYSDBA via `/tmp/bexhoma-session.sql` |
-| SAPHANA | varies | SQL | PK only | No `initindexes` file |
 | SQLServer | varies | SQL | PK + FK | T-SQL dialect |
 | Citus | `public` | SQL | PK + FK; columnar variant | Extends PostgreSQL |
 
@@ -308,7 +307,6 @@ folder declares.
 | `tpch/MemSQL` | Done |
 | `tpch/SingleStore` | Done |
 | `tpch/OracleDB` | Done |
-| `tpch/SAPHANA` | Done |
 | `tpch/SQLServer` | Done |
 | `tpch/Citus` | Done |
 | `tpcds/MariaDB` | Done |
@@ -320,7 +318,6 @@ folder declares.
 | `tpcds/MonetDB` | Done |
 | `tpcds/OmniSci` | Done |
 | `tpcds/OmniSciCPU` | Done |
-| `tpcds/SAPHANA` | Done |
 | `tpcds/SQLServer` | Done |
 | `tpcds/Citus` | Done |
 | `tpcc/MariaDB` | Done |

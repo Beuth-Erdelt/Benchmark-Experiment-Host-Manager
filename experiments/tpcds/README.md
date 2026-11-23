@@ -48,7 +48,6 @@ Files whose names contain `filled` are generated variants with Bexhoma placehold
 | `MonetDB` | varies | `COPY … INTO … FROM … USING DELIMITERS '\|'` | PK; FK optional | |
 | `OmniSci` | `tpcds` | `COPY … FROM … WITH (delimiter='\|')` | None | GPU-accelerated analytics; multiple schema variants |
 | `OmniSciCPU` | `tpcds` | `COPY … FROM … WITH (delimiter='\|')` | None | CPU-only variant of OmniSci |
-| `SAPHANA` | `TPCDS` | `IMPORT FROM CSV FILE …` | PK (inline) | `CREATE COLUMN TABLE`; uppercase quoted identifiers |
 | `SQLServer` | `dbo` | `BULK INSERT … WITH (FIELDTERMINATOR='\|', TABLOCK)` | PK (clustered, inline) | T-SQL; GO batch separators |
 | `Citus` | `public` | `COPY public.<table> FROM … DELIMITER '\|' NULL ''` | PK + FK + indexes | Extends PostgreSQL; fact tables distributed; dimensions as reference tables |
 
