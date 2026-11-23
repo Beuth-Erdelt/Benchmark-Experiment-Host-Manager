@@ -30,7 +30,7 @@ import json
 import urllib.request
 import urllib.parse
 from pprint import pprint
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from urllib3.util.retry import Retry
@@ -2786,7 +2786,7 @@ class Kubernetes():
             try:
                 pod_dashboard = self.get_dashboard_pod_name()
                 self.logger.debug(f'Inside pod {pod_dashboard}')
-                now = datetime.utcnow()
+                now = datetime.now(timezone.utc).replace(tzinfo=None)
                 start = now - timedelta(seconds=300)
                 end = now - timedelta(seconds=240)
                 query_url = (

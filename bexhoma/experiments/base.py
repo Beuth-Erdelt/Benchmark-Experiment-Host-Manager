@@ -2307,7 +2307,7 @@ class ExperimentBase():
                 reason = reason[len(prefix):]
             print("{:30s}: SUT not started: {}".format(config.configuration, reason))
             config.loader.fail_loading_fatally(reason)
-            self._abort_loading_if_needed(config, datetime.utcnow())
+            self._abort_loading_if_needed(config, datetime.now(timezone.utc).replace(tzinfo=None))
             return False
 
     def _abort_loading_if_needed(
@@ -2757,7 +2757,7 @@ class ExperimentBase():
             )
         # Timed from here, not from the counter, so that reset
         # scripts run before submission do not count.
-        self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.utcnow())
+        self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.now(timezone.utc).replace(tzinfo=None))
 
     def _submit_legacy_round(self, config, parallelism: int, benchmarking_parameters: Optional[dict],
                              experiment_run: str, client: str, round_counter_key: str,
@@ -2784,7 +2784,7 @@ class ExperimentBase():
         connection = (config.configuration+'-'+experiment_run+'-'+client).lower()
         print("{:30s}: start benchmarking".format(connection))
         config.runner.run_pod(connection=connection, configuration=config.configuration, client=client, parallelism=parallelism, reset_seconds=reset_seconds, reset_failed=reset_failed, fetch_batch=fetch_batch)
-        self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.utcnow())
+        self._benchmark_rounds_starting[config.configuration] = (round_counter_key, datetime.now(timezone.utc).replace(tzinfo=None))
 
     def _end_finished_jobs(self, config, end_batch: MetricFetchBatch, end_uploads: list) -> tuple:
         """Store the pods of a configuration's benchmarker jobs and end the jobs that succeeded.
@@ -2921,7 +2921,7 @@ class ExperimentBase():
                     json.dump(config.experiment_dict, _f, indent=2)
         intervals_wait = 0
         do = True
-        experiment_start_time = datetime.utcnow()
+        experiment_start_time = datetime.now(timezone.utc).replace(tzinfo=None)
         self._follow_up_waits_in_a_row = 0
         while do:
             #time.sleep(intervals)
@@ -2935,7 +2935,7 @@ class ExperimentBase():
             pass_started = time.monotonic()
             pass_calls_started = CALL_STATS.snapshot()
             if self.max_experiment_minutes is not None:
-                elapsed_minutes = (datetime.utcnow() - experiment_start_time).total_seconds() / SECONDS_PER_MINUTE
+                elapsed_minutes = (datetime.now(timezone.utc).replace(tzinfo=None) - experiment_start_time).total_seconds() / SECONDS_PER_MINUTE
                 if elapsed_minutes >= self.max_experiment_minutes:
                     print("{:30s}: exceeded maximum timeout of {} minutes ({:.1f} elapsed) - stopping and removing all components".format("Experiment", self.max_experiment_minutes, elapsed_minutes))
                     self.remove_experiment()
@@ -2963,7 +2963,7 @@ class ExperimentBase():
                     continue
                 # check if sut is running
                 if not config.status.sut_running():
-                    if self._abort_loading_if_needed(config, datetime.utcnow()):
+                    if self._abort_loading_if_needed(config, datetime.now(timezone.utc).replace(tzinfo=None)):
                         return
                     if not config.experiment_done:
                         if not config.status.sut_pending():
@@ -2998,7 +2998,7 @@ class ExperimentBase():
                     continue
                 # check if loading is done
                 config.loader.check()
-                if self._abort_loading_if_needed(config, datetime.utcnow()):
+                if self._abort_loading_if_needed(config, datetime.now(timezone.utc).replace(tzinfo=None)):
                     return
                 self._note_image_pull_waits(config)
                 # start loading
@@ -3025,7 +3025,7 @@ class ExperimentBase():
                             print("{:30s}: waits for health check of workers to succeed".format(config.configuration))
                             continue
                         print("{:30s}: is not loaded yet".format(config.configuration))
-                    now = datetime.utcnow()
+                    now = datetime.now(timezone.utc).replace(tzinfo=None)
                     if config.loading_after_time is not None:
                         if now >= config.loading_after_time:
                             if self.tenant_per == 'container':
@@ -3062,7 +3062,7 @@ class ExperimentBase():
                                     config.loader.start_exec()
                 # a load that ended before it ran (start_exec: refused -xld, failed upload) counts
                 # as finished, so abort here, before a benchmark starts against an empty database
-                if config.loading_failed_fatal and self._abort_loading_if_needed(config, datetime.utcnow()):
+                if config.loading_failed_fatal and self._abort_loading_if_needed(config, datetime.now(timezone.utc).replace(tzinfo=None)):
                     return
                 _has_benchmarks = (
                     (config.experiment_dict["benchmarker"] and config.client <= len(config.experiment_dict["benchmarker"]))
@@ -3137,7 +3137,7 @@ class ExperimentBase():
                                     config_tmp.loading_active = False
                 # start benchmarking, if loading is done and monitoring is ready
                 if config.loading_finished:
-                    now = datetime.utcnow()
+                    now = datetime.now(timezone.utc).replace(tzinfo=None)
                     # check if SUT is healthy
                     if config.status.sut_running():
                         if not config.status.sut_healthy():
@@ -3188,7 +3188,7 @@ class ExperimentBase():
                         if job not in self._ended_jobs()]
                     if _active_jobs:
                         if any(not self.cluster.get_job_status(j) for j in _active_jobs):
-                            if self._skip_benchmark_round_if_not_started(config, _active_jobs, datetime.utcnow()):
+                            if self._skip_benchmark_round_if_not_started(config, _active_jobs, datetime.now(timezone.utc).replace(tzinfo=None)):
                                 intervals_wait = self._follow_up_wait(intervals_wait, "{} round skipped".format(config.configuration))
                                 continue
                             print("{:30s}: has running benchmarks".format(config.configuration))
@@ -3550,7 +3550,7 @@ class ExperimentBase():
                         print("{:30s}: WARNING - could not update {}: {}".format(connection, individual_config_path, exc))
                 else:
                     print("{:30s}: WARNING - individual config not found: {}".format(connection, individual_config_path))
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc).replace(tzinfo=None)
             now_string = now.strftime('%Y-%m-%d %H:%M:%S')  # noqa: F841
             time_now = str(datetime.now())
             end_time_job = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))

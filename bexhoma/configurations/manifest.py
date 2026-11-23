@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import copy
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from io import StringIO
 from typing import TYPE_CHECKING, List, Optional, Tuple
 
@@ -494,7 +494,7 @@ class ManifestBuilder:
             configuration=configuration, experiment_run=experiment_run,
             client=str(client), benchmark_run=benchmark_run)
         servicename = cfg.get_service_sut(configuration=configuration)
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')  # noqa: F841
         time_now = str(datetime.now())
         time_now_int = int(datetime.timestamp(
@@ -732,7 +732,7 @@ class ManifestBuilder:
         code = str(int(experiment))
         experiment_run = str(cfg.num_experiment_to_apply_done + 1)
         cfg.logger.debug('ManifestBuilder.create_manifest_benchmarking()')
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         base_env = {
             'BEXHOMA_TIME_NOW': now_string,
@@ -807,7 +807,7 @@ class ManifestBuilder:
         experiment_run = str(cfg.num_experiment_to_apply_done + 1)
         connection = cfg.configuration
         cfg.logger.debug('ManifestBuilder.create_manifest_loading()')
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc).replace(tzinfo=None)
         now_string = now.strftime('%Y-%m-%d %H:%M:%S')
         base_env = {
             'BEXHOMA_TIME_NOW': now_string,

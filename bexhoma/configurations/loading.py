@@ -9,7 +9,7 @@ import shutil
 import subprocess
 import time
 import threading
-from datetime import datetime
+from datetime import datetime, timezone
 from math import ceil
 from timeit import default_timer
 from typing import TYPE_CHECKING
@@ -454,7 +454,7 @@ class LoadingCoordinator:
         """
         cfg = self._config
         timeout_minutes = getattr(cfg.experiment, 'max_loading_minutes', None)
-        wait_started_at = datetime.utcnow()
+        wait_started_at = datetime.now(timezone.utc).replace(tzinfo=None)
         t_start = default_timer()
         waiting = False
         while True:

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import os
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Optional
 
 from dbmsbenchmarker import benchmarker, tools
@@ -108,7 +108,7 @@ class BenchmarkRunner:
         cfg.logger.debug(
             'BenchmarkRunner.run_pod(current_benchmark_connection = {})'.format(
                 cfg.current_benchmark_connection))
-        now = datetime.utcnow()  # noqa: F841
+        now = datetime.now(timezone.utc).replace(tzinfo=None)  # noqa: F841
         time_now = str(datetime.now())
         time_now_int = int(datetime.timestamp(
             datetime.strptime(time_now, '%Y-%m-%d %H:%M:%S.%f')))
