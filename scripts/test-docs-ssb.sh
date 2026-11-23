@@ -673,7 +673,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDB  sf=1"
 
 #### SSB Monitoring (Example-SSB.md)
 # SSB with monitoring: a scaling factor large enough that loading and benchmarking last more than a minute
-# -dbms PostgreSQL MonetDB ClickHouse MonetDB ClickHouse DBMS under test
+# -dbms PostgreSQL MonetDB ClickHouse DBMS under test
 # -sf 10                        scaling factor (lineorder has about 6 million rows per SF)
 # -nlp 8                        number of loader pods (lineorder is generated in 8 chunks)
 # -xii                          create indexes after data load

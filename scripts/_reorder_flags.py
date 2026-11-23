@@ -172,8 +172,10 @@ def parse_sh_comment(line: str) -> tuple[str, str | None, str] | None:
             prefix = f'{parts3[0]} {parts3[1]}'
             description = parts3[2]
         elif len(parts3) == 2 and parts3[0].startswith('-'):
-            prefix = parts3[0]
-            description = parts3[1]
+            # '# -sf 1' without description, as this script writes it for a flag
+            # without comment: flag and value, so a second run changes nothing
+            prefix = content.strip()
+            description = ''
         else:
             prefix = content.strip()
             description = ''
@@ -297,10 +299,20 @@ def process_sh_file(path: Path, write: bool = True) -> bool:
             # Build description map from comment block
             desc_map: dict[tuple[str, str | None], str] = {}   # by flag and value: --set repeats
             for cl in comment_lines:
-                parsed = parse_sh_comment(cl)
-                if parsed:
-                    desc_map[(parsed[0], parsed[1])] = parsed[2]
-                    desc_map.setdefault((parsed[0], None), parsed[2])
+                content = re.sub(r'^\s*# ', '', cl.rstrip())
+                # a comment names its flag with the full value of the call: read it back
+                # against the call, so a value of several words (-dbms A B) stays a value
+                for flag, value in pairs:
+                    prefix = flag if value is None else f'{flag} {value}'
+                    if content == prefix or content.startswith(prefix + ' '):
+                        desc_map.setdefault((flag, value), content[len(prefix):].strip())
+                        desc_map.setdefault((flag, None), content[len(prefix):].strip())
+                        break
+                else:
+                    # the value changed since the comment was written: keep its description
+                    parsed = parse_sh_comment(cl)
+                    if parsed:
+                        desc_map.setdefault((parsed[0], None), parsed[2])
 
             # Reconstruct
             for flag, value in pairs:
