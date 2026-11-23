@@ -503,7 +503,7 @@ options:
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 We in the following also activate measurement of latencies with `-xlat`.
 
 Example:
@@ -899,7 +899,7 @@ Hammerdb Transaction Counter Log @ Tue Oct 20 08:41:24 UTC 2026
 898842 PostgreSQL tpm @ Tue Oct 20 08:41:44 UTC 2026
 ```
 
-The evaluator turns these lines into a time series (see [Evaluators](Evaluators.html) and [Collectors](Collectors.html)):
+The evaluator turns these lines into a time series (see [Evaluators](Evaluators.md) and [Collectors](Collectors.md)):
 
 ```python
 from bexhoma import collectors
@@ -954,7 +954,7 @@ See [Reset scripts](DBMS.md#reset-scripts--ar) for what each DBMS does.
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 Example:
 ```bash

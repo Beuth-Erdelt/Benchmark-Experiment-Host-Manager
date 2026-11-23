@@ -253,7 +253,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 At SF=1, the 22 queries take about 25 seconds on ColumnStore, so this run uses SF=10 (`-sf`), with a RAM limit of 64 GiB (at 16 GiB the SUT was OOM-killed at SF=10).
 ColumnStore has no Prometheus exporter in bexhoma, so there are no application metrics (`-ma`).
@@ -489,7 +489,7 @@ No warnings
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 ```bash
 bexhoma tpch \
@@ -1177,7 +1177,7 @@ Without 11 of the variants ColumnStore 25.10.6 gives wrong results or fails, som
 | Q93 | Inner joins | `LEFT JOIN` with a filter on the outer table in `WHERE` keeps the rows without a match: 90,919 groups instead of 7,164 |
 | Q18, Q22, Q27, Q36, Q67, Q70, Q86 | Rollup emulated with `UNION ALL` | `GROUP BY ... WITH ROLLUP` directly on a table kills `PrimProc` with a segmentation fault in `funcexp::FuncExp::evaluate`, also on 1,305 rows; very small tables do not show it. On a derived table it runs, but gives wrong results |
 
-The other 17 variants are for queries that ColumnStore refuses as they are, see [TPC-DS queries](Queries-TPC-DS.html) for the rewrites:
+The other 17 variants are for queries that ColumnStore refuses as they are, see [TPC-DS queries](Queries-TPC-DS.md) for the rewrites:
 
 | Queries | Result |
 |---|---|

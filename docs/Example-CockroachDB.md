@@ -280,7 +280,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 This run uses 10.000.000 operations (`-xop`).
 
@@ -520,7 +520,7 @@ YCSB SF=1
 Collecting application metrics for CockroachDB is supported.
 It can be activated by `-m -mc -ma`.
 Prometheus discovers the worker pods and scrapes the built-in endpoint of CockroachDB (`/_status/vars`, port 8080), with the metric set `cockroachdb` of [cluster.config](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config).
-See [Metrics](Example-Metrics.html) for application metrics of all DBMS.
+See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
 ```bash
 bexhoma ycsb \
@@ -766,7 +766,7 @@ YCSB SF=10
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 Example:
 ```bash

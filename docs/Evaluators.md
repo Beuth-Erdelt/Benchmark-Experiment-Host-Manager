@@ -505,7 +505,7 @@ Evaluator for [DBMSBenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker
 experiments.  Uses the `dbmsbenchmarker.inspector` API rather than raw log
 parsing.
 
-### `get_inspector()`
+### `load_inspector()`
 
 Loads the DBMSBenchmarker inspector for this experiment.  Called automatically
 by `__init__`; may be called again if `self.evaluation` is `None`.

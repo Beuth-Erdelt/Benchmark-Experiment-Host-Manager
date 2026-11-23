@@ -372,7 +372,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 This run uses 10.000.000 operations (`-xop`).
 
@@ -380,7 +380,7 @@ All metrics in monitoring are summed across all matching components.
 In this example, this means that used memory, CPU time, etc. are summed across all 3 tservers of the YugabyteDB cluster.
 
 The `-mc` option is mandatory here: the sidecar container approach does not work (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
-See [Monitoring](Monitoring.html) for further explanation.
+See [Monitoring](Monitoring.md) for further explanation.
 
 ```bash
 bexhoma ycsb \
@@ -643,7 +643,7 @@ YCSB SF=1
 Collecting application metrics for YugabyteDB is supported.
 It can be activated by `-m -mc -ma`.
 Prometheus discovers the master pods (port 7000) and the tserver pods (port 9000) and scrapes the native endpoint `/prometheus-metrics` of YugabyteDB, with the metric sets `yb-master` and `yb-tserver`.
-See [Metrics](Example-Metrics.html) for application metrics of all DBMS.
+See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
 ```bash
 bexhoma ycsb \

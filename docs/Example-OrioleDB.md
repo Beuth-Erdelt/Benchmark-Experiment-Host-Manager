@@ -218,7 +218,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 This run has 10 million operations (`-xop 10`), about 5 minutes at the target.
 The template has a `postgres_exporter` sidecar, as PostgreSQL; `-ma` collects the metric set `postgresql`, see [Example: Benchmark PostgreSQL](Example-PostgreSQL.md#application-metrics).
@@ -444,7 +444,7 @@ Counters of dead rows (`n_dead_tup`) and HOT updates stay 0 for OrioleDB tables,
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 ```bash
 bexhoma ycsb \

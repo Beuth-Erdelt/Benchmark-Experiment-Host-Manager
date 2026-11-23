@@ -270,7 +270,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 
 ```bash
@@ -515,7 +515,7 @@ No warnings
 
 Collecting application metrics for MySQL is supported.
 It can be activated by `-m -mc -ma`, with the metric set `mysql` of [cluster.config](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config).
-See [Metrics](Example-Metrics.html) for application metrics of all DBMS and benchmarks.
+See [Metrics](Example-Metrics.md) for application metrics of all DBMS and benchmarks.
 
 ```bash
 bexhoma tpch \
@@ -772,7 +772,7 @@ No warnings
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 This is a throughput test: one round with 1 stream and one with 2 parallel streams (`-ne 1,2`), repeated (`-nc 2`), so the second repetition runs on the loaded volume:
 

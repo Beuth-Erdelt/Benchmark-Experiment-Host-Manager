@@ -244,7 +244,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 This run uses SF=3 and 10.000.000 operations (`-xop`).
 
@@ -488,14 +488,14 @@ The metric set `dragonfly` in [cluster.config](https://github.com/Beuth-Erdelt/B
 | `dragonfly_replication_full_sync_bytes` | Full Sync Replication Memory [GiB] |
 | `dragonfly_replication_psync_count` | PSync Events [count] |
 
-See [Metrics](Example-Metrics.html) for application metrics of all DBMS.
+See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
 
 ## Persistent Storage
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 Dragonfly keeps the data in memory and writes it to disk only on `SAVE` or on shutdown.
 Therefore the runs on persistent storage use `-ar`: before each benchmarking round, `SAVE` writes a snapshot, so the volume holds the data that the round starts from (see [Reset Scripts](#reset-scripts)).

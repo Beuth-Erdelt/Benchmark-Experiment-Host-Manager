@@ -17,7 +17,7 @@ In the following sections, we present an evaluation of these strategies using be
 
 To make this work, there has to be some preparation.
 * In the experiment folders, there are init scripts containing placeholders for the database `{BEXHOMA_DATABASE}` or schema `{BEXHOMA_SCHEMA}`
-* The DBMS must have placeholders in the connection parameters - c.f. [DBMS](DBMS.html#postgresql)
+* The DBMS must have placeholders in the connection parameters - c.f. [DBMS](DBMS.md#postgresql)
 
 Bexhoma contains these preparations for PostgreSQL and MySQL.
 Which DBMS supports which tenancy is declared per benchmark in the `multi_tenancy` of the DBMS in `cluster.config`, see [DBMS](DBMS.md#benchmarks-of-a-dbms):

@@ -551,7 +551,7 @@ options:
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 
 Example:
 ```bash
@@ -1320,7 +1320,7 @@ No warnings
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 `-rsr` removes the volume only before the first repetition (`-nc`); the second repetition finds it loaded, skips loading and copies the loading times (`loading_inherited` in the connections).
 Use `-rsrp` instead to remove the volume before every repetition, so each repetition loads into a fresh volume and measures its own loading.
-See [Concepts](Concepts.html) for details.
+See [Concepts](Concepts.md) for details.
 Note the added section about `volume_size` and `volume_used` in the connections section.
 
 

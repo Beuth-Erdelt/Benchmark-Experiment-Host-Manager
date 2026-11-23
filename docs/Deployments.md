@@ -29,7 +29,7 @@ To generate a file `'deployment-'+docker+'-'+instance+'.yml'` from this
 
 This repository includes some templates at https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/k8s
 
-[DBMS](DBMS.html) included are:
+[DBMS](DBMS.md) included are:
 * MariaDB (10.4.6)
 * MonetDB (11.31.7)
 * OmniSci (v5.4.0)
@@ -79,6 +79,6 @@ cluster.set_resources(
   })
 ```
 
-For further information and option see the [documentation](API.html#set-resources).
+For further information and option see [`set_resources()`](../bexhoma/clusters.py).
 
 
