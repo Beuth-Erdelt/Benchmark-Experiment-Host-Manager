@@ -16,7 +16,7 @@ Each supported DBMS has a short section below; configuration, deployment, script
 | Relational / SQL | [PostgreSQL](#postgresql) | `PostgreSQL` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-PostgreSQL](Example-PostgreSQL.md) |
 | Relational / SQL | [PostgreSQL + PGBouncer](#pgbouncer) | `PGBouncer` | YCSB, Benchbase | [Example-PGBouncer](Example-PGBouncer.md) |
 | Relational / SQL | [PgDuckDB](#pgduckdb) | `PgDuckDB` | TPC-H, SSB | [Example-PgDuckDB](Example-PgDuckDB.md) |
-| Relational / SQL | [OrioleDB](#orioledb) | `OrioleDB` | YCSB, Benchbase, HammerDB | [Example-Other-DBMS](Example-Other-DBMS.md#orioledb) (no results) |
+| Relational / SQL | [OrioleDB](#orioledb) | `OrioleDB` | YCSB, Benchbase, HammerDB | [Example-OrioleDB](Example-OrioleDB.md) |
 | Relational / SQL | [MySQL](#mysql) | `MySQL` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-MySQL](Example-MySQL.md) |
 | Relational / SQL | [MariaDB](#mariadb) | `MariaDB` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-MariaDB](Example-MariaDB.md) |
 | Relational / SQL | [MariaDB ColumnStore](#mariadb-columnstore) | `MariaDBCS` | TPC-H, TPC-DS, SSB | [Example-MariaDBCS](Example-MariaDBCS.md) |
@@ -576,50 +576,11 @@ See [Example: Benchmark PgDuckDB](Example-PgDuckDB.md) for configuration, deploy
 
 ## OrioleDB
 
-`OrioleDB` is the configuration key for PostgreSQL 18 with the storage engine OrioleDB [orioledb.com](https://www.orioledb.com), a table access method with an undo log instead of dead row versions in the heap, index-organized tables (rows in the B-tree of the primary key) and its own buffer cache (YCSB, Benchbase, HammerDB TPC-C).
-It is a single Deployment without operator; analytical workloads (TPC-H, TPC-DS, SSB) are not offered.
+`OrioleDB` is the configuration key for PostgreSQL 18 with the storage engine [OrioleDB](https://www.orioledb.com) (image `orioledb/orioledb:v1.10.3-pg18`), a table access method with index-organized tables, an undo log instead of dead row versions in the table and a buffer cache of its own, used for YCSB, Benchbase and HammerDB.
+Every table is an OrioleDB table (`default_table_access_method=orioledb`); it uses the DDL, durability and reset scripts and the clients of [PostgreSQL](#postgresql).
+License: Apache-2.0 or PostgreSQL License, no benchmark clause; OrioleDB is public beta.
 
-**License:** OrioleDB is dual-licensed under Apache-2.0 and the PostgreSQL License, the image ships a patched PostgreSQL (PostgreSQL License); neither has a benchmark clause.
-OrioleDB calls itself public beta, "recommended for experiments, testing, benchmarking", not for production.
-The results of OrioleDB are not part of the repository: its test script writes to `logs_tests/local`.
-
-**Deployment template:** [`k8s/deploymenttemplate-OrioleDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OrioleDB.yml)
-
-The template is the one of [PostgreSQL](#postgresql) with the image `orioledb/orioledb:v1.10.3-pg18` (OrioleDB 1.10.3 on PostgreSQL 18.6, Alpine).
-It differs in these points:
-
-| Point | Handling | Without it |
-|---|---|---|
-| Engine | `-c shared_preload_libraries=orioledb` and `-c default_table_access_method=orioledb`: every table that a script or a benchmark client creates is an OrioleDB table, without `USING orioledb` in the DDL | the tables are heap tables of PostgreSQL |
-| Extension | the `initdb` of the image creates the extension `orioledb` in `template1` and `postgres`, so every database has it, also those created by a benchmark | `CREATE TABLE` of an OrioleDB table fails |
-| Configuration | the arguments start with `-c`, so the entrypoint runs `postgres -c ...` on `$PGDATA` (`/var/lib/postgresql/data/pgdata`, as PostgreSQL) | the default command of the image, `postgres -D /etc/postgresql`, fixes `data_directory` to the mount point of the volume |
-| Memory | `orioledb.main_buffers=16GB` (the cache of OrioleDB tables) and `shared_buffers=1GB` (only system catalogs and sequences are heap tables), instead of `shared_buffers=16GB`; `orioledb.undo_buffers=256MB` as in the image; `orioledb.checkpoint_completion_ratio=1.0`, as OrioleDB recommends when only OrioleDB tables are used | the cache of OrioleDB tables is 64 MB |
-| User | the image runs as `postgres` with UID 70 (not 999): `fix-permissions` changes the owner of tenant folders to `70:70`; `preStop` uses `su-exec` and `/usr/local/bin/pg_ctl` | - |
-
-All other settings (connections, WAL, checkpoints, `autovacuum=off`, locks) are those of PostgreSQL; `--set` works in the `pg` style.
-Monitoring uses the `postgres-exporter` sidecar and the metric set `postgresql` of PostgreSQL (`-ma`); counters of dead rows and HOT updates stay 0 for OrioleDB tables.
-
-**Scripts:** OrioleDB has no script folder of its own (`base_system: PostgreSQL`): DDL, checks, durability, reset and DDL parameters are those of PostgreSQL, for YCSB ([`experiments/ycsb/PostgreSQL`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/PostgreSQL)), Benchbase and HammerDB.
-The clients are the PostgreSQL ones: YCSB JDBC binding with `postgresql-42.5.0.jar`, Benchbase profile `postgres`, HammerDB `HAMMERDB_TYPE=postgresql`; no image is changed.
-What differs for OrioleDB tables:
-
-| Script step | Effect on OrioleDB tables |
-|---|---|
-| `VACUUM` (reset, `checkschema`) | nothing to remove (old row versions are in the undo log); `ANALYZE` collects statistics as for heap tables |
-| `CHECKPOINT` | also writes the OrioleDB checkpoint |
-| `-xld` | `synchronous_commit`, `fsync` and `full_page_writes` are the settings of PostgreSQL; OrioleDB writes no full page images, so `full_page_writes` only concerns heap tables |
-| `-xddl fillfactor` (YCSB) | OrioleDB supports `fillfactor` on tables and indexes: it reserves space in the B-tree leaf pages against page splits (inserts and updates), not for HOT updates |
-| `-xddl autovacuum_scale` (YCSB) | stored, without effect (no autovacuum of OrioleDB tables) |
-
-Isolation: OrioleDB has no serializable snapshot isolation.
-With `orioledb.serializable=table_lock` (the default, kept by the template) a `SERIALIZABLE` transaction locks every table it touches, so concurrent serializable transactions on a table run one after the other.
-Bexhoma runs Benchbase with `TRANSACTION_READ_COMMITTED`, but Benchbase `twitter` fixes `SERIALIZABLE` in the PostgreSQL profile.
-
-```bash
-bexhoma ycsb -dbms OrioleDB -sf 1 -xwl a -nlp 4 -nlt 16 -nbp 1 -nbt 32 -tr run
-```
-
-See [Example: Other DBMS](Example-Other-DBMS.md#orioledb) for the workloads and the test script; its logs stay in the git-ignored `logs_tests/local`.
+See [Example: Benchmark OrioleDB](Example-OrioleDB.md) for configuration, deployment, the differences of the scripts, a comparison with PostgreSQL and examples.
 
 ---
 

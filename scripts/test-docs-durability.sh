@@ -640,6 +640,92 @@ bexhoma ycsb \
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability PGBouncer unsafe"
 
 
+#### YCSB Durability OrioleDB durable
+# -dbms OrioleDB                PostgreSQL scripts (path PostgreSQL), OrioleDB tables
+# -sf 1                         scaling factor
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute the throughput target
+# -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
+# -xnlf 4                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         one client round
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -xop 1                        number of operations for the benchmark phase (in millions)
+# -xld durable                  load durability
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ycsb \
+  -dbms OrioleDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xop 1 \
+  -xld durable \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_durability_ycsb_orioledb_durable.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability OrioleDB durable"
+
+
+#### YCSB Durability OrioleDB unsafe
+# -dbms OrioleDB                PostgreSQL scripts (path PostgreSQL), OrioleDB tables
+# -sf 1                         scaling factor
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute the throughput target
+# -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
+# -xnlf 4                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         one client round
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -xop 1                        number of operations for the benchmark phase (in millions)
+# -xld unsafe                   load durability
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ycsb \
+  -dbms OrioleDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xop 1 \
+  -xld unsafe \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_durability_ycsb_orioledb_unsafe.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability OrioleDB unsafe"
+
+
 #### YCSB Durability MySQL relaxed
 # -dbms MySQL                   flush 0 and 1G log buffer (YCSB variant)
 # -sf 1                         scaling factor
