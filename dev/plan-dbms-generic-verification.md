@@ -4,6 +4,13 @@ Status: **open, 2026-11-22.** The refactor (branch dbms-agnostic-code, #850) is 
 test-docs suite (~490 logs, 2026-11-11..18) passed and covers most of the old checklist. This plan lists only
 what was never checked after the refactor, and what follows from it.
 
+Checked 2026-11-23: section 1 is **done** and merged in #901 (v0.12.2). The 1.5 rerun with indexes,
+constraints and statistics `true` (`tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml`) passed every test;
+the docs placeholders are filled, `logs_tests/SUMMARY.md` has no unchecked row. Still open, with no change since
+2026-11-22: section 2 (CedarDB SSB never ran; `docs_tpch_databaseservice_execution.log` is still 0.11.12),
+section 3 (`_show_loading_provenance()` still records "Loading measured" as passed under `-sl`), sections 4, 5, 7.
+Side finding of 1.5, not fixed: the PgDuckDB force-execution workload note ignores a system's own `sut_parameters`.
+
 Already covered, do not re-propose: refresh for CedarDB/Citus/ClickHouseCluster/DatabaseService; tenancy
 container/database/schema; `-xdim distributed`; `-xcol`; `-xdfe`; TiDB/YugabyteDB/CockroachDB/Cassandra;
 key-value cluster and replica modes; MariaDBCS `-nlp` notice; PGBouncer pooling with single values;
@@ -11,7 +18,7 @@ key-value cluster and replica modes; MariaDBCS `-nlp` notice; PGBouncer pooling 
 
 Branch: `dbms-generic-verification-runs` (from dev, commit b2a26bfc, not pushed).
 
-## 1. Running now (started 2026-11-22)
+## 1. New blocks (run 2026-11-22, done, #901)
 
 The four new blocks of b2a26bfc run one after the other, log to `logs_tests/`:
 
@@ -109,4 +116,4 @@ unknown), so `storage_reused` is False and the test is recorded as passed.
 
 ## Order
 
-1 (running) → 3 (small fix, then verified by 2.1) → 2 → 7 → 4 → 5 after decisions.
+1 (done) → 3 (small fix, then verified by 2.1) → 2 → 7 → 4 → 5 after decisions.
