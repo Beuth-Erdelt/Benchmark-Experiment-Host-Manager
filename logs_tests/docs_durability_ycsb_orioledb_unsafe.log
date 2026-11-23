@@ -85,14 +85,6 @@ Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 21 API requests
 OrioleDB-1                    : has running benchmarks
 Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '76ce7f69-beb9-4dc3-8878-c562c9175bc5', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Mon, 23 Nov 2026 09:20:01 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 orioledb-1-1-1-1              : wrote benchmarking_timespans to D:/data/benchmarks/1795425170/orioledb-1-1-1-1.config
 orioledb-1-1-1-1              : showing benchmarker times

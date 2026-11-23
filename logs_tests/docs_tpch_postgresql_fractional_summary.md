@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=0.1
 * Type: tpch
-* Duration: 630s 
-* Code: 1794593199
+* Duration: 596s 
+* Code: 1795446741
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=0.1) data is loaded and benchmark is executed.
@@ -14,7 +14,7 @@ TPC-H Queries SF=0.1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.3.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -36,7 +36,7 @@ TPC-H Queries SF=0.1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1125193
+  * disk:818321
   * datadisk:316
   * volume_size:49G
   * volume_used:316M
@@ -48,14 +48,14 @@ TPC-H Queries SF=0.1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794593199
+    * code:1795446741
 * postgresql-1-2-1-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1123982
+  * disk:819654
   * datadisk:316
   * volume_size:49G
   * volume_used:316M
@@ -67,7 +67,7 @@ TPC-H Queries SF=0.1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794593199
+    * code:1795446741
 
 ### Inherited Loading
 * loading skipped, loading times copied from an earlier repetition: PostgreSQL-1-2
@@ -80,8 +80,8 @@ TPC-H Queries SF=0.1
 * PostgreSQL-1: 50 of 50 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794593199-5655c6c874-8z5xq: 0
-* bexhoma-sut-postgresql-1-1794593199-7cd686499c-9spp7: 0
+* bexhoma-sut-postgresql-1-1795446741-7dcbd69dc-bjnqz: 0
+* bexhoma-sut-postgresql-1-1795446741-7b4bc5fbbb-97l48: 0
 
 ### Workflow
 
@@ -101,8 +101,8 @@ TPC-H Queries SF=0.1
 
 | DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 | 0.10 |       42.00 |           6.00 |           18.00 |          2.00 |           11.00 |              8 |         0 |             |                |             0 | False         |                8.57 | False               |
-| PostgreSQL-1-2 |                2 | 0.10 |       42.00 |           6.00 |           18.00 |          2.00 |           11.00 |              8 |         0 |             |                |             0 | False         |                8.57 | True                |
+| PostgreSQL-1-1 |                1 | 0.10 |       38.00 |           3.00 |           16.00 |          3.00 |           10.00 |              8 |         0 |             |                |             0 | False         |                9.47 | False               |
+| PostgreSQL-1-2 |                2 | 0.10 |       38.00 |           3.00 |           16.00 |          3.00 |           10.00 |              8 |         0 |             |                |             0 | False         |                9.47 | True                |
 
 ### Benchmarking
 
@@ -110,15 +110,15 @@ TPC-H Queries SF=0.1
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 0.10 |               22 |                  22 |          7 |            0.04 |            10288.64 |           1131.43 |           0 |
-| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 | 0.10 |               22 |                  22 |          6 |            0.05 |             7682.37 |           1320.00 |           0 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 0.10 |               22 |                  22 |          4 |            0.05 |             8254.22 |           1980.00 |           0 |
+| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 | 0.10 |               22 |                  22 |          4 |            0.06 |             6886.12 |           1980.00 |           0 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 0.10 |               22 |                  22 |          7 |            0.04 |            10288.64 |           1131.43 |           0 |
-| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 | 0.10 |               22 |                  22 |          6 |            0.05 |             7682.37 |           1320.00 |           0 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 0.10 |               22 |                  22 |          4 |            0.05 |             8254.22 |           1980.00 |           0 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 | 0.10 |               22 |                  22 |          4 |            0.06 |             6886.12 |           1980.00 |           0 |
 
 #### Query Completion per Phase
 
@@ -132,28 +132,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   postgresql-1-1-1-1-1 |   postgresql-1-2-1-1-1 |
 |:----------------------------------------------------|-----------------------:|-----------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |                 303.37 |                 372.20 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |                  20.85 |                 280.44 |
-| Shipping Priority (TPC-H Q3)                        |                  54.70 |                 115.34 |
-| Order Priority Checking Query (TPC-H Q4)            |                  83.69 |                  65.54 |
-| Local Supplier Volume (TPC-H Q5)                    |                  32.45 |                  25.47 |
-| Forecasting Revenue Change (TPC-H Q6)               |                  27.18 |                  25.04 |
-| Volume Shipping Query (TPC-H Q7)                    |                  37.72 |                  37.78 |
-| National Market Share (TPC-H Q8)                    |                  34.19 |                  42.89 |
-| Product Type Profit Measure (TPC-H Q9)              |                  86.03 |                 116.07 |
-| Returned Item Reporting Query (TPC-H Q10)           |                  53.24 |                  47.56 |
-| Important Stock Identification (TPC-H Q11)          |                   7.31 |                   6.91 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |                  36.38 |                  53.12 |
-| Customer Distribution (TPC-H Q13)                   |                  47.41 |                  45.32 |
-| Promotion Effect Query (TPC-H Q14)                  |                  29.83 |                  27.34 |
-| Top Supplier Query (TPC-H Q15)                      |                  25.18 |                  26.57 |
-| Parts/Supplier Relationship (TPC-H Q16)             |                  29.21 |                  29.48 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |                  52.02 |                  47.66 |
-| Large Volume Customer (TPC-H Q18)                   |                 180.13 |                 244.14 |
-| Discounted Revenue (TPC-H Q19)                      |                   6.03 |                   9.34 |
-| Potential Part Promotion (TPC-H Q20)                |                   9.67 |                  26.26 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                  36.02 |                  38.56 |
-| Global Sales Opportunity Query (TPC-H Q22)          |                  11.28 |                  32.46 |
+| Pricing Summary Report (TPC-H Q1)                   |                 143.30 |                 389.60 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                  46.74 |                 310.15 |
+| Shipping Priority (TPC-H Q3)                        |                 119.33 |                 137.20 |
+| Order Priority Checking Query (TPC-H Q4)            |                 201.67 |                  76.79 |
+| Local Supplier Volume (TPC-H Q5)                    |                  42.62 |                  27.17 |
+| Forecasting Revenue Change (TPC-H Q6)               |                  50.27 |                  20.76 |
+| Volume Shipping Query (TPC-H Q7)                    |                  47.51 |                  32.12 |
+| National Market Share (TPC-H Q8)                    |                  33.82 |                  47.36 |
+| Product Type Profit Measure (TPC-H Q9)              |                 100.30 |                 123.39 |
+| Returned Item Reporting Query (TPC-H Q10)           |                  53.13 |                  47.97 |
+| Important Stock Identification (TPC-H Q11)          |                   6.47 |                   9.35 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                  39.37 |                  55.86 |
+| Customer Distribution (TPC-H Q13)                   |                  73.40 |                  87.50 |
+| Promotion Effect Query (TPC-H Q14)                  |                  38.48 |                  31.95 |
+| Top Supplier Query (TPC-H Q15)                      |                  31.69 |                  29.14 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                  39.41 |                  35.62 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                  64.88 |                  55.53 |
+| Large Volume Customer (TPC-H Q18)                   |                 200.51 |                 241.77 |
+| Discounted Revenue (TPC-H Q19)                      |                   6.75 |                  11.15 |
+| Potential Part Promotion (TPC-H Q20)                |                  10.63 |                  25.43 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                  40.09 |                  50.10 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                  11.85 |                  34.05 |
 
 ### Errors (failed queries)
 
