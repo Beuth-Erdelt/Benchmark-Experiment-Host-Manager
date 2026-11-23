@@ -11,7 +11,8 @@ Status: **parked 2026-10-22, partly done since.** Checked 2026-11-22:
 - Still open: **P2** (`/mysqltmp` is still `emptyDir` `medium: Memory`, `sizeLimit: 32Gi`; the TPC-DS storage
   runs raise it by `--set ...volume[mysqltmp].sizeLimit`). A4 (start check pool vs. limit) is still a
   candidate guard.
-- Done 2026-11-23 (no cluster run yet):
+- Done 2026-11-23 on branch `small-corrections` (local, not pushed; no cluster run yet): P5 in 7e98b8b7, the
+  barrier timeout in 270d5342.
   - **P5**, decided as proposed (drop): MySQL's tpch/tpcds entries no longer declare `per_loading_threads`
     (no extra `MYSQL_LOADING_*` env, no configuration per `-nlt` value). Any DBMS without it now prints
     "<DBMS>: the loader does not use loading threads, ignoring -nlt N" (`system_builder.loading_variants`,

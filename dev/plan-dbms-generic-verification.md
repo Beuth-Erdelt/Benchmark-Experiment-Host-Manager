@@ -6,10 +6,13 @@ what was never checked after the refactor, and what follows from it.
 
 Checked 2026-11-23: section 1 is **done** and merged in #901 (v0.12.2). The 1.5 rerun with indexes,
 constraints and statistics `true` (`tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml`) passed every test;
-the docs placeholders are filled, `logs_tests/SUMMARY.md` has no unchecked row. Still open, with no change since
-2026-11-22: section 2 (CedarDB SSB never ran; `docs_tpch_databaseservice_execution.log` is still 0.11.12),
-section 3 (`_show_loading_provenance()` still records "Loading measured" as passed under `-sl`), sections 4, 5, 7.
-Side finding of 1.5, not fixed: the PgDuckDB force-execution workload note ignores a system's own `sut_parameters`.
+the docs placeholders are filled, `logs_tests/SUMMARY.md` has no unchecked row.
+Done 2026-11-23 on branch `small-corrections` (local, not pushed): section 3 in code (a87f1894, `-sl` makes the
+loading test skipped; result contract 1.15.0), section 7 (48b41866, both sync tools fixed, with tests).
+Still open: section 2 (CedarDB SSB never ran; `docs_tpch_databaseservice_execution.log` is still 0.11.12, and its
+rerun is also the cluster check of section 3), sections 4 and 5.
+Side finding of 1.5, not fixed: the PgDuckDB force-execution workload note ignores a system's own `sut_parameters`
+(belongs to [plan-pgduckdb-force-execution.md](plan-pgduckdb-force-execution.md), deferred by the user 2026-11-23).
 
 Already covered, do not re-propose: refresh for CedarDB/Citus/ClickHouseCluster/DatabaseService; tenancy
 container/database/schema; `-xdim distributed`; `-xcol`; `-xdfe`; TiDB/YugabyteDB/CockroachDB/Cassandra;
