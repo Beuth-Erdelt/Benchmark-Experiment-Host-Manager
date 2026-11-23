@@ -27,7 +27,7 @@ The level applies to the load only.
 Before the check script, the server returns to its configured state (template and `--set`), so the benchmark always runs as configured.
 The summary shows the level in the workload (`Load durability is relaxed (-xld; restored after the load).`) and per connection (`load_durability: relaxed`).
 
-Durability scripts exist for PostgreSQL (also used by PgDuckDB and PGBouncer), MySQL, MariaDB and Citus.
+Durability scripts exist for PostgreSQL (also used by PgDuckDB, PGBouncer and OrioleDB), MySQL, MariaDB and Citus.
 Other DBMS load as configured.
 See [Prepare Testbeds](Prepare-Testbeds.md#durability-during-the-load) for how the scripts are selected and [DBMS](DBMS.md#load-durability--xld) for what they set per DBMS.
 
@@ -48,7 +48,7 @@ This loads TPC-H SF 1 into PostgreSQL with `fsync` and `full_page_writes` off, t
 
 The test script runs one small experiment (SF 1, one client round) per benchmark, DBMS and level.
 The point is the loading phase.
-It covers TPC-H, TPC-DS, YCSB, HammerDB and Benchbase on PostgreSQL, PgDuckDB, PGBouncer, MySQL, MariaDB, Citus and TiDB (no durability scripts), and in addition
+It covers TPC-H, TPC-DS, YCSB, HammerDB and Benchbase on PostgreSQL, PgDuckDB, PGBouncer, OrioleDB, MySQL, MariaDB, Citus and TiDB (no durability scripts), and in addition
 * `durable` with `--set` (MySQL): durable during the load, back to the `--set` value afterwards
 * `unsafe` on persistent storage (`-rst`, `-nc 2`): repetition 2 finds the loaded volume and the data is complete
 * schema tenancy (`-mtb schema`): the scripts run once per tenant, the restore after all tenants
@@ -483,6 +483,64 @@ bexhoma ycsb \
 ```
 
 Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_pgbouncer_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_pgbouncer_unsafe.log</a>
+
+
+### OrioleDB durable
+
+PostgreSQL scripts (path PostgreSQL), OrioleDB tables.
+
+```bash
+bexhoma ycsb \
+  -dbms OrioleDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xop 1 \
+  -xld durable \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_durability_ycsb_orioledb_durable.log
+```
+
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_orioledb_durable_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_orioledb_durable.log</a>
+
+
+### OrioleDB unsafe
+
+PostgreSQL scripts (path PostgreSQL), OrioleDB tables; `full_page_writes` only concerns the heap tables of the catalog.
+
+```bash
+bexhoma ycsb \
+  -dbms OrioleDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xop 1 \
+  -xld unsafe \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_durability_ycsb_orioledb_unsafe.log
+```
+
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_orioledb_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_orioledb_unsafe.log</a>
 
 
 ### MySQL relaxed

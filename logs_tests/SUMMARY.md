@@ -4,7 +4,7 @@ Last recorded runs of the examples in `docs/`, one row per log in `logs_tests/`.
 Nothing is run to create this page: it is read from the committed logs by `scripts/demo-runs.py`,
 so it shows what the runs looked like when they were recorded, not whether the current code still passes.
 
-**391 passed, 0 failed, 1 warn, 0 unchecked** (392 runs)
+**400 passed, 0 failed, 1 warn, 0 unchecked** (401 runs)
 
 | Status | Log | Page | Date | Version | Duration | Failed tests / warnings |
 |---|---|---|---|---|---|---|
@@ -77,6 +77,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_tidb.log | Example-TiDB.md | 2026-11-14 | 0.11.17 | 1140s |  |
 | passed | docs_benchbase_tidb_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 1104s |  |
 | passed | docs_benchbase_tidb_storage.log | Example-TiDB.md | 2026-11-14 | 0.11.17 | 2225s |  |
+| passed | docs_benchbase_tpcc_orioledb.log | Example-OrioleDB.md | 2026-11-23 | 0.12.3 | 710s |  |
 | passed | docs_benchbase_yugabytedb.log | Example-YugaByteDB.md | 2026-11-16 | 0.11.18 | 1322s |  |
 | passed | docs_benchbase_yugabytedb_appmetrics.log | Example-Metrics.md | 2026-11-17 | 0.11.18 | 1541s |  |
 | passed | docs_benchbase_yugabytedb_keytime.log | Example-YugaByteDB.md | 2026-11-17 | 0.11.18 | 7445s |  |
@@ -107,6 +108,8 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_durability_ycsb_citus_relaxed.log | Test-Durability.md | 2026-11-14 | 0.11.17 | 767s |  |
 | passed | docs_durability_ycsb_mysql_relaxed.log | Test-Durability.md | 2026-11-14 | 0.11.17 | 542s |  |
 | passed | docs_durability_ycsb_mysql_unsafe.log | Test-Durability.md | 2026-11-14 | 0.11.17 | 513s |  |
+| passed | docs_durability_ycsb_orioledb_durable.log | Test-Durability.md | 2026-11-23 | 0.12.3 | 447s |  |
+| passed | docs_durability_ycsb_orioledb_unsafe.log | Test-Durability.md | 2026-11-23 | 0.12.3 | 451s |  |
 | passed | docs_durability_ycsb_pgbouncer_unsafe.log | Test-Durability.md | 2026-11-14 | 0.11.17 | 375s |  |
 | passed | docs_durability_ycsb_postgresql_relaxed.log | Test-Durability.md | 2026-11-14 | 0.11.17 | 423s |  |
 | passed | docs_durability_ycsb_tidb_relaxed.log | Test-Durability.md | 2026-11-14 | 0.11.17 | 513s |  |
@@ -120,6 +123,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_hammerdb_mysql_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 1384s |  |
 | passed | docs_hammerdb_mysql_monitoring.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 917s |  |
 | passed | docs_hammerdb_mysql_scale.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 3112s |  |
+| passed | docs_hammerdb_orioledb.log | Example-OrioleDB.md | 2026-11-23 | 0.12.3 | 765s |  |
 | passed | docs_hammerdb_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 1247s |  |
 | passed | docs_hammerdb_postgresql_collector_1.log | Example-Collectors.md | 2026-11-04 | 0.11.12 | 2414s |  |
 | passed | docs_hammerdb_postgresql_collector_2.log | Example-Collectors.md | 2026-11-04 | 0.11.12 | 2438s |  |
@@ -189,6 +193,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_reset_ycsb_dragonfly_replica.log | Test-Reset.md | 2026-11-16 | 0.11.18 | 487s |  |
 | passed | docs_reset_ycsb_mariadb.log | Test-Reset.md | 2026-11-16 | 0.11.18 | 1043s |  |
 | passed | docs_reset_ycsb_mysql.log | Test-Reset.md | 2026-11-16 | 0.11.18 | 954s |  |
+| passed | docs_reset_ycsb_orioledb.log | Test-Reset.md | 2026-11-23 | 0.12.3 | 544s |  |
 | passed | docs_reset_ycsb_pgbouncer.log | Test-Reset.md | 2026-11-16 | 0.11.18 | 511s |  |
 | passed | docs_reset_ycsb_postgresql.log | Test-Reset.md | 2026-11-16 | 0.11.18 | 491s |  |
 | passed | docs_reset_ycsb_redis.log | Test-Reset.md | 2026-11-16 | 0.11.18 | 380s |  |
@@ -351,6 +356,10 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_ycsb_mysql_scale.log | Example-MySQL.md | 2026-11-15 | 0.11.17 | 6878s |  |
 | passed | docs_ycsb_mysql_storage.log | Example-MySQL.md | 2026-11-15 | 0.11.17 | 3795s |  |
 | passed | docs_ycsb_mysql_workload_e.log | Example-MySQL.md | 2026-11-15 | 0.11.17 | 1378s |  |
+| passed | docs_ycsb_orioledb.log | Example-OrioleDB.md | 2026-11-23 | 0.12.3 | 438s |  |
+| passed | docs_ycsb_orioledb_monitoring.log | Example-OrioleDB.md | 2026-11-23 | 0.12.3 | 704s |  |
+| passed | docs_ycsb_orioledb_postgresql.log | Example-OrioleDB.md | 2026-11-23 | 0.12.3 | 1152s |  |
+| passed | docs_ycsb_orioledb_storage.log | Example-OrioleDB.md | 2026-11-23 | 0.12.3 | 754s |  |
 | passed | docs_ycsb_pgbouncer.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 349s |  |
 | passed | docs_ycsb_pgbouncer_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 736s |  |
 | passed | docs_ycsb_pgbouncer_monitoring.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 869s |  |
