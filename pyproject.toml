@@ -71,6 +71,27 @@ fail_under = 69
 show_missing = false
 skip_empty = true
 
+# ---- Lint (ruff, pinned in .github/workflows/tests.yml) ----
+# Checks the style rules of docs/CONTRIBUTING.md. Existing findings carry a
+# "# noqa: <rule>" comment, so CI fails only on new ones; the clean-ups of
+# dev/plan-software-quality.md (S2) remove those comments rule by rule.
+# Not selected yet, because they are fixed in bulk first (S2): E501 long lines,
+# UP032 .format() instead of f-string, F401 unused imports.
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = ["TPCTC23", "docs/_build", "dev", "build"]
+
+[tool.ruff.lint]
+select = [
+    "E4", "E7", "E9", "F",      # ruff defaults: imports, statements, syntax, pyflakes
+    "E711", "E712", "E713", "E714", "E722", "E741",
+    "A001", "A002",             # shadowed built-ins
+    "B006",                     # mutable default argument
+    "UP031",                    # % formatting
+]
+ignore = ["F401"]
+
 # ---- Dynamic metadata sources ----
 [tool.setuptools.dynamic]
 version = { attr = "bexhoma.__version__.__version__" }

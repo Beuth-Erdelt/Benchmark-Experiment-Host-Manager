@@ -16,17 +16,17 @@ import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-import pickle
-import json
-import traceback
-import ast
-from dbmsbenchmarker import monitor
-from datetime import datetime
-import glob
-from pathlib import Path
+import pickle  # noqa: E402
+import json  # noqa: E402
+import traceback  # noqa: E402
+import ast  # noqa: E402
+from dbmsbenchmarker import monitor  # noqa: E402
+from datetime import datetime  # noqa: E402
+import glob  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-from bexhoma.evaluators.base import natural_sort
-from bexhoma.evaluators.logger import LogEvaluator
+from bexhoma.evaluators.base import natural_sort  # noqa: E402
+from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
 
 __all__ = ["YcsbEvaluator"]
 
@@ -281,7 +281,7 @@ class YcsbEvaluator(LogEvaluator):
         except Exception as exc:
             print(exc)
             return df
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):  # noqa: B006
         """
         Aggregates parallel-pod YCSB benchmarking rows into one row per group.
 
@@ -491,7 +491,7 @@ class YcsbEvaluator(LogEvaluator):
         df.fillna(0, inplace=True)
         df_typed = df.astype(dtypes)
         return df_typed
-    def loading_aggregate_by_parallel_pods(self, df, columns=["phase"]):
+    def loading_aggregate_by_parallel_pods(self, df, columns=["phase"]):  # noqa: B006
         """
         Aggregates parallel-pod YCSB loading rows into one row per job.
 
@@ -602,7 +602,7 @@ class YcsbEvaluator(LogEvaluator):
                     #"all_numbers": list(map(float, all_numbers)),  # Convert all numbers to float
                     "metrics": metrics,
                 }
-            except Exception as e:
+            except Exception as e:  # noqa: F841
                 # Log or handle any parsing errors (optional)
                 return None
         results = []
@@ -697,7 +697,7 @@ class YcsbEvaluator(LogEvaluator):
                 parsed_results = self.parse_log_file(file)
                 data = []
                 for result in parsed_results:
-                    if not column in result:
+                    if not column in result:  # noqa: E713
                         result_metrics = flatten_dict(result['metrics'])
                         #print(result_metrics)
                         d = {
@@ -732,7 +732,7 @@ class YcsbEvaluator(LogEvaluator):
                         else:
                             df_total = df_total.add(df, fill_value=0)
         if aggregate:
-            if not metric == "current_ops_per_sec" and not "9" in metric and not "Max" in metric and not "Min" in metric:
+            if not metric == "current_ops_per_sec" and not "9" in metric and not "Max" in metric and not "Min" in metric:  # noqa: E713
                 df_total = df_total / num_logs
             df_total['avg'] = int(df_total[column].mean())
         return df_total
@@ -859,7 +859,7 @@ class YcsbEvaluator(LogEvaluator):
         cols_loading = ['code', 'configuration', 'experiment_run']
         df = self.loading_set_datatypes(df)
         df = self.loading_aggregate_by_parallel_pods(df)
-        indexname = df.index.name
+        indexname = df.index.name  # noqa: F841
         df_connections = df_connections.drop_duplicates(subset=cols_loading, keep='first')
         df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
         df = df.set_index(cols_loading, drop=False)

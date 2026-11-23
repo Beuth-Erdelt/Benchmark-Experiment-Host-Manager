@@ -10,13 +10,13 @@ Copyright (C) 2021 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from bexhoma import *
+from bexhoma import *  # noqa: F403
 from bexhoma.benchmarks import registry
 from bexhoma.scripts.cli import EXPERIMENT_MODES
-from dbmsbenchmarker import *
+from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
-import logging
+import logging  # noqa: F811
 import argparse
 import pandas as pd
 from tabulate import tabulate
@@ -164,7 +164,7 @@ def manage():
         logger_loader.setLevel(logging.DEBUG)
     connection = args.connection
     if args.mode == 'stop':
-        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)  # noqa: F405
         if args.experiment is None:
             if connection is None:
                 connection = ''
@@ -175,7 +175,7 @@ def manage():
             #cluster.kubectl('delete all -l experiment='+cluster.code)
             # kubectl delete all -l experiment=1742207308
         else:
-            experiment = experiments.ExperimentBase(cluster=cluster, code=args.experiment)
+            experiment = experiments.ExperimentBase(cluster=cluster, code=args.experiment)  # noqa: F405
             experiment.stop_sut()
             experiment.stop_monitoring()
             experiment.stop_loading()
@@ -184,10 +184,10 @@ def manage():
             # "all" does not include Secrets (TLS material of the SUTs)
             cluster.kubectl('delete secret -l experiment='+args.experiment+',component=tls')
     elif args.mode == 'summary':
-        if not args.experiment is None:
+        if not args.experiment is None:  # noqa: E714
             # -fe re-evaluates by executing a command inside the running dashboard pod,
             # which needs a live cluster connection; a plain summary only reads local files.
-            cluster = clusters.Kubernetes(clusterconfig, context=args.context, connect=args.force_evaluate)
+            cluster = clusters.Kubernetes(clusterconfig, context=args.context, connect=args.force_evaluate)  # noqa: F405
             resultfolder = cluster.config['benchmarker']['resultfolder']
             code = args.experiment
             with open(resultfolder+"/"+code+"/queries.config",'r') as inp:
@@ -208,7 +208,7 @@ def manage():
                 if descriptor is not None and descriptor.experiment is not None:
                     experiment = descriptor.experiment(cluster=cluster, code=code, **sf_kwargs)
                 else:
-                    experiment = experiments.ExperimentBase(cluster=cluster, code=code)
+                    experiment = experiments.ExperimentBase(cluster=cluster, code=code)  # noqa: F405
                 # Reconstructing from just type/SF leaves experiment.workload at its
                 # __init__ defaults (e.g. monitoring_components={}). evaluate_results()
                 # uses self.workload['monitoring_components'] to decide which extra
@@ -230,7 +230,7 @@ def manage():
                     experiment.store_workflow_results()
                 experiment.show_summary(write_report=args.report)
     elif args.mode == 'dashboard':
-        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)  # noqa: F405
         if args.action == 'start':
             cluster.start_dashboard()
         elif args.action == 'shutdown':
@@ -238,13 +238,13 @@ def manage():
         else:
             cluster.forward_dashboard_ports()
     elif args.mode == 'messagequeue':
-        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)  # noqa: F405
         if args.action == 'shutdown':
             cluster.stop_messagequeue()
         else:
             cluster.start_messagequeue()
     elif args.mode == 'localdashboard':
-        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)  # noqa: F405
         import sys
         resultfolder = cluster.config['benchmarker']['resultfolder']
         sys.argv += ['-r',resultfolder]
@@ -252,11 +252,11 @@ def manage():
         from dbmsbenchmarker.scripts import dashboardcli
         dashboardcli.startup()
     elif args.mode == 'localresults':
-        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)  # noqa: F405
         # path of folder containing experiment results
         resultfolder = cluster.resultfolder
         # create evaluation object for result folder
-        evaluate = inspector.inspector(resultfolder)
+        evaluate = inspector.inspector(resultfolder)  # noqa: F405
         # dataframe of experiments
         df = evaluate.get_experiments_preview().sort_values('time')
         df = df.reset_index()
@@ -272,7 +272,7 @@ def manage():
         # Display the PrettyTable
         print(pt)
     elif args.mode == 'data':
-        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)  # noqa: F405
         dashboard_name = cluster.get_dashboard_pod_name()
         if len(dashboard_name) > 0:
             cmd = {}
@@ -284,10 +284,10 @@ def manage():
         cmd = ["jupyter","notebook","--notebook-dir","images/evaluator_dbmsbenchmarker/notebooks","--NotebookApp.ip","0.0.0.0","--no-browser","--NotebookApp.allow_origin","*"]
         subprocess.Popen(cmd)
     elif args.mode == 'master':
-        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)  # noqa: F405
         cluster.forward_sut_port(experiment=args.experiment, configuration=connection)
     elif args.mode == 'status':
-        cluster = clusters.Kubernetes(clusterconfig, context=args.context)
+        cluster = clusters.Kubernetes(clusterconfig, context=args.context)  # noqa: F405
         app = cluster.appname
         # single bulk fetch per resource kind: every Pod and PVC is read once
         # here and then filtered/grouped in memory below, instead of issuing
@@ -355,7 +355,7 @@ def manage():
             volumes[name]['used'] = pvc_labels.get('volume_used', "")
         if len(volumes) > 0:
             df = pd.DataFrame(volumes).T
-            df = df.reindex(index=evaluators.natural_sort(df.index))
+            df = df.reindex(index=evaluators.natural_sort(df.index))  # noqa: F405
             h = ['Volumes'] + list(df.columns)
             print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
         # get all worker volumes: every StatefulSet volumeClaimTemplate PVC,
@@ -363,7 +363,7 @@ def manage():
         volumes = _worker_volumes(all_pvcs)
         if len(volumes) > 0:
             df = pd.DataFrame(volumes).T
-            df = df.reindex(index=evaluators.natural_sort(df.index))
+            df = df.reindex(index=evaluators.natural_sort(df.index))  # noqa: F405
             h = ['Volumes of Workers'] + list(df.columns)
             print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
         # group already-fetched pods by experiment and configuration
@@ -484,7 +484,7 @@ def manage():
                     labels = pod_labels[pod.metadata.name]
                     client_display = '{}. '.format(labels['client']) if 'client' in labels else ''
                     status_extended = "{pod} ({client}{status})".format(pod='', client=client_display, status=status)
-                    num_pods[status_extended] = 1 if not status_extended in num_pods else num_pods[status_extended]+1
+                    num_pods[status_extended] = 1 if not status_extended in num_pods else num_pods[status_extended]+1  # noqa: E713
                 for status in num_pods.keys():
                         apps[configuration][component] += "{num}x{status}".format(num=num_pods[status], status=status)
                 ############
@@ -497,16 +497,16 @@ def manage():
             h = [df.index.name] + list(df.columns)
             if args.verbose:
                 # this shows all columns even if empty
-                df = df.reindex(index=evaluators.natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))  # noqa: F405
                 print(tabulate(df, headers=h, tablefmt="grid", floatfmt=".2f", showindex="always"))
             else:
                 df_empty = df.eq('')
                 df_short = df.drop(df_empty.columns[df_empty.all()].tolist(), axis=1)
                 h_short = [df_short.index.name] + list(df_short.columns)
                 # this shows only columns with not all empty
-                df = df.reindex(index=evaluators.natural_sort(df.index))
+                df = df.reindex(index=evaluators.natural_sort(df.index))  # noqa: F405
                 print(tabulate(df_short, headers=h_short, tablefmt="grid", floatfmt=".2f", showindex="always"))
-    benchmarker.logger.setLevel(logging.ERROR)
+    benchmarker.logger.setLevel(logging.ERROR)  # noqa: F405
 
 
 # `python -m bexhoma.scripts.experimentsmanager ...` runs the same as `bexperiments ...`;

@@ -9,11 +9,11 @@ Copyright (C) 2023 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from bexhoma import *
+from bexhoma import *  # noqa: F403
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor, threads_per_pod_error
 from bexhoma.experiments.system_builder import build_configuration, entry_parameters, selected_dockers, tenancy_error
 from bexhoma.system_descriptors import dbms_choices
-from dbmsbenchmarker import *
+from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
@@ -78,7 +78,7 @@ def main() -> None:
     # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
     # should results be tested for validity?
-    test_result = args.test_result
+    test_result = args.test_result  # noqa: F841
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
@@ -105,16 +105,16 @@ def main() -> None:
     ##############
     aws = args.aws
     if aws:
-        cluster = clusters.AWS(context=args.context)
+        cluster = clusters.AWS(context=args.context)  # noqa: F405
         # scale up
-        node_sizes = {
+        node_sizes = {  # noqa: F841
             'auxiliary': 1,
             'sut-mid': 1,
             'benchmarker': 1
         }
         #cluster.scale_nodegroups(node_sizes)
     else:
-        cluster = clusters.Kubernetes(context=args.context)
+        cluster = clusters.Kubernetes(context=args.context)  # noqa: F405
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
     # set experiment
@@ -134,7 +134,7 @@ def main() -> None:
     # remove running dbms
     #experiment.clean()
     experiment.prepare_testbed(command_args)
-    num_loading_pods = experiment.get_parameter_as_list('num_loading_pods')
+    num_loading_pods = experiment.get_parameter_as_list('num_loading_pods')  # noqa: F841
     num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
     num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
     num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')

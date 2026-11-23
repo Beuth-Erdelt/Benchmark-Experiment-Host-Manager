@@ -237,18 +237,18 @@ class LifecycleManager:
         deployment_template = 'deploymenttemplate-bexhoma-prometheus.yml'
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
-        name_pool = self.create_monitoring(app, 'pool', experiment, configuration)
+        name_pool = self.create_monitoring(app, 'pool', experiment, configuration)  # noqa: F841
         if 'monitor' in cfg.dockertemplate and 'component' in cfg.dockertemplate['monitor']:
             name_monitor_application_component = cfg.dockertemplate['monitor']['component']
         else:
             name_monitor_application_component = 'sut'
         name_monitor_application = self.create_monitoring(
             app, name_monitor_application_component, experiment, configuration)
-        name_service = cfg.generate_component_name(
+        name_service = cfg.generate_component_name(  # noqa: F841
             app=app, component='sut',
             experiment=cfg.get_experiment_name(), configuration=configuration)
         name_worker = cfg.get_worker_name()
-        name_service_headless = name_worker
+        name_service_headless = name_worker  # noqa: F841
         if cfg.experiment.cluster.monitor_cluster_active:
             print("{:30s}: wants to monitor all components in cluster".format(configuration))
         if not cfg.experiment.cluster.monitor_cluster_exists:
@@ -354,7 +354,7 @@ scrape_configs:
     scrape_timeout: {prometheus_timeout}
     metrics_path: /_status/vars
     static_configs:
-      - targets: ['{endpoint}:8080']""".format(
+      - targets: ['{endpoint}:8080']""".format(  # noqa: F522
                                                 endpoint=endpoint,
                                                 client=worker_idx,
                                                 prometheus_interval=cfg.prometheus_interval,
@@ -385,7 +385,7 @@ scrape_configs:
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
-      - targets: ['{endpoint}:9300']""".format(
+      - targets: ['{endpoint}:9300']""".format(  # noqa: F522
                                 endpoint=endpoint,
                                 client=ep_idx,
                                 prometheus_interval=cfg.prometheus_interval,
@@ -406,7 +406,7 @@ scrape_configs:
     scrape_interval: {prometheus_interval}
     scrape_timeout: {prometheus_timeout}
     static_configs:
-      - targets: ['{endpoint}:9300']""".format(
+      - targets: ['{endpoint}:9300']""".format(  # noqa: F522
                                     endpoint=endpoint,
                                     client=worker_ep_idx,
                                     prometheus_interval=cfg.prometheus_interval,
@@ -892,9 +892,9 @@ scrape_configs:
                 worker_service=name_service_headless)
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
             env['STATEFULSET_NAME'] = name_worker
-            env['BEXHOMA_STORE_NAME'] = "{name_store}".format(
+            env['BEXHOMA_STORE_NAME'] = "{name_store}".format(  # noqa: F522
                 name_store=name_store, worker_service=name_store)
-            env['BEXHOMA_STORE_SERVICE'] = "{worker_service}".format(
+            env['BEXHOMA_STORE_SERVICE'] = "{worker_service}".format(  # noqa: F522
                 name_store=name_store, worker_service=name_store)
             list_of_stores = []
             for worker in range(cfg.num_worker):

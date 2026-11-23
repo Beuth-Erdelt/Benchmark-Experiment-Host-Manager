@@ -58,10 +58,10 @@ __all__ = [
     "DictToObject",
     "parse_set_arg",
     "ExperimentBase",
-    "IotExperiment",
-    "TsbsExperiment",
+    "IotExperiment",  # noqa: F822
+    "TsbsExperiment",  # noqa: F822
     "ExampleExperiment",
-    "TpcxaiExperiment",
+    "TpcxaiExperiment",  # noqa: F822
 ]
 
 
@@ -646,7 +646,7 @@ class ExperimentBase():
         filename_remote = '/results/'+str(self.code)+'/'+filename
         return self.cluster.download_file(filename_local=filename_local, filename_remote=filename_remote, pod=self.pod_dashboard)
     def get_parameter_as_list(self,
-                              parameter: str) -> list:
+                              parameter: str) -> list:  # noqa: F811
         """
         Transform comma separated CLI parameters to list.
         This is for example used to transform num_loading_pods.
@@ -665,7 +665,7 @@ class ExperimentBase():
             value = list(int(value))
         return value
     def get_parameter_as_list_str(self,
-                                  parameter: str) -> list:
+                                  parameter: str) -> list:  # noqa: F811
         """
         Transform a comma separated CLI parameter into a list of strings,
         without casting entries to int. This is for parameters whose values
@@ -682,7 +682,7 @@ class ExperimentBase():
             return []
         return [entry for entry in value.split(",") if len(entry) > 0]
     def prepare_testbed(self,
-                        parameter: dict) -> None:
+                        parameter: dict) -> None:  # noqa: F811
         """
         Prepares a testbed.
         It takes the CLI arguments as a dict.
@@ -692,7 +692,7 @@ class ExperimentBase():
 
         :param parameter: Comma separated list of values
         """
-        if (not 'type' in self.workload) or (len(self.workload['type']) == 0):
+        if (not 'type' in self.workload) or (len(self.workload['type']) == 0):  # noqa: E713
             # set default workload type
             self.workload['type'] = 'dbmsbenchmarker'
         args = SimpleNamespace(**parameter)
@@ -1016,7 +1016,7 @@ class ExperimentBase():
         """
         context = self.cluster.context
         port = self.cluster.port
-        app = self.appname
+        app = self.appname  # noqa: F841
         forward = ['kubectl', '--context {context}'.format(context=context), 'port-forward', 'service/'+service, f"{port}:{port}"]
         command = " ".join(forward)
         #print("{:30s}: {}".format(configuration, command))
@@ -1848,7 +1848,7 @@ class ExperimentBase():
         """
         if workflow_1.keys() != workflow_2.keys():
             return False
-        sort_key = lambda job: (job['type'], job['pods'])
+        sort_key = lambda job: (job['type'], job['pods'])  # noqa: E731
         for key in workflow_1:
             runs_1, runs_2 = workflow_1[key], workflow_2[key]
             if len(runs_1) != len(runs_2):
@@ -3360,7 +3360,7 @@ class ExperimentBase():
                 with open(filename) as f:
                     lines = f.readlines()
                 stdout = "".join(lines)
-                pod_name = filename[filename.rindex("-")+1:-len(".log")]
+                pod_name = filename[filename.rindex("-")+1:-len(".log")]  # noqa: F841
                 timing_start = re.findall('BEXHOMA_START:(.+?)\n', stdout)[0]
                 timing_end = re.findall('BEXHOMA_END:(.+?)\n', stdout)[0]
                 return (int(timing_start), int(timing_end))
@@ -3472,7 +3472,7 @@ class ExperimentBase():
                 else:
                     print("{:30s}: WARNING - individual config not found: {}".format(connection, individual_config_path))
             now = datetime.utcnow()
-            now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+            now_string = now.strftime('%Y-%m-%d %H:%M:%S')  # noqa: F841
             time_now = str(datetime.now())
             end_time_job = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
             print("{:30s}: showing benchmarker times".format(connection))
@@ -3489,7 +3489,7 @@ class ExperimentBase():
             pods = self.cluster.get_pods(component='dashboard')
             if len(pods) > 0:
                 pod_dashboard = pods[0]
-                cmd = {}
+                cmd = {}  # noqa: F841
                 # store benchmarker times in config and upload it to cluster again
                 if config is not None:
                     #connectionfile = config.benchmark.path+'/connections.config'
@@ -3526,7 +3526,7 @@ class ExperimentBase():
                             if name=='sut' and config.monitoring_sut:
                                 print("{:30s}: collecting execution metrics of SUT at connection {}".format(connection, connection))
                                 fetch(
-                                    title=f"Benchmarking phase: SUT deployment",
+                                    title=f"Benchmarking phase: SUT deployment",  # noqa: F541
                                     connection=connection,
                                     connection_file=connection+'.config',
                                     container="dbms",
@@ -3647,7 +3647,7 @@ class ExperimentBase():
                     if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
                         print("{:30s}: collecting metrics of benchmarker at connection {}".format(connection, connection))
                         fetch(
-                            title=f"Benchmarking phase: component benchmarker",
+                            title=f"Benchmarking phase: component benchmarker",  # noqa: F541
                             connection=connection,
                             connection_file=connection+'.config',
                             container="dbmsbenchmarker",
@@ -3752,9 +3752,9 @@ class ExperimentBase():
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
-        num_run = self.workload['num_run'] if 'num_run' in self.workload else 1
+        num_run = self.workload['num_run'] if 'num_run' in self.workload else 1  # noqa: F841
         #print("num_run", num_run)
-        pretty_connections = json.dumps(connections, indent=2)
+        pretty_connections = json.dumps(connections, indent=2)  # noqa: F841
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
         list_monitoring_app = list()
@@ -3772,7 +3772,7 @@ class ExperimentBase():
                         #print(metric['type'])
                         if num_metrics_included >= 5:
                             continue
-                        if metric['type'] == 'application' and metric['active'] == True:
+                        if metric['type'] == 'application' and metric['active'] == True:  # noqa: E712
                             df = self.evaluator.get_monitoring_metric(metric=metricname, component=component) # 'benchmarking')#
                             if not df.empty:
                                 list_monitoring_app
@@ -3795,20 +3795,20 @@ class ExperimentBase():
                     # currently: only first component, only benchmarking
                     # TODO: make dynamical
                     #break
-            infos = ["  * {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+            infos = ["  * {}:{}".format(key,info) for key, info in c['hostsystem'].items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]  # noqa: E713
             for info in infos:
                 print(info)
             if 'sut' in c and len(c['sut']) > 0:
                 for i, sut in enumerate(c['sut']):
                     print("  * sut {}".format(i))
-                    infos = ["    * {}:{}".format(key,info) for key, info in sut.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                    infos = ["    * {}:{}".format(key,info) for key, info in sut.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]  # noqa: E713
                     for info in infos:
                         print(info)
             if 'worker' in c and len(c['worker']) > 0:
                 for worker_type in c['worker'].keys():
                     for i, worker in enumerate(c['worker'][worker_type]):
                         print("  * {} {}".format(worker_type, i))
-                        infos = ["    * {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                        infos = ["    * {}:{}".format(key,info) for key, info in worker.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]  # noqa: E713
                         for info in infos:
                             print(info)
             if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
@@ -3824,7 +3824,7 @@ class ExperimentBase():
                         print("  * load_durability: {}".format(parameters))
                     if i == "eval_parameters":
                         print("  * "+i)
-                        infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]
+                        infos = ["    * {}:{}".format(key,info) for key, info in parameters.items() if not 'timespan' in key and not info=="" and not str(info)=="0" and not info==[]]  # noqa: E713
                         for info in infos:
                             print(info)
         self._show_loading_provenance(connections_sorted)

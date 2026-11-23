@@ -108,7 +108,7 @@ class BenchmarkRunner:
         cfg.logger.debug(
             'BenchmarkRunner.run_pod(current_benchmark_connection = {})'.format(
                 cfg.current_benchmark_connection))
-        now = datetime.utcnow()
+        now = datetime.utcnow()  # noqa: F841
         time_now = str(datetime.now())
         time_now_int = int(datetime.timestamp(
             datetime.strptime(time_now, '%Y-%m-%d %H:%M:%S.%f')))

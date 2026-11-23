@@ -24,7 +24,7 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from bexhoma import *
+from bexhoma import *  # noqa: F403
 from bexhoma.cli_args import make_base_parser, threads_per_pod_error
 import itertools
 import logging
@@ -93,7 +93,7 @@ def main() -> None:
     # start with old experiment?
     code = args.experiment
     # only create testbed or also run a benchmark?
-    mode = str(args.mode)
+    mode = str(args.mode)  # noqa: F841
     # timeout of a benchmark
     timeout = int(args.timeout)
     # how often to repeat experiment?
@@ -113,10 +113,10 @@ def main() -> None:
     ##############
     aws = args.aws
     if aws:
-        cluster = clusters.AWS(context=args.context)
+        cluster = clusters.AWS(context=args.context)  # noqa: F405
     else:
-        cluster = clusters.Kubernetes(context=args.context)
-    cluster_name = cluster.contextdata['clustername']
+        cluster = clusters.Kubernetes(context=args.context)  # noqa: F405
+    cluster_name = cluster.contextdata['clustername']  # noqa: F841
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
     # set experiment
@@ -202,7 +202,7 @@ def main() -> None:
             # sysbench/fio runs start at the same synchronized instant instead
             # of drifting apart with each pod's own scheduling/startup jitter.
             for tenant in range(experiment.num_tenants):
-                config = configurations.default(experiment=experiment, docker='Hardware', alias='Hardware')
+                config = configurations.default(experiment=experiment, docker='Hardware', alias='Hardware')  # noqa: F405
                 # PVC name mirrors the tenant naming used by benchbase.py/ycsb.py
                 # ('{docker}-{tenant}-{num_tenants}'), so each tenant's SUT gets
                 # its own volume instead of colliding on the shared 'hardware' one.
@@ -271,7 +271,7 @@ def main() -> None:
                                                             )
                 config.add_benchmark_list(executor_list)
         else:
-            config = configurations.default(experiment=experiment, docker='Hardware', alias='Hardware')
+            config = configurations.default(experiment=experiment, docker='Hardware', alias='Hardware')  # noqa: F405
             # storageClassName follows -rst as usual (defaults to None — no PVC,
             # /database lives in the SUT container's own ephemeral storage; see
             # images/hardware/sut/Dockerfile, which bakes the directory in so it

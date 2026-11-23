@@ -6,6 +6,18 @@ on:
   # the publish workflow runs the tests before it uploads
   workflow_call:
 jobs:
+  # Style rules of docs/CONTRIBUTING.md, configured in pyproject.toml [tool.ruff].
+  # Pinned, so a ruff release cannot fail a pull request.
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: pip install ruff==0.17.6
+      - run: ruff check --output-format=github bexhoma agent experiment.py
+
   pytest:
     runs-on: ubuntu-latest
     steps:

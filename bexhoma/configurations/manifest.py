@@ -452,7 +452,7 @@ class ManifestBuilder:
         experiment_run: str = '',
         client: str = '1',
         parallelism: int = 1,
-        env: dict = {},
+        env: dict = {},  # noqa: B006
         template: str = '',
         nodegroup: str = '',
         num_pods: int = 1,
@@ -495,7 +495,7 @@ class ManifestBuilder:
             client=str(client), benchmark_run=benchmark_run)
         servicename = cfg.get_service_sut(configuration=configuration)
         now = datetime.utcnow()
-        now_string = now.strftime('%Y-%m-%d %H:%M:%S')
+        now_string = now.strftime('%Y-%m-%d %H:%M:%S')  # noqa: F841
         time_now = str(datetime.now())
         time_now_int = int(datetime.timestamp(
             datetime.strptime(time_now, '%Y-%m-%d %H:%M:%S.%f')))
@@ -691,7 +691,7 @@ class ManifestBuilder:
         client: str = '1',
         parallelism: int = 1,
         alias: str = '',
-        env: dict = {},
+        env: dict = {},  # noqa: B006
         template: str = '',
         num_pods: int = 1,
         benchmark_run: str = '',
@@ -767,7 +767,7 @@ class ManifestBuilder:
         configuration: str = '',
         parallelism: int = 1,
         alias: str = '',
-        env: dict = {},
+        env: dict = {},  # noqa: B006
         num_pods: int = 1,
         connection: str = '',
         benchmark_run: str = '',

@@ -317,7 +317,7 @@ def refresh_template(dockers: dict, dbms: list, benchmark: str) -> str:
         templates[name] = template
     if len(set(templates.values())) > 1:
         raise IncompatibleBenchmark(
-            f"one refresh job serves all DBMS of an experiment, but they need different ones: "
+            f"one refresh job serves all DBMS of an experiment, but they need different ones: "  # noqa: F541
             + ", ".join(f"{name}: {template}" for name, template in templates.items()))
     return next(iter(templates.values()))
 

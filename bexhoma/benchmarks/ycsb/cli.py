@@ -6,12 +6,12 @@ Copyright (C) 2021 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from bexhoma import *
+from bexhoma import *  # noqa: F403
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor, threads_per_pod_error
 from bexhoma.experiments.system_builder import (build_configuration, entry_of, entry_parameters, pooling_variants,
                                                 selected_dockers, tenancy_error)
 from bexhoma.system_descriptors import dbms_choices
-from dbmsbenchmarker import *
+from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
@@ -127,17 +127,17 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     ##############
     aws = args.aws
     if aws:
-        cluster = clusters.AWS(context=args.context)
+        cluster = clusters.AWS(context=args.context)  # noqa: F405
         # scale up
-        node_sizes = {
+        node_sizes = {  # noqa: F841
             'auxiliary': 1,
             'sut-mid': 1,
             'benchmarker': 1
         }
         #cluster.scale_nodegroups(node_sizes)
     else:
-        cluster = clusters.Kubernetes(context=args.context)
-    cluster_name = cluster.contextdata['clustername']
+        cluster = clusters.Kubernetes(context=args.context)  # noqa: F405
+    cluster_name = cluster.contextdata['clustername']  # noqa: F841
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
     # set experiment

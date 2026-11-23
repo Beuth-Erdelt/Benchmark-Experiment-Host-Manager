@@ -146,7 +146,7 @@ _RELEVANT_NODE_RESOURCE_PREFIXES = ("cpu", "memory", "ephemeral-storage", "hugep
 _EXTENDED_GPU_RESOURCE_SUFFIX = "gpu"
 
 
-class EnvironmentError(Exception):
+class EnvironmentError(Exception):  # noqa: A001
     """Raised when the live cluster cannot be inspected (e.g. unreachable)."""
 
 
