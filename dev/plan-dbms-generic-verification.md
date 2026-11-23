@@ -74,11 +74,13 @@ Cause: `_show_loading_provenance()` (`bexhoma/experiments/base.py:1898-1921`) on
 which comes from the PVC `loaded=True` gate. `-sl` is for DBMS bexhoma does not manage (no PVC, state
 unknown), so `storage_reused` is False and the test is recorded as passed.
 
-- [ ] Fix: when loading was skipped by `-sl`, record the test as skipped with the reason
-  ("loading skipped by -sl, DBMS not managed by bexhoma"), not passed. Same mechanism as the reused-storage
-  case, no new test name.
-- [ ] Unit test with a fake connection list (with and without `-sl`); `report_writer.py:256` describes the
-  skipped variant, extend that text.
+- [x] Fix (2026-11-23): `connections.config` gets `loading_deactivated` per connection
+  (`configurations/metrics.py`); `_show_loading_provenance()` records the test as skipped
+  "(loading skipped by -sl, DBMS not managed by bexhoma: <configurations>)", combined with the reuse reason when
+  both apply. Results without the field fall back to the workload note "Loading is skipped.". Result contract
+  1.15.0 (`skipped_when` extended).
+- [x] Unit tests in `tests/test_storage_classes.py::LoadingProvenanceTest` (with/without `-sl`, both reasons,
+  old results); the report's interpretation text in `report_writer.py` describes the skipped variant.
 - [ ] Verified by the 2.1 rerun (section 2): the summary must show the skipped test.
 
 ## 4. Phase 0: local refusals (no cluster; kubectl context without access)

@@ -166,6 +166,8 @@ class MetricsCollector:
         c['storage'] = cfg.storage
         c['storage_reused'] = cfg.storage_reused
         c['loading_inherited'] = cfg.loading_inherited
+        # loading switched off (-sl, or skip_loading of a YAML system): nothing was loaded or measured
+        c['loading_deactivated'] = bool(getattr(cfg, 'loading_deactivated', False))
         # reused volume: its DDL and loading values against the requested ones
         c['volume_check'] = getattr(cfg, 'volume_check', {})
         # listed loading scripts that are not in the script folder (not run)

@@ -1908,17 +1908,37 @@ class ExperimentBase():
         A repetition that found the volume of an earlier repetition loaded
         (without ``-rsrp``) is listed too, informational only.
 
+        Loading switched off by ``-sl`` (or ``skip_loading`` of a YAML system)
+        measured nothing either: ``-sl`` is for a DBMS bexhoma does not manage,
+        so there is no volume and its state is unknown. Such configurations make
+        the test skipped as well. Results written before ``loading_deactivated``
+        was recorded fall back to the workload note "Loading is skipped."
+
         :param connections_sorted: Connection dicts of ``connections.config``.
         """
+        if any('loading_deactivated' in c for c in connections_sorted):
+            deactivated = sorted({c.get('configuration', c['name'])
+                                  for c in connections_sorted if c.get('loading_deactivated')})
+        elif "\nLoading is skipped." in (getattr(self, 'workload', None) or {}).get('info', ''):
+            deactivated = sorted({c.get('configuration', c['name']) for c in connections_sorted})
+        else:
+            deactivated = []
         recorded = [c for c in connections_sorted if 'storage_reused' in c]
-        if recorded:
-            reused = sorted({c.get('configuration', c['name']) for c in recorded if c['storage_reused']})
-            if reused:
-                print("\n### Reused Storage")
-                print("* loading skipped, loading times inherited from an earlier experiment: {}".format(", ".join(reused)))
-                self._record_skipped_test("Loading measured in this experiment (storage reused, loading times inherited: {})".format(", ".join(reused)))
-            else:
-                self._record_test(True, "Loading measured in this experiment")
+        reused = sorted({c.get('configuration', c['name']) for c in recorded
+                         if c['storage_reused'] and c.get('configuration', c['name']) not in deactivated})
+        reasons = []
+        if deactivated:
+            print("\n### Loading Skipped")
+            print("* loading skipped by -sl, DBMS not managed by bexhoma, nothing loaded or measured: {}".format(", ".join(deactivated)))
+            reasons.append("loading skipped by -sl, DBMS not managed by bexhoma: {}".format(", ".join(deactivated)))
+        if reused:
+            print("\n### Reused Storage")
+            print("* loading skipped, loading times inherited from an earlier experiment: {}".format(", ".join(reused)))
+            reasons.append("storage reused, loading times inherited: {}".format(", ".join(reused)))
+        if reasons:
+            self._record_skipped_test("Loading measured in this experiment ({})".format("; ".join(reasons)))
+        elif recorded:
+            self._record_test(True, "Loading measured in this experiment")
         # its loading times are copies, so they are no further sample of loading
         inherited = sorted({
             "{}-{}".format(c.get('configuration', c['name']), c.get('parameter', {}).get('numExperiment', '?'))

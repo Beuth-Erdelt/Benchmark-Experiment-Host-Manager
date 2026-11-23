@@ -365,6 +365,40 @@ class LoadingProvenanceTest(unittest.TestCase):
     def test_older_results_record_nothing(self):
         self.assertEqual(self.results({'name': 'tidb-1-1-1-1'}), [])
 
+    def test_skip_loading_is_skipped_not_passed(self):
+        """-sl: no volume, nothing loaded, so nothing measured (storage_reused is False)."""
+        results = self.results(
+            {'name': 'databaseservice-1-1-1-1', 'configuration': 'DatabaseService-1',
+             'storage_reused': False, 'loading_deactivated': True})
+        self.assertEqual(results, [
+            (None, 'Loading measured in this experiment '
+                   '(loading skipped by -sl, DBMS not managed by bexhoma: DatabaseService-1)')])
+
+    def test_without_skip_loading_still_passes(self):
+        self.assertEqual(self.results({'name': 'tidb-1-1-1-1', 'storage_reused': False,
+                                       'loading_deactivated': False}),
+                         [(True, 'Loading measured in this experiment')])
+
+    def test_skip_loading_and_reuse_name_both(self):
+        results = self.results(
+            {'name': 'a-1-1-1-1', 'configuration': 'A-1', 'storage_reused': False, 'loading_deactivated': True},
+            {'name': 'b-1-1-1-1', 'configuration': 'B-1', 'storage_reused': True, 'loading_deactivated': False})
+        self.assertEqual(results[0], (None, 'Loading measured in this experiment '
+                                            '(loading skipped by -sl, DBMS not managed by bexhoma: A-1; '
+                                            'storage reused, loading times inherited: B-1)'))
+
+    def test_older_skip_loading_results_use_the_workload_note(self):
+        """Results without loading_deactivated: the workload info "Loading is skipped." decides."""
+        experiment = ExperimentBase.__new__(ExperimentBase)
+        experiment._test_results = []
+        experiment.workload = {'info': 'TPC-H data is loaded.\nLoading is skipped.'}
+        with mock.patch('builtins.print'):
+            experiment._show_loading_provenance(
+                [{'name': 'databaseservice-1-1-1-1', 'configuration': 'DatabaseService-1', 'storage_reused': False}])
+        self.assertEqual(experiment._test_results, [
+            (None, 'Loading measured in this experiment '
+                   '(loading skipped by -sl, DBMS not managed by bexhoma: DatabaseService-1)')])
+
 
 class StorageReusedTest(unittest.TestCase):
     """A reused volume shows in the evaluated connections; older results stay unknown."""
