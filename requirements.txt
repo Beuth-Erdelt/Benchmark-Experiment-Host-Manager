@@ -1,5 +1,5 @@
 urllib3==2.8.0
-kubernetes==37.0.2
+kubernetes==37.0.3
 psutil>=7.2.2
 dbmsbenchmarker>=0.16.0
 myst_parser
