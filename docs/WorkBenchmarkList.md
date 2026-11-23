@@ -223,6 +223,10 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
 
                 # --- Path A: experiment_dict-driven benchmarks ---
                 IF experiment_dict has benchmarker entries AND client round exists:
+                    IF tenant_per == 'container':
+                        tenants_ready[config] = (run, config.client)
+                        CONTINUE   # released after the loop, see below
+                    # _queue_round():
                     client_round = experiment_dict["benchmarker"][config.client - 1]
                     config.client += 1
                     IF config.client > self.client:
@@ -296,6 +300,17 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
 
             ELSE:  # loading_finished is False
                 print "is loading"
+
+        # ── Container tenants: release rounds (_release_tenant_rounds) ────
+
+        FOR each round position in tenants_ready (lowest first):
+            IF every tenant whose next round is at or before it is ready for it:
+                FOR each of these tenants:
+                    queue its round (_queue_round)
+            ELSE:
+                print "waits for tenants ... to be ready for round ..."
+
+        run the queued submissions side by side (_submit_round: reset, then jobs)
 
         # ── Part B: Harvest completed benchmarker jobs ────────────────────
 
@@ -410,15 +425,21 @@ side by side, like the tenants of one schema or database:
 - **Indexing**: when its last data job has finished, a configuration sets
   `tenant_ready_to_index` instead of running its index script. When all are
   ready, the index scripts run in every container (`tenant_started_to_index`).
+- **Client rounds and reset**: a configuration that could start its next client
+  round (no jobs left, healthy, monitoring running) does not submit; it reports
+  the round in this pass (`tenants_ready`). After the loop,
+  `_release_tenant_rounds()` starts the round when every tenant that still runs
+  it, or an earlier one, is ready; tenants that are done or have no further round
+  are not waited for. All tenants of the round then submit in the same pass, side
+  by side (`_submit_round()`): each runs its reset scripts (`-ar`) and then
+  submits its jobs. So the resets run together, and no reset runs while another
+  tenant still benchmarks. Readiness counts per pass: a tenant that is not ready
+  in a pass (e.g. unhealthy) holds the others back. With more tenants than
+  `max_parallel_steps`, the submissions, and so the resets, run in batches.
 - **Benchmarking**: the benchmarker pods of all containers wait on an
-  experiment-level counter, so each client round starts in all tenants together
-  (see the pod synchronisation counters in `bexhoma/README.md`).
-- **Reset** (`-ar`): reset scripts have no gate of their own. Each container
-  runs its reset synchronously just before it submits its benchmarker job for
-  the round. The resets of different tenants can therefore start at different
-  times, but all of them finish before any tenant starts benchmarking: a tenant's
-  pods are only created after its reset, and the experiment-level counter makes
-  all tenants' pods wait for each other.
+  experiment-level counter, so the measured work of each round starts in all
+  tenants at the same moment (see the pod synchronisation counters in
+  `bexhoma/README.md`).
 
 ### experiment_dict vs. benchmark_list
 
