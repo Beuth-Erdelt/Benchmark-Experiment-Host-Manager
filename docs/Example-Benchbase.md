@@ -114,14 +114,14 @@ At the end of a benchmark you will see a summary like
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1067s 
-* Code: 1794590065
+* Duration: 1062s 
+* Code: 1795443622
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.3.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -144,10 +144,10 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1139376
+  * disk:834209
   * datadisk:4308
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:815G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -156,7 +156,7 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794590065
+    * code:1795443622
     * TENANT_VOL:False
 * postgresql-1-1-2-1 uses docker image postgres:18.6
   * RAM:2164173156352
@@ -164,10 +164,10 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1149340
-  * datadisk:20053
+  * disk:848377
+  * datadisk:20436
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:829G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -176,14 +176,14 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794590065
+    * code:1795443622
     * TENANT_VOL:False
 
 ### Ingestion
 * PostgreSQL-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794590065-675ff68586-862fd: 0
+* bexhoma-sut-postgresql-1-1795443622-dd5c9f7c7-4kh95: 0
 
 ### Workflow
 
@@ -203,7 +203,7 @@ Benchbase Workload tpcc SF=16
 
 | DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |   16 |       99.00 |           5.00 |            0.00 |         84.00 |           10.00 |              1 |         1 |             |                |             0 | False         |              581.82 | False               |
+| PostgreSQL-1-1 |                1 |   16 |       97.00 |           6.00 |            0.00 |         81.00 |           10.00 |              1 |         1 |             |                |             0 | False         |              593.81 | False               |
 
 ### Benchmarking
 
@@ -211,16 +211,16 @@ Benchbase Workload tpcc SF=16
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       47 |                       16197.55 |                    16012.17 |         0.00 |                                                      14478.00 |                                               5040.00 |
-| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 |        80 |     8192 |           0 | 300.00 |       20 |                        5256.87 |                     5197.55 |         0.00 |                                                      37149.00 |                                              15208.00 |
-| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 |        80 |     8192 |           0 | 300.00 |       26 |                        5261.96 |                     5202.98 |         0.00 |                                                      37028.00 |                                              15194.00 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       80 |                       16351.87 |                    16153.73 |         0.00 |                                                      17284.00 |                                               5671.00 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 |        80 |     8192 |           0 | 300.00 |       14 |                        5124.70 |                     5069.09 |         0.00 |                                                      35127.00 |                                              15599.00 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 |        80 |     8192 |           0 | 300.00 |       18 |                        5131.36 |                     5075.84 |         0.00 |                                                      35243.00 |                                              15582.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       47 |                       16197.55 |                    16012.17 |         0.00 |                                                      14478.00 |                                               5040.00 |
-| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 |       160 |    16384 |           0 | 300.00 |       46 |                       10518.83 |                    10400.53 |         0.00 |                                                      37149.00 |                                              15201.00 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       80 |                       16351.87 |                    16153.73 |         0.00 |                                                      17284.00 |                                               5671.00 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 |       160 |    16384 |           0 | 300.00 |       32 |                       10256.06 |                    10144.93 |         0.00 |                                                      35243.00 |                                              15590.50 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -525,14 +525,14 @@ The result looks something like
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1053s 
-* Code: 1794591149
+* Duration: 977s 
+* Code: 1795444701
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.3.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
@@ -556,10 +556,10 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1134189
+  * disk:828836
   * datadisk:4307
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:810G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -568,7 +568,7 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794591149
+    * code:1795444701
     * TENANT_VOL:False
 * postgresql-1-1-2-1 uses docker image postgres:18.6
   * RAM:2164173156352
@@ -576,10 +576,10 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1154976
-  * datadisk:20453
+  * disk:849392
+  * datadisk:20319
   * volume_size:1.8T
-  * volume_used:1.2T
+  * volume_used:830G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -588,14 +588,14 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794591149
+    * code:1795444701
     * TENANT_VOL:False
 
 ### Ingestion
 * PostgreSQL-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794591149-796bb677c6-qjczw: 0
+* bexhoma-sut-postgresql-1-1795444701-58f8c5d6db-52l8x: 0
 
 ### Workflow
 
@@ -615,7 +615,7 @@ Benchbase Workload tpcc SF=16
 
 | DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |   16 |      101.00 |           4.00 |            0.00 |         84.00 |           13.00 |              1 |         1 |             |                |             0 | False         |              570.30 | False               |
+| PostgreSQL-1-1 |                1 |   16 |       85.00 |           4.00 |            0.00 |         71.00 |           10.00 |              1 |         1 |             |                |             0 | False         |              677.65 | False               |
 
 ### Benchmarking
 
@@ -623,16 +623,16 @@ Benchbase Workload tpcc SF=16
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       92 |                       16323.74 |                    16126.71 |         0.00 |                                                      16948.00 |                                               5652.00 |
-| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 |        80 |     8192 |           0 | 300.00 |       15 |                        5658.41 |                     5598.75 |         0.00 |                                                      31602.00 |                                              13793.00 |
-| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 |        80 |     8192 |           0 | 300.00 |       28 |                        5669.84 |                     5610.71 |         0.00 |                                                      31573.00 |                                              13786.00 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       67 |                       16343.16 |                    16149.58 |         0.00 |                                                      15818.00 |                                               5288.00 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 |        80 |     8192 |           0 | 300.00 |       17 |                        5744.28 |                     5680.62 |         0.00 |                                                      32479.00 |                                              13513.00 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 |        80 |     8192 |           0 | 300.00 |       23 |                        5742.98 |                     5680.13 |         0.00 |                                                      32514.00 |                                              13536.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       92 |                       16323.74 |                    16126.71 |         0.00 |                                                      16948.00 |                                               5652.00 |
-| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 |       160 |    16384 |           0 | 300.00 |       43 |                       11328.25 |                    11209.46 |         0.00 |                                                      31602.00 |                                              13789.50 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       67 |                       16343.16 |                    16149.58 |         0.00 |                                                      15818.00 |                                               5288.00 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 |       160 |    16384 |           0 | 300.00 |       40 |                       11487.26 |                    11360.76 |         0.00 |                                                      32514.00 |                                              13524.50 |
 
 ### Monitoring
 
@@ -640,29 +640,29 @@ Benchbase Workload tpcc SF=16
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |       194.82 |      4.79 |           2.05 |                  3.68 |
-| postgresql-1-1-2-1 |       194.82 |      4.79 |           2.05 |                  3.68 |
+| postgresql-1-1-1-1 |       165.10 |      2.94 |           2.06 |                  3.68 |
+| postgresql-1-1-2-1 |       165.10 |      2.94 |           2.06 |                  3.68 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |      1022.98 |     15.09 |           0.26 |                  0.26 |
-| postgresql-1-1-2-1 |      1022.98 |     15.09 |           0.26 |                  0.26 |
+| postgresql-1-1-1-1 |       613.67 |     15.20 |           0.24 |                  0.24 |
+| postgresql-1-1-2-1 |       613.67 |     15.20 |           0.24 |                  0.24 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |      5142.28 |     18.33 |           8.64 |                 14.46 |
-| postgresql-1-1-2-1 |      4829.28 |     20.54 |          12.10 |                 16.00 |
+| postgresql-1-1-1-1 |      5398.22 |     18.73 |           8.15 |                 13.60 |
+| postgresql-1-1-2-1 |      4466.22 |     21.24 |          12.04 |                 16.00 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |      3144.05 |     13.76 |           1.12 |                  1.12 |
-| postgresql-1-1-2-1 |      2350.76 |      9.09 |           0.78 |                  0.78 |
+| postgresql-1-1-1-1 |      2818.61 |     11.14 |           1.11 |                  1.11 |
+| postgresql-1-1-2-1 |      2734.23 |     12.69 |           0.87 |                  0.88 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -755,14 +755,14 @@ The result looks something like
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1200s 
-* Code: 1794592244
+* Duration: 1193s 
+* Code: 1795445710
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.3.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -785,8 +785,8 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1122759
-  * datadisk:4308
+  * disk:817229
+  * datadisk:4307
   * volume_size:49G
   * volume_used:4.3G
   * cpu_list:0-223
@@ -797,7 +797,7 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794592244
+    * code:1795445710
     * TENANT_VOL:False
 * postgresql-1-2-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
@@ -805,8 +805,8 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1122761
-  * datadisk:17636
+  * disk:817232
+  * datadisk:18045
   * volume_size:49G
   * volume_used:18G
   * cpu_list:0-223
@@ -817,7 +817,7 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794592244
+    * code:1795445710
     * TENANT_VOL:False
 
 ### Inherited Loading
@@ -830,8 +830,8 @@ Benchbase Workload tpcc SF=16
 * PostgreSQL-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794592244-59c8c95d98-m6lt8: 0
-* bexhoma-sut-postgresql-1-1794592244-7ffccfdf59-4fw8z: 0
+* bexhoma-sut-postgresql-1-1795445710-5874d8d654-swvfj: 0
+* bexhoma-sut-postgresql-1-1795445710-cbc9b57d8-78fgd: 0
 
 ### Workflow
 
@@ -851,8 +851,8 @@ Benchbase Workload tpcc SF=16
 
 | DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |   16 |      100.00 |           6.00 |            0.00 |         81.00 |           13.00 |              1 |         1 |             |                |             0 | False         |              576.00 | False               |
-| PostgreSQL-1-2 |                2 |   16 |      100.00 |           6.00 |            0.00 |         81.00 |           13.00 |              1 |         1 |             |                |             0 | False         |              576.00 | True                |
+| PostgreSQL-1-1 |                1 |   16 |       86.00 |           3.00 |            0.00 |         74.00 |            9.00 |              1 |         1 |             |                |             0 | False         |              669.77 | False               |
+| PostgreSQL-1-2 |                2 |   16 |       86.00 |           3.00 |            0.00 |         74.00 |            9.00 |              1 |         1 |             |                |             0 | False         |              669.77 | True                |
 
 ### Benchmarking
 
@@ -860,15 +860,15 @@ Benchbase Workload tpcc SF=16
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       56 |                       12748.33 |                    12608.57 |         0.00 |                                                      34188.00 |                                              12530.00 |
-| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       38 |                        8332.03 |                     8256.55 |         0.00 |                                                      34351.00 |                                              19183.00 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       57 |                       12831.42 |                    12693.77 |         0.00 |                                                      33480.00 |                                              12453.00 |
+| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       21 |                        8071.58 |                     7998.27 |         0.00 |                                                      37095.00 |                                              19806.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       56 |                       12748.33 |                    12608.57 |         0.00 |                                                      34188.00 |                                              12530.00 |
-| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       38 |                        8332.03 |                     8256.55 |         0.00 |                                                      34351.00 |                                              19183.00 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       57 |                       12831.42 |                    12693.77 |         0.00 |                                                      33480.00 |                                              12453.00 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       21 |                        8071.58 |                     7998.27 |         0.00 |                                                      37095.00 |                                              19806.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -928,14 +928,14 @@ The result looks something like
 ### Workload
 Benchbase Workload tpcc SF=4
 * Type: benchbase
-* Duration: 911s 
-* Code: 1794593459
+* Duration: 907s 
+* Code: 1795446912
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 4. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes. A reset script (e.g. CHECKPOINT/VACUUM) runs before each benchmarking round.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.3.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -957,10 +957,10 @@ Benchbase Workload tpcc SF=4
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1123934
-  * datadisk:1132
+  * disk:819317
+  * datadisk:1133
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:801G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -969,7 +969,7 @@ Benchbase Workload tpcc SF=4
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794593459
+    * code:1795446912
     * TENANT_VOL:False
 * postgresql-1-2-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
@@ -977,10 +977,10 @@ Benchbase Workload tpcc SF=4
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1127594
+  * disk:823249
   * datadisk:1132
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:804G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -989,15 +989,15 @@ Benchbase Workload tpcc SF=4
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794593459
+    * code:1795446912
     * TENANT_VOL:False
 
 ### Ingestion
 * PostgreSQL-1: 2 of 2 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794593459-6bd8879599-99hqh: 0
-* bexhoma-sut-postgresql-1-1794593459-58b7ccdd98-stvw8: 0
+* bexhoma-sut-postgresql-1-1795446912-cc975bc97-rlpp5: 0
+* bexhoma-sut-postgresql-1-1795446912-5779d5f66d-n7rzn: 0
 
 ### Workflow
 
@@ -1017,8 +1017,8 @@ Benchbase Workload tpcc SF=4
 
 | DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    4 |       40.00 |           4.00 |            0.00 |         29.00 |            7.00 |              1 |         1 |             |                |             0 | False         |              360.00 | False               |
-| PostgreSQL-1-2 |                2 |    4 |       41.00 |           5.00 |            0.00 |         30.00 |            6.00 |              1 |         1 |             |                |             0 | False         |              351.22 | False               |
+| PostgreSQL-1-1 |                1 |    4 |       42.00 |           3.00 |            0.00 |         31.00 |            8.00 |              1 |         1 |             |                |             0 | False         |              342.86 | False               |
+| PostgreSQL-1-2 |                2 |    4 |       40.00 |           5.00 |            0.00 |         30.00 |            5.00 |              1 |         1 |             |                |             0 | False         |              360.00 | False               |
 
 ### Benchmarking
 
@@ -1026,22 +1026,22 @@ Benchbase Workload tpcc SF=4
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |        40 |     1024 |           0 | 120.00 |        0 |                        1024.01 |                     1016.39 |         0.00 |                                                      14553.00 |                                               6046.00 |
-| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 |        40 |     1024 |           0 | 120.00 |        0 |                        1023.99 |                     1016.37 |         0.00 |                                                      15084.00 |                                               6191.00 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |        40 |     1024 |           0 | 120.00 |        0 |                        1023.98 |                     1016.65 |         0.00 |                                                      11697.00 |                                               4528.00 |
+| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 |        40 |     1024 |           0 | 120.00 |        1 |                        1024.01 |                     1016.38 |         0.00 |                                                      12481.00 |                                               4981.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |        40 |     1024 |           0 | 120.00 |        0 |                        1024.01 |                     1016.39 |         0.00 |                                                      14553.00 |                                               6046.00 |
-| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 |        40 |     1024 |           0 | 120.00 |        0 |                        1023.99 |                     1016.37 |         0.00 |                                                      15084.00 |                                               6191.00 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |        40 |     1024 |           0 | 120.00 |        0 |                        1023.98 |                     1016.65 |         0.00 |                                                      11697.00 |                                               4528.00 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 |        40 |     1024 |           0 | 120.00 |        1 |                        1024.01 |                     1016.38 |         0.00 |                                                      12481.00 |                                               4981.00 |
 
 #### Reset
 
 | phase            | job                |   experiment_run |   client |   benchmark_run |   time_reset | reset_failed   |
 |:-----------------|:-------------------|-----------------:|---------:|----------------:|-------------:|:---------------|
-| postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |         2.00 |                |
-| postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |         2.00 |                |
+| postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |         1.00 |                |
+| postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |         1.00 |                |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -1099,50 +1099,16 @@ The result looks something like
 ## Show Summary
 
 ### Workload
-Benchbase Workload twitter SF=16
-* Type: benchbase
-* Duration: 643s 
-* Code: 1792706079
-* Benchbase runs the Twitter benchmark.
-* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
-  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
-  * Benchmark is 'twitter'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
-  * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma ve- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 20 API requests 0.6s)
-- waiting 30s -               : done
-PostgreSQL-1                  : has running benchmarks
-postgresql-1-1-2-1            : wrote benchmarking_timespans to D:/data/benchmarks/1794594384/postgresql-1-1-2-1.config
-postgresql-1-1-2-1            : showing benchmarker times
-postgresql-1-1-2-1            : benchmarker timespan job from 1794594897 to 1794595092
-postgresql-1-1-2-1            : benchmarker timespan pods from 1794594901 to 1794595084
-postgresql-1-1-2-1            : benchmarker timespan (start to end single container [s]) = 183
-postgresql-1-1-2-1            : benchmarker times (start/end per pod and container) = [(1794594902, 1794595084), (1794594901, 1794595084)]
-postgresql-1-1-2-1            : found and updated times {'benchmarker': [(1794594902, 1794595084), (1794594901, 1794595084)]}
-Loop pass                     : took 9.4s (6 kubectl calls 7.5s, 28 API requests 1.2s)
-PostgreSQL-1                  : can be stopped
-PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1794594384-864bc64f97-2kw8t
-Loop pass                     : took 5.5s (4 kubectl calls 4.1s, 29 API requests 0.9s)
-Experiment                    : ends at 2026-11-13 19:38:20.461023 (231643.5947378) - 715.37s total
-Experiment                    : downloading partial results
-Experiment                    : uploading full results
-Experiment                    : uploading workload file
-Result workflow complete
-
-## Show Summary
-
-### Workload
 Benchbase Workload tpcc SF=4
 * Type: benchbase
-* Duration: 716s 
-* Code: 1794594384
+* Duration: 687s 
+* Code: 1795447828
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 4. Target is unlimited. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes. Each benchmarker has a warmup of 60 seconds before that, which is not part of the results.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.3.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -1164,10 +1130,10 @@ Benchbase Workload tpcc SF=4
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1151268
+  * disk:845283
   * datadisk:1132
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:826G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -1176,7 +1142,7 @@ Benchbase Workload tpcc SF=4
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794594384
+    * code:1795447828
     * TENANT_VOL:False
 * postgresql-1-1-2-1 uses docker image postgres:18.6
   * RAM:2164173156352
@@ -1184,10 +1150,10 @@ Benchbase Workload tpcc SF=4
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1155992
-  * datadisk:3615
+  * disk:851123
+  * datadisk:3437
   * volume_size:1.8T
-  * volume_used:1.2T
+  * volume_used:832G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -1196,14 +1162,14 @@ Benchbase Workload tpcc SF=4
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794594384
+    * code:1795447828
     * TENANT_VOL:False
 
 ### Ingestion
 * PostgreSQL-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794594384-864bc64f97-2kw8t: 0
+* bexhoma-sut-postgresql-1-1795447828-6cbb6f9856-zpsfj: 0
 
 ### Workflow
 
@@ -1223,7 +1189,7 @@ Benchbase Workload tpcc SF=4
 
 | DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |    4 |       43.00 |           4.00 |            0.00 |         32.00 |            7.00 |              1 |         1 |             |                |             0 | False         |              334.88 | False               |
+| PostgreSQL-1-1 |                1 |    4 |       39.00 |           4.00 |            0.00 |         30.00 |            5.00 |              1 |         1 |             |                |             0 | False         |              369.23 | False               |
 
 ### Benchmarking
 
@@ -1231,16 +1197,16 @@ Benchbase Workload tpcc SF=4
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |        40 |        0 |           0 | 120.00 |       14 |                        3726.20 |                     5990.24 |         0.00 |                                                      33894.00 |                                              10723.00 |
-| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 |        20 |        0 |           0 | 120.00 |        5 |                        1895.57 |                     2799.75 |         0.00 |                                                      31475.00 |                                              10535.00 |
-| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 |        20 |        0 |           0 | 120.00 |        7 |                        1919.91 |                     2831.21 |         0.00 |                                                      31294.00 |                                              10401.00 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |        40 |        0 |           0 | 120.00 |       17 |                        3913.32 |                     5615.64 |         0.00 |                                                      31030.00 |                                              10187.00 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 |        20 |        0 |           0 | 120.00 |        6 |                        2034.13 |                     3093.77 |         0.00 |                                                      28230.00 |                                               9818.00 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 |        20 |        0 |           0 | 120.00 |        9 |                        1885.30 |                     2879.94 |         0.00 |                                                      32275.00 |                                              10593.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |        40 |        0 |           0 | 120.00 |       14 |                        3726.20 |                     5990.24 |         0.00 |                                                      33894.00 |                                              10723.00 |
-| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 |        40 |        0 |           0 | 120.00 |       12 |                        3815.48 |                     5630.96 |         0.00 |                                                      31475.00 |                                              10468.00 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |        40 |        0 |           0 | 120.00 |       17 |                        3913.32 |                     5615.64 |         0.00 |                                                      31030.00 |                                              10187.00 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 |        40 |        0 |           0 | 120.00 |       15 |                        3919.43 |                     5973.70 |         0.00 |                                                      32275.00 |                                              10205.50 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -1302,16 +1268,388 @@ bexhoma benchbase \
 ## Show Summary
 
 ### Workload
+Benchbase Workload hyadapt SF=1
+* Type: benchbase
+* Duration: 403s 
+* Code: 1794663401
+* Benchbase runs the hyadapt benchmark.
+* This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
+  * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
+  * Benchmark is 'hyadapt'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking runs for 2 minutes.
+  * Load durability is relaxed (-xld; restored after the load).
+  * Experiment uses bexhoma version 0.11.17.
+  * Experiment is limited to DBMS ['PostgreSQL'].
+  * Import is handled by 1 processes (pods).
+  * Loading is fixed to cl-worker38.
+  * Benchmarking is fixed to cl-worker38.
+  * SUT is fixed to cl-worker36.
+  * Database uses ephemeral storage of size 10Gi.
+  * Loading is tested with [1] threads, split into [1] pods.
+  * Benchmarking is tested with [4] threads, split into [1] pods.
+  * Benchmarking is run as [1] times the number of benchmarking pods.
+  * Experiment is run once.
+  * Maximum DBMS across the whole cluster is 10.
+  * Results are validated against basic correctness requirements.
+  * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
+  * SUT requests 4 CPU and 16Gi RAM.
+
+### Connections
+* postgresql-1-1-1-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:1199414
+  * datadisk:41
+  * volume_size:1.8T
+  * volume_used:1.2T
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1794663401
+    * TENANT_VOL:False
+
+### Ingestion
+* PostgreSQL-1: 1 of 1 units ok
+
+### SUT Container Restarts
+* bexhoma-sut-postgresql-1-1794663401-555bcd6cdc-c4rxx: 0
+
+### Workflow
+
+#### Actual
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+#### Planned
+
+* DBMS PostgreSQL-1 - Experiment 1 Client 1: benchbase (1 pods)
+
+### Loading
+
+#### Per Run
+
+| DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
+|:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
+| PostgreSQL-1-1 |                1 |    1 |       11.00 |           4.00 |            0.00 |          2.00 |            5.00 |              1 |         1 |             |                |             0 | False         |              327.27 | False               |
+
+### Benchmarking
+
+#### Per Connection
+
+| connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |         4 |     1024 |           0 | 120.00 |        0 |                        1024.01 |                     1024.02 |         0.00 |                                                       1589.00 |                                                948.00 |
+
+#### Per Phase
+
+| DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
+|:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |         4 |     1024 |           0 | 120.00 |        0 |                        1024.01 |                     1024.02 |         0.00 |                                                       1589.00 |                                                948.00 |
+
+### Tests
+* TEST passed: Loading measured in this experiment
+* TEST passed: Data parameters as requested
+* TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
+* TEST passed: No SUT container restarts
+* TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: Throughput (requests/second) contains no 0 or NaN
+* TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
+* TEST passed: Workflow as planned
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     - waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 23 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 2.0s (2 kubectl calls 0.8s, 24 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+postgresql-1-1-3-1            : wrote benchmarking_timespans to D:/data/benchmarks/1795448523/postgresql-1-1-3-1.config
+postgresql-1-1-3-1            : showing benchmarker times
+postgresql-1-1-3-1            : benchmarker timespan job from 1795454487 to 1795456407
+postgresql-1-1-3-1            : benchmarker timespan pods from 1795454494 to 1795456398
+postgresql-1-1-3-1            : benchmarker timespan (start to end single container [s]) = 1904
+postgresql-1-1-3-1            : benchmarker times (start/end per pod and container) = [(1795454494, 1795456386), (1795454495, 1795456390), (1795454494, 1795456367), (1795454494, 1795456383), (1795454494, 1795456398)]
+postgresql-1-1-3-1            : found and updated times {'benchmarker': [(1795454494, 1795456386), (1795454495, 1795456390), (1795454494, 1795456367), (1795454494, 1795456383), (1795454494, 1795456398)]}
+postgresql-1-1-3-1            : needs monitoring (common metrics) for deployment sut
+postgresql-1-1-3-1            : collecting execution metrics of SUT at connection postgresql-1-1-3-1
+postgresql-1-1-3-1            : collecting metrics of benchmarker at connection postgresql-1-1-3-1
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1795448523-d9d4fdb6d-m2fl5 and write to pvc bexhoma-storage-pg-nvme-benchbase-tpcc-160
+postgresql-1-1-3-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1795448523(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1795448523(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-1-3-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-postgresql-1-1795448523-1-3-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-postgresql-1-1795448523-1-3-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-1-3-1            : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+postgresql-1-1-3-1            : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+postgresql-1-1-3-1            : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+postgresql-1-1-3-1            : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 7s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 11.4s, 0 API requests 0.0s)
+Loop pass                     : took 16.4s (15 kubectl calls 18.4s, 40 API requests 1.6s)
+Exception when calling BatchV1Api->list_namespaced_job: (401)
+Reason: Unauthorized
+HTTP response headers: HTTPHeaderDict({'Audit-Id': 'd8b383e9-b3ca-44f4-87b7-63e602a80585', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Mon, 23 Nov 2026 17:53:37 GMT', 'Content-Length': '129'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
+
+
+
+Create new access token
+- waiting 2s -                : done
+Experiment                    : Reset experiment counter. This is first run of client number 4.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-4-PostgreSQL-1-1795448523 initialized to 10.
+PostgreSQL-1                  : benchmarks done 0 of 1. This will be client 4
+postgresql-1-1-4-1            : start benchmarking (benchmark_run=1)
+postgresql-1-1-4-1            : needs monitoring (common metrics) for deployment sut
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1795448523-d9d4fdb6d-m2fl5 and write to pvc bexhoma-storage-pg-nvme-benchbase-tpcc-160
+PostgreSQL-1                  : benchmarking results in folder D:\data\benchmarks/1795448523
+PostgreSQL-1                  : submitted benchmarker job in 5.2s (3 kubectl calls 3.7s, 14 API requests 1.3s)
+postgresql-1-1-4-1            : reused loading metrics of postgresql-1-1-1-1 (loading, loader)
+Experiment                    : ran 1 follow-up actions (e.g. reused loading metrics) in 1s
+Loop pass                     : took 10.2s (4 kubectl calls 4.4s, 45 API requests 2.6s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 30 API requests 1.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 1.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 1.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 28 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 28 API requests 1.3s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 28 API requests 1.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 1.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 1.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 28 API requests 0.8s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+- waiting 2s -                : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 4.1s (0 kubectl calls 0.0s, 29 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 28 API requests 0.7s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 28 API requests 1.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 28 API requests 1.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 28 API requests 1.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 28 API requests 1.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 1.0s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 28 API requests 1.2s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 1.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 28 API requests 1.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 1.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 28 API requests 1.4s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 28 API requests 1.1s)
+- waiting 30s -               : done
+PostgreSQL-1                  : has running benchmarks
+Loop pass                     : took 5.5s (8 kubectl calls 3.5s, 32 API requests 1.1s)
+- waiting 30s -               : done
+postgresql-1-1-4-1            : wrote benchmarking_timespans to D:/data/benchmarks/1795448523/postgresql-1-1-4-1.config
+postgresql-1-1-4-1            : showing benchmarker times
+postgresql-1-1-4-1            : benchmarker timespan job from 1795456424 to 1795458350
+postgresql-1-1-4-1            : benchmarker timespan pods from 1795456436 to 1795458334
+postgresql-1-1-4-1            : benchmarker timespan (start to end single container [s]) = 1898
+postgresql-1-1-4-1            : benchmarker times (start/end per pod and container) = [(1795456437, 1795458310), (1795456436, 1795458299), (1795456436, 1795458311), (1795456436, 1795458320), (1795456436, 1795458303), (1795456436, 1795458332), (1795456436, 1795458310), (1795456437, 1795458299), (1795456436, 1795458334), (1795456436, 1795458301)]
+postgresql-1-1-4-1            : found and updated times {'benchmarker': [(1795456437, 1795458310), (1795456436, 1795458299), (1795456436, 1795458311), (1795456436, 1795458320), (1795456436, 1795458303), (1795456436, 1795458332), (1795456436, 1795458310), (1795456437, 1795458299), (1795456436, 1795458334), (1795456436, 1795458301)]}
+postgresql-1-1-4-1            : needs monitoring (common metrics) for deployment sut
+postgresql-1-1-4-1            : collecting execution metrics of SUT at connection postgresql-1-1-4-1
+postgresql-1-1-4-1            : collecting metrics of benchmarker at connection postgresql-1-1-4-1
+PostgreSQL-1                  : get size via pod bexhoma-sut-postgresql-1-1795448523-d9d4fdb6d-m2fl5 and write to pvc bexhoma-storage-pg-nvme-benchbase-tpcc-160
+postgresql-1-1-4-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1795448523(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)postgresql-1-1795448523(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-1-4-1            : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-postgresql-1-1795448523-1-4-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-postgresql-1-1795448523-1-4-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+postgresql-1-1-4-1            : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+postgresql-1-1-4-1            : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+postgresql-1-1-4-1            : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+postgresql-1-1-4-1            : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 5s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.2s, 0 API requests 0.0s)
+Loop pass                     : took 14.9s (19 kubectl calls 15.8s, 54 API requests 2.4s)
+PostgreSQL-1                  : can be stopped
+PostgreSQL-1                  : had 0 restarts at worker bexhoma-sut-postgresql-1-1795448523-d9d4fdb6d-m2fl5
+Loop pass                     : took 3.8s (5 kubectl calls 2.2s, 31 API requests 1.3s)
+Experiment                    : ends at 2026-11-23 19:26:01.235178 (719820.5235205) - 9835.17s total
+Experiment                    : transforming metrics for loading
+Experiment                    : transforming metrics for loading completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for loader
+Experiment                    : transforming metrics for loader completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : transforming metrics for loading
+Experiment                    : transforming metrics for loading completed
+Experiment                    : transforming metrics for loader
+Experiment                    : transforming metrics for loader completed
+Experiment                    : transforming metrics for benchmarking
+Experiment                    : transforming metrics for benchmarking completed
+Experiment                    : transforming metrics for benchmarker
+Experiment                    : transforming metrics for benchmarker completed
+Experiment                    : downloading partial results
+Experiment                    : uploading full results
+Experiment                    : uploading workload file
+Result workflow complete
+
+## Show Summary
+
+### Workload
 Benchbase Workload tpcc SF=160
 * Type: benchbase
-* Duration: 9869s 
-* Code: 1794642726
+* Duration: 9836s 
+* Code: 1795448523
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 160. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking has keying and thinking times activated. Benchmarking runs for 30 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.3.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
@@ -1336,8 +1674,8 @@ Benchbase Workload tpcc SF=160
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1193577
-  * datadisk:45401
+  * disk:846882
+  * datadisk:46009
   * volume_size:98G
   * volume_used:45G
   * cpu_list:0-223
@@ -1349,7 +1687,7 @@ Benchbase Workload tpcc SF=160
     * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794642726
+    * code:1795448523
     * TENANT_VOL:False
 * postgresql-1-1-2-1 uses docker image postgres:18.6
   * RAM:2164173156352
@@ -1357,50 +1695,8 @@ Benchbase Workload tpcc SF=160
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1193905
-  * datadisk:45705
-  * volume_size:98G
-  * volume_used:45G
-  * cpu_list:0-223
-  * args:['-c', 'max_connections=2000', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
-  * requests_cpu:4
-  * requests_memory:128Gi
-  * limits_memory:128Gi
-  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
-  * load_durability: relaxed
-  * eval_parameters
-    * code:1794642726
-    * TENANT_VOL:False
-* postgresql-1-1-3-1 uses docker image postgres:18.6
-  * RAM:2164173156352
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-147-generic
-  * node:cl-worker36
-  * disk:1140688
-  * datadisk:45925
-  * volume_size:98G
-  * volume_used:45G
-  * cpu_list:0-223
-  * args:['-c', 'max_connections=2000', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
-  * requests_cpu:4
-  * requests_memory:128Gi
-  * limits_memory:128Gi
-  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
-  * load_durability: relaxed
-  * eval_parameters
-    * code:1794642726
-    * TENANT_VOL:False
-* postgresql-1-1-4-1 uses docker image postgres:18.6
-  * RAM:2164173156352
-  * CPU:INTEL(R) XEON(R) PLATINUM 8570
-  * Cores:224
-  * host:6.8.0-147-generic
-  * node:cl-worker36
-  * disk:1150334
-  * datadisk:46125
+  * disk:818212
+  * datadisk:46312
   * volume_size:98G
   * volume_used:46G
   * cpu_list:0-223
@@ -1412,14 +1708,56 @@ Benchbase Workload tpcc SF=160
     * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794642726
+    * code:1795448523
+    * TENANT_VOL:False
+* postgresql-1-1-3-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:903532
+  * datadisk:46532
+  * volume_size:98G
+  * volume_used:46G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=2000', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1795448523
+    * TENANT_VOL:False
+* postgresql-1-1-4-1 uses docker image postgres:18.6
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:875059
+  * datadisk:46733
+  * volume_size:98G
+  * volume_used:46G
+  * cpu_list:0-223
+  * args:['-c', 'max_connections=2000', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
+  * requests_cpu:4
+  * requests_memory:128Gi
+  * limits_memory:128Gi
+  * resources_total: 4.0 CPU, 128.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1795448523
     * TENANT_VOL:False
 
 ### Ingestion
 * PostgreSQL-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794642726-7bb4dcd7d-llv4p: 0
+* bexhoma-sut-postgresql-1-1795448523-d9d4fdb6d-m2fl5: 0
 
 ### Workflow
 
@@ -1443,7 +1781,7 @@ Benchbase Workload tpcc SF=160
 
 | DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |  160 |     1829.00 |           6.00 |            0.00 |       1765.00 |           58.00 |              1 |         1 |             |                |             0 | False         |              314.93 | False               |
+| PostgreSQL-1-1 |                1 |  160 |     1813.00 |           2.00 |            0.00 |       1751.00 |           60.00 |              1 |         1 |             |                |             0 | False         |              317.71 | False               |
 
 ### Benchmarking
 
@@ -1451,33 +1789,33 @@ Benchbase Workload tpcc SF=160
 
 | connection            | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |    time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|--------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1-1-1  | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |      1600 |     1024 |           0 | 1800.00 |        0 |                          76.62 |                       76.27 |       100.08 |                                                      10921.00 |                                               5123.00 |
-| postgresql-1-1-2-1-1  | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 |       800 |      512 |           0 | 1800.00 |        0 |                          38.14 |                       37.96 |        49.82 |                                                       9995.00 |                                               4913.00 |
-| postgresql-1-1-2-1-2  | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 |       800 |      512 |           0 | 1800.00 |        0 |                          38.15 |                       37.98 |        49.84 |                                                       9980.00 |                                               4931.00 |
-| postgresql-1-1-3-1-1  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       1 |       320 |      204 |           0 | 1800.00 |        0 |                          15.27 |                       15.22 |        19.97 |                                                      18727.00 |                                               8114.00 |
-| postgresql-1-1-3-1-2  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       2 |       320 |      204 |           0 | 1800.00 |        0 |                          15.22 |                       15.14 |        19.87 |                                                      18323.00 |                                               7943.00 |
-| postgresql-1-1-3-1-3  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       3 |       320 |      204 |           0 | 1800.00 |        0 |                          15.32 |                       15.26 |        20.02 |                                                      18310.00 |                                               7980.00 |
-| postgresql-1-1-3-1-4  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       4 |       320 |      204 |           0 | 1800.00 |        0 |                          15.32 |                       15.26 |        20.02 |                                                      18440.00 |                                               8010.00 |
-| postgresql-1-1-3-1-5  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       5 |       320 |      204 |           0 | 1800.00 |        0 |                          15.34 |                       15.28 |        20.05 |                                                      18429.00 |                                               8003.00 |
-| postgresql-1-1-4-1-1  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       1 |       160 |      102 |           0 | 1800.00 |        0 |                           7.65 |                        7.61 |         9.98 |                                                      19163.00 |                                               8688.00 |
-| postgresql-1-1-4-1-2  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       2 |       160 |      102 |           0 | 1800.00 |        0 |                           7.63 |                        7.59 |         9.96 |                                                      19044.00 |                                               8654.00 |
-| postgresql-1-1-4-1-3  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       3 |       160 |      102 |           0 | 1800.00 |        0 |                           7.66 |                        7.62 |        10.00 |                                                      19154.00 |                                               8622.00 |
-| postgresql-1-1-4-1-4  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       4 |       160 |      102 |           0 | 1800.00 |        0 |                           7.61 |                        7.57 |         9.94 |                                                      18962.00 |                                               8480.00 |
-| postgresql-1-1-4-1-5  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       5 |       160 |      102 |           0 | 1800.00 |        0 |                           7.64 |                        7.60 |         9.97 |                                                      19585.00 |                                               8699.00 |
-| postgresql-1-1-4-1-6  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       6 |       160 |      102 |           0 | 1800.00 |        0 |                           7.69 |                        7.66 |        10.05 |                                                      18749.00 |                                               8476.00 |
-| postgresql-1-1-4-1-7  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       7 |       160 |      102 |           0 | 1800.00 |        0 |                           7.62 |                        7.58 |         9.95 |                                                      18750.00 |                                               8579.00 |
-| postgresql-1-1-4-1-8  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       8 |       160 |      102 |           0 | 1800.00 |        0 |                           7.58 |                        7.55 |         9.90 |                                                      19291.00 |                                               8912.00 |
-| postgresql-1-1-4-1-9  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       9 |       160 |      102 |           0 | 1800.00 |        0 |                           7.58 |                        7.54 |         9.90 |                                                      19197.00 |                                               8732.00 |
-| postgresql-1-1-4-1-10 | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |      10 |       160 |      102 |           0 | 1800.00 |        0 |                           7.70 |                        7.67 |        10.07 |                                                      18951.00 |                                               8610.00 |
+| postgresql-1-1-1-1-1  | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |      1600 |     1024 |           0 | 1800.00 |        0 |                          76.54 |                       76.18 |        99.96 |                                                      20010.00 |                                               7715.00 |
+| postgresql-1-1-2-1-1  | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 |       800 |      512 |           0 | 1800.00 |        0 |                          38.30 |                       38.11 |        50.01 |                                                      24009.00 |                                               8926.00 |
+| postgresql-1-1-2-1-2  | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 |       800 |      512 |           0 | 1800.00 |        0 |                          38.36 |                       38.19 |        50.12 |                                                      23887.00 |                                               8888.00 |
+| postgresql-1-1-3-1-1  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       1 |       320 |      204 |           0 | 1800.00 |        0 |                          15.31 |                       15.24 |        20.00 |                                                      20470.00 |                                               8109.00 |
+| postgresql-1-1-3-1-2  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       2 |       320 |      204 |           0 | 1800.00 |        0 |                          15.38 |                       15.31 |        20.09 |                                                      20360.00 |                                               8026.00 |
+| postgresql-1-1-3-1-3  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       3 |       320 |      204 |           0 | 1800.00 |        0 |                          15.30 |                       15.22 |        19.97 |                                                      21037.00 |                                               8282.00 |
+| postgresql-1-1-3-1-4  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       4 |       320 |      204 |           0 | 1800.00 |        0 |                          15.29 |                       15.22 |        19.97 |                                                      20559.00 |                                               8071.00 |
+| postgresql-1-1-3-1-5  | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       5 |       320 |      204 |           0 | 1800.00 |        0 |                          15.28 |                       15.20 |        19.95 |                                                      20664.00 |                                               8083.00 |
+| postgresql-1-1-4-1-1  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       1 |       160 |      102 |           0 | 1800.00 |        0 |                           7.65 |                        7.62 |        10.00 |                                                      24854.00 |                                              10763.00 |
+| postgresql-1-1-4-1-2  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       2 |       160 |      102 |           0 | 1800.00 |        0 |                           7.62 |                        7.59 |         9.96 |                                                      24989.00 |                                              10713.00 |
+| postgresql-1-1-4-1-3  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       3 |       160 |      102 |           0 | 1800.00 |        0 |                           7.67 |                        7.64 |        10.02 |                                                      24342.00 |                                              10495.00 |
+| postgresql-1-1-4-1-4  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       4 |       160 |      102 |           0 | 1800.00 |        0 |                           7.69 |                        7.66 |        10.06 |                                                      24728.00 |                                              10709.00 |
+| postgresql-1-1-4-1-5  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       5 |       160 |      102 |           0 | 1800.00 |        0 |                           7.66 |                        7.62 |        10.00 |                                                      24892.00 |                                              10605.00 |
+| postgresql-1-1-4-1-6  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       6 |       160 |      102 |           0 | 1800.00 |        0 |                           7.73 |                        7.69 |        10.09 |                                                      24710.00 |                                              10522.00 |
+| postgresql-1-1-4-1-7  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       7 |       160 |      102 |           0 | 1800.00 |        0 |                           7.58 |                        7.55 |         9.91 |                                                      24961.00 |                                              10660.00 |
+| postgresql-1-1-4-1-8  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       8 |       160 |      102 |           0 | 1800.00 |        0 |                           7.68 |                        7.64 |        10.03 |                                                      25071.00 |                                              10928.00 |
+| postgresql-1-1-4-1-9  | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |       9 |       160 |      102 |           0 | 1800.00 |        0 |                           7.64 |                        7.60 |         9.97 |                                                      24874.00 |                                              10650.00 |
+| postgresql-1-1-4-1-10 | postgresql-1-1-4 | postgresql-1-1-4-1 |                1 |        4 |               1 |      10 |       160 |      102 |           0 | 1800.00 |        0 |                           7.61 |                        7.58 |         9.94 |                                                      24792.00 |                                              10734.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |    time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|--------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |      1600 |     1024 |           0 | 1800.00 |        0 |                          76.62 |                       76.27 |       100.08 |                                                      10921.00 |                                               5123.00 |
-| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 |      1600 |     1024 |           0 | 1800.00 |        0 |                          76.29 |                       75.95 |        99.66 |                                                       9995.00 |                                               4922.00 |
-| postgresql-1-1-3 | postgresql-1-1-3 |                1 |        3 |               1 |           5 |      1600 |     1020 |           0 | 1800.00 |        0 |                          76.48 |                       76.15 |        99.93 |                                                      18727.00 |                                               8010.00 |
-| postgresql-1-1-4 | postgresql-1-1-4 |                1 |        4 |               1 |          10 |      1600 |     1020 |           0 | 1800.00 |        0 |                          76.35 |                       76.00 |        99.73 |                                                      19585.00 |                                               8645.20 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |      1600 |     1024 |           0 | 1800.00 |        0 |                          76.54 |                       76.18 |        99.96 |                                                      20010.00 |                                               7715.00 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 |      1600 |     1024 |           0 | 1800.00 |        0 |                          76.66 |                       76.30 |       100.12 |                                                      24009.00 |                                               8907.00 |
+| postgresql-1-1-3 | postgresql-1-1-3 |                1 |        3 |               1 |           5 |      1600 |     1020 |           0 | 1800.00 |        0 |                          76.55 |                       76.19 |        99.98 |                                                      21037.00 |                                               8114.20 |
+| postgresql-1-1-4 | postgresql-1-1-4 |                1 |        4 |               1 |          10 |      1600 |     1020 |           0 | 1800.00 |        0 |                          76.53 |                       76.20 |        99.99 |                                                      25071.00 |                                              10677.90 |
 
 ### Monitoring
 
@@ -1485,37 +1823,37 @@ Benchbase Workload tpcc SF=160
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |      1793.44 |      7.11 |          17.00 |                 32.96 |
-| postgresql-1-1-2-1 |      1793.44 |      7.11 |          17.00 |                 32.96 |
-| postgresql-1-1-3-1 |      1793.44 |      7.11 |          17.00 |                 32.96 |
-| postgresql-1-1-4-1 |      1793.44 |      7.11 |          17.00 |                 32.96 |
+| postgresql-1-1-1-1 |      1942.03 |      6.32 |          16.99 |                 32.97 |
+| postgresql-1-1-2-1 |      1942.03 |      6.32 |          16.99 |                 32.97 |
+| postgresql-1-1-3-1 |      1942.03 |      6.32 |          16.99 |                 32.97 |
+| postgresql-1-1-4-1 |      1942.03 |      6.32 |          16.99 |                 32.97 |
 
 ### Loading phase: component loader
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |    187521.19 |    121.94 |           0.39 |                  0.39 |
-| postgresql-1-1-2-1 |    187521.19 |    121.94 |           0.39 |                  0.39 |
-| postgresql-1-1-3-1 |    187521.19 |    121.94 |           0.39 |                  0.39 |
-| postgresql-1-1-4-1 |    187521.19 |    121.94 |           0.39 |                  0.39 |
+| postgresql-1-1-1-1 |    184812.80 |    121.95 |           0.39 |                  0.39 |
+| postgresql-1-1-2-1 |    184812.80 |    121.95 |           0.39 |                  0.39 |
+| postgresql-1-1-3-1 |    184812.80 |    121.95 |           0.39 |                  0.39 |
+| postgresql-1-1-4-1 |    184812.80 |    121.95 |           0.39 |                  0.39 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |       270.22 |      0.55 |          26.71 |                 42.99 |
-| postgresql-1-1-2-1 |       252.59 |      0.43 |          26.94 |                 43.42 |
-| postgresql-1-1-3-1 |       325.74 |      0.33 |          27.67 |                 44.34 |
-| postgresql-1-1-4-1 |       394.60 |      0.58 |          28.25 |                 45.11 |
+| postgresql-1-1-1-1 |       298.90 |      0.37 |          26.66 |                 42.92 |
+| postgresql-1-1-2-1 |       307.58 |      0.38 |          26.88 |                 43.36 |
+| postgresql-1-1-3-1 |       312.99 |      0.56 |          27.59 |                 44.27 |
+| postgresql-1-1-4-1 |       334.85 |      0.59 |          28.23 |                 45.09 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |       406.86 |      2.01 |           4.18 |                  4.18 |
-| postgresql-1-1-2-1 |       415.19 |      2.02 |           2.60 |                  2.60 |
-| postgresql-1-1-3-1 |       939.12 |      6.04 |           1.50 |                  1.50 |
-| postgresql-1-1-4-1 |      1336.46 |     11.26 |           0.66 |                  0.66 |
+| postgresql-1-1-1-1 |       470.82 |      1.02 |           4.16 |                  4.16 |
+| postgresql-1-1-2-1 |       605.87 |      2.01 |           2.49 |                  2.49 |
+| postgresql-1-1-3-1 |       883.56 |      5.04 |           1.06 |                  1.06 |
+| postgresql-1-1-4-1 |      1419.93 |     11.73 |           0.69 |                  0.69 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)

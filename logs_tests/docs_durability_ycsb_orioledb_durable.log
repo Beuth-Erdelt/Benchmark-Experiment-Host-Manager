@@ -61,14 +61,6 @@ Loop pass                     : took 18.5s (8 kubectl calls 9.9s, 39 API request
 OrioleDB-1                    : is loading
 Loop pass                     : took 24.3s (16 kubectl calls 21.8s, 42 API requests 1.3s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '94395145-9dbf-45cb-a70d-fd087fb64a59', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Mon, 23 Nov 2026 09:09:28 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 OrioleDB-1                    : showing loader times (ycsb-loader)
 OrioleDB-1                    : generator times (start/end per pod and container) []

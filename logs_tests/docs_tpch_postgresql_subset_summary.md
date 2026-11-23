@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=10
 * Type: tpch
-* Duration: 725s 
-* Code: 1794594284
+* Duration: 722s 
+* Code: 1795447786
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=10) data is loaded and benchmark is executed.
@@ -15,7 +15,7 @@ TPC-H Queries SF=10
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.3.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -38,10 +38,10 @@ TPC-H Queries SF=10
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1156368
+  * disk:852361
   * datadisk:27209
   * volume_size:1.8T
-  * volume_used:1.2T
+  * volume_used:833G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -51,13 +51,13 @@ TPC-H Queries SF=10
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794594284
+    * code:1795447786
 
 ### Ingestion
 * PostgreSQL-1: 50 of 50 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794594284-58bcff54bb-q98t4: 0
+* bexhoma-sut-postgresql-1-1795447786-75b748c969-bftsr: 0
 
 ### Workflow
 
@@ -75,7 +75,7 @@ TPC-H Queries SF=10
 
 | DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |   10 |      359.00 |           4.00 |           23.00 |         76.00 |          252.00 |              8 |         0 |             |                |             0 | False         |              100.28 | False               |
+| PostgreSQL-1-1 |                1 |   10 |      370.00 |           3.00 |           20.00 |         83.00 |          261.00 |              8 |         0 |             |                |             0 | False         |               97.30 | False               |
 
 ### Benchmarking
 
@@ -83,13 +83,13 @@ TPC-H Queries SF=10
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 10.00 |                4 |                   4 |         49 |            8.87 |             4060.63 |           2938.78 |           0 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 10.00 |                4 |                   4 |         59 |           10.85 |             3320.08 |           2440.68 |           0 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |                4 |                   4 |         49 |            8.87 |             4060.63 |           2938.78 |           0 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |                4 |                   4 |         59 |           10.85 |             3320.08 |           2440.68 |           0 |
 
 #### Query Completion per Phase
 
@@ -102,10 +102,10 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                |   postgresql-1-1-1-1-1 |
 |:---------------------------------------|-----------------------:|
-| Pricing Summary Report (TPC-H Q1)      |               11274.15 |
-| Product Type Profit Measure (TPC-H Q9) |                9945.89 |
-| Promotion Effect Query (TPC-H Q14)     |                2323.31 |
-| Large Volume Customer (TPC-H Q18)      |               23713.74 |
+| Pricing Summary Report (TPC-H Q1)      |               13535.82 |
+| Product Type Profit Measure (TPC-H Q9) |               12793.83 |
+| Promotion Effect Query (TPC-H Q14)     |                2749.19 |
+| Large Volume Customer (TPC-H Q18)      |               29035.21 |
 
 ### Errors (failed queries)
 
