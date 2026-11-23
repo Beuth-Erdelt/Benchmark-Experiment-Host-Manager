@@ -62,12 +62,10 @@ Files whose names contain `filled` are generated variants with Bexhoma placehold
 | `MonetDB` | varies | `COPY … INTO … FROM … USING DELIMITERS '\|'` | PK (FK optional) | `initschemadummy` variant used for loading |
 | `CedarDB` | `public` | `COPY … FROM … DELIMITER '\|' NULL ''` | PK + FK | `\COPY` of the PostgreSQL loader with the plain schema; no SF100 (64 GiB limit) |
 | `DatabaseService` | `public` | `COPY … FROM … DELIMITER '\|' NULL ''` | PK + FK | `\COPY` of the PostgreSQL loader with the plain schema; no SF100 (64 GiB limit) |
-| `Exasol` | `public` | `IMPORT INTO … FROM LOCAL CSV FILE …` | PK (optimizer hint) + FK | PKs placed in `initindexes`; columnar zone maps replace secondary indexes |
 | `Kinetica` | (default) | SQL `INSERT` | PK | `CREATE REPLICATED TABLE` for dimensions; `SHARD KEY` for fact tables; replicated-only variant available |
 | `MemSQL` | `tpch` | `LOAD DATA INFILE … FIELDS TERMINATED BY '\|'` | PK (CLUSTERED COLUMNSTORE) | FK not supported; `ADD INDEX USING HASH` for lookups |
 | `SingleStore` | `tpch` | `LOAD DATA INFILE … FIELDS TERMINATED BY '\|'` | PK | FK not supported; `ADD INDEX USING HASH` for lookups |
 | `OracleDB` | `BEXHOMA` | SQL*Loader (`sqlldr`) of the loader `loader_tpch_oracle`, conventional path | PK (inline) + FK | Oracle Database Free; scripts run as SYSDBA in `FREEPDB1` with `CURRENT_SCHEMA` = `BEXHOMA`; `NUMBER` keys and amounts, `DATE`; statistics with `DBMS_STATS` |
-| `SAPHANA` | `TPCH` | `IMPORT FROM CSV FILE …` | PK (inline) | `CREATE COLUMN TABLE`; uppercase quoted identifiers; no secondary indexes |
 | `SQLServer` | `dbo` | `BULK INSERT … WITH (FIRSTROW=1, FIELDTERMINATOR='\|', LASTROW=N, TABLOCK)` | PK (clustered, inline) | T-SQL; GO batch separators; `RECOVERY BULK_LOGGED` during load |
 | `Citus` | `public` | `COPY public.<table> FROM … DELIMITER '\|' NULL ''` | PK + FK | Extends PostgreSQL; `orders`/`lineitem` distributed; dimension tables as reference tables (`-xdim distributed` is refused); columnar variant available; `{num_worker_shards}` DDL parameter |
 | `ClickHouseCluster` | (default) | `clickhouse-client` `INSERT INTO <table> FORMAT CSV` on the coordinator | None | `orders`/`lineitem` as MergeTree `<name>_local` per shard + Distributed table; dimensions as `ReplicatedMergeTree` on every node (`-xdim replicated`, default) or `part`, `partsupp`, `supplier`, `customer` as Distributed tables too (`-xdim distributed`, folder `ClickHouseCluster/distributed`; `nation`/`region` replicated in both) |

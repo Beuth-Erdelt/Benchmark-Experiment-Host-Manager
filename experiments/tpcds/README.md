@@ -43,13 +43,11 @@ Files whose names contain `filled` are generated variants with Bexhoma placehold
 | `MySQL` | `tpcds` | `LOAD DATA INFILE … FIELDS TERMINATED BY '\|'` | PK + FK + indexes | InnoDB; `SET GLOBAL local_infile = 1` |
 | `Clickhouse` | `tpcds` | `cat … \| clickhouse-client --format_csv_delimiter="\|"` | None | `ENGINE = MergeTree() ORDER BY …`; `Int32` / `Float64` types |
 | `DB2` | `DB2INST1` | remote external table of the loader `loader_tpcds_db2`, empty field = `NULL` | PK + FK + indexes | the statements of PostgreSQL; statistics with `RUNSTATS`; dialect `DB2` (Q3, Q5, Q12, Q16, Q20, Q21, Q32, Q37, Q40, Q66, Q72, Q77, Q80, Q82, Q84, Q92, Q94, Q95, Q98) |
-| `Exasol` | `public` | `IMPORT INTO … FROM LOCAL CSV FILE …` | PK (optimizer hint) + FK | Columnar zone maps replace secondary indexes |
 | `MariaDBCS` | `tpcds` | `LOAD DATA LOCAL` of the MariaDB loaders (`cpimport` inside), one pod | None (columnar engine) | `ENGINE = ColumnStore` on every table |
 | `MemSQL` | `tpcds` | `LOAD DATA INFILE … FIELDS TERMINATED BY '\|'` | PK | FK not supported; columnstore tables |
 | `MonetDB` | varies | `COPY … INTO … FROM … USING DELIMITERS '\|'` | PK; FK optional | |
 | `OmniSci` | `tpcds` | `COPY … FROM … WITH (delimiter='\|')` | None | GPU-accelerated analytics; multiple schema variants |
 | `OmniSciCPU` | `tpcds` | `COPY … FROM … WITH (delimiter='\|')` | None | CPU-only variant of OmniSci |
-| `SAPHANA` | `TPCDS` | `IMPORT FROM CSV FILE …` | PK (inline) | `CREATE COLUMN TABLE`; uppercase quoted identifiers |
 | `SQLServer` | `dbo` | `BULK INSERT … WITH (FIELDTERMINATOR='\|', TABLOCK)` | PK (clustered, inline) | T-SQL; GO batch separators |
 | `Citus` | `public` | `COPY public.<table> FROM … DELIMITER '\|' NULL ''` | PK + FK + indexes | Extends PostgreSQL; fact tables distributed; dimensions as reference tables |
 

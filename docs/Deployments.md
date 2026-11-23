@@ -36,8 +36,6 @@ This repository includes some templates at https://github.com/Beuth-Erdelt/Bench
 * PostgreSQL (11.4)
 
 To be added in near future:
-* Exasol (7.0.0)  
-  You will need a Docker image including EXAplus
 * MemSQL (centos-7.1.8-43a12901be-2.0.0-1.7.0)  
   You will have to add a licence key
 * MySQL (8.0.21)  
