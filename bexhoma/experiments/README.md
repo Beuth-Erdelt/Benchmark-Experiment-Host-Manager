@@ -23,7 +23,7 @@ experiment_dict["benchmarker"] = [
     # round 1 — one entry per job to submit in parallel
     [
         {"name": "tpch",         "benchmarker": "dbmsbenchmarker", "parallelism": 1, ...},
-        {"name": "tpch-refresh", "benchmarker": "tpch_refresh",    "parallelism": 1,
+        {"name": "tpch_refresh", "benchmarker": "tpch_refresh",    "parallelism": 1,
          "fixed_parallelism": True, ...},
     ],
     # round 2, round 3, …
@@ -448,16 +448,22 @@ experiment_dict_template["benchmarker"][0] = [
      "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml",
      "parallelism": 1, ...},
     # benchmark_run = 2 — refresh stream
-    {"name": "tpch-refresh", "benchmarker": "tpch_refresh",
-     "template": "jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml",
+    {"name": "tpch_refresh", "benchmarker": "tpch_refresh",
+     "template": "",   # set per configuration, see below
      "parallelism": 1, "fixed_parallelism": True, ...},
 ]
 ```
 
+`TpchExperiment.add_configuration()` sets the `template` of each configuration's copy to the
+`refresh_template` of its DBMS in `cluster.config` (e.g.
+`jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml` for PostgreSQL, PgDuckDB, Citus, the
+ClickHouse one for ClickHouse), like the loader entry gets its `loading_template`. So DBMS with
+different refresh jobs can share an experiment; each runs its own job against its own SUT.
+
 ### 8b. `add_benchmark_list([1, 1, 1])` (for `-ne 3`)
 
 Produces three rounds, each with two entries.  The `tpch` entry receives
-`parallelism = 1` (from the `-ne` list); the `tpch-refresh` entry keeps
+`parallelism = 1` (from the `-ne` list); the `tpch_refresh` entry keeps
 `parallelism = 1` unchanged because `fixed_parallelism: True`.
 
 ### 8c. Per-round job submission

@@ -292,9 +292,10 @@ def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
             TPCH_REFRESH_STREAM_OFFSET=tpch_cfg.get('refresh_stream_offset', 0),
             TRANSFORM_RAW_DATA=1, STORE_RAW_DATA=1,
         )
-        experiment.enable_refresh_stream(
-            template=refresh_template(cluster.dockers, [system['dbms'] for system in spec['systems']], 'tpch')
-        )
+        # one refresh job per system, each from its DBMS's refresh_template
+        for system in spec['systems']:
+            refresh_template(cluster.dockers, system['dbms'], 'tpch')
+        experiment.enable_refresh_stream()
 
     parameter = _build_prepare_testbed_parameter(spec, tpch_module)
     experiment.prepare_testbed(parameter)

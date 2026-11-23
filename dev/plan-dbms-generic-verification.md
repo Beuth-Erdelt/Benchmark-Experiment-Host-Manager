@@ -98,6 +98,11 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
   `tpch -dbms Citus -xdim distributed`; `tpch -dbms PostgreSQL ClickHouse -xrs 1` ("need different ones").
   Finding: `-xrs` was refused only in `run()`, after `clusters.Kubernetes(...)` and after the experiment was
   built. `tpch` `main()` now checks `refresh_template()` right after parsing, like `-mtb` and `-xdim`.
+  Changed the same day (user): the refusal of DBMS with different refresh jobs is gone. Each configuration's
+  refresh entry gets the `refresh_template` of its own DBMS (`TpchExperiment.add_configuration()`), so
+  `-dbms PostgreSQL ClickHouse -xrs 1` runs, each DBMS with its own job. Only a DBMS without a refresh job is
+  refused (none in TPC-H). Not yet run on the cluster: `bexhoma tpch -dbms PostgreSQL ClickHouse MySQL -sf 1
+  -xrs 1 -ne 1 run`, check one `tpch_refresh` job per DBMS with its own template and no SQL errors.
 - [x] Unit tests instead of runs, so they need no rerun.
 
 ## 5. Decisions for the user (before any run)

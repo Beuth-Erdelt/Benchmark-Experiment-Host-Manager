@@ -273,9 +273,11 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
             TRANSFORM_RAW_DATA = 1,
             STORE_RAW_DATA = 1,
         )
-        # one refresh job for all DBMS of the run (the default set without -dbms)
-        dbms_list = args.dbms if args.dbms else default_dockers(cluster.dockers, 'tpch')
-        experiment.enable_refresh_stream(template=refresh_template(cluster.dockers, dbms_list, 'tpch'))
+        # one refresh job per DBMS, each from its own refresh_template; refuse a DBMS without
+        # one before any configuration is built (the default set without -dbms)
+        for docker in (args.dbms if args.dbms else default_dockers(cluster.dockers, 'tpch')):
+            refresh_template(cluster.dockers, docker, 'tpch')
+        experiment.enable_refresh_stream()
     ##############
     ### add configs of dbms to be tested
     ##############
@@ -340,11 +342,12 @@ def main() -> None:
         if reason:
             parser.error(f'-xdim {args.dimensions} is not supported for {docker} in TPC-H: {reason}')
     if args.num_refresh_streams > 0:
-        # one refresh job serves every DBMS; refuse before run() reaches the cluster
-        try:
-            refresh_template(dockers, args.dbms or default_dockers(dockers, 'tpch'), 'tpch')
-        except IncompatibleBenchmark as error:
-            parser.error(f'-xrs {args.num_refresh_streams}: {error}')
+        # every DBMS needs a refresh job of its own; refuse before run() reaches the cluster
+        for docker in (args.dbms or default_dockers(dockers, 'tpch')):
+            try:
+                refresh_template(dockers, docker, 'tpch')
+            except IncompatibleBenchmark as error:
+                parser.error(f'-xrs {args.num_refresh_streams}: {error}')
     run(args)
     exit()
 

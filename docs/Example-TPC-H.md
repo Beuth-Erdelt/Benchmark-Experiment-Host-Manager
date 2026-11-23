@@ -1801,7 +1801,7 @@ The added `### tpch_refresh` section shows the wall-clock timing of the parallel
 ### Refresh Stream on two DBMS
 
 With several DBMS in one experiment, each DBMS gets its own refresh stream, running against its own SUT beside its own query streams.
-All of them use the same refresh job template, so the DBMS must declare the same `refresh_template`; bexhoma refuses the run otherwise.
+Each refresh job comes from the `refresh_template` of its own DBMS, so DBMS with different refresh jobs (e.g. PostgreSQL and ClickHouse) can share an experiment.
 PostgreSQL and PgDuckDB both use the job of PostgreSQL:
 
 ```bash

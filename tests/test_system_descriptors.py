@@ -265,11 +265,11 @@ class DescriptorsMatchScriptsTest(unittest.TestCase):
             'C': {'benchmarks': {'x': {'refresh_template': 'r2.yml'}}},
             'D': {'benchmarks': {'x': {}}},
         }
-        self.assertEqual(sd.refresh_template(dockers, ['A', 'B'], 'x'), 'r1.yml')
+        self.assertEqual(sd.refresh_template(dockers, 'A', 'x'), 'r1.yml')
+        # each DBMS has its own: different templates are no conflict
+        self.assertEqual(sd.refresh_template(dockers, 'C', 'x'), 'r2.yml')
         with self.assertRaisesRegex(sd.IncompatibleBenchmark, r'D has no refresh job .*\(DBMS with one: A, B, C\)'):
-            sd.refresh_template(dockers, ['A', 'D'], 'x')
-        with self.assertRaisesRegex(sd.IncompatibleBenchmark, 'need different ones: A: r1.yml, C: r2.yml'):
-            sd.refresh_template(dockers, ['A', 'C'], 'x')
+            sd.refresh_template(dockers, 'D', 'x')
 
     def test_refresh_templates_are_the_former_table(self) -> None:
         pg = 'jobtemplate-benchmarking-tpch-refresh-PostgreSQL.yml'

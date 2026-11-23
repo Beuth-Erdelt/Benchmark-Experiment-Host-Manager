@@ -3,7 +3,7 @@
 0.1 ``-dbms`` offers exactly the DBMS whose cluster configuration has an entry for the benchmark.
 0.2 A selection a benchmark cannot run is refused as a usage error right after parsing, before
     any Kubernetes object exists: tenancy a DBMS does not declare, ``-xdim distributed`` for a
-    DBMS without that variant, ``-xrs`` for DBMS that need different refresh jobs.
+    DBMS without that variant. (``-xrs`` needs a refresh job per DBMS; every TPC-H DBMS has one.)
 """
 import contextlib
 import io
@@ -74,16 +74,15 @@ class RefusedBeforeTheClusterTest(unittest.TestCase):
         self.assert_refused('tpch.py', ['-dbms', 'Citus', '-xdim', 'distributed'],
                             '-xdim distributed is not supported for Citus')
 
-    def test_refresh_stream_for_dbms_with_different_refresh_jobs(self) -> None:
-        for other in ('ClickHouse', 'MySQL'):
-            with self.subTest(other=other):
-                self.assert_refused('tpch.py', ['-dbms', 'PostgreSQL', other, '-xrs', '1'],
-                                    'they need different ones')
+    def test_refresh_stream_is_not_refused_for_dbms_with_different_refresh_jobs(self) -> None:
+        """Each DBMS runs its own refresh job: the selection passes to run(), here the patched cluster.
 
-    def test_refresh_stream_for_dbms_sharing_a_refresh_job_is_not_refused_early(self) -> None:
-        """The check lets a valid selection through to run(), which here meets the patched cluster."""
-        with self.assertRaisesRegex(AssertionError, 'reached the cluster'):
-            _run_main('tpch.py', 'run', '-dbms', 'PostgreSQL', 'PgDuckDB', '-xrs', '1')
+        A DBMS without a refresh job would be refused here; every TPC-H DBMS has one
+        (tests/test_refresh_loaders.py), the refusal itself is in tests/test_system_descriptors.py.
+        """
+        for dbms in (['PostgreSQL', 'PgDuckDB'], ['PostgreSQL', 'ClickHouse'], ['PostgreSQL', 'MySQL']):
+            with self.subTest(dbms=dbms), self.assertRaisesRegex(AssertionError, 'reached the cluster'):
+                _run_main('tpch.py', 'run', '-dbms', *dbms, '-xrs', '1')
 
 
 if __name__ == '__main__':

@@ -18,6 +18,10 @@ import urllib3
 from bexhoma import benchmarks
 from bexhoma.benchmarks.dbmsbenchmarker.experiment import DbmsBenchmarkerExperiment
 from bexhoma.benchmarks.tpch.benchmark import TPCH
+from bexhoma.system_descriptors import refresh_template
+
+#: Name of the refresh stream's benchmarker entry (and of its benchmark).
+REFRESH_ENTRY = 'tpch_refresh'
 
 urllib3.disable_warnings()
 logging.basicConfig(level=logging.ERROR)
@@ -109,30 +113,49 @@ class TpchExperiment(DbmsBenchmarkerExperiment):
             ]],
         }
 
-    def enable_refresh_stream(self, template: str) -> None:
+    def enable_refresh_stream(self) -> None:
         """
         Add a TPC-H RF1/RF2 refresh stream that runs in parallel with the query stream.
 
         The refresh stream becomes ``benchmark_run=2`` within each client round.
+        Every configuration runs its own refresh job against its own SUT, from the
+        ``refresh_template`` of its DBMS (set in :meth:`add_configuration`), so DBMS
+        with different refresh jobs can share an experiment.
         Call :meth:`set_default_benchmarking_parameters` with ``TPCH_REFRESH_STREAMS``
         and ``TPCH_REFRESH_STREAM_OFFSET`` before calling this method so those values
         reach both the generator initContainer and the loader main container.
+        Call it before the configurations are created: they copy the entry when they
+        are added.
 
-        :param template: k8s job-template file for the refresh benchmarker job: the
-            ``refresh_template`` of the target DBMS's ``tpch`` entry in the cluster
-            configuration.
+        :raises RuntimeError: When configurations exist already.
         """
+        if self.configurations:
+            raise RuntimeError("enable_refresh_stream() must come before the configurations are created")
         self.experiment_dict_template["benchmarker"][0].append({
-            "name":             "tpch_refresh",
+            "name":             REFRESH_ENTRY,
             "benchmarker":      "tpch_refresh",
-            "template":         template,
+            "template":         "",   # every configuration sets its DBMS's refresh_template from cluster.config
             "parallelism":      1,
             "num_pods":         1,
             "fixed_parallelism": True,
             "target":           "sut",
             "parameters":       {},
         })
-        self.add_benchmark(benchmarks.RefreshStreamBenchmark(name='tpch_refresh', SF=self.SF))
+        self.add_benchmark(benchmarks.RefreshStreamBenchmark(name=REFRESH_ENTRY, SF=self.SF))
+
+    def add_configuration(self, configuration: object) -> None:
+        """
+        Add a configuration; its refresh entry gets the ``refresh_template`` of its DBMS.
+
+        :param configuration: Configuration object to register.
+        :raises bexhoma.system_descriptors.IncompatibleBenchmark: When the refresh stream
+            is on and the DBMS declares no refresh job.
+        """
+        super().add_configuration(configuration)
+        rounds = (getattr(configuration, 'experiment_dict', None) or {}).get('benchmarker', [])
+        for entry in (entry for entries in rounds for entry in entries):
+            if entry.get('name') == REFRESH_ENTRY:
+                entry['template'] = refresh_template(self.cluster.dockers, configuration.docker, 'tpch')
 
     def show_summary(self, write_report: bool = False) -> None:
         """

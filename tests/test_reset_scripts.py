@@ -238,24 +238,29 @@ class ResetCompletenessTest(unittest.TestCase):
         _, configurations = _run_script('tpch.py', '-xrs', '1', '-dbms', *group)
         self.assertEqual({c.docker for c in configurations}, set(group))
 
-    def test_tpch_refresh_stream_is_refused_when_the_dbms_need_different_jobs(self):
-        """In-process path (experiment.py calls run() without main()): run() refuses on its own.
+    def test_tpch_refresh_stream_runs_each_dbms_with_its_own_job(self):
+        """DBMS with different refresh jobs share an experiment: each configuration gets its own template."""
+        from bexhoma import system_descriptors as sd
+        dbms = ['PostgreSQL', 'PgDuckDB', 'ClickHouse', 'MySQL']
+        _, configurations = _run_script('tpch.py', '-xrs', '1', '-dbms', *dbms)
+        dockers = sd.load_dockers(os.path.join(_REPO, 'k8s-cluster.config'))
+        self.assertEqual({c.docker for c in configurations}, set(dbms))
+        for config in configurations:
+            with self.subTest(docker=config.docker):
+                refresh = [entry for entries in config.experiment_dict['benchmarker'] for entry in entries
+                           if entry['name'] == 'tpch_refresh']
+                self.assertEqual(len(refresh), 1)
+                self.assertEqual(refresh[0]['template'], sd.refresh_template(dockers, config.docker, 'tpch'))
+        templates = {c.docker: c.experiment_dict['benchmarker'][0][1]['template'] for c in configurations}
+        self.assertEqual(templates['PgDuckDB'], templates['PostgreSQL'])
+        self.assertEqual(len({templates['PostgreSQL'], templates['ClickHouse'], templates['MySQL']}), 3)
 
-        The command line refuses earlier, in main(): tests/test_early_refusals.py.
-        """
-        from bexhoma.benchmarks.tpch import cli as tpch
-        from bexhoma.system_descriptors import IncompatibleBenchmark
-        for other in ('MySQL', 'ClickHouse'):
-            with self.subTest(other=other), tempfile.TemporaryDirectory() as tmp_dir:
-                args = tpch.build_parser().parse_args(['run', '-xrs', '1', '-dbms', 'PostgreSQL', other])
-                cluster = _SweepStubCluster(resultfolder=tmp_dir)
-                cluster.volumes = _AnyVolumes(cluster.volumes)
-                with (
-                    mock.patch('bexhoma.clusters.Kubernetes', return_value=cluster),
-                    contextlib.redirect_stdout(io.StringIO()),
-                    self.assertRaisesRegex(IncompatibleBenchmark, 'need different ones'),
-                ):
-                    tpch.run(args)
+    def test_refresh_stream_must_come_before_the_configurations(self):
+        from bexhoma.benchmarks.tpch.experiment import TpchExperiment
+        experiment = TpchExperiment.__new__(TpchExperiment)
+        experiment.configurations = [object()]
+        with self.assertRaisesRegex(RuntimeError, 'before the configurations'):
+            experiment.enable_refresh_stream()
 
 
 class ResetScriptContentTest(unittest.TestCase):
