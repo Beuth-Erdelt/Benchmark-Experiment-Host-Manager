@@ -76,7 +76,7 @@ skip_empty = true
 # "# noqa: <rule>" comment, so CI fails only on new ones; the clean-ups of
 # dev/plan-software-quality.md (S2) remove those comments rule by rule.
 # Not selected yet, because they are fixed in bulk first (S2): E501 long lines,
-# UP032 .format() instead of f-string, F401 unused imports.
+# UP032 .format() instead of f-string.
 [tool.ruff]
 line-length = 120
 target-version = "py310"
@@ -90,7 +90,6 @@ select = [
     "B006",                     # mutable default argument
     "UP031",                    # % formatting
 ]
-ignore = ["F401"]
 
 # ---- Dynamic metadata sources ----
 [tool.setuptools.dynamic]

@@ -19,8 +19,6 @@ from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
-import subprocess
-import psutil
 from bexhoma.benchmarks.tpcds.experiment import TpcdsExperiment
 
 

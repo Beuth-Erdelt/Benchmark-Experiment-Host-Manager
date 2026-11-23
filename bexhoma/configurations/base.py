@@ -6,10 +6,9 @@ from datetime import datetime
 import logging
 import os
 import re
-import shutil
-from typing import List, Optional, Tuple
+from typing import Optional
 
-from bexhoma import ceph_storage, ddl_parameters, experiments
+from bexhoma import ceph_storage, ddl_parameters
 from bexhoma.cli_args import abbreviate_storage_name, limit_name, storage_suffix
 from bexhoma.load_durability import (DEFAULT_LEVEL, conflicting_set_args, expand_durability_placeholders,
                                      server_wide_settings)

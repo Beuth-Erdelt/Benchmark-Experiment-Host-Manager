@@ -30,7 +30,7 @@ from types import SimpleNamespace
 from importlib.metadata import version
 from pathlib import Path
 import math
-from typing import TYPE_CHECKING, List, Tuple, Optional
+from typing import TYPE_CHECKING, Tuple, Optional
 
 from bexhoma import evaluators
 from bexhoma import missing_metrics

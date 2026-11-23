@@ -18,21 +18,12 @@ from bexhoma.system_descriptors import (IncompatibleBenchmark, dbms_choices, def
                                         load_dockers, refresh_template, storage_prefix, unsupported_dimension)
 from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, loading_layouts,
                                                 tenancy_error, tenant_ids)
-from bexhoma.cli_args import storage_suffix as _storage_suffix, set_cell_storage as _set_cell_storage
 # resource sweeps (-rc/-lc/-rr/-lr/-rst lists) are expanded for every DBMS by
 # ExperimentBase.expand_resource_cells(); kept here under its old name
-from bexhoma.cli_args import resource_cells as _resource_cells
 from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
-import time
-from timeit import default_timer
-import datetime
-import subprocess
-import psutil
-import math
-import re
 from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 
 

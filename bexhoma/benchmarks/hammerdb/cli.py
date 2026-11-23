@@ -17,10 +17,6 @@ from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
-import time
-from timeit import default_timer
-import datetime
-import math
 from bexhoma.benchmarks.hammerdb.experiment import HammerdbExperiment
 
 

@@ -13,7 +13,6 @@ See LICENSE for details.
 """
 import logging
 import urllib3
-import pandas as pd
 
 from bexhoma.experiments.mixed import MixedExperiment
 from bexhoma.benchmarks.dbmsbenchmarker.evaluator import DbmsBenchmarkerEvaluator

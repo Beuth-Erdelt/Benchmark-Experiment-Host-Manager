@@ -19,10 +19,8 @@ from __future__ import annotations
 
 import os
 import shutil
-import sys
-from pathlib import Path
 
-from bexhoma import clusters, configurations, experiments
+from bexhoma import clusters, configurations
 from bexhoma.cli_args import resolve_scaling_factor
 from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 from bexhoma.experiments.system_builder import loading_variants, set_loading_template

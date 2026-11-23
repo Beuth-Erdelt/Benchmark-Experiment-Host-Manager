@@ -22,14 +22,12 @@ import os
 import posixpath
 import re
 import tarfile
-import psutil
 import logging
 import socket
 import ast
 import json
 import urllib.request
 import urllib.parse
-from pprint import pprint
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 

@@ -42,7 +42,7 @@ import argparse
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
-from bexhoma import configurations, experiments
+from bexhoma import configurations
 from bexhoma.cli_args import make_base_parser
 from bexhoma.benchmarks.hardware.experiment import HardwareExperiment
 

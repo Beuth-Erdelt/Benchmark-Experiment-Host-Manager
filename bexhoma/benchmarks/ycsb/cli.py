@@ -15,7 +15,6 @@ from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
-import pandas as pd
 from bexhoma.benchmarks.ycsb.experiment import YcsbExperiment
 
 

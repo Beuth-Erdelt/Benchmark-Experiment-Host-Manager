@@ -12,20 +12,11 @@ See LICENSE for details.
 """
 import pandas as pd
 import os
-import re
 import shutil
-import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-import pickle  # noqa: E402
-import json  # noqa: E402
-import traceback  # noqa: E402
-import ast  # noqa: E402
-from dbmsbenchmarker import monitor  # noqa: E402
 from dbmsbenchmarker import parameter, inspector  # noqa: E402
 from datetime import datetime  # noqa: E402
-import glob  # noqa: E402
-from pathlib import Path  # noqa: E402
 from scipy.stats import gmean  # noqa: E402
 import numpy as np  # noqa: E402
 
