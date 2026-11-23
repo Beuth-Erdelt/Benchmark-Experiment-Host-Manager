@@ -271,6 +271,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOM
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 10                       threads per benchmarking pod
 # -xkey                         simulate user think time and keying delays
+# -ar                           activate configured reset scripts before each round (run together in all tenants)
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -290,6 +291,7 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 10 \
   -xkey \
+  -ar \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \

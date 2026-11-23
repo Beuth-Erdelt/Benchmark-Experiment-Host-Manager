@@ -383,8 +383,8 @@ bexhoma experiment tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml &>$LOG_
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 544s 
-* Code: 1795351092
+* Duration: 573s 
+* Code: 1795449026
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -393,7 +393,7 @@ TPC-H Queries SF=1
   * Timeout per query is 600.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.12.2.
+  * Experiment uses bexhoma version 0.12.3.
   * System metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PostgreSQL', 'PgDuckDB'].
   * Import is handled by 1 processes (pods).
@@ -410,10 +410,10 @@ TPC-H Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948585
+  * disk:826148
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -424,17 +424,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * pgduckdb-1-1-2-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948585
+  * disk:826148
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -445,17 +445,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * pgduckdb-1-1-2-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948585
+  * disk:826148
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -466,17 +466,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * pgduckdb-1-1-3-1-1 uses docker image pgduckdb/pgduckdb:18-v1.1.1
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948586
+  * disk:826149
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -487,17 +487,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * pgduckdb-1-1-3-1-2 uses docker image pgduckdb/pgduckdb:18-v1.1.1
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948586
+  * disk:826149
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -508,17 +508,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * pgduckdb-1-1-3-1-3 uses docker image pgduckdb/pgduckdb:18-v1.1.1
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948586
+  * disk:826149
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -529,17 +529,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * pgduckdb-1-1-3-1-4 uses docker image pgduckdb/pgduckdb:18-v1.1.1
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948586
+  * disk:826149
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'shared_preload_libraries=pg_duckdb', '-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -550,17 +550,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * postgresql-1-1-1-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948585
+  * disk:826148
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -571,17 +571,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * postgresql-1-1-2-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948585
+  * disk:826148
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -592,17 +592,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * postgresql-1-1-2-1-2 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948585
+  * disk:826148
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -613,17 +613,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * postgresql-1-1-3-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948586
+  * disk:826149
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -634,17 +634,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * postgresql-1-1-3-1-2 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948586
+  * disk:826149
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -655,17 +655,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * postgresql-1-1-3-1-3 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948586
+  * disk:826149
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -676,17 +676,17 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 * postgresql-1-1-3-1-4 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:948586
+  * disk:826149
   * datadisk:2758
   * volume_size:1.8T
-  * volume_used:927G
+  * volume_used:807G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=16', '-c', 'max_parallel_workers=16', '-c', 'max_parallel_workers_per_gather=8', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=16GB', '-c', 'effective_cache_size=40GB', '-c', 'work_mem=512MB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000']
   * requests_cpu:4
@@ -697,15 +697,15 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795351092
+    * code:1795449026
 
 ### Ingestion
 * PgDuckDB-1: 8 of 8 units ok
 * PostgreSQL-1: 8 of 8 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-pgduckdb-1-1795351092-557cfdd5dc-tkbts: 0
-* bexhoma-sut-postgresql-1-1795351092-75ff8448db-2vvtj: 0
+* bexhoma-sut-pgduckdb-1-1795449026-7f9b78f5bd-lsgrk: 0
+* bexhoma-sut-postgresql-1-1795449026-567547fddf-dz57k: 0
 
 ### Workflow
 
@@ -733,8 +733,8 @@ TPC-H Queries SF=1
 
 | DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PgDuckDB-1-1   |                1 |    1 |       64.00 |           2.00 |            0.00 |         40.00 |           15.00 |              1 |         0 |             | None           |             0 | False         |               56.25 | False               |
-| PostgreSQL-1-1 |                1 |    1 |       67.00 |           3.00 |            0.00 |         40.00 |           17.00 |              1 |         0 |             | None           |             0 | False         |               53.73 | False               |
+| PgDuckDB-1-1   |                1 |    1 |       56.00 |           2.00 |            0.00 |         37.00 |           14.00 |              1 |         0 |             | None           |             0 | False         |               64.29 | False               |
+| PostgreSQL-1-1 |                1 |    1 |       62.00 |           4.00 |            0.00 |         38.00 |           17.00 |              1 |         0 |             | None           |             0 | False         |               58.06 | False               |
 
 ### Benchmarking
 
@@ -742,31 +742,31 @@ TPC-H Queries SF=1
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| pgduckdb-1-1-1-1-1   | pgduckdb-1-1-1   | pgduckdb-1-1-1-1   |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         20 |            0.58 |             6250.63 |           3960.00 |          -1 |
-| pgduckdb-1-1-2-1-1   | pgduckdb-1-1-2   | pgduckdb-1-1-2-1   |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         26 |            0.83 |             4339.71 |           3046.15 |          -1 |
-| pgduckdb-1-1-2-1-2   | pgduckdb-1-1-2   | pgduckdb-1-1-2-1   |                1 |        2 |               1 |       2 | 1.00 |               22 |                  22 |         25 |            0.78 |             4635.65 |           3168.00 |          -1 |
-| pgduckdb-1-1-3-1-1   | pgduckdb-1-1-3   | pgduckdb-1-1-3-1   |                1 |        3 |               1 |       1 | 1.00 |               22 |                  22 |         55 |            1.98 |             1815.77 |           1440.00 |          -1 |
-| pgduckdb-1-1-3-1-2   | pgduckdb-1-1-3   | pgduckdb-1-1-3-1   |                1 |        3 |               1 |       2 | 1.00 |               22 |                  22 |         58 |            1.91 |             1888.67 |           1365.52 |          -1 |
-| pgduckdb-1-1-3-1-3   | pgduckdb-1-1-3   | pgduckdb-1-1-3-1   |                1 |        3 |               1 |       3 | 1.00 |               22 |                  22 |         58 |            1.96 |             1841.31 |           1365.52 |          -1 |
-| pgduckdb-1-1-3-1-4   | pgduckdb-1-1-3   | pgduckdb-1-1-3-1   |                1 |        3 |               1 |       4 | 1.00 |               22 |                  22 |         58 |            1.98 |             1822.20 |           1365.52 |          -1 |
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         23 |            0.25 |            14337.04 |           3443.48 |          -1 |
-| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         19 |            0.30 |            12054.45 |           4168.42 |          -1 |
-| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 | 1.00 |               22 |                  22 |         19 |            0.28 |            12650.52 |           4168.42 |          -1 |
-| postgresql-1-1-3-1-1 | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       1 | 1.00 |               22 |                  22 |         25 |            0.56 |             6483.04 |           3168.00 |          -1 |
-| postgresql-1-1-3-1-2 | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       2 | 1.00 |               22 |                  22 |         31 |            0.55 |             6519.19 |           2554.84 |          -1 |
-| postgresql-1-1-3-1-3 | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       3 | 1.00 |               22 |                  22 |         30 |            0.60 |             6028.48 |           2640.00 |          -1 |
-| postgresql-1-1-3-1-4 | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       4 | 1.00 |               22 |                  22 |         26 |            0.59 |             6059.31 |           3046.15 |          -1 |
+| pgduckdb-1-1-1-1-1   | pgduckdb-1-1-1   | pgduckdb-1-1-1-1   |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         21 |            0.63 |             5732.88 |           3771.43 |          -1 |
+| pgduckdb-1-1-2-1-1   | pgduckdb-1-1-2   | pgduckdb-1-1-2-1   |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         26 |            0.95 |             3803.83 |           3046.15 |          -1 |
+| pgduckdb-1-1-2-1-2   | pgduckdb-1-1-2   | pgduckdb-1-1-2-1   |                1 |        2 |               1 |       2 | 1.00 |               22 |                  22 |         27 |            0.94 |             3824.56 |           2933.33 |          -1 |
+| pgduckdb-1-1-3-1-1   | pgduckdb-1-1-3   | pgduckdb-1-1-3-1   |                1 |        3 |               1 |       1 | 1.00 |               22 |                  22 |         50 |            1.77 |             2034.83 |           1584.00 |          -1 |
+| pgduckdb-1-1-3-1-2   | pgduckdb-1-1-3   | pgduckdb-1-1-3-1   |                1 |        3 |               1 |       2 | 1.00 |               22 |                  22 |         49 |            1.75 |             2059.82 |           1616.33 |          -1 |
+| pgduckdb-1-1-3-1-3   | pgduckdb-1-1-3   | pgduckdb-1-1-3-1   |                1 |        3 |               1 |       3 | 1.00 |               22 |                  22 |         49 |            1.75 |             2061.81 |           1616.33 |          -1 |
+| pgduckdb-1-1-3-1-4   | pgduckdb-1-1-3   | pgduckdb-1-1-3-1   |                1 |        3 |               1 |       4 | 1.00 |               22 |                  22 |         50 |            1.78 |             2027.05 |           1584.00 |          -1 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         12 |            0.24 |            14851.05 |           6600.00 |          -1 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         17 |            0.36 |             9986.63 |           4658.82 |          -1 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 | 1.00 |               22 |                  22 |         17 |            0.37 |             9843.93 |           4658.82 |          -1 |
+| postgresql-1-1-3-1-1 | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       1 | 1.00 |               22 |                  22 |         24 |            0.53 |             6734.19 |           3300.00 |          -1 |
+| postgresql-1-1-3-1-2 | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       2 | 1.00 |               22 |                  22 |         27 |            0.50 |             7178.07 |           2933.33 |          -1 |
+| postgresql-1-1-3-1-3 | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       3 | 1.00 |               22 |                  22 |         25 |            0.55 |             6502.98 |           3168.00 |          -1 |
+| postgresql-1-1-3-1-4 | postgresql-1-1-3 | postgresql-1-1-3-1 |                1 |        3 |               1 |       4 | 1.00 |               22 |                  22 |         26 |            0.56 |             6445.82 |           3046.15 |          -1 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| pgduckdb-1-1-1   | pgduckdb-1-1-1   |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         20 |            0.58 |             6250.63 |           3960.00 |          -1 |
-| pgduckdb-1-1-2   | pgduckdb-1-1-2   |                1 |        2 |               1 |           2 | 1.00 |               44 |                  44 |         26 |            0.80 |             4485.24 |           6092.31 |          -1 |
-| pgduckdb-1-1-3   | pgduckdb-1-1-3   |                1 |        3 |               1 |           4 | 1.00 |               88 |                  88 |         58 |            1.95 |             1841.77 |           5462.07 |          -1 |
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         23 |            0.25 |            14337.04 |           3443.48 |          -1 |
-| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |               44 |                  44 |         19 |            0.29 |            12348.89 |           8336.84 |          -1 |
-| postgresql-1-1-3 | postgresql-1-1-3 |                1 |        3 |               1 |           4 | 1.00 |               88 |                  88 |         31 |            0.57 |             6268.32 |          10219.35 |          -1 |
+| pgduckdb-1-1-1   | pgduckdb-1-1-1   |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         21 |            0.63 |             5732.88 |           3771.43 |          -1 |
+| pgduckdb-1-1-2   | pgduckdb-1-1-2   |                1 |        2 |               1 |           2 | 1.00 |               44 |                  44 |         27 |            0.94 |             3814.18 |           5866.67 |          -1 |
+| pgduckdb-1-1-3   | pgduckdb-1-1-3   |                1 |        3 |               1 |           4 | 1.00 |               88 |                  88 |         50 |            1.76 |             2045.82 |           6336.00 |          -1 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         12 |            0.24 |            14851.05 |           6600.00 |          -1 |
+| postgresql-1-1-2 | postgresql-1-1-2 |                1 |        2 |               1 |           2 | 1.00 |               44 |                  44 |         17 |            0.36 |             9915.02 |           9317.65 |          -1 |
+| postgresql-1-1-3 | postgresql-1-1-3 |                1 |        3 |               1 |           4 | 1.00 |               88 |                  88 |         27 |            0.54 |             6709.20 |          11733.33 |          -1 |
 
 #### Query Completion per Phase
 
@@ -784,28 +784,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   pgduckdb-1-1-1-1-1 |   pgduckdb-1-1-2-1-1 |   pgduckdb-1-1-2-1-2 |   pgduckdb-1-1-3-1-1 |   pgduckdb-1-1-3-1-2 |   pgduckdb-1-1-3-1-3 |   pgduckdb-1-1-3-1-4 |   postgresql-1-1-1-1-1 |   postgresql-1-1-2-1-1 |   postgresql-1-1-2-1-2 |   postgresql-1-1-3-1-1 |   postgresql-1-1-3-1-2 |   postgresql-1-1-3-1-3 |   postgresql-1-1-3-1-4 |
 |:----------------------------------------------------|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|---------------------:|-----------------------:|-----------------------:|-----------------------:|-----------------------:|-----------------------:|-----------------------:|-----------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |              1027.87 |              1569.07 |              1656.06 |              3336.86 |              4532.58 |              5265.92 |              5874.14 |                 929.10 |                1533.09 |                1495.48 |                2843.78 |                2818.89 |                8719.80 |                2820.25 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |               290.59 |               333.49 |               293.74 |               975.80 |               922.37 |              1317.72 |              1792.05 |                 173.95 |                 174.58 |                 163.44 |                 206.36 |                 205.61 |                 546.63 |                 201.97 |
-| Shipping Priority (TPC-H Q3)                        |               604.30 |               904.96 |               908.68 |              1889.71 |              2963.75 |              2418.67 |              2102.38 |                 238.43 |                 227.14 |                 221.49 |                1223.21 |                1215.49 |                 867.89 |                1234.40 |
-| Order Priority Checking Query (TPC-H Q4)            |               655.24 |               982.81 |               874.49 |              2992.45 |              2096.25 |              2184.28 |              2285.70 |                 112.51 |                 212.17 |                 211.50 |                 584.72 |                 482.77 |                 361.73 |                 571.29 |
-| Local Supplier Volume (TPC-H Q5)                    |              1108.49 |              1504.63 |              1168.59 |              3594.53 |              3891.86 |              4262.11 |              3694.65 |                 238.62 |                 295.86 |                 300.99 |                 207.22 |                 539.86 |                 293.57 |                 539.47 |
-| Forecasting Revenue Change (TPC-H Q6)               |               601.54 |              1551.92 |               929.82 |              2672.19 |              2084.84 |              1928.67 |              1645.54 |                 154.87 |                 314.37 |                 311.38 |                 338.06 |                 488.88 |                 521.15 |                 488.67 |
-| Volume Shipping Query (TPC-H Q7)                    |               612.22 |              1019.63 |              1751.97 |              1700.64 |              1675.21 |              1815.05 |              1645.87 |                 263.31 |                 350.03 |                 349.79 |                 657.78 |                 563.94 |                 849.09 |                 565.08 |
-| National Market Share (TPC-H Q8)                    |               816.13 |              1370.69 |              1181.81 |              3059.62 |              3198.21 |              4026.10 |              3020.99 |                 496.89 |                 112.73 |                 113.22 |                 245.78 |                 283.15 |                 153.71 |                 282.39 |
-| Product Type Profit Measure (TPC-H Q9)              |               899.63 |              1543.42 |              1018.58 |              4238.47 |              4548.20 |              3456.90 |              4458.88 |                 584.77 |                 800.30 |                 797.52 |                1125.77 |                2091.54 |                1082.93 |                 769.33 |
-| Returned Item Reporting Query (TPC-H Q10)           |               632.72 |               789.60 |               891.05 |              2050.80 |              1604.49 |              1469.74 |              1685.91 |                 238.31 |                 348.60 |                 348.58 |                 338.82 |                 585.02 |                 851.07 |                 827.24 |
-| Important Stock Identification (TPC-H Q11)          |               201.09 |               237.05 |               252.27 |               602.64 |               585.75 |              1244.91 |               613.18 |                  72.82 |                  59.95 |                  59.31 |                 416.80 |                  58.97 |                 286.37 |                 476.40 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |               663.16 |               891.15 |               700.88 |              1654.04 |              2774.98 |              2071.20 |              2534.87 |                 221.23 |                 520.51 |                 523.37 |                 873.87 |                1760.55 |                 906.31 |                 585.48 |
-| Customer Distribution (TPC-H Q13)                   |               242.53 |               263.66 |               357.05 |              1218.10 |               868.25 |               793.26 |               892.84 |                1099.03 |                 601.40 |                 603.05 |                1100.69 |                2062.18 |                2007.44 |                 689.66 |
-| Promotion Effect Query (TPC-H Q14)                  |               559.22 |              1017.49 |               839.59 |              2614.07 |              2881.50 |              2744.98 |              2711.74 |                 310.63 |                 349.20 |                 350.17 |                 533.51 |                 594.78 |                 568.55 |                 532.88 |
-| Top Supplier Query (TPC-H Q15)                      |               535.32 |              1282.48 |               790.97 |              2797.21 |              1857.54 |              1761.35 |              1895.58 |                 179.84 |                 373.40 |                 373.75 |                 527.16 |                 524.48 |                 578.60 |                 525.84 |
-| Parts/Supplier Relationship (TPC-H Q16)             |               189.38 |               266.36 |               229.39 |               525.31 |               404.67 |               585.35 |               473.60 |                 132.45 |                 227.56 |                 145.46 |                 320.45 |                 483.08 |                 873.43 |                 318.98 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |               990.88 |              1887.09 |              1527.89 |              4138.13 |              4393.11 |              4335.51 |              4528.35 |                 588.76 |                 505.66 |                 560.76 |                1032.19 |                2570.75 |                2200.91 |                1557.07 |
-| Large Volume Customer (TPC-H Q18)                   |               514.71 |               866.48 |               739.78 |              1723.47 |              1865.94 |              1423.58 |              1672.32 |                3033.56 |                3968.95 |                4254.82 |                7799.21 |                6078.87 |                4828.12 |                7405.68 |
-| Discounted Revenue (TPC-H Q19)                      |              1274.71 |               849.78 |               776.39 |              1702.63 |              1990.41 |              2346.06 |              1109.55 |                  39.77 |                  43.52 |                  33.81 |                 166.36 |                  40.20 |                  44.48 |                  87.99 |
-| Potential Part Promotion (TPC-H Q20)                |               671.58 |              1063.80 |              1012.92 |              2062.18 |              1931.92 |              1871.97 |              2718.65 |                 113.91 |                 105.51 |                  74.24 |                 140.18 |                 117.82 |                 114.27 |                 377.87 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |              1656.53 |              1677.81 |              2452.36 |              5194.13 |              5991.52 |              5681.76 |              6302.79 |                 277.93 |                 598.62 |                 597.15 |                 651.77 |                 472.52 |                 508.33 |                 794.78 |
-| Global Sales Opportunity Query (TPC-H Q22)          |               179.86 |               184.40 |               232.01 |               713.44 |               306.11 |               255.27 |               572.86 |                  72.73 |                  70.01 |                  65.24 |                 298.91 |                 107.14 |                 104.79 |                 188.16 |
+| Pricing Summary Report (TPC-H Q1)                   |              1946.26 |              1147.74 |              2352.36 |              3006.93 |              2374.42 |              2535.59 |              3007.74 |                1765.80 |                1838.09 |                1818.88 |                2281.30 |                9073.95 |                2976.40 |                2935.56 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |               332.52 |               791.11 |               419.41 |              1091.77 |               756.43 |               818.70 |               870.99 |                 163.17 |                 187.89 |                 189.31 |                 710.06 |                 528.43 |                 206.08 |                 239.79 |
+| Shipping Priority (TPC-H Q3)                        |               665.69 |              1450.71 |              1061.62 |              2474.29 |              2374.59 |              2326.07 |              2949.76 |                 256.84 |                 896.11 |                 888.45 |                 469.12 |                 545.04 |                 651.31 |                 628.21 |
+| Order Priority Checking Query (TPC-H Q4)            |               641.78 |               803.61 |              1120.46 |              1777.86 |              1903.32 |              1971.79 |              1710.15 |                 111.22 |                 387.51 |                 453.99 |                 238.42 |                 259.93 |                 312.40 |                 334.79 |
+| Local Supplier Volume (TPC-H Q5)                    |               797.61 |              1711.97 |              1888.04 |              3700.46 |              2578.93 |              2193.29 |              3694.84 |                 193.19 |                 300.36 |                 300.62 |                 635.30 |                 333.35 |                 837.85 |                 835.55 |
+| Forecasting Revenue Change (TPC-H Q6)               |               431.79 |               662.44 |               603.66 |              1246.79 |              2179.62 |              2194.94 |              1335.96 |                 139.16 |                 449.35 |                 449.94 |                 347.82 |                 546.66 |                 688.37 |                 681.48 |
+| Volume Shipping Query (TPC-H Q7)                    |               739.19 |              1594.53 |              1070.21 |              2579.52 |              1927.98 |              1994.02 |              2679.97 |                 223.85 |                 379.22 |                 378.84 |                1306.18 |                 629.03 |                 572.74 |                 572.42 |
+| National Market Share (TPC-H Q8)                    |              1443.69 |              1523.74 |              1793.85 |              3953.76 |              3481.07 |              3482.05 |              3865.68 |                 113.28 |                 137.84 |                 142.76 |                 266.11 |                 112.89 |                 301.33 |                 301.44 |
+| Product Type Profit Measure (TPC-H Q9)              |               993.95 |              1480.37 |              2557.55 |              3904.14 |              4764.61 |              4366.77 |              3788.52 |                 400.28 |                 732.33 |                 693.37 |                 762.37 |                1047.23 |                1022.64 |                1050.16 |
+| Returned Item Reporting Query (TPC-H Q10)           |               606.11 |              1555.28 |               827.65 |              1777.65 |              1877.11 |              1768.06 |              1741.82 |                 222.40 |                 291.62 |                 310.56 |                 647.52 |                1205.09 |                 617.81 |                 616.20 |
+| Important Stock Identification (TPC-H Q11)          |               157.32 |               558.82 |               376.42 |               587.46 |               512.29 |               684.34 |               732.07 |                  52.58 |                  59.55 |                  59.18 |                 147.87 |                 122.48 |                  61.32 |                  61.91 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |               583.92 |               980.70 |               952.00 |              1805.27 |              1673.93 |              1583.19 |              1805.15 |                 248.17 |                 655.25 |                 654.56 |                 567.30 |                 857.19 |                 609.55 |                 631.89 |
+| Customer Distribution (TPC-H Q13)                   |               260.27 |               344.43 |               306.99 |               732.37 |               783.63 |               671.08 |               732.75 |                 692.76 |                 854.29 |                1063.76 |                1052.95 |                2030.82 |                1215.35 |                1250.49 |
+| Promotion Effect Query (TPC-H Q14)                  |               648.64 |               675.45 |              1602.65 |              1792.90 |              1620.85 |              1504.61 |              1902.05 |                 445.54 |                 239.22 |                 460.55 |                 350.88 |                 703.05 |                 450.39 |                 525.64 |
+| Top Supplier Query (TPC-H Q15)                      |               979.30 |               761.03 |               720.06 |              1852.33 |              1261.35 |              1400.96 |              1734.14 |                 449.14 |                 401.22 |                 308.66 |                 429.68 |                 835.07 |                 409.93 |                 525.07 |
+| Parts/Supplier Relationship (TPC-H Q16)             |               265.37 |               314.75 |               416.95 |               605.83 |               593.16 |               500.41 |               516.07 |                 340.48 |                 347.04 |                 289.11 |                 237.32 |                 512.28 |                 362.70 |                 287.38 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |              1293.95 |              2392.45 |              1972.61 |              4664.44 |              3443.86 |              3981.71 |              4263.81 |                 543.57 |                 551.66 |                 584.86 |                1144.35 |                1222.22 |                 880.84 |                2437.75 |
+| Large Volume Customer (TPC-H Q18)                   |               569.07 |               720.57 |              1500.98 |              1727.26 |              1505.96 |              1725.67 |              2095.91 |                2179.98 |                4911.37 |                4845.08 |                8044.97 |                3863.13 |                8002.94 |                6933.37 |
+| Discounted Revenue (TPC-H Q19)                      |               558.91 |               872.72 |               886.66 |              2277.72 |              2380.26 |              2335.46 |              1776.54 |                  40.42 |                  71.33 |                  88.89 |                 112.43 |                  41.61 |                 125.27 |                 133.49 |
+| Potential Part Promotion (TPC-H Q20)                |               646.83 |               981.23 |               926.78 |              1912.76 |              2204.37 |              2301.98 |              2219.17 |                 120.81 |                 138.15 |                 108.64 |                 305.57 |                  86.67 |                 379.02 |                 242.09 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |              2680.11 |              3247.13 |              1927.65 |              3691.41 |              5670.45 |              5969.40 |              4020.01 |                 241.05 |                 444.73 |                 321.56 |                 682.46 |                 305.39 |                 634.23 |                1150.00 |
+| Global Sales Opportunity Query (TPC-H Q22)          |               203.64 |               302.82 |               195.76 |               295.87 |               627.09 |               508.85 |               295.22 |                  67.22 |                  74.89 |                  75.11 |                 221.60 |                  68.93 |                 441.89 |                 118.55 |
 
 ### Errors (failed queries)
 
@@ -821,12 +821,12 @@ No warnings
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| pgduckdb-1-1-1-1   |        22.93 |      0.37 |           1.68 |                  3.05 |
-| pgduckdb-1-1-2-1   |        22.93 |      0.37 |           1.68 |                  3.05 |
-| pgduckdb-1-1-3-1   |        22.93 |      0.37 |           1.68 |                  3.05 |
-| postgresql-1-1-1-1 |        13.77 |      0.27 |           0.50 |                  1.72 |
-| postgresql-1-1-2-1 |        13.77 |      0.27 |           0.50 |                  1.72 |
-| postgresql-1-1-3-1 |        13.77 |      0.27 |           0.50 |                  1.72 |
+| pgduckdb-1-1-1-1   |        36.16 |      0.58 |           1.75 |                  3.30 |
+| pgduckdb-1-1-2-1   |        36.16 |      0.58 |           1.75 |                  3.30 |
+| pgduckdb-1-1-3-1   |        36.16 |      0.58 |           1.75 |                  3.30 |
+| postgresql-1-1-1-1 |        16.62 |      0.54 |           0.51 |                  1.72 |
+| postgresql-1-1-2-1 |        16.62 |      0.54 |           0.51 |                  1.72 |
+| postgresql-1-1-3-1 |        16.62 |      0.54 |           0.51 |                  1.72 |
 
 ### Loading phase: component data generator
 
@@ -843,80 +843,92 @@ No warnings
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| pgduckdb-1-1-1-1   |         4.07 |      0.00 |           0.00 |                  0.26 |
-| pgduckdb-1-1-2-1   |         4.07 |      0.00 |           0.00 |                  0.26 |
-| pgduckdb-1-1-3-1   |         4.07 |      0.00 |           0.00 |                  0.26 |
-| postgresql-1-1-1-1 |         4.88 |      0.00 |           0.02 |                  0.37 |
-| postgresql-1-1-2-1 |         4.88 |      0.00 |           0.02 |                  0.37 |
-| postgresql-1-1-3-1 |         4.88 |      0.00 |           0.02 |                  0.37 |
+| pgduckdb-1-1-1-1   |         5.89 |      0.00 |           0.00 |                  0.31 |
+| pgduckdb-1-1-2-1   |         5.89 |      0.00 |           0.00 |                  0.31 |
+| pgduckdb-1-1-3-1   |         5.89 |      0.00 |           0.00 |                  0.31 |
+| postgresql-1-1-1-1 |         3.69 |      0.00 |           0.01 |                  0.30 |
+| postgresql-1-1-2-1 |         3.69 |      0.00 |           0.01 |                  0.30 |
+| postgresql-1-1-3-1 |         3.69 |      0.00 |           0.01 |                  0.30 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS               | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|:-------------|----------:|---------------:|----------------------:|
-| pgduckdb-1-1-1-1   | n/a          |      0.00 |           1.75 |                  3.38 |
-| pgduckdb-1-1-2-1   | n/a          |      1.55 |           1.85 |                  3.49 |
-| pgduckdb-1-1-3-1   | 215.06       |      3.99 |           2.13 |                  3.77 |
-| postgresql-1-1-1-1 | n/a          |      0.40 |           1.92 |                  3.55 |
-| postgresql-1-1-2-1 | n/a          |      2.04 |           5.28 |                  6.91 |
-| postgresql-1-1-3-1 | n/a          |      2.01 |           3.08 |                  4.71 |
+| pgduckdb-1-1-1-1   | n/a          |      0.76 |           1.81 |                  3.44 |
+| pgduckdb-1-1-2-1   | n/a          |      0.93 |           1.86 |                  3.49 |
+| pgduckdb-1-1-3-1   | 171.43       |      3.99 |           2.07 |                  3.73 |
+| postgresql-1-1-1-1 | n/a          |      0.53 |           1.92 |                  3.55 |
+| postgresql-1-1-2-1 | n/a          |      0.42 |           1.89 |                  3.52 |
+| postgresql-1-1-3-1 | n/a          |      0.00 |           1.89 |                  3.52 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS               | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|:-------------|----------:|---------------:|----------------------:|
-| pgduckdb-1-1-1-1   | n/a          |      0.00 |           0.01 |                  0.01 |
-| pgduckdb-1-1-2-1   | n/a          |      0.00 |           0.01 |                  0.01 |
-| pgduckdb-1-1-3-1   | 45.76        |      0.73 |           0.29 |                  0.29 |
-| postgresql-1-1-1-1 | n/a          |      0.00 |           0.29 |                  0.29 |
-| postgresql-1-1-2-1 | n/a          |      0.00 |           0.28 |                  0.28 |
-| postgresql-1-1-3-1 | n/a          |      0.00 |           0.58 |                  0.58 |
+| pgduckdb-1-1-1-1   | n/a          |      0.00 |           0.31 |                  0.32 |
+| pgduckdb-1-1-2-1   | n/a          |      0.00 |           0.00 |                  0.00 |
+| pgduckdb-1-1-3-1   | 46.85        |      0.04 |           0.31 |                  0.31 |
+| postgresql-1-1-1-1 | n/a          |      0.00 |           0.00 |                  0.00 |
+| postgresql-1-1-2-1 | n/a          |      0.00 |           0.00 |                  0.00 |
+| postgresql-1-1-3-1 | n/a          |      0.00 |           0.35 |                  0.35 |
 
 ### Missing Monitoring Metrics
 * CPU Utilization [CPUs] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
 * CPU Throttling Rate [s/s] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
-* Memory Usage, Working Set [MiB] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* Memory Usage incl. Page Cache [MiB] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization [CPUs] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttling Rate [s/s] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage, Working Set [MiB] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage incl. Page Cache [MiB] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttled Time [s] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization Time [s] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU User Time [s] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU System Time [s] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization [CPUs] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
 * CPU Throttling Rate [s/s] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection pgduckdb-1-1-1-1 (bexhoma-metrics-pgduckdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Utilization [CPUs] for connection pgduckdb-1-1-2-1 (bexhoma-metrics-pgduckdb-1-1-2-1-benchmarker.log, expected: phase shorter than scrape interval)
 * CPU Throttling Rate [s/s] for connection pgduckdb-1-1-2-1 (bexhoma-metrics-pgduckdb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection pgduckdb-1-1-2-1 (bexhoma-metrics-pgduckdb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection pgduckdb-1-1-2-1 (bexhoma-metrics-pgduckdb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Memory Usage, Working Set [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Memory Usage incl. Page Cache [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU Utilization Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU User Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU System Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * Memory Usage, Working Set [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Memory Usage incl. Page Cache [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Utilization Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU User Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU System Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Utilization [CPUs] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: phase shorter than scrape interval)
-* CPU Utilization [CPUs] for connection postgresql-1-1-3-1 (bexhoma-metrics-postgresql-1-1-3-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Memory Usage incl. Page Cache [MiB] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Memory Usage, Working Set [MiB] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU Throttling Rate [s/s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU System Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU Utilization Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: phase shorter than scrape interval)
+* CPU User Time [s] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Network Tx Total [MiB] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
+* Network Rx Total [MiB] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: phase shorter than scrape interval)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-2-1 (bexhoma-metrics-postgresql-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-3-1 (bexhoma-metrics-postgresql-1-1-3-1-benchmarker.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection postgresql-1-1-3-1 (bexhoma-metrics-postgresql-1-1-3-1-benchmarker.log, expected: phase shorter than scrape interval)
 Experiment                    : cleaning up per-connection artefacts
 Experiment                    : cleaning up per-connection artefacts completed
 
