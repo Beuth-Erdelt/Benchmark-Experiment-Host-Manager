@@ -18,24 +18,53 @@ jobs:
       - run: pip install ruff==0.17.6
       - run: ruff check --output-format=github bexhoma agent experiment.py
 
+  # The oldest Python that pyproject.toml allows (requires-python) and the one of
+  # the images and the cluster runner. Coverage is measured on 3.12 only.
   pytest:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.12"]
     steps:
       - uses: actions/checkout@v5
+        with:
+          # diff-cover compares against the base branch
+          fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: ${{ matrix.python }}
           cache: pip
       - run: pip install -r requirements.txt pytest "coverage[toml]>=7.10" -e ".[agent]"
-      - run: python -m coverage run -m pytest tests -q
+      - if: matrix.python != '3.12'
+        run: python -m pytest tests -q
+      - if: matrix.python == '3.12'
+        run: python -m coverage run -m pytest tests -q
       # Coverage of bexhoma and agent, including the collector validations that
       # run as subprocesses; fails below the floor set in pyproject.toml.
       - name: Coverage
+        if: matrix.python == '3.12'
         run: |
           set -o pipefail
           python -m coverage combine -q
           python -m coverage report | tee coverage.txt
           tail -1 coverage.txt | awk '{print "Coverage: " $NF}' >> "$GITHUB_STEP_SUMMARY"
+      # The floor above only stops the total from falling; a pull request into
+      # dev should also cover the lines it adds or changes. Reported, not yet
+      # blocking: the mechanical ruff clean-ups (S2 of dev/plan-software-quality.md)
+      # change many untested lines without changing logic. Remove
+      # continue-on-error once they are done.
+      - name: Diff coverage
+        if: matrix.python == '3.12' && github.event_name == 'pull_request' && github.base_ref == 'dev'
+        continue-on-error: true
+        run: |
+          pip install diff-cover==11.0.4
+          python -m coverage xml -q
+          status=0
+          diff-cover coverage.xml --compare-branch=origin/dev --fail-under=80 > diff-cover.txt || status=$?
+          cat diff-cover.txt
+          { echo '```'; cat diff-cover.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
 
   # On a pull request into master (the release PR): would the merge publish?
   # Same rule as the publish workflow, without the tag. Informational only, the
