@@ -239,11 +239,23 @@ class ResetCompletenessTest(unittest.TestCase):
         self.assertEqual({c.docker for c in configurations}, set(group))
 
     def test_tpch_refresh_stream_is_refused_when_the_dbms_need_different_jobs(self):
+        """In-process path (experiment.py calls run() without main()): run() refuses on its own.
+
+        The command line refuses earlier, in main(): tests/test_early_refusals.py.
+        """
+        from bexhoma.benchmarks.tpch import cli as tpch
         from bexhoma.system_descriptors import IncompatibleBenchmark
-        with self.assertRaisesRegex(IncompatibleBenchmark, 'need different ones'):
-            _run_script('tpch.py', '-xrs', '1', '-dbms', 'PostgreSQL', 'MySQL')
-        with self.assertRaisesRegex(IncompatibleBenchmark, 'need different ones'):
-            _run_script('tpch.py', '-xrs', '1', '-dbms', 'PostgreSQL', 'ClickHouse')
+        for other in ('MySQL', 'ClickHouse'):
+            with self.subTest(other=other), tempfile.TemporaryDirectory() as tmp_dir:
+                args = tpch.build_parser().parse_args(['run', '-xrs', '1', '-dbms', 'PostgreSQL', other])
+                cluster = _SweepStubCluster(resultfolder=tmp_dir)
+                cluster.volumes = _AnyVolumes(cluster.volumes)
+                with (
+                    mock.patch('bexhoma.clusters.Kubernetes', return_value=cluster),
+                    contextlib.redirect_stdout(io.StringIO()),
+                    self.assertRaisesRegex(IncompatibleBenchmark, 'need different ones'),
+                ):
+                    tpch.run(args)
 
 
 class ResetScriptContentTest(unittest.TestCase):

@@ -14,8 +14,8 @@ See LICENSE for details.
 from bexhoma import *  # noqa: F403
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.benchmarks.dbmsbenchmarker.benchmark import DIMENSION_VARIANTS, dimension_folder
-from bexhoma.system_descriptors import (dbms_choices, default_dockers, dimension_dockers, load_dockers,
-                                        refresh_template, storage_prefix, unsupported_dimension)
+from bexhoma.system_descriptors import (IncompatibleBenchmark, dbms_choices, default_dockers, dimension_dockers,
+                                        load_dockers, refresh_template, storage_prefix, unsupported_dimension)
 from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, loading_layouts,
                                                 tenancy_error, tenant_ids)
 from bexhoma.cli_args import storage_suffix as _storage_suffix, set_cell_storage as _set_cell_storage
@@ -339,6 +339,12 @@ def main() -> None:
         reason = unsupported_dimension(dockers, docker, 'tpch', args.dimensions)
         if reason:
             parser.error(f'-xdim {args.dimensions} is not supported for {docker} in TPC-H: {reason}')
+    if args.num_refresh_streams > 0:
+        # one refresh job serves every DBMS; refuse before run() reaches the cluster
+        try:
+            refresh_template(dockers, args.dbms or default_dockers(dockers, 'tpch'), 'tpch')
+        except IncompatibleBenchmark as error:
+            parser.error(f'-xrs {args.num_refresh_streams}: {error}')
     run(args)
     exit()
 
