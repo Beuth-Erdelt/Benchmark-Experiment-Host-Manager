@@ -8,6 +8,11 @@ Checked 2026-11-22: unchanged, the problem still exists (`k8s/deploymenttemplate
 still runs `ALTER ROLE postgres SET duckdb.force_execution = true` in `postStart`, `option_parameters`
 in `k8s-cluster.config` still map `DUCKDB_FORCE_EXECUTION`). Since 2026-11-13 `tpch_catalog.option_flags()`
 is in `bexhoma/benchmarks/tpch/catalog.py`, and the `-xdfe` flags in `bexhoma/benchmarks/{tpch,ssb}/cli.py`.
+2026-11-23: ranked P1 (results on a reused volume can be wrong), deferred by the user ("for later").
+Add when implementing: the workload note "PgDuckDB queries are forced through the DuckDB execution engine"
+follows only the global `tpch.duckdb_force_execution`, not a system's own `sut_parameters` (a YAML system with
+`DUCKDB_FORCE_EXECUTION=true` gets no note; found in run 1.5 of
+[plan-dbms-generic-verification.md](plan-dbms-generic-verification.md)).
 
 ## Problem
 

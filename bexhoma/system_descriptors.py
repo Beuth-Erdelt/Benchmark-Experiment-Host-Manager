@@ -52,6 +52,7 @@ the entry script of that benchmark needs to configure the DBMS:
     A run with ``-mtn`` is refused for a DBMS that does not list the requested mode (:func:`unsupported_tenancy`).
 ``per_loading_threads``
     Loading parameters of a DBMS that gets one configuration per ``-nlt`` value; ``{threads}`` is that value.
+    No DBMS declares it at the moment; without it, ``-nlt`` is reported as ignored.
 ``option_experiment``
     ``{option: {script: ..., indexing: ...}}``: init and indexing scripts the DBMS switches to when the
     boolean command line option is set (e.g. columnar storage).

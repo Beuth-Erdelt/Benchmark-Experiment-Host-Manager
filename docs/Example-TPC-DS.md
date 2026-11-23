@@ -95,7 +95,7 @@ This
     * if data is already present: do nothing
   * with a loading container each
     * importing TPC-DS data from the distributed filesystem
-    * loading uses 8 threads (`-nlt`)
+    * `-nlt 8` is ignored: the TPC-DS loaders use one connection per pod, and bexhoma says so in the log
 * creates constraints (`-xic`) and indexes (`-xii`) and updates table statistics (`-xis`) after ingestion
 * runs 1 stream of TPC-DS queries
   * data transfer is also measured (`-xdt`)
