@@ -50,7 +50,7 @@ CREATE TABLE tpcds.dbgen_version
     dv_create_date  DATE         ,
     dv_create_time  TIME         ,
     dv_cmdline_args VARCHAR(200)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.customer_address
 (
@@ -68,7 +68,7 @@ CREATE TABLE tpcds.customer_address
     ca_gmt_offset    DECIMAL(5,2)         ,
     ca_location_type CHAR(20)             ,
     PRIMARY KEY (ca_address_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.customer_demographics
 (
@@ -82,7 +82,7 @@ CREATE TABLE tpcds.customer_demographics
     cd_dep_employed_count INTEGER          ,
     cd_dep_college_count  INTEGER          ,
     PRIMARY KEY (cd_demo_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.date_dim
 (
@@ -115,7 +115,7 @@ CREATE TABLE tpcds.date_dim
     d_current_quarter   CHAR(1)          ,
     d_current_year      CHAR(1)          ,
     PRIMARY KEY (d_date_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.warehouse
 (
@@ -134,7 +134,7 @@ CREATE TABLE tpcds.warehouse
     w_country         VARCHAR(20)          ,
     w_gmt_offset      DECIMAL(5,2)         ,
     PRIMARY KEY (w_warehouse_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.ship_mode
 (
@@ -145,7 +145,7 @@ CREATE TABLE tpcds.ship_mode
     sm_carrier      CHAR(20)         ,
     sm_contract     CHAR(20)         ,
     PRIMARY KEY (sm_ship_mode_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.time_dim
 (
@@ -160,7 +160,7 @@ CREATE TABLE tpcds.time_dim
     t_sub_shift CHAR(20)         ,
     t_meal_time CHAR(20)         ,
     PRIMARY KEY (t_time_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.reason
 (
@@ -168,7 +168,7 @@ CREATE TABLE tpcds.reason
     r_reason_id   CHAR(16) NOT NULL,
     r_reason_desc CHAR(100)        ,
     PRIMARY KEY (r_reason_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.income_band
 (
@@ -176,7 +176,7 @@ CREATE TABLE tpcds.income_band
     ib_lower_bound    INTEGER         ,
     ib_upper_bound    INTEGER         ,
     PRIMARY KEY (ib_income_band_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.item
 (
@@ -203,7 +203,7 @@ CREATE TABLE tpcds.item
     i_manager_id     INTEGER              ,
     i_product_name   CHAR(50)             ,
     PRIMARY KEY (i_item_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.store
 (
@@ -237,7 +237,7 @@ CREATE TABLE tpcds.store
     s_gmt_offset       DECIMAL(5,2)          ,
     s_tax_precentage   DECIMAL(5,2)          ,
     PRIMARY KEY (s_store_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.call_center
 (
@@ -273,7 +273,7 @@ CREATE TABLE tpcds.call_center
     cc_gmt_offset     DECIMAL(5,2)         ,
     cc_tax_percentage DECIMAL(5,2)         ,
     PRIMARY KEY (cc_call_center_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.customer
 (
@@ -296,7 +296,7 @@ CREATE TABLE tpcds.customer
     c_email_address        CHAR(50)         ,
     c_last_review_date     CHAR(10)         ,
     PRIMARY KEY (c_customer_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.web_site
 (
@@ -327,7 +327,7 @@ CREATE TABLE tpcds.web_site
     web_gmt_offset     DECIMAL(5,2)         ,
     web_tax_percentage DECIMAL(5,2)         ,
     PRIMARY KEY (web_site_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.store_returns
 (
@@ -352,7 +352,7 @@ CREATE TABLE tpcds.store_returns
     sr_store_credit       DECIMAL(7,2)         ,
     sr_net_loss           DECIMAL(7,2)         ,
     PRIMARY KEY (sr_item_sk, sr_ticket_number)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.household_demographics
 (
@@ -362,7 +362,7 @@ CREATE TABLE tpcds.household_demographics
     hd_dep_count      INTEGER          ,
     hd_vehicle_count  INTEGER          ,
     PRIMARY KEY (hd_demo_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.web_page
 (
@@ -381,7 +381,7 @@ CREATE TABLE tpcds.web_page
     wp_image_count      INTEGER              ,
     wp_max_ad_count     INTEGER              ,
     PRIMARY KEY (wp_web_page_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.promotion
 (
@@ -405,7 +405,7 @@ CREATE TABLE tpcds.promotion
     p_purpose         CHAR(15)              ,
     p_discount_active CHAR(1)               ,
     PRIMARY KEY (p_promo_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.catalog_page
 (
@@ -419,7 +419,7 @@ CREATE TABLE tpcds.catalog_page
     cp_description         VARCHAR(100)         ,
     cp_type                VARCHAR(100)         ,
     PRIMARY KEY (cp_catalog_page_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.inventory
 (
@@ -428,7 +428,7 @@ CREATE TABLE tpcds.inventory
     inv_warehouse_sk     INTEGER NOT NULL,
     inv_quantity_on_hand INTEGER         ,
     PRIMARY KEY (inv_date_sk, inv_item_sk, inv_warehouse_sk)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.catalog_returns
 (
@@ -460,7 +460,7 @@ CREATE TABLE tpcds.catalog_returns
     cr_store_credit          DECIMAL(7,2)         ,
     cr_net_loss              DECIMAL(7,2)         ,
     PRIMARY KEY (cr_item_sk, cr_order_number)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.web_returns
 (
@@ -489,7 +489,7 @@ CREATE TABLE tpcds.web_returns
     wr_account_credit        DECIMAL(7,2)         ,
     wr_net_loss              DECIMAL(7,2)         ,
     PRIMARY KEY (wr_item_sk, wr_order_number)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.web_sales
 (
@@ -528,7 +528,7 @@ CREATE TABLE tpcds.web_sales
     ws_net_paid_inc_ship_tax DECIMAL(7,2)         ,
     ws_net_profit            DECIMAL(7,2)         ,
     PRIMARY KEY (ws_item_sk, ws_order_number)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.catalog_sales
 (
@@ -567,7 +567,7 @@ CREATE TABLE tpcds.catalog_sales
     cs_net_paid_inc_ship_tax DECIMAL(7,2)         ,
     cs_net_profit            DECIMAL(7,2)         ,
     PRIMARY KEY (cs_item_sk, cs_order_number)
-);
+){row_format}{stats_sample_pages};
 
 CREATE TABLE tpcds.store_sales
 (
@@ -595,4 +595,4 @@ CREATE TABLE tpcds.store_sales
     ss_net_paid_inc_tax   DECIMAL(7,2)         ,
     ss_net_profit         DECIMAL(7,2)         ,
     PRIMARY KEY (ss_item_sk, ss_ticket_number)
-);
+){row_format}{stats_sample_pages};

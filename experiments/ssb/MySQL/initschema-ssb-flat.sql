@@ -9,7 +9,6 @@
 --          the primary key (lo_orderkey, lo_linenumber) is part of the table, as
 --          for lineorder.
 --          Import settings (load durability, -xld) are in durability-*.sql.
---          No curly braces in this file: bexhoma may fill it with str.format().
 
 -- Create a passworded root account accessible from any host (the loader connects as root)
 DROP USER 'root'@'%';
@@ -65,4 +64,4 @@ CREATE TABLE ssb.lineorder_flat (
     p_size              INTEGER      NOT NULL,
     p_container         VARCHAR(10)  NOT NULL,
     PRIMARY KEY (lo_orderkey, lo_linenumber)
-);
+){row_format}{stats_sample_pages};
