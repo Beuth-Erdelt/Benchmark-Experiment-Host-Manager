@@ -41,7 +41,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+The experiment is run with the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
 Example:
 ```bash
@@ -1465,7 +1465,7 @@ See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract and [Test:
 
 ## TPC-DS
 
-For performing the experiment we can run the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
+The experiment is run with the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
 
 ### Power Test
 

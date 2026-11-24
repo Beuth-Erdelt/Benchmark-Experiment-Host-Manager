@@ -41,7 +41,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -606,7 +606,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_citus_storage.log
 ```
 
-The following status shows we have one volume of type `shared`.
+The following status shows a volume of type `shared`.
 Every Citus experiment will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of Citus mounts the volume and generates the data.
@@ -989,7 +989,7 @@ where
 ### Deployment
 
 * [deploymenttemplate-Citus.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Citus.yml): the coordinator is the SUT deployment, the workers are a stateful set.
-* The template uses the Debian image `citusdata/citus:14.2.0` (PostgreSQL 18), not `-alpine`: `14.2.0-alpine` fails about 5 % of TPC-C New Order transactions with `could not append to file: Not supported`.
+* The template uses the Debian image `citusdata/citus`, not `-alpine`: the Alpine image fails TPC-C New Order transactions with `could not append to file: Not supported`.
 * Coordinator and workers set `PGDATA=/var/lib/postgresql/data/pgdata`; PostgreSQL 18 images otherwise use `/var/lib/postgresql/18/docker` and refuse a volume mounted at `/var/lib/postgresql/data`.
 
 ### Schema and Scripts
@@ -1003,7 +1003,7 @@ DDL scripts per benchmark:
 
 TPC-H and SSB distribute the fact tables (`orders`/`lineitem`, `lineorder`) by the order key; the dimensions are reference tables, a full copy on every worker.
 SSB can distribute the dimensions by their own key instead (`-xdim distributed`, scripts in `Citus/distributed`); then a join with `lineorder` is a repartition join.
-TPC-H refuses `-xdim distributed` for Citus: with distributed dimensions Citus could not plan 12 of the 22 queries (joins that are not co-located, subqueries, a cartesian product; check 2026-10-30).
+TPC-H refuses `-xdim distributed` for Citus: with distributed dimensions Citus cannot plan 12 of the 22 queries (joins that are not co-located, subqueries, a cartesian product).
 
 DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)):
 
@@ -1040,9 +1040,9 @@ See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract and [Test:
 
 ## Benchbase's TPC-C
 
-Before ingestion, we run a script to create and distribute the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/benchbase/Citus/initschema-benchbase.sql
+Before ingestion, a script creates and distributes the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/benchbase/Citus/initschema-benchbase.sql
 
-After ingestion, we run a script to check the distributions.
+After ingestion, a script checks the distributions.
 The script also vacuums and analyzes the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/benchbase/Citus/checkschema-benchbase.sql
 
 ### Benchbase Simple Example
@@ -1820,7 +1820,7 @@ Benchbase Workload tpcc SF=128
 
 ### Benchbase Realistic
 
-We run a benchmark with
+This runs a benchmark with
 * PVCs for persistent database
 * monitoring
 * a sensible number of workers (4)
@@ -1835,7 +1835,7 @@ We run a benchmark with
 
 Note that the number of threads for each pod is a multiple of the number of warehouses.
 At start, Benchbase assigns each thread to a fixed warehouse.
-This way, we distribute the threads equally to the warehouses.
+This distributes the threads equally to the warehouses.
 Each thread also gets assigned a fixed range of districts per warehouse.
 Please also note, that this is not compliant to the TPC-C specifications, which state: *For each active warehouse in the database, the SUT must accept requests for transactions from a population of 10 terminals.*
 
@@ -2706,7 +2706,7 @@ Benchbase Workload tpcc SF=128
 HammerDB provides an option to benchmark PostgreSQL with citus compatibility activated.
 This generates the tables and functions in an empty database and additionally distributes tables and functions: https://github.com/TPC-Council/HammerDB/blob/master/src/postgresql/pgoltp.tcl
 
-After ingestion, we run a script to check the distributions.
+After ingestion, a script checks the distributions.
 The script also vacuums and analyzes the tables: https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/tpcc/Citus/checkschema-tpcc.sql
 
 ### HammerDB Simple Example
@@ -3413,19 +3413,18 @@ HammerDB Workload SF=128 (warehouses for TPC-C)
 
 ### HammerDB Referenced Paper
 
-We here run HammerDB TPROC-C benchmark against Citus similar to [1].
-We in particular copy the setting 500 warehouses, 250 virtual users and 4 worker nodes.
-There has been made a contribution to HammerDB by [2] and we assume this reflects the configuration used in [1]:
+This runs the HammerDB TPROC-C benchmark against Citus similar to [1], with 500 warehouses, 250 virtual users and 4 worker nodes.
+The configuration follows the contribution of [2] to HammerDB, which corresponds to [1]:
 *In case of Citus, we converted the items table to a reference table
 and the remaining tables to co-located distributed tables with the
 warehouse ID column as the distribution column. Additionally, we
 configured Citus to delegate stored procedure calls to worker nodes
 based on the warehouse ID argument.*
-We configure the experiment to use 48 shards, run for 20 minutes and split the 250 virtual users (sequentially) into 1,2,5 and 10 pods.
+The experiment uses 48 shards, runs for 20 minutes and splits the 250 virtual users (sequentially) into 1,2,5 and 10 pods.
 Database is persisted on PVCs.
 The experiment runs twice for confidence.
 
-Note: In [1] YCSB is run as this: *For this benchmark, the coordinatorâ€™s CPU usage becomes a scaling bottleneck. Hence, we ran the benchmark with every worker node acting as coordinator and configured YCSB to load balance across all nodes.* This apparently uses [4], part of the Citus benchmark toolkit [3], and PostgreSQL loadbalancer feature [5].
+Note: In [1] YCSB is run as this: *For this benchmark, the coordinatorâ€™s CPU usage becomes a scaling bottleneck. Hence, we ran the benchmark with every worker node acting as coordinator and configured YCSB to load balance across all nodes.* This uses [4], part of the Citus benchmark toolkit [3], and PostgreSQL loadbalancer feature [5].
 
 [1] [Citus: Distributed PostgreSQL for Data-Intensive Applications](https://dl.acm.org/doi/10.1145/3448016.3457551)
 > Umur Cubukcu, Ozgun Erdogan, Sumedh Pathak, Sudhakar Sannakkayala, and Marco Slot.
@@ -4342,7 +4341,7 @@ HammerDB Workload SF=500 (warehouses for TPC-C)
 
 ## TPC-H
 
-We build the schema similar to [2] in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/tpch/Citus/initschema-tpch.sql
+The schema is built similar to [2] in https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/experiments/tpch/Citus/initschema-tpch.sql
 
 ```sql
 select create_reference_table('nation');
@@ -4359,7 +4358,7 @@ It is also mentioned in [1] that the big tables `orders` and `linetime` should b
 As the paper used Citus 9.5, columnar storage has not been included in Citus [3].
 Note that columnar storage has some limitations as no UPDATEs, no DELETEs and no FOREIGN KEYs.
 Also note that Citus does not support all TPC-H queries.
-In a correlated subquery there cannot be a replicated table, so we have to rewrite Q22.
+In a correlated subquery there cannot be a replicated table, so Q22 is rewritten.
 
 [1] [Citus: Distributed PostgreSQL for Data-Intensive Applications](https://dl.acm.org/doi/10.1145/3448016.3457551)
 > Umur Cubukcu, Ozgun Erdogan, Sumedh Pathak, Sudhakar Sannakkayala, and Marco Slot.
@@ -4617,7 +4616,7 @@ No warnings
 
 ### TPC-H More Complex Example
 
-We run TPC-H Power Test at SF=10.
+This runs the TPC-H power test at SF=10.
 Possibly existing PVCs of the workers are removed before loading (`-rsr`).
 Note that this takes a lot of disk space including for indexes.
 

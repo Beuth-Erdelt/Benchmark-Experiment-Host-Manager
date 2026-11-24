@@ -33,7 +33,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+The experiment is run with the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
 Example:
 ```bash
@@ -275,8 +275,8 @@ No warnings
 
 This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
 Moreover the loading times (schema creation, ingestion and indexing), the geometric mean of query execution times and the TPC-H metrics power and throughput are reported.
-Please note that the results are not suitable for being published as official TPC-H results.
-In particular the refresh streams are missing.
+The results are not official TPC-H results.
+This run has no refresh stream (see [Refresh Stream](#refresh-stream)).
 
 To see the summary again you can simply call `bexhoma summary -e 1759316196` with the experiment code.
 
@@ -801,12 +801,12 @@ No warnings
 </details>
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
-PostgreSQL is fast, so we cannot see a lot (metrics are fetched every 30 seconds).
+Metrics are fetched every 30 seconds, so a short phase has few samples.
 
 
 ## Perform Benchmark - Throughput Test
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+The experiment is run with the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
 Example:
 ```bash
@@ -1086,7 +1086,7 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql_storage.log
 ```
-The following status shows we have a volumes of type `shared`.
+The following status shows a volume of type `shared`.
 Every experiment running TPC-H of SF=1 at PostgreSQL will take the database from this volume and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of PostgreSQL mounts the volume and generates the data.
@@ -2103,7 +2103,7 @@ No warnings
 
 Not every iteration needs the full 22-query stream. `-xaq` restricts a run to the given 1-based query numbers; every other query is set inactive for this experiment's uploaded query config only — the query config files in [experiments/tpch/](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch) are never modified, so a later run without `-xaq` sees the full query set again.
 
-Looking back at the [SF=10 monitoring example](#monitoring) above, Q1, Q18, Q14 and Q9 dominate total runtime (34.5s, 24.0s, 17.0s and 10.3s respectively), while every other query finishes in under 8.5s. When iterating on a tuning change (e.g. `shared_buffers` or `work_mem`), re-running just these four queries gives a fast read on whether the change helped, without waiting on the full stream.
+When iterating on a tuning change (e.g. `shared_buffers` or `work_mem`), re-running only the long-running queries shows the effect of the change without the full stream.
 
 Example:
 ```bash

@@ -208,3 +208,8 @@ the total stays above 69%.
 - Type checks (mypy/pyright): later, after S6, starting with `cli_args.py`,
   `system_builder.py`, `benchmarks/registry.py`.
 - Class renames in `clusters.py` (excluded by earlier decision).
+
+## Known structural debt (moved from docs/Architecture.md)
+
+- `experiments/base.py` (about 4,000 lines) and `clusters.py` (about 3,700 lines) are the largest modules. `work_benchmark_list()` alone is several hundred lines; splitting it into one handler per phase would make the phases testable on their own.
+- The legacy `benchmark_list` path of the main loop is still there for configurations without benchmarker entries in `experiment_dict`. The entry scripts call `add_benchmark_list()`, which also fills `experiment_dict`, so they take the `experiment_dict` path.

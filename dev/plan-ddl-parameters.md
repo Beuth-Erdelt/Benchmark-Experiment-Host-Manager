@@ -674,7 +674,7 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
   resource sweep or a storage class); agent validator: factor `ddl` in
   `discriminates`, sweep counted in `count_runs()`. The catalog is read whole
   by the agent (limit 56,000 characters): 54,547 after M3b, little room left.
-  Design doc: docs/Design-Catalog-Contract.md "DDL parameters".
+  Design doc: dev/Design-Catalog-Contract.md "DDL parameters".
 - **M4** priority B keys, one DBMS at a time, each with a docs test run.
   **Batches 1-2 committed 2026-10-30** (da4121ee), defaults reproduce
   the scripts (an empty `sql` text where the old script had nothing):

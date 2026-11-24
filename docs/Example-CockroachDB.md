@@ -5,8 +5,8 @@ This example shows how to benchmark CockroachDB with YCSB and Benchbase's TPC-C,
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 [CockroachDB](https://www.cockroachlabs.com/) is a distributed, PostgreSQL wire-compatible DBMS.
-CockroachDB offers several installation methods; we here rely on *CockroachDB insecure test cluster in a single Kubernetes cluster*.
-The benefit of this approach is we can use a [manifest](https://github.com/cockroachdb/cockroach/blob/master/cloud/kubernetes/cockroachdb-statefulset.yaml) for a stateful set provided by CockroachDB.
+CockroachDB offers several installation methods; bexhoma uses the *CockroachDB insecure test cluster in a single Kubernetes cluster*.
+This way, bexhoma uses a [manifest](https://github.com/cockroachdb/cockroach/blob/master/cloud/kubernetes/cockroachdb-statefulset.yaml) for a stateful set provided by CockroachDB.
 A CockroachDB cluster does not require a coordinator; every worker pod is a node of the cluster.
 Bexhoma still deploys a main pod (called master) as a substitute for a single point of contact and to annotate status of experiments.
 
@@ -42,7 +42,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -810,7 +810,7 @@ All other instances just use the database without generating and loading data.
 Bexhoma uses two types of volumes.
 The first volume is attached to the (dummy) coordinator and is used to persist infos across experiments (and not to store actual data).
 The other volumes (worker volumes) are attached to the worker pods and store the actual data.
-Here, we remove existing storage via `-rsr` to start with a clean copy.
+This removes existing storage via `-rsr` to start with a clean copy.
 
 ### Example Result
 

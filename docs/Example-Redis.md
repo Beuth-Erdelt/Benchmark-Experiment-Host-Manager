@@ -37,7 +37,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -769,7 +769,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_redis_storage.log
 ```
 
-The following status shows we have one volume of type `shared`.
+The following status shows a volume of type `shared`.
 Every single-host Redis experiment running YCSB of SF=1 will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of Redis mounts the volume and generates the data.
@@ -1238,7 +1238,7 @@ YCSB SF=1
 #### Cluster on Persistent Storage
 
 A Redis cluster can store the database in persistent storage, too.
-Here, we remove existing storage via `-rsr` to start with a clean copy.
+This removes existing storage via `-rsr` to start with a clean copy.
 
 ```bash
 bexhoma ycsb \
@@ -1572,7 +1572,7 @@ YCSB SF=3
 
 ### Replication
 
-We can set the number of replicas with the parameter `-nwr`.
+The parameter `-nwr` sets the number of replicas.
 Redis requires a worker per replicated shard, so `-nw 3` and `-nwr 1` create 6 worker pods, 3 for sharding and another 3 for the (single) replicas.
 
 ```bash

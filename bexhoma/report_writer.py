@@ -115,7 +115,7 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
      "The experiment.yml/.yaml this run was actually built from, plus provenance "
      "copies of the contract(s)/catalog/environment file(s) that governed it - "
      "not a Kubernetes manifest; see docs/AgentResultContract.md and "
-     "docs/Design-Catalog-Contract.md for what each one means."),
+     "dev/Design-Catalog-Contract.md for what each one means."),
     ("configs", "Connection and Workload Configs", ("*.config",),
      "`connections.config` is the list of every connection dict (identity, "
      "parameters, timings); each `<job>.config` is a durable single-connection "

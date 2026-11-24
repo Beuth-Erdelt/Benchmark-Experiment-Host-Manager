@@ -5,12 +5,12 @@
 > `bexhoma/benchmarks/tpch/builder.py` and
 > `tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml` exist. Where this note
 > and the code disagree, the code is right. For the current structure see
-> [Architecture](Architecture.md).
+> [Architecture](../docs/Architecture.md).
 >
 > Since then: the entry script `experiment.py` exists. The per-workload registry of section 2
 > (`DBMS_DEFAULTS`, `DEFAULT_REFRESH_TEMPLATE`) no longer exists as a Python table: what it held
 > (docker entry, SQL dialect, job templates, storage prefix) is part of the `dockers` section of
-> `cluster.config` now, see [Benchmarks of a DBMS](DBMS.md#benchmarks-of-a-dbms). A DBMS may be named
+> `cluster.config` now, see [Benchmarks of a DBMS](../docs/DBMS.md#benchmarks-of-a-dbms). A DBMS may be named
 > in `experiment.yaml` if its `tpch` entry has `experiment_yaml: True`, and the default `alias` of a system is
 > the `template.alias` of its DBMS.
 
@@ -333,7 +333,7 @@ Deliberately separate, and left untouched by this plan:
 Different schema, different files, on purpose. Unifying them (catalog-driven
 knob resolution feeding directly into this in-process builder, instead of
 `spec.py`'s current argv round-trip) is exactly the "Phase 2" territory
-`docs/Design-Catalog-Contract.md` already flags as future work — not part of
+`dev/Design-Catalog-Contract.md` already flags as future work — not part of
 this plan. The optional `catalog:`/`environment:` provenance pointers above
 are the only place the two paths touch, and only for copying files, never for
 resolution.

@@ -165,7 +165,7 @@ class DocsConsistencyTest(unittest.TestCase):
         self.assertGreater(sum(1 for page in PAGES for _ in _local_links(page)), 300)
         calls = sum(len(_CALL.findall(line)) for page in PAGES
                     for line in page.read_text(encoding='utf-8').splitlines())
-        self.assertGreater(calls, 300)
+        self.assertGreater(calls, 250)
 
 
 if __name__ == '__main__':

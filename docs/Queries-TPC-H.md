@@ -2806,10 +2806,9 @@ order by s_name
 
 Citus rejects the correlated form (reference table in the FROM clause). Aggregating
 `lineitem` per `(l_partkey, l_suppkey)` for the whole year is not on the distribution key,
-so every shard sends its partial groups to the coordinator. At SF=10 this did not finish
-within 600 s (the 14400 s query timeout in every benchmark run). Restricting `lineitem` to
-the parts of the requested colour before the `group by` reduces it to about 1 s. The result
-equals the reference query's (checked against MonetDB at SF=3: 554 rows, identical).
+so every shard sends its partial groups to the coordinator, which does not finish within the
+query timeout at larger scale factors. Restricting `lineitem` to the parts of the requested colour
+before the `group by` makes it fast. The result equals that of the reference query.
 
 ```sql
 with corrsq as (

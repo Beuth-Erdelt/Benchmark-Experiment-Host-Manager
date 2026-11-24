@@ -36,7 +36,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+The experiment is run with the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
 Example:
 ```bash
@@ -261,7 +261,7 @@ This forwards ports, so you have
 
 [Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
-The 22 queries take about 270 s at SF=100, so this run uses SF=30 (`-sf`), with 256 GiB RAM.
+This run uses SF=30 (`-sf`), with 256 GiB RAM.
 There are no application metrics for MonetDB.
 
 ```bash
@@ -1015,14 +1015,14 @@ Official TPC-H benchmark - http://www.tpc.org/tpch
 
 ### Generate and Load Data
 
-At first we generate TPC-H data at SF=100 (`-sf`) with 8 parallel generators (`-nlp`).
+First, the script generates TPC-H data at SF=100 (`-sf`) with 8 parallel generators (`-nlp`).
 The generated data is stored at the shared disk `data`.
 Moreover the data is loaded into an instance of MonetDB using again 8 parallel loaders.
 Afterwards the script creates contraints (`-xic`) and indexes (`-xii`) and updates table statistics (`-xis`).
 The database is located in another shared disk of storageClass shared (`-rst`) and of size 1000Gi (`-rss`).
 
 The script also runs a power test (`-ne` set to 1) with timeout 1200s (`-t`) and data transfer activated (`-xdt`) once (`-nc` set to 1).
-To avoid conflicts with other experiments we set a maximum of 1 DBMS per time (`-ms`).
+To avoid conflicts with other experiments, it runs at most 1 DBMS at a time (`-ms`).
 Monitoring is activated (`-m`) for all components (`-mc`).
 The components, that is the SUT (`-rnn`) and the loader (`-rnl`) and the benchmark driver (`-rnb`), are fixed to specific nodes in the cluster.
 
@@ -1064,7 +1064,7 @@ bexhoma tpch \
 
 You can watch the status of the data disk via `bexhoma data`.
 
-In the following example output we see we have generated TPC-H at SF=100 using 8 generators.
+The following example output shows TPC-H data at SF=100 from 8 generators.
 The data set is split into 8 parts, each of about 14G size.
 In total the data set has a size of 106G.
 
@@ -1085,11 +1085,10 @@ In total the data set has a size of 106G.
 
 You can watch the status of experiments via `bexhoma status`.
 
-In the following example output we see all components of bexhoma are up and running.
+The following example output shows all components of bexhoma up and running.
 The cluster stores a MonetDB database corresponding to TPC-H of SF=100.
 The disk is of storageClass shared and of size 1000Gi and 210G of that space is used.
-It took about 7000s to build this database.
-Currently no DBMS is running.
+No DBMS is running.
 
 ```bash
 Dashboard: Running
@@ -1337,8 +1336,8 @@ You can inspect a preview list of results via `bexhoma localresults`.
 
 ### Perform Benchmark - Power Test
 
-We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
-We then run two power tests, one after the other (`-ne 1,1`), and shut down the DBMS.
+This starts a new instance of MonetDB on the prepared database of the shared disk.
+It runs two power tests, one after the other (`-ne 1,1`), and shuts down the DBMS.
 This is repeated 2 times (`-nc`).
 
 
@@ -1632,8 +1631,8 @@ No warnings
 
 ### Perform Benchmark - Throughput Test
 
-We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
-We then run two power tests, one after the other, and then a throughput test with 3 parallel driver (`-ne 1,1,3`). and shut down the DBMS.
+This starts a new instance of MonetDB on the prepared database of the shared disk.
+It runs two power tests, one after the other, then a throughput test with 3 parallel drivers (`-ne 1,1,3`), and shuts down the DBMS.
 
 
 ```bash
@@ -1942,7 +1941,7 @@ Note the added section about `volume_size` and `volume_used` in the connections 
 
 ## TPC-DS
 
-For performing the experiment we can run the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
+The experiment is run with the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
 
 ### Power Test
 
@@ -2197,7 +2196,7 @@ No warnings
 
 ### Monitoring
 
-At SF=3 the 99 queries take about 35 s, so this is shorter than the minute that monitoring needs; see [TPC-DS at SF 30](#tpc-ds-at-sf-30) for a longer run.
+At SF=3 the benchmarking phase is shorter than the minute that monitoring needs; see [TPC-DS at SF 30](#tpc-ds-at-sf-30) for a longer run.
 
 ```bash
 bexhoma tpcds \
@@ -2970,7 +2969,7 @@ Official TPC-DS benchmark - http://www.tpc.org/tpcds
 
 ### Generate and Load Data
 
-At first we generate TPC-DS data at SF=30 (`-sf`) with 8 parallel generators (`-nlp`).
+First, the script generates TPC-DS data at SF=30 (`-sf`) with 8 parallel generators (`-nlp`).
 The generated data is stored at the shared disk `data`.
 Moreover the data is loaded into an instance of MonetDB using again 8 parallel loaders.
 Afterwards the script creates contraints (`-xic`) and indexes (`-xii`) and updates table statistics (`-xis`).
@@ -2978,7 +2977,7 @@ The database is located in a persistent volume of storageClass nvme (`-rst`) and
 Storage is cleaned if it has existed (`-rsr`).
 
 The script also runs a power test (`-ne` set to 1) with timeout 14400s (`-t`) and data transfer activated (`-xdt`) once (`-nc` set to 1).
-To avoid conflicts with other experiments we set a maximum of 1 DBMS per time (`-ms`).
+To avoid conflicts with other experiments, it runs at most 1 DBMS at a time (`-ms`).
 Monitoring is activated (`-m`) for all components (`-mc`).
 A node is requested that has 900Gi RAM (`-rr`), the RAM limit is 1024Gi (`-lr`).
 
@@ -3018,11 +3017,10 @@ bexhoma tpcds \
 
 You can watch the status of experiments via `bexhoma status`.
 
-In the following example output we see all components of bexhoma are up and running.
+The following example output shows all components of bexhoma up and running.
 The cluster stores a MonetDB database corresponding to TPC-DS of SF=30.
 The disk is of storageClass nvme and of size 3000Gi and 156G of that space is used.
-It took about 4000s to build this database.
-Currently no DBMS is running.
+No DBMS is running.
 
 ```bash
 Dashboard: Running
@@ -3329,8 +3327,8 @@ No warnings
 
 ### Perform Benchmark - Power Test
 
-We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
-We then run two power tests, one after the other (`-ne 1,1`), and shut down the DBMS.
+This starts a new instance of MonetDB on the prepared database of the shared disk.
+It runs two power tests, one after the other (`-ne 1,1`), and shuts down the DBMS.
 This is repeated 2 times (`-nc`).
 
 ```bash
@@ -3693,8 +3691,8 @@ No warnings
 
 ### Perform Benchmark - Throughput Test
 
-We now start a new instance of MonetDB and mount the existing database: we use the prepared database on the shared disk.
-We then run two power tests, one after the other, and then a throughput test with 3 parallel driver (`-ne 1,1,3`). and shut down the DBMS.
+This starts a new instance of MonetDB on the prepared database of the shared disk.
+It runs two power tests, one after the other, then a throughput test with 3 parallel drivers (`-ne 1,1,3`), and shuts down the DBMS.
 
 
 ```bash

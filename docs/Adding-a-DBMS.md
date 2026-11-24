@@ -16,7 +16,7 @@ To add a DBMS called `NewDBMS`:
    No entry script has to be changed: `-dbms` offers every DBMS that has an entry for the benchmark, and the configuration is built from the entry.
    The key of the entry must match the YAML filename of the deployment template (`docker='NewDBMS'`).
 
-If you need a JDBC driver that is not yet included, please raise an issue at https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues.
+If a JDBC driver is missing, raise an issue at https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues.
 
 5. **Add an example page** `docs/Example-NewDBMS.md` with a test script `scripts/test-docs-newdbms.sh` and `.ps1`, whose runs are in the order of the page.
    All example pages of a DBMS have the same structure:

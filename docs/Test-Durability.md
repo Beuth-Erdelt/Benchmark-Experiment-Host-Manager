@@ -1,6 +1,6 @@
 # Test: Load Durability
 
-This page shows how to use `-xld` (load durability) and keeps the test script and the logs of its last run on the cluster.
+This page shows how to use `-xld` (load durability) with its test script and the logs of its runs.
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -80,9 +80,6 @@ What to check per log:
 * the result folder has `bexhoma-loading-<config>-durability-*` logs (before the load) and `-restoredurability-*` logs (after the load), with no errors in `.stderr` except documented NOTICEs and the mysql password warning
 * the `durability-*` stdout logs show the values during the load, the restore and checkschema logs show the configured values again
 * `-tr` passes, no SUT restarts
-
-The last run used bexhoma 0.11.7 (2026-10-21 and 2026-10-22).
-All runs passed their tests.
 
 
 ## TPC-H
@@ -429,7 +426,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### PostgreSQL relaxed
 
-New: synchronous_commit off during the load.
+Synchronous_commit off during the load.
 
 ```bash
 bexhoma ycsb \
@@ -603,7 +600,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### Citus relaxed
 
-New: synchronous_commit off on coordinator and workers.
+Synchronous_commit off on coordinator and workers.
 
 ```bash
 bexhoma ycsb \
@@ -670,7 +667,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### PostgreSQL relaxed
 
-New: synchronous_commit off during the build.
+Synchronous_commit off during the build.
 
 ```bash
 bexhoma hammerdb \
@@ -742,7 +739,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### Citus relaxed
 
-New: synchronous_commit off on coordinator and workers.
+Synchronous_commit off on coordinator and workers.
 
 ```bash
 bexhoma hammerdb \
@@ -770,7 +767,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### TPC-C PostgreSQL relaxed
 
-New: synchronous_commit off during the load.
+Synchronous_commit off during the load.
 
 ```bash
 bexhoma benchbase \
@@ -823,7 +820,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### TPC-C MySQL relaxed
 
-New: flush 2, key checks off (reference MySQL variant).
+Flush 2, key checks off (reference MySQL variant).
 
 ```bash
 bexhoma benchbase \
@@ -873,7 +870,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### TPC-C Citus relaxed
 
-New: synchronous_commit off on coordinator and workers.
+Synchronous_commit off on coordinator and workers.
 
 ```bash
 bexhoma benchbase \

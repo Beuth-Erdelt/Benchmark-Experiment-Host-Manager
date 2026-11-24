@@ -33,8 +33,8 @@ Contributions are welcome. Areas where help is most useful:
 Versions have the form `MAJOR.MINOR.PATCH`; git tags have the form `vMAJOR.MINOR.PATCH`, and the Docker images of a release are tagged `MAJOR.MINOR.PATCH` and `latest`.
 While the major version is 0, a minor release may contain incompatible changes; they are named in their pull requests.
 
-- **Minor release** (`0.12.0`): changes what an experiment executes or records. This includes the catalog and result contracts, the result format, collectors, the Docker images and Kubernetes manifests, and the meaning of command line options.
-- **Patch release** (`0.11.19`): everything else, including bug fixes in evaluations and reports, and documentation. If a fix changes evaluated numbers, its pull request names the affected metrics.
+- **Minor release** (`X.Y.0`): changes what an experiment executes or records. This includes the catalog and result contracts, the result format, collectors, the Docker images and Kubernetes manifests, and the meaning of command line options.
+- **Patch release** (`X.Y.Z`): everything else, including bug fixes in evaluations and reports, and documentation. If a fix changes evaluated numbers, its pull request names the affected metrics.
 
 ### Release checklist
 

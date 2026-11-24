@@ -448,7 +448,7 @@ Two parallel submission paths exist:
 | Path | Trigger | Format |
 |---|---|---|
 | **experiment_dict** | `config.experiment_dict["benchmarker"]` is non-empty | Nested list of client rounds; each round is a list of `{parallelism, parameters?, template?}` dicts |
-| **benchmark_list** (legacy) | `experiment_dict["benchmarker"]` is empty; `benchmark_list` is populated via `add_benchmark_list()` | Flat list of parallelism integers |
+| **benchmark_list** (fallback) | `experiment_dict["benchmarker"]` is empty; `benchmark_list` is populated via `add_benchmark_list()` | Flat list of parallelism integers |
 
 Only one path is active per configuration per run.
 

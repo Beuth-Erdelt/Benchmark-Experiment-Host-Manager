@@ -17,7 +17,7 @@ Two options choose what is measured:
 Sources:
 
 * Specification: P. O'Neil, E. O'Neil, X. Chen, S. Revilak: *Star Schema Benchmark*, Revision 3, 2009, <https://www.cs.umb.edu/~poneil/StarSchemaB.PDF>
-* Data generator: [eyalroz/ssb-dbgen](https://github.com/eyalroz/ssb-dbgen), commit `ae1e254`, built in the generator image with one fix for chunked generation
+* Data generator: [eyalroz/ssb-dbgen](https://github.com/eyalroz/ssb-dbgen), built in the generator image with a patch for chunked generation
 * Random parameters: T. Rabl, M. Poess, H.-A. Jacobsen, P. O'Neil, E. O'Neil: *Variations of the Star Schema Benchmark to Test the Effects of Data Skew on Query Performance*, ICPE 2013
 * Flat table: ClickHouse docs, *Star Schema Benchmark*; Apache Doris docs, *SSB*
 
@@ -3481,7 +3481,7 @@ No warnings
 | `-xdt` | measure the data transfer volume per query |
 | `-xve`, `-xse` | print or store EXPLAIN output per query |
 
-Multi-tenancy (`-mtn`) is not supported for SSB yet.
+Multi-tenancy (`-mtn`) is not supported for SSB.
 
 ### Files
 

@@ -4,7 +4,7 @@
 
 In a multi-tenant architecture, it is assumed that each tenant maintains an isolated dataset and interacts exclusively with this dataset.
 Several strategies exist to achieve this separation, including the schema-per-tenant, database-per-tenant, and container-per-tenant approaches.
-In the following sections, we present an evaluation of these strategies using bexhoma to compare their performance characteristics, c.f. [1].
+The following sections show how bexhoma benchmarks these strategies, see [1].
 
 
 [1] [Benchmarking Multi-Tenant Architectures in PostgreSQL](https://doi.org/10.48786/edbt.2026.46)
@@ -15,7 +15,7 @@ In the following sections, we present an evaluation of these strategies using be
 
 ## Background
 
-To make this work, there has to be some preparation.
+This needs:
 * In the experiment folders, there are init scripts containing placeholders for the database `{BEXHOMA_DATABASE}` or schema `{BEXHOMA_SCHEMA}`
 * The DBMS must have placeholders in the connection parameters - c.f. [DBMS](DBMS.md#postgresql)
 
@@ -44,7 +44,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-We set the number of tenants to 2 in the following:
+The following examples use 2 tenants:
 ```
 BEXHOMA_NUM_TENANTS=2
 ```
@@ -830,7 +830,7 @@ No warnings
 
 #### Database-Per-Tenant - Multiple Loaders
 
-We set 8 loaders per tenant (2 tenants):
+The following example uses 8 loaders per tenant (2 tenants):
 ```bash
 BEXHOMA_NUM_TENANTS_LOADER = 16
 ```

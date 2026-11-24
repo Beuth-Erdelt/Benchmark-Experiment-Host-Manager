@@ -4,7 +4,7 @@
 
 Benchbase contains 18 benchmarks, 16 of which can be selected in bexhoma (`-xbt`; TPC-H and TPC-DS are excluded).
 In principle, all of them can be run in bexhoma.
-Twitter, CH-benCHmark and YCSB have been run with full examples; the remaining ones are listed at the end with small test runs.
+Twitter, CH-benCHmark and YCSB have full examples; the remaining ones are listed at the end with small test runs.
 Further examples are listed below.
 
 **The results are not official benchmark results.
@@ -39,7 +39,7 @@ mkdir -p $LOG_DIR
 
 ### Twitter Simple Testrun
 
-For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
+The experiment is run with the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
 Example:
 ```bash
@@ -520,7 +520,7 @@ mkdir -p $LOG_DIR
 
 ### CH-benCHmark Simple Testrun
 
-For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
+The experiment is run with the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
 Example:
 ```bash
@@ -924,7 +924,7 @@ mkdir -p $LOG_DIR
 
 ### YCSB Simple Testrun Workload C
 
-For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
+The experiment is run with the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
 Example:
 ```bash
@@ -1100,7 +1100,7 @@ Benchbase Workload ycsb SF=1000
 
 ### YCSB Simple Testrun Workload A
 
-For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
+The experiment is run with the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
 Example:
 ```bash
@@ -1260,7 +1260,7 @@ Benchbase Workload ycsb SF=1000
 
 ### YCSB Simple Testrun Workload B
 
-For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
+The experiment is run with the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
 Example:
 ```bash
@@ -1422,7 +1422,7 @@ Benchbase Workload ycsb SF=1000
 
 ### YCSB Simple Testrun Workload D
 
-For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
+The experiment is run with the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
 Example:
 ```bash
@@ -1443,7 +1443,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_d.log
 ```
 
-This time we only use a single benchmarking pod.
+This run uses a single benchmarking pod.
 This is because the workload contains INSERTs and two parallel pods would try to insert the same data.
 Other than the original YCSB tool, Benchbase does not offer an option to limit the range of keys to be inserted.
 
@@ -1562,7 +1562,7 @@ Benchbase Workload ycsb SF=1000
 
 ### YCSB Simple Testrun Workload E
 
-For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
+The experiment is run with the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
 Example:
 ```bash
@@ -1583,7 +1583,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_e.log
 ```
 
-This time we only use a single benchmarking pod.
+This run uses a single benchmarking pod.
 This is because the workload contains INSERTs and two parallel pods would try to insert the same data.
 Other than the original YCSB tool, Benchbase does not offer an option to limit the range of keys to be inserted.
 
@@ -1702,7 +1702,7 @@ Benchbase Workload ycsb SF=1000
 
 ### YCSB Simple Testrun Workload F
 
-For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
+The experiment is run with the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
 Example:
 ```bash

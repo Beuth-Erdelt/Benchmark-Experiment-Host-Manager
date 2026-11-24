@@ -26,7 +26,7 @@ those consume.
 
 Its scope is narrowed to the TPC-H/PostgreSQL/PgDuckDB slice chosen for the
 first implementation, plus a basic YCSB/PostgreSQL workload (see below) —
-see `docs/Design-Catalog-Contract.md` for the full
+see `dev/Design-Catalog-Contract.md` for the full
 design rationale, the complete (all-workload, all-system) breadth pass this
 was extracted from, and open questions.
 
@@ -771,7 +771,7 @@ orphaned directory by wiring it back in without knowing why it was unused.
 - `docs/AgentCatalogContract.md` — prose/condensed-YAML version of this
   file's shape, worked example, and known gaps — the input-side counterpart
   to `docs/AgentResultContract.md`.
-- `docs/Design-Catalog-Contract.md` — full design rationale, the
+- `dev/Design-Catalog-Contract.md` — full design rationale, the
   all-workload/all-system breadth pass this contract was trimmed from, and
   open questions.
 - `contracts/contract_catalog.yml` — the actual contract.

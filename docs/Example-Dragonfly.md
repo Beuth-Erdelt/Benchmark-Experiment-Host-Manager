@@ -37,7 +37,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -530,7 +530,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_dragonfly_storage.log
 ```
 
-The following status shows we have one volume of type `shared`.
+The following status shows a volume of type `shared`.
 Every single-host Dragonfly experiment running YCSB of SF=1 will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of Dragonfly mounts the volume and generates the data.
@@ -1078,7 +1078,7 @@ YCSB SF=1
 #### Cluster on Persistent Storage
 
 A Dragonfly cluster can store the database in persistent storage, too.
-Here, we remove existing storage via `-rsr` to start with a clean copy.
+This removes existing storage via `-rsr` to start with a clean copy.
 
 ```bash
 bexhoma ycsb \
@@ -1454,7 +1454,7 @@ YCSB SF=1
 
 ### Replication
 
-We can set the number of replicas with the parameter `-nwr`.
+The parameter `-nwr` sets the number of replicas.
 However, only the basic master-copy replication is implemented in bexhoma.
 Whenever `-nwr` is greater than 0, it is set to the number of workers minus 1.
 The first worker pod is the master and receives all writes; the other workers replicate it.
@@ -1775,7 +1775,7 @@ Both sections use the metric set `dragonfly`, see [Application Metrics](#applica
 * Cluster (`-nw` > 0): [deploymenttemplate-DragonflyCluster.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-DragonflyCluster.yml), a stateful set of `-nw` worker pods. YCSB uses a cluster-aware client (`redis-cluster`) that finds the right shard for each key.
 * Replication (`-nw` > 0 and `-nwr` > 0): [deploymenttemplate-DragonflyReplica.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-DragonflyReplica.yml), worker 0 is the master (the service points there), the other workers replicate it. Its volumes have their own name (`dfr`), since they hold all data instead of a shard.
 * In cluster and replication mode, the SUT pod is a placeholder: the data lives in the workers, and the SUT pod is not monitored. Shell scripts run on every worker (script target `workers`).
-* We copied the following behaviour from Redis: Redis expects a fully qualified domain name (FQDN) for each pod, while the length of hostnames is limited. Therefore bexhoma shortens the names of the worker pods and their volumes.
+* As for Redis: Redis expects a fully qualified domain name (FQDN) for each pod, while the length of hostnames is limited. Therefore bexhoma shortens the names of the worker pods and their volumes.
 
 ### Settings of Dragonfly
 
@@ -1788,7 +1788,7 @@ The templates set Dragonfly's flags as environment variables `DFLY_<flag>`, not 
 | `DFLY_proactor_threads` | `16` | number of io threads, equal to the CPU limit of the container |
 
 Without `DFLY_proactor_threads`, Dragonfly starts one io thread per core of the host, pinned to that core, regardless of the CPU request and limit of the pod.
-On a node with 224 cores and other workloads, this made Dragonfly stall for up to 2 seconds, so that YCSB clients ran into read timeouts.
+On a node with many cores and other workloads, Dragonfly can then stall long enough for YCSB clients to run into read timeouts.
 
 A setting can be changed per experiment with `--set`.
 The name in `deployment[...]` or `statefulset[...]` is `metadata.name` of the workload in the template, the container is `dbms`:

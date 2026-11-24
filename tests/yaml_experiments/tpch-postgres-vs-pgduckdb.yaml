@@ -2,7 +2,7 @@
 # Run with: bexhoma experiment tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml
 # or:       python experiment.py tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml
 #
-# See docs/Design-Yaml-Experiment-Entry-Script.md for the full schema.
+# See dev/Design-Yaml-Experiment-Entry-Script.md for the full schema.
 
 workload: tpch
 mode: run

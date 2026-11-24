@@ -5,7 +5,7 @@ This example shows how to benchmark OrioleDB, PostgreSQL with the storage engine
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 [OrioleDB](https://www.orioledb.com) is a table access method for PostgreSQL: rows are stored in the B-tree of the primary key (index-organized tables), old row versions are kept in an undo log instead of the table, so its tables need no `VACUUM`, and it has a buffer cache of its own.
-Bexhoma runs the image `orioledb/orioledb:v1.10.3-pg18` (OrioleDB 1.10.3 on PostgreSQL 18.6), with OrioleDB as the default table access method, and uses the scripts, loaders and clients of PostgreSQL.
+Bexhoma runs the image `orioledb/orioledb` (OrioleDB on PostgreSQL), with OrioleDB as the default table access method, and uses the scripts, loaders and clients of PostgreSQL.
 OrioleDB is meant for transactional workloads, so bexhoma offers it for YCSB, Benchbase and HammerDB only.
 
 OrioleDB is dual-licensed under Apache-2.0 and the PostgreSQL License; it calls itself public beta, "recommended for experiments, testing, benchmarking", not for production.
@@ -39,7 +39,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -628,7 +628,7 @@ YCSB SF=1
 
 ## Comparison with PostgreSQL
 
-OrioleDB and [PostgreSQL](Example-PostgreSQL.md) run the same PostgreSQL 18.6 with the same settings, except for the storage engine and its cache (`orioledb.main_buffers=16GB` instead of `shared_buffers=16GB`).
+OrioleDB and [PostgreSQL](Example-PostgreSQL.md) run the same PostgreSQL version with the same settings, except for the storage engine and its cache (`orioledb.main_buffers=16GB` instead of `shared_buffers=16GB`).
 This run benchmarks both with YCSB workload A, one after the other on the same node (`-ms 1`), with a target that neither reaches (`-xnbf 8`, 131072 operations per second).
 
 ```bash
@@ -655,8 +655,7 @@ bexhoma ycsb \
 
 Both templates switch autovacuum off (`autovacuum=off`), so PostgreSQL does not pay for vacuuming during the run; the dead rows of its updates stay in the table.
 
-In the example result, OrioleDB has a higher throughput (about 71,000 against 61,500 operations per second) and a lower 99th percentile read latency (461 µs against 617 µs), with about the same update latency and slightly less CPU.
-Its memory is higher from the start, as the cache of OrioleDB tables (`orioledb.main_buffers`) is allocated when the server starts.
+The memory of OrioleDB is higher from the start, as the cache of OrioleDB tables (`orioledb.main_buffers`) is allocated when the server starts.
 This is a single run of a single workload; the difference varies between runs.
 
 ### Example Result
@@ -913,7 +912,7 @@ TPC-H, TPC-DS and SSB have no entry, so `-dbms` does not offer OrioleDB for them
 
 ### Deployment
 
-[deploymenttemplate-OrioleDB.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OrioleDB.yml): one SUT pod, deployment `bexhoma-deployment-orioledb`, image `orioledb/orioledb:v1.10.3-pg18` (Alpine).
+[deploymenttemplate-OrioleDB.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OrioleDB.yml): one SUT pod, deployment `bexhoma-deployment-orioledb`, image `orioledb/orioledb` (Alpine).
 It is the template of PostgreSQL with these differences:
 
 | Point | Handling | Without it |

@@ -56,7 +56,7 @@ After the runs:
 - [ ] Check every log against its "Check:" column; any failed test is a finding, not a doc edit.
 - [ ] `python scripts/replace-docs.py`: fills the "(not run yet)" placeholders in
   `docs/Example-TPC-H.md` ("Refresh Stream on two DBMS"), `docs/Example-PGBouncer.md` ("Sweeping the Pool"),
-  `docs/Design-Yaml-Experiment-Entry-Script.md` ("Example Run").
+  `dev/Design-Yaml-Experiment-Entry-Script.md` ("Example Run").
 - [ ] `python scripts/demo-runs.py`: regenerate `logs_tests/SUMMARY.md` (now 4 unchecked rows; CI `--check`).
 - [ ] Commit logs, summaries, docs on the branch (`Test: ...`), do not push.
 

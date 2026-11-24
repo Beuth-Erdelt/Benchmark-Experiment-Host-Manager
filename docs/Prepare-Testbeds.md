@@ -62,7 +62,7 @@ Experiments run by the agent harness always stop their SUTs (except in `start`).
 | `unsafe` | the strongest lever of the DBMS; a crash during the load can corrupt the data | MySQL redo log off and doublewrite `DETECT_ONLY` (MySQL cannot switch it off at runtime); MariaDB doublewrite off; PostgreSQL `fsync=off`, `full_page_writes=off` |
 
 `-xld` affects the load only, like `-xii`/`-xic`/`-xis`. Before the check script, the server returns to its configured state (template and `--set`), so the benchmark always runs as configured, whatever the level. `unsafe` ends with a checkpoint (PostgreSQL also flushes the OS cache).
-`relaxed` is the default; for TPC-H, TPC-DS and the MySQL loads of TPC-C and YCSB it is what the load always did.
+`relaxed` is the default.
 
 **Durability of the benchmark.** The SUT templates set no durability options, so every DBMS runs with its own defaults, which are crash-safe (MySQL/MariaDB flush the redo log at every commit and use doublewrite, PostgreSQL waits for the WAL flush at commit).
 A less durable benchmark is set per run with `--set`, so it is visible in the command and the results, e.g. `--set deployment[bexhoma-deployment-mysql].container[dbms].innodb_flush_log_at_trx_commit=2` or `--set ...container[dbms].innodb_doublewrite=OFF`.

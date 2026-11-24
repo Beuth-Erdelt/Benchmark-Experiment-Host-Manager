@@ -49,7 +49,7 @@ The second run (`-nc 2`) restarts the SUT on the same data, `-ar` runs the reset
 ## SQL Server
 
 Microsoft SQL Server is a relational DBMS [2].
-Bexhoma runs SQL Server 2022, Developer edition, from the image `mcr.microsoft.com/mssql/server` with the template [deploymenttemplate-SQLServer.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-SQLServer.yml).
+Bexhoma runs SQL Server, Developer edition, from the image `mcr.microsoft.com/mssql/server` with the template [deploymenttemplate-SQLServer.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-SQLServer.yml).
 
 The license terms of the Developer edition do not allow disclosing the results of a benchmark test to a third party without Microsoft's prior written approval.
 Bexhoma therefore runs SQL Server for internal tests only: there are no results of it on this page, in the documentation or in the repository.
@@ -88,7 +88,7 @@ bexhoma tpch \
 ## Oracle Database Free
 
 Oracle Database Free is the free edition of Oracle Database, the successor of Express Edition (XE) [3].
-Bexhoma runs Oracle AI Database 26ai Free 23.26.3 from the image `container-registry.oracle.com/database/free` with the template [deploymenttemplate-OracleDB.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OracleDB.yml).
+Bexhoma runs Oracle Database Free from the image `container-registry.oracle.com/database/free` with the template [deploymenttemplate-OracleDB.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OracleDB.yml).
 The edition uses at most 2 CPU threads, 2 GB of memory and 12 GB of user data, so scale factors stay small (TPC-H SF 1 is about 1.7 GB with indexes).
 
 The results of Oracle are kept internal: there are no results of it on this page, in the documentation or in the repository.
@@ -128,7 +128,7 @@ bexhoma tpch \
 ## IBM Db2 Community Edition
 
 IBM Db2 Community Edition is the free edition of Db2 for Linux, UNIX and Windows [4].
-Bexhoma runs Db2 12.1.5 from the image `icr.io/db2_community/db2` with the template [deploymenttemplate-DB2.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-DB2.yml).
+Bexhoma runs Db2 Community Edition from the image `icr.io/db2_community/db2` with the template [deploymenttemplate-DB2.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-DB2.yml).
 The edition uses at most 4 cores and 8 GB of instance memory; the container needs the capability `IPC_OWNER`, not privileged mode.
 The template switches off the AI query optimizer, which the image ships as Technology Preview Code.
 The images of bexhoma contain no IBM driver: the pods download it at the start (Db2 client from PyPI, JDBC driver from Maven Central).

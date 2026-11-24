@@ -7,11 +7,11 @@ This example assumes you have
 
 ## Prerequisites
 
-We need a dummy to mimick the existence of a DBMS managed by bexhoma and a query file in a certain format.
+This needs a dummy that stands for a DBMS managed by bexhoma, and a query file in a certain format.
 
 ### Dummy DBMS
 
-Inside the `docker` section of the `cluster.config` we define infos how to connect to a DBMS (keep key `Dummy` here, adjust all the rest):
+Inside the `docker` section of the `cluster.config` define how to connect to the DBMS (keep key `Dummy` here, adjust all the rest):
 ```python
         'Dummy': {
             'loadData': '',
@@ -45,47 +45,11 @@ Example: Run `python example.py run -dbms Dummy -ne 5 -xqr 100` to run experimen
 
 ## Background Information
 
-1. The script installs a Dummy DBMS according to `k8s/deploymenttemplate-Dummy.yml`. This is just a lightweight busybox container running an endless sleep. Bexhoma writes status information about the components to the benchmarked DBMS container. If the DBMS is not managed by bexhoma, we need such a Dummy container otherwise. The container will be removed automatically after experiment has finished.
+1. The script installs a Dummy DBMS according to `k8s/deploymenttemplate-Dummy.yml`. This is just a lightweight busybox container running an endless sleep. Bexhoma writes status information about the components to the benchmarked DBMS container. A DBMS not managed by bexhoma therefore needs such a Dummy container. The container will be removed automatically after experiment has finished.
 
 The DBMSBenchmarker Docker container needs to have the required JDBC driver included.
 
-Currently, the image contains the following:
-```bash
-
-######### Specific version of PostgreSQL JDBC #########
-RUN wget https://jdbc.postgresql.org/download/postgresql-42.5.0.jar --no-check-certificate
-RUN cp postgresql-42.5.0.jar jars/postgresql-42.5.0.jar
-
-######### Specific version of MySQL JDBC #########
-RUN wget https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-j-8.0.31.tar.gz
-RUN tar -zxvf mysql-connector-j-8.0.31.tar.gz
-RUN cp mysql-connector-j-8.0.31/mysql-connector-j-8.0.31.jar jars/mysql-connector-j-8.0.31.jar
-
-######### Specific version of MariaDB JDBC #########
-RUN wget https://dlm.mariadb.com/2678616/Connectors/java/connector-java-3.1.0/mariadb-java-client-3.1.0.jar
-RUN cp mariadb-java-client-3.1.0.jar jars/mariadb-java-client-3.1.0.jar
-
-######### Specific version of MonetDB JDBC #########
-RUN wget https://www.monetdb.org/downloads/Java/archive/monetdb-jdbc-3.3.jre8.jar --no-check-certificate
-RUN cp monetdb-jdbc-3.3.jre8.jar jars/monetdb-jdbc-3.3.jre8.jar
-
-######### Specific version of MonetDB JDBC #########
-RUN wget https://www.monetdb.org/downloads/Java/monetdb-jdbc-3.3.jre8.jar --no-check-certificate
-RUN cp monetdb-jdbc-3.3.jre8.jar jars/monetdb-jdbc-3.3.jre8.jar
-
-######### Specific version of SingleStore JDBC #########
-RUN wget https://github.com/memsql/S2-JDBC-Connector/releases/download/v1.1.4/singlestore-jdbc-client-1.1.4.jar
-RUN cp singlestore-jdbc-client-1.1.4.jar jars/singlestore-jdbc-client-1.1.4.jar
-
-######### Specific version of Kinetica JDBC #########
-RUN wget https://github.com/kineticadb/kinetica-client-jdbc/archive/refs/tags/v7.1.8.7.tar.gz
-RUN tar -zxvf v7.1.8.7.tar.gz
-RUN cp kinetica-client-jdbc-7.1.8.7/kinetica-jdbc-7.1.8.7-jar-with-dependencies.jar jars/kinetica-jdbc-7.1.8.7-jar-with-dependencies.jar
-
-######### Specific version of YugabyteDB JDBC #########
-RUN wget https://github.com/yugabyte/pgjdbc/releases/download/v42.3.5-yb-2/jdbc-yugabytedb-42.3.5-yb-2.jar
-RUN cp jdbc-yugabytedb-42.3.5-yb-2.jar jars/jdbc-yugabytedb-42.3.5-yb-2.jar
-```
+The JDBC drivers of the image are listed in its [Dockerfile](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/images/benchmarker_dbmsbenchmarker).
 
 ## Status and Evaluation
 

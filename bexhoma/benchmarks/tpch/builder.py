@@ -4,7 +4,7 @@ from a parsed ``experiment.yaml`` — no argv is ever generated, nothing is
 handed to a shell.
 
 This is the builder half of the YAML-driven experiment entry script (see
-``docs/Design-Yaml-Experiment-Entry-Script.md``). It still funnels through
+``dev/Design-Yaml-Experiment-Entry-Script.md``). It still funnels through
 :meth:`~bexhoma.experiments.base.ExperimentBase.prepare_testbed`, the seam
 every existing entry script (``tpch.py``, ``tpcds.py``, ...) already uses;
 the dict it expects is populated here from the YAML instead of from

@@ -5827,7 +5827,7 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_3.log
 ```
 
-Same parameters as test 2 but the persistent volume is reused (no `-rsr -rst`), and `-xop 8` raises the operation count so execution still runs long enough for resource monitoring to capture samples now that the loading phase is skipped.
+Same parameters as test 2 but the persistent volume is reused (no `-rsr -rst`), and `-xop 8` raises the operation count so execution still runs long enough for resource monitoring to capture samples while the loading phase is skipped.
 
 The result looks something like
 

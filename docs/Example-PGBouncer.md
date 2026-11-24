@@ -1,7 +1,7 @@
 # Example: Benchmark PGBouncer
 
 This example shows how to benchmark PostgreSQL with the connection pooler PGBouncer, with YCSB and Benchbase's TPC-C.
-This differs from the default behaviour of bexhoma, since we benchmark a DBMS **with a pooling component, that can be managed by bexhoma**.
+This differs from the default behaviour of bexhoma, since the DBMS runs **with a pooling component that is managed by bexhoma**.
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -40,7 +40,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -1271,7 +1271,7 @@ With `-xld`, the durability scripts of PostgreSQL run in the PostgreSQL pod:
 * `relaxed` (default): `synchronous_commit=off` during the load
 * `unsafe`: also `fsync` and `full_page_writes` off; restore with `CHECKPOINT` and `sync`
 
-The template no longer fixes `synchronous_commit`, so the scripts take effect.
+The template does not fix `synchronous_commit`, so the scripts take effect.
 See [Load durability](DBMS.md#load-durability--xld) and [Test: Load Durability](Test-Durability.md), with results for [YCSB unsafe](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_pgbouncer_unsafe_summary.md), [Benchbase relaxed](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_benchbase_pgbouncer_relaxed_summary.md).
 
 ### Reset Scripts
@@ -1290,15 +1290,14 @@ See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract and [Test:
 Benchbase allows to activate new-connection-per-transaction ([example](https://illuminatedcomputing.com/posts/2024/08/benchbase-documentation/)).
 The [default value](https://github.com/cmu-db/benchbase/blob/main/src/main/java/com/oltpbenchmark/DBWorkload.java#L143) is "false".
 When activated, after each transaction the connection is closed ([implementation](https://github.com/cmu-db/benchbase/blob/main/src/main/java/com/oltpbenchmark/api/Worker.java)).
-A new connection will be opened right before the next transaction.
-This behavior can be expected to affect throughput and latency.
-It can also be expected that a connection pooler like PGBouncer will help here.
+A new connection is opened right before the next transaction.
+This affects throughput and latency, and a connection pooler like PGBouncer can reduce the effect.
 
 ### Reconnect
 
 TPC-C is performed at 16 warehouses.
 The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
-We activate the new-connection-per-transaction feature with `-xconn`.
+This activates the new-connection-per-transaction feature with `-xconn`.
 
 ```bash
 bexhoma benchbase \
@@ -1453,7 +1452,7 @@ Benchbase Workload tpcc SF=16
 
 TPC-C is performed at 16 warehouses.
 The 16 threads of the client are split into a cascading sequence of 1 and 2 pods.
-We activate the new-connection-per-transaction feature.
+This activates the new-connection-per-transaction feature.
 This time there will be a connection pool of size 32, handled by 2 pods of PGBouncer.
 
 ```bash

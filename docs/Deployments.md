@@ -27,22 +27,7 @@ To generate a file `'deployment-'+docker+'-'+instance+'.yml'` from this
 
 ### Included
 
-This repository includes some templates at https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/k8s
-
-[DBMS](DBMS.md) included are:
-* MariaDB (10.4.6)
-* MonetDB (11.31.7)
-* OmniSci (v5.4.0)
-* PostgreSQL (11.4)
-
-To be added in near future:
-* MemSQL (centos-7.1.8-43a12901be-2.0.0-1.7.0)  
-  You will have to add a licence key
-* MySQL (8.0.21)  
-  You will need a Docker image including tar
-* Oracle DB (18.4.0-xe)  
-  You will need to build the Docker image
-* MS SQL Server (2019-CU5-ubuntu-18.04)
+The templates are in [k8s/](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/k8s), one per DBMS of [DBMS](DBMS.md).
 
 ### Your Cluster
 

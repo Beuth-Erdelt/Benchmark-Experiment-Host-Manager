@@ -6,7 +6,7 @@ This example shows how to benchmark a database service outside of Kubernetes, th
 
 The following example treats **a cloud database that is compatible to PostgreSQL**.
 
-This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that is not managed by bexhoma and does not exist in the Kubernetes cluster in the same namespace**.
+This differs from the default behaviour of bexhoma, since the SUT is **a distributed DBMS, that is not managed by bexhoma and does not exist in the Kubernetes cluster in the same namespace**.
 
 Important implications of this:
 * Bexhoma does neither start nor stop the DBMS.
@@ -39,7 +39,7 @@ References:
 
 ### Prerequisites: Placeholder of a Cloud Service
 
-In order to have a test environment, we install a placeholder instance PostgreSQL and treat it like an external service.
+For a test environment, a placeholder instance of PostgreSQL stands for the external service.
 
 Create the test placeholder
 ```bash
@@ -49,7 +49,7 @@ kubectl create -f k8s/deploymenttemplate-PostgreSQLService.yml
 
 This starts a deployment `bexhoma-deployment-postgres` with a service `bexhoma-service`.
 
-We can delete these after the experiment has finished by
+Delete it after the experiment has finished by
 ```bash
 # delete database service
 kubectl delete deployment bexhoma-deployment-postgres
@@ -72,7 +72,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example: 
 ```bash
@@ -433,7 +433,7 @@ YCSB SF=1
 ## Persistent Storage
 
 Persistent Storage is not managed by bexhoma, but by the Cloud service.
-We can add the request for a PVC to the experiment setup:
+The experiment setup can request a PVC:
 
 ```bash
 bexhoma ycsb \
@@ -472,12 +472,12 @@ Nothing will be stored there, but it maintains status information about previous
 +----------------------------------------+-----------------+--------------+--------------+-------------------+-----------------+----------------------+-----------+----------+--------+--------+
 ```
 
-The above means there has been a YCSB loading process (managed by bexhoma) of size SF=5, that has been completed.
-All following calls of such an experiment will skip loading, since the PVC tells it has been finished.
+The status shows a completed YCSB loading process (managed by bexhoma) of size SF=5.
+Later experiments of this kind skip loading, since the PVC marks the loading as finished.
 This thus helps to spare the `-sl` parameter.
 
 However bexhoma cannot verify such information.
-If data is delete somehow, this PVC information will be outdated and wrong.
+If the data is deleted, this information is wrong.
 
 This approach helps bexhoma to persist status information, but it does not persist data inside the Cloud database.
 
@@ -637,7 +637,7 @@ YCSB SF=5
 
 #### Managed by Bexhoma
 
-We included [CockroachDB](Example-CockroachDB.md) as an example for a distributed DBMS, that is managed by bexhoma.
+[CockroachDB](Example-CockroachDB.md) is an example for a distributed DBMS, that is managed by bexhoma.
 
 Advantages
 * Bexhoma can monitor all components
@@ -649,7 +649,7 @@ Disadvantages
 
 #### Not Managed by Bexhoma
 
-We included [YugaByteDB](Example-YugaByteDB.md) as an example for a distributed DBMS, that is not managed by bexhoma, but runs in the same Kubernetes cluster.
+[YugaByteDB](Example-YugaByteDB.md) is an example for a distributed DBMS, that is not managed by bexhoma, but runs in the same Kubernetes cluster.
 
 Advantages
 * Can be applied to all systems running in Kubernetes
@@ -661,7 +661,7 @@ Disadvantages
 
 #### Outside of Kubernetes
 
-Here we present an example for a DBMS, that is not managed by bexhoma and might be running outside of the Kubernetes cluster.
+This page is an example for a DBMS that is not managed by bexhoma and might be running outside of the Kubernetes cluster.
 
 Advantages
 * This can be applied to all Cloud services (or any other database outside of the Kubernetes cluster) with a JDBC interface
@@ -903,7 +903,7 @@ BEXHOMA_DATABASE = 'postgres',
 
 ### Only Execution
 
-This time we skip loading (`-sl`), since the database is already present.
+This run skips loading (`-sl`), since the database is already present.
 
 ```bash
 bexhoma benchbase \
@@ -1050,12 +1050,12 @@ Benchbase Workload tpcc SF=16
 
 ## TPC-H
 
-In the following we run TPC-H against the Cloud Database Service.
+The following runs TPC-H against the Cloud Database Service.
 
 
 ### Simple Run
 
-At first we run a simple power test against SF=3.
+The first run is a power test at SF=3.
 Components are monitored.
 
 ```bash
@@ -1271,7 +1271,7 @@ No warnings
 
 ### Execution Only
 
-Now loading is skipped (`-sl`) as data is already present in the Cloud system.
+Loading is skipped (`-sl`), as the data is already present in the Cloud system.
 
 ```bash
 bexhoma tpch \
@@ -1456,8 +1456,8 @@ No warnings
 
 ### Persistent Storage
 
-We now use a PVC to store infos about the loading process.
-At first, we remove the placeholder and recreate it again.
+A PVC stores information about the loading process.
+The placeholder is removed and created again.
 An existing PVC of the placeholder is removed before loading (`-rsr`).
 ```bash
 # delete database service placeholder
@@ -1694,9 +1694,9 @@ No warnings
 
 ### Execution Only with Persistent Storage
 
-Data is now present in the database.
+The data is present in the database.
 The persistent volume helps to memorize this.
-We can rerun the experiment without explicitly skipping ingestion (no `-sl`).
+The experiment can run again without skipping ingestion explicitly (no `-sl`).
 
 ```bash
 bexhoma tpch \
