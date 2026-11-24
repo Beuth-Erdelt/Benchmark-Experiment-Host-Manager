@@ -153,12 +153,15 @@ class MixedExperiment(ExperimentBase):
         for benchmark in self.benchmarks:
             benchmark.show_summary(self, write_report=write_report)
 
-    def test_results(self) -> None:
+    def test_results(self) -> int:
         """
         Validate results for every registered benchmark.
 
         Delegates to :meth:`~bexhoma.benchmarks.base.Benchmark.test_results` on
         each benchmark in registration order.
+
+        :return: ``0`` if every benchmark's check passed, else ``1``.
+        :rtype: int
         """
-        for benchmark in self.benchmarks:
-            benchmark.test_results(self)
+        codes = [benchmark.test_results(self) or 0 for benchmark in self.benchmarks]
+        return 1 if any(codes) else 0

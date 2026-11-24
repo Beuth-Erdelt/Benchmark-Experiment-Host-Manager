@@ -19,7 +19,7 @@ from datetime import datetime  # noqa: E402
 import glob  # noqa: E402
 
 
-from bexhoma.evaluators.base import natural_sort  # noqa: E402
+from bexhoma.evaluators.base import natural_sort, natural_sort_rows  # noqa: E402
 from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
 
 __all__ = ["HammerdbEvaluator"]
@@ -76,6 +76,7 @@ class HammerdbEvaluator(LogEvaluator):
     #: HammerDB's names (virtual users) for the common columns.
     column_names = {'vusers': 'threads', 'vusers_loading': 'threads_loading', 'sf': 'SF'}
 
+    RESULTS_PER_POD = True
     def get_threads(self, loading_parameters):
         """
         Returns the number of HammerDB virtual users from ``HAMMERDB_VUSERS``.
@@ -534,7 +535,7 @@ class HammerdbEvaluator(LogEvaluator):
                 df_plot_filtered[col] = df_plot.loc[:,col]
         df_plot_filtered = self.identity_first(df_plot_filtered, self.IDENTITY_PER_CONNECTION, source=df_plot)
         df_plot_filtered = df_plot_filtered.rename_axis(index="connection")
-        df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
+        df_plot_filtered = natural_sort_rows(df_plot_filtered)
         return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """

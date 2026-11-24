@@ -476,8 +476,10 @@ PostgreSQL: `--set` passes a value as `-c` on the command line, which `ALTER SYS
 
 Nothing reads the loaded tables to check a load. A load counts as failed if
 - a loader pod fails: a loader exits with 1 when the reply of a load statement is an error or reports fewer rows than the file has (`BEXHOMA_INGEST:...:failed` in its log); test `Loader pods without errors`,
-- a loading script fails (schema, durability, indexes, constraints, statistics, checks; shell scripts run with `sh -e`); test `Init scripts without errors`,
+- a loading script fails (schema, durability, indexes, constraints, statistics, checks; shell scripts run with `sh -e`), judged by its error lines and by the exit code of `kubectl exec`, which also covers a connection that broke while the script ran; test `Init scripts without errors`,
 - the SUT restarts during loading, or scripts cannot be uploaded; test `Loading completed without failures`.
+
+Generated raw data (TPC-H, TPC-DS, SSB) is reused only with the completion marker the generator writes after it succeeded; files without it are generated again.
 
 A failed loading job aborts the experiment (with diagnostics). A failed load never labels its volume `loaded=True`; such a volume is not reused, remove it with `-rsr`.
 

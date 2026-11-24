@@ -107,8 +107,17 @@ then
 	shopt -s nullglob
 	existing_dat_files=("$destination_raw"*.dat)
 	shopt -u nullglob
+	# .bexhoma_generated is written only after a complete generation (below); files
+	# without it are what is left of a failed or killed generator (or of an image
+	# before the marker), and are generated again. Only the files of this folder go:
+	# the folder of a single pod also holds the split subfolders <pods>/<child>.
+	if [ -d "$destination_raw" ] && [ ${#existing_dat_files[@]} -gt 0 ] && [ ! -f "${destination_raw}.bexhoma_generated" ]; then
+		echo "Raw folder has no completion marker (generation incomplete, or from an older image): generate again"
+		rm -f "${existing_dat_files[@]}"
+		existing_dat_files=()
+	fi
 	if [ -d "$destination_raw" ] && [ ${#existing_dat_files[@]} -gt 0 ]; then
-		### raw folder exists and contains generated .dat files ###
+		### raw folder exists and contains completely generated .dat files ###
 		if test $STORE_RAW_DATA_RECREATE -gt 0
 		then
 			echo "Recreate raw folder"
@@ -187,7 +196,10 @@ then
 	then
 		# convert into new file
 		echo "Convert customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat"
-		iconv -f ISO_8859-1 -t UTF-8 $destination_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat > customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.dat
+		if ! iconv -f ISO_8859-1 -t UTF-8 $destination_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat > customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.dat; then
+			echo "FATAL: converting customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat to UTF-8 failed"
+			exit 1
+		fi
 		# rename to original name
 		mv customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.dat $destination_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat
 		# remove first character (damaged?)
@@ -199,7 +211,10 @@ then
 	then
 		# convert into new file
 		echo "Convert customer.dat"
-		iconv -f ISO_8859-1 -t UTF-8 $destination_raw/customer.dat > customer_utf8.dat
+		if ! iconv -f ISO_8859-1 -t UTF-8 $destination_raw/customer.dat > customer_utf8.dat; then
+			echo "FATAL: converting customer.dat to UTF-8 failed"
+			exit 1
+		fi
 		# rename to original name
 		mv customer_utf8.dat $destination_raw/customer.dat
 		# remove first character (damaged?)
@@ -216,8 +231,18 @@ then
 	for i in $destination_raw/*.dat; do
 		echo "$i"
 	    time sed 's/.$//' -i $i
+	    SED_RC=$?
+	    if [ $SED_RC -ne 0 ]; then
+	        echo "FATAL: removing the last character of $i failed (exit code $SED_RC)"
+	        exit 1
+	    fi
 	done
 fi
+
+######################## Mark generation as complete ###################
+# Only reached when dsdgen and the transformation succeeded; a later pod reuses
+# the folder only with this marker (see above)
+echo "SF=$SF BEXHOMA_CHILD=$BEXHOMA_CHILD BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS generated=$(date -u +%s)" > "${destination_raw%/}/.bexhoma_generated"
 
 ######################## End measurement of time ########################
 bexhoma_end_epoch=$(date -u +%s)

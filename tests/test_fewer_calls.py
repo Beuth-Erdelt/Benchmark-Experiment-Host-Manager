@@ -362,7 +362,7 @@ def _probe(outputs: dict, pod_object=None):
 
 _HOST_OUTPUTS = {
     'grep MemTotal': '2113450364\n',
-    'more /proc/cpuinfo': 'model name\t: INTEL(R) XEON(R) PLATINUM 8570\n',
+    "grep -m1 'model name' /proc/cpuinfo": 'model name\t: INTEL(R) XEON(R) PLATINUM 8570\n',
     'grep -c ^processor': '224\n',
     'uname -r': '6.8.0-137-generic\n',
     'df -m /': 'Filesystem     1M-blocks   Used Available Use% Mounted on\noverlay 1800943 856817 852572  51% /\n',
@@ -420,7 +420,7 @@ class HostProbeTest(unittest.TestCase):
         first = probe.get_host_all()
         self.assertEqual(list(first), ['RAM', 'CPU', 'GPU', 'GPUIDs', 'Cores', 'host', 'node', 'disk',
                                        'datadisk', 'volume_size', 'volume_used', 'cuda', 'hugepages_total',
-                                       'hugepages_free', 'cpu_list', 'args'])
+                                       'hugepages_free', 'cpu_list', 'args', 'pod_uid'])
         self.assertEqual(first['node'], 'cl-worker7')
         self.assertEqual(first['datadisk'], 1234)
         self.assertEqual((first['volume_size'], first['volume_used']), ('100G', '55G'))

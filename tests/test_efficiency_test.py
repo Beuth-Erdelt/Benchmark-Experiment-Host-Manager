@@ -67,25 +67,32 @@ class EfficiencyTestHelperTest(unittest.TestCase):
         self.assertEqual(_labels(exp), [(False, "efficiency contains 0 or NaN")])
 
 
+def _no_results(cls):
+    """An evaluator of ``cls`` whose result folder has no per-pod results."""
+    evaluator = cls.__new__(cls)
+    evaluator.get_df_benchmarking = pd.DataFrame
+    return evaluator
+
+
 class EvaluatorRecordTestsTest(unittest.TestCase):
     """Benchbase and HammerDB record_tests decide from key-and-think and the benchmark."""
 
     def test_benchbase_without_keying_skips(self):
         exp = _experiment(BENCHBASE_KEY_AND_THINK="false")
         df = pd.DataFrame({'threads': [40], 'Throughput (requests/second)': [1024.0], 'efficiency': [0.0]})
-        BenchbaseEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
+        BenchbaseEvaluator.record_tests(_no_results(BenchbaseEvaluator), exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp)[0][0], None)
 
     def test_benchbase_twitter_with_keying_skips(self):
         exp = _experiment(benchmark_type='twitter', BENCHBASE_KEY_AND_THINK="true")
         df = pd.DataFrame({'threads': [40], 'Throughput (requests/second)': [1024.0], 'efficiency': [0.0]})
-        BenchbaseEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
+        BenchbaseEvaluator.record_tests(_no_results(BenchbaseEvaluator), exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp)[0][0], None)
 
     def test_benchbase_tpcc_with_keying_tests(self):
         exp = _experiment(BENCHBASE_KEY_AND_THINK="true")
         df = pd.DataFrame({'threads': [40], 'Throughput (requests/second)': [10.0], 'efficiency': [0.0]})
-        BenchbaseEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
+        BenchbaseEvaluator.record_tests(_no_results(BenchbaseEvaluator), exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp), [(False, "efficiency contains 0 or NaN")])
 
     def test_hammerdb_without_keying_skips(self):

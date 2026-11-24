@@ -444,8 +444,27 @@ class ExperimentBase():
         return all(os.path.isfile(self.result_filename_local(name))
                    for name in ('queries.config', 'connections.config'))
 
+    def _record_runtime_failure(self, reason: str) -> None:
+        """Record a failed test found while the experiment ran, once per reason.
+
+        :param reason: Label of the failed test.
+        """
+        if (False, reason) not in self._runtime_test_results:
+            self._runtime_test_results.append((False, reason))
+
+    def _record_runtime_gaps(self) -> None:
+        """Record what the cluster layer gave up on while the experiment ran as failed tests.
+
+        So far: pod logs that could not be stored (:meth:`bexhoma.clusters.Kubernetes.store_pod_log`).
+        A missing benchmarker log is also caught by ``Results of all benchmarker pods``;
+        a missing loader log would otherwise go unnoticed.
+        """
+        for filename in sorted(set(getattr(getattr(self, 'cluster', None), 'logs_not_stored', []) or [])):
+            self._record_runtime_failure(f"Pod log stored: {filename}")
+
     def _show_summary_or_abort_note(self) -> None:
         """Print the summary, or a short one when the experiment ended before its first result."""
+        self._record_runtime_gaps()
         if self._has_result_files():
             self.show_summary(write_report=getattr(self.args, 'write_report', False))
         else:
@@ -1037,15 +1056,16 @@ class ExperimentBase():
                     status = self.cluster.get_pod_status(pod_dashboard)
                     self.cluster.logger.debug(pod_dashboard+status)
         return pod_dashboard
-    def test_results(self) -> None:
+    def test_results(self) -> int:
         """
         Run test script locally.
         Extract exit code.
 
-        :return: exit code of test script
+        :return: exit code of test script (``0`` = passed)
+        :rtype: int
         """
         self.cluster.logger.debug('base.test_results()')
-        self.evaluator.test_results()
+        return self.evaluator.test_results() or 0
         # not yet implemented in detail for dbmsbenchmarker:
         #workflow = self.get_workflow_list()
         #if workflow == self.evaluator.workflow:
@@ -1998,6 +2018,35 @@ class ExperimentBase():
         else:
             self._record_test(True, "Loader pods without errors")
 
+    def _show_benchmarker_pod_checks(self, connections_sorted: list) -> None:
+        """
+        Print failed benchmarker pods and record the test ``Benchmarker pods without errors``.
+
+        Judged from the stored pod and job descriptions of the benchmarking jobs
+        (:func:`bexhoma.loading_checks.check_benchmarker_pods`). A pod that
+        failed and was started again by its job (e.g. evicted) counts, even
+        when the job ended complete. Records nothing when no benchmarker pod
+        description was stored.
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        from bexhoma.loading_checks import check_benchmarker_pods
+        configurations = sorted({c.get('configuration', c['name']) for c in connections_sorted})
+        checks = check_benchmarker_pods(getattr(self, 'path', ''), getattr(self, 'appname', 'bexhoma'),
+                                        getattr(self, 'code', ''), configurations)
+        if not checks:
+            return
+        failed = {configuration: check.failures for configuration, check in checks.items() if check.failures}
+        if failed:
+            print("\n### Benchmarker Pods with Errors")
+            for configuration, failures in sorted(failed.items()):
+                for failure in failures:
+                    print(f"* {configuration}: {failure}")
+            self._record_test(False, "Benchmarker pods without errors (failed: {})".format("; ".join(
+                f"{configuration}: {len(failures)}" for configuration, failures in sorted(failed.items()))))
+        else:
+            self._record_test(True, "Benchmarker pods without errors")
+
     def _show_loading_failures(self, connections_sorted: list) -> None:
         """
         Print why a load counts as failed, and record the test ``Loading completed without failures``.
@@ -2945,6 +2994,8 @@ class ExperimentBase():
                 elapsed_minutes = (datetime.now(timezone.utc).replace(tzinfo=None) - experiment_start_time).total_seconds() / SECONDS_PER_MINUTE
                 if elapsed_minutes >= self.max_experiment_minutes:
                     print("{:30s}: exceeded maximum timeout of {} minutes ({:.1f} elapsed) - stopping and removing all components".format("Experiment", self.max_experiment_minutes, elapsed_minutes))
+                    self._record_runtime_failure(
+                        f"Experiment ended by --experiment-timeout after {self.max_experiment_minutes} minutes")
                     self.remove_experiment()
                     return
             _benchmark_just_submitted = False
@@ -3466,6 +3517,8 @@ class ExperimentBase():
                 self.cluster.logger.debug(f"Found times {(timing_start, timing_end)}")
                 if (timing_start, timing_end) == (0,0):
                     print(f"Error in {filename}: no start and end times")
+                    # the pod is left out of the job's timing, so the phase may look shorter
+                    self._record_runtime_failure(f"Start and end time in pod log {filename}")
                 else:
                     timing.append((timing_start, timing_end))
             # when log does not contain container name (when is it true?)
@@ -3873,20 +3926,20 @@ class ExperimentBase():
                     # currently: only first component, only benchmarking
                     # TODO: make dynamical
                     #break
-            infos = [f"  * {key}:{info}" for key, info in c['hostsystem'].items() if 'timespan' not in key and not info=="" and not str(info)=="0" and not info==[]]
+            infos = [f"  * {key}:{info}" for key, info in c['hostsystem'].items() if 'timespan' not in key and key != 'pod_uid' and not info=="" and not str(info)=="0" and not info==[]]
             for info in infos:
                 print(info)
             if 'sut' in c and len(c['sut']) > 0:
                 for i, sut in enumerate(c['sut']):
                     print(f"  * sut {i}")
-                    infos = [f"    * {key}:{info}" for key, info in sut.items() if 'timespan' not in key and not info=="" and not str(info)=="0" and not info==[]]
+                    infos = [f"    * {key}:{info}" for key, info in sut.items() if 'timespan' not in key and key != 'pod_uid' and not info=="" and not str(info)=="0" and not info==[]]
                     for info in infos:
                         print(info)
             if 'worker' in c and len(c['worker']) > 0:
                 for worker_type in c['worker'].keys():
                     for i, worker in enumerate(c['worker'][worker_type]):
                         print(f"  * {worker_type} {i}")
-                        infos = [f"    * {key}:{info}" for key, info in worker.items() if 'timespan' not in key and not info=="" and not str(info)=="0" and not info==[]]
+                        infos = [f"    * {key}:{info}" for key, info in worker.items() if 'timespan' not in key and key != 'pod_uid' and not info=="" and not str(info)=="0" and not info==[]]
                         for info in infos:
                             print(info)
             if 'connection_parameter' in c['parameter'] and len(c['parameter']['connection_parameter']) > 0:
@@ -3932,7 +3985,73 @@ class ExperimentBase():
                 self._record_skipped_test("SUT data survived container restarts (no describe log)")
             else:
                 self._record_skipped_test("SUT data survived container restarts (no restarts)")
+        self._test_sut_pods_not_replaced(connections_sorted)
+        self._test_host_info_complete(connections_sorted)
         return connections_sorted, monitoring_applications
+    #: Host information every SUT pod must report; a failed probe leaves '' or 0.
+    HOST_INFO_REQUIRED = ('RAM', 'CPU', 'Cores', 'node')
+    def _test_host_info_complete(self, connections_sorted: list) -> None:
+        """
+        Record whether the SUT host information of every connection is complete.
+
+        The probes (:class:`bexhoma.configurations.host.HostProbe`) return ``''``
+        or ``0`` when a command in the pod fails, e.g. a missing tool in the
+        image; the summary then prints nothing for that value. A warning, as
+        the results themselves are not affected.
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        incomplete = set()
+        for c in connections_sorted:
+            host = c.get('hostsystem') or {}
+            if not host:
+                continue
+            missing = [key for key in self.HOST_INFO_REQUIRED if str(host.get(key, '')).strip() in ('', '0', 'None')]
+            if missing:
+                incomplete.add(f"{c.get('configuration', c['name'])}: {', '.join(missing)}")
+        if not any(c.get('hostsystem') for c in connections_sorted):
+            return
+        if incomplete:
+            self._record_warning_test("Host information incomplete (" + "; ".join(sorted(incomplete)) + ")")
+        else:
+            self._record_test(True, "Host information complete")
+    def _test_sut_pods_not_replaced(self, connections_sorted: list) -> None:
+        """
+        Record the test ``SUT pods not replaced``: the SUT pod and every worker pod
+        kept their UID through each repetition.
+
+        Kubernetes replaces an evicted or rescheduled pod by a new one; its
+        containers start with no restarts, so the restart test does not see it.
+        The UIDs come from ``connections.config``: the SUT pod's when loading
+        started (``sut_pod_uid_loading``) and every pod's when a benchmarking
+        round started (``pod_uid`` of the host information). Records nothing for
+        results without UIDs.
+
+        :param connections_sorted: Connection dicts of ``connections.config``.
+        """
+        uids: dict = {}
+        def add(key, uid):
+            if uid:
+                uids.setdefault(key, set()).add(uid)
+        for c in connections_sorted:
+            run = (c.get('configuration', c['name']), str(c.get('parameter', {}).get('numExperiment', '')))
+            add(run + ('sut',), c.get('sut_pod_uid_loading', ''))
+            add(run + ('sut',), c.get('hostsystem', {}).get('pod_uid', ''))
+            for component, workers in (c.get('worker') or {}).items():
+                for index, worker in enumerate(workers or []):
+                    if isinstance(worker, dict):
+                        add(run + (f'{component} {index}',), worker.get('pod_uid', ''))
+        if not uids:
+            return
+        replaced = sorted(f"{configuration} repetition {run} {pod}"
+                          for (configuration, run, pod), found in uids.items() if len(found) > 1)
+        if replaced:
+            print("\n### SUT Pods Replaced")
+            for entry in replaced:
+                print(f"* {entry}")
+            self._record_test(False, "SUT pods replaced during a repetition: " + ", ".join(replaced))
+        else:
+            self._record_test(True, "SUT pods not replaced")
     def show_summary(self, write_report: bool = False):
         """
         Tell that this experiment has no summary.
@@ -4096,6 +4215,18 @@ class ExperimentBase():
                 else:
                     suffix = "no 0 or NaN" if passed else "0 or NaN"
                     self._record_test(passed, f"{title} contains {suffix} in CPU [CPUs]")
+        # Without any data no CPU test above is recorded, and the fetch logs that
+        # collect_missing_metrics() reads below may be missing too: nothing would fail.
+        # Per component, no data can be right (a phase that did not run, e.g. loading
+        # from a reused volume), so only an experiment without any data fails.
+        try:
+            phase_ran = self.benchmarking_is_active() or self.loading_is_active()
+        except AttributeError:
+            # neither flag known (e.g. a summary built from parts): a phase ran
+            phase_ran = True
+        if self.workload['monitoring_components'] and phase_ran:
+            self._record_test(header_printed, "Monitoring returned data" if header_printed
+                              else "Monitoring returned no data for any component")
         # dbmsbenchmarker zero-fills a metric Prometheus did not return, so a
         # missing metric is only visible in the logs of the processes fetching it
         missing = missing_metrics.collect_missing_metrics(

@@ -20,7 +20,7 @@ import traceback  # noqa: E402
 from datetime import datetime  # noqa: E402
 import glob  # noqa: E402
 
-from bexhoma.evaluators.base import natural_sort  # noqa: E402
+from bexhoma.evaluators.base import natural_sort, natural_sort_rows  # noqa: E402
 from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
 
 __all__ = ["BenchbaseEvaluator"]
@@ -44,6 +44,7 @@ class BenchbaseEvaluator(LogEvaluator):
     #: Benchbase's names for the common columns.
     column_names = {'terminals': 'threads', 'num_errors': 'errors', 'sf': 'SF'}
 
+    RESULTS_PER_POD = True
     def get_threads(self, loading_parameters):
         """
         Returns the number of Benchbase terminals from ``BENCHBASE_TERMINALS``.
@@ -168,13 +169,24 @@ class BenchbaseEvaluator(LogEvaluator):
         :return: DataFrame with only the rows that carry results.
         :rtype: pandas.DataFrame
         """
-        if 'scalefactor' in df.columns:
-            has_result = df['scalefactor'].notna()
-        else:
-            has_result = pd.Series(False, index=df.index)
+        has_result = self._has_result(df)
         for pod in df.loc[~has_result, 'pod'] if 'pod' in df.columns else []:
             print(f"no benchbase results for pod {pod}, left out of the summary")
         return df[has_result]
+    @staticmethod
+    def _has_result(df):
+        """Whether each row of :meth:`log_to_df` holds a result (its JSON gave the scale factor)."""
+        if 'scalefactor' in df.columns:
+            return df['scalefactor'].notna()
+        return pd.Series(False, index=df.index)
+    def rows_with_results(self, df):
+        """
+        Rows that carry a benchbase result (see :meth:`drop_rows_without_results`), without printing.
+
+        :param df: Raw per-pod benchmarking rows.
+        :rtype: pandas.DataFrame
+        """
+        return df[self._has_result(df)]
     def benchmarking_set_datatypes(self, df):
         """
         Casts all benchmarking result columns to their appropriate data types.
@@ -488,7 +500,7 @@ class BenchbaseEvaluator(LogEvaluator):
                 df_plot_filtered[col] = df_plot.loc[:,col]
         df_plot_filtered = self.identity_first(df_plot_filtered, self.IDENTITY_PER_CONNECTION, source=df_plot)
         df_plot_filtered = df_plot_filtered.rename_axis(index="connection")
-        df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
+        df_plot_filtered = natural_sort_rows(df_plot_filtered)
         return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """
@@ -603,7 +615,40 @@ class BenchbaseEvaluator(LogEvaluator):
                 experiment.test_workflow(workflow_actual, workflow_planned),
                 "Workflow as planned"
             )
+            self._test_duration_complete(experiment)
         else:
             experiment._record_skipped_test(
                 "Throughput (requests/second) (benchmarking phase not active)"
             )
+
+    #: Share of the configured time (``BENCHBASE_TIME``) a pod must have measured.
+    DURATION_TOLERANCE = 0.99
+
+    def _test_duration_complete(self, experiment) -> None:
+        """
+        Record whether every benchmarker pod measured for the configured time.
+
+        Compares ``Elapsed Time (nanoseconds)`` of each pod's result with its
+        ``BENCHBASE_TIME``. Benchbase also writes a result when the run ends
+        early, and the throughput of a shorter run passes every other test.
+
+        :param experiment: The owning experiment object.
+        """
+        df = self.rows_with_results(self.get_df_benchmarking())
+        column = 'Elapsed Time (nanoseconds)'
+        if df.empty or column not in df.columns or 'time' not in df.columns:
+            return
+        short = []
+        for _, row in df.iterrows():
+            planned = pd.to_numeric(row['time'], errors='coerce')
+            elapsed = pd.to_numeric(row[column], errors='coerce')
+            if pd.isna(planned) or pd.isna(elapsed) or planned <= 0:
+                continue
+            if elapsed / 1e9 < self.DURATION_TOLERANCE * planned:
+                short.append(f"{row.get('connection', '')} ({elapsed / 1e9:.0f}s of {planned:.0f}s)")
+        if short:
+            print("benchmarker pods that ran shorter than configured: " + ", ".join(short))
+        experiment._record_test(
+            not short,
+            "Every pod ran for the configured time" if not short else
+            "Pods ran shorter than configured: " + ", ".join(short))

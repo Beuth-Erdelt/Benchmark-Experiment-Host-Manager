@@ -76,12 +76,15 @@ class RefreshStreamBenchmark(Benchmark):
         :param parameter: Dict of CLI arguments as produced by argparse.
         """
 
-    def test_results(self, experiment) -> None:
+    def test_results(self, experiment) -> int:
         """
         No-op: no pass/fail assertions are defined for the refresh stream.
 
         :param experiment: The owning experiment object.
+        :return: ``0``.
+        :rtype: int
         """
+        return 0
 
     def show_summary(self, experiment, write_report: bool = False) -> None:
         """

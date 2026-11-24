@@ -238,7 +238,8 @@ class HostProbe:
         :rtype: str
         """
         self._config.logger.debug('HostProbe.get_host_cpu()')
-        command = "more /proc/cpuinfo | grep 'model name' | head -n 1"
+        # not "more": images such as mysql:8.4 have no more, the CPU was then empty
+        command = "grep -m1 'model name' /proc/cpuinfo"
         _, stdout, _ = self._run(command)
         cpu = stdout
         cpu = cpu.replace('model name\t: ', '')
@@ -526,6 +527,9 @@ class HostProbe:
         for key, probe in probes:
             server[key] = copy.deepcopy(cached[key]) if key in cached else probe()
         server['args'] = self._config.sut_startup_args
+        # a pod replaced during a repetition (evicted, rescheduled) has a new UID,
+        # also a StatefulSet pod that keeps its name (summary test "SUT pods not replaced")
+        server['pod_uid'] = uid or ''
         if uid and not cached and all(server[key] for key in ('RAM', 'CPU', 'Cores', 'host', 'node')):
             self._static_host_info[uid] = {key: copy.deepcopy(server[key]) for key in STATIC_HOST_INFO}
         return server

@@ -379,7 +379,7 @@ class ExecResetScriptTest(unittest.TestCase):
                 'loadData': "cd /home/monetdb;printf 'user=monetdb\npassword=monetdb\n' > .monetdb;mclient demo < {scriptname}",
                 'template': {'JDBC': {'database': 'demo'}}},
             get_service_sut=lambda configuration: 'svc',
-            execute_command_in_pod_sut=lambda cmd, retry_interrupted=True: sent.append(cmd) or ('', '', ''))
+            execute_command_in_pod_sut=lambda cmd, retry_interrupted=True, report_exit=False: sent.append(cmd) or ('', '', ''))
         with (
             mock.patch.object(LoadingCoordinator, 'prepare_init_dbms'),
             contextlib.redirect_stdout(io.StringIO()),
@@ -402,7 +402,7 @@ class ExecResetScriptTest(unittest.TestCase):
             dockertemplate={'loadData': 'psql -d {database} < {scriptname}',
                             'template': {'JDBC': {'database': 'postgres'}}},
             get_service_sut=lambda configuration: 'svc',
-            execute_command_in_pod_sut=lambda cmd, retry_interrupted=True: sent.append(cmd) or ('', '', ''))
+            execute_command_in_pod_sut=lambda cmd, retry_interrupted=True, report_exit=False: sent.append(cmd) or ('', '', ''))
         with (
             mock.patch.object(LoadingCoordinator, 'prepare_init_dbms'),
             contextlib.redirect_stdout(io.StringIO()),
@@ -523,7 +523,7 @@ class ResetFailedRecordedTest(unittest.TestCase):
                 dockertemplate={'loadData': 'mysql < {scriptname}', 'template': {'JDBC': {'database': 'ycsb'}}},
                 experiment=types.SimpleNamespace(cluster=cluster, path=tmp_dir, volume='ycsb'),
                 get_service_sut=lambda configuration: 'svc',
-                execute_command_in_pod_sut=lambda cmd, retry_interrupted=True: (
+                execute_command_in_pod_sut=lambda cmd, retry_interrupted=True, report_exit=False: (
                     '', *outputs['reset-flush.sh' if 'reset-flush.sh' in cmd else 'reset-ycsb.sql']))
             loader = LoadingCoordinator(cfg)
             with mock.patch.object(LoadingCoordinator, 'prepare_init_dbms'), \

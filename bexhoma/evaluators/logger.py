@@ -608,6 +608,64 @@ class LogEvaluator(EvaluatorBase):
             connections = ast.literal_eval(f.read())
         return sorted(connections, key=lambda conn: conn['name'])
 
+    #: Each benchmarker pod writes one result of its own (``log_to_df``), named
+    #: ``<job>-<child>``; then :meth:`record_results_complete_test` applies.
+    RESULTS_PER_POD = False
+
+    def rows_with_results(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Rows of :meth:`get_df_benchmarking` that carry a benchmark result.
+
+        Default: every row, as ``log_to_df`` returns an empty frame for a log
+        without a result. Override where a log without a result still gives a row.
+
+        :param df: Raw per-pod benchmarking rows.
+        :return: The rows with a result.
+        :rtype: pandas.DataFrame
+        """
+        return df
+
+    def record_results_complete_test(self, experiment, df_connections: pd.DataFrame) -> None:
+        """
+        Record whether every planned benchmarker pod left exactly one result.
+
+        The planned pods are the rows of :meth:`get_connections_of_experiment`
+        of this benchmark (one per pod, named ``<job>-<child>``). A pod whose
+        log was not fetched, was cut, or holds no result is missing; two pods
+        with the same child number (a pod retried by Kubernetes) are a
+        duplicate. Either changes the summed throughput without any other test
+        noticing it.
+
+        :param experiment: The owning experiment object.
+        :param df_connections: Output of :meth:`get_connections_of_experiment`.
+        """
+        if not self.RESULTS_PER_POD:
+            return
+        if df_connections is None or df_connections.empty or 'connection' not in df_connections.columns:
+            return
+        planned = df_connections
+        if self.benchmark_run > 0 and 'benchmark_run' in planned.columns:
+            planned = planned[planned['benchmark_run'].astype(int) == self.benchmark_run]
+        planned_names = {str(name).lower() for name in planned['connection']}
+        if not planned_names:
+            return
+        df = self.rows_with_results(self.get_df_benchmarking())
+        pods_per_connection: dict = {}
+        if not df.empty and 'connection' in df.columns:
+            pod_column = df['pod'] if 'pod' in df.columns else pd.Series(range(len(df)), index=df.index)
+            for connection, pod in zip(df['connection'], pod_column):
+                pods_per_connection.setdefault(str(connection).lower(), set()).add(pod)
+        missing = sorted(planned_names - set(pods_per_connection))
+        duplicate = sorted(c for c, pods in pods_per_connection.items() if c in planned_names and len(pods) > 1)
+        label = "Results of all benchmarker pods"
+        if missing:
+            print(f"benchmarker pods without results: {', '.join(missing)}")
+            label += f" - missing: {', '.join(missing)}"
+        if duplicate:
+            print(f"more than one benchmarker pod with the same child: {', '.join(duplicate)}")
+            label += f" - same child twice: {', '.join(duplicate)}"
+        experiment._record_test(not missing and not duplicate, label)
+
     def record_tests(self, experiment, df_loading: pd.DataFrame, df_reduced: pd.DataFrame,
                      workflow_actual: dict, workflow_planned: dict, **extra) -> None:
         """

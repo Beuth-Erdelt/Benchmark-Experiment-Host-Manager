@@ -54,8 +54,12 @@ echo "Querying message queue bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EX
 BEXHOMA_CHILD="$(redis-cli -h 'bexhoma-messagequeue' lpop bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT)"
 if [ -z "$BEXHOMA_CHILD" ]
 then
-    echo "No entry found in message queue. I assume this is the first child."
-    BEXHOMA_CHILD=1
+    # bexhoma fills the queue with 1..parallelism before every job, also for one pod.
+    # Empty means a pod Kubernetes started again (backoffLimit) after one of its pods
+    # failed, or Redis is unreachable. Running as child 1 would run that child twice
+    # and leave the failed pod's child out, so fail the pod instead.
+    echo "FATAL: no child number in message queue bexhoma-benchmarker-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT (queue empty or Redis unreachable)"
+    exit 1
 else
     echo "Found entry number $BEXHOMA_CHILD in message queue."
 fi

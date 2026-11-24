@@ -20,7 +20,7 @@ import json  # noqa: E402
 import ast  # noqa: E402
 from datetime import datetime  # noqa: E402
 
-__all__ = ["EvaluatorBase", "natural_sort", "resolve_within_result_folder"]
+__all__ = ["EvaluatorBase", "natural_sort", "natural_sort_rows", "resolve_within_result_folder"]
 
 
 def natural_sort(items):
@@ -35,11 +35,28 @@ def natural_sort(items):
     :return: Sorted list.
     :rtype: list
     """
-    def convert(text):
-        return int(text) if text.isdigit() else text.lower()
-    def alphanum_key(key):
-        return [convert(c) for c in re.split('([0-9]+)', str(key))]
-    return sorted(items, key=alphanum_key)
+    return sorted(items, key=_natural_key)
+
+
+def _natural_key(key) -> list:
+    """Sort key of :func:`natural_sort`: digit runs as numbers, the rest lower case."""
+    return [int(part) if part.isdigit() else part.lower() for part in re.split('([0-9]+)', str(key))]
+
+
+def natural_sort_rows(df):
+    """
+    Rows of a DataFrame in natural order of its index, like
+    ``df.reindex(index=natural_sort(df.index))``, but keeping rows with the same
+    index label (e.g. two pods of one connection after a retried pod), where
+    ``reindex`` raises.
+
+    :param df: DataFrame to sort.
+    :type df: pandas.DataFrame
+    :return: The same rows, sorted.
+    :rtype: pandas.DataFrame
+    """
+    order = sorted(range(len(df.index)), key=lambda position: _natural_key(df.index[position]))
+    return df.iloc[order]
 
 
 def resolve_within_result_folder(root: str, name: str) -> str | None:

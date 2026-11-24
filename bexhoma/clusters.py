@@ -200,6 +200,24 @@ def is_cluster_connection_error(output: str, include_interrupted: bool = True) -
     return False
 
 
+def exit_code_line(returncode) -> str:
+    """
+    Line to append to the stderr of a script run through ``kubectl exec``.
+
+    kubectl exits with the script's exit code, and with a code of its own when
+    the connection or the stream breaks (then the script's outcome is unknown,
+    and kubectl's own message need not look like an error of the script).
+    The line makes either visible to a check that reads the output only.
+
+    :param returncode: Exit code of the kubectl process.
+    :return: ``"bexhoma: kubectl exit code N\\n"`` for a non-zero code, else ``""``.
+    :rtype: str
+    """
+    if not isinstance(returncode, int) or returncode == 0:
+        return ''
+    return f'\nbexhoma: kubectl exit code {returncode}\n'
+
+
 def wait_for_cluster(deadline: float) -> bool:
     """
     Pause before retrying an unreachable cluster, unless the budget is spent.
@@ -814,6 +832,25 @@ class Kubernetes():
             self.cluster_access()
             self.wait(2)
             return self._read_pod(pod, attempts - 1)
+
+    def get_pod_uid(self, pod) -> str:
+        """
+        Return the UID of a named Pod.
+
+        A Pod that Kubernetes replaces (evicted, rescheduled) gets a new UID,
+        also a StatefulSet Pod that keeps its name.
+
+        :param pod: Name of the Pod.
+        :return: The UID, or ``''`` if the Pod does not exist or cannot be read.
+        :rtype: str
+        """
+        pod_object = self._read_pod(pod)
+        if pod_object is None:
+            return ''
+        if pod_object is not POD_NOT_READ:
+            return pod_object.metadata.uid or ''
+        result = self.kubectl(f'get pod {pod} -o jsonpath="{{.metadata.uid}}"')
+        return (result or '').strip().strip('"')
 
     def get_pod_status(self, pod, app=''):
         """
@@ -1783,7 +1820,7 @@ class Kubernetes():
         return run_with_fallback(fullcommand)
 
     def execute_command_in_pod(self, command, pod='', container='', params='',
-                               retry_interrupted: bool = True):
+                               retry_interrupted: bool = True, report_exit: bool = False):
         """
         Execute a shell command inside a container of a running Pod.
 
@@ -1798,6 +1835,9 @@ class Kubernetes():
         :param container: Container name within the Pod (optional for single-container pods).
         :param params: Unused; reserved for future use.
         :param retry_interrupted: Whether to retry after a connection broke mid-command.
+        :param report_exit: Append :func:`exit_code_line` to stderr when kubectl
+            exits non-zero, for callers that judge a script by its output
+            (see :func:`bexhoma.configurations.loading.script_failed`).
         :return: Tuple ``("", stdout_str, stderr_str)``.
         """
         if not pod:
@@ -1835,6 +1875,8 @@ class Kubernetes():
             if (is_cluster_connection_error(str_stderr, include_interrupted=retry_interrupted)
                     and wait_for_cluster(deadline)):
                 continue
+            if report_exit:
+                str_stderr += exit_code_line(proc.returncode)
             return "", str_stdout, str_stderr
 
     def execute_command_in_pod_api(self, command, pod='', container='',
@@ -3466,6 +3508,14 @@ class Kubernetes():
                     return
                 else:
                     attempt += 1
+            # An empty log can be right (a container that prints nothing); only a log
+            # that could not be read at all is a gap. The experiment records these as
+            # failed tests (ExperimentBase._record_runtime_gaps).
+            if stdout is None:
+                print(f"{'Bexhoma':30s}: gave up storing log {filename_log}")
+                if not hasattr(self, 'logs_not_stored'):
+                    self.logs_not_stored = []
+                self.logs_not_stored.append(os.path.basename(filename_log))
 
     def store_previous_pod_logs(self, pod_name, number=None, counts=None):
         """

@@ -14,7 +14,8 @@ from math import ceil
 from timeit import default_timer
 from typing import TYPE_CHECKING
 
-from ..clusters import CLUSTER_OUTAGE_BUDGET_SECONDS, is_cluster_connection_error, start_process, wait_for_cluster
+from ..clusters import (CLUSTER_OUTAGE_BUDGET_SECONDS, exit_code_line, is_cluster_connection_error,
+                        start_process, wait_for_cluster)
 from ..cluster_calls import stored_pods
 from .. import ddl_parameters
 
@@ -28,11 +29,18 @@ __all__ = ['LoadingCoordinator', 'load_data_asynch', 'loading_script_errors', 's
 # ("psql:/tmp/x.sql:14: ERROR:", mysql "ERROR 1146 ...", cockroach "ERROR: ...")
 # Client errors in other formats (#848): a client's own "<client>: error: ..." (e.g. a
 # connection failure), "Code: 60. DB::Exception: ...", "InvalidRequest: Error from server: ..."
+# "bexhoma: kubectl exit code N" is appended by bexhoma whenever kubectl exits non-zero
+# (clusters.exit_code_line): the script's own exit code, or a broken connection or stream,
+# after which the outcome is unknown. It covers clients whose error lines match nothing
+# here but that exit non-zero (mclient, cqlsh SyntaxException, sqlcmd -b).
 _SCRIPT_ERROR_STDERR = re.compile(
-    r'command terminated with exit code [1-9]|(^|:\s)(ERROR|FATAL|PANIC)\b'
+    r'command terminated with exit code [1-9]|^bexhoma: kubectl exit code [1-9]'
+    r'|(^|:\s)(ERROR|FATAL|PANIC)\b'
     r'|^[\w.-]+: error:|\bDB::Exception\b|\bError from server\b', re.M)
-# redis-cli prints error replies on stdout and exits 0
-_SCRIPT_ERROR_STDOUT = re.compile(r'^(\(error\) )?(ERR|WRONGTYPE|NOAUTH|NOPERM)\b', re.M)
+# redis-cli prints error replies on stdout and exits 0; sqlplus prints its own errors
+# (SP2-nnnn, e.g. an unknown command) on stdout, goes on even under WHENEVER SQLERROR
+# EXIT, and exits 0
+_SCRIPT_ERROR_STDOUT = re.compile(r'^(\(error\) )?(ERR|WRONGTYPE|NOAUTH|NOPERM)\b|^SP2-\d{4}:', re.M)
 
 
 def script_failed(stdout: str, stderr: str) -> bool:
@@ -111,7 +119,8 @@ def load_data_asynch(
         stdout, stderr = proc.communicate()
         logger.debug(stdout.decode('utf-8'))
         logger.debug(stderr.decode('utf-8'))
-        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+        # kubectl's exit code: the script's, or kubectl's own when the stream broke
+        return "", stdout.decode('utf-8'), stderr.decode('utf-8') + exit_code_line(proc.returncode)
 
     def kubectl(command, context):
         # Only used for reading and (over)writing labels, which is safe to
@@ -499,6 +508,8 @@ class LoadingCoordinator:
                 # restarts during the load make it a failed load (see check())
                 cfg.sut_restarts_at_loading_start = sum(
                     cfg.experiment.cluster.get_pod_restart_counts(pod_sut).values())
+                # a pod replaced during the load has a new UID, but no restarts
+                cfg.sut_pod_uid_at_loading_start = cfg.experiment.cluster.get_pod_uid(pod_sut)
                 cfg.apply_load_durability()
                 conflicts = cfg.load_durability_conflicts()
                 if conflicts:
@@ -1122,7 +1133,8 @@ class LoadingCoordinator:
                 cfg.experiment.cluster.execute_command_in_pod(
                     f"sed -i 's/\\r$//' {target}", pod=pod, container='dbms')
                 _, stdout, stderr = cfg.experiment.cluster.execute_command_in_pod(
-                    f'sh -e {target}', pod=pod, container='dbms', retry_interrupted=False)
+                    f'sh -e {target}', pod=pod, container='dbms', retry_interrupted=False,
+                    report_exit=True)
                 if script_failed(stdout, stderr):
                     self.workers_failed.append(f'{script} ({pod})')
                 filename, file_extension = os.path.splitext(script)
@@ -1267,7 +1279,7 @@ class LoadingCoordinator:
             cmd = cmd.replace('\n', '\\n')
             # A reset script may be half-applied when the connection breaks,
             # so it is only retried if it never reached the pod.
-            _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd, retry_interrupted=False)
+            _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd, retry_interrupted=False, report_exit=True)
             if script_failed(stdout, stderr):
                 name = f'{script} ({tenant_tag})' if tenant_tag else script
                 if name not in self.last_reset_failed:

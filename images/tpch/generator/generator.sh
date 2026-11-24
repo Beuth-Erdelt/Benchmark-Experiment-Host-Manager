@@ -109,8 +109,17 @@ then
 	shopt -s nullglob
 	existing_tbl_files=("$destination_raw"/*tbl*)
 	shopt -u nullglob
+	# .bexhoma_generated is written only after a complete generation (below); files
+	# without it are what is left of a failed or killed generator (or of an image
+	# before the marker), and are generated again. Only the files of this folder go:
+	# the folder of a single pod also holds the split subfolders <pods>/<child>.
+	if [ -d "$destination_raw" ] && [ ${#existing_tbl_files[@]} -gt 0 ] && [ ! -f "$destination_raw/.bexhoma_generated" ]; then
+		echo "Raw folder has no completion marker (generation incomplete, or from an older image): generate again"
+		rm -f "${existing_tbl_files[@]}"
+		existing_tbl_files=()
+	fi
 	if [ -d "$destination_raw" ] && [ ${#existing_tbl_files[@]} -gt 0 ]; then
-		### raw folder exists and contains generated .tbl files ###
+		### raw folder exists and contains completely generated .tbl files ###
 		if test $STORE_RAW_DATA_RECREATE -gt 0
 		then
 			echo "Recreate raw folder"
@@ -257,8 +266,18 @@ then
 	for i in $destination_raw/*tbl*; do
 		echo "$i"
 	    time sed 's/.$//' -i $i
+	    SED_RC=$?
+	    if [ $SED_RC -ne 0 ]; then
+	        echo "FATAL: removing the last character of $i failed (exit code $SED_RC)"
+	        exit 1
+	    fi
 	done
 fi
+
+######################## Mark generation as complete ###################
+# Only reached when dbgen and the transformation succeeded; a later pod reuses
+# the folder only with this marker (see above)
+echo "SF=$SF BEXHOMA_CHILD=$BEXHOMA_CHILD BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS generated=$(date -u +%s)" > "$destination_raw/.bexhoma_generated"
 
 ######################## End measurement of time ########################
 bexhoma_end_epoch=$(date -u +%s)

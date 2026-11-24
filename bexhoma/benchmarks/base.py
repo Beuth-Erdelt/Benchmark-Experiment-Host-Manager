@@ -483,6 +483,11 @@ class Benchmark(ABC):
             experiment, df_loading, df_aggregated_reduced,
             workflow_actual, workflow_planned, **extra_context
         )
+        if experiment.benchmarking_is_active():
+            if hasattr(self.evaluator, 'record_results_complete_test'):
+                self.evaluator.record_results_complete_test(experiment, df_connections)
+            if hasattr(experiment, '_show_benchmarker_pod_checks') and connections_sorted:
+                experiment._show_benchmarker_pod_checks(connections_sorted)
         self._record_reset_test(experiment, df_connections)
         if write_report:
             print("{:30s}: cleaning up per-connection artefacts".format("Experiment"))
@@ -546,7 +551,7 @@ class Benchmark(ABC):
             children.append(reset_section)
         return Section(heading=self.name, level=3, blank_after_heading=False, children=children)
 
-    def test_results(self, experiment) -> None:
+    def test_results(self, experiment) -> int:
         """
         Validate results and print workflow completion status.
 
@@ -560,11 +565,15 @@ class Benchmark(ABC):
         per-query results of its own to validate.
 
         :param experiment: The owning experiment object.
+        :return: ``0`` if the evaluator's check passed and the workflow is complete, else ``1``.
+        :rtype: int
         """
         experiment.cluster.logger.debug(f'{type(self).__name__}.test_results()')
-        self.evaluator.test_results()
+        code = self.evaluator.test_results() or 0
         workflow = experiment.get_workflow_list()
         if workflow == self.evaluator.workflow:
             print("Result workflow complete")
         else:
             print("Result workflow not complete")
+            code = 1
+        return code
