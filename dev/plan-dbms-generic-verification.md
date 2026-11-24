@@ -113,10 +113,11 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
 
 ## 5. Decisions for the user (before any run)
 
-- [ ] 4.1 SSB `-xsv flat`: PostgreSQL/MonetDB/CedarDB/PgDuckDB use `reset-ssb.sql`,
-  MySQL/MariaDB/MariaDBCS/ClickHouseCluster/Citus `reset-ssb-flat.sql`. Intended?
-  Test: `bexhoma ssb -dbms PostgreSQL -xsv flat -ar run`.
-- [ ] 4.2 Container tenancy for MySQL/MariaDB: try `bexhoma tpch -dbms MySQL -mtn 2 -mtb container -nlp 2 run`;
+- [x] 4.1 SSB `-xsv flat`: decided 2026-11-24, flat has its own reset scripts. PostgreSQL (also PgDuckDB),
+  CedarDB and MonetDB got `reset-ssb-flat.sql` (only `lineorder_flat`); their `reset-ssb.sql` names the five
+  star-schema tables instead of the whole database; cluster.config uses `reset-ssb{schema_suffix}.sql` (b0d7d0c9).
+  Cluster check open: `bexhoma ssb -dbms PostgreSQL PgDuckDB CedarDB MonetDB -xsv flat -sf 1 -ar run`.
+- [ ] 4.2 Container tenancy for MySQL/MariaDB (decided 2026-11-24: small, short runs first): try `bexhoma tpch -dbms MySQL -mtn 2 -mtb container -nlp 2 run`;
   if it works, add `multi_tenancy: [container]` to their tpch entries in cluster.config.
 - [x] 4.3 Dragonfly cluster with `-m`: "Monitoring metrics missing" (worker filesystem series absent for
   in-memory runs). Solved differently (user, checked 2026-11-23), no `sparse_metrics`: a missing series of a
