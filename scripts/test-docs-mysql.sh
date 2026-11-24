@@ -328,8 +328,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL monitoring  sf=3"
 
 # TPC-DS throughput test on MySQL, on persistent storage
 # -dbms MySQL                   DBMS under test
-# -sf 10                        scaling factor (controls database size in GB)
-# -nc 2                         number of repeated runs per configuration
+# -sf 3                         scaling factor (controls database size in GB)
+# -nc 1                         number of repeated runs per configuration
 # -ne 1,2                       parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
@@ -360,8 +360,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL monitoring  sf=3"
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpcds \
   -dbms MySQL \
-  -sf 10 \
-  -nc 2 \
+  -sf 3 \
+  -nc 1 \
   -ne 1,2 \
   -nlp 8 \
   -nlt 8 \
@@ -388,7 +388,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_mysql_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL throughput  sf=10  ne=1,2"
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL throughput  sf=3  ne=1,2"
 
 
 ####################################################

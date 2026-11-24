@@ -2354,8 +2354,8 @@ No warnings
 ```bash
 bexhoma tpcds \
   -dbms MySQL \
-  -sf 10 \
-  -nc 2 \
+  -sf 3 \
+  -nc 1 \
   -ne 1,2 \
   -nlp 8 \
   -nlt 8 \
