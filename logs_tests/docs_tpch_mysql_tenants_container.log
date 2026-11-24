@@ -86,14 +86,6 @@ MySQL-2                       : is not loaded yet
 MySQL-2                       : will start loading but not before 2026-11-24 14:12:48
 Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 22 API requests 0.7s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '35799a27-25f8-405b-a608-64f693c296ba', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Tue, 24 Nov 2026 14:12:50 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MySQL-1                       : is not loaded yet
 MySQL-1                       : is loading
@@ -189,14 +181,6 @@ MySQL-1                       : has running benchmarks
 MySQL-2                       : has running benchmarks
 Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 38 API requests 1.5s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '666b6ce9-0add-4434-9683-76c903d13290', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Tue, 24 Nov 2026 14:17:33 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MySQL-2                       : has running benchmarks
 mysql-1-1-1-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1795529289/mysql-1-1-1-1.config

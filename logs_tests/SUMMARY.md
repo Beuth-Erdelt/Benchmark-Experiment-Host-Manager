@@ -236,7 +236,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpcds_mysql.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 1758s |  |
 | passed | docs_tpcds_mysql_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 2439s |  |
 | passed | docs_tpcds_mysql_monitoring.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 2263s |  |
-| passed | docs_tpcds_mysql_storage.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 2263s |  |
+| passed | docs_tpcds_mysql_storage.log | Example-MySQL.md | 2026-11-24 | 0.12.3 | 4027s |  |
 | passed | docs_tpcds_postgresql.log | Example-TPC-DS.md | 2026-11-19 | 0.12.0 | 632s |  |
 | passed | docs_tpcds_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 1231s |  |
 | passed | docs_tpcds_postgresql_collector_1.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 914s |  |

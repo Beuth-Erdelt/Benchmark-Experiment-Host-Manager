@@ -167,14 +167,6 @@ MariaDB-1                     : has running benchmarks
 MariaDB-2                     : has running benchmarks
 Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'b3a232f4-3f4f-43ac-8c36-a6b00584319a', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Tue, 24 Nov 2026 14:27:58 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MariaDB-1                     : has running benchmarks
 MariaDB-2                     : has running benchmarks
