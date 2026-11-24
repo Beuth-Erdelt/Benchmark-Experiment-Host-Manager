@@ -9,8 +9,9 @@ constraints and statistics `true` (`tests/yaml_experiments/tpch-postgres-vs-pgdu
 the docs placeholders are filled, `logs_tests/SUMMARY.md` has no unchecked row.
 Done 2026-11-23 on branch `small-corrections` (local, not pushed): section 3 in code (a87f1894, `-sl` makes the
 loading test skipped; result contract 1.15.0), section 7 (48b41866, both sync tools fixed, with tests).
-Still open: section 2 (CedarDB SSB never ran; `docs_tpch_databaseservice_execution.log` is still 0.11.12, and its
-rerun is also the cluster check of section 3), sections 4 and 5.
+Done 2026-11-23: section 2 (CedarDB SSB, DatabaseService `-sl` rerun, which also verified section 3).
+Done 2026-11-24 on branch `verification-decisions`: section 5 (4.1, 4.2, 4.3 decided and done).
+Still open: the cluster run of the multi-DBMS refresh in section 4 (`-dbms PostgreSQL ClickHouse MySQL -xrs 1`).
 Side finding of 1.5, not fixed: the PgDuckDB force-execution workload note ignores a system's own `sut_parameters`
 (belongs to [plan-pgduckdb-force-execution.md](plan-pgduckdb-force-execution.md), deferred by the user 2026-11-23).
 
@@ -38,7 +39,7 @@ Results (2026-11-22, bexhoma 0.12.2, 11:27-13:04):
 
 - [x] 1.1 passed (7 min): `tpch_refresh` job per DBMS (`pgduckdb-1-1-1-2`, `postgresql-1-1-1-2`), no SQL errors.
   The summary shows only the refresh job times, not RF1/RF2 row counts, so that part of the check is not visible.
-- [ ] 1.5 **failed** (73 min): `SQL errors` and `Some active queries missing from the totals`: PostgreSQL
+- [x] 1.5 **failed** first (73 min), passed in the rerun of 2026-11-23 (see status above): `SQL errors` and `Some active queries missing from the totals`: PostgreSQL
   Q17 and Q20 cancelled by the 600 s timeout in every phase (`canceling statement due to user request`).
   Cause: the YAML sets `init_indexes/init_constraints/init_statistics: false`; the command line examples use
   `-xii -xic -xis`. The rest is right (checked in the result folder): alias `DBMS A2` for PostgreSQL,
@@ -46,19 +47,19 @@ Results (2026-11-22, bexhoma 0.12.2, 11:27-13:04):
   the PgDuckDB SUT manifest. Side finding: the workload note "PgDuckDB queries are forced through the DuckDB
   execution engine" is missing, because the note follows only the global `tpch.duckdb_force_execution`, not a
   system's own `sut_parameters`.
-  Fix proposal: indexes, constraints, statistics `true` in the YAML, then rerun only this block.
+  Fix: indexes, constraints, statistics `true` in the YAML, rerun of only this block passed (#901).
 - [x] 3.1 passed (11 min): 4 configurations; pooler pods 1, 1, 2, 2; MAX_CLIENT_CONN 32, 64, 32, 64;
   DEFAULT/MIN_POOL_SIZE 32 everywhere (from the pool pods' describe logs; the summary does not show pool sizes).
 - [x] 3.2 passed (4 min): DEFAULT/MIN_POOL_SIZE and MAX_CLIENT_CONN = 16 for PGBouncer-1, 64 for PGBouncer-2.
 
 After the runs:
 
-- [ ] Check every log against its "Check:" column; any failed test is a finding, not a doc edit.
-- [ ] `python scripts/replace-docs.py`: fills the "(not run yet)" placeholders in
+- [x] Check every log against its "Check:" column; any failed test is a finding, not a doc edit.
+- [x] `python scripts/replace-docs.py`: fills the "(not run yet)" placeholders in
   `docs/Example-TPC-H.md` ("Refresh Stream on two DBMS"), `docs/Example-PGBouncer.md` ("Sweeping the Pool"),
   `dev/Design-Yaml-Experiment-Entry-Script.md` ("Example Run").
-- [ ] `python scripts/demo-runs.py`: regenerate `logs_tests/SUMMARY.md` (now 4 unchecked rows; CI `--check`).
-- [ ] Commit logs, summaries, docs on the branch (`Test: ...`), do not push.
+- [x] `python scripts/demo-runs.py`: regenerate `logs_tests/SUMMARY.md` (now 4 unchecked rows; CI `--check`).
+- [x] Commit logs, summaries, docs on the branch (`Test: ...`), do not push.
 
 ## 2. Existing blocks that never ran after the refactor
 
@@ -90,7 +91,7 @@ unknown), so `storage_reused` is False and the test is recorded as passed.
   1.15.0 (`skipped_when` extended).
 - [x] Unit tests in `tests/test_storage_classes.py::LoadingProvenanceTest` (with/without `-sl`, both reasons,
   old results); the report's interpretation text in `report_writer.py` describes the skipped variant.
-- [ ] Verified by the 2.1 rerun (section 2): the summary must show the skipped test.
+- [x] Verified by the 2.1 rerun (section 2, 2026-11-23): the summary shows the skipped test.
 
 ## 4. Phase 0: local refusals (no cluster; kubectl context without access)
 
@@ -116,7 +117,8 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
 - [x] 4.1 SSB `-xsv flat`: decided 2026-11-24, flat has its own reset scripts. PostgreSQL (also PgDuckDB),
   CedarDB and MonetDB got `reset-ssb-flat.sql` (only `lineorder_flat`); their `reset-ssb.sql` names the five
   star-schema tables instead of the whole database; cluster.config uses `reset-ssb{schema_suffix}.sql` (b0d7d0c9).
-  Cluster check open: `bexhoma ssb -dbms PostgreSQL PgDuckDB CedarDB MonetDB -xsv flat -sf 1 -ar run`.
+  Cluster check passed 2026-11-24 (1795527352, `logs_tests/local/p3_ssb_flat_reset.log`): every test passed,
+  the reset logs show `reset-ssb-flat` for all four DBMS; CedarDB accepts the table-scoped `VACUUM`.
 - [x] 4.2 Container tenancy for MySQL/MariaDB in TPC-H: done 2026-11-24. `multi_tenancy: ['container']` declared
   in their tpch entries; small docs runs in test-docs-multitenant.sh (SF 1, 2 tenants, `-xii -xic -xis`), shown in
   Example-Multi-Tenant.md: `docs_tpch_mysql_tenants_container` (1795529289) and
