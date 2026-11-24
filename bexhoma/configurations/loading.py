@@ -15,7 +15,7 @@ from timeit import default_timer
 from typing import TYPE_CHECKING
 
 from ..clusters import (CLUSTER_OUTAGE_BUDGET_SECONDS, exit_code_line, is_cluster_connection_error,
-                        start_process, wait_for_cluster)
+                        script_end_line, start_process, wait_for_cluster, wrap_script)
 from ..cluster_calls import stored_pods
 from .. import ddl_parameters
 
@@ -35,12 +35,15 @@ __all__ = ['LoadingCoordinator', 'load_data_asynch', 'loading_script_errors', 's
 # here but that exit non-zero (mclient, cqlsh SyntaxException, sqlcmd -b).
 _SCRIPT_ERROR_STDERR = re.compile(
     r'command terminated with exit code [1-9]|^bexhoma: kubectl exit code [1-9]'
+    r'|^bexhoma: script ended without'
     r'|(^|:\s)(ERROR|FATAL|PANIC)\b'
     r'|^[\w.-]+: error:|\bDB::Exception\b|\bError from server\b', re.M)
 # redis-cli prints error replies on stdout and exits 0; sqlplus prints its own errors
 # (SP2-nnnn, e.g. an unknown command) on stdout, goes on even under WHENEVER SQLERROR
 # EXIT, and exits 0
-_SCRIPT_ERROR_STDOUT = re.compile(r'^(\(error\) )?(ERR|WRONGTYPE|NOAUTH|NOPERM)\b|^SP2-\d{4}:', re.M)
+# Scripts run through clusters.wrap_script print BEXHOMA_SCRIPT_END:failed on a non-zero exit
+_SCRIPT_ERROR_STDOUT = re.compile(
+    r'^(\(error\) )?(ERR|WRONGTYPE|NOAUTH|NOPERM)\b|^SP2-\d{4}:|^BEXHOMA_SCRIPT_END:failed', re.M)
 
 
 def script_failed(stdout: str, stderr: str) -> bool:
@@ -110,7 +113,7 @@ def load_data_asynch(
         fullcommand = (
             'kubectl --context {context} exec {pod} --container=dbms -- bash -c "{command}"'
             .format(context=context, pod=pod,
-                    command=command.replace('"', '\\"').replace('\n', '\\n')))
+                    command=wrap_script(command).replace('"', '\\"').replace('\n', '\\n')))
         logger.debug(f'execute_command_in_pod_sut({fullcommand})')
         proc = start_process(
             subprocess.Popen,
@@ -119,8 +122,11 @@ def load_data_asynch(
         stdout, stderr = proc.communicate()
         logger.debug(stdout.decode('utf-8'))
         logger.debug(stderr.decode('utf-8'))
-        # kubectl's exit code: the script's, or kubectl's own when the stream broke
-        return "", stdout.decode('utf-8'), stderr.decode('utf-8') + exit_code_line(proc.returncode)
+        # the end marker (wrap_script) is missing when the pod or the stream went away,
+        # which kubectl may end with exit code 0; kubectl's own exit code for the rest
+        stdout_text = stdout.decode('utf-8')
+        return "", stdout_text, (stderr.decode('utf-8') + script_end_line(command, stdout_text)
+                                 + exit_code_line(proc.returncode))
 
     def kubectl(command, context):
         # Only used for reading and (over)writing labels, which is safe to

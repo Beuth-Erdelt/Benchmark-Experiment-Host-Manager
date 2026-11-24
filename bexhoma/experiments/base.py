@@ -483,9 +483,11 @@ class ExperimentBase():
             print("* " + self.workload['info'].replace('\n', '\n  * '))
         print("* No results: the experiment ended before its first result was written, see the tests")
         self._test_results = list(self._runtime_test_results)
-        # the loader pods' logs and descriptions are in the result folder even then
-        self._show_loader_pod_checks([{'name': c.configuration, 'configuration': c.configuration}
-                                      for c in getattr(self, 'configurations', [])])
+        # the logs of the loading scripts and loader pods are in the result folder even then
+        connections = [{'name': c.configuration, 'configuration': c.configuration}
+                       for c in getattr(self, 'configurations', [])]
+        self._show_init_script_checks(connections)
+        self._show_loader_pod_checks(connections)
         self._print_test_summary()
 
     def benchmarking_is_active(self) -> bool:

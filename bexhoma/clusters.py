@@ -218,6 +218,45 @@ def exit_code_line(returncode) -> str:
     return f'\nbexhoma: kubectl exit code {returncode}\n'
 
 
+#: Printed by a script run in a pod (see :func:`wrap_script`): ``ok`` or ``failed``.
+SCRIPT_END_MARKER = 'BEXHOMA_SCRIPT_END:'
+
+
+def wrap_script(command: str) -> str:
+    """
+    Make a script run in a pod print whether it ended, and how.
+
+    The command runs in a subshell; ``BEXHOMA_SCRIPT_END:ok`` or
+    ``BEXHOMA_SCRIPT_END:failed`` follows on stdout, by its exit code. When
+    the pod or the stream goes away before the script ends, the marker is
+    missing, whatever exit code kubectl reports (:func:`script_end_line`).
+    No ``$?``: the command passes the local shell (cmd.exe or sh) inside
+    double quotes, where only the remote shell may expand.
+
+    :param command: Shell command run by ``sh -c`` or ``bash -c`` in the pod.
+    :return: The wrapped command; an empty command stays empty.
+    :rtype: str
+    """
+    if not command.strip():
+        return command
+    return f'( {command} ) && echo {SCRIPT_END_MARKER}ok || echo {SCRIPT_END_MARKER}failed'
+
+
+def script_end_line(command: str, stdout: str) -> str:
+    """
+    Line to append to the stderr of a wrapped script that printed no end marker.
+
+    :param command: The command before :func:`wrap_script`.
+    :param stdout: Standard output of the script.
+    :return: ``"bexhoma: script ended without BEXHOMA_SCRIPT_END ..."``, or ``""``
+        when the marker is there or the command was empty.
+    :rtype: str
+    """
+    if not command.strip() or SCRIPT_END_MARKER in (stdout or ''):
+        return ''
+    return f'\nbexhoma: script ended without {SCRIPT_END_MARKER} (the pod or the connection went away)\n'
+
+
 def wait_for_cluster(deadline: float) -> bool:
     """
     Pause before retrying an unreachable cluster, unless the budget is spent.
@@ -1835,9 +1874,10 @@ class Kubernetes():
         :param container: Container name within the Pod (optional for single-container pods).
         :param params: Unused; reserved for future use.
         :param retry_interrupted: Whether to retry after a connection broke mid-command.
-        :param report_exit: Append :func:`exit_code_line` to stderr when kubectl
-            exits non-zero, for callers that judge a script by its output
-            (see :func:`bexhoma.configurations.loading.script_failed`).
+        :param report_exit: Run the command as a script that is judged by its
+            output (see :func:`bexhoma.configurations.loading.script_failed`):
+            wrapped by :func:`wrap_script`, with :func:`script_end_line` and
+            :func:`exit_code_line` appended to stderr.
         :return: Tuple ``("", stdout_str, stderr_str)``.
         """
         if not pod:
@@ -1845,6 +1885,9 @@ class Kubernetes():
                 f'Kubernetes.execute_command_in_pod({command}): empty pod name given for command'
             )
             return "", "", ""
+        original_command = command
+        if report_exit:
+            command = wrap_script(command)
         command_clean = command.replace('"', '\\"')
         if container:
             fullcommand = (
@@ -1876,7 +1919,7 @@ class Kubernetes():
                     and wait_for_cluster(deadline)):
                 continue
             if report_exit:
-                str_stderr += exit_code_line(proc.returncode)
+                str_stderr += script_end_line(original_command, str_stdout) + exit_code_line(proc.returncode)
             return "", str_stdout, str_stderr
 
     def execute_command_in_pod_api(self, command, pod='', container='',

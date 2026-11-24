@@ -1,9 +1,8 @@
 # Plan: no malfunction stays unnoticed
 
-Status: **implemented on branch silent-malfunctions (2026-11-24), not committed, not cluster-tested.** S1-S9
-done as in section 4, unit tests in `tests/test_silent_malfunctions.py`, offline replays on copies of real
-result folders (section 4b). Images changed by S3/S4 still have to be built and pushed. Open: the
-proposals of section 5 and the docs page (section 6).
+Status: **implemented on branch silent-malfunctions, cluster-tested 2026-11-24 (section 4c) with the
+rebuilt images.** S1-S9 done (section 4), plus S10 (end marker of scripts) and S11 (aborted summary checks
+the scripts) found by the cluster tests. Open: the proposals of section 5 and the docs page (section 6).
 
 Goal: every run either does what was planned or leaves a failed (or at least a skipped/warning) test in
 the summary. A number in the summary that is wrong because something was missing must not pass silently.
@@ -106,18 +105,42 @@ DBMS clients after a failing statement (local Docker, outputs run through `scrip
 - Generators in Docker (debian, stubs for dbgen/dsdgen and redis-cli): failed generation → next run generates
   again; marker → reused; legacy folder without marker → generated again, split subfolder kept.
 
+### 4c. Cluster tests (2026-11-24, rebuilt images, logs in `logs_tests/local/silent_*.log`)
+
+| Run | Code | What | Result |
+|---|---|---|---|
+| TPC-H, TPC-DS, YCSB, Benchbase, HammerDB, hardware fio (PostgreSQL, SF 1-4, 2 loader / 2 benchmarker pods) | 1795553594 ... | normal runs | all tests passed, no traceback; new tests passed; both TPC-H generator pods printed "no completion marker: generate again" for the old raw folder |
+| A: YCSB, one of 2 benchmarker pods deleted while running | 1795556476 | S3 | the retry pod printed `FATAL: no child number in message queue` and exited 1, the job failed (backoffLimit 1). Failed: job Failed, `Start and end time in pod log ...ft729`, throughput NaN, `Results of all benchmarker pods - missing: ...-1, ...-2`, `Benchmarker pods without errors` |
+| B: TPC-H SF 10, SUT pod deleted (graceful) during the index script | 1795557106 | S1, S6 | PostgreSQL's smart shutdown let the index script finish (7 of 7, exit 0, correct). The scripts after it got exit code 2 (`bexhoma: kubectl exit code 2`). bexhoma saw the new pod as "not loaded yet" and loaded again; a loader job failed, the experiment aborted with loader tests failed |
+| C: TPC-H SF 1, `-ne 2` | | S2 with 2 DBMSBenchmarker pods | all passed |
+| D: TPC-H SF 1, `-ne 2`, with S10 | | end marker | all 7 scripts printed `BEXHOMA_SCRIPT_END:ok`, all tests passed |
+| B2: as B, with S10 | 1795558454 | | as B; the scripts after the deletion end with `BEXHOMA_SCRIPT_END:failed` |
+| B3: as B, pod deleted with `--grace-period=0 --force` | 1795559036 | | index script cut after 4 of 7 (`FATAL: terminating connection`, `BEXHOMA_SCRIPT_END:failed`). The experiment aborted before its first result, and that short summary did not check the scripts: fixed (S11), replayed on the folder: `Init scripts without errors (failed: ... initindexes ...)` |
+
+Added after the cluster tests:
+
+| Step | Fix |
+|---|---|
+| S10 | Every script run in a pod is wrapped (`clusters.wrap_script`): `( cmd ) && echo BEXHOMA_SCRIPT_END:ok \|\| echo BEXHOMA_SCRIPT_END:failed`; `failed` matches, a missing marker (pod or stream gone before the end, whatever kubectl's exit code) adds `bexhoma: script ended without BEXHOMA_SCRIPT_END`. No `$?`, so the local shell (cmd.exe or sh) passes it unchanged; checked through kubectl on the cluster |
+| S11 | `show_summary_aborted()` also records `Init scripts without errors` from the stored script logs |
+
+Not reproduced: a kubectl stream that breaks while the pod keeps running (S1/S10 cover it by exit code and marker).
+Also found: `-nbp` is silently ignored by TPC-H/TPC-DS (parallel benchmarker pods are `-ne`), see P9.
+
 ## 5. Proposals for catches that are still missing
 
 | # | Gap | Proposal |
 |---|---|---|
 | P1 | bexhoma exits 0 even when a test failed | Opt-in exit code (e.g. `BEXHOMA_FAIL_ON_TEST=1` or a flag) after the summary. Not default: the `test-docs-*` scripts run many experiments in a row and grep `TEST failed` already |
 | P2 | A SUT pod replaced after the last round's host information was read (during the last round) is not seen by S6 | Store the UID in the end-of-repetition restart snapshot (`bexhoma-sut-*-restarts.json`) and compare it in the test; one API read per pod and repetition |
-| P3 | S1 relies on kubectl exiting non-zero when the stream breaks; seen in kubectl's code and the 1793360424 log, not reproduced | Cluster run: delete the SUT pod while an index script runs; expect `Init scripts without errors` failed (needs go-ahead) |
-| P4 | S3/S4 need the new images | Build and push benchbase, benchmarker_dbmsbenchmarker, hammerdb, hardware, ycsb benchmarker and tpch/tpcds generator; one run per benchmark with `-nbp` > 1 |
+| P3 | done (4c, S10) | - |
+| P4 | done (4c) | - |
 | P5 | HammerDB: a run shorter than `HAMMERDB_DURATION` is not compared | HammerDB prints no elapsed time; add `BEXHOMA_START/END` around the timed test in the benchmarker script and compare with rampup + duration |
 | P6 | Monitoring of one component returns nothing while others do | Needs to know which phases ran per component (e.g. from the connection's timespans); then a skipped/failed test per component |
 | P7 | A new script with a failure-relevant command in a pipe | Test that lists the allowed pipes in `experiments/**/*.sh` (like the restore-script test in `test_loading_checks.py`) |
 | P8 | Duplicate child for DBMSBenchmarker only shows as "n of m" per job; which child ran twice is not named | DBMSBenchmarker per-pod entries could carry the pod name; then name both pods |
+| P9 | `-nbp` is accepted and silently ignored by TPC-H/TPC-DS (DBMSBenchmarker uses `-ne`) | Refuse `-nbp` other than 1 for these benchmarks, or map it |
+| P10 | A replaced SUT pod during loading makes bexhoma load the new, empty pod again while the old loader jobs still run | Abort the repetition when the SUT pod's UID changes during loading (S6 has the UID at loading start) |
 
 ## 6. Later: docs page
 

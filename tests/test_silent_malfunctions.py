@@ -14,7 +14,7 @@ from bexhoma.benchmarks.benchbase.evaluator import BenchbaseEvaluator
 from bexhoma.benchmarks.dbmsbenchmarker.evaluator import DbmsBenchmarkerEvaluator
 from bexhoma.benchmarks.hardware.evaluator import HardwareEvaluator
 from bexhoma.benchmarks.ycsb.evaluator import YcsbEvaluator
-from bexhoma.clusters import Kubernetes, exit_code_line
+from bexhoma.clusters import Kubernetes, exit_code_line, script_end_line, wrap_script
 from bexhoma.configurations.loading import script_failed
 from bexhoma.evaluators.base import natural_sort_rows
 from bexhoma.evaluators.logger import LogEvaluator
@@ -68,6 +68,18 @@ class ScriptOutcomeTest(unittest.TestCase):
             with self.subTest(output=output):
                 self.assertFalse(script_failed('', output))
                 self.assertTrue(script_failed('', output + exit_code_line(1)))
+
+    def test_end_marker(self) -> None:
+        """A script cut off by a vanished pod or stream has no end marker; a failed one prints failed."""
+        self.assertEqual(wrap_script('psql < x.sql'),
+                         '( psql < x.sql ) && echo BEXHOMA_SCRIPT_END:ok || echo BEXHOMA_SCRIPT_END:failed')
+        self.assertEqual(wrap_script(''), '')
+        cut = 'CREATE INDEX\nCREATE INDEX\n'
+        self.assertFalse(script_failed(cut, ''))
+        self.assertTrue(script_failed(cut, script_end_line('psql < x.sql', cut)))
+        self.assertFalse(script_failed(cut + 'BEXHOMA_SCRIPT_END:ok\n', ''))
+        self.assertTrue(script_failed('BEXHOMA_SCRIPT_END:failed\n', ''))
+        self.assertEqual(script_end_line('', ''), '')
 
     def test_sqlplus_sp2_error(self) -> None:
         # real output of the instant client (2026-11-24): sqlplus goes on and exits 0
@@ -253,6 +265,28 @@ class RuntimeGapsTest(unittest.TestCase):
                     mock.patch.object(Kubernetes, '_pod_label', return_value='bexhoma-sut-x'):
                 cluster.store_pod_log('bexhoma-sut-x', 'exporter')
         self.assertEqual(cluster.logs_not_stored, ['bexhoma-loading-x.sensor.log'])
+
+
+class AbortedSummaryScriptsTest(unittest.TestCase):
+    """An experiment aborted before its first result still names the loading scripts that failed (1795559036)."""
+
+    def test_failed_index_script(self) -> None:
+        from types import SimpleNamespace
+        import contextlib
+        import io
+        with tempfile.TemporaryDirectory() as folder:
+            prefix = os.path.join(folder, 'bexhoma-loading-postgresql-1-initindexes-tpch-postgres.sql')
+            with open(prefix + '.stdout.log', 'w') as file:
+                file.write('CREATE INDEX\nBEXHOMA_SCRIPT_END:failed\n')
+            with open(prefix + '.stderr.log', 'w') as file:
+                file.write('FATAL:  terminating connection due to administrator command\n')
+            e = experiment(folder)
+            e.workload = {'name': 'TPC-H'}
+            e.configurations = [SimpleNamespace(configuration='PostgreSQL-1')]
+            with contextlib.redirect_stdout(io.StringIO()):
+                e.show_summary_aborted()
+        self.assertFalse(e._test_results[0][0])
+        self.assertIn('initindexes-tpch-postgres.sql', e._test_results[0][1])
 
 
 class SutPodsTest(unittest.TestCase):
