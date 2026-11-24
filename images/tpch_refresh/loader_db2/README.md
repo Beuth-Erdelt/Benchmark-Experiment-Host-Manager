@@ -8,7 +8,7 @@ See [images/tpch_refresh/README.md](https://github.com/Beuth-Erdelt/Benchmark-Ex
 ## Refresh functions
 
 * RF1: [`load.py`](load.py) inserts `orders.tbl.u<K>` and `lineitem.tbl.u<K>` as remote external tables, one transaction per chunk of `DB2_LOAD_CHUNK_ROWS` lines; it is a copy of [`images/tpch/loader_db2/load.py`](../../tpch/loader_db2/load.py) (each image is built from its own folder), keep both the same
-* RF2: [`rf2.py`](rf2.py) deletes the lineitems and orders whose keys are in `delete.<K>` in one transaction; the delete file is read as a remote external table, so there is no staging table
+* RF2: [`rf2.py`](rf2.py) deletes the lineitems and orders whose keys are in `delete.<K>` in one transaction; the delete file is read as a remote external table, so there is no staging table; it is sent from a copy in the container's temporary folder, because Db2 writes a log file per remote load next to the file (the shared data volume otherwise)
 * one `BEXHOMA_INGEST:<unit>:<expected>:<reported>:ok|failed` line per unit (#848); RF2 has no expected count (a set applied again deletes nothing). A failed unit makes the pod exit 1.
 
 ## Environment variables

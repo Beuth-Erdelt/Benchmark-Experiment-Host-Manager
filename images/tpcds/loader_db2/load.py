@@ -28,12 +28,17 @@ user), DB2_DELIMITER (default '|'), DB2_EMPTY_AS_NULL (1: an empty field is
 NULL, as in TPC-DS; default 0: an empty field of a character column is an empty
 string), DB2_LOAD_CHUNK_ROWS (default 20000), DB2_LOAD_RETRIES (default 10).
 
+Chunk files are written to the temporary folder of the container, which is also the
+working directory: Db2 writes a log file per remote load next to the chunk, and the
+source folder may be the shared data volume.
+
 Author: Patrick K. Erdelt
 Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
 import os
 import sys
+import tempfile
 import time
 
 import ibm_db
@@ -105,7 +110,9 @@ def main():
     delimiter = os.environ.get('DB2_DELIMITER', '|')
     size = int(os.environ.get('DB2_LOAD_CHUNK_ROWS', '20000'))
     retries = int(os.environ.get('DB2_LOAD_RETRIES', '10'))
-    tmpdir = os.path.dirname(os.path.abspath(path))
+    path = os.path.abspath(path)
+    tmpdir = tempfile.gettempdir()
+    os.chdir(tmpdir)
     loaded = 0
     ok = True
     conn = None

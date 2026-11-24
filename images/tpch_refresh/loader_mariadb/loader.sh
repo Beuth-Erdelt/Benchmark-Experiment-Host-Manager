@@ -153,6 +153,7 @@ for K in $(seq $FIRST_SET $LAST_SET); do
     #### RF2: delete orders identified in delete file ####
     # no expected count: a set applied again (reused volume) deletes nothing;
     # the client stops at the first error and exits 1
+    # ROW_COUNT() prints the rows each DELETE removed (session value, reads no table)
     # The key table is a regular table in the engine of lineitem: ColumnStore runs a join with a
     # table of another engine (a TEMPORARY table is never ColumnStore) as a cross-engine join, which
     # needs credentials in Columnstore.xml and cannot see the temporary tables of this session.
@@ -165,7 +166,9 @@ CREATE TABLE $KEYS_TABLE (orderkey BIGINT) $KEYS_ENGINE;
 LOAD DATA LOCAL INFILE '$destination_raw/delete.$K'
     INTO TABLE $KEYS_TABLE FIELDS TERMINATED BY '\n';
 DELETE l FROM lineitem l WHERE l.l_orderkey IN (SELECT orderkey FROM $KEYS_TABLE);
+SELECT ROW_COUNT() AS lineitem_deleted;
 DELETE o FROM orders o WHERE o.o_orderkey IN (SELECT orderkey FROM $KEYS_TABLE);
+SELECT ROW_COUNT() AS orders_deleted;
 DROP TABLE $KEYS_TABLE;
 SQL
     RC=$?
