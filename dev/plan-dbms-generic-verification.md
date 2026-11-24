@@ -1,6 +1,6 @@
 # Plan: what is left after the DBMS-generic refactor (#850)
 
-Status: **open, 2026-11-22.** The refactor (branch dbms-agnostic-code, #850) is in v0.11.13. The full
+Status: **done, 2026-11-24** (opened 2026-11-22). The refactor (branch dbms-agnostic-code, #850) is in v0.11.13. The full
 test-docs suite (~490 logs, 2026-11-11..18) passed and covers most of the old checklist. This plan lists only
 what was never checked after the refactor, and what follows from it.
 
@@ -11,7 +11,7 @@ Done 2026-11-23 on branch `small-corrections` (local, not pushed): section 3 in 
 loading test skipped; result contract 1.15.0), section 7 (48b41866, both sync tools fixed, with tests).
 Done 2026-11-23: section 2 (CedarDB SSB, DatabaseService `-sl` rerun, which also verified section 3).
 Done 2026-11-24 on branch `verification-decisions`: section 5 (4.1, 4.2, 4.3 decided and done).
-Still open: the cluster run of the multi-DBMS refresh in section 4 (`-dbms PostgreSQL ClickHouse MySQL -xrs 1`).
+Done 2026-11-24: the cluster run of the multi-DBMS refresh in section 4. Left: the side findings in section 8.
 Side finding of 1.5, not fixed: the PgDuckDB force-execution workload note ignores a system's own `sut_parameters`
 (belongs to [plan-pgduckdb-force-execution.md](plan-pgduckdb-force-execution.md), deferred by the user 2026-11-23).
 
@@ -108,8 +108,10 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
   Changed the same day (user): the refusal of DBMS with different refresh jobs is gone. Each configuration's
   refresh entry gets the `refresh_template` of its own DBMS (`TpchExperiment.add_configuration()`), so
   `-dbms PostgreSQL ClickHouse -xrs 1` runs, each DBMS with its own job. Only a DBMS without a refresh job is
-  refused (none in TPC-H). Not yet run on the cluster: `bexhoma tpch -dbms PostgreSQL ClickHouse MySQL -sf 1
-  -xrs 1 -ne 1 run`, check one `tpch_refresh` job per DBMS with its own template and no SQL errors.
+  refused (none in TPC-H). Run on the cluster 2026-11-24 (1795550789, bexhoma 0.12.4, `-sf 1 -ne 1 -xii -xic
+  -xis -tr -xrs 1`, `logs_tests/local/refresh_three_dbms.log`, 8 min): every test passed, one `tpch_refresh`
+  job per DBMS, the same generator image, the loader image of each DBMS (`loader_tpch_refresh_postgresql`,
+  `_clickhouse`, `_mysql`), RF1 and RF2 ran in all three, no SQL errors.
 - [x] Unit tests instead of runs, so they need no rerun.
 
 ## 5. Decisions for the user (before any run)
@@ -151,3 +153,15 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
 ## Order
 
 1 (done) → 3 (code done; verified by 2.1) → 2 → 7 (done) → 4 → 5 after decisions.
+
+
+## 8. Side findings of the refresh run (2026-11-24), not fixed
+
+- RF2 row counts: only the PostgreSQL refresh loader prints them (`DELETE 6005`, `DELETE 1500`). The MySQL loader
+  runs RF2 without `SELECT ROW_COUNT()` (RF1 has it), the ClickHouse loader prints no counts for RF1 or RF2
+  (lightweight `DELETE` reports none). Note for the 1.1 check: RF2 deletes other orders than RF1 inserts, so only
+  orders match (1500 = 1500); lineitem counts differ by design (5822 inserted, 6005 deleted at SF 1).
+- Db2 external-table logs: `load.py` of the Db2 loaders (`images/{tpch,tpcds,tpch_refresh}/loader_db2`) writes its
+  chunk files next to the source file, and Db2 writes one `BEXHOMA.DB2INST1.SYSTET*.log` per load there. In the
+  shared folder `/data/tpch-refresh/SF1` 12 of them were left from the run of 2026-11-11 (removed 2026-11-24; no
+  others under `/data`). Fix: chunk files to `/tmp` and `LOGDIR '/tmp'` in the external-table options.
