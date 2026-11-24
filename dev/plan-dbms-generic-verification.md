@@ -62,12 +62,18 @@ After the runs:
 
 ## 2. Existing blocks that never ran after the refactor
 
-- [ ] 1.2 CedarDB SSB, dialect CedarDB: `scripts/test-docs-cedardb.sh` block with log
+- [x] 1.2 CedarDB SSB, dialect CedarDB: `scripts/test-docs-cedardb.sh` block with log
   `doc_ssb_testcase_cedardb_normal.log`. All 13 queries succeed, queries unchanged.
   CedarDB results are never published (`tests/test_unpublished_results.py`): log stays internal, no doc page.
-- [ ] 2.1 TPC-H DatabaseService `-sl`: `scripts/test-docs-databaseservice.sh`, log
+  Run 2026-11-23 (1795467658, bexhoma 0.12.3, `logs_tests/local`): all 13 queries, no errors, no warnings,
+  every test passed or skipped with its reason (no `-se`, no restarts).
+- [x] 2.1 TPC-H DatabaseService `-sl`: `scripts/test-docs-databaseservice.sh`, log
   `docs_tpch_databaseservice_execution.log`; last run was 0.11.12 (pre-refactor). Needs the
   `docs_tpch_databaseservice.log` block before it, which loads the external database.
+  Rerun 2026-11-23 (0.12.3, whole script): `TEST skipped: Loading measured in this experiment (loading skipped
+  by -sl, DBMS not managed by bexhoma: DatabaseService-1)` in the TPC-H and the Benchbase `-sl` logs, no failed
+  test. The storage variant (no `-sl`, reuses the volume of the block before) says "storage reused", as it should.
+  This also verifies section 3 on the cluster.
 
 ## 3. Bug: "Loading measured in this experiment" passes with `-sl`
 
