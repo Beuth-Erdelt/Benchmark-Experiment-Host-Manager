@@ -130,15 +130,6 @@ The agent in `agent/` uses both contracts to plan, run and answer experiments; s
 
 What to do when one of them fails: [When a test fails](CONTRIBUTING.md#when-a-test-fails).
 
-## Known structural debt
+## Design rationale
 
-- `experiments/base.py` (about 4,000 lines) and `clusters.py` (about 3,700 lines) are the largest modules. `work_benchmark_list()` alone is several hundred lines; splitting it into one handler per phase would make the phases testable on their own.
-- The legacy `benchmark_list` path of the main loop is still there for configurations without benchmarker entries in `experiment_dict`. The entry scripts call `add_benchmark_list()`, which also fills `experiment_dict`, so they take the `experiment_dict` path.
-
-## Design notes
-
-These pages record why a design was chosen. They are not updated with every change; where they and the code disagree, the code is right.
-
-- [Design: Catalog Contract](Design-Catalog-Contract.md): the catalog contract, its full audit of benchmarks and DBMS, open questions
-- [Design: YAML-driven experiment entry script](Design-Yaml-Experiment-Entry-Script.md): `experiment.py` and its builder
-- `contracts/contract_catalog_comments.md`, `contracts/contract_result_comments.md`: the rationale of each contract field
+`contracts/contract_catalog_comments.md` and `contracts/contract_result_comments.md` give the rationale of each contract field.

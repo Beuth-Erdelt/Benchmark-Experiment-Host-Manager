@@ -4,7 +4,7 @@ Last recorded runs of the examples in `docs/`, one row per log in `logs_tests/`.
 Nothing is run to create this page: it is read from the committed logs by `scripts/demo-runs.py`,
 so it shows what the runs looked like when they were recorded, not whether the current code still passes.
 
-**400 passed, 0 failed, 1 warn, 0 unchecked** (401 runs)
+**399 passed, 0 failed, 1 warn, 0 unchecked** (400 runs)
 
 | Status | Log | Page | Date | Version | Duration | Failed tests / warnings |
 |---|---|---|---|---|---|---|
@@ -315,7 +315,6 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpch_postgresql_tenants_schema.log | Example-Multi-Tenant.md | 2026-11-16 | 0.11.18 | 448s |  |
 | passed | docs_tpch_postgresql_throughput.log | Example-TPC-H.md | 2026-11-23 | 0.12.3 | 457s |  |
 | passed | docs_tpch_refresh_two_dbms.log | Example-TPC-H.md | 2026-11-23 | 0.12.3 | 465s |  |
-| passed | docs_tpch_yaml_experiment.log | Design-Yaml-Experiment-Entry-Script.md | 2026-11-23 | 0.12.3 | 573s |  |
 | passed | docs_ycsb_cassandra.log | Example-Cassandra.md | 2026-11-16 | 0.11.18 | 297s |  |
 | passed | docs_ycsb_cassandra_cluster.log | Example-Cassandra.md | 2026-11-16 | 0.11.18 | 535s |  |
 | passed | docs_ycsb_cassandra_monitoring.log | Example-Cassandra.md | 2026-11-16 | 0.11.18 | 452s |  |

@@ -8,7 +8,7 @@ It automates the full lifecycle of a benchmark: provisioning the DBMS inside a K
 The central motivation is **reproducibility and comparability**.
 By encoding every hardware and software decision — DBMS image, resource limits, node placement, data scale, driver concurrency — into a single parameterized run, Bexhoma makes it straightforward to repeat the same experiment with different DBMS or different configuration variants and then compare results side by side.
 
-Bexhoma has been used on Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud, Oracle Cloud, and Minikube installations, and has been validated across more than twenty DBMS products.
+Bexhoma runs on managed Kubernetes services (Amazon Web Services, Google Cloud, Microsoft Azure, IBM Cloud, Oracle Cloud) and on Minikube.
 
 ---
 

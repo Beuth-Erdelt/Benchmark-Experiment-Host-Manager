@@ -1,6 +1,6 @@
 """
 Demo/verification script for bexhoma/spec.py — the contract_catalog.yml +
-experiment.yml translator (see docs/Design-Catalog-Contract.md).
+experiment.yml translator (see dev/Design-Catalog-Contract.md).
 
 Translates dev/catalog/experiment.yml against contracts/contract_catalog.yml,
 prints the resulting tpch.py argument vector and command line, and parses that argv

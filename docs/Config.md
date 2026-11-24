@@ -296,13 +296,13 @@ Init scripts may use these placeholders, which bexhoma substitutes at runtime:
 
 ---
 
-## `instances` — Legacy IaaS Settings
+## `instances` — IaaS Settings
 
 ```python
 'instances': {},
 ```
 
-This section is a remnant of an earlier IaaS (VM-based) deployment mode.
+This section belongs to an IaaS (VM-based) deployment mode.
 It is **not used** in Kubernetes mode and should be left empty.
 
 ---

@@ -5,7 +5,7 @@ This example shows how to benchmark TiDB with YCSB and Benchbase's TPC-C, as a c
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 [TiDB](https://www.pingcap.com/) is a distributed, MySQL-compatible DBMS with a disaggregated architecture.
-TiDB offers several installation methods, including an operator; we here rely on a [manifest](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-TiDB.yml) that is suitable for bexhoma.
+TiDB offers several installation methods, including an operator; bexhoma uses a [manifest](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-TiDB.yml) that is suitable for bexhoma.
 TiDB clusters consist of three core components: TiDB (the SQL layer), PD (Placement Driver) and TiKV (the storage).
 TiDB does not require a single coordinator node - PD handles cluster metadata management and scheduling.
 
@@ -41,7 +41,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -1076,7 +1076,7 @@ The name of each volume contains the storage class, so data loaded on one storag
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of TiDB mounts the volumes and loads the data.
 The second instance reuses the volumes and skips loading.
-Here, we remove existing storage via `-rsr` to start with a clean copy.
+This removes existing storage via `-rsr` to start with a clean copy.
 
 ### Example Result
 
@@ -1532,7 +1532,7 @@ Example: `-nw 6 -xnpd 3 -xnsr 2` deploys 6 TiKV nodes, 3 PD nodes, and 2 `tidb-s
 
 Two more scaling-related flags exist but are **not** pod-count knobs for TiDB:
 * `-nwr` / `--num-worker-replicas` sets PD's `max-replicas` raft configuration (`SET CONFIG pd max-replicas = {num_worker_replicas}`, run once as part of the init schema) - the number of Raft replicas TiKV keeps per data region, a data-durability setting independent of how many TiKV/PD pods are actually running. It is exposed as `BEXHOMA_REPLICAS` on the SUT pods and in the eval summary, but no container in the TiDB manifest uses it as a pod count.
-* `-nws` / `--num-worker-shards` currently has **no effect** for TiDB - it's a DDL parameter only wired up for Citus (`SET citus.shard_count = ...`). It is still parsed (shared across all entry scripts) but the TiDB init schema does not reference it.
+* `-nws` / `--num-worker-shards` has **no effect** for TiDB - it's a DDL parameter only wired up for Citus (`SET citus.shard_count = ...`). It is still parsed (shared across all entry scripts) but the TiDB init schema does not reference it.
 
 
 ## Technical Details

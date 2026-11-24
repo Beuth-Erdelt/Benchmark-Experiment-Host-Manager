@@ -5,7 +5,6 @@ This example shows how to benchmark Apache Cassandra with YCSB, as a single node
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 [Apache Cassandra](https://cassandra.apache.org/) is a wide-column store, licensed under Apache 2.0 (which has no restriction on publishing benchmark results).
-This page uses the image `cassandra:5.0.9`.
 Bexhoma runs it as a single node (one SUT pod) or as a cluster (`-nw`), where every node is a worker pod of a stateful set.
 Cassandra has no coordinator node, every node answers clients.
 Bexhoma still deploys a main pod as a single point of contact, to run `cqlsh` for the scripts and to annotate the status of experiments.
@@ -40,7 +39,7 @@ BEXHOMA_STORAGE_CLASS="nvme"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -1723,7 +1722,7 @@ where
 * `monitor`: Prometheus discovery of the SUT pod (single node) or the worker pods (cluster), scraping the `cassandra_exporter` on port 8080
 
 There is no JDBC driver: YCSB runs its `cassandra-cql` binding, selected by `BEXHOMA_DBMS_TYPE = "cassandra"`.
-The binding uses the DataStax driver 3.0.0, which works with Cassandra 5.
+The binding uses the DataStax driver of YCSB, which works with the Cassandra version of the template.
 DBMSBenchmarker cannot connect, so only YCSB is offered.
 
 ### Deployment
@@ -1770,4 +1769,4 @@ With `-ar`, [save-snapshot.sh](https://github.com/Beuth-Erdelt/Benchmark-Experim
 
 All runs on this page use `-ar`, so compactions caused by the load do not run during the benchmark.
 See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract.
-There is no test run for Cassandra in [Test: Reset Scripts](Test-Reset.md) yet.
+[Test: Reset Scripts](Test-Reset.md) has no run for Cassandra.

@@ -38,7 +38,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example: 
 ```bash
@@ -327,8 +327,6 @@ YCSB SF=1
 
 </details>
 
-We can see that the overall throughput is very close to the target and that scaled-out drivers (8 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 64 thread).
-The runtime is between 8 seconds and 1 minute.
 
 To see the summary again you can simply call `bexhoma summary -e 1708411664` with the experiment code.
 
@@ -589,9 +587,9 @@ options:
 ## Perform Execution Benchmark
 
 The default behaviour of bexhoma is that several different settings of the loading component are compared.
-We might only want to benchmark the workloads of YCSB in different configurations and have a fixed loading phase.
+To benchmark the workloads of YCSB in different configurations with a fixed loading phase:
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example: 
 ```bash
@@ -1167,7 +1165,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_storage.log
 ```
-The following status shows we have one volume of type `shared`.
+The following status shows a volume of type `shared`.
 Every PostgreSQL experiment running YCSB of SF=1 will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of PostgreSQL mounts the volume and generates the data.
@@ -1519,7 +1517,7 @@ Note the added section about `volume_size` and `volume_used` in the connections 
 Some DBMS allow to set parameter via args during startup.
 In general, the Kubernetes manifest should be used to set all arguments.
 In special cases (for example a batch of benchmarks) you may want to set a parameter via CLI.
-Here is an example for how to use `--set` for PostgreSQL 18. This sets `effective_io_concurrency` to 64.
+Here is an example for how to use `--set` for PostgreSQL. This sets `effective_io_concurrency` to 64.
 
 ```bash
 bexhoma ycsb \
@@ -1964,8 +1962,7 @@ YCSB SF=1
 
 </details>
 
-At this scale (SF=1, 1000 rows) `CHECKPOINT` and `VACUUM ANALYZE` complete in well under a second, so `time_reset` rounds to `0`.
-On a larger, longer-running dataset this section is where you'd see the reset cost start to matter relative to the benchmarking duration itself.
+The duration of the reset grows with the size of the data; compare it with the benchmarking duration.
 
 ## All Workloads
 
@@ -2918,7 +2915,6 @@ This means there are more rows in the database after the benchmark than before t
 The range of key that can be read or inserted changes.
 Repetition is only fully sensible after a clean creation of the database.
 This workload can be scaled out.
-*Currently this does not seem to work properly.*
 Scans might be done over empty keyspaces.
 
 Example:

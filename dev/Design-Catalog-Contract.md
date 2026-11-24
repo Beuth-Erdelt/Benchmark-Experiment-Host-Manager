@@ -6,7 +6,7 @@
 > PgDuckDB (each workload's `argv_builder` in its `catalog.py`) —
 > see "Near-term implementation scope" below for exactly what's built vs.
 > still just designed. Not linked from `docs/index.rst` on purpose — it's a
-> working note, not published documentation; [Architecture](Architecture.md)
+> working note, not published documentation; [Architecture](../docs/Architecture.md)
 > links it as a design note.
 >
 > This revision widens the catalog to bexhoma's **full** current surface
@@ -221,7 +221,7 @@ implied by `arg_style` at the system level, with per-knob overrides for the
 3. **PGBouncer** — models as *one component of a two-component system*, not
    two independent `systems:` entries composed together: the JDBC URL points
    at the pooler port while `datadir`/`logfile` still describe the
-   underlying PostgreSQL paths (see [DBMS](DBMS.md)). Its `pooling` entry in
+   underlying PostgreSQL paths (see [DBMS](../docs/DBMS.md)). Its `pooling` entry in
    `dockers.PGBouncer.benchmarks` of `cluster.config` (YCSB, Benchbase) gives one
    configuration per pooler setting, with its own knob namespace
    (`MAX_CLIENT_CONN`, pool replica count) layered on top of the real PostgreSQL SUT.

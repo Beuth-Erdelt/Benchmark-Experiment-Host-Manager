@@ -93,7 +93,7 @@ Multi-tenancy adds a further dimension: a single service provider may map to sev
 `component` is one of `known_components()`: `loading`, `benchmarking`, `loader`,
 `benchmarker`, plus what an experiment adds in the `monitoring_components` of its
 `queries.config` (e.g. `datagenerator`). An unknown component raises a `ValueError`
-that lists the known ones; it used to return an empty DataFrame. This applies to the
+that lists the known ones. This applies to the
 time-series methods below as well.
 
 ### Monitoring — Time Series

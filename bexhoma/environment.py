@@ -1,7 +1,7 @@
 """
 Generate ``environment.yml`` — a curated, machine-readable descriptor of the
 concrete Kubernetes cluster a ``catalog.yaml``/``experiment.yml`` pair would
-run against (see ``docs/Design-Catalog-Contract.md``).
+run against (see ``dev/Design-Catalog-Contract.md``).
 
 This is the read-only half of that contract: nodes (with curated labels,
 their static allocatable/capacity resources, and how much of that is

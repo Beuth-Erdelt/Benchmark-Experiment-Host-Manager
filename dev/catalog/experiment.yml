@@ -3,7 +3,7 @@
 #
 # STATUS: sample experiment, prototype scope. Resolved against
 # contracts/contract_catalog.yml by bexhoma/spec.py into a `tpch.py`
-# argument vector. See docs/Design-Catalog-Contract.md for the full
+# argument vector. See dev/Design-Catalog-Contract.md for the full
 # contract design.
 #
 # Designed from the contract alone:

@@ -4,8 +4,7 @@ This example shows how to benchmark Valkey with YCSB, as a single host and as a 
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
-[Valkey](https://valkey.io/) is an in-memory key-value store and a drop-in replacement for Redis: a Linux Foundation fork of Redis 7.2.4 under the BSD-3-Clause license (which has no restriction on publishing benchmark results).
-This page uses the image `valkey/valkey:9.1.3`.
+[Valkey](https://valkey.io/) is an in-memory key-value store and a drop-in replacement for Redis: a Linux Foundation fork of Redis under the BSD-3-Clause license (which has no restriction on publishing benchmark results).
 Bexhoma runs it as a single host (one SUT pod) or as a Valkey cluster (`-nw`), where every shard and every replica is a worker pod of a stateful set.
 A Valkey cluster has no coordinator; bexhoma still deploys a main pod as a single point of contact and to annotate the status of experiments.
 YCSB talks to Valkey via the Redis wire protocol, not via JDBC.
@@ -38,7 +37,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -1240,7 +1239,7 @@ YCSB SF=1
 #### Cluster on Persistent Storage
 
 A Valkey cluster can store the database in persistent storage, too.
-Here, we remove existing storage via `-rsr` to start with a clean copy.
+This removes existing storage via `-rsr` to start with a clean copy.
 
 ```bash
 bexhoma ycsb \
@@ -1774,7 +1773,7 @@ YCSB SF=1
 
 ### Replication
 
-We can set the number of replicas with the parameter `-nwr`.
+The parameter `-nwr` sets the number of replicas.
 Valkey requires a worker per replicated shard, so `-nw 3` and `-nwr 1` create 6 worker pods, 3 for sharding and another 3 for the (single) replicas.
 
 ```bash
@@ -2099,4 +2098,4 @@ With `-ar`, [save-snapshot.sh](https://github.com/Beuth-Erdelt/Benchmark-Experim
 3. Counters: `CONFIG RESETSTAT`
 
 See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract.
-There is no test run for Valkey in [Test: Reset Scripts](Test-Reset.md) yet; the scripts are the ones of [Redis](Example-Redis.md#reset-scripts) with `valkey-cli`.
+[Test: Reset Scripts](Test-Reset.md) has no run for Valkey; the scripts are the ones of [Redis](Example-Redis.md#reset-scripts) with `valkey-cli`.

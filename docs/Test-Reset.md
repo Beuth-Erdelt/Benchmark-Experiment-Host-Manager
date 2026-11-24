@@ -1,6 +1,6 @@
 # Test: Reset Scripts
 
-This page shows how to use `-ar` (reset scripts) and keeps the test script and the logs of its last run on the cluster.
+This page shows how to use `-ar` (reset scripts) with its test script and the logs of its runs.
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -79,9 +79,6 @@ What to check per log:
 * step 2 visible: `CHECKPOINT` (PostgreSQL family), `run_command_on_workers` with `success = t` for every worker (Citus), `dirty pages: 0` from `reset-flush.sh` (MySQL, MariaDB), `SAVE` returns `OK` on every data pod (Dragonfly, Redis)
 * step 3 visible: `counters reset on 3 tservers` (YugabyteDB), `FLUSH STATUS` without error (TiDB), `CONFIG RESETSTAT` returns `OK` (Dragonfly, Redis)
 * TPC-H with `-xrs`: one reset per round, none for the refresh stream
-
-The last run used bexhoma 0.11.7 (2026-10-21 and 2026-10-22).
-All runs passed their tests, except TPC-DS MariaDB, where Q94 and Q95 exceeded the query timeout (`-t 1200`); its resets ran without errors.
 
 
 ## YCSB

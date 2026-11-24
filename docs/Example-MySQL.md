@@ -41,7 +41,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+The experiment is run with the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
 Example:
 ```bash
@@ -1678,8 +1678,8 @@ In `cluster.config` there is a section:
 
 * [deploymenttemplate-MySQL.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MySQL.yml): one SUT pod.
 * The template sets the server options as `--key=value` arguments (e.g. `--innodb-buffer-pool-size=8G`); change them per run with `--set ...container[dbms].innodb_buffer_pool_size=32G`.
-* The buffer pool of 8G fits the default pod size (`-rr 16Gi`; the namespace sets the memory limit equal to the request when `-lr` is not given). Bexhoma does not adapt it to `-rr`/`-lr`: give larger pods a larger pool with `--set`. Until 2026-10-22 the template had 96G, which was OOM-killed in a 16Gi pod as soon as the data filled it (TPC-H SF 10).
-* A pool that is too small makes the persistent-storage runs very slow: the data of SF 10 does not fit into 8G, so queries read it again and again from the (network) volume. TPC-H SF 10 on the storage volume took 2952 s for Q9, Q13, Q15, Q18 and Q21 with 8G (Q15 timed out) and about 1050 s with 32G (Q18 and Q21 about 9 times faster); larger temporary-table limits (`temptable_max_ram`, `tmp_table_size`) made no difference. The storage runs below therefore set 32G. TPC-DS at SF 10 also sorts and joins a lot: with the default 256K for `sort_buffer_size` and `join_buffer_size` MySQL wrote thousands of merge passes to temporary files in `/mysqltmp`, and one query failed with `No space left on device` on the 32Gi tmpfs. Its storage run therefore sets both buffers and the temporary-table limits and a `mysqltmp` tmpfs of 72Gi: a 48Gi tmpfs ran full (`No space left on device`) when two clients ran the rollup queries (Q22) at the same time. The tmpfs is RAM and counts against the memory limit `-lr 128Gi`; the pool of 32G, a few GB for the server and the buffers of two clients and the 72Gi tmpfs stay below it (the rollup queries Q18, Q22, Q27, Q36, Q67, Q70 and Q86 with two clients peaked at 62 GB of RAM in the SUT).
+* The buffer pool of 8G fits the default pod size (`-rr 16Gi`; the namespace sets the memory limit equal to the request when `-lr` is not given). Bexhoma does not adapt it to `-rr`/`-lr`: give larger pods a larger pool with `--set`. A pool larger than the memory limit gets the SUT OOM-killed as soon as the data fills it.
+* A pool that is too small makes the persistent-storage runs slow: when the data does not fit into the pool, queries read it again and again from the (network) volume. Larger temporary-table limits (`temptable_max_ram`, `tmp_table_size`) do not help there. The storage runs below therefore set a pool of 32G. TPC-DS at SF 10 also sorts and joins a lot: with the default 256K for `sort_buffer_size` and `join_buffer_size`, MySQL writes many merge passes to temporary files in `/mysqltmp`, which can run full (`No space left on device`). Its storage run therefore sets both buffers, the temporary-table limits and a `mysqltmp` tmpfs of 72Gi, enough for two clients running the rollup queries at the same time. The tmpfs is RAM and counts against the memory limit `-lr 128Gi`, together with the pool, the server and the buffers of the clients.
 * MySQL writes temporary tables to `--tmpdir=/mysqltmp`, a tmpfs of 32Gi in RAM (volume `mysqltmp`). Large sorts and groupings need more, e.g. TPC-DS Q22 at SF 10 fails with `No space left on device`. Enlarge it per run with `--set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=64Gi`; it counts against the memory limit (`-lr`), together with the buffer pool. `.volume[mysqltmp].medium=` moves it to the node's disk. Internal temporary tables are held in RAM only up to `temptable_max_ram` (1G) and `tmp_table_size` (16M); beyond that MySQL converts them to on-disk tables, and at larger scale factors TPC-DS Q31 then fails with `Table './mysqltmp/#sql…' doesn't exist`. Raise them per run with `--set deployment[bexhoma-deployment-mysql].container[dbms].temptable_max_ram=32G` (and likewise `tmp_table_size`, `max_heap_table_size`).
 * The template sets no durability options: MySQL runs crash-safe by default (`innodb_flush_log_at_trx_commit=1`, doublewrite on); relax the benchmark per run with `--set ...container[dbms].innodb_flush_log_at_trx_commit=2`.
 * `delay_prepare: 120` makes bexhoma wait 2 minutes before querying the DBMS. This accounts for InnoDB's buffer pool initialisation, which can cause a brief restart.
@@ -1693,7 +1693,7 @@ DDL scripts per benchmark:
 - [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/MySQL)
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MySQL)
 
-The `initconstraints` scripts (TPC-H, TPC-DS) add the foreign keys with `SET SESSION foreign_key_checks = 0`, as for MariaDB: with checks on, MySQL validates every row and its memory grew past 16 GB while adding lineitem->orders at TPC-H SF 1 (OOM-killed, 2026-10-21).
+The `initconstraints` scripts (TPC-H, TPC-DS) add the foreign keys with `SET SESSION foreign_key_checks = 0`, as for MariaDB: with checks on, MySQL validates every row, and its memory can grow past the memory limit while adding lineitem->orders (OOM kill).
 
 DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)):
 
@@ -1730,7 +1730,7 @@ See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract and [Test:
 
 ## TPC-DS
 
-For performing the experiment we can run the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
+The experiment is run with the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
 
 ### Power Test
 
@@ -2354,8 +2354,8 @@ No warnings
 ```bash
 bexhoma tpcds \
   -dbms MySQL \
-  -sf 10 \
-  -nc 2 \
+  -sf 3 \
+  -nc 1 \
   -ne 1,2 \
   -nlp 8 \
   -nlt 8 \

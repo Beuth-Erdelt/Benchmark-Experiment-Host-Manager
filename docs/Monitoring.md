@@ -18,7 +18,7 @@ Three CLI flags control how deeply bexhoma monitors an experiment:
 
 `-m` and `-mc` cover hardware metrics (CPU, memory, network, disk). Network and disk metrics need a preinstalled Prometheus whose exporters report them: the cAdvisor bexhoma installs itself runs with `--disable_metrics disk,network,...` (see below).
 `-ma` adds DBMS-internal statistics (buffer pool hits, query rates, replication lag, etc.) scraped from an exporter sidecar.
-`-ma` is currently in alpha status.
+`-ma` is experimental.
 
 Which hardware metrics are collected is decided by each metric's `active` flag in `cluster.config` (see [Config](Config.md)).
 `-mm` overrides that flag for a single experiment, e.g. `-mm total_gpu_util=on,total_network_rx=off`, and needs `-m` or `-mc`.
@@ -177,8 +177,8 @@ The cAdvisor queries in `k8s-cluster.config` handle this in two ways:
 `{namespace}` keeps pods of other namespaces out: worker pod names carry no experiment code.
 
 A scoped job's counter starts at 0 before its first scrape, so its first value counts as growth: a loader with a single scrape gets its CPU total instead of 0.
-Whether a connection is scoped is read from its stored queries (its job query set differs from `metrics`); a `cluster.config` copy with the old literal pod pattern gives job query sets equal to `metrics` and keeps the old rule (`max - min`) without any message.
-To use the new queries, copy the cAdvisor metric definitions of `k8s-cluster.config` into your `cluster.config`.
+Whether a connection is scoped is read from its stored queries (its job query set differs from `metrics`); with a literal pod pattern in `cluster.config`, the job query sets equal `metrics` and the rule is `max - min`, without a message.
+The scoped queries are the cAdvisor metric definitions of `k8s-cluster.config`.
 
 ---
 
@@ -333,7 +333,7 @@ Gaps in such a fetch count as expected (`phase shorter than scrape interval`, se
 
 Even in a long phase a CPU total is only accurate to about one scrape interval: the counted span is shifted by up to one interval, and the CPU after a job pod's last scrape is never recorded.
 Widening the window does not help (it counts the neighbouring phase), so `extend` stays a clock-skew knob.
-Results from before this rule (fetch logs without `Interval length`) are evaluated as before.
+Fetch logs without `Interval length` are evaluated without this rule.
 
 ---
 

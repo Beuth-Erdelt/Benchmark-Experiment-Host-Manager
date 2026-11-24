@@ -3,7 +3,7 @@
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 Benchbase's TPC-C [1] implementation [2,5] does not allow scaling data generation and ingestion, but scaling the benchmarking driver.
-It uses quite some resources, so that for simulating a lot of users, scale-out of the driver is necessary [6].
+It needs considerable client resources, so simulating many users requires scale-out of the driver [6].
 
 > TPC-C involves a mix of five concurrent transactions of different types and complexity either executed on-line or queued for deferred execution. The database is comprised of nine types of tables with a wide range of record and population sizes. TPC-C is measured in transactions per minute (tpmC). While the benchmark portrays the activity of a wholesale supplier, TPC-C is not limited to the activity of any particular business segment, but, rather represents any industry that must manage, sell, or distribute a product or service.
 
@@ -41,7 +41,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
+The experiment is run with the [benchbase file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/benchbase.py).
 
 Example:
 ```bash
@@ -237,7 +237,6 @@ Benchbase Workload tpcc SF=16
 
 </details>
 
-We can see that the overall throughput is close to the target and that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads).
 
 To see the summary again you can simply call `bexhoma summary -e 1708411664` with the experiment code.
 
@@ -730,7 +729,7 @@ bexhoma benchbase \
   run &>$LOG_DIR/docs_benchbase_postgresql_storage.log
 ```
 
-The following status shows we have two volumes of type `shared`.
+The following status shows two volumes of type `shared`.
 Every PostgreSQL experiment running Benchbase's TPC-C of SF=16 (warehouses) will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of PostgreSQL mounts the volume and generates the data.
@@ -887,7 +886,7 @@ Benchbase Workload tpcc SF=16
 
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
-Also note the size increases from first to second run (benchmark writes data).
+The benchmark writes data, so the volume grows from run to run.
 
 ## Reset Scripts
 
@@ -1060,7 +1059,7 @@ Benchbase Workload tpcc SF=4
 </details>
 
 The `#### Reset` section appears once per experiment repeat (`-nc 2`), right after `#### Per Phase`.
-At SF=4 the 9 TPC-C tables are small, so `CHECKPOINT` + `VACUUM ANALYZE` finish in about 2 seconds here; at larger scaling factors this cost grows with table size and is worth comparing against the benchmarking duration itself.
+The duration of `CHECKPOINT` and `VACUUM ANALYZE` grows with the table size; compare it with the benchmarking duration.
 
 ## Unlimited Target and Warmup
 
@@ -1224,12 +1223,12 @@ Benchbase Workload tpcc SF=4
 </details>
 
 The workload description says `Target is unlimited.` and mentions the warmup.
-In `#### Per Connection` the column `target` is 0 for both pod counts, and `time` is the measured duration (120 seconds) without the warmup.
+In `#### Per Connection` the column `target` is 0 for both pod counts, and `time` is the measured duration (`-xsd`) without the warmup.
 
 ## Keying and Thinking Time
 
-We can activate waiting times before and after execution of transactions with `-xkey` to follow TPC-C specifications more closely.
-Also also make sure, the number of driver threads (`-nbt`) is 10 times the number of warehouses (`-sf`).
+`-xkey` activates waiting times before and after the execution of transactions, closer to the TPC-C specification.
+Make sure that the number of driver threads (`-nbt`) is 10 times the number of warehouses (`-sf`).
 Since `-nbt` can exceed the DBMS's connection limit at the largest pod count in the `-nbp` sweep, raise
 `max_connections` accordingly with `--set`.
 
@@ -1525,7 +1524,7 @@ Benchbase Workload tpcc SF=160
 
 </details>
 
-Now also efficiency is computed via `0.45 * 60. * 100. * Goodput (requests/second) / 12.86 / sf`, when number of client threads is 10 times the number of warehouses:
+Efficiency is computed via `0.45 * 60. * 100. * Goodput (requests/second) / 12.86 / sf`, when number of client threads is 10 times the number of warehouses:
 * 45% is the average portion of new orders in the set of transactions
 * 60 transforms to per-minute
 * 100 makes it a percentage value

@@ -2,7 +2,7 @@
 
 The examples of this documentation are produced by test scripts.
 Each script runs a sequence of bexhoma experiments, writes their logs to `logs_tests/` and extracts the summaries, which the pages show.
-The [log folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/logs_tests) contains the logs and `*_summary.md` files of the last runs.
+The [log folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/logs_tests) contains the logs and `*_summary.md` files of the runs.
 
 You will have to change the node selectors in [testfunctions.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/testfunctions.sh) / [testfunctions.ps1](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/testfunctions.ps1) to names of nodes that exist in your cluster, or leave out the corresponding parameters.
 
@@ -72,7 +72,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_tpch_compare.log
 ```
 
-yields (after ca. 120 minutes) something like
+yields something like
 
 <details>
 <summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_compare_summary.md" target="_blank" rel="noopener">docs_tpch_compare.log</a></summary>
@@ -273,7 +273,7 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_tpcds_compare.log
 ```
 
-yields (after ca. 520 minutes) something like
+yields something like
 
 <details>
 <summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_compare_summary.md" target="_blank" rel="noopener">docs_tpcds_compare.log</a></summary>

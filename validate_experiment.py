@@ -8,7 +8,7 @@ Wraps :mod:`bexhoma.spec`'s ``build_argv()`` (catalog resolution — the same
 path ``experiment.py``/``bexhoma/spec.py::translate()`` use to build a
 ``tpch.py`` argument vector) and its ``validate_environment()`` (placement
 node existence/taints, CPU/memory ceilings, storage-class existence). See
-``docs/Design-Catalog-Contract.md`` for the contract both validate against.
+``dev/Design-Catalog-Contract.md`` for the contract both validate against.
 
 Usage: ``python validate_experiment.py [experiment.yaml]
 [-c contracts/contract_catalog.yml] [-e environment.yml]``. Pass ``-e ""``

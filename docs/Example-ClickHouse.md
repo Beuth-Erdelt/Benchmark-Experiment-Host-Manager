@@ -45,7 +45,7 @@ BEXHOMA_STORAGE_CLASS="nvme"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+The experiment is run with the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
 Example:
 ```bash
@@ -270,7 +270,7 @@ This forwards ports, so you have
 
 [Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
-At SF=1, the 22 queries take about 10 seconds on ClickHouse and at SF=10 about 14 seconds, so this run uses SF=10 (`-sf`) and runs each query 10 times (`-xqr`).
+This run uses SF=10 (`-sf`) and runs each query 10 times (`-xqr`), so that the benchmarking phase is long enough for monitoring.
 At SF=1 the loaders also finish within a few seconds, shorter than the scrape interval of 30 seconds; their CPU utilization (a rate over two scrapes) is then missing, and the test `Monitoring metrics missing` fails for that metric only.
 
 For a cluster, monitoring sums the metrics of coordinator and shards (components SUT and worker).
@@ -1248,11 +1248,11 @@ In `cluster.config` there is a section:
 
 `ClickHouseCluster` is the same, plus `'attachWorker': ''` (the shards are in the configuration of every pod, `remote_servers`, there is nothing to register) and the monitor component `worker`, which scrapes coordinator and shards (the metrics are totals of the cluster).
 The JDBC jar is the variant with all dependencies; the smaller `-all` jar lacks slf4j-api, and the driver class does not load without it.
-DBMS-Benchmarker reads `UInt64` results (e.g. of `count()`), which the driver returns as `java.math.BigInteger`, since v0.15.4.
+DBMS-Benchmarker reads `UInt64` results (e.g. of `count()`), which the driver returns as `java.math.BigInteger`.
 
 ### Deployment
 
-* Single server: [deploymenttemplate-ClickHouse.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-ClickHouse.yml), official image `clickhouse/clickhouse-server:26.8.34.13` (LTS).
+* Single server: [deploymenttemplate-ClickHouse.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-ClickHouse.yml), official image `clickhouse/clickhouse-server` (LTS).
 * Clients use the HTTP interface (JDBC, service port 9091 → 8123); loaders and init scripts use the native protocol (`clickhouse-client`, port 9000, service port `port-sut-native`).
 * `CLICKHOUSE_SKIP_USER_SETUP=1` keeps user `default` without password and with network access; without it the image restricts `default` to localhost.
 * Instead of `privileged`, the container gets the capabilities `SYS_NICE`, `IPC_LOCK` and `NET_ADMIN` (thread priorities, mlock, per-query OS metrics).
@@ -1338,12 +1338,12 @@ With `-ar`, the reset runs before each benchmarking round:
 3. Counters: n/a (`system.events` cannot be reset)
 
 See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract.
-There is no test run for ClickHouse in [Test: Reset Scripts](Test-Reset.md) yet.
+[Test: Reset Scripts](Test-Reset.md) has no run for ClickHouse.
 
 
 ## TPC-DS
 
-For performing the experiment we can run the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
+The experiment is run with the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
 
 ```bash
 bexhoma tpcds \

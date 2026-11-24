@@ -81,9 +81,8 @@ each write converts unwritten extents and each fsync/fdatasync also commits a fi
 entry. That matches a table or index growing during a bulk load, but not PostgreSQL's WAL, whose
 segments are zero-filled when created and then recycled, nor checkpoint writes into existing
 relation files. `-xfow 1` lays out (fully writes) the test file before the timed part of the round,
-so writes go into already written blocks. On a Ceph RBD volume (ext4) this made a large difference
-for 8k writes with fdatasync after each, one job: about 370 commits/s on a fresh file versus about
-1,540 on a prefilled one, with fdatasync dropping from 1.85 ms to a few µs. Use `-xfow 1` for
+so writes go into already written blocks. On a Ceph RBD volume (ext4) this makes a large difference
+for small writes with fdatasync after each. Use `-xfow 1` for
 WAL-like rounds, or `-xfow 0,1` to measure both.
 
 To compare storage backends in one experiment, give `-rst` a comma-separated list, e.g.
@@ -97,7 +96,7 @@ network or the storage cluster.
 
 #### 1. Queue-depth sweep
 
-For performing the experiment we can run the
+The experiment is run with the
 [hardware file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/hardware.py).
 
 ```bash
@@ -3945,10 +3944,8 @@ derived from `hardware_fio_write_iops × hardware_fio_bs`.
 A single-profile approximation of foreground OLTP traffic contending with WAL flushes on one
 queue: mixed random read/write with fsync on the write side. This is **not** the same as true
 concurrent checkpoint+WAL+OLTP contention — that needs several parallel benchmarker jobs with
-different fio profiles running in the same round, which bexhoma does not yet support for Hardware
-(the closest existing precedent is the TPC-H refresh-stream mechanism, see
-section 8 of the [experiments README](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/bexhoma/experiments/README.md), which could be adapted for this in the future). This proxy is
-what is achievable today with the single-profile-per-round model used throughout this page.
+different fio profiles running in the same round, which bexhoma does not support for Hardware.
+This proxy fits the single-profile-per-round model used throughout this page.
 
 ```bash
 bexhoma hardware \
