@@ -1349,12 +1349,13 @@ DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)):
 
 | Key | Benchmarks | Values | Default | Effect |
 |---|---|---|---|---|
-| `index_method` | TPC-H | `btree`, `hash`, `brin` | `btree` | access method of the foreign key indexes (-xii) except the multicolumn index on lineitem, which stays a B-tree: hash indexes answer equality only, brin indexes are tiny but need physically ordered keys |
+| `index_method` | TPC-H, TPC-DS | `btree`, `hash`, `brin` | `btree` | access method of the foreign key indexes (-xii) except the multicolumn indexes, which stay B-trees: hash indexes answer equality only, brin indexes are tiny but need physically ordered keys |
 | `btree_dedup` | TPC-H | `on`, `off` | `on` | deduplication of B-tree index entries (-xii; PostgreSQL default on): shrinks non-unique foreign key indexes. Requires `index_method` = `btree` |
 | `statistics_target` | TPC-H | integer | `100` | default_statistics_target of the database (-xis; PostgreSQL default 100): rows sampled and histogram size per column; plan quality vs. ANALYZE time |
 | `extended_statistics` | TPC-H | `off`, `on` | `off` | multi-column statistics (-xis) on correlated columns of lineitem and part: the planner otherwise multiplies their selectivities |
 | `fillfactor` | YCSB | integer | `100` | fillfactor of usertable (PostgreSQL default 100, allowed 10-100): free space per page lets updates stay on the page (HOT updates, see n_tup_hot_upd in pg_stat_user_tables) |
 | `autovacuum_scale` | YCSB | `0.2`, `0.1`, `0.05`, `0.01` | `0.2` | autovacuum_vacuum_scale_factor of usertable (PostgreSQL default 0.2): share of dead rows that starts an autovacuum; lower values vacuum earlier in update-heavy runs (see autovacuum_count in pg_stat_user_tables) |
+| `partition_by` | TPC-H | `none`, `year` | `none` | year: orders and lineitem partitioned by range of o_orderdate and l_shipdate, one partition per year and a default one (partition pruning); their primary keys contain the date, and lineitem has no foreign key to orders (-xic) |
 
 PgDuckDB uses the TPC-H keys (it runs these scripts), PGBouncer the YCSB keys.
 

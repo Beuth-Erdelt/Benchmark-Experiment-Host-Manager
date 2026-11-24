@@ -34,12 +34,22 @@ ALTER TABLE public.customer
     ADD FOREIGN KEY (c_nationkey)          REFERENCES public.nation(n_nationkey);
 
 ALTER TABLE public.orders
+\if {partition_by}
+    -- the primary key of a partitioned table contains the partition column
+    ADD PRIMARY KEY (o_orderkey, o_orderdate),
+\else
     ADD PRIMARY KEY (o_orderkey),
+\endif
     ADD FOREIGN KEY (o_custkey)            REFERENCES public.customer(c_custkey);
 
 ALTER TABLE public.lineitem
+\if {partition_by}
+    -- no foreign key to orders: o_orderkey alone is not unique in a partitioned orders table
+    ADD PRIMARY KEY (l_orderkey, l_linenumber, l_shipdate),
+\else
     ADD PRIMARY KEY (l_orderkey, l_linenumber),
     ADD FOREIGN KEY (l_orderkey)           REFERENCES public.orders(o_orderkey),
+\endif
     ADD FOREIGN KEY (l_partkey)            REFERENCES public.part(p_partkey),
     ADD FOREIGN KEY (l_suppkey)            REFERENCES public.supplier(s_suppkey),
     ADD FOREIGN KEY (l_partkey, l_suppkey) REFERENCES public.partsupp(ps_partkey, ps_suppkey);

@@ -16,7 +16,7 @@
 # never reads it, and an experiment.yml systems[] entry that sets engine: is
 # rejected as an unknown field.
 
-catalog_contract_version: "1.13.1"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.14.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -926,6 +926,7 @@ systems:
         btree_dedup: {values: ["on", "off"], default: "on", why: "btree only"}
         statistics_target: {type: int, default: 100, min: 1, max: 10000}
         extended_statistics: {values: ["off", "on"], default: "off"}
+        partition_by: {values: [none, year], default: none, why: "orders, lineitem"}
 
     profiles:
       analytical-ssd:
