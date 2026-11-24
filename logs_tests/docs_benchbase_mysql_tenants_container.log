@@ -166,14 +166,6 @@ MySQL-2                       : submitted benchmarker job in 14.4s (4 kubectl ca
 Experiment                    : submitted 2 benchmark rounds in 14.5s (2 at once; 9 kubectl calls 7.4s, 51 API requests 15.0s)
 Loop pass                     : took 22.4s (13 kubectl calls 10.2s, 91 API requests 19.9s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '6da8818b-5aa4-41cf-ab1c-d309bc523048', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Mon, 23 Nov 2026 11:58:39 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MySQL-1                       : has running benchmarks
 MySQL-2                       : has running benchmarks
@@ -211,14 +203,6 @@ MySQL-1                       : has running benchmarks
 MySQL-2                       : has running benchmarks
 Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 34 API requests 1.5s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '3aca82b9-40fb-42ed-bacb-7cf2a695978b', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Mon, 23 Nov 2026 12:03:27 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MySQL-1                       : has running benchmarks
 MySQL-2                       : has running benchmarks
@@ -288,14 +272,6 @@ MySQL-1                       : has running benchmarks
 MySQL-2                       : has running benchmarks
 Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 34 API requests 1.2s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '411bcf36-249f-499c-97ea-192d0a62da29', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Mon, 23 Nov 2026 12:08:30 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MySQL-1                       : has running benchmarks
 MySQL-2                       : has running benchmarks
