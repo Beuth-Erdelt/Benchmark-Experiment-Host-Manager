@@ -217,9 +217,9 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL monito
 # TPC-DS throughput test on MySQL, on persistent storage
 bexhoma tpcds `
   -dbms MySQL                   <# DBMS under test #> `
-  -sf 10                        <# scaling factor (controls database size in GB) #> `
-  -nc 2                         <# number of repeated runs per configuration #> `
-  -ne 1,2                       <# parallel client counts to sweep (comma-separated) #> `
+  -sf 3                         <# scaling factor (controls database size in GB) #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne "1,2"                     <# parallel client counts to sweep (comma-separated) #> `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 8                        <# threads per loader pod #> `
   -nbp 1                        <# number of benchmarking pods #> `
@@ -249,7 +249,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_mysql_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL throughput  sf=10  ne=1,2"
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL throughput  sf=3  ne=1,2"
 
 
 ####################################################
