@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=5
 * Type: ycsb
-* Duration: 586s 
-* Code: 1793618720
+* Duration: 774s 
+* Code: 1795467781
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -17,7 +17,7 @@ YCSB SF=5
   * Factors for benchmarking are [4].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.12.
+  * Experiment uses bexhoma version 0.12.3.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['DatabaseService'].
   * Import is handled by 8 processes (pods).
@@ -40,7 +40,7 @@ YCSB SF=5
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:741386
+  * disk:900164
   * datadisk:39
   * volume_size:49G
   * volume_used:39M
@@ -52,13 +52,16 @@ YCSB SF=5
     * sut: 1 x, 1.0 CPU, 1.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1793618720
+    * code:1795467781
 
 ### Init Scripts Not in Folder
 * DatabaseService-1: skipped checkschema-ycsb.sql
 
+### Ingestion
+* DatabaseService-1: 8 of 8 units ok
+
 ### SUT Container Restarts
-* bexhoma-sut-databaseservice-1-1793618720-567bd59768-4cxvw: 0
+* bexhoma-sut-databaseservice-1-1795467781-65847f977d-d7sm9: 0
 
 ### Workflow
 
@@ -74,36 +77,36 @@ YCSB SF=5
 
 #### Per Connection
 
-| connection                |   experiment_run |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   sf |   Throughput [SF/h] |
-|:--------------------------|-----------------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| databaseservice-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7177.97 |                87072.00 |            625000.00 |                              5175.00 | 5.00 |              206.73 |
-| databaseservice-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7117.88 |                87807.00 |            625000.00 |                              5075.00 | 5.00 |              205.00 |
-| databaseservice-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7184.49 |                86993.00 |            625000.00 |                              5099.00 | 5.00 |              206.91 |
-| databaseservice-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7100.74 |                88019.00 |            625000.00 |                              5139.00 | 5.00 |              204.50 |
-| databaseservice-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7134.05 |                87608.00 |            625000.00 |                              5107.00 | 5.00 |              205.46 |
-| databaseservice-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7079.83 |                88279.00 |            625000.00 |                              5231.00 | 5.00 |              203.90 |
-| databaseservice-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7102.68 |                87995.00 |            625000.00 |                              5135.00 | 5.00 |              204.56 |
-| databaseservice-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |         0.00 |                         7092.60 |                88120.00 |            625000.00 |                              5167.00 | 5.00 |              204.27 |
+| connection                |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   SF |   Throughput [SF/h] |
+|:--------------------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
+| databaseservice-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         5352.77 |               116762.00 |            625000.00 |                             14063.00 | 5.00 |              154.16 |
+| databaseservice-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         5378.94 |               116194.00 |            625000.00 |                             14063.00 | 5.00 |              154.91 |
+| databaseservice-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         5351.81 |               116783.00 |            625000.00 |                             14079.00 | 5.00 |              154.13 |
+| databaseservice-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         5340.92 |               117021.00 |            625000.00 |                             14079.00 | 5.00 |              153.82 |
+| databaseservice-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         5435.16 |               114992.00 |            625000.00 |                             14039.00 | 5.00 |              156.53 |
+| databaseservice-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         5387.84 |               116002.00 |            625000.00 |                             14071.00 | 5.00 |              155.17 |
+| databaseservice-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         5361.77 |               116566.00 |            625000.00 |                             14167.00 | 5.00 |              154.42 |
+| databaseservice-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         5288.99 |               118170.00 |            625000.00 |                             14111.00 | 5.00 |              152.32 |
 
 #### Per Run
 
-| DBMS                |   experiment_run |   threads |   target |   pod_count |   exceptions |   sf |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
-|:--------------------|-----------------:|----------:|---------:|------------:|-------------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| DatabaseService-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |         0.00 | 5.00 |              203.90 |                        56990.23 |                88279.00 |           5000000.00 |                              5141.00 |
+| DBMS                |   experiment_run |   threads |   target |   pod_count |   errors |   SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
+|:--------------------|-----------------:|----------:|---------:|------------:|---------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
+| DatabaseService-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |     0.00 | 5.00 |              152.32 |                        42898.19 |               118170.00 |           5000000.00 |                             14084.00 |
 
 ### Benchmarking
 
 #### Per Connection
 
-| DBMS                      | phase                 | job                     | configuration     |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:--------------------------|:----------------------|:------------------------|:------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| databaseservice-1-1-1-1-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 | DatabaseService-1 |                1 |        1 |               1 |       1 |        64 |    65536 |           1 |            0 |                        65377.42 |               152958.00 |            5001895 |                             441.00 |              4998105 |                              1570.00 |
+| connection                | phase                 | job                     |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:--------------------------|:----------------------|:------------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| databaseservice-1-1-1-1-1 | databaseservice-1-1-1 | databaseservice-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    65536 |        0 |                        65293.76 |               153154.00 |            4999611 |                             612.00 |              5000389 |                             27679.00 |
 
 #### Per Phase
 
-| DBMS                  | phase                 |   experiment_run |   threads |   target |   benchmark_run |   pod_count |   exceptions |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
-|:----------------------|:----------------------|-----------------:|----------:|---------:|----------------:|------------:|-------------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |        64 |    65536 |               1 |           1 |            0 |                        65377.42 |               152958.00 |            5001895 |                             441.00 |              4998105 |                              1570.00 |
+| DBMS                  | phase                 |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
+|:----------------------|:----------------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
+| databaseservice-1-1-1 | databaseservice-1-1-1 |                1 |        1 |               1 |           1 |        64 |    65536 |        0 |                        65293.76 |               153154.00 |            4999611 |                             612.00 |              5000389 |                             27679.00 |
 
 ### Monitoring
 
@@ -111,13 +114,13 @@ YCSB SF=5
 
 | DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------------|-------------:|----------:|---------------:|----------------------:|
-| databaseservice-1-1-1-1 |       370.16 |      6.16 |           0.29 |                  0.29 |
+| databaseservice-1-1-1-1 |       497.41 |      5.15 |           0.28 |                  0.28 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS                    |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------------|-------------:|----------:|---------------:|----------------------:|
-| databaseservice-1-1-1-1 |       526.87 |      4.82 |           1.05 |                  1.06 |
+| databaseservice-1-1-1-1 |       548.89 |      4.63 |           1.04 |                  1.04 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection databaseservice-1-1-1-1 (bexhoma-metrics-databaseservice-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -129,6 +132,8 @@ YCSB SF=5
 * TEST passed: Loading measured in this experiment
 * TEST passed: Data parameters as requested
 * TEST passed: Init scripts without errors
+* TEST passed: Loader pods without errors
+* TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]

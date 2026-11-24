@@ -62,12 +62,18 @@ After the runs:
 
 ## 2. Existing blocks that never ran after the refactor
 
-- [ ] 1.2 CedarDB SSB, dialect CedarDB: `scripts/test-docs-cedardb.sh` block with log
+- [x] 1.2 CedarDB SSB, dialect CedarDB: `scripts/test-docs-cedardb.sh` block with log
   `doc_ssb_testcase_cedardb_normal.log`. All 13 queries succeed, queries unchanged.
   CedarDB results are never published (`tests/test_unpublished_results.py`): log stays internal, no doc page.
-- [ ] 2.1 TPC-H DatabaseService `-sl`: `scripts/test-docs-databaseservice.sh`, log
+  Run 2026-11-23 (1795467658, bexhoma 0.12.3, `logs_tests/local`): all 13 queries, no errors, no warnings,
+  every test passed or skipped with its reason (no `-se`, no restarts).
+- [x] 2.1 TPC-H DatabaseService `-sl`: `scripts/test-docs-databaseservice.sh`, log
   `docs_tpch_databaseservice_execution.log`; last run was 0.11.12 (pre-refactor). Needs the
   `docs_tpch_databaseservice.log` block before it, which loads the external database.
+  Rerun 2026-11-23 (0.12.3, whole script): `TEST skipped: Loading measured in this experiment (loading skipped
+  by -sl, DBMS not managed by bexhoma: DatabaseService-1)` in the TPC-H and the Benchbase `-sl` logs, no failed
+  test. The storage variant (no `-sl`, reuses the volume of the block before) says "storage reused", as it should.
+  This also verifies section 3 on the cluster.
 
 ## 3. Bug: "Loading measured in this experiment" passes with `-sl`
 
@@ -112,9 +118,11 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
   Test: `bexhoma ssb -dbms PostgreSQL -xsv flat -ar run`.
 - [ ] 4.2 Container tenancy for MySQL/MariaDB: try `bexhoma tpch -dbms MySQL -mtn 2 -mtb container -nlp 2 run`;
   if it works, add `multi_tenancy: [container]` to their tpch entries in cluster.config.
-- [ ] 4.3 Dragonfly cluster with `-m`: "Monitoring metrics missing" (worker filesystem series absent for
-  in-memory runs). Proposal: DBMS-level `sparse_metrics` {metric: [component types]} merged into
-  `sparse_components` in `metrics.py`. Not implemented.
+- [x] 4.3 Dragonfly cluster with `-m`: "Monitoring metrics missing" (worker filesystem series absent for
+  in-memory runs). Solved differently (user, checked 2026-11-23), no `sparse_metrics`: a missing series of a
+  component whose pods were scraped is a `warning` reason, and a warning needs judgement but is no failure.
+  `docs_ycsb_dragonfly_cluster.log` (0.11.13): `TEST warning: Monitoring metrics missing (Filesystem Read/Write
+  Total ... of workerloading: no activity seen, the pods were scraped)`. The proposal is dropped.
 
 ## 6. Deferred
 

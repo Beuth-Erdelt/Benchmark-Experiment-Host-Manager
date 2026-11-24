@@ -1920,8 +1920,17 @@ class ExperimentBase():
         the test skipped as well. Results written before ``loading_deactivated``
         was recorded fall back to the workload note "Loading is skipped."
 
+        An experiment without a loading phase at all (a hardware benchmark, which
+        never loads data; workload ``loading_active`` False) records the test as
+        skipped with that reason, not as ``-sl``: its configurations are not
+        deactivated by the user but by the benchmark.
+
         :param connections_sorted: Connection dicts of ``connections.config``.
         """
+        if (getattr(self, 'workload', None) or {}).get('loading_active') is False:
+            self._record_skipped_test("Loading measured in this experiment (no loading phase in this experiment)")
+            self._show_volume_checks(connections_sorted)
+            return
         if any('loading_deactivated' in c for c in connections_sorted):
             deactivated = sorted({c.get('configuration', c['name'])
                                   for c in connections_sorted if c.get('loading_deactivated')})

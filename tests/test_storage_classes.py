@@ -399,6 +399,31 @@ class LoadingProvenanceTest(unittest.TestCase):
             (None, 'Loading measured in this experiment '
                    '(loading skipped by -sl, DBMS not managed by bexhoma: DatabaseService-1)')])
 
+    def test_a_benchmark_without_loading_phase_is_not_called_sl(self):
+        """Hardware switches loading off itself (workload loading_active False): no -sl in the reason."""
+        experiment = ExperimentBase.__new__(ExperimentBase)
+        experiment._test_results = []
+        experiment.workload = {'info': 'Hardware benchmark.', 'loading_active': False}
+        with mock.patch('builtins.print'):
+            experiment._show_loading_provenance(
+                [{'name': f'hardware-{n}-1-1-1', 'configuration': f'Hardware-{n}', 'storage_reused': False,
+                  'loading_deactivated': True} for n in (1, 2)])
+        self.assertEqual(experiment._test_results, [
+            (None, 'Loading measured in this experiment (no loading phase in this experiment)')])
+
+    def test_sl_keeps_its_reason_when_the_experiment_loads(self):
+        """-sl deactivates configurations, not the experiment's loading phase."""
+        experiment = ExperimentBase.__new__(ExperimentBase)
+        experiment._test_results = []
+        experiment.workload = {'info': 'TPC-H data is loaded.\nLoading is skipped.', 'loading_active': True}
+        with mock.patch('builtins.print'):
+            experiment._show_loading_provenance(
+                [{'name': 'databaseservice-1-1-1-1', 'configuration': 'DatabaseService-1', 'storage_reused': False,
+                  'loading_deactivated': True}])
+        self.assertEqual(experiment._test_results, [
+            (None, 'Loading measured in this experiment '
+                   '(loading skipped by -sl, DBMS not managed by bexhoma: DatabaseService-1)')])
+
 
 class StorageReusedTest(unittest.TestCase):
     """A reused volume shows in the evaluated connections; older results stay unknown."""
