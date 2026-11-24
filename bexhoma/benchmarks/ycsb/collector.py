@@ -11,18 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 import pandas as pd
-import matplotlib.pyplot as plt
-from IPython.display import display, Markdown
-import seaborn as sns
-from math import floor
-import ast
-import json
-import re
-import numpy as np
-from scipy.stats import gmean
-import pprint
 
-from dbmsbenchmarker import parameter, inspector
 
 from bexhoma.collectors.base import CollectorBase
 from bexhoma.benchmarks.ycsb.evaluator import YcsbEvaluator

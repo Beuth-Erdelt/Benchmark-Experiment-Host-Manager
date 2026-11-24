@@ -45,6 +45,7 @@ EXPECTED = {
     'ycsb.py': {
         'PostgreSQL': ['reset-ycsb.sql'],
         'PGBouncer': ['reset-ycsb.sql'],
+        'OrioleDB': ['reset-ycsb.sql'],
         'MySQL': ['reset-ycsb.sql', _FLUSH],
         'MariaDB': ['reset-ycsb.sql', _FLUSH],
         'YugabyteDB': ['reset-ycsb.sql', _COUNTERS],
@@ -64,6 +65,7 @@ EXPECTED = {
     'benchbase.py': {
         'PostgreSQL': ['reset-benchbase.sql'],
         'PGBouncer': ['reset-benchbase.sql'],
+        'OrioleDB': ['reset-benchbase.sql'],
         'MySQL': ['reset-benchbase.sql', _FLUSH],
         'MariaDB': ['reset-benchbase.sql', _FLUSH],
         'YugabyteDB': ['reset-benchbase.sql', _COUNTERS],
@@ -77,6 +79,7 @@ EXPECTED = {
     },
     'hammerdb.py': {
         'PostgreSQL': ['reset-hammerdb.sql'],
+        'OrioleDB': ['reset-hammerdb.sql'],
         'MySQL': ['reset-hammerdb.sql', _FLUSH],
         'MariaDB': ['reset-hammerdb.sql', _FLUSH],
         'Citus': ['reset-hammerdb.sql'],
@@ -123,7 +126,7 @@ EXPECTED = {
 }
 
 #: Benchbase benchmarks other than tpcc have folders (and resets) only for these DBMS (R4).
-BENCHBASE_NON_TPCC = {'PostgreSQL', 'PGBouncer', 'CedarDB'}
+BENCHBASE_NON_TPCC = {'PostgreSQL', 'PGBouncer', 'OrioleDB', 'CedarDB'}
 
 
 def _run_script(script: str, *argv: str) -> tuple:
@@ -235,12 +238,29 @@ class ResetCompletenessTest(unittest.TestCase):
         _, configurations = _run_script('tpch.py', '-xrs', '1', '-dbms', *group)
         self.assertEqual({c.docker for c in configurations}, set(group))
 
-    def test_tpch_refresh_stream_is_refused_when_the_dbms_need_different_jobs(self):
-        from bexhoma.system_descriptors import IncompatibleBenchmark
-        with self.assertRaisesRegex(IncompatibleBenchmark, 'need different ones'):
-            _run_script('tpch.py', '-xrs', '1', '-dbms', 'PostgreSQL', 'MySQL')
-        with self.assertRaisesRegex(IncompatibleBenchmark, 'need different ones'):
-            _run_script('tpch.py', '-xrs', '1', '-dbms', 'PostgreSQL', 'ClickHouse')
+    def test_tpch_refresh_stream_runs_each_dbms_with_its_own_job(self):
+        """DBMS with different refresh jobs share an experiment: each configuration gets its own template."""
+        from bexhoma import system_descriptors as sd
+        dbms = ['PostgreSQL', 'PgDuckDB', 'ClickHouse', 'MySQL']
+        _, configurations = _run_script('tpch.py', '-xrs', '1', '-dbms', *dbms)
+        dockers = sd.load_dockers(os.path.join(_REPO, 'k8s-cluster.config'))
+        self.assertEqual({c.docker for c in configurations}, set(dbms))
+        for config in configurations:
+            with self.subTest(docker=config.docker):
+                refresh = [entry for entries in config.experiment_dict['benchmarker'] for entry in entries
+                           if entry['name'] == 'tpch_refresh']
+                self.assertEqual(len(refresh), 1)
+                self.assertEqual(refresh[0]['template'], sd.refresh_template(dockers, config.docker, 'tpch'))
+        templates = {c.docker: c.experiment_dict['benchmarker'][0][1]['template'] for c in configurations}
+        self.assertEqual(templates['PgDuckDB'], templates['PostgreSQL'])
+        self.assertEqual(len({templates['PostgreSQL'], templates['ClickHouse'], templates['MySQL']}), 3)
+
+    def test_refresh_stream_must_come_before_the_configurations(self):
+        from bexhoma.benchmarks.tpch.experiment import TpchExperiment
+        experiment = TpchExperiment.__new__(TpchExperiment)
+        experiment.configurations = [object()]
+        with self.assertRaisesRegex(RuntimeError, 'before the configurations'):
+            experiment.enable_refresh_stream()
 
 
 class ResetScriptContentTest(unittest.TestCase):

@@ -17,13 +17,13 @@ See LICENSE for details.
 """
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from bexhoma import spec
 from bexhoma import system_descriptors as descriptors
 from bexhoma.benchmarks.tpch.benchmark import resolve_indexing_key
-from bexhoma.cli_args import format_metric_overrides, format_storage_types
-from bexhoma.spec import ResolvedSystem, SpecError
+from bexhoma.cli_args import format_metric_overrides
+from bexhoma.spec import SpecError
 from bexhoma.spec_argv import (
     _append_flag, _env_set_arg, append_ddl_flags, append_resource_flags, format_postgres_memory,
     resolve_resource_cells, resource_sweep)

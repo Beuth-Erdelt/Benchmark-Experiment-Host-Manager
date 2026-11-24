@@ -9,7 +9,7 @@ cluster checks A–R OK. Item 14 (`-xdim` for TPC-H, ClickHouseCluster only)
 committed (91f96682). M4 batches 1-4 committed (da4121ee, 3ee48d99). All keys per DBMS are in docs/DBMS.md (kept by a test). Open:
 rest of M4, M5, 13b. Checked 2026-11-22: the ClickHouse docs rerun is done
 (`docs_tpch_clickhouse_cluster`, 2026-11-05, "Dimensions ... a full copy on every
-node (-xdim replicated)"); the catalog is now 54,087 characters (LF-counted) of
+node (-xdim replicated)"); the catalog is now 53,633 characters (LF-counted, 2026-11-23, catalog 1.13.1) of
 the 56,000 whole-read limit, and the test margin was lowered to 500 (51650340,
 "until the contract is split"), so the "53,990 / 53,975" numbers in the table are
 outdated; item 11's comment is in 229 init scripts plus 250 durability copies, not
@@ -530,7 +530,7 @@ version before adding index types; imprints changed between releases.
 - **CedarDB**: PostgreSQL syntax, own storage; no known DDL knobs worth a
   sweep.
 - **Redis, Dragonfly**: no DDL; everything is a server flag → `--set`.
-- **SingleStore, OmniSci, Kinetica, Exasol, DB2, SAP HANA, SQL Server,
+- **SingleStore, OmniSci, Kinetica, DB2, SQL Server,
   Oracle, MemSQL, MariaDBCS**: script folders without a driver; out of scope.
 
 ### Further DDL options (all DBMS)
@@ -674,7 +674,7 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
   resource sweep or a storage class); agent validator: factor `ddl` in
   `discriminates`, sweep counted in `count_runs()`. The catalog is read whole
   by the agent (limit 56,000 characters): 54,547 after M3b, little room left.
-  Design doc: docs/Design-Catalog-Contract.md "DDL parameters".
+  Design doc: dev/Design-Catalog-Contract.md "DDL parameters".
 - **M4** priority B keys, one DBMS at a time, each with a docs test run.
   **Batches 1-2 committed 2026-10-30** (da4121ee), defaults reproduce
   the scripts (an empty `sql` text where the old script had nothing):

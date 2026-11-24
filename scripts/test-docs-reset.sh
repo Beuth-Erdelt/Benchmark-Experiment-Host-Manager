@@ -130,7 +130,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset PostgreSQL"
 # -xnpp 1                       number of PGBouncer proxy pods
 # -xnpi 128                     maximum incoming connections per PGBouncer instance (default: loading threads)
 # -xnpo 64                      maximum outgoing connections per PGBouncer instance
-# -xop 1                       number of operations for the benchmark phase (in millions)
+# -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -161,6 +161,49 @@ bexhoma ycsb \
   run &>$LOG_DIR/docs_reset_ycsb_pgbouncer.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset PGBouncer"
+
+
+#### YCSB Reset OrioleDB
+# -dbms OrioleDB                reset of PostgreSQL; VACUUM has nothing to remove on OrioleDB tables
+# -sf 1                         scaling factor
+# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xtb 16384                    base ops/s used to compute the throughput target
+# -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
+# -xnlf 4                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1,2                       two client rounds -- the reset runs before each
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1                        benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -xop 1                        number of operations for the benchmark phase (in millions)
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -tr                           verify result meets basic sanity requirements
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+# -ar                           activate configured reset scripts before each round
+bexhoma ycsb \
+  -dbms OrioleDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ar \
+  run &>$LOG_DIR/docs_reset_ycsb_orioledb.log
+
+echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset OrioleDB"
 
 
 #### YCSB Reset MySQL
@@ -360,12 +403,12 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset CockroachDB"
 # -nbt 64                       threads per benchmarking pod
 # -xnsr 3                       number of TiDB SUT replicas
 # -nw 3                         number of worker nodes
+# -xnpd 3                       number of PD nodes
+# -ar                           activate configured reset scripts before each round
 # -nwr 3                        replication factor (Dragonfly: replica mode)
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -xnpd 3                       number of PD nodes
-# -ar                           activate configured reset scripts before each round
 bexhoma ycsb \
   -dbms TiDB \
   -sf 1 \
@@ -381,12 +424,12 @@ bexhoma ycsb \
   -nbt 64 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
+  -ar \
   -nwr 3 \
   -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
-  -xnpd 3 \
-  -ar \
   run &>$LOG_DIR/docs_reset_ycsb_tidb.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset TiDB"
@@ -899,11 +942,11 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C CockroachDB"
 # -nbt 40                       threads per benchmarking pod
 # -xnsr 3                       number of TiDB SUT replicas
 # -nw 3                         number of worker nodes
+# -xnpd 3                       number of PD nodes
+# -ar                           activate configured reset scripts before each round
 # -nwr 3                        replication factor (Dragonfly: replica mode)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
-# -xnpd 3                       number of PD nodes
-# -ar                           activate configured reset scripts before each round
 bexhoma benchbase \
   -dbms TiDB \
   -sf 4 \
@@ -916,11 +959,11 @@ bexhoma benchbase \
   -nbt 40 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
+  -ar \
   -nwr 3 \
   -ms $BEXHOMA_MS \
   -tr \
-  -xnpd 3 \
-  -ar \
   run &>$LOG_DIR/docs_reset_benchbase_tidb.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C TiDB"

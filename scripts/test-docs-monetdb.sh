@@ -37,7 +37,6 @@ source ./scripts/testfunctions.sh
 # -lr 64Gi                      RAM limit for the SUT container
 # -rc 16                        CPU requested for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpch \
@@ -85,7 +84,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB  sf=1"
 # -lr 256Gi                     RAM limit for the SUT container
 # -rc 16                        CPU requested for the SUT container
 # -rr 256Gi                     RAM requested for the SUT container
-# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpch \
@@ -134,10 +132,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB monitoring  sf=30"
 # -rc 16                        CPU requested for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
-# -rsr                          delete any existing PVC for the SUT before starting
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpch \
@@ -191,7 +187,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB storage  sf=1  nc=2"
 # -rsr                          delete any existing PVC for the SUT before starting
 # -rss 1000Gi                   size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpch \
@@ -241,7 +236,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=
 # -rr 256Gi                     RAM requested for the SUT container
 # -rss 1000Gi                   size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpch \
@@ -290,7 +284,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=
 # -rr 256Gi                     RAM requested for the SUT container
 # -rss 1000Gi                   size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
-# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpch \
@@ -326,14 +319,14 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB throughput  sf=100  ne=1
 # TPC-DS power test at SF 3
 # -dbms MonetDB                 DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
 # -nlt 1                        threads per loader pod
+# -nbp 1                        number of benchmarking pods
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -nc 1                         number of repeated runs per configuration
-# -ne 1                         parallel client counts to sweep (comma-separated)
-# -nbp 1                        number of benchmarking pods
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
@@ -345,12 +338,12 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB throughput  sf=100  ne=1
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 3 \
-  -nlp 8 \
-  -nlt 1 \
-  -xii -xic -xis \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 1 \
   -nbp 1 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 128Gi \
@@ -365,14 +358,14 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB simple  sf=3"
 # TPC-DS monitoring at SF 3
 # -dbms MonetDB                 DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
 # -nlt 1                        threads per loader pod
+# -nbp 1                        number of benchmarking pods
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -nc 1                         number of repeated runs per configuration
-# -ne 1                         parallel client counts to sweep (comma-separated)
-# -nbp 1                        number of benchmarking pods
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -386,12 +379,12 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB simple  sf=3"
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 3 \
-  -nlp 8 \
-  -nlt 1 \
-  -xii -xic -xis \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 1 \
   -nbp 1 \
+  -xii -xic -xis \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -408,14 +401,14 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB monitoring  sf=3"
 # TPC-DS throughput test at SF 3, on persistent storage
 # -dbms MonetDB                 DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
+# -nc 2                         number of repeated runs per configuration
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
 # -nlp 8                        number of data loader pods
 # -nlt 1                        threads per loader pod
+# -nbp 1                        number of benchmarking pods
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -nc 2                         number of repeated runs per configuration
-# -ne 1,2                       parallel client counts to sweep (comma-separated)
-# -nbp 1                        number of benchmarking pods
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -423,20 +416,20 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB monitoring  sf=3"
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
-# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rss 50Gi                     size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
 bexhoma tpcds \
   -dbms MonetDB \
   -sf 3 \
-  -nlp 8 \
-  -nlt 1 \
-  -xii -xic -xis \
   -nc 2 \
   -ne 1,2 \
+  -nlp 8 \
+  -nlt 1 \
   -nbp 1 \
+  -xii -xic -xis \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -444,8 +437,8 @@ bexhoma tpcds \
   -lr 128Gi \
   -rr 128Gi \
   -rsr \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_monetdb_storage.log
 
@@ -586,34 +579,34 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1
 # TPC-H with a refresh stream on MonetDB: 3 query streams and one RF1/RF2 stream in parallel
 # -dbms MonetDB                 DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
+# -ne 3                         parallel query streams
+# -xrs 3                        refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams
 # -nlp 8                        number of data loader pods
 # -nlt 8                        threads per loader pod
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -ne 3                         parallel query streams
-# -xrs 3                        refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
 # -lc 16                        CPU limit for the SUT container
-# -rc 16                        CPU requested for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
+# -rc 16                        CPU requested for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
+# -rnl $BEXHOMA_NODE_LOAD
+# -rnb $BEXHOMA_NODE_BENCHMARK
 bexhoma tpch \
   -dbms MonetDB \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii \
-  -xic \
-  -xis \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lc 16 \
-  -rc 16 \
   -lr 64Gi \
+  -rc 16 \
   -rr 64Gi \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_monetdb_refresh.log

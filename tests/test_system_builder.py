@@ -110,7 +110,7 @@ class LoadingPodsTest(unittest.TestCase):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
             self.assertEqual(builder.limit_loading_pods({'max_loading_pods': 1}, 'A', 4, 2), (1, 1))
-        self.assertEqual(out.getvalue().strip(), 'A: loads with 1 pod, ignoring -nlp 4')
+        self.assertEqual(out.getvalue().strip(), 'A                             : loads with 1 pod, ignoring -nlp 4')
 
     def test_parallel_only_capped_without_a_message(self) -> None:
         out = io.StringIO()
@@ -127,6 +127,27 @@ class LoadingVariantsTest(unittest.TestCase):
     def test_one_per_thread_count(self) -> None:
         entry = {'per_loading_threads': {'T': '{threads}', 'P': 1}}
         self.assertEqual(builder.loading_variants(entry, [1, '8']), [{'T': 1, 'P': 1}, {'T': 8, 'P': 1}])
+
+    def test_ignored_threads_are_reported(self) -> None:
+        with mock.patch('builtins.print') as printed:
+            builder.loading_variants({}, [1, '8', 16], 'MySQL')
+        printed.assert_called_once_with('MySQL                         : the loader does not use loading threads, ignoring -nlt 8,16')
+
+    def test_one_thread_or_no_name_reports_nothing(self) -> None:
+        with mock.patch('builtins.print') as printed:
+            builder.loading_variants({}, [1], 'MySQL')
+            builder.loading_variants({}, [8])
+            builder.loading_variants({'per_loading_threads': {'T': '{threads}'}}, [8], 'X')
+        printed.assert_not_called()
+
+    def test_layouts_report_once_per_dbms(self) -> None:
+        dockers = {'A': {'benchmarks': {'tpch': {}}}}
+        args = types.SimpleNamespace(dbms=['A'], num_tenants=0, tenant_per='')
+        with mock.patch('builtins.print') as printed, \
+                mock.patch.object(builder, 'selected_dockers', return_value=['A']):
+            layouts = list(builder.loading_layouts(dockers, 'tpch', args, [1], [4, 8], [8]))
+        self.assertEqual(len(layouts), 2)
+        printed.assert_called_once_with('A                             : the loader does not use loading threads, ignoring -nlt 8')
 
 
 class TenantTest(unittest.TestCase):

@@ -22,20 +22,18 @@ import os
 import posixpath
 import re
 import tarfile
-import psutil
 import logging
 import socket
 import ast
 import json
 import urllib.request
 import urllib.parse
-from pprint import pprint
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from urllib3.util.retry import Retry
 
-from dbmsbenchmarker import *
+from dbmsbenchmarker import *  # noqa: F403
 from .__version__ import __version__
 from . import ceph_storage
 from .cluster_calls import CALL_STATS, ThrottledTokenRefresh
@@ -2354,6 +2352,28 @@ class Kubernetes():
             reasons.extend(output.split() if output else [])
         return reasons
 
+    def get_pod_unschedulable(self, pod):
+        """
+        Return since when and why the scheduler cannot place a Pod.
+
+        Reads the Pod's ``PodScheduled`` condition: ``False`` with reason
+        ``Unschedulable`` (e.g. "Too many pods", insufficient CPU, no node
+        matches the selector).
+
+        :param pod: Name of the Pod.
+        :return: ``(since, message)`` with the condition's last transition time
+            (timezone-aware) and the scheduler's message; ``None`` if the Pod is
+            scheduled, gone, or could not be read.
+        """
+        pod_object = self._read_pod(pod)
+        if pod_object is None or pod_object is POD_NOT_READ or pod_object.status is None:
+            return None
+        for condition in pod_object.status.conditions or []:
+            if (condition.type == 'PodScheduled' and condition.status in (False, 'False')
+                    and condition.reason == 'Unschedulable' and condition.last_transition_time is not None):
+                return condition.last_transition_time, condition.message or ''
+        return None
+
     def get_pod_containers(self, pod):
         """
         Return the names of all containers and init-containers in a Pod.
@@ -2764,7 +2784,7 @@ class Kubernetes():
             try:
                 pod_dashboard = self.get_dashboard_pod_name()
                 self.logger.debug(f'Inside pod {pod_dashboard}')
-                now = datetime.utcnow()
+                now = datetime.now(timezone.utc).replace(tzinfo=None)
                 start = now - timedelta(seconds=300)
                 end = now - timedelta(seconds=240)
                 query_url = (

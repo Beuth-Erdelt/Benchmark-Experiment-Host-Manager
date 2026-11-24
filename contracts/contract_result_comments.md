@@ -36,7 +36,7 @@ bexhoma source tree.
   answer.
 - `docs/AgentResultContract.md` — prose version of this file, with worked
   examples and rationale.
-- `docs/Design-Catalog-Contract.md` — the input-side catalog contract
+- `dev/Design-Catalog-Contract.md` — the input-side catalog contract
   (issue #764) this complements.
 - `bexhoma/report_writer.py` — implementation; `SCHEMA_VERSION` source of
   truth.

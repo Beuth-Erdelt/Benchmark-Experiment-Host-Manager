@@ -11,16 +11,14 @@ Copyright (C) 2023 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from bexhoma import *
+from bexhoma import *  # noqa: F403
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.experiments.system_builder import build_configuration, entry_parameters, loading_layouts, tenancy_error
 from bexhoma.system_descriptors import dbms_choices
-from dbmsbenchmarker import *
+from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
-import subprocess
-import psutil
 from bexhoma.benchmarks.tpcds.experiment import TpcdsExperiment
 
 
@@ -81,7 +79,6 @@ def main() -> None:
     # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
     # should results be tested for validity?
-    test_result = args.test_result
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
@@ -107,16 +104,11 @@ def main() -> None:
     ##############
     aws = args.aws
     if aws:
-        cluster = clusters.AWS(context=args.context)
+        cluster = clusters.AWS(context=args.context)  # noqa: F405
         # scale up
-        node_sizes = {
-            'auxiliary': 1,
-            'sut-mid': 1,
-            'benchmarker': 1
-        }
         #cluster.scale_nodegroups(node_sizes)
     else:
-        cluster = clusters.Kubernetes(context=args.context)
+        cluster = clusters.Kubernetes(context=args.context)  # noqa: F405
     # limit number of sut
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
@@ -141,8 +133,6 @@ def main() -> None:
     num_loading_pods = experiment.get_parameter_as_list('num_loading_pods')
     num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
     num_loading_split = experiment.get_parameter_as_list('num_loading_split')
-    num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
-    num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
     # set node groups for components
     if aws:
         # set node labes for components

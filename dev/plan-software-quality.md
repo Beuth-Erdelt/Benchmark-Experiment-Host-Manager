@@ -1,10 +1,39 @@
 # Plan: software quality: lint, docs checks, shared argument checks, CI
 
-Status: plan only, written 2026-11-22. Nothing implemented.
+Status: written 2026-11-22. **S1, S3, S5, S7 done 2026-11-23**, merged in #931 (CI on `dev` green, the
+Python 3.10 job passes, diff coverage reported 74% on the PR). **S2 done 2026-11-24** on branch
+`software-quality-s2` (not pushed), except long lines. Open: S4, S6, and S7's blocking switch.
+S2 as done (5 commits):
+- step 1: `__all__` of `experiments/base.py` named three classes that do not exist (star import raised);
+  `.format()` arguments no template used (no placeholder was lost); `not in`/`is not`; 18 calls of the
+  deprecated `datetime.utcnow()` replaced by `datetime.now(timezone.utc).replace(tzinfo=None)`, the same
+  naive value. Kept: `EnvironmentError` (public name, CONTRIBUTING), `== False` on a `numpy.bool_` cell.
+- step 2: 137 unused imports (F401 now selected). Every module still imports on its own in a fresh interpreter.
+- step 3: 388 `.format()` calls as f-strings (UP032 now selected).
+- step 4: 37 unused variables (two HammerDB log markers stay as `_ = ...[0]`, they decide whether a log is
+  parsed), 13 mutable defaults (none was written to), five `%` messages, three named lambdas.
+- Left with `noqa`, not part of S2: star imports and imports below code (F403/F405/E402, structural, about 77)
+  and argument names that shadow built-ins (A002, public). E501 stays unselected: long lines only in modules
+  that change anyway.
+- S7 is still `continue-on-error`: this branch changes hundreds of untested lines mechanically, so its own
+  diff coverage is low. Switch it to blocking in a small PR after this one is merged.
+Deviations of S1, S3, S5, S7 from the text below:
+- S1: E501, UP032 and F401 are not selected yet (1,268 findings, fixed in bulk by S2 and then enabled);
+  the other 204 findings carry `# noqa`. Ruff runs in its own CI job `lint`.
+- S3: the page check is "reachable from the toctree, directly or by links" instead of an exclusion list
+  (only `docs/README.md` is exempt); check 3 covers every function the docs name in code style
+  (`name()`, `obj.name(args)`) against all definitions in the repository, with a list of SQL/PromQL/library
+  names, because names next to source links were only 2. It found 69 `.html` links (broken on GitHub),
+  one dead link and two stale names (`get_inspector()`, `_effective_post_load()`), all fixed.
+- S5: no CI run yet. Checked locally: ruff with target py310 finds no newer syntax, no 3.11+ standard
+  library feature is used, every direct requirement has a 3.10 wheel (`dash-renderer`, a dbmsbenchmarker
+  dependency without wheel, prevents an offline resolution of the whole tree).
+- S7: reported in the job summary, `continue-on-error` until S2 is done; this branch has 72% diff coverage
+  because of the noqa lines. Only on pull requests into `dev`.
 
 Follows the review of CONTRIBUTING and the design docs. The doc fixes, the
 TPC-DS/SSB/Hardware collector runs and the threads-per-pod check have been
-merged (#898, #900, #899). Everything below is open.
+merged (#898, #900, #899).
 
 Each step is its own branch from `dev` (`--no-track`) and its own PR into `dev`.
 None of the steps builds on another, except that S6 is easier after S1.
@@ -195,3 +224,8 @@ the total stays above 69%.
 - Type checks (mypy/pyright): later, after S6, starting with `cli_args.py`,
   `system_builder.py`, `benchmarks/registry.py`.
 - Class renames in `clusters.py` (excluded by earlier decision).
+
+## Known structural debt (moved from docs/Architecture.md)
+
+- `experiments/base.py` (about 4,000 lines) and `clusters.py` (about 3,700 lines) are the largest modules. `work_benchmark_list()` alone is several hundred lines; splitting it into one handler per phase would make the phases testable on their own.
+- The legacy `benchmark_list` path of the main loop is still there for configurations without benchmarker entries in `experiment_dict`. The entry scripts call `add_benchmark_list()`, which also fills `experiment_dict`, so they take the `experiment_dict` path.

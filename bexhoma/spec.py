@@ -2,7 +2,7 @@
 Translate a catalog-backed ``experiment.yml`` into a bexhoma CLI invocation.
 
 This module implements Phase 1 of the catalog contract proposed in
-``docs/Design-Catalog-Contract.md`` (see also GitHub issue #764): it resolves
+``dev/Design-Catalog-Contract.md`` (see also GitHub issue #764): it resolves
 an ``experiment.yml`` against ``catalog.yaml`` (workload parameters, system
 knobs, profiles, ``derive:`` formulas) and emits the argument vector an
 existing bexhoma entry script already understands. No entry script or
@@ -69,7 +69,7 @@ __all__ = [
 #: Bump whenever experiment_schema/catalog_concepts/workloads/systems shape
 #: changes -- must equal contracts/contract_catalog.yml's catalog_contract_version
 #: (see tests/test_naming_conformance.py).
-CATALOG_CONTRACT_VERSION = "1.13.0"
+CATALOG_CONTRACT_VERSION = "1.13.1"
 
 #: Names a ``derive:`` expression is allowed to reference.
 DERIVE_INPUTS = ("memory_limit", "cpu_limit", "storage_class", "scaling_factor")
@@ -217,7 +217,7 @@ def evaluate_derive_expression(expression: str, inputs: dict[str, float]) -> flo
     """Evaluate a ``derive:`` formula.
 
     Deliberately minimal: arithmetic over exactly :data:`DERIVE_INPUTS`, no
-    functions, no conditionals — see ``docs/Design-Catalog-Contract.md``.
+    functions, no conditionals — see ``dev/Design-Catalog-Contract.md``.
 
     :param expression: Formula text, e.g. ``"0.75 * memory_limit"``.
     :param inputs: Numeric values for the declared derive inputs.
@@ -477,7 +477,7 @@ def effective_post_load(system_spec: dict[str, Any], shared_post_load: dict[str,
     apply post-load steps to some named systems and not others. Omitting it
     falls back to the shared ``loading.post_load`` default, so today's
     single-block experiment.yml files keep resolving exactly as before. See
-    "Validation ordering" in ``docs/Design-Catalog-Contract.md``.
+    "Validation ordering" in ``dev/Design-Catalog-Contract.md``.
 
     :param system_spec: One entry of experiment.yml's ``systems:`` list.
     :param shared_post_load: The top-level ``loading.post_load`` default.
@@ -611,7 +611,7 @@ def validate_experiment(catalog: dict[str, Any], experiment: dict[str, Any]) -> 
     system's ``physical_design`` actually supports the requested value
     (support); finally every ``systems[].ddl`` selection against the
     system's DDL capability (:func:`validate_ddl`). See "Validation
-    ordering" in ``docs/Design-Catalog-Contract.md``.
+    ordering" in ``dev/Design-Catalog-Contract.md``.
 
     :param catalog: Parsed catalog.
     :param experiment: Parsed experiment spec.

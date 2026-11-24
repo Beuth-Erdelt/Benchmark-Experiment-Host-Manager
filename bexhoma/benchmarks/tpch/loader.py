@@ -2,7 +2,7 @@
 Load and validate a self-specified ``experiment.yaml``.
 
 This is the loader half of the YAML-driven experiment entry script (see
-``docs/Design-Yaml-Experiment-Entry-Script.md``). It is deliberately
+``dev/Design-Yaml-Experiment-Entry-Script.md``). It is deliberately
 separate from :mod:`bexhoma.spec`, which translates a *catalog-driven*
 ``experiment.yml`` into a ``tpch.py`` CLI argument vector: this module's
 ``experiment.yaml`` is fully self-specified and is fed straight into

@@ -85,7 +85,7 @@ __all__ = ["write_markdown_report"]
 #: Bump whenever the frontmatter fields, tiers, or file layout change --
 #: also tracks contracts/contract_result.yml, which documents this same
 #: output shape as data an agent can read without this module's source.
-SCHEMA_VERSION = "1.14.0"
+SCHEMA_VERSION = "1.15.0"
 
 #: Top-level .yml/.yaml files that are *inputs* the run was built from (the
 #: experiment.yml/.yaml actually run, plus provenance copies of the catalog
@@ -115,7 +115,7 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
      "The experiment.yml/.yaml this run was actually built from, plus provenance "
      "copies of the contract(s)/catalog/environment file(s) that governed it - "
      "not a Kubernetes manifest; see docs/AgentResultContract.md and "
-     "docs/Design-Catalog-Contract.md for what each one means."),
+     "dev/Design-Catalog-Contract.md for what each one means."),
     ("configs", "Connection and Workload Configs", ("*.config",),
      "`connections.config` is the list of every connection dict (identity, "
      "parameters, timings); each `<job>.config` is a durable single-connection "
@@ -262,6 +262,13 @@ same holds for a repetition whose `loading_inherited` is `True` (it found the
 volume of an earlier repetition loaded): its loading times are copies and
 enter no loading statistic across repetitions. Check `connections.md`'s
 `storage_reused`, `loading_inherited` and `sut_storage_*`.
+`Loading measured in this experiment (loading skipped by -sl, ...)` names
+configurations whose loading was switched off: the DBMS is not managed by
+bexhoma, nothing was loaded and there are no loading times at all; what the
+database holds is not known to bexhoma (`loading_deactivated` in
+`connections.md`). `Loading measured in this experiment (no loading phase in
+this experiment)` is a benchmark that loads no data at all (hardware
+benchmarks); there are no loading times to compare.
 `Data parameters as requested (unknown, assumed: ...)` names reused volumes
 loaded before bexhoma stored DDL and loading values on them: what they hold is
 assumed to be what was requested, not verified.

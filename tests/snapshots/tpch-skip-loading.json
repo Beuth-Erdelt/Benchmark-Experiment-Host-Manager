@@ -1335,8 +1335,6 @@
       "parameters": {
        "BEXHOMA_SYNCH_GENERATE": 1,
        "BEXHOMA_SYNCH_LOAD": 1,
-       "MYSQL_LOADING_PARALLEL": 1,
-       "MYSQL_LOADING_THREADS": 1,
        "PODS_PARALLEL": "1",
        "PODS_TOTAL": "1",
        "SF": "1",
@@ -1355,8 +1353,6 @@
    "loading_parameters": {
     "BEXHOMA_SYNCH_GENERATE": 1,
     "BEXHOMA_SYNCH_LOAD": 1,
-    "MYSQL_LOADING_PARALLEL": 1,
-    "MYSQL_LOADING_THREADS": 1,
     "PODS_PARALLEL": "1",
     "PODS_TOTAL": "1",
     "SF": "1",

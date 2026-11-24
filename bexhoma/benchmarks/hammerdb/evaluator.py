@@ -12,21 +12,15 @@ See LICENSE for details.
 import pandas as pd
 import os
 import re
-import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-import pickle
-import json
-import traceback
-import ast
-from dbmsbenchmarker import monitor
-from datetime import datetime
-import glob
-from pathlib import Path
+import traceback  # noqa: E402
+from datetime import datetime  # noqa: E402
+import glob  # noqa: E402
 
 
-from bexhoma.evaluators.base import natural_sort
-from bexhoma.evaluators.logger import LogEvaluator
+from bexhoma.evaluators.base import natural_sort  # noqa: E402
+from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
 
 __all__ = ["HammerdbEvaluator"]
 
@@ -127,8 +121,9 @@ class HammerdbEvaluator(LogEvaluator):
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
             benchmark_run = re.findall('BEXHOMA_BENCHMARK_RUN:(.+?)\n', stdout)
             benchmark_run = benchmark_run[0] if benchmark_run else '1'
-            timeprofile = re.findall('HAMMERDB_TIMEPROFILE:(.+?)\n', stdout)[0]
-            allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES:(.+?)\n', stdout)[0]
+            # not used, but required: a log without these lines is not parsed (IndexError below)
+            _ = re.findall('HAMMERDB_TIMEPROFILE:(.+?)\n', stdout)[0]
+            _ = re.findall('HAMMERDB_ALLWAREHOUSES:(.+?)\n', stdout)[0]
             keyandthink = re.findall('HAMMERDB_KEYANDTHINK:(.+?)\n', stdout)[0]
             child = re.findall('BEXHOMA_CHILD:(.+?)\n', stdout)[0]
             error_timesynch = re.findall('start time has already passed', stdout)
@@ -284,7 +279,7 @@ class HammerdbEvaluator(LogEvaluator):
         if 'tenant_id' not in df_typed.columns:
             df_typed = df_typed.assign(tenant_id=-1)
         return df_typed
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=None):
         """
         Aggregates parallel-pod TPC-C result rows into one row per group.
 
@@ -306,6 +301,8 @@ class HammerdbEvaluator(LogEvaluator):
         :return: Aggregated DataFrame with one row per group.
         :rtype: pandas.DataFrame
         """
+        if columns is None:
+            columns = ["phase"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby([df[col] for col in columns]):
             if 'CALLS' in grp:
@@ -413,7 +410,7 @@ class HammerdbEvaluator(LogEvaluator):
                     skip_next = False
                     continue
                 tpm, month, day, time, year = match.groups()
-                dt = datetime.strptime('{} {} {} {}'.format(year, month, day, time), '%Y %b %d %H:%M:%S')
+                dt = datetime.strptime(f'{year} {month} {day} {time}', '%Y %b %d %H:%M:%S')
                 if datetime_first_measure is None:
                     datetime_first_measure = dt
                 elapsed = (dt - datetime_first_measure).total_seconds()
@@ -446,7 +443,7 @@ class HammerdbEvaluator(LogEvaluator):
             return glob.glob(os.path.abspath(os.path.normpath(os.path.join(directory, pattern))))
         list_df = []
         for file_logs in list_logs:
-            pattern = 'bexhoma-benchmarker-*-{}.log'.format(file_logs)
+            pattern = f'bexhoma-benchmarker-*-{file_logs}.log'
             for file in find_matching_files(self.path, pattern):
                 parsed_results = self.parse_log_file(file)
                 if not parsed_results:

@@ -13,14 +13,13 @@
 
     ../README.md
     ./Concepts.md
-    ./Architecture.md
-    ./WorkBenchmarkList.md
     ./Config.md
     ./DBMS.md
     ./Monitoring.md
     ./Evaluators.md
     ./Collectors.md
     ./Adding-a-Benchmark.md
+    ./Adding-a-DBMS.md
     ./Environment.md
     ./Prepare-Testbeds.md
     ./Example-YCSB.md
@@ -37,6 +36,7 @@
     ./Example-PostgreSQL.md
     ./Example-PGBouncer.md
     ./Example-PgDuckDB.md
+    ./Example-OrioleDB.md
     ./Example-MySQL.md
     ./Example-MariaDB.md
     ./Example-MariaDBCS.md
@@ -64,6 +64,8 @@
     ./Test-Reset.md
     ./Test-Durability.md
     ./Agent.md
+    ./Architecture.md
+    ./WorkBenchmarkList.md
     ./bexhoma
 
 

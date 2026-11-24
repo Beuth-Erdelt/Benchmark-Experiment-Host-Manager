@@ -2,7 +2,7 @@
 CLI entry point for running a bexhoma experiment from a YAML definition.
 
 Dispatches on the YAML's own shape, since two deliberately separate schemas
-exist (see ``docs/Design-Yaml-Experiment-Entry-Script.md``'s "Relation to
+exist (see ``dev/Design-Yaml-Experiment-Entry-Script.md``'s "Relation to
 ``bexhoma/spec.py``" section):
 
 * **Self-specified** (``workload: tpch``, a bare string): built directly in

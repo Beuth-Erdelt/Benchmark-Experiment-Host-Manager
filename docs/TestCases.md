@@ -2,7 +2,7 @@
 
 The examples of this documentation are produced by test scripts.
 Each script runs a sequence of bexhoma experiments, writes their logs to `logs_tests/` and extracts the summaries, which the pages show.
-The [log folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/logs_tests) contains the logs and `*_summary.md` files of the last runs.
+The [log folder](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/logs_tests) contains the logs and `*_summary.md` files of the runs.
 
 You will have to change the node selectors in [testfunctions.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/testfunctions.sh) / [testfunctions.ps1](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/testfunctions.ps1) to names of nodes that exist in your cluster, or leave out the corresponding parameters.
 
@@ -36,6 +36,7 @@ You will have to change the node selectors in [testfunctions.sh](https://github.
 | DBMS | [test-docs-cassandra.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-cassandra.sh), [.ps1](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-cassandra.ps1) | [Example-Cassandra](Example-Cassandra.md) |
 | DBMS | [test-docs-databaseservice.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-databaseservice.sh), [.ps1](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-databaseservice.ps1) | [Example-CloudDatabase](Example-CloudDatabase.md) |
 | DBMS | [test-docs-cedardb.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-cedardb.sh), [.ps1](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-cedardb.ps1) | [Example-Other-DBMS](Example-Other-DBMS.md) |
+| DBMS | [test-docs-orioledb.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-orioledb.sh), [.ps1](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-orioledb.ps1) | [Example-OrioleDB](Example-OrioleDB.md) |
 | Features | [test-docs-appmetrics.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-appmetrics.sh), [.ps1](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-appmetrics.ps1) | [Example-Metrics](Example-Metrics.md) |
 | Features | [test-docs-collector.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-collector.sh), [.ps1](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-collector.ps1) | [Example-Collectors](Example-Collectors.md) |
 | Features | [test-docs-multitenant.sh](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-multitenant.sh), [.ps1](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-multitenant.ps1) | [Example-Multi-Tenant](Example-Multi-Tenant.md) |
@@ -71,7 +72,7 @@ bexhoma tpch \
   run &>$LOG_DIR/docs_tpch_compare.log
 ```
 
-yields (after ca. 120 minutes) something like
+yields something like
 
 <details>
 <summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_compare_summary.md" target="_blank" rel="noopener">docs_tpch_compare.log</a></summary>
@@ -272,7 +273,7 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_tpcds_compare.log
 ```
 
-yields (after ca. 520 minutes) something like
+yields something like
 
 <details>
 <summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_compare_summary.md" target="_blank" rel="noopener">docs_tpcds_compare.log</a></summary>

@@ -1,6 +1,6 @@
 # Test: Reset Scripts
 
-This page shows how to use `-ar` (reset scripts) and keeps the test script and the logs of its last run on the cluster.
+This page shows how to use `-ar` (reset scripts) with its test script and the logs of its runs.
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -50,7 +50,7 @@ With `-ar` on a configuration without reset scripts, the experiment prints a war
 ## Test Script
 
 The test script runs one experiment per DBMS and benchmark with two client rounds, so every reset script runs twice, the first time right after loading.
-It covers PostgreSQL, PGBouncer, PgDuckDB, MySQL, MariaDB, Citus, MonetDB, CockroachDB, TiDB, YugabyteDB, Dragonfly (standalone, replica) and Redis (standalone, cluster) in the benchmarks that have reset scripts for them, Benchbase `twitter` in addition to `tpcc`, and TPC-H with a refresh stream.
+It covers PostgreSQL, PGBouncer, PgDuckDB, OrioleDB, MySQL, MariaDB, Citus, MonetDB, CockroachDB, TiDB, YugabyteDB, Dragonfly (standalone, replica) and Redis (standalone, cluster) in the benchmarks that have reset scripts for them, Benchbase `twitter` in addition to `tpcc`, and TPC-H with a refresh stream.
 
 You will have to change the node selectors (to names of nodes, that exist in your cluster - or to leave out the corresponding parameters):
 ```bash
@@ -79,9 +79,6 @@ What to check per log:
 * step 2 visible: `CHECKPOINT` (PostgreSQL family), `run_command_on_workers` with `success = t` for every worker (Citus), `dirty pages: 0` from `reset-flush.sh` (MySQL, MariaDB), `SAVE` returns `OK` on every data pod (Dragonfly, Redis)
 * step 3 visible: `counters reset on 3 tservers` (YugabyteDB), `FLUSH STATUS` without error (TiDB), `CONFIG RESETSTAT` returns `OK` (Dragonfly, Redis)
 * TPC-H with `-xrs`: one reset per round, none for the refresh stream
-
-The last run used bexhoma 0.11.7 (2026-10-21 and 2026-10-22).
-All runs passed their tests, except TPC-DS MariaDB, where Q94 and Q95 exceeded the query timeout (`-t 1200`); its resets ran without errors.
 
 
 ## YCSB
@@ -146,6 +143,35 @@ bexhoma ycsb \
 ```
 
 Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_pgbouncer_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_pgbouncer.log</a>
+
+
+### OrioleDB
+
+Reset of PostgreSQL; `VACUUM` has nothing to remove on OrioleDB tables, `ANALYZE` collects their statistics.
+
+```bash
+bexhoma ycsb \
+  -dbms OrioleDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  -ar \
+  run &>$LOG_DIR/docs_reset_ycsb_orioledb.log
+```
+
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_reset_ycsb_orioledb_summary.md" target="_blank" rel="noopener">docs_reset_ycsb_orioledb.log</a>
 
 
 ### MySQL
@@ -289,12 +315,12 @@ bexhoma ycsb \
   -nbt 64 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
+  -ar \
   -nwr 3 \
   -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
-  -xnpd 3 \
-  -ar \
   run &>$LOG_DIR/docs_reset_ycsb_tidb.log
 ```
 
@@ -655,11 +681,11 @@ bexhoma benchbase \
   -nbt 40 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
+  -ar \
   -nwr 3 \
   -ms $BEXHOMA_MS \
   -tr \
-  -xnpd 3 \
-  -ar \
   run &>$LOG_DIR/docs_reset_benchbase_tidb.log
 ```
 

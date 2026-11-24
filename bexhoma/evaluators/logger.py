@@ -13,20 +13,14 @@ See LICENSE for details.
 """
 import pandas as pd
 import os
-import re
 import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-import pickle
-import json
-import traceback
-import ast
-from dbmsbenchmarker import monitor
-from datetime import datetime
-import glob
-from pathlib import Path
+import pickle  # noqa: E402
+import ast  # noqa: E402
+from dbmsbenchmarker import monitor  # noqa: E402
 
-from .base import EvaluatorBase, natural_sort, resolve_within_result_folder
+from .base import EvaluatorBase, natural_sort, resolve_within_result_folder  # noqa: E402
 
 __all__ = ["LogEvaluator"]
 
@@ -293,7 +287,7 @@ class LogEvaluator(EvaluatorBase):
         if plot_by is None:
             fig, ax = plt.subplots()
             for key, grp in df.groupby(column):
-                labels = "{} {}".format(key, column)
+                labels = f"{key} {column}"
                 ax = grp.plot(ax=ax, kind=kind, x=x, y=y, title=y, label=labels, figsize=figsize)
                 ax.set_ylim(0,df[y].max())
             plt.legend(loc='best')
@@ -306,7 +300,7 @@ class LogEvaluator(EvaluatorBase):
             fig, axes = plt.subplots(nrows=num_rows, ncols=2, sharex=True, squeeze=False, figsize=(figsize[0], figsize[1] * num_rows))
             for key1, grp in groups:
                 for key2, grp2 in grp.groupby(column):
-                    labels = "{} {}, {} {}".format(key1, plot_by, key2, column)
+                    labels = f"{key1} {plot_by}, {key2} {column}"
                     if dict_colors is not None and len(dict_colors):
                         ax = grp2.plot(ax=axes[row_idx, col_idx], kind=kind, x=x, y=y, label=labels, title=y, figsize=figsize, layout=(num_rows, 2), color=dict_colors)
                     else:
@@ -392,7 +386,7 @@ class LogEvaluator(EvaluatorBase):
         """
         return df
 
-    def benchmarking_aggregate_by_parallel_pods(self, df: pd.DataFrame, columns: list = ["phase"]) -> pd.DataFrame:
+    def benchmarking_aggregate_by_parallel_pods(self, df: pd.DataFrame, columns: list | None = None) -> pd.DataFrame:
         """
         Aggregate the typed per-pod DataFrame to one row per group of parallel pods.
 
@@ -404,6 +398,8 @@ class LogEvaluator(EvaluatorBase):
         :return: Aggregated DataFrame.
         :rtype: pandas.DataFrame
         """
+        if columns is None:
+            columns = ["phase"]
         return df
 
     # Optional: time series parsed from the benchmarker logs, for the collectors.
@@ -529,15 +525,13 @@ class LogEvaluator(EvaluatorBase):
         connections_sorted = self.get_connection_config()
         metric_keys = self.get_monitoring_metrics()
         for metric_key in metric_keys:
-            out_filename = "query_{component}_metric_{metric}.csv".format(component=component, metric=metric_key)
+            out_filename = f"query_{component}_metric_{metric_key}.csv"
             df_all = monitor.metrics.loadMetricsDataframe(self.path + "/" + out_filename)
             connection_filenames = []
             processed_names = set()
             for connection in connections_sorted:
                 connectionname = connection.get('orig_name', connection['name'])
-                filename = "query_{component}_metric_{metric}_{connection}.csv".format(
-                    component=component, metric=metric_key, connection=connectionname
-                )
+                filename = f"query_{component}_metric_{metric_key}_{connectionname}.csv"
                 connection_filenames.append(filename)
                 own_filename = filename
                 if connection['name'] != connectionname:
@@ -581,7 +575,7 @@ class LogEvaluator(EvaluatorBase):
         :return: Wide-format DataFrame, or empty DataFrame if the file does not exist.
         :rtype: pandas.DataFrame
         """
-        filename = '/query_{component}_metric_{metric}.csv'.format(component=component, metric=metric)
+        filename = f'/query_{component}_metric_{metric}.csv'
         if os.path.isfile(self.path+"/"+filename):
             df = pd.read_csv(self.path+"/"+filename).T
             df = df.reindex(index=natural_sort(df.index))

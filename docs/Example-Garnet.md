@@ -5,7 +5,6 @@ This example shows how to benchmark Garnet with YCSB, as a single host and as a 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 [Garnet](https://microsoft.github.io/garnet/) is a key-value cache store from Microsoft Research that speaks the Redis protocol (RESP). It is licensed under the MIT license (which has no restriction on publishing benchmark results).
-This page uses the image `ghcr.io/microsoft/garnet:2.2.5`.
 Bexhoma runs it as a single host (one SUT pod) or as a cluster (`-nw`, with optional replicas `-nwr`), where every shard and every replica is a worker pod of a stateful set.
 In a cluster, bexhoma still deploys a main pod as a single point of contact and to annotate the status of experiments.
 YCSB uses its Redis binding, so only the commands used by that binding must be supported by Garnet.
@@ -38,7 +37,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -246,7 +245,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 This run uses SF=3 and 10.000.000 operations (`-xop`).
 
@@ -454,7 +453,7 @@ YCSB SF=3
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 Garnet is started with a checkpoint directory and an append-only file on the volume (see [Deployment](#deployment)), so a reused persistent volume keeps its data.
 
@@ -948,7 +947,7 @@ YCSB SF=1
 ### Cluster on Persistent Storage
 
 A Garnet cluster can store the database in persistent storage, too.
-Here, we remove existing storage via `-rsr` to start with a clean copy, and run two rounds (`-nc 2`): the second one restarts the cluster on the volumes of the first.
+This removes existing storage via `-rsr` to start with a clean copy, and runs two rounds (`-nc 2`): the second one restarts the cluster on the volumes of the first.
 With `-ar`, a snapshot is saved in every worker before each benchmarking round.
 
 ```bash
@@ -1281,7 +1280,7 @@ The second round finds the data of the first and runs with the same throughput.
 
 ### Replication
 
-We can set the number of replicas with the parameter `-nwr`.
+The parameter `-nwr` sets the number of replicas.
 Garnet requires a worker per replicated shard, so `-nw 3` and `-nwr 1` create 6 worker pods, 3 for sharding and another 3 for the (single) replicas.
 The cluster is created with `valkey-cli --cluster create --cluster-replicas`, the replicas replicate their primary with `CLUSTER REPLICATE` and need the append-only file, which the template enables.
 
@@ -1630,4 +1629,4 @@ With `-ar`, [save-snapshot.sh](https://github.com/Beuth-Erdelt/Benchmark-Experim
 A replica can be busy with a checkpoint when the reset script runs `SAVE`, so `save-snapshot.sh` retries while Garnet answers that a checkpoint is already in progress.
 The runs on persistent storage, the cluster and the replication on this page use `-ar`.
 See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract.
-There is no test run for Garnet in [Test: Reset Scripts](Test-Reset.md) yet.
+[Test: Reset Scripts](Test-Reset.md) has no run for Garnet.

@@ -278,7 +278,7 @@ class HardwareEvaluator(LogEvaluator):
         df_typed = df.astype(dtype_map)
         return df_typed
 
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=None):
         """
         Aggregates parallel-pod Hardware result rows into one row per group.
 
@@ -294,6 +294,8 @@ class HardwareEvaluator(LogEvaluator):
         :return: Aggregated DataFrame with one row per group.
         :rtype: pandas.DataFrame
         """
+        if columns is None:
+            columns = ["phase"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {

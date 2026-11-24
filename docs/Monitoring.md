@@ -18,7 +18,7 @@ Three CLI flags control how deeply bexhoma monitors an experiment:
 
 `-m` and `-mc` cover hardware metrics (CPU, memory, network, disk). Network and disk metrics need a preinstalled Prometheus whose exporters report them: the cAdvisor bexhoma installs itself runs with `--disable_metrics disk,network,...` (see below).
 `-ma` adds DBMS-internal statistics (buffer pool hits, query rates, replication lag, etc.) scraped from an exporter sidecar.
-`-ma` is currently in alpha status.
+`-ma` is experimental.
 
 Which hardware metrics are collected is decided by each metric's `active` flag in `cluster.config` (see [Config](Config.md)).
 `-mm` overrides that flag for a single experiment, e.g. `-mm total_gpu_util=on,total_network_rx=off`, and needs `-m` or `-mc`.
@@ -83,6 +83,7 @@ Hardware metrics come from cAdvisor (per container), node-exporter (per node) an
 | Ceph other volumes | `ceph_others_write_rate` MiB/s, `ceph_others_write_ops_rate` / `ceph_others_read_ops_rate` operations/s (`gauge`), every other volume in the same pool | Ceph pool |
 
 Node-level metrics describe the whole node the SUT runs on, including other workloads on it, not only the SUT container.
+The node metrics of workers spread over several nodes (`-rnw`) cover all of these nodes in one series: cores are told apart `by (instance, exported_cpu)`, so `max_core_util` is the busiest core and `core_variance` the variance over all cores of all nodes; `io_wait_pct` is the I/O wait of all nodes over their busy time, `io_wait_total` the sum.
 The Ceph metrics are explained in [Ceph storage metrics](#ceph-storage-metrics) below.
 The filesystem metrics take the largest device per pod because cAdvisor reports a RAID device and each of its member disks; summing over devices would count every read and write several times.
 They count block-device I/O: a volume on a network filesystem (e.g. CephFS, NFS) does its I/O over the network, so it shows in the network metrics instead, and filesystem metrics compare storage backends fairly only when all of them are block devices.
@@ -118,8 +119,8 @@ Bexhoma substitutes the following placeholders at runtime before sending the que
 | `{experiment}` | The numeric experiment code (e.g., `1775855486`) |
 | `{pods}` | A regex of the pods the query is about, per query set (see [Pods of a phase](#pods-of-a-phase)) |
 | `{namespace}` | The namespace of the cluster context |
-| `{host}` | The Kubernetes node hosting the SUT |
-| `{gpuid}` | Pipe-separated list of GPU UUIDs present in the SUT pod |
+| `{host}` | The Kubernetes node hosting the SUT; in `metrics_<statefulset>` the nodes of the workers, as a regex alternation (`(n1\|n2)`) when there are several, so match it with `instance=~"{host}"` |
+| `{gpuid}` | Pipe-separated list of GPU UUIDs present in the SUT pod; in `metrics_<statefulset>` those of all worker nodes |
 | `{database}` | The database name (the tenant's database in database-per-tenant mode) |
 | `{schema}` | The schema name (the tenant's schema in schema-per-tenant mode) |
 | `{storage_class}` | The StorageClass of the configuration's PVC (the cluster default resolved when `-rst ''`) |
@@ -176,8 +177,8 @@ The cAdvisor queries in `k8s-cluster.config` handle this in two ways:
 `{namespace}` keeps pods of other namespaces out: worker pod names carry no experiment code.
 
 A scoped job's counter starts at 0 before its first scrape, so its first value counts as growth: a loader with a single scrape gets its CPU total instead of 0.
-Whether a connection is scoped is read from its stored queries (its job query set differs from `metrics`); a `cluster.config` copy with the old literal pod pattern gives job query sets equal to `metrics` and keeps the old rule (`max - min`) without any message.
-To use the new queries, copy the cAdvisor metric definitions of `k8s-cluster.config` into your `cluster.config`.
+Whether a connection is scoped is read from its stored queries (its job query set differs from `metrics`); with a literal pod pattern in `cluster.config`, the job query sets equal `metrics` and the rule is `max - min`, without a message.
+The scoped queries are the cAdvisor metric definitions of `k8s-cluster.config`.
 
 ---
 
@@ -332,7 +333,7 @@ Gaps in such a fetch count as expected (`phase shorter than scrape interval`, se
 
 Even in a long phase a CPU total is only accurate to about one scrape interval: the counted span is shifted by up to one interval, and the CPU after a job pod's last scrape is never recorded.
 Widening the window does not help (it counts the neighbouring phase), so `extend` stays a clock-skew knob.
-Results from before this rule (fetch logs without `Interval length`) are evaluated as before.
+Fetch logs without `Interval length` are evaluated without this rule.
 
 ---
 

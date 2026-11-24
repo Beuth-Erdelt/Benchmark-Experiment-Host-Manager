@@ -106,19 +106,23 @@ class DeclaredJobsTest(unittest.TestCase):
     def test_every_tpch_dbms_has_an_existing_job(self) -> None:
         for docker in sd.compatible_dockers(self.dockers, 'tpch'):
             with self.subTest(docker=docker):
-                template = sd.refresh_template(self.dockers, [docker], 'tpch')
+                template = sd.refresh_template(self.dockers, docker, 'tpch')
                 self.assertTrue(os.path.isfile(os.path.join(_K8S, template)), template)
 
     def test_clickhouse_uses_its_own_job_and_postgres_protocol_systems_the_postgres_one(self) -> None:
-        job = lambda docker: sd.refresh_template(self.dockers, [docker], 'tpch').split('refresh-')[1]
+        job = lambda docker: sd.refresh_template(self.dockers, docker, 'tpch').split('refresh-')[1]
         self.assertEqual(job('ClickHouse'), 'ClickHouse.yml')
         self.assertEqual(job('ClickHouseCluster'), 'ClickHouseCluster.yml')
         for docker in ('CedarDB', 'Citus', 'DatabaseService', 'PgDuckDB'):
             self.assertEqual(job(docker), 'PostgreSQL.yml', docker)
 
-    def test_dbms_with_different_jobs_cannot_share_a_run(self) -> None:
-        with self.assertRaises(sd.IncompatibleBenchmark):
-            sd.refresh_template(self.dockers, ['PostgreSQL', 'ClickHouse'], 'tpch')
+    def test_every_refresh_job_names_its_main_container_dbmsbenchmarker(self) -> None:
+        """RefreshStreamBenchmark reads the timing from <job>.dbmsbenchmarker.log, whatever the template."""
+        for docker in sd.compatible_dockers(self.dockers, 'tpch'):
+            with self.subTest(docker=docker):
+                path = os.path.join(_K8S, sd.refresh_template(self.dockers, docker, 'tpch'))
+                with open(path, encoding='utf-8') as file:
+                    self.assertRegex(file.read(), r'\n\s+- name: dbmsbenchmarker\n')
 
 
 if __name__ == '__main__':

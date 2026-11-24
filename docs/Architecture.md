@@ -1,8 +1,8 @@
-# Architecture
+# Software Architecture
 
 This page describes how the Python code of Bexhoma is organised, so that you know where a change belongs.
 For what runs inside the Kubernetes cluster (SUT, loaders, benchmarkers, monitoring, dashboard), see [Concepts](Concepts.md#architecture).
-For adding a benchmark or a DBMS, see [Adding a Benchmark](Adding-a-Benchmark.md) and [Add a New DBMS](DBMS.md#add-a-new-dbms).
+For adding a benchmark or a DBMS, see [Adding a Benchmark](Adding-a-Benchmark.md) and [Adding a DBMS](Adding-a-DBMS.md).
 
 Bexhoma is an orchestrator. It runs on your machine, talks to the cluster through `kubectl` and the Kubernetes API, and never runs a benchmark itself: every loader, benchmarker and evaluation runs in a pod.
 
@@ -25,21 +25,25 @@ Bexhoma is an orchestrator. It runs on your machine, talks to the cluster throug
 
 ## Package
 
-The package has three layers: benchmark-specific code builds on generic orchestration, which builds on cluster access. Generic code reaches a benchmark only through the registry; the one exception is `environment.py`, which runs the hardware baseline of `benchmarks/hardware/` directly.
+The package has three layers: benchmark-specific code builds on generic orchestration, which builds on cluster access. Generic code reaches benchmark-specific code only through the registry; the one exception is `environment.py`, which runs the hardware baseline of `benchmarks/hardware/` directly.
 
 | Layer | Module | Responsibility |
 |---|---|---|
-| Benchmark-specific | `benchmarks/<name>/` | everything that belongs to one benchmark: CLI, experiment, benchmark, evaluator, collector, catalog argv builder |
+| Benchmark-specific | `benchmarks/<name>/` | everything that belongs to one benchmark, up to: CLI, experiment, benchmark, evaluator, collector, catalog argv builder (`catalog.py`, only `tpch` and `ycsb`); `tpch/` also has `loader.py` and `builder.py` for the YAML-driven entry script |
+| | `benchmarks/dbmsbenchmarker/` | what TPC-H, TPC-DS and SSB share (benchmark, evaluator, collector); not a benchmark of its own: no CLI, no experiment |
 | | `benchmarks/registry.py` | finds the benchmark folders; generic code asks it instead of naming a benchmark |
-| Generic orchestration | `experiments/base.py`, `experiments/mixed.py` | `ExperimentBase` and `MixedExperiment`: the experiment, its configurations, the main loop, evaluation, summary |
+| Generic orchestration | `benchmarks/base.py`, `benchmarks/refresh.py` | the abstract `Benchmark` and the `Section` tree its summary is built from; `RefreshStreamBenchmark` for stream jobs that run beside a benchmark in the same round |
+| | `experiments/base.py`, `experiments/mixed.py` | `ExperimentBase` and `MixedExperiment`: the experiment, its configurations, the main loop, evaluation, summary |
 | | `experiments/system_builder.py` | builds one configuration of a DBMS for a benchmark from the `dockers` entry of the cluster configuration |
 | | `configurations/` | `SutConfiguration`: one DBMS configuration and its helpers, see [Configuration](#configuration) |
-| | `evaluators/`, `collectors/` | generic base classes for the results of one experiment (evaluator) or of several (collector) |
+| | `evaluators/`, `collectors/` | generic base classes for the results of one experiment (evaluator) or of several (collector); `evaluators/logger.py` has `LogEvaluator`, which parses benchmarker logs and is the parent of every benchmark-specific evaluator |
+| | `monitoring_math.py` | reduces monitoring time series to one value per connection (counter metrics across pod restarts and leftover pods) |
 | | `report_writer.py`, `failure_timeline.py`, `sut_restarts.py`, `loading_checks.py`, `missing_metrics.py`, `test_status.py` | the Markdown report and the checks it shows; they read only the result folder |
 | | `spec.py`, `spec_argv.py`, `environment.py` | catalog contract: validate an `experiment.yml`, build the command line, describe the cluster in `environment.yml` |
 | | `system_descriptors.py`, `ddl_parameters.py`, `load_durability.py` | read DBMS-specific settings from the cluster configuration and the script folders |
 | Cluster access | `clusters.py` | `Kubernetes` (and `AWS`): pods, jobs, deployments, PVCs, `kubectl exec`/`cp`, the dashboard and message queue |
 | | `cluster_calls.py`, `parallel_steps.py`, `metric_fetching.py` | counting and timing cluster calls, steps of the main loop that run side by side, parallel Prometheus fetches |
+| | `ceph_storage.py`, `tls.py` | Ceph facts behind a SUT's volumes (StorageClass, pool, RBD images) for monitoring placeholders, `environment.yml` and spec validation; the self-signed CA and server certificate Secret of a SUT |
 | Command line | `scripts/cli.py`, `scripts/experimentsmanager.py`, `cli_args.py` | the `bexhoma` command, the management tool (`status`, `summary`, ...) and the arguments all entry scripts share |
 
 ## Flow of a run
@@ -126,15 +130,6 @@ The agent in `agent/` uses both contracts to plan, run and answer experiments; s
 
 What to do when one of them fails: [When a test fails](CONTRIBUTING.md#when-a-test-fails).
 
-## Known structural debt
+## Design rationale
 
-- `experiments/base.py` (about 4,000 lines) and `clusters.py` (about 3,700 lines) are the largest modules. `work_benchmark_list()` alone is several hundred lines; splitting it into one handler per phase would make the phases testable on their own.
-- The legacy `benchmark_list` path of the main loop is still there for configurations without benchmarker entries in `experiment_dict`. The entry scripts call `add_benchmark_list()`, which also fills `experiment_dict`, so they take the `experiment_dict` path.
-
-## Design notes
-
-These pages record why a design was chosen. They are not updated with every change; where they and the code disagree, the code is right.
-
-- [Design: Catalog Contract](Design-Catalog-Contract.md): the catalog contract, its full audit of benchmarks and DBMS, open questions
-- [Design: YAML-driven experiment entry script](Design-Yaml-Experiment-Entry-Script.md): `experiment.py` and its builder
-- `contracts/contract_catalog_comments.md`, `contracts/contract_result_comments.md`: the rationale of each contract field
+`contracts/contract_catalog_comments.md` and `contracts/contract_result_comments.md` give the rationale of each contract field.

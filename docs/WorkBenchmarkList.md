@@ -35,27 +35,27 @@ def work_benchmark_list(
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Pre-loop                                                        │
-│    • Check cluster monitoring health                             │
-│    • Write experiment_dict JSON files for each config            │
+│  Pre-loop                                                       │
+│    • Check cluster monitoring health                            │
+│    • Write experiment_dict JSON files for each config           │
 └────────────────────────────┬────────────────────────────────────┘
                              │
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│  MAIN LOOP  (repeat every `intervals` seconds)                   │
-│                                                                  │
-│  Part A — for each configuration:                                │
-│    Phase 1  Start SUT                                            │
-│    Phase 2  Start monitoring (if needed)                         │
-│    Phase 3  Wait for SUT health; start loading                   │
-│    Phase 4  Submit benchmarker job(s)                            │
-│    Phase 5  Collect SUT logs; stop / restart / mark done         │
-│                                                                  │
-│  Part B — for each configuration:                                │
-│    Harvest completed benchmarker job pods (store logs, describe) │
-│    On job success: call end_benchmarking(), delete job           │
-│                                                                  │
-│  Loop termination check                                          │
+│  MAIN LOOP  (repeat every `intervals` seconds)                  │
+│                                                                 │
+│  Part A — for each configuration:                               │
+│    Phase 1  Start SUT                                           │
+│    Phase 2  Start monitoring (if needed)                        │
+│    Phase 3  Wait for SUT health; start loading                  │
+│    Phase 4  Submit benchmarker job(s)                           │
+│    Phase 5  Collect SUT logs; stop / restart / mark done        │
+│                                                                 │
+│  Part B — for each configuration:                               │
+│    Harvest completed benchmarker job pods (store logs, describe)│
+│    On job success: call end_benchmarking(), delete job          │
+│                                                                 │
+│  Loop termination check                                         │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -223,6 +223,10 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
 
                 # --- Path A: experiment_dict-driven benchmarks ---
                 IF experiment_dict has benchmarker entries AND client round exists:
+                    IF tenant_per == 'container':
+                        tenants_ready[config] = (run, config.client)
+                        CONTINUE   # released after the loop, see below
+                    # _queue_round():
                     client_round = experiment_dict["benchmarker"][config.client - 1]
                     config.client += 1
                     IF config.client > self.client:
@@ -296,6 +300,17 @@ FUNCTION work_benchmark_list(intervals, stop_after_starting,
 
             ELSE:  # loading_finished is False
                 print "is loading"
+
+        # ── Container tenants: release rounds (_release_tenant_rounds) ────
+
+        FOR each round position in tenants_ready (lowest first):
+            IF every tenant whose next round is at or before it is ready for it:
+                FOR each of these tenants:
+                    queue its round (_queue_round)
+            ELSE:
+                print "waits for tenants ... to be ready for round ..."
+
+        run the queued submissions side by side (_submit_round: reset, then jobs)
 
         # ── Part B: Harvest completed benchmarker jobs ────────────────────
 
@@ -395,10 +410,36 @@ was recorded.
 
 ### Tenant-per-container synchronisation
 
-When `tenant_per == 'container'`, multiple database schemas live inside a single
-SUT container. Each configuration independently sets its `tenant_ready_to_load`
-flag. Loading (and later indexing) only begins when **all** container
-configurations report ready, ensuring a consistent data-load start point.
+When `tenant_per == 'container'`, each tenant has its own SUT container, i.e. its
+own configuration. The tenants share the cluster, so they are synchronised to run
+side by side, like the tenants of one schema or database:
+
+- **Schema and loading**: once its SUT is healthy and the loading delay has
+  passed, a configuration does not load on its own; it only sets
+  `tenant_ready_to_load`. When **all** configurations are ready, the loop starts
+  loading in every container at once (`tenant_started_to_load`): the schema
+  scripts (`initscript`, which also create schema or database) and, for
+  loader-pod loading, the loader jobs. The experiment-level loader and generator
+  counters are set to the loading pods of all containers together, so the loader
+  pods of all tenants start their work at the same moment.
+- **Indexing**: when its last data job has finished, a configuration sets
+  `tenant_ready_to_index` instead of running its index script. When all are
+  ready, the index scripts run in every container (`tenant_started_to_index`).
+- **Client rounds and reset**: a configuration that could start its next client
+  round (no jobs left, healthy, monitoring running) does not submit; it reports
+  the round in this pass (`tenants_ready`). After the loop,
+  `_release_tenant_rounds()` starts the round when every tenant that still runs
+  it, or an earlier one, is ready; tenants that are done or have no further round
+  are not waited for. All tenants of the round then submit in the same pass, side
+  by side (`_submit_round()`): each runs its reset scripts (`-ar`) and then
+  submits its jobs. So the resets run together, and no reset runs while another
+  tenant still benchmarks. Readiness counts per pass: a tenant that is not ready
+  in a pass (e.g. unhealthy) holds the others back. With more tenants than
+  `max_parallel_steps`, the submissions, and so the resets, run in batches.
+- **Benchmarking**: the benchmarker pods of all containers wait on an
+  experiment-level counter, so the measured work of each round starts in all
+  tenants at the same moment (see the pod synchronisation counters in
+  `bexhoma/README.md`).
 
 ### experiment_dict vs. benchmark_list
 
@@ -407,7 +448,7 @@ Two parallel submission paths exist:
 | Path | Trigger | Format |
 |---|---|---|
 | **experiment_dict** | `config.experiment_dict["benchmarker"]` is non-empty | Nested list of client rounds; each round is a list of `{parallelism, parameters?, template?}` dicts |
-| **benchmark_list** (legacy) | `experiment_dict["benchmarker"]` is empty; `benchmark_list` is populated via `add_benchmark_list()` | Flat list of parallelism integers |
+| **benchmark_list** (fallback) | `experiment_dict["benchmarker"]` is empty; `benchmark_list` is populated via `add_benchmark_list()` | Flat list of parallelism integers |
 
 Only one path is active per configuration per run.
 

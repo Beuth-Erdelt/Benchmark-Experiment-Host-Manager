@@ -1,7 +1,7 @@
 """
 Generate ``environment.yml`` — a curated, machine-readable descriptor of the
 concrete Kubernetes cluster a ``catalog.yaml``/``experiment.yml`` pair would
-run against (see ``docs/Design-Catalog-Contract.md``).
+run against (see ``dev/Design-Catalog-Contract.md``).
 
 This is the read-only half of that contract: nodes (with curated labels,
 their static allocatable/capacity resources, and how much of that is
@@ -146,7 +146,8 @@ _RELEVANT_NODE_RESOURCE_PREFIXES = ("cpu", "memory", "ephemeral-storage", "hugep
 _EXTENDED_GPU_RESOURCE_SUFFIX = "gpu"
 
 
-class EnvironmentError(Exception):
+# shadows the built-in alias of OSError; a public name, so it is kept (see CONTRIBUTING, Code style)
+class EnvironmentError(Exception):  # noqa: A001
     """Raised when the live cluster cannot be inspected (e.g. unreachable)."""
 
 

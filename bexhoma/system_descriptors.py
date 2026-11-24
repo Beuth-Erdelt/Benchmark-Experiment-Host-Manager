@@ -52,6 +52,7 @@ the entry script of that benchmark needs to configure the DBMS:
     A run with ``-mtn`` is refused for a DBMS that does not list the requested mode (:func:`unsupported_tenancy`).
 ``per_loading_threads``
     Loading parameters of a DBMS that gets one configuration per ``-nlt`` value; ``{threads}`` is that value.
+    No DBMS declares it at the moment; without it, ``-nlt`` is reported as ignored.
 ``option_experiment``
     ``{option: {script: ..., indexing: ...}}``: init and indexing scripts the DBMS switches to when the
     boolean command line option is set (e.g. columnar storage).
@@ -292,33 +293,27 @@ def benchmark_entry(dockers: dict, docker: str, benchmark: str) -> dict:
     return entry
 
 
-def refresh_template(dockers: dict, dbms: list, benchmark: str) -> str:
-    """The job template of the refresh stream for the experiment's DBMS.
+def refresh_template(dockers: dict, dbms: str, benchmark: str) -> str:
+    """The job template of the refresh stream of one DBMS.
 
-    An experiment has one refresh job for all its DBMS, so every DBMS must declare a
-    ``refresh_template`` and they must agree. There is no fallback to another DBMS's job.
+    Every DBMS of an experiment runs its own refresh job against its own SUT, from its own
+    ``refresh_template``; DBMS with different templates can share an experiment. There is no
+    fallback to another DBMS's job.
 
     :param dockers: The ``dockers`` section of the cluster configuration.
-    :param dbms: The DBMS of the experiment.
+    :param dbms: Name of the DBMS.
     :param benchmark: Benchmark key.
-    :return: The common ``refresh_template``.
+    :return: The DBMS's ``refresh_template``.
     :rtype: str
-    :raises IncompatibleBenchmark: When a DBMS declares none, or they declare different ones.
+    :raises IncompatibleBenchmark: When the DBMS declares none.
     """
-    templates = {}
-    for name in dbms:
-        template = benchmark_entry(dockers, name, benchmark).get('refresh_template')
-        if not template:
-            have = [d for d in compatible_dockers(dockers, benchmark)
-                    if dockers[d]['benchmarks'][benchmark].get('refresh_template')]
-            raise IncompatibleBenchmark(
-                f"{name} has no refresh job for benchmark {benchmark!r} (DBMS with one: {', '.join(have) or 'none'})")
-        templates[name] = template
-    if len(set(templates.values())) > 1:
+    template = benchmark_entry(dockers, dbms, benchmark).get('refresh_template')
+    if not template:
+        have = [d for d in compatible_dockers(dockers, benchmark)
+                if dockers[d]['benchmarks'][benchmark].get('refresh_template')]
         raise IncompatibleBenchmark(
-            f"one refresh job serves all DBMS of an experiment, but they need different ones: "
-            + ", ".join(f"{name}: {template}" for name, template in templates.items()))
-    return next(iter(templates.values()))
+            f"{dbms} has no refresh job for benchmark {benchmark!r} (DBMS with one: {', '.join(have) or 'none'})")
+    return template
 
 
 def evaluate(expression: str, context: dict):

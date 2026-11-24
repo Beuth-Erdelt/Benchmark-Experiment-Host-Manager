@@ -10,4 +10,4 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
 __all__ = ["evaluators", "clusters", "experiments", "configurations", "collectors", "spec", "environment"]
-from .__version__ import __version__
+from .__version__ import __version__  # noqa: F401 - re-exported: bexhoma.__version__

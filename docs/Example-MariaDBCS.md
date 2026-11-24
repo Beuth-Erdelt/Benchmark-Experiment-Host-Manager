@@ -5,7 +5,7 @@ This example shows how to benchmark MariaDB ColumnStore with TPC-H, TPC-DS and S
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 [MariaDB ColumnStore](https://mariadb.com/docs/analytics/mariadb-columnstore) is the columnar storage engine of MariaDB, GPL-2.0, under the name `MariaDBCS` in bexhoma.
-The template uses the official image `mariadb:12.3.3`, the same server as the template of MariaDB, and installs the plugin `mariadb-plugin-columnstore` at every start.
+The template uses the official image `mariadb`, the same server as the template of MariaDB, and installs the plugin `mariadb-plugin-columnstore` at every start.
 So the pods need access to `archive.mariadb.org` and the Ubuntu mirrors.
 Queries run over JDBC, loaders and init scripts use the `mariadb` client.
 
@@ -35,21 +35,21 @@ BEXHOMA_STORAGE_CLASS="nvme"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+The experiment is run with the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
 Example:
 ```bash
 bexhoma tpch \
   -dbms MariaDBCS \
   -sf 1 \
+  -nc 1 \
+  -ks no \
   -nlp 8 \
   -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 16Gi \
   -rr 16Gi \
-  -nc 1 \
-  -ks no \
   run &>$LOG_DIR/docs_tpch_mariadbcs.log
 ```
 
@@ -253,15 +253,17 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
-At SF=1, the 22 queries take about 25 seconds on ColumnStore, so this run uses SF=10 (`-sf`), with a RAM limit of 64 GiB (at 16 GiB the SUT was OOM-killed at SF=10).
+This run uses SF=10 (`-sf`), so that the benchmarking phase is long enough for monitoring, with a RAM limit of 64 GiB.
 ColumnStore has no Prometheus exporter in bexhoma, so there are no application metrics (`-ma`).
 
 ```bash
 bexhoma tpch \
   -dbms MariaDBCS \
   -sf 10 \
+  -nc 1 \
+  -ks no \
   -nlp 8 \
   -xis \
   -m \
@@ -270,8 +272,6 @@ bexhoma tpch \
   -tr \
   -lr 64Gi \
   -rr 64Gi \
-  -nc 1 \
-  -ks no \
   run &>$LOG_DIR/docs_tpch_mariadbcs_monitoring.log
 ```
 
@@ -489,28 +489,26 @@ No warnings
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 ```bash
 bexhoma tpch \
   -dbms MariaDB MariaDBCS \
   -sf 1 \
+  -nc 2 \
+  -ar \
+  -ks no \
   -nlp 8 \
-  -xii \
-  -xic \
-  -xis \
+  -xii -xic -xis \
   -xdt \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 16Gi \
   -rr 16Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 20Gi \
   -rsr \
-  -nc 2 \
-  -ar \
-  -ks no \
+  -rss 20Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_tpch_mariadbcs_storage.log
 ```
 
@@ -893,13 +891,11 @@ Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 bexhoma tpch \
   -dbms MariaDBCS \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii \
-  -xic \
-  -xis \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
@@ -1119,8 +1115,8 @@ The section `### tpch_refresh` shows the refresh job: it applied the 3 pairs in 
 
 ### Deployment
 
-The template [deploymenttemplate-MariaDBCS.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDBCS.yml) runs the official image `mariadb:12.3.3`, without a derived image.
-The image `mariadb/columnstore` is stale (23.02.4).
+The template [deploymenttemplate-MariaDBCS.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MariaDBCS.yml) runs the official image `mariadb`, without a derived image.
+The image `mariadb/columnstore` is not used.
 The container command does what the package script cannot do in a container, which has no systemd:
 
 | Point | Handling | Without it |
@@ -1145,10 +1141,10 @@ Server options work as for MariaDB, `--set deployment[bexhoma-deployment-mariadb
 It always runs with one loader pod, and `-nlp` is ignored.
 Concurrent `LOAD DATA` into one table fail with `ERROR 1030 ... from storage engine ColumnStore` before `cpimport` starts, and the loader script goes on, so rows would be missing without any test failing.
 `cpimport` itself works in parallel, and loads of one table run one after the other anyway.
-The limit of this path is `mariadbd`, which parses the file on one core: `lineitem` at SF 10 takes 495 s.
+The limit of this path is `mariadbd`, which parses the file on one core.
 
 **Note: `cpimport` is only possible as a pull, so bexhoma does not use it.**
-`cpimport` run in the SUT on the same file takes 55 s, but then the SUT reads the raw files itself, which is a different path than the sending loader pods of all other DBMS and not comparable.
+`cpimport` run in the SUT is faster, but then the SUT reads the raw files itself, which is a different path than the sending loader pods of all other DBMS and not comparable.
 A sending `cpimport` does not work: in a separate container with the plugin and the configuration of the SUT, `cpimport -m 1` reaches `WriteEngineServer`, the BRM controller and ExeMgr, and then fails with `MCS-2006: 'tpch.push_t' does not exist in Columnstore`, also with data on stdin, while the same call in the SUT works.
 So loading times of MariaDBCS are not the best the DBMS can do.
 
@@ -1168,7 +1164,7 @@ Compared with the result sets of MariaDB at SF 1 (`-xdt`, same run), all queries
 The numbers are compared as bexhoma stores them, rounded to `precision` of the query: whole numbers in TPC-DS and SSB.
 All 99 queries of TPC-DS run, 28 of them with a `MariaDBCS` variant. Their results are the same. The test `SQL warnings` fails because of Q39: it has columns of the same name, so the comparison cannot sort its rows.
 
-Without 11 of the variants ColumnStore 25.10.6 gives wrong results or fails, some of them without an error:
+Without 11 of the variants ColumnStore gives wrong results or fails, some of them without an error:
 
 | Queries | Variant | Without it |
 |---|---|---|
@@ -1177,7 +1173,7 @@ Without 11 of the variants ColumnStore 25.10.6 gives wrong results or fails, som
 | Q93 | Inner joins | `LEFT JOIN` with a filter on the outer table in `WHERE` keeps the rows without a match: 90,919 groups instead of 7,164 |
 | Q18, Q22, Q27, Q36, Q67, Q70, Q86 | Rollup emulated with `UNION ALL` | `GROUP BY ... WITH ROLLUP` directly on a table kills `PrimProc` with a segmentation fault in `funcexp::FuncExp::evaluate`, also on 1,305 rows; very small tables do not show it. On a derived table it runs, but gives wrong results |
 
-The other 17 variants are for queries that ColumnStore refuses as they are, see [TPC-DS queries](Queries-TPC-DS.html) for the rewrites:
+The other 17 variants are for queries that ColumnStore refuses as they are, see [TPC-DS queries](Queries-TPC-DS.md) for the rewrites:
 
 | Queries | Result |
 |---|---|
@@ -1190,8 +1186,8 @@ The other 17 variants are for queries that ColumnStore refuses as they are, see 
 
 
 Memory depends on the number of cores of the node, since ColumnStore starts threads per core.
-TPC-DS at SF 1 fits 16 Gi on nodes with 96 or 128 cores. On a node with 224 cores the SUT was killed at the limit of 16 Gi in Q18 (`OOMKilled`, `ExeMgr has allocated too much memory`), 32 Gi are enough there, with a peak of 14 GiB.
-When `PrimProc` dies, queries fail at once with `MCS-2033` until it is back after about 3 s, so many queries of a stream are lost.
+TPC-DS at SF 1 fits 16 Gi on nodes with 96 or 128 cores. On nodes with more cores the SUT can be killed at this limit (`OOMKilled`, `ExeMgr has allocated too much memory`); 32 Gi are enough there.
+When `PrimProc` dies, queries fail at once with `MCS-2033` until it is back, so many queries of a stream are lost.
 
 ### Load Durability
 
@@ -1206,44 +1202,42 @@ With `-ar`, the reset runs before each benchmarking round:
 3. Counters: n/a (the check scripts read no ColumnStore counter)
 
 See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract.
-There is no test run for MariaDBCS in [Test: Reset Scripts](Test-Reset.md) yet; the runs on this page use `-ar`.
+[Test: Reset Scripts](Test-Reset.md) has no run for MariaDBCS; the runs on this page use `-ar`.
 
 
 ## TPC-DS
 
-For performing the experiment we can run the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
+The experiment is run with the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
 
 ```bash
 bexhoma tpcds \
   -dbms MariaDB MariaDBCS \
   -sf 1 \
-  -xii \
-  -xic \
-  -xis \
+  -nc 2 \
+  -ar \
+  -ks no \
+  -xii -xic -xis \
   -xdt \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 32Gi \
   -rr 32Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 30Gi \
   -rsr \
-  -nc 2 \
-  -ar \
-  -ks no \
+  -rss 30Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_tpcds_mariadbcs.log
 ```
 
 All 99 queries of TPC-DS run on ColumnStore, 28 of them with a variant named `MariaDBCS`, see [Queries](#queries):
 
 * 17 queries are refused by ColumnStore as they are, for example because it has no `INTERSECT` and no `EXCEPT`.
-* 11 queries would crash ColumnStore 25.10.6 or return wrong rows without an error.
+* 11 queries would crash ColumnStore or return wrong rows without an error.
 
 The test `SQL warnings` fails in this run because of Q39: it returns columns with the same name, so the comparison cannot sort its rows. The stored results of Q39 are the same on both.
 
 The RAM limit is 32 GiB here, since memory depends on the number of cores of the node: ColumnStore starts threads per core.
-16 GiB are enough on nodes with 96 or 128 cores, but on a node with 224 cores the SUT was killed at that limit.
+16 GiB are enough on nodes with 96 or 128 cores, but not on nodes with more cores.
 
 <details>
 <summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpcds_mariadbcs_summary.md" target="_blank" rel="noopener">docs_tpcds_mariadbcs.log</a></summary>
@@ -1663,24 +1657,24 @@ No warnings
 
 ## SSB
 
-For performing the experiment we can run the [ssb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ssb.py).
+The experiment is run with the [ssb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ssb.py).
 
 ```bash
 bexhoma ssb \
   -dbms MariaDBCS \
   -sf 1 \
+  -nc 2 \
+  -ar \
+  -ks no \
   -xis \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 16Gi \
   -rr 16Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 20Gi \
   -rsr \
-  -nc 2 \
-  -ar \
-  -ks no \
+  -rss 20Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_ssb_mariadbcs.log
 ```
 
@@ -1950,18 +1944,18 @@ bexhoma ssb \
   -dbms MariaDBCS \
   -sf 1 \
   -xsv flat \
+  -nc 2 \
+  -ar \
+  -ks no \
   -xis \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 16Gi \
   -rr 16Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 20Gi \
   -rsr \
-  -nc 2 \
-  -ar \
-  -ks no \
+  -rss 20Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_ssb_mariadbcs_flat.log
 ```
 

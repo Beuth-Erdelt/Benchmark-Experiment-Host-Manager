@@ -12,12 +12,12 @@ Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
-from bexhoma import *
+from bexhoma import *  # noqa: F403
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.benchmarks.ssb.benchmark import SCHEMA_VARIANTS, QUERY_VARIANTS, DIMENSION_VARIANTS, resolve_dimension_folder
 from bexhoma.experiments.system_builder import build_configuration, entry_parameters, loading_layouts
 from bexhoma.system_descriptors import dbms_choices, dimension_dockers
-from dbmsbenchmarker import *
+from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
@@ -109,9 +109,9 @@ def main() -> None:
     ##############
     aws = args.aws
     if aws:
-        cluster = clusters.AWS(context=args.context)
+        cluster = clusters.AWS(context=args.context)  # noqa: F405
     else:
-        cluster = clusters.Kubernetes(context=args.context)
+        cluster = clusters.Kubernetes(context=args.context)  # noqa: F405
     # limit number of sut
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)

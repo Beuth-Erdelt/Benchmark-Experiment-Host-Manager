@@ -16,6 +16,7 @@ Each supported DBMS has a short section below; configuration, deployment, script
 | Relational / SQL | [PostgreSQL](#postgresql) | `PostgreSQL` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-PostgreSQL](Example-PostgreSQL.md) |
 | Relational / SQL | [PostgreSQL + PGBouncer](#pgbouncer) | `PGBouncer` | YCSB, Benchbase | [Example-PGBouncer](Example-PGBouncer.md) |
 | Relational / SQL | [PgDuckDB](#pgduckdb) | `PgDuckDB` | TPC-H, SSB | [Example-PgDuckDB](Example-PgDuckDB.md) |
+| Relational / SQL | [OrioleDB](#orioledb) | `OrioleDB` | YCSB, Benchbase, HammerDB | [Example-OrioleDB](Example-OrioleDB.md) |
 | Relational / SQL | [MySQL](#mysql) | `MySQL` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-MySQL](Example-MySQL.md) |
 | Relational / SQL | [MariaDB](#mariadb) | `MariaDB` | TPC-H, TPC-DS, SSB, YCSB, Benchbase, HammerDB | [Example-MariaDB](Example-MariaDB.md) |
 | Relational / SQL | [MariaDB ColumnStore](#mariadb-columnstore) | `MariaDBCS` | TPC-H, TPC-DS, SSB | [Example-MariaDBCS](Example-MariaDBCS.md) |
@@ -60,13 +61,13 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 | `attachWorker` | no | Command run on the coordinator to register a new worker node (used for distributed DBMS like Citus, CockroachDB) |
 | `worker_port` | no | Internal port of the worker/coordinator headless service, appended to every host of the worker lists (used for TiDB, and for Citus' `BEXHOMA_URL_LIST`: a multi-host JDBC URL needs the port on every host) |
 | `store_args` | no | Whether to capture and display the container startup arguments in the experiment summary (default: `True`) |
-| `priceperhourdollar` | no | Reserved for cost modelling (currently unused) |
+| `priceperhourdollar` | no | Reserved for cost modelling (unused) |
 | `monitor` | no | Application-level monitoring configuration; see [Monitoring](Monitoring.md) |
 | `benchmarks` | yes² | The benchmarks the DBMS can run, and what each needs of it; see [Benchmarks of a DBMS](#benchmarks-of-a-dbms) |
 | `storage_prefix` | yes² | Name of the storage (volume) of the DBMS, the same for every benchmark (e.g. `postgresql`, `PgDuckDB`) |
 | `abbreviation` | no | Short name of the DBMS in the names of volumes and worker stateful sets (`pg`, `chc`, `df`, ...): a storage name that starts with the DBMS name gets it instead (`postgresql-schema-16` → `pg-schema-16`), since Kubernetes and some DBMS limit the length of these names |
 | `tls` | no | `{'secret': True}`: a CA and server certificate Secret is created per SUT, for the server and the benchmark client (MySQL with HammerDB, see [MySQL](Example-MySQL.md)) |
-| `base_system` | no | DBMS whose script folder `experiments/<benchmark>/<base_system>` this DBMS uses, if it is not its own (PgDuckDB and PGBouncer use `PostgreSQL`) |
+| `base_system` | no | DBMS whose script folder `experiments/<benchmark>/<base_system>` this DBMS uses, if it is not its own (PgDuckDB, OrioleDB and PGBouncer use `PostgreSQL`) |
 | `workers` | no | `True` if the SUT takes `-nw` workers (shards) next to its coordinator |
 | `sut_attributes` | no | How the SUT is set up (placeholder pod, no monitoring, Helm-managed stateful sets, ...); see [Benchmarks of a DBMS](#how-the-sut-is-set-up-sut_attributes) |
 | `initial_cluster` | no | `{component, port, scheme, env}`: the members of this component are passed to the SUT pods as `env`, for a DBMS that bootstraps as a cluster (TiDB: the `pd` nodes) |
@@ -88,7 +89,7 @@ injection whenever `template.JDBC` is absent.
 ### Benchmarks of a DBMS
 
 The entry scripts (`tpch.py`, `tpcds.py`, `ssb.py`, `ycsb.py`, `benchbase.py`, `hammerdb.py`) contain nothing that is specific to a DBMS.
-Everything a script needs to know about a DBMS is in its `dockers` entry, so a DBMS is added by configuration alone, see [Add a New DBMS](#add-a-new-dbms).
+Everything a script needs to know about a DBMS is in its `dockers` entry, so a DBMS is added by configuration alone, see [Adding a DBMS](Adding-a-DBMS.md).
 
 `benchmarks` has one key per benchmark the DBMS can run: `tpch`, `tpcds`, `ssb`, `ycsb`, `benchbase` and `tpcc` (HammerDB).
 **A missing key means that the DBMS cannot run that benchmark**: the `-dbms` of a script offers exactly the DBMS that have an entry for it.
@@ -116,7 +117,7 @@ The keys of an entry of `benchmarks`:
 |---|---|
 | `default` | `True`: the DBMS runs if `-dbms` is not given. Without it the DBMS has to be named. |
 | `loading_template` | Job template in `k8s/` that loads the data (TPC-H, TPC-DS, SSB). A DBMS that loads needs one: there is no default job. HammerDB, Benchbase and YCSB bring a loading job of their own. |
-| `refresh_template` | Job template of the TPC-H refresh stream (`-xrs`), see [TPC-H](Example-TPC-H.md#refresh-stream). All DBMS of one run need the same job. |
+| `refresh_template` | Job template of the TPC-H refresh stream (`-xrs`), see [TPC-H](Example-TPC-H.md#refresh-stream). Each DBMS of a run gets its own refresh job from its own template. |
 | `reset_scripts` | Scripts run before each benchmarking round with `-ar`, see [Reset scripts](#reset-scripts--ar) |
 | `loading_parameters`, `benchmarking_parameters` | Environment of the loading and benchmarking jobs |
 | `sut_parameters` | Environment of the SUT container; a value you set yourself wins |
@@ -125,7 +126,7 @@ The keys of an entry of `benchmarks`:
 | `option_experiment` | Init and indexing scripts used when a boolean option is set (Citus: `-xcol` switches to columnar storage) |
 | `max_loading_pods` | Number of loading pods the DBMS tolerates; more are reduced with a message (MariaDB ColumnStore: 1) |
 | `max_sut_dbms` | Number of SUT of the DBMS that may run at the same time |
-| `per_loading_threads` | The DBMS gets one configuration per `-nlt` value, with these loading parameters (MySQL) |
+| `per_loading_threads` | The DBMS gets one configuration per `-nlt` value, with these loading parameters. No DBMS declares it: no TPC-H, TPC-DS or SSB loader reads a thread count, so bexhoma reports `-nlt` as ignored |
 | `pooling` | For a DBMS behind a connection pooler: one configuration per combination of `-xnpp`, `-xnpi` and `-xnpo` (PGBouncer) |
 | `dimensions`, `unsupported_dimensions` | `-xdim` applies to the DBMS; or it refuses a variant of it, with the reason |
 | `multi_tenancy`, `tenant_parameters` | The tenancy modes the DBMS supports and the parameters it gets, see [Multi-Tenant](Example-Multi-Tenant.md) |
@@ -342,7 +343,7 @@ How `PARAM` is written depends on the template:
 
 | Style | Written as | Templates | Chosen by |
 |---|---|---|---|
-| `pg` | `["-c", "PARAM=VALUE"]` | PostgreSQL, PgDuckDB, Citus, PGBouncer backends | `-c` pairs in the args (default) |
+| `pg` | `["-c", "PARAM=VALUE"]` | PostgreSQL, PgDuckDB, OrioleDB, Citus, PGBouncer backends | `-c` pairs in the args (default) |
 | `flag` | `"--PARAM=VALUE"` | MySQL, MariaDB | annotation `bexhoma/arg-style: flag` on the workload, or `--x=y` elements in the args |
 | env | env entry `PARAM=VALUE` | all | `PARAM` = `env.NAME`, e.g. Dragonfly `env.DFLY_maxmemory` |
 
@@ -418,7 +419,7 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 
 | DBMS | 1 Statistics | 2 Persist | 3 Counters |
 |---|---|---|---|
-| PostgreSQL, PGBouncer, PgDuckDB | `VACUUM VERBOSE ANALYZE` (whole database) | `CHECKPOINT` | `pg_stat_reset()`, `pg_stat_reset_shared()` for `bgwriter`, `checkpointer`, `io`, `wal` |
+| PostgreSQL, PGBouncer, PgDuckDB, OrioleDB | `VACUUM VERBOSE ANALYZE` (whole database; `ANALYZE` only for OrioleDB tables, which have no dead rows) | `CHECKPOINT` | `pg_stat_reset()`, `pg_stat_reset_shared()` for `bgwriter`, `checkpointer`, `io`, `wal` |
 | Citus | `VACUUM VERBOSE ANALYZE` on the distributed tables (passed on to the shards) | `CHECKPOINT` on the coordinator and with `run_command_on_workers` on every worker | as PostgreSQL, on the coordinator and every worker |
 | MySQL, MariaDB | `ANALYZE TABLE` (`reset-<benchmark>.sql`) | `reset-flush.sh`: `innodb_max_dirty_pages_pct = 0`, wait until no dirty pages are left (at most 600 s), restore the old value | `FLUSH STATUS` (in `reset-flush.sh`) |
 | MariaDBCS | `ANALYZE TABLE` | n/a (no dirty pages to flush) | n/a (the check scripts read no ColumnStore counter) |
@@ -439,7 +440,7 @@ A step without an equivalent is a comment line `step N (...): n/a - <reason>` in
 | Cassandra | n/a | `save-snapshot.sh`: `nodetool flush`, wait until no compactions are pending (at most 1800 s; single node: SUT pod; cluster: every worker) | n/a (the JMX metrics cannot be reset) |
 
 DatabaseService has no reset.
-Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL, PGBouncer and CedarDB only (the other DBMS have no scripts for them).
+Benchbase `twitter`, `ycsb` and `chbenchmark` have a reset for PostgreSQL, PGBouncer, OrioleDB and CedarDB only (the other DBMS have no scripts for them).
 With `-ar` on a configuration without a reset, the experiment prints a warning at the start; a listed script missing in the experiment folder is skipped with a message.
 
 Scripts are in the experiment folder of the DBMS (`experiments/<benchmark>/<DBMS>/`, Benchbase `experiments/benchbase/<benchmark>/<DBMS>/`), named `reset-<benchmark>.sql`, plus `reset-flush.sh` (MySQL, MariaDB, ClickHouse), `reset-counters.sh` (YugabyteDB) or `save-snapshot.sh` (Dragonfly, Redis, Cassandra).
@@ -448,9 +449,8 @@ With a TPC-H refresh stream (`-xrs`), the reset runs once per round, before both
 Each reset is logged per round (`bexhoma-reset_<run>_<client>_<entry>-...log`), and its duration is reported as `reset_seconds`.
 A script counts as failed when it exits non-zero, writes an error line (`ERROR`, `FATAL`) to stderr, or (redis-cli) an `ERR` reply to stdout; no output means success.
 The summary's Reset table lists the failed scripts per job (`reset_failed`), and the test `Reset scripts ran without errors` fails when there are any; the agent report links the reset logs in `files.md`.
-`scripts/test-docs-reset.sh` (`.ps1`) checks every reset on a cluster: one run per DBMS and benchmark with two rounds, and its header lists what to look for in the logs; see [Test: Reset Scripts](Test-Reset.md) for the commands and the logs of the last run.
+`scripts/test-docs-reset.sh` (`.ps1`) checks every reset on a cluster: one run per DBMS and benchmark with two rounds, and its header lists what to look for in the logs; see [Test: Reset Scripts](Test-Reset.md) for the commands and the logs of the runs.
 
-Runs with `-ar` from before this contract (October 2026) are not directly comparable to newer ones for PostgreSQL (checkpoint now after `VACUUM`), Citus (checkpoints on the workers) and MySQL/MariaDB (dirty-page flush): these move I/O out of round 1.
 
 ### Load durability (`-xld`)
 
@@ -461,7 +461,7 @@ Commands and logs of the test runs: [Test: Load Durability](Test-Durability.md).
 
 | DBMS | durable | relaxed | unsafe |
 |---|---|---|---|
-| PostgreSQL, PgDuckDB, PGBouncer | `synchronous_commit`, `fsync`, `full_page_writes` on | `synchronous_commit=off` | also `fsync`, `full_page_writes` off; restore with `CHECKPOINT` + `sync` |
+| PostgreSQL, PgDuckDB, PGBouncer, OrioleDB | `synchronous_commit`, `fsync`, `full_page_writes` on | `synchronous_commit=off` | also `fsync`, `full_page_writes` off; restore with `CHECKPOINT` + `sync` |
 | Citus (coordinator + workers) | as PostgreSQL | `synchronous_commit=off` | - (= relaxed) |
 | MySQL | flush 1 | flush 2 (TPC-C/YCSB 0), key checks off | also redo log off, doublewrite `DETECT_ONLY` |
 | MariaDB (`.sh`, root) | flush 1, doublewrite on | flush 2 | also doublewrite off |
@@ -573,9 +573,19 @@ See [Example: Benchmark PgDuckDB](Example-PgDuckDB.md) for configuration, deploy
 
 ---
 
+## OrioleDB
+
+`OrioleDB` is the configuration key for PostgreSQL with the storage engine [OrioleDB](https://www.orioledb.com), a table access method with index-organized tables, an undo log instead of dead row versions in the table and a buffer cache of its own, used for YCSB, Benchbase and HammerDB.
+Every table is an OrioleDB table (`default_table_access_method=orioledb`); it uses the DDL, durability and reset scripts and the clients of [PostgreSQL](#postgresql).
+License: Apache-2.0 or PostgreSQL License, no benchmark clause.
+
+See [Example: Benchmark OrioleDB](Example-OrioleDB.md) for configuration, deployment, the differences of the scripts, a comparison with PostgreSQL and examples.
+
+---
+
 ## MySQL
 
-`MySQL` is the configuration key for MySQL 9.7 (LTS), used for TPC-H, TPC-DS, Benchbase, HammerDB and YCSB.
+`MySQL` is the configuration key for MySQL, used for TPC-H, TPC-DS, Benchbase, HammerDB and YCSB.
 MySQL 9 needs TLS for the first login of `root`, so bexhoma creates a TLS Secret per SUT.
 
 See [Example: Benchmark MySQL](Example-MySQL.md) for configuration, deployment, scripts, DDL parameters, durability, reset and examples.
@@ -635,7 +645,7 @@ CedarDB is an HTAP DBMS with a PostgreSQL wire protocol, the commercial successo
 
 **Deployment template:** [`k8s/deploymenttemplate-CedarDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-CedarDB.yml)
 
-The template pins the Community Edition image `cedardb/cedardb:v2026-10-22`.
+The template uses the Community Edition image `cedardb/cedardb`.
 It differs from a PostgreSQL template in these points:
 
 | Point | Handling | Without it |
@@ -643,7 +653,7 @@ It differs from a PostgreSQL template in these points:
 | Password | `CEDAR_PASSWORD` has at least 20 characters, as the JDBC `auth` of `cluster.config`; letters and digits only, it goes through `sed` in the YCSB and Benchbase images | the image refuses a weak password and the server stops |
 | Authentication | no trust authentication: `client_env` of `cluster.config` gives every job `PGPASSWORD` | the `psql` of the loader images cannot connect |
 | Address | the entrypoint binds to `::`; the container command changes it to `0.0.0.0` before the start | no IPv6 in the pods, the server stops; `-address` as an argument is refused as given twice |
-| `psql` | the image has none; the initContainer `include-client` copies it from `postgres:18.6` to `/pgclient` for `loadData` | init scripts cannot run |
+| `psql` | the image has none; the initContainer `include-client` copies it from the `postgres` image to `/pgclient` for `loadData` | init scripts cannot run |
 
 Memory and threads follow the limits of the container: `buffersize` and `workmemsize` default to 45% of the memory limit each.
 CedarDB warns that the `memlock` limit is too low for its `io_uring` buffers (performance may degrade); this limit cannot be changed from a pod.
@@ -669,7 +679,7 @@ CedarDB does not share code with PostgreSQL. What the scripts cannot use:
 
 Isolation: every transaction runs as repeatable read. `READ COMMITTED` is accepted but stays repeatable read, `SERIALIZABLE` is refused, so Benchbase runs on repeatable read here.
 With concurrent writes to the same rows, transactions fail with `conflict with concurrent transaction` instead of waiting.
-YCSB does not retry them: workload A lost about 0.4% of its updates at 16 threads (`[UPDATE-FAILED]`), so the test `Execution Phase: contains FAILED column` fails.
+YCSB does not retry them: workload A loses updates (`[UPDATE-FAILED]`), so the test `Execution Phase: contains FAILED column` fails.
 
 Benchbase `twitter` loads, but its benchmark stops when it connects: the PostgreSQL profile of the image fixes `TRANSACTION_SERIALIZABLE` for it and ignores `BENCHBASE_ISOLATION`.
 
@@ -689,16 +699,16 @@ See [Example: Other DBMS](Example-Other-DBMS.md#cedardb) for the workloads and t
 
 ## SQL Server
 
-`SQLServer` is the configuration key for Microsoft SQL Server 2022, Developer edition, a single Deployment without operator (TPC-H, YCSB, Benchbase TPC-C, HammerDB TPC-C).
+`SQLServer` is the configuration key for Microsoft SQL Server, Developer edition, a single Deployment without operator (TPC-H, YCSB, Benchbase TPC-C, HammerDB TPC-C).
 
-**License:** the license terms of SQL Server 2022 Developer edition (also Express and Evaluation), section "Benchmark testing", require Microsoft's prior written approval to disclose the results of any benchmark test to a third party.
+**License:** the license terms of SQL Server Developer edition (also Express and Evaluation), section "Benchmark testing", require Microsoft's prior written approval to disclose the results of any benchmark test to a third party.
 Bexhoma therefore runs SQL Server for **internal tests only**: there are no results, summaries or logs of it in the repository or in the documentation.
 `tests/test_unpublished_results.py` fails on results of it in `docs/` or `logs_tests/`, and on a test script that runs it without writing to `logs_tests/local`.
 The Developer edition must not be used in a production environment; benchmarking is not production use.
 
 **Deployment template:** [`k8s/deploymenttemplate-SQLServer.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-SQLServer.yml)
 
-The template pins `mcr.microsoft.com/mssql/server:2022-CU27-ubuntu-22.04` with `ACCEPT_EULA=Yes` (a bare `Y` in the written manifest is a boolean for Kubernetes) and `MSSQL_PID=Developer`.
+The template uses the image `mcr.microsoft.com/mssql/server` with `ACCEPT_EULA=Yes` (a bare `Y` in the written manifest is a boolean for Kubernetes) and `MSSQL_PID=Developer`.
 
 | Point | Handling | Without it |
 |---|---|---|
@@ -743,7 +753,7 @@ See [Example: Other DBMS](Example-Other-DBMS.md#sql-server) for the workloads an
 
 ## Oracle Database Free
 
-`OracleDB` is the configuration key for Oracle AI Database 26ai Free (release 23.26.3), the free edition of Oracle Database, a single Deployment without operator (TPC-H, YCSB, Benchbase TPC-C, HammerDB TPC-C).
+`OracleDB` is the configuration key for Oracle Database Free, the free edition of Oracle Database, a single Deployment without operator (TPC-H, YCSB, Benchbase TPC-C, HammerDB TPC-C).
 
 **License:** Oracle Free Use Terms and Conditions; the terms of the database have no benchmark clause (the only one in the image belongs to the bundled XDK, which the benchmarks do not use).
 The grant covers developing, testing, prototyping and demonstrating applications; bexhoma uses it for research tests.
@@ -756,7 +766,7 @@ The database allows 200 processes, which bounds the sessions of all loader and b
 
 **Deployment template:** [`k8s/deploymenttemplate-OracleDB.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-OracleDB.yml)
 
-The template pins `container-registry.oracle.com/database/free:23.26.3.0` (public, no login); the image holds a prebuilt database (CDB `FREE`, pluggable database `FREEPDB1`) and runs as user `oracle` (UID 54321).
+The template uses the image `container-registry.oracle.com/database/free` (public, no login); the image holds a prebuilt database (CDB `FREE`, pluggable database `FREEPDB1`) and runs as user `oracle` (UID 54321).
 Before the entrypoint of the image (`runOracle.sh`), the container command prepares:
 
 | Point | Handling | Without it |
@@ -804,12 +814,12 @@ See [Example: Other DBMS](Example-Other-DBMS.md#oracle-database-free) for the wo
 
 ## IBM Db2 Community Edition
 
-`DB2` is the configuration key for IBM Db2 Community Edition 12.1.5 (container format), a single Deployment without operator (TPC-H, TPC-DS, YCSB, Benchbase TPC-C).
+`DB2` is the configuration key for IBM Db2 Community Edition (container format), a single Deployment without operator (TPC-H, TPC-DS, YCSB, Benchbase TPC-C).
 
 **License:** the License Information in the image (`L-KHAI-C8GJZN`, International License Agreement for Non-Warranted Programs) has no benchmark clause.
-The notices of the image list the "Machine Learning Optimizer" (the AI query optimizer of Db2 12.1) as Technology Preview Code: it is not part of the licensed program, may be used for internal evaluation only, and information about it, including benchmarks, is IBM confidential.
+The notices of the image list the "Machine Learning Optimizer" (the AI query optimizer of Db2) as Technology Preview Code: it is not part of the licensed program, may be used for internal evaluation only, and information about it, including benchmarks, is IBM confidential.
 It is on by default in new databases; the template switches it off (`AI_OPTIMIZER`, `AUTO_AI_OPTIMIZER`, `AUTO_AI_MAINT` = `OFF`), the pod becomes ready only when it is off, and `checkschema-<benchmark>.sql` reports it.
-The License Information file in the image names version 11.5.7.0, and the online License Information of 12.1 has not been read yet.
+The License Information file in the image belongs to an earlier Db2 version than the image.
 The results of Db2 are therefore kept internal: its test script writes to `logs_tests/local`, and `tests/test_unpublished_results.py` fails on results of it in `docs/` or `logs_tests/`.
 
 **Drivers:** the images of bexhoma contain no IBM software.
@@ -823,11 +833,11 @@ So every pod downloads the driver itself at the start:
 
 A pod that cannot download its driver ends with exit code 1.
 
-**Limits of the edition:** at most 4 cores and 8 GB of instance memory (`db2licm -l` of 12.1.5: `Max amount of memory (GB): 8`, `Max number of cores: 4`, enforcement "Soft Stop"); Db2 lowers `INSTANCE_MEMORY` to 8 GB at the start.
+**Limits of the edition:** at most 4 cores and 8 GB of instance memory (`db2licm -l`: `Max amount of memory (GB): 8`, `Max number of cores: 4`, enforcement "Soft Stop"); Db2 lowers `INSTANCE_MEMORY` to 8 GB at the start.
 
 **Deployment template:** [`k8s/deploymenttemplate-DB2.yml`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-DB2.yml)
 
-The template pins `icr.io/db2_community/db2:12.1.5.0` (public, no login) with `LICENSE=accept`.
+The template uses the image `icr.io/db2_community/db2` (public, no login) with `LICENSE=accept`.
 The entrypoint of the image runs as root, creates the instance `db2inst1` and the database `BEXHOMA` in `/database` on the first start (about a minute) and starts both on every later start.
 
 | Point | Handling | Without it |
@@ -859,7 +869,7 @@ There are no durability scripts: Db2 has no setting for asynchronous commit, so 
 | Benchbase | profile `db2` of the bexhoma image (the profile `postgres` without its driver, `jcc-12.1.5.0.jar` in its `lib`); Benchbase's own type `DB2` with `ddl-db2.sql` and `dialect-db2.xml` of `tpcc`; only `tpcc` has a config (`images/benchbase/config/db2`) | `bexhoma/generator_benchbase`, `bexhoma/benchmarker_benchbase` |
 
 The loaders insert into the same table from several pods: each chunk holds one row lock per row until its commit.
-With chunks of 200000 lines, four TPC-H loaders filled the lock list, Db2 escalated to table locks and the loaders deadlocked on `lineitem`; 20000 lines keep them far below it.
+Larger chunks fill the lock list of parallel TPC-H loaders: Db2 escalates to table locks and the loaders deadlock on `lineitem`.
 
 **Schema** ([TPC-H](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpch/DB2), [TPC-DS](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcds/DB2), [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/DB2)):
 row-organized tables in the default table space (4 KiB pages).
@@ -988,35 +998,3 @@ There is no `loadData` command and there are no DDL scripts.
 
 See [Example: Hardware](Example-Hardware.md#technical-details) for the deployment, the configuration and examples.
 
----
-
-## Add a New DBMS
-
-To add a DBMS called `NewDBMS`:
-
-1. **Add a configuration entry** in the `dockers` section of `cluster.config` following the reference above.
-
-2. **Create a deployment manifest** at `k8s/deploymenttemplate-NewDBMS.yml`.  
-   Copy `k8s/deploymenttemplate-Dummy.yml` as a starting point and adjust the image, port, and resource defaults.
-
-3. **Add DDL scripts** in a subfolder of `experiments/`, e.g., `experiments/tpch/NewDBMS/` for TPC-H.
-
-4. **Declare the benchmarks** it can run in `benchmarks` of the entry, with `storage_prefix` and `template.alias`, see [Benchmarks of a DBMS](#benchmarks-of-a-dbms).
-   No entry script has to be changed: `-dbms` offers every DBMS that has an entry for the benchmark, and the configuration is built from the entry.
-   The key of the entry must match the YAML filename of the deployment template (`docker='NewDBMS'`).
-
-If you need a JDBC driver that is not yet included, please raise an issue at https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues.
-
-5. **Add an example page** `docs/Example-NewDBMS.md` with a test script `scripts/test-docs-newdbms.sh` and `.ps1`, whose runs are in the order of the page.
-   All example pages of a DBMS have the same structure:
-
-   * a short introduction and references (as links), including the test script
-   * the main use case (`Perform <Benchmark> Benchmark`): a quick run without monitoring, with subsections Status, Cleanup and Evaluate Results
-   * Monitoring: a run of at least one minute of benchmarking with `-m -mc`, and Application Metrics (`-ma`) where the DBMS has an exporter
-   * Persistent Storage: a run with `-rst` and `-nc 2`, so the second repetition uses the loaded volume
-   * Variants, where the DBMS has them (cluster, replication, components, ...), one subsection with an example result each
-   * Technical Details: configuration of bexhoma, deployment, schema and scripts, DDL parameters, load durability and reset scripts
-   * one section per further use case (benchmark)
-
-   Logs are named `docs_<benchmark>_<dbms>[_<role>].log`, e.g. `_monitoring`, `_appmetrics`, `_storage`, `_cluster`; [TestCases](TestCases.md) lists all test scripts.
-   Add the page to `docs/index.rst` and a short section with a link to this document.

@@ -402,8 +402,8 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld relaxed                  <# load durability (default) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -428,8 +428,8 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld unsafe                   <# load durability #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -438,6 +438,58 @@ bexhoma ycsb `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_pgbouncer_unsafe.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability PGBouncer unsafe"
+
+
+#### YCSB Durability OrioleDB durable
+bexhoma ycsb `
+  -dbms OrioleDB                <# PostgreSQL scripts (path PostgreSQL), OrioleDB tables #> `
+  -sf 1                         <# scaling factor #> `
+  -xwl a                        <# YCSB workload template (a = 50%% read / 50%% update) #> `
+  -xtb 16384                    <# base ops/s used to compute the throughput target #> `
+  -xnbf 1                       <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# one client round #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod #> `
+  -xld durable                  <# load durability #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_orioledb_durable.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability OrioleDB durable"
+
+
+#### YCSB Durability OrioleDB unsafe
+bexhoma ycsb `
+  -dbms OrioleDB                <# PostgreSQL scripts (path PostgreSQL), OrioleDB tables #> `
+  -sf 1                         <# scaling factor #> `
+  -xwl a                        <# YCSB workload template (a = 50%% read / 50%% update) #> `
+  -xtb 16384                    <# base ops/s used to compute the throughput target #> `
+  -xnbf 1                       <# benchmarking throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# one client round #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod #> `
+  -xld unsafe                   <# load durability #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_orioledb_unsafe.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability OrioleDB unsafe"
 
 
 #### YCSB Durability MySQL relaxed
@@ -454,8 +506,8 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld relaxed                  <# load durability (default) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -480,8 +532,8 @@ bexhoma ycsb `
   -nlt 64                       <# threads per loader pod #> `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld unsafe                   <# load durability #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -509,8 +561,8 @@ bexhoma ycsb `
   -nw 3                         <# number of worker nodes #> `
   -nwr 1                        <# replication factor #> `
   -nws 48                       <# number of shards #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld relaxed                  <# load durability (default) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -537,12 +589,12 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -xnsr 3                       <# number of TiDB SUT replicas #> `
   -nw 3                         <# number of worker nodes #> `
+  -xnpd 3                       <# number of PD nodes #> `
   -nwr 3                        <# replication factor #> `
-  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -xld relaxed                  <# load durability (default) #> `
+  -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -tr                           <# verify result meets basic sanity requirements #> `
-  -xnpd 3                       <# number of PD nodes #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_tidb_relaxed.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability TiDB relaxed"

@@ -3,7 +3,7 @@
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 HammerDB's TPC-C implementation does not allow scaling data generation and ingestion, but scaling the benchmarking driver.
-It uses very little resources, but stresses the DBMS a lot. Scale-out can simulate distributed clients [4].
+It needs few client resources and puts a high load on the DBMS. Scale-out can simulate distributed clients [4].
 
 About the benchmark [1]:
 > The TPC-C specification on which TPROC-C is based implements a computer system to fulfil orders from customers to supply products from a company. The company sells 100,000 items and keeps its stock in warehouses. Each warehouse has 10 sales districts and each district serves 3000 customers. The customers call the company whose operators take the order, each order containing a number of items. Orders are usually satisfied from the local warehouse however a small number of items are not in stock at a particular point in time and are supplied by an alternative warehouse. It is important to note that the size of the company is not fixed and can add Warehouses and sales districts as the company grows. For this reason your test schema can be as small or large as you wish with a larger schema requiring a more powerful computer system to process the increased level of transactions. The TPROC-C schema is shown below, in particular note how the number of rows in all of the tables apart from the ITEM table which is fixed is dependent upon the number of warehouses you choose to create your schema.
@@ -38,7 +38,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [hammerdb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/hammerdb.py).
+The experiment is run with the [hammerdb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/hammerdb.py).
 
 Example:
 ```bash
@@ -287,7 +287,6 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 </details>
 
-We can see that scaled-out drivers (2 pods with 8 threads each) have similar results as a monolithic driver (1 pod with 16 threads) - but are a bit weaker.
 
 To see the summary again you can simply call `bexhoma summary -e 1708411664` with the experiment code.
 
@@ -503,8 +502,8 @@ options:
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
-We in the following also activate measurement of latencies with `-xlat`.
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+The following run also measures latencies (`-xlat`).
 
 Example:
 ```bash
@@ -723,7 +722,7 @@ The counter starts before the ramp-up, so the first minute (`-xrt 1`) is warm-up
 
 The example compares one benchmarker pod with two pods on the same SUT.
 The second client runs on the data the first client has changed, so `-ar` runs a [reset script](#reset-scripts) (`VACUUM ANALYZE`, `CHECKPOINT`, statistics reset) before each client.
-Without it, the second client was much slower in our test: the PostgreSQL SUT runs with `autovacuum=off`, and after about 17 million new order lines HammerDB's stock-level transaction took about 180 ms instead of about 1 ms.
+Without it, the second client runs on a database with dead rows: the PostgreSQL SUT runs with `autovacuum=off`, and HammerDB's stock-level transaction slows down as new order lines accumulate.
 
 Example:
 ```bash
@@ -732,8 +731,8 @@ bexhoma hammerdb \
   -sf 16 \
   -xrt 1 \
   -xsd 5 \
-  -ne 1 \
   -nc 1 \
+  -ne 1 \
   -nlt 16 \
   -nbp 1,2 \
   -nbt 16 \
@@ -899,7 +898,7 @@ Hammerdb Transaction Counter Log @ Tue Oct 20 08:41:24 UTC 2026
 898842 PostgreSQL tpm @ Tue Oct 20 08:41:44 UTC 2026
 ```
 
-The evaluator turns these lines into a time series (see [Evaluators](Evaluators.html) and [Collectors](Collectors.html)):
+The evaluator turns these lines into a time series (see [Evaluators](Evaluators.md) and [Collectors](Collectors.md)):
 
 ```python
 from bexhoma import collectors
@@ -941,7 +940,6 @@ Some remarks:
 * Timestamps are rounded to the 10 seconds of the counter, so the pods line up.
 * The first counter value of each log is always 0 and is skipped.
   The first remaining value covers the start of the ramp-up, the last one the end of the run, so both are lower.
-* One pod with 16 threads and two pods with 8 threads each reach about the same throughput (about 850,000 to 950,000 tpm).
 * The counter reports transactions per minute only, not NOPM.
 
 ## Reset Scripts
@@ -954,7 +952,7 @@ See [Reset scripts](DBMS.md#reset-scripts--ar) for what each DBMS does.
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 Example:
 ```bash
@@ -979,7 +977,7 @@ bexhoma hammerdb \
   run &>$LOG_DIR/docs_hammerdb_postgresql_storage.log
 ```
 
-The following status shows we have two volumes of type `shared`.
+The following status shows two volumes of type `shared`.
 Every experiment running HammerDB's TPC-C of SF=16 (warehouses) will take the databases from these volumes and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of PostgreSQL mounts the volume and generates the data.
@@ -1137,12 +1135,11 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 The loading times for both instances of loading are the same, since both relate to the same process of ingesting into the database.
 Note the added section about `volume_size` and `volume_used` in the connections section.
-Also note the size descreases from first to second run (PostgreSQL does some cleaning?).
 
 ## Keying and Thinking Time
 
-We can activate waiting times before and after execution of transactions with `-xkey` to follow TPC-C specifications more closely.
-Also also make sure, the number of driver threads (`-nbt`) is 10 times the number of warehouses (`-sf`).
+`-xkey` activates waiting times before and after the execution of transactions, closer to the TPC-C specification.
+Make sure that the number of driver threads (`-nbt`) is 10 times the number of warehouses (`-sf`).
 
 The keying and thinking times can be activated via `-xkey`:
 
@@ -1423,7 +1420,7 @@ HammerDB Workload SF=32 (warehouses for TPC-C)
 
 </details>
 
-Now also efficiency is computed via `100. * NOPM / 12.86 / sf`, when number of client threads is 10 times the number of warehouses:
+Efficiency is computed via `100. * NOPM / 12.86 / sf`, when number of client threads is 10 times the number of warehouses:
 * 100 makes it a percentage value
 * NOPM is the number of new orders per minute
 * sf is the number of warehouses

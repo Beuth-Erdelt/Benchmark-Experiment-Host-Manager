@@ -260,9 +260,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
 # -xsd 5                        benchmark duration in minutes
 # -xtb 1024                     base ops/s used to compute the throughput target (2^10)
 # -xnbf 16                      throughput target as a multiple of the base ops/s
+# -nc 2                         number of repeated runs per configuration (2nd reuses the volumes)
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod
-# -nc 2                         number of repeated runs per configuration (2nd reuses the volumes)
 # -xnsr 3                       number of TiDB server (SQL frontend) replicas
 # -nw 3                         number of worker nodes in the cluster
 # -xnpd 3                       number of PD (Placement Driver) nodes
@@ -273,19 +273,19 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
 # -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
-# -rsr                        delete any existing PVC for the SUT before starting
-# -rst nvme                     storage class for persistent volumes (PD and TiKV)
+# -rsr                          delete any existing PVC for the SUT before starting
 # -rss 50Gi                     size of the persistent volume claim
 # -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes (PD and TiKV)
 bexhoma benchbase \
   -dbms TiDB \
   -sf 16 \
   -xsd 5 \
   -xtb 1024 \
   -xnbf 16 \
+  -nc 2 \
   -nbp 1,2 \
   -nbt 16 \
-  -nc 2 \
   -xnsr 3 \
   -nw 3 \
   -xnpd 3 \
@@ -297,9 +297,9 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_benchbase_tidb_storage.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2  nc=2  nvme"

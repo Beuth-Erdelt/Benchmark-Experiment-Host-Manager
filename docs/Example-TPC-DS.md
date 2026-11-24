@@ -9,7 +9,7 @@ This example shows how to benchmark 99 reading queries Q1-Q99 derived from TPC-D
 
 > The query file is derived from the TPC-DS and as such is not comparable to published TPC-DS results, as the query file results do not comply with the TPC-DS Specification.
 
-In particular we had to apply changes to the queries, because
+The queries are adapted, because
 * MySQL and MariaDB do not have a FULL OUTER JOIN (Q51, Q97, ...)
 * MySQL and MariaDB do CASTing to INTEGER differently
 * column names may differ if AS is not used
@@ -24,7 +24,6 @@ The schema of
 * MariaDB: sets primary keys before import, all foreign key constraints and indexes on foreign keys of fact tables and customer table after import
 * PostgreSQL: sets primary keys before import, all foreign key constraints and indexes on foreign keys of fact tables and customer table after import
 
-**MySQL is excluded currently because the treatment of NULL during INSERT is complicated.**
 
 
 
@@ -52,7 +51,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
+The experiment is run with the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
 
 Example:
 ```bash
@@ -95,7 +94,7 @@ This
     * if data is already present: do nothing
   * with a loading container each
     * importing TPC-DS data from the distributed filesystem
-    * loading uses 8 threads (`-nlt`)
+    * `-nlt 8` is ignored: the TPC-DS loaders use one connection per pod, and bexhoma says so in the log
 * creates constraints (`-xic`) and indexes (`-xii`) and updates table statistics (`-xis`) after ingestion
 * runs 1 stream of TPC-DS queries
   * data transfer is also measured (`-xdt`)
@@ -372,8 +371,8 @@ No warnings
 
 This gives a survey about the errors and warnings (result set mismatch) and the latencies of execution per query.
 Moreover the loading times (schema creation, ingestion and indexing), the geometric mean of query execution times and the TPC-DS metrics power and throughput are reported.
-Please note that the results are not suitable for being published as official TPC-DS results.
-In particular the refresh streams are missing.
+The results are not official TPC-DS results.
+The data maintenance functions are not included.
 
 To see the summary again you can simply call `bexhoma summary -e 1750150367` with the experiment code.
 
@@ -630,7 +629,7 @@ options:
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 
 Example:
 ```bash
@@ -953,12 +952,12 @@ No warnings
 </details>
 
 This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during loading and execution of the benchmark.
-MonetDB is fast, so we cannot see a lot (metrics are fetched every 30 seconds).
+Metrics are fetched every 30 seconds, so a short phase has few samples.
 
 
 ## Perform Benchmark - Throughput Test
 
-For performing the experiment we can run the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
+The experiment is run with the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
 
 Example:
 ```bash
@@ -1290,7 +1289,7 @@ See [Reset scripts](DBMS.md#reset-scripts--ar) for what each DBMS does.
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 Example:
 ```bash
@@ -1323,7 +1322,7 @@ bexhoma tpcds \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpcds_postgresql_storage.log
 ```
-The following status shows we have a volumes of type `shared`.
+The following status shows a volume of type `shared`.
 Every experiment running TPC-DS of SF=1 at MonetDB will take the database from this volume and skip loading.
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of MonetDB mounts the volume and generates the data.
@@ -1631,7 +1630,7 @@ Note the added section about `volume_size` and `volume_used` in the connections 
 
 ## Profiling Benchmark
 
-We have included a custom data profiling benchmark as in [1].
+Bexhoma includes a data profiling benchmark as in [1].
 > We differentiate between metric attributes (INTEGER, DOUBLE, DECIMAL) and nominal attributes (others). We seek to obtain basic statistics about the attributes and we use COUNT, COUNT NULL (missing values), COUNT DISTINCT and the distribution: MIN, MAX, truncated AVG of values (metric) or of frequencies (nominal). We query for these 6 statistics per attribute and this yields 429 profiling queries. 
 
 In [1] the benchmark is used to assess node stability and to compare performance of DBMS and cloud providers.
@@ -1643,7 +1642,7 @@ In [1] the benchmark is used to assess node stability and to compare performance
 > Lecture Notes in Computer Science, vol 13169. Springer, Cham.
 > https://doi.org/10.1007/978-3-030-94437-7_6
 
-Here, we run it at TPC-DS SF=10 in PostgreSQL:
+This runs it at TPC-DS SF=10 in PostgreSQL:
 
 
 ```bash

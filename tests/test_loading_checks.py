@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+from datetime import datetime, timedelta, timezone
 import tempfile
 import unittest
 from types import SimpleNamespace
@@ -9,7 +10,7 @@ from unittest import mock
 
 from bexhoma.configurations.base import SutConfiguration
 from bexhoma.configurations.loading import LoadingCoordinator, loading_script_errors
-from bexhoma.experiments.base import ExperimentBase
+from bexhoma.experiments.base import LOADING_UNSCHEDULABLE_TIMEOUT_MINUTES, ExperimentBase
 from bexhoma.loading_checks import (check_loader_pods, parse_ingest_markers,
                                     parse_job_failed_pods, parse_pod_description)
 
@@ -358,6 +359,68 @@ class LoadDurabilityTest(unittest.TestCase):
         self.assertTrue(cfg.loading_finished)
         # the experiment loop aborts in its next pass
         self.assertIn('fsync=on', experiment()._loading_abort_reason(cfg, None))
+
+
+class UnschedulableLoaderTest(unittest.TestCase):
+    """A loading pod the scheduler cannot place aborts the load instead of blocking the barrier forever."""
+
+    NOW = datetime(2026, 11, 23, 12, 0, 0)
+
+    def abort_reason(self, minutes_unschedulable, message='0/5 nodes are available: 1 Too many pods.'):
+        e = experiment()
+        e.max_loading_minutes = None
+        e.cluster = mock.Mock()
+        e.cluster.get_jobs.return_value = ['job-1']
+        e.cluster.get_job_failed.return_value = False
+        e.cluster.get_pods.return_value = ['loader-pod-16'] if minutes_unschedulable is not None else []
+        since = (self.NOW - timedelta(minutes=minutes_unschedulable or 0)).replace(tzinfo=timezone.utc)
+        e.cluster.get_pod_unschedulable.return_value = (since, message)
+        cfg = SimpleNamespace(configuration='DBMS-1', appname='bexhoma', code='42', loading_failed_fatal='',
+                              loading_started=True, loading_finished=False, loading_started_at=None)
+        reason = e._loading_abort_reason(cfg, self.NOW)
+        if minutes_unschedulable is not None:
+            e.cluster.get_pods.assert_called_once_with(app='bexhoma', component='loading', experiment='42',
+                                                       configuration='DBMS-1', status='Pending')
+        return reason
+
+    def test_unschedulable_for_the_timeout_aborts(self) -> None:
+        self.assertEqual(self.abort_reason(LOADING_UNSCHEDULABLE_TIMEOUT_MINUTES),
+                         'Loading pod loader-pod-16 of DBMS-1 could not be scheduled for 15 minutes '
+                         '(0/5 nodes are available: 1 Too many pods.); the other loading pods wait for it')
+
+    def test_shorter_wait_continues(self) -> None:
+        self.assertIsNone(self.abort_reason(LOADING_UNSCHEDULABLE_TIMEOUT_MINUTES - 1))
+
+    def test_no_pending_pod_continues(self) -> None:
+        self.assertIsNone(self.abort_reason(None))
+
+    def test_pending_but_scheduled_continues(self) -> None:
+        e = experiment()
+        e.max_loading_minutes = None
+        e.cluster = mock.Mock()
+        e.cluster.get_jobs.return_value = []
+        e.cluster.get_pods.return_value = ['loader-pod-1']   # e.g. pulling its image
+        e.cluster.get_pod_unschedulable.return_value = None
+        cfg = SimpleNamespace(configuration='DBMS-1', appname='bexhoma', code='42', loading_failed_fatal='',
+                              loading_started=True, loading_finished=False, loading_started_at=None)
+        self.assertIsNone(e._loading_abort_reason(cfg, self.NOW))
+
+    def test_cluster_reads_the_pod_scheduled_condition(self) -> None:
+        from bexhoma.clusters import Kubernetes
+        cluster = Kubernetes.__new__(Kubernetes)
+        since = datetime(2026, 11, 23, 11, 0, tzinfo=timezone.utc)
+        unschedulable = SimpleNamespace(type='PodScheduled', status='False', reason='Unschedulable',
+                                        last_transition_time=since, message='Too many pods')
+        pod = SimpleNamespace(status=SimpleNamespace(conditions=[unschedulable]))
+        with mock.patch.object(Kubernetes, '_read_pod', return_value=pod):
+            self.assertEqual(cluster.get_pod_unschedulable('p'), (since, 'Too many pods'))
+        scheduled = SimpleNamespace(type='PodScheduled', status='True', reason=None,
+                                    last_transition_time=since, message=None)
+        pod.status.conditions = [scheduled]
+        with mock.patch.object(Kubernetes, '_read_pod', return_value=pod):
+            self.assertIsNone(cluster.get_pod_unschedulable('p'))
+        with mock.patch.object(Kubernetes, '_read_pod', return_value=None):
+            self.assertIsNone(cluster.get_pod_unschedulable('p'))
 
 
 if __name__ == '__main__':

@@ -31,9 +31,9 @@ source ./scripts/testfunctions.sh
 # -xfbs 4k                      fio block size
 # -xfid 1,2,4,8,16,32,64,128    queue depths to sweep (comma-separated)
 # -xfe libaio                   fio ioengine
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -51,9 +51,9 @@ bexhoma hardware \
   -xfbs 4k \
   -xfid 1,2,4,8,16,32,64,128 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -79,9 +79,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 1. Hardware fio depth sweep  rw=randre
 # -xfbs 4k,8k,16k,64k,128k,256k,1M block sizes to sweep (comma-separated)
 # -xfid 64                      queue depth, fixed at the elbow found earlier
 # -xfe libaio                   fio ioengine
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1                        threads per benchmarking pod (fio numjobs), fixed
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -99,9 +99,9 @@ bexhoma hardware \
   -xfbs 4k,8k,16k,64k,128k,256k,1M \
   -xfid 64 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -138,9 +138,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 2. Hardware fio block-size sweep  rw=r
 # -xfbs 8k                      fio block size, fixed at PostgreSQL's page size (BLCKSZ)
 # -xfid 64                      queue depth, fixed at the elbow found earlier
 # -xfe libaio                   fio ioengine
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -158,9 +158,9 @@ bexhoma hardware \
   -xfbs 8k \
   -xfid 64 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -197,9 +197,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 3. Hardware fio random_page_cost calib
 # -xfe libaio                   fio ioengine
 # -xfsy 1                       fsync after every write (wal_sync_method=fsync)
 # -xfow 1                       prefilled test file: writes go into written blocks, like recycled WAL segments
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1                        threads per benchmarking pod, fixed (single backend)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -219,9 +219,9 @@ bexhoma hardware \
   -xfe libaio \
   -xfsy 1 \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -252,9 +252,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 4. Hardware fio WAL sync-write fsync  
 # -xfbs 4k                      fio block size, fixed
 # -xfid 64,80,96,112,128        linear refinement around the elbow (comma-separated)
 # -xfe libaio                   fio ioengine
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -272,9 +272,9 @@ bexhoma hardware \
   -xfbs 4k \
   -xfid 64,80,96,112,128 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -300,9 +300,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 1. Hardware fio depth sweep refine  rw
 # -xfbs 4k                      fio block size, fixed
 # -xfid 64                      queue depth, fixed at the elbow found earlier
 # -xfe libaio                   fio ioengine
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1,2,4,8,16               numjobs per pod to sweep (comma-separated)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -320,9 +320,9 @@ bexhoma hardware \
   -xfbs 4k \
   -xfid 64 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1,2,4,8,16 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -347,9 +347,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 2. Hardware fio numjobs sweep  rw=rand
 # -xfbs 8k                      fio block size, fixed at PostgreSQL's page size (BLCKSZ)
 # -xfid 1,2,4,8,16,32,64,128    queue depths to sweep (comma-separated)
 # -xfe libaio                   fio ioengine
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -367,9 +367,9 @@ bexhoma hardware \
   -xfbs 8k \
   -xfid 1,2,4,8,16,32,64,128 \
   -xfe libaio \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -398,9 +398,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 3. Hardware fio depth sweep 8k  rw=ran
 # -xfe libaio                   fio ioengine
 # -xffd 1                       fdatasync after every write (wal_sync_method=fdatasync)
 # -xfow 1                       prefilled test file: writes go into written blocks, like recycled WAL segments
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1                        threads per benchmarking pod, fixed (single backend)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -420,9 +420,9 @@ bexhoma hardware \
   -xfe libaio \
   -xffd 1 \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -452,9 +452,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 4. Hardware fio WAL sync-write fdatasy
 # -xfe libaio                   fio ioengine
 # -xfsy 1                       fsync after every write (wal_sync_method=fsync)
 # -xfow 1                       prefilled test file: writes go into written blocks, like recycled WAL segments
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1,2,4,8,16,32            concurrent committing backends to sweep (comma-separated)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -474,9 +474,9 @@ bexhoma hardware \
   -xfe libaio \
   -xfsy 1 \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1,2,4,8,16,32 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -504,9 +504,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 5. Hardware fio WAL group commit  bs=8
 # -xfe libaio                   fio ioengine
 # -xfsy 1                       fsync after every write (wal_sync_method=fsync)
 # -xfow 1                       prefilled test file: writes go into written blocks, like recycled WAL segments
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1                        threads per benchmarking pod, fixed (single backend)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -526,9 +526,9 @@ bexhoma hardware \
   -xfe libaio \
   -xfsy 1 \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -553,9 +553,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 6. Hardware fio WAL record size  bs=1k
 # -xfid 4,16                    queue depths to sweep (comma-separated)
 # -xfe libaio                   fio ioengine
 # -xfow 1                       prefilled test file: writes go into written blocks, like existing relation files
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -574,9 +574,9 @@ bexhoma hardware \
   -xfid 4,16 \
   -xfe libaio \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -607,9 +607,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 7. Hardware fio checkpoint writeback  
 # -xfe libaio                   fio ioengine
 # -xfsy 1                       fsync after every write (approximates WAL flush contention)
 # -xfow 1                       prefilled test file: writes go into written blocks, like recycled WAL segments
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -630,9 +630,9 @@ bexhoma hardware \
   -xfe libaio \
   -xfsy 1 \
   -xfow 1 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -679,9 +679,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 8. Hardware fio OLTP/WAL contention pr
 # -dbms Hardware                hardware target(s) to test
 # -xht sysbench                 benchmark tool: sysbench (CPU/memory)
 # -xtd 60                       seconds per phase (CPU, then memory); long enough for -m/-mc to sample
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count, fixed
 # -nbt 1,2,4,8                  sysbench --threads to sweep (comma-separated)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -694,9 +694,9 @@ bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
   -xtd 60 \
+  -ne 1 \
   -nbp 1 \
   -nbt 1,2,4,8 \
-  -ne 1 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -720,9 +720,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 5. Hardware sysbench CPU quota calibra
 # -dbms Hardware                hardware target(s) to test
 # -xht sysbench                 benchmark tool: sysbench (CPU/memory)
 # -xtd 60                       seconds per phase (CPU, then memory); long enough for -m/-mc to sample
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1,2,4                    benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        total sysbench threads, fixed, split across -nbp
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -735,9 +735,9 @@ bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
   -xtd 60 \
+  -ne 1 \
   -nbp 1,2,4 \
   -nbt 4 \
-  -ne 1 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -762,9 +762,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 6. Hardware sysbench nbp overhead swee
 # -dbms Hardware                hardware target(s) to test
 # -xht sysbench                 benchmark tool: sysbench (CPU/memory)
 # -xtd 60                       seconds per phase (CPU, then memory); long enough for -m/-mc to sample
+# -ne 1,2,4,8                   parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count, fixed
 # -nbt 2                        threads per benchmarking pod, fixed at the saturation point
-# -ne 1,2,4,8                   parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -777,9 +777,9 @@ bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
   -xtd 60 \
+  -ne 1,2,4,8 \
   -nbp 1 \
   -nbt 2 \
-  -ne 1,2,4,8 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -809,9 +809,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 7. Hardware sysbench ne saturation swe
 # -dbms Hardware                hardware target(s) to test
 # -xht sysbench                 benchmark tool: sysbench (CPU/memory)
 # -xtd 60                       seconds per phase (CPU, then memory); long enough for -m/-mc to sample
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count per tenant, fixed
 # -nbt 2                        threads per benchmarking pod, fixed at the saturation point
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
@@ -826,9 +826,9 @@ bexhoma hardware \
   -dbms Hardware \
   -xht sysbench \
   -xtd 60 \
+  -ne 1 \
   -nbp 1 \
   -nbt 2 \
-  -ne 1 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -879,10 +879,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 8. Hardware sysbench noisy-neighbor te
 # -dbms Hardware                hardware target(s) to test
 # -xht netperf                  benchmark tool: netperf (many-concurrent-connection request/response)
 # -xtd 60                       seconds per netperf round
-# -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count, fixed (single connection)
 # -nbt 1                        concurrent TCP_RR connections, fixed (single-connection baseline)
-# -ne 1                         parallel client counts to sweep (comma-separated)
+# -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -892,10 +892,10 @@ bexhoma hardware \
   -dbms Hardware \
   -xht netperf \
   -xtd 60 \
-  -xnpp tcp \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
+  -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -921,10 +921,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 9. Hardware netperf PostgreSQL query r
 # -dbms Hardware                hardware target(s) to test
 # -xht netperf                  benchmark tool: netperf (many-concurrent-connection request/response)
 # -xtd 60                       seconds per netperf round
-# -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count, fixed - isolates connection-count from pod-count
 # -nbt 1,8,16,32,64             concurrent TCP_RR connections to sweep, all within one pod
-# -ne 1                         parallel client counts to sweep (comma-separated)
+# -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -934,10 +934,10 @@ bexhoma hardware \
   -dbms Hardware \
   -xht netperf \
   -xtd 60 \
-  -xnpp tcp \
+  -ne 1 \
   -nbp 1 \
   -nbt 1,8,16,32,64 \
-  -ne 1 \
+  -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -960,10 +960,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 10. Hardware netperf PostgreSQL connec
 # -dbms Hardware                hardware target(s) to test
 # -xht netperf                  benchmark tool: netperf (many-concurrent-connection request/response)
 # -xtd 60                       seconds per netperf round
-# -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1,2                      benchmarking pod counts to compare
 # -nbt 64                       total concurrent TCP_RR connections, split evenly across pods
-# -ne 1                         parallel client counts to sweep (comma-separated)
+# -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -973,10 +973,10 @@ bexhoma hardware \
   -dbms Hardware \
   -xht netperf \
   -xtd 60 \
-  -xnpp tcp \
+  -ne 1 \
   -nbp 1,2 \
   -nbt 64 \
-  -ne 1 \
+  -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1030,9 +1030,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 11. Hardware netperf PostgreSQL pod sc
 # -xspr max                     message rate: uncapped
 # -xsps 64                      message payload size in bytes
 # -xspp tcp                     protocol: tcp, matches PostgreSQL's wire protocol
-# -nbp 1,2,4,8,16                benchmarking pod counts to sweep, capped at the server pool size
-# -nbt 1                        threads per benchmarking pod, fixed (unused by sockperf, one process per pod)
 # -ne 1                         parallel client counts to sweep (comma-separated)
+# -nbp 1,2,4,8,16               benchmarking pod counts to sweep, capped at the server pool size
+# -nbt 1                        threads per benchmarking pod, fixed (unused by sockperf, one process per pod)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -1046,9 +1046,9 @@ bexhoma hardware \
   -xspr max \
   -xsps 64 \
   -xspp tcp \
+  -ne 1 \
   -nbp 1,2,4,8,16 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1071,9 +1071,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 12. Hardware sockperf pod scaling swee
 # -xspr max                     message rate: uncapped (next request right after each reply)
 # -xsps 64                      message payload size in bytes
 # -xspp tcp                     protocol: tcp, matches PostgreSQL's wire protocol
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count, fixed (single connection)
 # -nbt 1                        threads per benchmarking pod, fixed (unused by sockperf)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -1087,9 +1087,9 @@ bexhoma hardware \
   -xspr max \
   -xsps 64 \
   -xspp tcp \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1113,9 +1113,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 13. Hardware sockperf PostgreSQL query
 # -xspr max                     message rate: uncapped, find the throughput ceiling
 # -xsps 8192                    message payload size in bytes, PostgreSQL's page size (BLCKSZ)
 # -xspp tcp                     protocol: tcp, matches PostgreSQL's wire protocol
+# -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count, fixed (single stream)
 # -nbt 1                        threads per benchmarking pod, fixed (unused by sockperf)
-# -ne 1                         parallel client counts to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -1129,9 +1129,9 @@ bexhoma hardware \
   -xspr max \
   -xsps 8192 \
   -xspp tcp \
+  -ne 1 \
   -nbp 1 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \
@@ -1159,9 +1159,9 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 14. Hardware sockperf PostgreSQL strea
 # -xspr max                     message rate: uncapped (next request right after each reply)
 # -xsps 64                      message payload size in bytes
 # -xspp tcp                     protocol: tcp, matches PostgreSQL's wire protocol
-# -nbp 1,2,4,8,16                benchmarking pod counts to sweep, capped at the server pool size
-# -nbt 1                        threads per benchmarking pod, fixed (unused by sockperf, one process per pod)
 # -ne 1                         parallel client counts to sweep (comma-separated)
+# -nbp 1,2,4,8,16               benchmarking pod counts to sweep, capped at the server pool size
+# -nbt 1                        threads per benchmarking pod, fixed (unused by sockperf, one process per pod)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -tr                           verify result meets basic sanity requirements
@@ -1175,9 +1175,9 @@ bexhoma hardware \
   -xspr max \
   -xsps 64 \
   -xspp tcp \
+  -ne 1 \
   -nbp 1,2,4,8,16 \
   -nbt 1 \
-  -ne 1 \
   -m \
   -ms $BEXHOMA_MS \
   -tr \

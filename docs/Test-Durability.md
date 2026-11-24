@@ -1,6 +1,6 @@
 # Test: Load Durability
 
-This page shows how to use `-xld` (load durability) and keeps the test script and the logs of its last run on the cluster.
+This page shows how to use `-xld` (load durability) with its test script and the logs of its runs.
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -27,7 +27,7 @@ The level applies to the load only.
 Before the check script, the server returns to its configured state (template and `--set`), so the benchmark always runs as configured.
 The summary shows the level in the workload (`Load durability is relaxed (-xld; restored after the load).`) and per connection (`load_durability: relaxed`).
 
-Durability scripts exist for PostgreSQL (also used by PgDuckDB and PGBouncer), MySQL, MariaDB and Citus.
+Durability scripts exist for PostgreSQL (also used by PgDuckDB, PGBouncer and OrioleDB), MySQL, MariaDB and Citus.
 Other DBMS load as configured.
 See [Prepare Testbeds](Prepare-Testbeds.md#durability-during-the-load) for how the scripts are selected and [DBMS](DBMS.md#load-durability--xld) for what they set per DBMS.
 
@@ -48,7 +48,7 @@ This loads TPC-H SF 1 into PostgreSQL with `fsync` and `full_page_writes` off, t
 
 The test script runs one small experiment (SF 1, one client round) per benchmark, DBMS and level.
 The point is the loading phase.
-It covers TPC-H, TPC-DS, YCSB, HammerDB and Benchbase on PostgreSQL, PgDuckDB, PGBouncer, MySQL, MariaDB, Citus and TiDB (no durability scripts), and in addition
+It covers TPC-H, TPC-DS, YCSB, HammerDB and Benchbase on PostgreSQL, PgDuckDB, PGBouncer, OrioleDB, MySQL, MariaDB, Citus and TiDB (no durability scripts), and in addition
 * `durable` with `--set` (MySQL): durable during the load, back to the `--set` value afterwards
 * `unsafe` on persistent storage (`-rst`, `-nc 2`): repetition 2 finds the loaded volume and the data is complete
 * schema tenancy (`-mtb schema`): the scripts run once per tenant, the restore after all tenants
@@ -80,9 +80,6 @@ What to check per log:
 * the result folder has `bexhoma-loading-<config>-durability-*` logs (before the load) and `-restoredurability-*` logs (after the load), with no errors in `.stderr` except documented NOTICEs and the mysql password warning
 * the `durability-*` stdout logs show the values during the load, the restore and checkschema logs show the configured values again
 * `-tr` passes, no SUT restarts
-
-The last run used bexhoma 0.11.7 (2026-10-21 and 2026-10-22).
-All runs passed their tests.
 
 
 ## TPC-H
@@ -429,7 +426,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### PostgreSQL relaxed
 
-New: synchronous_commit off during the load.
+Synchronous_commit off during the load.
 
 ```bash
 bexhoma ycsb \
@@ -445,8 +442,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -474,8 +471,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld unsafe \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -483,6 +480,64 @@ bexhoma ycsb \
 ```
 
 Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_pgbouncer_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_pgbouncer_unsafe.log</a>
+
+
+### OrioleDB durable
+
+PostgreSQL scripts (path PostgreSQL), OrioleDB tables.
+
+```bash
+bexhoma ycsb \
+  -dbms OrioleDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xld durable \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_durability_ycsb_orioledb_durable.log
+```
+
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_orioledb_durable_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_orioledb_durable.log</a>
+
+
+### OrioleDB unsafe
+
+PostgreSQL scripts (path PostgreSQL), OrioleDB tables; `full_page_writes` only concerns the heap tables of the catalog.
+
+```bash
+bexhoma ycsb \
+  -dbms OrioleDB \
+  -sf 1 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 1 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1 \
+  -nbt 64 \
+  -xld unsafe \
+  -xop 1 \
+  -ms $BEXHOMA_MS \
+  -tr \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_durability_ycsb_orioledb_unsafe.log
+```
+
+Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_durability_ycsb_orioledb_unsafe_summary.md" target="_blank" rel="noopener">docs_durability_ycsb_orioledb_unsafe.log</a>
 
 
 ### MySQL relaxed
@@ -503,8 +558,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -532,8 +587,8 @@ bexhoma ycsb \
   -nlt 64 \
   -nbp 1 \
   -nbt 64 \
-  -xop 1 \
   -xld unsafe \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -545,7 +600,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### Citus relaxed
 
-New: synchronous_commit off on coordinator and workers.
+Synchronous_commit off on coordinator and workers.
 
 ```bash
 bexhoma ycsb \
@@ -564,8 +619,8 @@ bexhoma ycsb \
   -nw 3 \
   -nwr 1 \
   -nws 48 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -595,12 +650,12 @@ bexhoma ycsb \
   -nbt 64 \
   -xnsr 3 \
   -nw 3 \
+  -xnpd 3 \
   -nwr 3 \
-  -xop 1 \
   -xld relaxed \
+  -xop 1 \
   -ms $BEXHOMA_MS \
   -tr \
-  -xnpd 3 \
   run &>$LOG_DIR/docs_durability_ycsb_tidb_relaxed.log
 ```
 
@@ -612,7 +667,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### PostgreSQL relaxed
 
-New: synchronous_commit off during the build.
+Synchronous_commit off during the build.
 
 ```bash
 bexhoma hammerdb \
@@ -684,7 +739,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### Citus relaxed
 
-New: synchronous_commit off on coordinator and workers.
+Synchronous_commit off on coordinator and workers.
 
 ```bash
 bexhoma hammerdb \
@@ -712,7 +767,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### TPC-C PostgreSQL relaxed
 
-New: synchronous_commit off during the load.
+Synchronous_commit off during the load.
 
 ```bash
 bexhoma benchbase \
@@ -765,7 +820,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### TPC-C MySQL relaxed
 
-New: flush 2, key checks off (reference MySQL variant).
+Flush 2, key checks off (reference MySQL variant).
 
 ```bash
 bexhoma benchbase \
@@ -815,7 +870,7 @@ Result: <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manag
 
 ### TPC-C Citus relaxed
 
-New: synchronous_commit off on coordinator and workers.
+Synchronous_commit off on coordinator and workers.
 
 ```bash
 bexhoma benchbase \

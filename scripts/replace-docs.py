@@ -43,6 +43,9 @@ pattern = re.compile(
 )
 
 missing_summary_files = []
+# A NUL byte in a summary means its log was written by two processes at once (the file was
+# truncated while a run still wrote at its old offset); such a summary is never copied.
+damaged_summary_files = []
 
 for filename in os.listdir(md_directory):
     if filename.endswith('.md'):
@@ -62,6 +65,10 @@ for filename in os.listdir(md_directory):
                 # utf-8-sig drops a BOM (e.g. from PowerShell 5.1) instead of embedding U+FEFF in the docs
                 with open(summary_path, 'r', encoding='utf-8-sig') as log_f:
                     log_content = log_f.read().strip()
+                if '\x00' in log_content:
+                    print(f"Error: Summary file contains NUL bytes, not copied - {summary_path}")
+                    damaged_summary_files.append((summary_path, log_content.count('\x00')))
+                    return match.group(0)  # keep the block as it is
                 return (
                     f'<details>\n<summary>Show <a href="{link_url}"{link_attrs}>{log_marker}</a></summary>\n\n'
                     f'```markdown\n{log_content}\n```\n\n</details>'
@@ -81,6 +88,11 @@ if missing_summary_files:
     for path in sorted(set(missing_summary_files)):
         print(path)
 
+if damaged_summary_files:
+    print("\n\n\nSummary files with NUL bytes (not copied; rerun the experiment)\n\n\n")
+    for path, count in sorted(set(damaged_summary_files)):
+        print(f"{path}: {count} NUL bytes")
+
 print("\n\n\nShow all failed tests\n\n\n")
 
 from pathlib import Path
@@ -94,3 +106,19 @@ for md_file in docs_folder.rglob("*.md"):
         for line_number, line in enumerate(file, start=1):
             if "TEST failed: " in line:
                 print(f"{md_file}:{line_number}: {line.strip()}")
+
+# Pages that still contain NUL bytes, e.g. from a damaged summary copied before this check existed
+damaged_pages = []
+for md_file in sorted(docs_folder.rglob("*.md")):
+    data = md_file.read_bytes()
+    if b'\x00' in data:
+        line_number = data[:data.index(b'\x00')].count(b'\n') + 1
+        count = data.count(b'\x00')
+        damaged_pages.append(f"{md_file}: {count} NUL bytes from line {line_number}")
+if damaged_pages:
+    print("\n\n\nPages with NUL bytes\n\n\n")
+    for page in damaged_pages:
+        print(page)
+
+if damaged_summary_files or damaged_pages:
+    raise SystemExit(1)

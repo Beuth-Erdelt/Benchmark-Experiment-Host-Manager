@@ -17,9 +17,9 @@ For these DBMS the repository describes how to deploy and run them, but holds no
 
 | DBMS | Configuration key | Reason | Details |
 |---|---|---|---|
-| Microsoft SQL Server 2022 Developer | `SQLServer` | The licence requires Microsoft's prior written approval to disclose results of benchmark tests (#834). | [SQL Server](DBMS.md#sql-server) |
+| Microsoft SQL Server Developer | `SQLServer` | The licence requires Microsoft's prior written approval to disclose results of benchmark tests (#834). | [SQL Server](DBMS.md#sql-server) |
 | Oracle Database Free | `OracleDB` | The terms of the database have no benchmark clause; the results are kept internal by decision of the maintainer (#828). | [Oracle Database Free](DBMS.md#oracle-database-free) |
-| IBM Db2 Community Edition | `DB2` | Information about the Technology Preview Code in the image, including benchmarks, is IBM confidential, and the License Information of 12.1 has not been read yet (#829). | [IBM Db2](DBMS.md#ibm-db2-community-edition) |
+| IBM Db2 Community Edition | `DB2` | Information about the Technology Preview Code in the image, including benchmarks, is IBM confidential (#829). | [IBM Db2](DBMS.md#ibm-db2-community-edition) |
 | CedarDB Community Edition | `CedarDB` | Kept internal by decision of the maintainer. | [CedarDB](DBMS.md#cedardb) |
 
 ### How this is enforced

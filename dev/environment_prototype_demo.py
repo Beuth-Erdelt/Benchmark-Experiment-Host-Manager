@@ -1,6 +1,6 @@
 """
 Demo/verification script for bexhoma/environment.py — the environment.yml
-generator (see docs/Design-Catalog-Contract.md).
+generator (see dev/Design-Catalog-Contract.md).
 
 Exercises the curation logic (label allowlisting, tainted-node exclusion,
 storage-class alias cross-referencing, resource-limit derivation) against

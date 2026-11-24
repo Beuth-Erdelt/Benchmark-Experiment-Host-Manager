@@ -5,7 +5,7 @@ This example shows how to benchmark TiDB with YCSB and Benchbase's TPC-C, as a c
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 [TiDB](https://www.pingcap.com/) is a distributed, MySQL-compatible DBMS with a disaggregated architecture.
-TiDB offers several installation methods, including an operator; we here rely on a [manifest](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-TiDB.yml) that is suitable for bexhoma.
+TiDB offers several installation methods, including an operator; bexhoma uses a [manifest](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-TiDB.yml) that is suitable for bexhoma.
 TiDB clusters consist of three core components: TiDB (the SQL layer), PD (Placement Driver) and TiKV (the storage).
 TiDB does not require a single coordinator node - PD handles cluster metadata management and scheduling.
 
@@ -41,7 +41,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -340,7 +340,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 
 All metrics in monitoring are summed across all matching components of the same type.
@@ -671,7 +671,7 @@ YCSB SF=1
 Collecting application metrics for TiDB is supported.
 It can be activated by `-m -mc -ma`.
 Metrics are defined per component: the tidb-server pods (SUT deployment), PD and TiKV.
-See [example configuration](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) for the definitions and [Metrics](Example-Metrics.html) for application metrics of all DBMS.
+See [example configuration](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) for the definitions and [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
 ```bash
 bexhoma ycsb \
@@ -1035,7 +1035,7 @@ YCSB SF=1
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 Example:
 ```bash
@@ -1076,7 +1076,7 @@ The name of each volume contains the storage class, so data loaded on one storag
 In this example `-nc` is set to two, that is the complete experiment is repeated twice for statistical confidence.
 The first instance of TiDB mounts the volumes and loads the data.
 The second instance reuses the volumes and skips loading.
-Here, we remove existing storage via `-rsr` to start with a clean copy.
+This removes existing storage via `-rsr` to start with a clean copy.
 
 ### Example Result
 
@@ -1532,7 +1532,7 @@ Example: `-nw 6 -xnpd 3 -xnsr 2` deploys 6 TiKV nodes, 3 PD nodes, and 2 `tidb-s
 
 Two more scaling-related flags exist but are **not** pod-count knobs for TiDB:
 * `-nwr` / `--num-worker-replicas` sets PD's `max-replicas` raft configuration (`SET CONFIG pd max-replicas = {num_worker_replicas}`, run once as part of the init schema) - the number of Raft replicas TiKV keeps per data region, a data-durability setting independent of how many TiKV/PD pods are actually running. It is exposed as `BEXHOMA_REPLICAS` on the SUT pods and in the eval summary, but no container in the TiDB manifest uses it as a pod count.
-* `-nws` / `--num-worker-shards` currently has **no effect** for TiDB - it's a DDL parameter only wired up for Citus (`SET citus.shard_count = ...`). It is still parsed (shared across all entry scripts) but the TiDB init schema does not reference it.
+* `-nws` / `--num-worker-shards` has **no effect** for TiDB - it's a DDL parameter only wired up for Citus (`SET citus.shard_count = ...`). It is still parsed (shared across all entry scripts) but the TiDB init schema does not reference it.
 
 
 ## Technical Details
@@ -2041,9 +2041,9 @@ bexhoma benchbase \
   -xsd 5 \
   -xtb 1024 \
   -xnbf 16 \
+  -nc 2 \
   -nbp 1,2 \
   -nbt 16 \
-  -nc 2 \
   -xnsr 3 \
   -nw 3 \
   -xnpd 3 \
@@ -2055,9 +2055,9 @@ bexhoma benchbase \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
+  -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_benchbase_tidb_storage.log
 ```
 

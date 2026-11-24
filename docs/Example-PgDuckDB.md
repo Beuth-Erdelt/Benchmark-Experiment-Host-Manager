@@ -5,7 +5,7 @@ This example shows how to benchmark PgDuckDB, PostgreSQL with the DuckDB extensi
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 [PgDuckDB](https://github.com/duckdb/pg_duckdb) is PostgreSQL with the extension `pg_duckdb`, which embeds the analytical engine of [DuckDB](https://duckdb.org/).
-Bexhoma runs the image `pgduckdb/pgduckdb:18-v1.1.1` and uses the scripts and loaders of PostgreSQL.
+Bexhoma runs the image `pgduckdb/pgduckdb` and uses the scripts and loaders of PostgreSQL.
 With `-xdfe` the queries on PostgreSQL tables run in DuckDB's engine, otherwise in PostgreSQL's own executor.
 
 **The results are not official benchmark results.
@@ -36,7 +36,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+The experiment is run with the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
 Example:
 ```bash
@@ -260,7 +260,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 This run uses SF=10 (`-sf`).
 
@@ -516,7 +516,7 @@ The template has a `postgres_exporter` sidecar, as PostgreSQL; `-ma` collects th
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 ```bash
 bexhoma tpch \
@@ -939,13 +939,11 @@ Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 bexhoma tpch \
   -dbms PgDuckDB \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii \
-  -xic \
-  -xis \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
@@ -1194,7 +1192,7 @@ It is the configuration of [PostgreSQL](Example-PostgreSQL.md#configuration-of-b
 
 ### Deployment
 
-* [deploymenttemplate-PgDuckDB.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PgDuckDB.yml): one SUT pod, deployment `bexhoma-deployment-pg-duck`, image `pgduckdb/pgduckdb:18-v1.1.1`.
+* [deploymenttemplate-PgDuckDB.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-PgDuckDB.yml): one SUT pod, deployment `bexhoma-deployment-pg-duck`, image `pgduckdb/pgduckdb`.
 * After the start, a hook creates the extension (`CREATE EXTENSION IF NOT EXISTS pg_duckdb`) and, with `-xdfe` (environment variable `DUCKDB_FORCE_EXECUTION`), sets `duckdb.force_execution = true` for the role `postgres`.
 * Server options are set as for PostgreSQL, e.g. `--set deployment[bexhoma-deployment-pg-duck].container[dbms].work_mem=1GB`.
 

@@ -16,7 +16,7 @@
 # never reads it, and an experiment.yml systems[] entry that sets engine: is
 # rejected as an unknown field.
 
-catalog_contract_version: "1.13.0"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
+catalog_contract_version: "1.13.1"  # == bexhoma.spec.CATALOG_CONTRACT_VERSION
 
 catalog_concepts:
   experimental_design:
@@ -214,9 +214,7 @@ experiment_schema:
       fields:
         pods: {type: int, semantics: "number of parallel loader pods"}
         threads: {type: int, semantics: "loader threads, split across pods;
-          support varies by DBMS loader (e.g. MySQL honors it, others ignore
-          it) -- see workloads.tpch.loading.threads.support below; prefer
-          pods to scale load at the current state"}
+          support per workload: workloads.<name>.loading.threads.support"}
         timeout_minutes:
           type: int
           min: 1
@@ -577,13 +575,9 @@ workloads:
       threads:
         type: int
         min: 1
-        why: "number of loader threads within each pod, splitting that pod's
-          slice further. Leave it at 1 and scale with pods instead: only some
-          DBMS loaders (e.g. MySQL) honour this value and the others silently
-          ignore it, so it cannot be relied on to speed up loading here"
-        support: "only honored by some DBMS loaders (e.g. MySQL); ignored by
-          others. Prefer pods over threads at the current state -- use
-          threads=1 and scale via pods instead"
+        why: "no TPC-H loader reads it; bexhoma reports a value other than 1
+          as ignored. Leave it at 1 and scale with pods"
+        support: "ignored by every DBMS loader"
       timeout_minutes:
         type: int
         min: 1

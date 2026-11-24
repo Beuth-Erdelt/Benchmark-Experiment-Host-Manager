@@ -506,7 +506,7 @@ process boundaries.
 - [WEAKNESSES.md](WEAKNESSES.md) is the open repair backlog.
 - `contracts/contract_catalog.yml` and `contracts/contract_result.yml` are the
   normative machine-readable interfaces.
-- `docs/Design-Catalog-Contract.md` and `docs/AgentResultContract.md` explain
+- `dev/Design-Catalog-Contract.md` and `docs/AgentResultContract.md` explain
   the broader reusable Bexhoma contracts.
 - `design-decisions.md` and `prototype-architecture.md` are the original v0.1
   design record, kept for history.

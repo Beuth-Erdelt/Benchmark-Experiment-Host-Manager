@@ -4,7 +4,7 @@ from a parsed ``experiment.yaml`` — no argv is ever generated, nothing is
 handed to a shell.
 
 This is the builder half of the YAML-driven experiment entry script (see
-``docs/Design-Yaml-Experiment-Entry-Script.md``). It still funnels through
+``dev/Design-Yaml-Experiment-Entry-Script.md``). It still funnels through
 :meth:`~bexhoma.experiments.base.ExperimentBase.prepare_testbed`, the seam
 every existing entry script (``tpch.py``, ``tpcds.py``, ...) already uses;
 the dict it expects is populated here from the YAML instead of from
@@ -19,10 +19,8 @@ from __future__ import annotations
 
 import os
 import shutil
-import sys
-from pathlib import Path
 
-from bexhoma import clusters, configurations, experiments
+from bexhoma import clusters, configurations
 from bexhoma.cli_args import resolve_scaling_factor
 from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 from bexhoma.experiments.system_builder import loading_variants, set_loading_template
@@ -179,8 +177,8 @@ def _configure_system(experiment: TpchExperiment, spec: dict, system: dict, tpch
     if max_pods is not None and (loading_pods_total > max_pods or loading_pods_split > max_pods):
         # e.g. concurrent LOAD DATA into a ColumnStore table fails and the loader goes on, so rows
         # would be missing: the DBMS tolerates one loader pod only
-        print('%s: loads with %d pod, ignoring loading.pods=%d, loading.split=%d' % (
-            dbms, max_pods, loading_pods_total, loading_pods_split))
+        print(f'{dbms:30s}: loads with {max_pods} pod, ignoring loading.pods={loading_pods_total}, '
+              f'loading.split={loading_pods_split}')
         loading_pods_total = min(loading_pods_total, max_pods)
         loading_pods_split = min(loading_pods_split, max_pods)
     split_portion = loading_pods_total // loading_pods_split
@@ -189,8 +187,8 @@ def _configure_system(experiment: TpchExperiment, spec: dict, system: dict, tpch
     config.set_loading_parameters(
         PODS_TOTAL=str(loading_pods_total),
         PODS_PARALLEL=str(split_portion),
-        # threads only matter for a DBMS whose entry declares per_loading_threads (e.g. MySQL)
-        **loading_variants(entry, [loading_threads])[0],
+        # threads only matter for a DBMS whose entry declares per_loading_threads; others say they ignore them
+        **loading_variants(entry, [loading_threads], dbms)[0],
         **(system.get('loading_parameters') or {}),
     )
     config.set_benchmarking_parameters(**(system.get('benchmarking_parameters') or {}))
@@ -292,9 +290,10 @@ def build_experiment(spec: dict, spec_path: str) -> TpchExperiment:
             TPCH_REFRESH_STREAM_OFFSET=tpch_cfg.get('refresh_stream_offset', 0),
             TRANSFORM_RAW_DATA=1, STORE_RAW_DATA=1,
         )
-        experiment.enable_refresh_stream(
-            template=refresh_template(cluster.dockers, [system['dbms'] for system in spec['systems']], 'tpch')
-        )
+        # one refresh job per system, each from its DBMS's refresh_template
+        for system in spec['systems']:
+            refresh_template(cluster.dockers, system['dbms'], 'tpch')
+        experiment.enable_refresh_stream()
 
     parameter = _build_prepare_testbed_parameter(spec, tpch_module)
     experiment.prepare_testbed(parameter)

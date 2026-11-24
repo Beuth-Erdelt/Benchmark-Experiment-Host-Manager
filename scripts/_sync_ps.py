@@ -2,9 +2,16 @@
 """
 Sync bexhoma commands in PowerShell test scripts to match the bash scripts.
 
-For each bexhoma call in a test-docs-*.ps1 file, if its flags differ from the
+For each bexhoma call in a test-docs-*.ps1 file, if it differs from the
 canonical bash version (ignoring PS-specific quoting), replace the PS command
 block with a regenerated PS-formatted version of the bash command.
+
+A call is compared as (subcommand, positional arguments, flags in order, mode):
+- every value of a flag is kept (``-dbms PostgreSQL PgDuckDB``);
+- a repeated flag (``--set a --set b``) is kept every time, in its order;
+- positional arguments stay (``bexhoma experiment <yaml>``), and a one-line
+  bash call becomes a one-line PS call;
+- the mode (``run``, ``load``, ``start``, ...) is taken from the bash call.
 
 Preserved PS conventions:
   - Backtick (`) line continuation
@@ -12,10 +19,12 @@ Preserved PS conventions:
   - Double-quoted values for arguments containing commas
 
 Run from the repo root:
-    python scripts/_sync_ps.py
+    python scripts/_sync_ps.py            # rewrite the .ps1 files
+    python scripts/_sync_ps.py --check    # only list the files it would change (exit 1 if any)
 """
 
 import re
+import sys
 from pathlib import Path
 
 SCRIPTS_DIR = Path("scripts")
@@ -26,6 +35,8 @@ _RE_PS_REDIRECT = re.compile(r'Out-File\s+"?\$LOG_DIR[\\\/](\S+\.log)')
 
 COMMENT_COL = 32
 
+MODES = frozenset({'run', 'load', 'start', 'profiling', 'empty', 'summary'})
+
 
 def _strip_one_quote_pair(s: str) -> str:
     """Remove exactly one surrounding double-quote pair, if present."""
@@ -34,30 +45,69 @@ def _strip_one_quote_pair(s: str) -> str:
     return s
 
 
+def _is_flag(tok: str) -> bool:
+    """True for -flag and --flag tokens (not negative numbers)."""
+    return bool(re.match(r'^--?[a-zA-Z]', tok))
+
+
+# ── Call model ─────────────────────────────────────────────────────────────────
+
+def parse_call(tokens: list[str]) -> dict:
+    """
+    Split the tokens of one call (redirect already removed) into its parts.
+
+    :param tokens: e.g. ``['bexhoma', 'tpch', '-dbms', 'A', 'B', '--set', 'x', 'run']``
+    :return: ``{'command': 'bexhoma tpch', 'positional': [...], 'flags': [(flag, [values])...], 'mode': str|None}``;
+        values without their outer double quotes.
+    """
+    command = ' '.join(tokens[:2])
+    positional: list[str] = []
+    flags: list[tuple[str, list[str]]] = []
+    mode = None
+    for tok in tokens[2:]:
+        if _is_flag(tok):
+            flags.append((tok, []))
+        elif tok in MODES:
+            # the mode word; no flag value in these scripts equals a mode
+            mode = tok
+        elif flags:
+            flags[-1][1].append(_strip_one_quote_pair(tok))
+        else:
+            positional.append(_strip_one_quote_pair(tok))
+    return {'command': command, 'positional': positional, 'flags': flags, 'mode': mode}
+
+
+def _comparable(call: dict) -> tuple:
+    return (call['command'], tuple(call['positional']),
+            tuple((flag, tuple(values)) for flag, values in call['flags']), call['mode'])
+
+
 # ── SH command loading ─────────────────────────────────────────────────────────
 
-def _parse_sh_header_comment(line: str) -> tuple[str | None, str]:
+def _parse_sh_header_comment(line: str) -> tuple[str | None, str | None, str]:
     """
-    Return (flag, description) from one SH header comment line.
+    Return (flag, value, description) from one SH header comment line.
 
     Handles both normal lines (flag+value < 30 chars, description at col 32)
     and overlong lines (1-space gap after the flag/value).
     """
     if not line.startswith('# -'):
-        return None, ''
+        return None, None, ''
     content = line[2:]  # strip '# '
     tokens = content.split()
     if not tokens or not tokens[0].startswith('-'):
-        return None, ''
+        return None, None, ''
     flag = tokens[0]
+    value = None
     prefix_end = len(tokens[0])
     if len(tokens) > 1 and not tokens[1].startswith('-'):
+        value = tokens[1]
         prefix_end += 1 + len(tokens[1])
     if prefix_end < 30:
         desc = content[30:].strip()
     else:
         desc = content[prefix_end:].strip()
-    return flag, desc
+    return flag, value, desc
 
 
 def _collect_bash_block(lines: list[str], start: int) -> tuple[list[str], int]:
@@ -70,10 +120,19 @@ def _collect_bash_block(lines: list[str], start: int) -> tuple[list[str], int]:
     return block, i
 
 
+def _sh_tokens(block: list[str]) -> list[str]:
+    text = ' '.join(line.rstrip().rstrip('\\').strip() for line in block)
+    if '&>' in text:
+        text = text[:text.index('&>')]
+    return text.split()
+
+
 def extract_sh_commands(sh_path: Path) -> dict[str, dict]:
     """
-    Return {logfile: {'lines': [...], 'comments': {flag: desc}}} for each
-    bexhoma call in *sh_path*.
+    Return {logfile: {'lines': [...], 'comments': {...}}} for each bexhoma call in *sh_path*.
+
+    ``comments`` maps ``(flag, value)`` and ``(flag, None)`` to the description of the
+    header comment, so repeated flags keep their own descriptions.
 
     :param sh_path: path to a test-docs-*.sh file
     :return: mapping from log filename to command info
@@ -90,12 +149,13 @@ def extract_sh_commands(sh_path: Path) -> dict[str, dict]:
                 if m:
                     logfile = m.group(1)
             if logfile:
-                comments: dict[str, str] = {}
+                comments: dict[tuple[str, str | None], str] = {}
                 k = i - 1
                 while k >= 0 and lines[k].startswith('# '):
-                    flag, desc = _parse_sh_header_comment(lines[k])
+                    flag, value, desc = _parse_sh_header_comment(lines[k])
                     if flag:
-                        comments[flag] = desc
+                        comments[(flag, value)] = desc
+                        comments[(flag, None)] = desc   # scanning upwards: the first comment of a flag wins
                     k -= 1
                 result[logfile] = {'lines': block, 'comments': comments}
             i = end
@@ -111,84 +171,19 @@ def load_all_sh(scripts_dir: Path) -> dict[str, dict]:
     return cmds
 
 
-# ── Flag parsing ───────────────────────────────────────────────────────────────
-
-def _parse_flags(tokens: list[str]) -> dict[str, str | bool]:
-    """Parse a flat token list into {flag: value_or_True}."""
-    flags: dict[str, str | bool] = {}
-    i = 0
-    while i < len(tokens):
-        tok = tokens[i]
-        if tok.startswith('-'):
-            if i + 1 < len(tokens) and not tokens[i + 1].startswith('-'):
-                flags[tok] = tokens[i + 1]
-                i += 2
-            else:
-                flags[tok] = True
-                i += 1
-        else:
-            i += 1
-    return flags
+def call_from_sh(sh_info: dict) -> dict:
+    """The call of a SH command block."""
+    return parse_call(_sh_tokens(sh_info['lines']))
 
 
-def _flags_from_sh(sh_info: dict) -> dict[str, str | bool]:
-    """Parse a SH command block into normalised {flag: value} (outer quotes stripped)."""
-    flags: dict[str, str | bool] = {}
-    for line in sh_info['lines']:
-        clean = line.rstrip().rstrip('\\').strip()
-        if '&>' in clean:
-            clean = clean[:clean.index('&>')].strip()
-        if not clean or clean.startswith('#') or clean == 'run':
-            continue
-        m = re.match(r'bexhoma\s+(\w+)', clean)
-        if m:
-            flags['__subcommand__'] = m.group(1)
-            continue
-        tokens = clean.split()
-        i = 0
-        while i < len(tokens):
-            tok = tokens[i]
-            if tok.startswith('-'):
-                if i + 1 < len(tokens) and not tokens[i + 1].startswith('-'):
-                    flags[tok] = _strip_one_quote_pair(tokens[i + 1])  # normalise: strip shell quotes
-                    i += 2
-                else:
-                    flags[tok] = True
-                    i += 1
-            else:
-                i += 1
-    return flags
-
-
-def _flags_from_ps_block(block: list[str]) -> dict[str, str | bool]:
+def call_from_ps_block(block: list[str]) -> dict:
     """
-    Parse a PS command block into normalised {flag: value}.
-
-    PS-specific quoting is stripped for comparison: ``"1,1"`` → ``1,1``.
+    The call of a PS command block. PS-specific quoting is stripped: ``"1,1"`` → ``1,1``.
     """
-    flags: dict[str, str | bool] = {}
-    for line in block:
-        clean = _RE_PS_COMMENT.sub('', line).rstrip().rstrip('`').strip()
-        if '2>&1' in clean or 'Out-File' in clean or clean == 'run':
-            continue
-        m = re.match(r'bexhoma\s+(\w+)', clean)
-        if m:
-            flags['__subcommand__'] = m.group(1)
-            continue
-        tokens = clean.split()
-        i = 0
-        while i < len(tokens):
-            tok = tokens[i]
-            if tok.startswith('-'):
-                if i + 1 < len(tokens) and not tokens[i + 1].startswith('-'):
-                    flags[tok] = _strip_one_quote_pair(tokens[i + 1])  # normalise: drop PS quotes
-                    i += 2
-                else:
-                    flags[tok] = True
-                    i += 1
-            else:
-                i += 1
-    return flags
+    text = ' '.join(_RE_PS_COMMENT.sub('', line).rstrip().rstrip('`').strip() for line in block)
+    if '2>&1' in text:
+        text = text[:text.index('2>&1')]
+    return parse_call(text.split())
 
 
 # ── PS command reconstruction ──────────────────────────────────────────────────
@@ -200,9 +195,9 @@ def _ps_value(raw: str) -> str:
     return raw
 
 
-def _ps_flag_line(flag: str, value: str | None, desc: str) -> str:
+def _ps_flag_line(flag: str, values: list[str], desc: str) -> str:
     """Return one PS flag line with inline comment and backtick continuation."""
-    prefix = f'  {flag}' if value is None else f'  {flag} {_ps_value(value)}'
+    prefix = '  ' + ' '.join([flag] + [_ps_value(value) for value in values])
     if desc:
         padding = max(1, COMMENT_COL - len(prefix))
         return f'{prefix}{" " * padding}<# {desc} #> `'
@@ -213,39 +208,23 @@ def sh_to_ps_block(sh_info: dict, logfile: str) -> list[str]:
     """
     Reconstruct a full PS command block from SH command lines and header comments.
 
-    :param sh_info: dict with keys 'lines' (SH command lines) and 'comments' ({flag: desc})
+    :param sh_info: dict with keys 'lines' (SH command lines) and 'comments' (see :func:`extract_sh_commands`)
     :param logfile: log file name used in the Out-File redirect
     :return: list of PS-formatted lines (no trailing newlines)
     """
-    sh_lines = sh_info['lines']
+    call = call_from_sh(sh_info)
     comments = sh_info['comments']
-
-    bm = re.match(r'\s*(bexhoma\s+\w+)', sh_lines[0])
-    subcommand = bm.group(1).strip() if bm else 'bexhoma'
-    ps: list[str] = [f'{subcommand} `']
-
-    for sh_line in sh_lines[1:]:
-        clean = sh_line.rstrip().rstrip('\\').strip()
-        if '&>' in clean:
-            clean = clean[:clean.index('&>')].strip()
-        if not clean or clean.startswith('#') or clean == 'run':
-            continue
-        tokens = clean.split()
-        idx = 0
-        while idx < len(tokens):
-            tok = tokens[idx]
-            if tok.startswith('-'):
-                if idx + 1 < len(tokens) and not tokens[idx + 1].startswith('-'):
-                    raw = _strip_one_quote_pair(tokens[idx + 1])  # normalise shell quotes before PS re-quoting
-                    ps.append(_ps_flag_line(tok, raw, comments.get(tok, '')))
-                    idx += 2
-                else:
-                    ps.append(_ps_flag_line(tok, None, comments.get(tok, '')))
-                    idx += 1
-            else:
-                idx += 1
-
-    ps.append(f'  run 2>&1 | Out-File "$LOG_DIR\\{logfile}" -Encoding utf8')
+    redirect = f'2>&1 | Out-File "$LOG_DIR\\{logfile}" -Encoding utf8'
+    head = ' '.join([call['command']] + [_ps_value(value) for value in call['positional']])
+    tail = ' '.join(part for part in (call['mode'], redirect) if part)
+    if len(sh_info['lines']) == 1:
+        flags = ' '.join(' '.join([flag] + [_ps_value(value) for value in values]) for flag, values in call['flags'])
+        return [' '.join(part for part in (head, flags, tail) if part)]
+    ps: list[str] = [f'{head} `']
+    for flag, values in call['flags']:
+        desc = comments.get((flag, values[0] if len(values) == 1 else None), comments.get((flag, None), ''))
+        ps.append(_ps_flag_line(flag, values, desc))
+    ps.append(f'  {tail}')
     return ps
 
 
@@ -264,13 +243,14 @@ def _collect_ps_block(lines: list[str], start: int) -> tuple[list[str], int]:
     return block, i
 
 
-def patch_ps_file(ps_path: Path, sh_commands: dict[str, dict]) -> bool:
+def patch_ps_file(ps_path: Path, sh_commands: dict[str, dict], write: bool = True) -> bool:
     """
     Patch *ps_path* in-place so every bexhoma command matches the SH version.
 
     :param ps_path: path to the .ps1 file to update
     :param sh_commands: output of :func:`load_all_sh`
-    :return: True if the file was modified
+    :param write: False only reports whether the file would change
+    :return: True if the file was (or would be) modified
     """
     lines = ps_path.read_text(encoding='utf-8').splitlines(keepends=False)
     out: list[str] = []
@@ -285,32 +265,34 @@ def patch_ps_file(ps_path: Path, sh_commands: dict[str, dict]) -> bool:
                 if m:
                     logfile = m.group(1)
             if logfile and logfile in sh_commands:
-                sh_flags = _flags_from_sh(sh_commands[logfile])
-                ps_flags = _flags_from_ps_block(block)
-                if sh_flags != ps_flags:
+                if _comparable(call_from_sh(sh_commands[logfile])) != _comparable(call_from_ps_block(block)):
                     out.extend(sh_to_ps_block(sh_commands[logfile], logfile))
                     i = end + 1
                     changed = True
                     continue
         out.append(lines[i])
         i += 1
-    if changed:
+    if changed and write:
         ps_path.write_text('\n'.join(out) + '\n', encoding='utf-8', newline='\n')
     return changed
 
 
 # ── Entry point ────────────────────────────────────────────────────────────────
 
-if __name__ == '__main__':
+def main(argv: list[str]) -> int:
+    check = '--check' in argv
     sh_commands = load_all_sh(SCRIPTS_DIR)
     print(f'Loaded {len(sh_commands)} commands from test-docs-*.sh scripts.\n')
-
     total_changed = 0
     for ps_file in sorted(SCRIPTS_DIR.glob('test-docs-*.ps1')):
-        if patch_ps_file(ps_file, sh_commands):
-            print(f'  updated  {ps_file.name}')
+        if patch_ps_file(ps_file, sh_commands, write=not check):
+            print(f'  {"would update" if check else "updated"}  {ps_file.name}')
             total_changed += 1
-        else:
+        elif not check:
             print(f'  no change {ps_file.name}')
+    print(f'\n{total_changed} file(s) {"would be " if check else ""}updated.')
+    return 1 if check and total_changed else 0
 
-    print(f'\n{total_changed} file(s) updated.')
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))

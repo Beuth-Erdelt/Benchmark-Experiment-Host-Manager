@@ -38,6 +38,7 @@ class LoadingFailureTest(unittest.TestCase):
         experiment.max_loading_minutes = 2
         experiment.cluster = mock.Mock()
         experiment.cluster.get_jobs.return_value = ["loader-job"]
+        experiment.cluster.get_pods.return_value = []   # no loading pod waits for the scheduler
         config = SimpleNamespace(
             appname="bexhoma", code="42", configuration="PostgreSQL-1",
             loading_started=True, loading_finished=False,

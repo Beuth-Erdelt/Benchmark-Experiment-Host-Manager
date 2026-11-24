@@ -5,7 +5,6 @@ This example shows how to benchmark Apache Cassandra with YCSB, as a single node
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
 [Apache Cassandra](https://cassandra.apache.org/) is a wide-column store, licensed under Apache 2.0 (which has no restriction on publishing benchmark results).
-This page uses the image `cassandra:5.0.9`.
 Bexhoma runs it as a single node (one SUT pod) or as a cluster (`-nw`), where every node is a worker pod of a stateful set.
 Cassandra has no coordinator node, every node answers clients.
 Bexhoma still deploys a main pod as a single point of contact, to run `cqlsh` for the scripts and to annotate the status of experiments.
@@ -40,7 +39,7 @@ BEXHOMA_STORAGE_CLASS="nvme"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -63,9 +62,7 @@ bexhoma ycsb \
   -lr 16Gi \
   -rr 16Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra.log
 ```
 
@@ -261,7 +258,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 This run uses SF=3 and 10.000.000 operations (`-xop`).
 
@@ -291,9 +288,7 @@ bexhoma ycsb \
   -lr 16Gi \
   -rr 16Gi \
   -rss 50Gi \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_monitoring.log
 ```
 
@@ -514,14 +509,14 @@ The metric set `cassandra` in [cluster.config](https://github.com/Beuth-Erdelt/B
 | `cassandra_load` | Data on Disk [GiB] |
 | `cassandra_commitlog_size` | Commit Log Size [GiB] |
 
-See [Metrics](Example-Metrics.html) for application metrics of all DBMS.
+See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
 
 ## Persistent Storage
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 `-rst` puts the data on a volume, here for a single node.
 `-rsr` removes an existing volume at the start, and `-nc 2` repeats the experiment, so the second repetition runs on the data loaded by the first:
@@ -551,9 +546,7 @@ bexhoma ycsb \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
-  -rnn $BEXHOMA_NODE_SUT \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_storage.log
 ```
 
@@ -832,8 +825,7 @@ bexhoma ycsb \
   -rr 16Gi \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_cluster.log
 ```
 
@@ -1102,8 +1094,7 @@ bexhoma ycsb \
   -rr 16Gi \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_replica.log
 ```
 
@@ -1377,8 +1368,7 @@ bexhoma ycsb \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
   -rnw $BEXHOMA_NODES_WORKER \
-  -rnl $BEXHOMA_NODE_LOAD \
-  -rnb $BEXHOMA_NODE_BENCHMARK \
+  -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_replica_storage.log
 ```
 
@@ -1732,7 +1722,7 @@ where
 * `monitor`: Prometheus discovery of the SUT pod (single node) or the worker pods (cluster), scraping the `cassandra_exporter` on port 8080
 
 There is no JDBC driver: YCSB runs its `cassandra-cql` binding, selected by `BEXHOMA_DBMS_TYPE = "cassandra"`.
-The binding uses the DataStax driver 3.0.0, which works with Cassandra 5.
+The binding uses the DataStax driver of YCSB, which works with the Cassandra version of the template.
 DBMSBenchmarker cannot connect, so only YCSB is offered.
 
 ### Deployment
@@ -1779,4 +1769,4 @@ With `-ar`, [save-snapshot.sh](https://github.com/Beuth-Erdelt/Benchmark-Experim
 
 All runs on this page use `-ar`, so compactions caused by the load do not run during the benchmark.
 See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract.
-There is no test run for Cassandra in [Test: Reset Scripts](Test-Reset.md) yet.
+[Test: Reset Scripts](Test-Reset.md) has no run for Cassandra.

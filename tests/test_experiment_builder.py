@@ -154,13 +154,16 @@ class BuildExperimentTest(unittest.TestCase):
         self.assertEqual(postgres.num_loading_pods, 4)
         self.assertEqual(pgduckdb.num_loading_pods, 2)
 
-    def test_loading_threads_reach_a_dbms_with_thread_variants(self) -> None:
-        """MySQL declares per_loading_threads: the YAML's threads fill MYSQL_LOADING_THREADS."""
+    def test_loading_threads_are_reported_as_ignored(self) -> None:
+        """No TPC-H loader reads a thread count: MySQL gets no thread parameter, and the log says so."""
         spec = copy.deepcopy(_BASE_SPEC)
         spec['loading'] = {'pods': [1], 'threads': [8]}
         spec['systems'] = [{'dbms': 'MySQL'}]
-        mysql = self._build(spec).configurations[0]
-        self.assertEqual(str(mysql.loading_parameters['MYSQL_LOADING_THREADS']), '8')
+        with mock.patch('builtins.print') as printed:
+            mysql = self._build(spec).configurations[0]
+        self.assertNotIn('MYSQL_LOADING_THREADS', mysql.loading_parameters)
+        self.assertIn(mock.call('MySQL                         : the loader does not use loading threads, ignoring -nlt 8'),
+                      printed.call_args_list)
 
     def test_unknown_dbms_raises_key_error(self) -> None:
         """A dbms with no tpch entry raises — validation is expected to have caught this earlier."""

@@ -122,8 +122,7 @@ class ComponentStatus:
                             ready = self._config.experiment.cluster.is_pod_ready(pod)
                             if ready:
                                 num_ready = num_ready + 1
-                    print("{:30s}: found {} / {} running workers (component {})".format(
-                        self._config.configuration, num_ready, num_expected, component))
+                    print(f"{self._config.configuration:30s}: found {num_ready} / {num_expected} running workers (component {component})")
                     self._config.are_worker_ready = (
                         self._config.are_worker_ready and (num_ready == num_expected))
                 if self._config.are_worker_ready:
@@ -143,8 +142,7 @@ class ComponentStatus:
                         ready = self._config.experiment.cluster.is_pod_ready(pod)
                         if ready:
                             num_ready = num_ready + 1
-                print("{:30s}: found {} / {} running pool pods".format(
-                    self._config.configuration, num_ready, num_pool))
+                print(f"{self._config.configuration:30s}: found {num_ready} / {num_pool} running pool pods")
                 self._config.are_pool_ready = (num_ready == num_pool)
             all_ready = all_ready and self._config.are_pool_ready
         return all_ready

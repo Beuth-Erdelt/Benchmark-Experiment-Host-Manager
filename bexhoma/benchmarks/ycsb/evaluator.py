@@ -13,20 +13,13 @@ See LICENSE for details.
 import pandas as pd
 import os
 import re
-import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-import pickle
-import json
-import traceback
-import ast
-from dbmsbenchmarker import monitor
-from datetime import datetime
-import glob
-from pathlib import Path
+from datetime import datetime  # noqa: E402
+import glob  # noqa: E402
 
-from bexhoma.evaluators.base import natural_sort
-from bexhoma.evaluators.logger import LogEvaluator
+from bexhoma.evaluators.base import natural_sort  # noqa: E402
+from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
 
 __all__ = ["YcsbEvaluator"]
 
@@ -281,7 +274,7 @@ class YcsbEvaluator(LogEvaluator):
         except Exception as exc:
             print(exc)
             return df
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=None):
         """
         Aggregates parallel-pod YCSB benchmarking rows into one row per group.
 
@@ -302,6 +295,8 @@ class YcsbEvaluator(LogEvaluator):
         :return: Aggregated DataFrame with one row per group.
         :rtype: pandas.DataFrame
         """
+        if columns is None:
+            columns = ["phase"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {
@@ -491,7 +486,7 @@ class YcsbEvaluator(LogEvaluator):
         df.fillna(0, inplace=True)
         df_typed = df.astype(dtypes)
         return df_typed
-    def loading_aggregate_by_parallel_pods(self, df, columns=["phase"]):
+    def loading_aggregate_by_parallel_pods(self, df, columns=None):
         """
         Aggregates parallel-pod YCSB loading rows into one row per job.
 
@@ -507,6 +502,8 @@ class YcsbEvaluator(LogEvaluator):
         :return: Aggregated DataFrame with one row per group.
         :rtype: pandas.DataFrame
         """
+        if columns is None:
+            columns = ["phase"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {
@@ -602,7 +599,7 @@ class YcsbEvaluator(LogEvaluator):
                     #"all_numbers": list(map(float, all_numbers)),  # Convert all numbers to float
                     "metrics": metrics,
                 }
-            except Exception as e:
+            except Exception:
                 # Log or handle any parsing errors (optional)
                 return None
         results = []
@@ -690,14 +687,14 @@ class YcsbEvaluator(LogEvaluator):
             df_total = pd.DataFrame()
         num_logs = 0
         for file_logs in list_logs:
-            pattern = 'bexhoma-{}-*-{}.log'.format(filetype, file_logs)
+            pattern = f'bexhoma-{filetype}-*-{file_logs}.log'
             matching_files = find_matching_files(self.path, pattern)
             for file in matching_files:
                 num_logs = num_logs + 1
                 parsed_results = self.parse_log_file(file)
                 data = []
                 for result in parsed_results:
-                    if not column in result:
+                    if column not in result:
                         result_metrics = flatten_dict(result['metrics'])
                         #print(result_metrics)
                         d = {
@@ -732,7 +729,7 @@ class YcsbEvaluator(LogEvaluator):
                         else:
                             df_total = df_total.add(df, fill_value=0)
         if aggregate:
-            if not metric == "current_ops_per_sec" and not "9" in metric and not "Max" in metric and not "Min" in metric:
+            if not metric == "current_ops_per_sec" and "9" not in metric and "Max" not in metric and "Min" not in metric:
                 df_total = df_total / num_logs
             df_total['avg'] = int(df_total[column].mean())
         return df_total
@@ -859,7 +856,6 @@ class YcsbEvaluator(LogEvaluator):
         cols_loading = ['code', 'configuration', 'experiment_run']
         df = self.loading_set_datatypes(df)
         df = self.loading_aggregate_by_parallel_pods(df)
-        indexname = df.index.name
         df_connections = df_connections.drop_duplicates(subset=cols_loading, keep='first')
         df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
         df = df.set_index(cols_loading, drop=False)
@@ -1165,7 +1161,7 @@ class YcsbEvaluator(LogEvaluator):
         experiment._record_test(
             bool((missing == 0).all()),
             "Loading Phase: all rows inserted" if (missing == 0).all()
-            else "Loading Phase: {} of {} rows not inserted".format(int(missing.max()), int(rows.max())),
+            else f"Loading Phase: {int(missing.max())} of {int(rows.max())} rows not inserted",
         )
 
 

@@ -9,6 +9,10 @@ Checked 2026-11-22: still nothing implemented. M0's read-scope hole is still ope
 `_readable_roots`. `bexhoma/hardware_baseline.py` moved to `bexhoma/benchmarks/hardware/baseline.py`
 (2026-11-13); the agent reports now name the model of each phase (#895), which a `study.yml` can reuse.
 
+Checked 2026-11-23 (M0, see there): the `results_root` entry does not serve provenance reads during
+interpretation; it only widens design and follow-up authoring. Whether those phases should read provenance is
+an open decision of the user.
+
 ## Goal
 
 The agent carries out a *study*: one question, answered by zero or more
@@ -670,6 +674,25 @@ Each milestone ships with its tests and docs and leaves the pipeline working.
     `<study>/baseline/answer.md`;
   - follow-up authoring refuses the parent's report;
   - the inbox stays readable.
+
+Checked 2026-11-23 (why it was added, and what depends on it):
+- The line has been there since the first prototype commit (ab5a6328, 2026-08-20), with no comment giving a reason.
+- Interpretation does not use it. `restrict_to_result()` sets `_reachable_result_files`: the report, its
+  result contract, the archived `experiment.yml`, the handbook, and every local file linked from a Markdown page
+  that was read. These include the tier-3 provenance files (`*.describe.log`, `*.sensor.log`, workflow
+  manifests). While that set exists, `_resolve_readable()` checks only it and never `_readable_roots`.
+  `restrict_to_result()` reads `self.results_root` directly, to check that the report lies under it.
+  Dropping the entry therefore changes no provenance read during interpretation.
+- Design and follow-up authoring are the only contexts that use `_readable_roots`, and there the entry
+  makes the whole result root readable, including other studies' answers and the baseline.
+  `agent/ARCHITECTURE.md` (Capability boundary) says design reads resolve only inside contracts, the inbox and
+  the environment file. The follow-up prompt passes the parent's specification, the interpretation and the
+  ancestor summaries in the message; it asks for no read under the result root.
+- **Open decision (user, 2026-11-23):** the user thinks the agent is allowed to read files in the result root
+  for provenance. If that is meant for follow-up authoring, M0 becomes: follow-up authoring may read the
+  parent's own result folder (reachable set as in `restrict_to_result`, plus the design roots), design reads
+  nothing under the result root, ARCHITECTURE.md states it, and the tests change to "follow-up authoring reads
+  the parent's provenance, refuses another result and `results/agent/`". If not, M0 stays as written above.
 
 ### M1 — study record
 

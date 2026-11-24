@@ -41,20 +41,20 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
+The experiment is run with the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).
 
 Example:
 ```bash
 bexhoma tpch \
   -dbms MySQL \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 8 \
   -nbp 1 \
+  -xii -xic -xis \
+  -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
@@ -69,7 +69,7 @@ This
 * starts a clean instance of MySQL (`-dbms`)
   * data directory inside a Docker container
 * creates the TPC-H schema
-* starts 8 loader pods (`-nlp`) with 8 threads each (`-nlt`)
+* starts 8 loader pods (`-nlp`); `-nlt 8` is ignored: the TPC-H loader uses one connection per pod, and bexhoma says so in the log
   * with a data generator (init container) each, which generates a share of TPC-H data of SF=1 (`-sf`)
   * and a loading container each, which loads the data into the DBMS
 * creates indexes (`-xii`), constraints (`-xic`) and statistics (`-xis`)
@@ -270,20 +270,20 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 
 ```bash
 bexhoma tpch \
   -dbms MySQL \
   -sf 10 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 8 \
   -nbp 1 \
+  -xii -xic -xis \
+  -xdt \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -515,7 +515,7 @@ No warnings
 
 Collecting application metrics for MySQL is supported.
 It can be activated by `-m -mc -ma`, with the metric set `mysql` of [cluster.config](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config).
-See [Metrics](Example-Metrics.html) for application metrics of all DBMS and benchmarks.
+See [Metrics](Example-Metrics.md) for application metrics of all DBMS and benchmarks.
 
 ```bash
 bexhoma tpch \
@@ -772,7 +772,7 @@ No warnings
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
 If your cluster allows dynamic provisioning of volumes, you might request a persistent storage of a certain type (storageClass) and size.
-With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.html).
+With repetitions (`-nc`), `-rsr` removes an existing volume only before the first repetition and later repetitions reuse it without loading; `-rsrp` removes it before every repetition. See [Concepts](Concepts.md).
 
 This is a throughput test: one round with 1 stream and one with 2 parallel streams (`-ne 1,2`), repeated (`-nc 2`), so the second repetition runs on the loaded volume:
 
@@ -780,13 +780,13 @@ This is a throughput test: one round with 1 stream and one with 2 parallel strea
 bexhoma tpch \
   -dbms MySQL \
   -sf 10 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
   -nc 2 \
   -ne 1,2 \
+  -nlp 8 \
+  -nlt 8 \
   -nbp 1 \
+  -xii -xic -xis \
+  -xdt \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -795,9 +795,9 @@ bexhoma tpch \
   -lr 128Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 128Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 150Gi \
   -rsr \
+  -rss 150Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mysql_storage.log
 ```
@@ -1168,15 +1168,15 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
   -lr 128Gi \
   -rr 128Gi \
-  -rst ramdisk \
   -rss 150Gi \
+  -rst ramdisk \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mysql_ramdisk.log
 ```
@@ -1420,13 +1420,11 @@ Here, 3 query streams run in parallel with a refresh stream of 3 RF1+RF2 pairs.
 bexhoma tpch \
   -dbms MySQL \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii \
-  -xic \
-  -xis \
   -ne 3 \
   -xrs 3 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 128Gi \
@@ -1680,8 +1678,8 @@ In `cluster.config` there is a section:
 
 * [deploymenttemplate-MySQL.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-MySQL.yml): one SUT pod.
 * The template sets the server options as `--key=value` arguments (e.g. `--innodb-buffer-pool-size=8G`); change them per run with `--set ...container[dbms].innodb_buffer_pool_size=32G`.
-* The buffer pool of 8G fits the default pod size (`-rr 16Gi`; the namespace sets the memory limit equal to the request when `-lr` is not given). Bexhoma does not adapt it to `-rr`/`-lr`: give larger pods a larger pool with `--set`. Until 2026-10-22 the template had 96G, which was OOM-killed in a 16Gi pod as soon as the data filled it (TPC-H SF 10).
-* A pool that is too small makes the persistent-storage runs very slow: the data of SF 10 does not fit into 8G, so queries read it again and again from the (network) volume. TPC-H SF 10 on the storage volume took 2952 s for Q9, Q13, Q15, Q18 and Q21 with 8G (Q15 timed out) and about 1050 s with 32G (Q18 and Q21 about 9 times faster); larger temporary-table limits (`temptable_max_ram`, `tmp_table_size`) made no difference. The storage runs below therefore set 32G. TPC-DS at SF 10 also sorts and joins a lot: with the default 256K for `sort_buffer_size` and `join_buffer_size` MySQL wrote thousands of merge passes to temporary files in `/mysqltmp`, and one query failed with `No space left on device` on the 32Gi tmpfs. Its storage run therefore sets both buffers and the temporary-table limits and a `mysqltmp` tmpfs of 72Gi: a 48Gi tmpfs ran full (`No space left on device`) when two clients ran the rollup queries (Q22) at the same time. The tmpfs is RAM and counts against the memory limit `-lr 128Gi`; the pool of 32G, a few GB for the server and the buffers of two clients and the 72Gi tmpfs stay below it (the rollup queries Q18, Q22, Q27, Q36, Q67, Q70 and Q86 with two clients peaked at 62 GB of RAM in the SUT).
+* The buffer pool of 8G fits the default pod size (`-rr 16Gi`; the namespace sets the memory limit equal to the request when `-lr` is not given). Bexhoma does not adapt it to `-rr`/`-lr`: give larger pods a larger pool with `--set`. A pool larger than the memory limit gets the SUT OOM-killed as soon as the data fills it.
+* A pool that is too small makes the persistent-storage runs slow: when the data does not fit into the pool, queries read it again and again from the (network) volume. Larger temporary-table limits (`temptable_max_ram`, `tmp_table_size`) do not help there. The storage runs below therefore set a pool of 32G. TPC-DS at SF 10 also sorts and joins a lot: with the default 256K for `sort_buffer_size` and `join_buffer_size`, MySQL writes many merge passes to temporary files in `/mysqltmp`, which can run full (`No space left on device`). Its storage run therefore sets both buffers, the temporary-table limits and a `mysqltmp` tmpfs of 72Gi, enough for two clients running the rollup queries at the same time. The tmpfs is RAM and counts against the memory limit `-lr 128Gi`, together with the pool, the server and the buffers of the clients.
 * MySQL writes temporary tables to `--tmpdir=/mysqltmp`, a tmpfs of 32Gi in RAM (volume `mysqltmp`). Large sorts and groupings need more, e.g. TPC-DS Q22 at SF 10 fails with `No space left on device`. Enlarge it per run with `--set deployment[bexhoma-deployment-mysql].volume[mysqltmp].sizeLimit=64Gi`; it counts against the memory limit (`-lr`), together with the buffer pool. `.volume[mysqltmp].medium=` moves it to the node's disk. Internal temporary tables are held in RAM only up to `temptable_max_ram` (1G) and `tmp_table_size` (16M); beyond that MySQL converts them to on-disk tables, and at larger scale factors TPC-DS Q31 then fails with `Table './mysqltmp/#sql…' doesn't exist`. Raise them per run with `--set deployment[bexhoma-deployment-mysql].container[dbms].temptable_max_ram=32G` (and likewise `tmp_table_size`, `max_heap_table_size`).
 * The template sets no durability options: MySQL runs crash-safe by default (`innodb_flush_log_at_trx_commit=1`, doublewrite on); relax the benchmark per run with `--set ...container[dbms].innodb_flush_log_at_trx_commit=2`.
 * `delay_prepare: 120` makes bexhoma wait 2 minutes before querying the DBMS. This accounts for InnoDB's buffer pool initialisation, which can cause a brief restart.
@@ -1695,7 +1693,7 @@ DDL scripts per benchmark:
 - [TPC-C](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/tpcc/MySQL)
 - [YCSB](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/tree/master/experiments/ycsb/MySQL)
 
-The `initconstraints` scripts (TPC-H, TPC-DS) add the foreign keys with `SET SESSION foreign_key_checks = 0`, as for MariaDB: with checks on, MySQL validates every row and its memory grew past 16 GB while adding lineitem->orders at TPC-H SF 1 (OOM-killed, 2026-10-21).
+The `initconstraints` scripts (TPC-H, TPC-DS) add the foreign keys with `SET SESSION foreign_key_checks = 0`, as for MariaDB: with checks on, MySQL validates every row, and its memory can grow past the memory limit while adding lineitem->orders (OOM kill).
 
 DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)):
 
@@ -1732,7 +1730,7 @@ See [Reset scripts](DBMS.md#reset-scripts--ar) for the reset contract and [Test:
 
 ## TPC-DS
 
-For performing the experiment we can run the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
+The experiment is run with the [tpcds file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpcds.py).
 
 ### Power Test
 
@@ -1740,13 +1738,13 @@ For performing the experiment we can run the [tpcds file](https://github.com/Beu
 bexhoma tpcds \
   -dbms MySQL \
   -sf 1 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 8 \
   -nbp 1 \
+  -xii -xic -xis \
+  -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -tr \
@@ -1996,13 +1994,13 @@ No warnings
 bexhoma tpcds \
   -dbms MySQL \
   -sf 3 \
-  -nlp 8 \
-  -nlt 8 \
-  -xii -xic -xis \
-  -xdt \
   -nc 1 \
   -ne 1 \
+  -nlp 8 \
+  -nlt 8 \
   -nbp 1 \
+  -xii -xic -xis \
+  -xdt \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -2356,14 +2354,14 @@ No warnings
 ```bash
 bexhoma tpcds \
   -dbms MySQL \
-  -sf 10 \
+  -sf 3 \
+  -nc 1 \
+  -ne 1,2 \
   -nlp 8 \
   -nlt 8 \
+  -nbp 1 \
   -xii -xic -xis \
   -xdt \
-  -nc 2 \
-  -ne 1,2 \
-  -nbp 1 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -2379,8 +2377,8 @@ bexhoma tpcds \
   --set deployment[bexhoma-deployment-mysql].container[dbms].temptable_max_ram=4G \
   -rr 128Gi \
   -rsr \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 150Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_mysql_storage.log
 ```
@@ -4010,11 +4008,11 @@ bexhoma benchbase \
   -sf 16 \
   -xsd 5 \
   -xtb 1024 \
+  -xnbf 8 \
   -nc 1 \
   -ne 1 \
   -nbp 1 \
   -nbt 160 \
-  -xnbf 8 \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
@@ -4143,18 +4141,18 @@ bexhoma benchbase \
   -sf 16 \
   -xsd 1 \
   -xtb 1024 \
+  -xnbf 8 \
   -nc 2 \
   -ne 1 \
   -nbp 1 \
   -nbt 160 \
-  -xnbf 8 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rsr \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql_storage.log
 ```
@@ -4306,11 +4304,11 @@ bexhoma benchbase \
   -sf 16 \
   -xsd 5 \
   -xtb 1024 \
+  -xnbf 8 \
   -nc 1 \
   -ne 1 \
   -nbp 1 \
   -nbt 160 \
-  -xnbf 8 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
@@ -4483,19 +4481,19 @@ bexhoma benchbase \
   -sf 16 \
   -xsd 2 \
   -xtb 1024 \
+  -xnbf 8 \
   -nc 2 \
   -ne 1,2 \
   -nbp 1,2 \
   -nbt 160 \
-  -xnbf 8 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql_scale.log
 ```
@@ -4858,9 +4856,9 @@ See [Example: HammerDB](Example-HammerDB.md) for the parameters.
 bexhoma hammerdb \
   -dbms MySQL \
   -sf 16 \
-  -nlt 8 \
   -nc 1 \
   -ne 1 \
+  -nlt 8 \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
@@ -4985,9 +4983,9 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 bexhoma hammerdb \
   -dbms MySQL \
   -sf 16 \
-  -nlt 8 \
   -nc 1 \
   -ne 1 \
+  -nlt 8 \
   -nbp 1 \
   -nbt 16 \
   -m \
@@ -4996,9 +4994,9 @@ bexhoma hammerdb \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
-  -rss 128Gi \
   -rsr \
+  -rss 128Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_mysql_monitoring.log
 ```
@@ -5189,9 +5187,9 @@ bexhoma hammerdb \
   -dbms MySQL \
   -sf 16 \
   -xsd 2 \
-  -nlt 8 \
   -nc 2 \
   -ne 1,2 \
+  -nlt 8 \
   -nbp 1,2 \
   -nbt 16 \
   -m \
@@ -5200,8 +5198,8 @@ bexhoma hammerdb \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_mysql_scale.log
 ```
@@ -5559,14 +5557,14 @@ bexhoma ycsb \
   -sf 1 \
   -xwl a \
   -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
   -nc 1 \
   -ne 1 \
   -nlp 4,8 \
   -nlt 32,64 \
-  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 1 \
   -ms $BEXHOMA_MS \
   -tr \
   -lr 64Gi \
@@ -5809,21 +5807,21 @@ bexhoma ycsb \
   -sf 1 \
   -xwl a \
   -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
   -nc 2 \
   -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 1 \
   -nbp 1 \
   -nbt 64 \
-  -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
   -rsr \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_storage.log
 ```
@@ -5996,20 +5994,20 @@ bexhoma ycsb \
   -sf 1 \
   -xwl a \
   -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
   -nc 2 \
   -ne 1,2 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_scale.log
 ```
@@ -6329,20 +6327,20 @@ bexhoma ycsb \
   -sf 1 \
   -xwl e \
   -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
   -nc 1 \
   -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 1 \
   -nbp 8 \
   -nbt 64 \
-  -xnbf 1 \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_workload_e.log
 ```
@@ -6468,22 +6466,22 @@ bexhoma ycsb \
   -sf 1 \
   -xwl a \
   -xtb 1024 \
+  -xnbf 1 \
+  -xnlf 1 \
   -nc 1 \
   -ne 1 \
   -nlp 8 \
   -nlt 64 \
-  -xnlf 1 \
   -nbp 1,8 \
   -nbt 64 \
-  -xnbf 1 \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
-  -rst $BEXHOMA_STORAGE_CLASS \
   -rss 50Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_monitoring.log
 ```

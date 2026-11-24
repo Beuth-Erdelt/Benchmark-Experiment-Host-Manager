@@ -1,7 +1,7 @@
 # Example: Benchmark YugabyteDB
 
 This example shows how to benchmark YugabyteDB with YCSB and Benchbase's TPC-C.
-This differs from the default behaviour of bexhoma, since we benchmark **a distributed DBMS, that is not managed by bexhoma, but exists in the Kubernetes cluster in the same namespace**.
+This differs from the default behaviour of bexhoma, since the SUT is **a distributed DBMS, that is not managed by bexhoma, but exists in the Kubernetes cluster in the same namespace**.
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
@@ -112,7 +112,7 @@ BEXHOMA_STORAGE_CLASS="shared"
 mkdir -p $LOG_DIR
 ```
 
-For performing the experiment we can run the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
+The experiment is run with the [ycsb file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/ycsb.py).
 
 Example:
 ```bash
@@ -372,7 +372,7 @@ This forwards ports, so you have
 
 ## Monitoring
 
-[Monitoring](Monitoring.html) can be activated for DBMS only (`-m`) or for all components (`-mc`).
+[Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 Metrics are sampled every few seconds, so the benchmarking phase should take at least a minute.
 This run uses 10.000.000 operations (`-xop`).
 
@@ -380,7 +380,7 @@ All metrics in monitoring are summed across all matching components.
 In this example, this means that used memory, CPU time, etc. are summed across all 3 tservers of the YugabyteDB cluster.
 
 The `-mc` option is mandatory here: the sidecar container approach does not work (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
-See [Monitoring](Monitoring.html) for further explanation.
+See [Monitoring](Monitoring.md) for further explanation.
 
 ```bash
 bexhoma ycsb \
@@ -643,7 +643,7 @@ YCSB SF=1
 Collecting application metrics for YugabyteDB is supported.
 It can be activated by `-m -mc -ma`.
 Prometheus discovers the master pods (port 7000) and the tserver pods (port 9000) and scrapes the native endpoint `/prometheus-metrics` of YugabyteDB, with the metric sets `yb-master` and `yb-tserver`.
-See [Metrics](Example-Metrics.html) for application metrics of all DBMS.
+See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
 ```bash
 bexhoma ycsb \
@@ -1142,7 +1142,7 @@ YCSB SF=1
 
 ### Bexhoma Status Volume
 
-We can add the request for a PVC to the experiment setup.
+The experiment setup can request a PVC.
 Make sure to reset the database before this test as it should not contain data from previous test runs.
 
 ```bash
@@ -1182,8 +1182,8 @@ Nothing will be stored there, but it maintains status information about previous
 +-----------------------------------------+-----------------+--------------+--------------+-------------------+------------+----------------------+-----------+----------+--------+--------+
 ```
 
-The above means there has been a YCSB loading process (managed by bexhoma) of size SF=1, that has been completed.
-All following calls of such an experiment will skip loading, since the PVC tells it has been finished.
+The status shows a completed YCSB loading process (managed by bexhoma) of size SF=1.
+Later experiments of this kind skip loading, since the PVC marks the loading as finished.
 This thus helps to spare the `-sl` parameter.
 
 However bexhoma cannot verify such information.
@@ -2744,7 +2744,7 @@ Benchbase Workload tpcc SF=16
 
 ### More Complex Example
 
-We now run Benchbase's TPC-C variant with more data, for a longer period of time, with keying and thinking time (`-xkey`) and with a varying number of pods for execution.
+This runs Benchbase's TPC-C variant with more data, for a longer period of time, with keying and thinking time (`-xkey`) and with a varying number of pods for execution.
 Make sure to reset the database before this test as it should not contain data from previous test runs.
 
 ```bash
