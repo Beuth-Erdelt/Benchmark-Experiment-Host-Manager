@@ -1009,12 +1009,17 @@
     2
    ],
    "benchmarking_parameters": {
+    "BEXHOMA_TENANT_BY": "",
+    "BEXHOMA_TENANT_ID": 0,
+    "BEXHOMA_TENANT_NUM": 0,
     "DBMSBENCHMARKER_DEV": 0,
     "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
     "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
     "DBMSBENCHMARKER_STORE_EXPLAIN": false,
     "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-    "SF": "1"
+    "SF": "1",
+    "TENANT_BY": "",
+    "TENANT_NUM": 0
    },
    "benchmarking_parameters_list": [],
    "benchmarking_parameters_list_template": [],
@@ -1023,6 +1028,8 @@
    "dialect": "MySQL",
    "docker": "MariaDB",
    "eval_parameters": {
+    "TENANT_BY": "",
+    "TENANT_NUM": 0,
     "code": "<CODE>"
    },
    "experiment_dict": {
@@ -1035,12 +1042,17 @@
        "num_pods": 1,
        "parallelism": 1,
        "parameters": {
+        "BEXHOMA_TENANT_BY": "",
+        "BEXHOMA_TENANT_ID": 0,
+        "BEXHOMA_TENANT_NUM": 0,
         "DBMSBENCHMARKER_DEV": 0,
         "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
         "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
         "DBMSBENCHMARKER_STORE_EXPLAIN": false,
         "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
+        "SF": "1",
+        "TENANT_BY": "",
+        "TENANT_NUM": 0
        },
        "resetscript": [
         "reset-tpch.sql",
@@ -1058,12 +1070,17 @@
        "num_pods": 2,
        "parallelism": 2,
        "parameters": {
+        "BEXHOMA_TENANT_BY": "",
+        "BEXHOMA_TENANT_ID": 0,
+        "BEXHOMA_TENANT_NUM": 0,
         "DBMSBENCHMARKER_DEV": 0,
         "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
         "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
         "DBMSBENCHMARKER_STORE_EXPLAIN": false,
         "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
+        "SF": "1",
+        "TENANT_BY": "",
+        "TENANT_NUM": 0
        },
        "resetscript": [
         "reset-tpch.sql",
@@ -1083,6 +1100,9 @@
       "parameters": {
        "BEXHOMA_SYNCH_GENERATE": 1,
        "BEXHOMA_SYNCH_LOAD": 1,
+       "BEXHOMA_TENANT_BY": "",
+       "BEXHOMA_TENANT_ID": 0,
+       "BEXHOMA_TENANT_NUM": 0,
        "MYSQL_LOADING_FROM": "LOCAL",
        "PODS_PARALLEL": "1",
        "PODS_TOTAL": "1",
@@ -1102,6 +1122,9 @@
    "loading_parameters": {
     "BEXHOMA_SYNCH_GENERATE": 1,
     "BEXHOMA_SYNCH_LOAD": 1,
+    "BEXHOMA_TENANT_BY": "",
+    "BEXHOMA_TENANT_ID": 0,
+    "BEXHOMA_TENANT_NUM": 0,
     "MYSQL_LOADING_FROM": "LOCAL",
     "PODS_PARALLEL": "1",
     "PODS_TOTAL": "1",
@@ -1505,12 +1528,17 @@
     2
    ],
    "benchmarking_parameters": {
+    "BEXHOMA_TENANT_BY": "",
+    "BEXHOMA_TENANT_ID": 0,
+    "BEXHOMA_TENANT_NUM": 0,
     "DBMSBENCHMARKER_DEV": 0,
     "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
     "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
     "DBMSBENCHMARKER_STORE_EXPLAIN": false,
     "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-    "SF": "1"
+    "SF": "1",
+    "TENANT_BY": "",
+    "TENANT_NUM": 0
    },
    "benchmarking_parameters_list": [],
    "benchmarking_parameters_list_template": [],
@@ -1519,6 +1547,8 @@
    "dialect": "MySQL",
    "docker": "MySQL",
    "eval_parameters": {
+    "TENANT_BY": "",
+    "TENANT_NUM": 0,
     "code": "<CODE>"
    },
    "experiment_dict": {
@@ -1531,12 +1561,17 @@
        "num_pods": 1,
        "parallelism": 1,
        "parameters": {
+        "BEXHOMA_TENANT_BY": "",
+        "BEXHOMA_TENANT_ID": 0,
+        "BEXHOMA_TENANT_NUM": 0,
         "DBMSBENCHMARKER_DEV": 0,
         "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
         "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
         "DBMSBENCHMARKER_STORE_EXPLAIN": false,
         "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
+        "SF": "1",
+        "TENANT_BY": "",
+        "TENANT_NUM": 0
        },
        "resetscript": [
         "reset-tpch.sql",
@@ -1554,12 +1589,17 @@
        "num_pods": 2,
        "parallelism": 2,
        "parameters": {
+        "BEXHOMA_TENANT_BY": "",
+        "BEXHOMA_TENANT_ID": 0,
+        "BEXHOMA_TENANT_NUM": 0,
         "DBMSBENCHMARKER_DEV": 0,
         "DBMSBENCHMARKER_RECREATE_PARAMETER": false,
         "DBMSBENCHMARKER_SHUFFLE_QUERIES": false,
         "DBMSBENCHMARKER_STORE_EXPLAIN": false,
         "DBMSBENCHMARKER_VERBOSE_EXPLAIN": false,
-        "SF": "1"
+        "SF": "1",
+        "TENANT_BY": "",
+        "TENANT_NUM": 0
        },
        "resetscript": [
         "reset-tpch.sql",
@@ -1579,6 +1619,9 @@
       "parameters": {
        "BEXHOMA_SYNCH_GENERATE": 1,
        "BEXHOMA_SYNCH_LOAD": 1,
+       "BEXHOMA_TENANT_BY": "",
+       "BEXHOMA_TENANT_ID": 0,
+       "BEXHOMA_TENANT_NUM": 0,
        "PODS_PARALLEL": "1",
        "PODS_TOTAL": "1",
        "SF": "1",
@@ -1597,6 +1640,9 @@
    "loading_parameters": {
     "BEXHOMA_SYNCH_GENERATE": 1,
     "BEXHOMA_SYNCH_LOAD": 1,
+    "BEXHOMA_TENANT_BY": "",
+    "BEXHOMA_TENANT_ID": 0,
+    "BEXHOMA_TENANT_NUM": 0,
     "PODS_PARALLEL": "1",
     "PODS_TOTAL": "1",
     "SF": "1",
