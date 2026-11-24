@@ -274,7 +274,7 @@ class YcsbEvaluator(LogEvaluator):
         except Exception as exc:
             print(exc)
             return df
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):  # noqa: B006
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=None):
         """
         Aggregates parallel-pod YCSB benchmarking rows into one row per group.
 
@@ -295,6 +295,8 @@ class YcsbEvaluator(LogEvaluator):
         :return: Aggregated DataFrame with one row per group.
         :rtype: pandas.DataFrame
         """
+        if columns is None:
+            columns = ["phase"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {
@@ -484,7 +486,7 @@ class YcsbEvaluator(LogEvaluator):
         df.fillna(0, inplace=True)
         df_typed = df.astype(dtypes)
         return df_typed
-    def loading_aggregate_by_parallel_pods(self, df, columns=["phase"]):  # noqa: B006
+    def loading_aggregate_by_parallel_pods(self, df, columns=None):
         """
         Aggregates parallel-pod YCSB loading rows into one row per job.
 
@@ -500,6 +502,8 @@ class YcsbEvaluator(LogEvaluator):
         :return: Aggregated DataFrame with one row per group.
         :rtype: pandas.DataFrame
         """
+        if columns is None:
+            columns = ["phase"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby([df[col] for col in columns]):
             aggregate = {
@@ -595,7 +599,7 @@ class YcsbEvaluator(LogEvaluator):
                     #"all_numbers": list(map(float, all_numbers)),  # Convert all numbers to float
                     "metrics": metrics,
                 }
-            except Exception as e:  # noqa: F841
+            except Exception:
                 # Log or handle any parsing errors (optional)
                 return None
         results = []
@@ -852,7 +856,6 @@ class YcsbEvaluator(LogEvaluator):
         cols_loading = ['code', 'configuration', 'experiment_run']
         df = self.loading_set_datatypes(df)
         df = self.loading_aggregate_by_parallel_pods(df)
-        indexname = df.index.name  # noqa: F841
         df_connections = df_connections.drop_duplicates(subset=cols_loading, keep='first')
         df_connections.drop('connection', axis=1, inplace=True, errors='ignore')
         df = df.set_index(cols_loading, drop=False)

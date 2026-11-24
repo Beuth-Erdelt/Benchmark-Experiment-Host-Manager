@@ -386,7 +386,7 @@ class LogEvaluator(EvaluatorBase):
         """
         return df
 
-    def benchmarking_aggregate_by_parallel_pods(self, df: pd.DataFrame, columns: list = ["phase"]) -> pd.DataFrame:  # noqa: B006
+    def benchmarking_aggregate_by_parallel_pods(self, df: pd.DataFrame, columns: list | None = None) -> pd.DataFrame:
         """
         Aggregate the typed per-pod DataFrame to one row per group of parallel pods.
 
@@ -398,6 +398,8 @@ class LogEvaluator(EvaluatorBase):
         :return: Aggregated DataFrame.
         :rtype: pandas.DataFrame
         """
+        if columns is None:
+            columns = ["phase"]
         return df
 
     # Optional: time series parsed from the benchmarker logs, for the collectors.

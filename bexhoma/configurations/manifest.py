@@ -446,7 +446,7 @@ class ManifestBuilder:
         experiment_run: str = '',
         client: str = '1',
         parallelism: int = 1,
-        env: dict = {},  # noqa: B006
+        env: dict | None = None,
         template: str = '',
         nodegroup: str = '',
         num_pods: int = 1,
@@ -475,6 +475,8 @@ class ManifestBuilder:
         :return: Path to the written YAML manifest file.
         :rtype: str
         """
+        if env is None:
+            env = {}
         cfg = self._config
         if len(app) == 0:
             app = cfg.appname
@@ -488,8 +490,6 @@ class ManifestBuilder:
             configuration=configuration, experiment_run=experiment_run,
             client=str(client), benchmark_run=benchmark_run)
         servicename = cfg.get_service_sut(configuration=configuration)
-        now = datetime.now(timezone.utc).replace(tzinfo=None)
-        now_string = now.strftime('%Y-%m-%d %H:%M:%S')  # noqa: F841
         time_now = str(datetime.now())
         time_now_int = int(datetime.timestamp(
             datetime.strptime(time_now, '%Y-%m-%d %H:%M:%S.%f')))
@@ -678,7 +678,7 @@ class ManifestBuilder:
         client: str = '1',
         parallelism: int = 1,
         alias: str = '',
-        env: dict = {},  # noqa: B006
+        env: dict | None = None,
         template: str = '',
         num_pods: int = 1,
         benchmark_run: str = '',
@@ -713,6 +713,8 @@ class ManifestBuilder:
         :return: Path to the written YAML manifest file.
         :rtype: str
         """
+        if env is None:
+            env = {}
         cfg = self._config
         if len(app) == 0:
             app = cfg.appname
@@ -754,7 +756,7 @@ class ManifestBuilder:
         configuration: str = '',
         parallelism: int = 1,
         alias: str = '',
-        env: dict = {},  # noqa: B006
+        env: dict | None = None,
         num_pods: int = 1,
         connection: str = '',
         benchmark_run: str = '',
@@ -784,6 +786,8 @@ class ManifestBuilder:
         :return: Path to the written YAML manifest file.
         :rtype: str
         """
+        if env is None:
+            env = {}
         cfg = self._config
         if len(app) == 0:
             app = cfg.appname

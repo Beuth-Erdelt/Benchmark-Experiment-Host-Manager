@@ -1011,7 +1011,6 @@ class ExperimentBase():
         """
         context = self.cluster.context
         port = self.cluster.port
-        app = self.appname  # noqa: F841
         forward = ['kubectl', f'--context {context}', 'port-forward', 'service/'+service, f"{port}:{port}"]
         command = " ".join(forward)
         #print("{:30s}: {}".format(configuration, command))
@@ -1843,7 +1842,8 @@ class ExperimentBase():
         """
         if workflow_1.keys() != workflow_2.keys():
             return False
-        sort_key = lambda job: (job['type'], job['pods'])  # noqa: E731
+        def sort_key(job):
+            return (job['type'], job['pods'])
         for key in workflow_1:
             runs_1, runs_2 = workflow_1[key], workflow_2[key]
             if len(runs_1) != len(runs_2):
@@ -3436,7 +3436,6 @@ class ExperimentBase():
                 with open(filename) as f:
                     lines = f.readlines()
                 stdout = "".join(lines)
-                pod_name = filename[filename.rindex("-")+1:-len(".log")]  # noqa: F841
                 timing_start = re.findall('BEXHOMA_START:(.+?)\n', stdout)[0]
                 timing_end = re.findall('BEXHOMA_END:(.+?)\n', stdout)[0]
                 return (int(timing_start), int(timing_end))
@@ -3547,8 +3546,6 @@ class ExperimentBase():
                         print(f"{connection:30s}: WARNING - could not update {individual_config_path}: {exc}")
                 else:
                     print(f"{connection:30s}: WARNING - individual config not found: {individual_config_path}")
-            now = datetime.now(timezone.utc).replace(tzinfo=None)
-            now_string = now.strftime('%Y-%m-%d %H:%M:%S')  # noqa: F841
             time_now = str(datetime.now())
             end_time_job = int(datetime.timestamp(datetime.strptime(time_now,'%Y-%m-%d %H:%M:%S.%f')))
             print(f"{connection:30s}: showing benchmarker times")
@@ -3565,7 +3562,6 @@ class ExperimentBase():
             pods = self.cluster.get_pods(component='dashboard')
             if len(pods) > 0:
                 pod_dashboard = pods[0]
-                cmd = {}  # noqa: F841
                 # store benchmarker times in config and upload it to cluster again
                 if config is not None:
                     #connectionfile = config.benchmark.path+'/connections.config'
@@ -3828,9 +3824,7 @@ class ExperimentBase():
         print("\n### Connections")
         with open(resultfolder+"/"+code+"/connections.config",'r') as inf:
             connections = ast.literal_eval(inf.read())
-        num_run = self.workload['num_run'] if 'num_run' in self.workload else 1  # noqa: F841
         #print("num_run", num_run)
-        pretty_connections = json.dumps(connections, indent=2)  # noqa: F841
         #print(pretty_connections)
         connections_sorted = sorted(connections, key=lambda c: c['name'])
         list_monitoring_app = list()

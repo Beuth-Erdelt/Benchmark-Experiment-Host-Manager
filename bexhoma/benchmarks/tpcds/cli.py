@@ -79,7 +79,6 @@ def main() -> None:
     # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
     # should results be tested for validity?
-    test_result = args.test_result  # noqa: F841
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
@@ -107,11 +106,6 @@ def main() -> None:
     if aws:
         cluster = clusters.AWS(context=args.context)  # noqa: F405
         # scale up
-        node_sizes = {  # noqa: F841
-            'auxiliary': 1,
-            'sut-mid': 1,
-            'benchmarker': 1
-        }
         #cluster.scale_nodegroups(node_sizes)
     else:
         cluster = clusters.Kubernetes(context=args.context)  # noqa: F405
@@ -139,8 +133,6 @@ def main() -> None:
     num_loading_pods = experiment.get_parameter_as_list('num_loading_pods')
     num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
     num_loading_split = experiment.get_parameter_as_list('num_loading_split')
-    num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')  # noqa: F841
-    num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')  # noqa: F841
     # set node groups for components
     if aws:
         # set node labes for components

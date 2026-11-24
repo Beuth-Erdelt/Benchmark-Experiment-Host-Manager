@@ -128,15 +128,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     if aws:
         cluster = clusters.AWS(context=args.context)  # noqa: F405
         # scale up
-        node_sizes = {  # noqa: F841
-            'auxiliary': 1,
-            'sut-mid': 1,
-            'benchmarker': 1
-        }
         #cluster.scale_nodegroups(node_sizes)
     else:
         cluster = clusters.Kubernetes(context=args.context)  # noqa: F405
-    cluster_name = cluster.contextdata['clustername']  # noqa: F841
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
     # set experiment

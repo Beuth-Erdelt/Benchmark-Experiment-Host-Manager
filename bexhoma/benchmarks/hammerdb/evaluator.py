@@ -121,8 +121,9 @@ class HammerdbEvaluator(LogEvaluator):
             client = re.findall('BEXHOMA_CLIENT:(.+?)\n', stdout)[0]
             benchmark_run = re.findall('BEXHOMA_BENCHMARK_RUN:(.+?)\n', stdout)
             benchmark_run = benchmark_run[0] if benchmark_run else '1'
-            timeprofile = re.findall('HAMMERDB_TIMEPROFILE:(.+?)\n', stdout)[0]  # noqa: F841
-            allwarehouses = re.findall('HAMMERDB_ALLWAREHOUSES:(.+?)\n', stdout)[0]  # noqa: F841
+            # not used, but required: a log without these lines is not parsed (IndexError below)
+            _ = re.findall('HAMMERDB_TIMEPROFILE:(.+?)\n', stdout)[0]
+            _ = re.findall('HAMMERDB_ALLWAREHOUSES:(.+?)\n', stdout)[0]
             keyandthink = re.findall('HAMMERDB_KEYANDTHINK:(.+?)\n', stdout)[0]
             child = re.findall('BEXHOMA_CHILD:(.+?)\n', stdout)[0]
             error_timesynch = re.findall('start time has already passed', stdout)
@@ -278,7 +279,7 @@ class HammerdbEvaluator(LogEvaluator):
         if 'tenant_id' not in df_typed.columns:
             df_typed = df_typed.assign(tenant_id=-1)
         return df_typed
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):  # noqa: B006
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=None):
         """
         Aggregates parallel-pod TPC-C result rows into one row per group.
 
@@ -300,6 +301,8 @@ class HammerdbEvaluator(LogEvaluator):
         :return: Aggregated DataFrame with one row per group.
         :rtype: pandas.DataFrame
         """
+        if columns is None:
+            columns = ["phase"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby([df[col] for col in columns]):
             if 'CALLS' in grp:

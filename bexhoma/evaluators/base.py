@@ -35,8 +35,10 @@ def natural_sort(items):
     :return: Sorted list.
     :rtype: list
     """
-    convert = lambda text: int(text) if text.isdigit() else text.lower()  # noqa: E731
-    alphanum_key = lambda key: [convert(c) for c in re.split('([0-9]+)', str(key))]  # noqa: E731
+    def convert(text):
+        return int(text) if text.isdigit() else text.lower()
+    def alphanum_key(key):
+        return [convert(c) for c in re.split('([0-9]+)', str(key))]
     return sorted(items, key=alphanum_key)
 
 

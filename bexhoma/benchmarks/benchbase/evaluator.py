@@ -234,7 +234,7 @@ class BenchbaseEvaluator(LogEvaluator):
             'tenant_id': 'int',
         })
         return df_typed
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):  # noqa: B006
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=None):
         """
         Aggregates parallel-pod result rows into one row per group.
 
@@ -257,6 +257,8 @@ class BenchbaseEvaluator(LogEvaluator):
         :return: Aggregated DataFrame with one row per group.
         :rtype: pandas.DataFrame
         """
+        if columns is None:
+            columns = ["phase"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby(columns):
             aggregate = {

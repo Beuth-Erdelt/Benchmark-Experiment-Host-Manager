@@ -237,18 +237,13 @@ class LifecycleManager:
         deployment_template = 'deploymenttemplate-bexhoma-prometheus.yml'
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
-        name_pool = self.create_monitoring(app, 'pool', experiment, configuration)  # noqa: F841
+        self.create_monitoring(app, 'pool', experiment, configuration)
         if 'monitor' in cfg.dockertemplate and 'component' in cfg.dockertemplate['monitor']:
             name_monitor_application_component = cfg.dockertemplate['monitor']['component']
         else:
             name_monitor_application_component = 'sut'
         name_monitor_application = self.create_monitoring(
             app, name_monitor_application_component, experiment, configuration)
-        name_service = cfg.generate_component_name(  # noqa: F841
-            app=app, component='sut',
-            experiment=cfg.get_experiment_name(), configuration=configuration)
-        name_worker = cfg.get_worker_name()
-        name_service_headless = name_worker  # noqa: F841
         if cfg.experiment.cluster.monitor_cluster_active:
             print(f"{configuration:30s}: wants to monitor all components in cluster")
         if not cfg.experiment.cluster.monitor_cluster_exists:

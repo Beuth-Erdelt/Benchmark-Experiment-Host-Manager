@@ -93,9 +93,9 @@ class HostProbe:
         try:
             s.connect((ip, port))
             found = True
-            print("Somebody is answering at %s:%d" % (ip, port))  # noqa: UP031
+            print(f"Somebody is answering at {ip}:{port}")
         except Exception:
-            print("Nobody is answering yet at %s:%d" % (ip, port))  # noqa: UP031
+            print(f"Nobody is answering yet at {ip}:{port}")
         finally:
             s.close()
         return found
