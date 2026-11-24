@@ -3,7 +3,7 @@
   "@type": "SoftwareSourceCode",
   "name": "Bexhoma: Benchmark Experiment Host Manager",
   "description": "Bexhoma (Benchmark Experiment Host Manager) is a Python tool that manages benchmark experiments of Database Management Systems (DBMS) in Kubernetes clusters. It deploys the systems under test, runs data generators, loaders and benchmark drivers (DBMS-Benchmarker, HammerDB, Benchbase, YCSB) as containers, collects hardware metrics, and evaluates and reports the results, so that experiments can be repeated over varying configurations.",
-  "version": "0.12.3",
+  "version": "0.12.4",
   "license": "https://spdx.org/licenses/AGPL-3.0-or-later",
   "codeRepository": "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager",
   "issueTracker": "https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues",
