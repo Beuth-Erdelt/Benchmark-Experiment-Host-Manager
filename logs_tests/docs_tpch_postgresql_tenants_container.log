@@ -90,14 +90,6 @@ PostgreSQL-2                  : Schema scripts done after 6s
 PostgreSQL-2                  : is loading
 Loop pass                     : took 31.7s (16 kubectl calls 12.1s, 75 API requests 6.9s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'a4e4cb76-31bc-4e4b-9a48-9ed2e771852f', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Mon, 23 Nov 2026 11:53:25 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 PostgreSQL-1                  : is loading
 PostgreSQL-2                  : is loading

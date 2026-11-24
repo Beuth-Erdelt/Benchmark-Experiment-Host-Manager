@@ -55,7 +55,7 @@ pip install ruff==0.17.6
 ruff check bexhoma agent experiment.py
 ```
 
-Existing findings carry a `# noqa: <rule>` comment so that only new code fails; do not add such comments to new code, fix it instead. Line length (120), f-strings and unused imports are not checked yet. Older code does not follow all of the rules (line length, f-strings, `__all__`, type annotations); do not reformat code you do not otherwise touch, and put clean-ups in their own pull request. When cleaning up existing code: do not change logic or public names (classes, public methods, public attributes), verify that all references (imports, call sites, attribute accesses) still resolve correctly after the change, and check how similar things are already done elsewhere in the codebase before introducing a new pattern.
+Existing findings carry a `# noqa: <rule>` comment so that only new code fails; do not add such comments to new code, fix it instead. Line length (120) is not checked yet. Older code does not follow all of the rules (line length, f-strings, `__all__`, type annotations); do not reformat code you do not otherwise touch, and put clean-ups in their own pull request. When cleaning up existing code: do not change logic or public names (classes, public methods, public attributes), verify that all references (imports, call sites, attribute accesses) still resolve correctly after the change, and check how similar things are already done elsewhere in the codebase before introducing a new pattern.
 
 **Naming**
 - `snake_case` for functions, methods, and variables; `PascalCase` for classes; `UPPER_CASE` for constants.

@@ -16,7 +16,6 @@ from bexhoma.scripts.cli import EXPERIMENT_MODES
 from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
-import logging  # noqa: F811
 import argparse
 import pandas as pd
 from tabulate import tabulate
@@ -126,11 +125,11 @@ def _derive_phase(labels: dict, loading_active: bool, benchmarking_active: bool,
     num_rounds_planned = labels.get('num_rounds_planned', '')
     experiment_run = labels.get('experiment_run', labels.get('experimentRun', ''))
     if benchmarking_active:
-        run_progress = '{}/{}'.format(experiment_run, num_runs_planned) if num_runs_planned else experiment_run
+        run_progress = f'{experiment_run}/{num_runs_planned}' if num_runs_planned else experiment_run
         round_progress = (
-            ', round {}/{}'.format(current_client, num_rounds_planned)
+            f', round {current_client}/{num_rounds_planned}'
             if num_rounds_planned and current_client else '')
-        return 'Benchmarking (run {}{})'.format(run_progress, round_progress)
+        return f'Benchmarking (run {run_progress}{round_progress})'
     if num_runs_planned and experiment_run == num_runs_planned:
         return 'Done'
     return 'Loaded'
@@ -184,7 +183,7 @@ def manage():
             # "all" does not include Secrets (TLS material of the SUTs)
             cluster.kubectl('delete secret -l experiment='+args.experiment+',component=tls')
     elif args.mode == 'summary':
-        if not args.experiment is None:  # noqa: E714
+        if args.experiment is not None:
             # -fe re-evaluates by executing a command inside the running dashboard pod,
             # which needs a live cluster connection; a plain summary only reads local files.
             cluster = clusters.Kubernetes(clusterconfig, context=args.context, connect=args.force_evaluate)  # noqa: F405
@@ -302,7 +301,7 @@ def manage():
         # check dashboard
         dashboard_pods = _filter_by_labels(all_pods, component='dashboard')
         if dashboard_pods:
-            print("Dashboard: {}".format(dashboard_pods[0].status.phase))
+            print(f"Dashboard: {dashboard_pods[0].status.phase}")
             # get cluster monitoring Prometheus
             monitoring_running = cluster.is_monitoring_healthy()
             if monitoring_running:
@@ -315,7 +314,7 @@ def manage():
         # check message queue
         messagequeue_pods = _filter_by_labels(all_pods, component='messagequeue')
         if messagequeue_pods:
-            print("Message Queue: {}".format(messagequeue_pods[0].status.phase))
+            print(f"Message Queue: {messagequeue_pods[0].status.phase}")
         else:
             print("Message Queue: Not running")
         # check agent model server (the self-hosted LLM the agent harness talks to)
@@ -324,7 +323,7 @@ def manage():
             if _labels(pod).get('role') == 'model-server'
         ]
         if model_server_pods:
-            print("Agent Model Server: {}".format(model_server_pods[0].status.phase))
+            print(f"Agent Model Server: {model_server_pods[0].status.phase}")
         else:
             print("Agent Model Server: Not running")
         # get data directory
@@ -399,7 +398,7 @@ def manage():
                     labels = pod_labels[pod.metadata.name]
                     sut_labels = labels
                     run_label = labels.get('experiment_run', labels.get('experimentRun'))
-                    experiment_run_display = '{}. '.format(run_label) if run_label else ''
+                    experiment_run_display = f'{run_label}. ' if run_label else ''
                     apps[configuration][component] = "{pod} ({experiment_run}{status})".format(pod='', experiment_run=experiment_run_display, status=status)
                     if 'loaded' in labels:
                         if labels['loaded'] == 'True':
@@ -422,7 +421,7 @@ def manage():
                     print("Worker Pods", [pod.metadata.name for pod in pods])
                 num_pods = _pod_status_counts(pods)
                 for status in num_pods.keys():
-                    apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
+                    apps[configuration][component] += f"({num_pods[status]} {status})"
                 ############
                 component = 'pool'
                 apps[configuration][component] = ''
@@ -436,7 +435,7 @@ def manage():
                     print("Pooling Pods", [pod.metadata.name for pod in pods])
                 pods_per_status = _pod_status_counts(pods)
                 for status, number in pods_per_status.items():
-                    apps[configuration][component] += "{pod} ({status})".format(pod=number, status=status)
+                    apps[configuration][component] += f"{number} ({status})"
                 ############
                 component = 'loading'
                 apps[configuration][component] = ''
@@ -451,7 +450,7 @@ def manage():
                 loading_active = len(pods) > 0
                 num_pods = _pod_status_counts(pods)
                 for status in num_pods.keys():
-                    apps[configuration][component] += "({num} {status})".format(num=num_pods[status], status=status)
+                    apps[configuration][component] += f"({num_pods[status]} {status})"
                 ############
                 component = 'monitoring'
                 apps[configuration][component] = ''
@@ -484,9 +483,9 @@ def manage():
                     labels = pod_labels[pod.metadata.name]
                     client_display = '{}. '.format(labels['client']) if 'client' in labels else ''
                     status_extended = "{pod} ({client}{status})".format(pod='', client=client_display, status=status)
-                    num_pods[status_extended] = 1 if not status_extended in num_pods else num_pods[status_extended]+1  # noqa: E713
+                    num_pods[status_extended] = 1 if status_extended not in num_pods else num_pods[status_extended]+1
                 for status in num_pods.keys():
-                        apps[configuration][component] += "{num}x{status}".format(num=num_pods[status], status=status)
+                        apps[configuration][component] += f"{num_pods[status]}x{status}"
                 ############
                 apps[configuration]['phase'] = _derive_phase(
                     sut_labels, loading_active, benchmarking_active, current_client)

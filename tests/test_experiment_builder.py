@@ -162,7 +162,7 @@ class BuildExperimentTest(unittest.TestCase):
         with mock.patch('builtins.print') as printed:
             mysql = self._build(spec).configurations[0]
         self.assertNotIn('MYSQL_LOADING_THREADS', mysql.loading_parameters)
-        self.assertIn(mock.call('MySQL: the loader does not use loading threads, ignoring -nlt 8'),
+        self.assertIn(mock.call('MySQL                         : the loader does not use loading threads, ignoring -nlt 8'),
                       printed.call_args_list)
 
     def test_unknown_dbms_raises_key_error(self) -> None:

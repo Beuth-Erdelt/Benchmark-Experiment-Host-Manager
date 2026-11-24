@@ -266,7 +266,9 @@ enter no loading statistic across repetitions. Check `connections.md`'s
 configurations whose loading was switched off: the DBMS is not managed by
 bexhoma, nothing was loaded and there are no loading times at all; what the
 database holds is not known to bexhoma (`loading_deactivated` in
-`connections.md`).
+`connections.md`). `Loading measured in this experiment (no loading phase in
+this experiment)` is a benchmark that loads no data at all (hardware
+benchmarks); there are no loading times to compare.
 `Data parameters as requested (unknown, assumed: ...)` names reused volumes
 loaded before bexhoma stored DDL and loading values on them: what they hold is
 assumed to be what was requested, not verified.

@@ -13,7 +13,6 @@ See LICENSE for details.
 """
 import logging
 import urllib3
-import pandas as pd
 
 from bexhoma.experiments.mixed import MixedExperiment
 from bexhoma.benchmarks.dbmsbenchmarker.evaluator import DbmsBenchmarkerEvaluator
@@ -97,20 +96,20 @@ class DbmsBenchmarkerExperiment(MixedExperiment):
             pod_dashboard = self.get_dashboard_pod()
         if self.monitoring_active:
             cmd = {}
-            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loading -e {}'.format(self.code)
+            cmd['transform_benchmarking_metrics'] = f'python metrics.evaluation.py -r /results/ -db -ct loading -e {self.code}'
             _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
-            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct stream -e {}'.format(self.code)
+            cmd['transform_benchmarking_metrics'] = f'python metrics.evaluation.py -r /results/ -db -ct stream -e {self.code}'
             _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
-            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct loader -e {}'.format(self.code)
+            cmd['transform_benchmarking_metrics'] = f'python metrics.evaluation.py -r /results/ -db -ct loader -e {self.code}'
             _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
-            cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {}'.format(self.code)
+            cmd['transform_benchmarking_metrics'] = f'python metrics.evaluation.py -r /results/ -db -ct benchmarker -e {self.code}'
             _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
             self.cluster.logger.debug(stdout)
             for component_type in self.workload['monitoring_components']:
-                cmd['transform_benchmarking_metrics'] = 'python metrics.evaluation.py -r /results/ -db -ct {} -e {}'.format(component_type, self.code)
+                cmd['transform_benchmarking_metrics'] = f'python metrics.evaluation.py -r /results/ -db -ct {component_type} -e {self.code}'
                 _, stdout, _ = self.cluster.execute_command_in_pod(command=cmd['transform_benchmarking_metrics'], pod=pod_dashboard, container="dashboard")
                 self.cluster.logger.debug(stdout)
         # specific to dbmsbenchmarker

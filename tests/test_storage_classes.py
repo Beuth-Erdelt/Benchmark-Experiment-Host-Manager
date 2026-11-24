@@ -19,6 +19,7 @@ from unittest import mock
 import pandas as pd
 
 from bexhoma.benchmarks.tpch import cli as tpch
+from bexhoma import cli_args
 from bexhoma import environment
 from bexhoma import spec as catalog_spec
 from bexhoma.cli_args import format_storage_types, split_storage_types
@@ -127,33 +128,33 @@ class TpchStorageCellTest(unittest.TestCase):
     """``tpch.py`` pairs the storage class with the other resource lists."""
 
     def test_storage_sweep_makes_one_cell_per_class(self):
-        cells = tpch._resource_cells(['8'], ['8'], ['32Gi'], ['32Gi'], ['cephcsi', 'shared', None])
+        cells = cli_args.resource_cells(['8'], ['8'], ['32Gi'], ['32Gi'], ['cephcsi', 'shared', None])
         self.assertEqual([cell['storage_type'] for cell in cells], ['cephcsi', 'shared', None])
         self.assertEqual({cell['memory'] for cell in cells}, {'32Gi'})
 
     def test_storage_is_paired_with_memory_by_position(self):
-        cells = tpch._resource_cells(['8'], ['8'], ['32Gi', '64Gi'], ['32Gi', '64Gi'], ['cephcsi', 'shared'])
+        cells = cli_args.resource_cells(['8'], ['8'], ['32Gi', '64Gi'], ['32Gi', '64Gi'], ['cephcsi', 'shared'])
         self.assertEqual([(cell['memory'], cell['storage_type']) for cell in cells],
                          [('32Gi', 'cephcsi'), ('64Gi', 'shared')])
 
     def test_length_mismatch_is_refused(self):
         with self.assertRaisesRegex(ValueError, 'must share one length'):
-            tpch._resource_cells(['8'], ['8'], ['32Gi', '64Gi'], ['32Gi', '64Gi'], ['cephcsi', 'shared', None])
+            cli_args.resource_cells(['8'], ['8'], ['32Gi', '64Gi'], ['32Gi', '64Gi'], ['cephcsi', 'shared', None])
 
     def test_without_storage_list_cells_are_unchanged(self):
-        cells = tpch._resource_cells(['8'], ['8'], ['32Gi', '64Gi'], ['32Gi', '64Gi'])
+        cells = cli_args.resource_cells(['8'], ['8'], ['32Gi', '64Gi'], ['32Gi', '64Gi'])
         self.assertEqual(len(cells), 2)
         self.assertEqual({cell['storage_type'] for cell in cells}, {None})
 
     def test_storage_suffix_is_a_dns_label(self):
-        self.assertEqual(tpch._storage_suffix('cephcsi'), 'cephcsi')
-        self.assertEqual(tpch._storage_suffix(None), 'ephemeral')
-        self.assertEqual(tpch._storage_suffix('Ceph_CSI'), 'ceph-csi')
+        self.assertEqual(cli_args.storage_suffix('cephcsi'), 'cephcsi')
+        self.assertEqual(cli_args.storage_suffix(None), 'ephemeral')
+        self.assertEqual(cli_args.storage_suffix('Ceph_CSI'), 'ceph-csi')
 
     def test_cell_gets_its_class(self):
         config = types.SimpleNamespace(storage={'storageClassName': 'cephcsi', 'storageSize': '50Gi'})
         config.set_storage = lambda **kwargs: config.storage.update(kwargs)
-        tpch._set_cell_storage(config, 'postgresql-2', {'storage_type': 'shared'})
+        cli_args.set_cell_storage(config, 'postgresql-2', {'storage_type': 'shared'})
         self.assertEqual(config.storage, {
             'storageConfiguration': 'postgresql-2', 'storageClassName': 'shared', 'storageSize': '50Gi'})
 
@@ -395,6 +396,31 @@ class LoadingProvenanceTest(unittest.TestCase):
         with mock.patch('builtins.print'):
             experiment._show_loading_provenance(
                 [{'name': 'databaseservice-1-1-1-1', 'configuration': 'DatabaseService-1', 'storage_reused': False}])
+        self.assertEqual(experiment._test_results, [
+            (None, 'Loading measured in this experiment '
+                   '(loading skipped by -sl, DBMS not managed by bexhoma: DatabaseService-1)')])
+
+    def test_a_benchmark_without_loading_phase_is_not_called_sl(self):
+        """Hardware switches loading off itself (workload loading_active False): no -sl in the reason."""
+        experiment = ExperimentBase.__new__(ExperimentBase)
+        experiment._test_results = []
+        experiment.workload = {'info': 'Hardware benchmark.', 'loading_active': False}
+        with mock.patch('builtins.print'):
+            experiment._show_loading_provenance(
+                [{'name': f'hardware-{n}-1-1-1', 'configuration': f'Hardware-{n}', 'storage_reused': False,
+                  'loading_deactivated': True} for n in (1, 2)])
+        self.assertEqual(experiment._test_results, [
+            (None, 'Loading measured in this experiment (no loading phase in this experiment)')])
+
+    def test_sl_keeps_its_reason_when_the_experiment_loads(self):
+        """-sl deactivates configurations, not the experiment's loading phase."""
+        experiment = ExperimentBase.__new__(ExperimentBase)
+        experiment._test_results = []
+        experiment.workload = {'info': 'TPC-H data is loaded.\nLoading is skipped.', 'loading_active': True}
+        with mock.patch('builtins.print'):
+            experiment._show_loading_provenance(
+                [{'name': 'databaseservice-1-1-1-1', 'configuration': 'DatabaseService-1', 'storage_reused': False,
+                  'loading_deactivated': True}])
         self.assertEqual(experiment._test_results, [
             (None, 'Loading measured in this experiment '
                    '(loading skipped by -sl, DBMS not managed by bexhoma: DatabaseService-1)')])

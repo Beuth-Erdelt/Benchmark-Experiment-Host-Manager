@@ -100,9 +100,7 @@ class CallStats:
         :return: E.g. ``23 kubectl calls 38.2s, 40 API requests 3.1s``.
         """
         kubectl_calls, kubectl_seconds, api_calls, api_seconds = self.snapshot(own_thread)
-        return "{} kubectl calls {:.1f}s, {} API requests {:.1f}s".format(
-            kubectl_calls - snapshot[0], kubectl_seconds - snapshot[1],
-            api_calls - snapshot[2], api_seconds - snapshot[3])
+        return f"{kubectl_calls - snapshot[0]} kubectl calls {kubectl_seconds - snapshot[1]:.1f}s, {api_calls - snapshot[2]} API requests {api_seconds - snapshot[3]:.1f}s"
 
 
 #: Counters of this process.
