@@ -613,7 +613,7 @@ class TpchExperimentTest(_ExperimentTestBase):
         citus, monetdb, mariadb = (next(c for c in configs.values() if c.docker == d)
                                    for d in ('Citus', 'MonetDB', 'MariaDB'))
         self.assertEqual(citus.ddl_parameters, {'num_worker_shards': '32', 'columnar_compression': 'default'})
-        self.assertEqual(mariadb.ddl_parameters, {'engine': 'InnoDB', 'histograms': 'off'})
+        self.assertEqual(mariadb.ddl_parameters, {'engine': 'InnoDB', 'histograms': 'off', 'row_format': 'default'})
         self.assertEqual(monetdb.ddl_parameters, {})
         for config in configs.values():
             self.assertNotIn('ddl_engine', config.eval_parameters)
@@ -629,7 +629,7 @@ class TpchExperimentTest(_ExperimentTestBase):
     def test_single_value_keeps_the_volume_name(self):
         configs = self.configs('-dbms', 'MariaDB', '-xddl', 'engine=Aria', '-rst', 'cephcsi', '-rss', '10Gi')
         (mariadb,) = configs.values()
-        self.assertEqual(mariadb.ddl_parameters, {'engine': 'Aria', 'histograms': 'off'})
+        self.assertEqual(mariadb.ddl_parameters, {'engine': 'Aria', 'histograms': 'off', 'row_format': 'default'})
         self.assertEqual(mariadb.eval_parameters['ddl_engine'], 'Aria')
         self.assertEqual(mariadb.get_storage_configuration(), 'mariadb-cephcsi')
 
