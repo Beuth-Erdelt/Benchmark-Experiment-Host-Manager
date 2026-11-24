@@ -117,8 +117,10 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
   CedarDB and MonetDB got `reset-ssb-flat.sql` (only `lineorder_flat`); their `reset-ssb.sql` names the five
   star-schema tables instead of the whole database; cluster.config uses `reset-ssb{schema_suffix}.sql` (b0d7d0c9).
   Cluster check open: `bexhoma ssb -dbms PostgreSQL PgDuckDB CedarDB MonetDB -xsv flat -sf 1 -ar run`.
-- [ ] 4.2 Container tenancy for MySQL/MariaDB (decided 2026-11-24: small, short runs first): try `bexhoma tpch -dbms MySQL -mtn 2 -mtb container -nlp 2 run`;
-  if it works, add `multi_tenancy: [container]` to their tpch entries in cluster.config.
+- [x] 4.2 Container tenancy for MySQL/MariaDB in TPC-H: done 2026-11-24. `multi_tenancy: ['container']` declared
+  in their tpch entries; small docs runs in test-docs-multitenant.sh (SF 1, 2 tenants, `-xii -xic -xis`), shown in
+  Example-Multi-Tenant.md: `docs_tpch_mysql_tenants_container` (1795529289) and
+  `docs_tpch_mariadb_tenants_container` (1795529977), all tests passed.
 - [x] 4.3 Dragonfly cluster with `-m`: "Monitoring metrics missing" (worker filesystem series absent for
   in-memory runs). Solved differently (user, checked 2026-11-23), no `sparse_metrics`: a missing series of a
   component whose pods were scraped is a `warning` reason, and a warning needs judgement but is no failure.
