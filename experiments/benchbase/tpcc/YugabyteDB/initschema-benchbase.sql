@@ -10,7 +10,13 @@
 --          The tables live in a database of their own, which every later script
 --          and BenchBase (BEXHOMA_DATABASE in benchbase.py) connect to.
 
-CREATE DATABASE benchbase;
+-- DDL parameter colocated (ddl-parameters.config): small puts warehouse, district and item into
+-- one colocated tablet; the large tables keep their own tablets (colocation = false)
+CREATE DATABASE benchbase
+\if {colocated}
+WITH colocation = true
+\endif
+;
 \c benchbase
 
 CREATE TABLE warehouse (
@@ -56,7 +62,11 @@ CREATE TABLE stock (
     CONSTRAINT stock_pkey PRIMARY KEY (s_w_id HASH, s_i_id ASC)
     -- stock->item FK not applied: not supported on YugabyteDB distributed tables
     -- stock->warehouse FK not applied: not supported on YugabyteDB distributed tables
-);
+)
+\if {colocated}
+WITH (colocation = false)
+\endif
+;
 
 CREATE TABLE district (
     d_w_id       INTEGER         NOT NULL,
@@ -98,7 +108,11 @@ CREATE TABLE customer (
     c_data          VARCHAR(500)    NOT NULL,
     CONSTRAINT customer_pkey PRIMARY KEY ((c_w_id,c_d_id) HASH,c_id)
     -- customer->district FK not applied: not supported on YugabyteDB distributed tables
-);
+)
+\if {colocated}
+WITH (colocation = false)
+\endif
+;
 
 CREATE TABLE history (
     h_c_id    INTEGER        NOT NULL,
@@ -111,7 +125,11 @@ CREATE TABLE history (
     h_data    VARCHAR(24)    NOT NULL
     -- history->customer FK not applied: not supported on YugabyteDB distributed tables
     -- history->district FK not applied: not supported on YugabyteDB distributed tables
-);
+)
+\if {colocated}
+WITH (colocation = false)
+\endif
+;
 
 CREATE TABLE oorder (
     o_w_id        INTEGER    NOT NULL,
@@ -125,7 +143,11 @@ CREATE TABLE oorder (
     CONSTRAINT oorder_o_w_id_o_d_id_o_c_id_o_id_key UNIQUE (o_w_id, o_d_id, o_c_id, o_id),
     CONSTRAINT oorder_pkey PRIMARY KEY ((o_w_id,o_d_id) HASH,o_id)
     -- oorder->customer FK not applied: not supported on YugabyteDB distributed tables
-);
+)
+\if {colocated}
+WITH (colocation = false)
+\endif
+;
 
 CREATE TABLE new_order (
     no_w_id  INTEGER  NOT NULL,
@@ -133,7 +155,11 @@ CREATE TABLE new_order (
     no_o_id  INTEGER  NOT NULL,
     CONSTRAINT new_order_pkey PRIMARY KEY ((no_w_id,no_d_id) HASH,no_o_id)
     -- new_order->oorder FK not applied: not supported on YugabyteDB distributed tables
-);
+)
+\if {colocated}
+WITH (colocation = false)
+\endif
+;
 
 CREATE TABLE order_line (
     ol_w_id         INTEGER        NOT NULL,
@@ -149,7 +175,11 @@ CREATE TABLE order_line (
     CONSTRAINT order_line_pkey PRIMARY KEY ((ol_w_id,ol_d_id) HASH, ol_o_id,ol_number)
     -- order_line->stock FK not applied: not supported on YugabyteDB distributed tables
     -- order_line->oorder FK not applied: not supported on YugabyteDB distributed tables
-);
+)
+\if {colocated}
+WITH (colocation = false)
+\endif
+;
 
 SELECT current_timestamp AS "Time after creation";
 

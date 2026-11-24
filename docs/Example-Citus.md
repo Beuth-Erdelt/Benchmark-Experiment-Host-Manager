@@ -1013,7 +1013,7 @@ DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)):
 | `tpcc_item` | BenchBase TPC-C | `reference`, `distributed` | `reference` | placement of the read-only item table: a copy on every worker, or spread by i_id, so that New-Order reads items remotely |
 | `columnar_compression` | TPC-H | `default`, `none`, `lz4`, `zstd`, `pglz` | `default` | compression of the columnar orders and lineitem (-xcol only; default: columnar.compression of the server, zstd): bytes read vs. CPU per scan |
 | `num_worker_replicas` | YCSB | integer | `1` | citus.shard_replication_factor of usertable (Citus default 1) |
-| `fillfactor` | YCSB | integer | `100` | fillfactor of usertable and its shards (PostgreSQL default 100, allowed 10-100): free space per page lets updates stay on the page (HOT updates) |
+| `fillfactor` | YCSB, BenchBase TPC-C | integer | `100` | fillfactor of usertable (YCSB) or of the updated tables (TPC-C) and their shards (PostgreSQL default 100, allowed 10-100): free space per page lets updates stay on the page (HOT updates) |
 
 `columnar_compression` applies only with `-xcol`.
 

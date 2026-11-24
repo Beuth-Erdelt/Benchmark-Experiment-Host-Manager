@@ -1,5 +1,11 @@
 # Plan: DDL parameters (placeholders in init scripts)
 
+**2026-11-24, branch silent-malfunctions: M4 done** (57038443 MySQL, b4aa99a4 MariaDB, 3c159c7b PostgreSQL
+and catalog 1.14.0, 73890dc4 ClickHouse, Citus/YugabyteDB see M4 below). Every new key and value was run on a
+local container of the template's image (MySQL 9.7.2, MariaDB 12.3.3, PostgreSQL 18, ClickHouse 26.8.34.13,
+the ClickHouseCluster scripts against a one-node local cluster), no cluster run yet. Open: M5, the cluster
+checks listed under M4.
+
 Status (2026-10-30): **M1, M1b, M2 committed (04a57300); M2b, M2c and the
 data-defining parameters committed (8616163b); M3 and `requires` committed
 (b730977a); test `Init scripts without errors` committed (21a877b7)**, the
@@ -23,7 +29,7 @@ one experiment per value with `--set` on the same `-rst` PVC).
 
 | # | Item | Kind | Section |
 |---|---|---|---|
-| M4 | Rest of the priority B keys. Not started: PostgreSQL `partition_by` (primary keys must contain the partition column), YugabyteDB `colocated` (BenchBase TPC-C now has its own database `benchbase`, created by initschema, so the key is one placeholder in `CREATE DATABASE`, not added yet). Done for one benchmark only, others open: `row_format` (YCSB; TPC-H, TPC-DS, SSB open), `stats_sample_pages` and MySQL `histograms` (TPC-H; TPC-DS, SSB open), PostgreSQL `index_method` (TPC-H; TPC-DS open), ClickHouse keys (TPC-H; TPC-DS, SSB open), Citus `fillfactor` (YCSB). Left out with a reason: ClickHouseCluster `sharding_key`, `codec` value `delta_zstd` (numeric columns only); `collation` stays YCSB only (decision 2026-10-30) | open | [Milestones](#milestones) |
+| M4 | **Done 2026-11-24** (see M4 below); cluster checks open. Was: rest of the priority B keys. Not started: PostgreSQL `partition_by` (primary keys must contain the partition column), YugabyteDB `colocated` (BenchBase TPC-C now has its own database `benchbase`, created by initschema, so the key is one placeholder in `CREATE DATABASE`, not added yet). Done for one benchmark only, others open: `row_format` (YCSB; TPC-H, TPC-DS, SSB open), `stats_sample_pages` and MySQL `histograms` (TPC-H; TPC-DS, SSB open), PostgreSQL `index_method` (TPC-H; TPC-DS open), ClickHouse keys (TPC-H; TPC-DS, SSB open), Citus `fillfactor` (YCSB). Left out with a reason: ClickHouseCluster `sharding_key`, `codec` value `delta_zstd` (numeric columns only); `collation` stays YCSB only (decision 2026-10-30) | open | [Milestones](#milestones) |
 | M5 | Not started: `covering_indexes`, `projections`, `pk_order`; results change: `string_type`, `numeric_type`; script variant: `primary_keys`, `distribution_key` (probably the Citus join limit of item 14); BenchBase creates the PostgreSQL TPC-C schema, so not by scripts: `hash_partitions`; more than scripts: `tablespace_index` | open | [More candidates](#more-candidates-not-yet-prioritized) |
 | – | Catalog at its margin: at most 53,990 characters (LF-counted; test keeps 2,000 below the 56,000 limit), now 53,975. Next key for PostgreSQL needs a shorter catalog or a higher limit | decision | [Milestones](#milestones) |
 | – | Docs rerun: TPC-H cluster logs in docs/Example-ClickHouse.md are from the old all-distributed layout | open | – |
@@ -743,6 +749,36 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
     it), now 53,975. The next key for PostgreSQL needs a shorter catalog or a
     higher limit.
   - Still open in M4: see [Open items](#open-items).
+
+  **Rest of M4, 2026-11-24** (branch silent-malfunctions, checked on local containers only):
+  - MySQL `row_format` (TPC-H, TPC-DS, SSB, `sql` empty for DYNAMIC, so the default reproduces the scripts),
+    `stats_sample_pages` and `histograms` (TPC-DS, SSB). TPC-DS and SSB `histograms` write the statements into
+    initstatistics, each line starting with `{histograms}` (`off` = `-- `), because SSB star and flat need
+    different statements and one key has one `sql` text. Local MySQL 9.7.2: COMPRESSED tables, 397 (TPC-DS),
+    52 (SSB), 36 (flat) histograms, no errors.
+  - MariaDB `row_format` (TPC-H requires `engine=InnoDB`, TPC-DS, SSB); local MariaDB 12.3.3 OK.
+  - PostgreSQL `index_method` TPC-DS (46 single-column indexes, multicolumn stay B-trees); `partition_by`
+    TPC-H (none/year): psql `\if` switches the schema (`PARTITION BY RANGE`, one partition per year
+    1992-1998 and a default one) and the constraints (primary keys with the date, no lineitem->orders foreign
+    key), so one key works in the `-schema` scripts too. All PostgreSQL-family scripts run through psql.
+    Catalog 1.14.0 (`partition_by`, 53,718 characters). Local PostgreSQL 18: 2 partitioned tables, 16
+    partitions, indexes (btree, brin, dedup off), constraints, statistics, reset, tenant scripts OK. PgDuckDB
+    and OrioleDB inherit the key; partitioned tables are untested there.
+  - ClickHouse(Cluster) SSB `order_lineorder` (date/key), and SSB and TPC-DS `index_granularity`,
+    `wide_parts`, `low_cardinality`, `codec` on the fact tables (TPC-DS: sales, returns, inventory;
+    `LowCardinality(Nullable(String))`). Not done, with reason: SSB partitions (star dates are Int32
+    yyyymmdd, flat dates are Date with a fixed yearly partition, one `sql` text cannot serve both); TPC-DS
+    sort and partition keys (the date columns are nullable surrogate keys). Local ClickHouse 26.8.34.13 OK,
+    the cluster scripts on a one-node local cluster.
+  - Citus BenchBase TPC-C `fillfactor` (updated tables: warehouse, district, customer, stock, oorder,
+    order_line). YugabyteDB BenchBase TPC-C `colocated` (off/small, psql `\if`: database `WITH colocation =
+    true`, the six large tables `WITH (colocation = false)`). Not checked on Citus or YugabyteDB; the `\if`
+    lines ran on PostgreSQL with `off`.
+  - Cluster checks to run (SF 1, `-tr`, each key away from its default): MySQL and MariaDB TPC-H/TPC-DS/SSB
+    `row_format=COMPRESSED` + MySQL `histograms=on stats_sample_pages=100`; PostgreSQL TPC-H
+    `partition_by=year` with `-xii -xic -xis -ar` and `-xrs 1` (refresh into partitions), PgDuckDB the same;
+    PostgreSQL TPC-DS `index_method=hash`; ClickHouse and ClickHouseCluster SSB (star and `-xsv flat`) and
+    TPC-DS with all four keys; Citus BenchBase `fillfactor=80`; YugabyteDB BenchBase `colocated=small`.
 - **M5** "More candidates" that need only placeholders or script variants (done: `wide_parts`, `btree_dedup`, extended statistics, statistics target, `tpcc_item`);
   those needing images, volumes or loader changes are a separate decision.
 
