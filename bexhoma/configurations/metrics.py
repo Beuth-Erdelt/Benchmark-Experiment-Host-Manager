@@ -182,8 +182,7 @@ class MetricsCollector:
             pods_worker = cfg.get_worker_pods(component=component)
             for pod in pods_worker:
                 cfg.pod_sut = pod
-                print("{:30s}: distributed system - get host info for worker {}".format(
-                    cfg.configuration, pod))
+                print(f"{cfg.configuration:30s}: distributed system - get host info for worker {pod}")
                 worker_infos = cfg.host.get_host_all(component=component, kind='statefulset')
                 # StatefulSets bexhoma did not render (YugabyteDB's Helm chart) record no args
                 worker_infos['args'] = cfg.deployment_infos['statefulset'][component].get('args', [])
@@ -198,8 +197,7 @@ class MetricsCollector:
             pods_worker = cfg.get_worker_pods(component=component)
             for pod in pods_worker:
                 cfg.pod_sut = pod
-                print("{:30s}: distributed system - get host info for worker {}".format(
-                    cfg.configuration, pod))
+                print(f"{cfg.configuration:30s}: distributed system - get host info for worker {pod}")
                 worker_infos = cfg.host.get_host_all(component=component, kind='deployment')
                 c['worker'][component].append(worker_infos)
         c['sut'] = []
@@ -208,8 +206,7 @@ class MetricsCollector:
         if len(pods) > 1:
             for pod in pods:
                 cfg.pod_sut = pod
-                print("{:30s}: distributed system - get host info for sut {}".format(
-                    cfg.configuration, pod))
+                print(f"{cfg.configuration:30s}: distributed system - get host info for sut {pod}")
                 sut_infos = cfg.host.get_host_all()
                 sut_infos['args'] = cfg.sut_startup_args
                 c['sut'].append(sut_infos)
@@ -286,12 +283,10 @@ class MetricsCollector:
             if 'metrics' in config_K8s['monitor']:
                 if 'deployment' in cfg.deployment_infos:
                     for name, deployment in cfg.deployment_infos['deployment'].items():
-                        print("{:30s}: needs monitoring (common metrics) for deployment {}".format(
-                            connection, name))
+                        print(f"{connection:30s}: needs monitoring (common metrics) for deployment {name}")
                 if 'statefulset' in cfg.deployment_infos:
                     for name, statefulset in cfg.deployment_infos['statefulset'].items():
-                        print("{:30s}: needs monitoring (custom metrics) for stateful set {}".format(
-                            connection, name))
+                        print(f"{connection:30s}: needs monitoring (custom metrics) for stateful set {name}")
                         metrics_type = f"metrics_{name}"
                         c['monitoring'][metrics_type] = {}
                         host_worker, gpuid_worker = worker_host_values(
@@ -324,11 +319,9 @@ class MetricsCollector:
                                 pods=pods_job))
             if cfg.monitor_app_active and 'monitor' in cfg.dockertemplate:
                 for component, application_monitoring in cfg.dockertemplate['monitor'].items():
-                    print("{:30s}: need application metrics for {}".format(
-                        cfg.configuration, component))
+                    print(f"{cfg.configuration:30s}: need application metrics for {component}")
                     application_metrics_name = application_monitoring['metrics']
-                    print("{:30s}: load application metrics of type {}".format(
-                        cfg.configuration, application_metrics_name))
+                    print(f"{cfg.configuration:30s}: load application metrics of type {application_metrics_name}")
                     if application_metrics_name in config_K8s['monitor']:
                         metrics_template = config_K8s['monitor'][application_metrics_name][
                             'metrics'].copy()
@@ -429,15 +422,15 @@ class MetricsCollector:
         if container != 'dbms':
             metric_example['query'] = metric_example['query'].replace(
                 'container_label_io_kubernetes_container_name="dbms"',
-                'container_label_io_kubernetes_container_name="{}"'.format(container))
+                f'container_label_io_kubernetes_container_name="{container}"')
             metric_example['query'] = metric_example['query'].replace(
                 'container_label_io_kubernetes_container_name!="dbms"',
-                'container_label_io_kubernetes_container_name!="{}"'.format(container))
+                f'container_label_io_kubernetes_container_name!="{container}"')
             metric_example['query'] = metric_example['query'].replace(
-                'container="dbms"', 'container="{}"'.format(container))
+                'container="dbms"', f'container="{container}"')
             metric_example['query'] = metric_example['query'].replace(
-                'container!="dbms"', 'container!="{}"'.format(container))
-        print("{:30s}: example metric {}".format(connection, metric_example))
+                'container!="dbms"', f'container!="{container}"')
+        print(f"{connection:30s}: example metric {metric_example}")
         cmd = (
             f'python metrics.py -r /results/ -db -mt {metrics_type} -ct {component_type}'
             f' -com {component} -cn {container} -c {connection} -cf {connection_file}'
@@ -456,7 +449,7 @@ class MetricsCollector:
         with open(filename_log, 'a', encoding='utf-8') as f:
             f.write(f"### {cmd}\n{output}\n")
         for missing in missing_metrics.parse_missing_metrics(output):
-            print("{:30s}: WARNING metric missing for {}: {}".format(connection, component_type, missing.title))
+            print(f"{connection:30s}: WARNING metric missing for {component_type}: {missing.title}")
         if upload:
             # re-upload connections.config because metrics.py may have overwritten it
             stdout = cfg.upload_experiment_file('connections.config')

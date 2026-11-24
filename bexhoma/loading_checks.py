@@ -143,8 +143,8 @@ def check_loader_pods(folder: str, appname: str, code: str, configurations: list
     original = {str(c).lower(): c for c in configurations}
     # longest name first: 'postgresql-1-0' before 'postgresql-1'
     names = sorted(original, key=len, reverse=True)
-    prefix = '{}-loading-'.format(appname.lower())
-    infix = '-{}-'.format(str(code).lower())
+    prefix = f'{appname.lower()}-loading-'
+    infix = f'-{str(code).lower()}-'
     checks: dict[str, LoaderCheck] = {}
     jobs_failed: dict[str, tuple[str, int]] = {}
     pods_failed_per_job: dict[str, int] = {}
@@ -171,7 +171,7 @@ def check_loader_pods(folder: str, appname: str, code: str, configurations: list
             if phase == 'Failed' or containers:
                 job = pod.rsplit('-', 1)[0]
                 pods_failed_per_job[job] = pods_failed_per_job.get(job, 0) + 1
-                details = ', '.join('{} exit {}{}'.format(c, e, ' ({})'.format(r) if r else '')
+                details = ', '.join('{} exit {}{}'.format(c, e, f' ({r})' if r else '')
                                     for c, r, e in containers)
                 check.failures.append('pod {} {}{}'.format(
                     pod, phase or 'failed', ': ' + details if details else ''))

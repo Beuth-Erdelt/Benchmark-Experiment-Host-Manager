@@ -25,6 +25,7 @@ import re
 import unittest
 
 from bexhoma.benchmarks.tpch import cli as tpch
+from bexhoma import cli_args
 from bexhoma import spec as catalog_spec
 
 _CATALOG_FILE = 'contracts/contract_catalog.yml'
@@ -60,7 +61,7 @@ def _tpch_cell_names(argv):
     def as_list(value):
         return [entry for entry in str(value).split(',') if entry]
 
-    cells = tpch._resource_cells(
+    cells = cli_args.resource_cells(
         as_list(args.request_cpu), as_list(args.limit_cpu),
         as_list(args.request_ram), as_list(args.limit_ram),
     )

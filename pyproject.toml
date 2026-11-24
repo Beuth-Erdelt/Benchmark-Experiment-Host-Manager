@@ -75,8 +75,7 @@ skip_empty = true
 # Checks the style rules of docs/CONTRIBUTING.md. Existing findings carry a
 # "# noqa: <rule>" comment, so CI fails only on new ones; the clean-ups of
 # dev/plan-software-quality.md (S2) remove those comments rule by rule.
-# Not selected yet, because they are fixed in bulk first (S2): E501 long lines,
-# UP032 .format() instead of f-string, F401 unused imports.
+# Not selected yet: E501 long lines (fixed only in modules that change anyway, S2).
 [tool.ruff]
 line-length = 120
 target-version = "py310"
@@ -88,9 +87,8 @@ select = [
     "E711", "E712", "E713", "E714", "E722", "E741",
     "A001", "A002",             # shadowed built-ins
     "B006",                     # mutable default argument
-    "UP031",                    # % formatting
+    "UP031", "UP032",           # % formatting, .format() instead of f-string
 ]
-ignore = ["F401"]
 
 # ---- Dynamic metadata sources ----
 [tool.setuptools.dynamic]

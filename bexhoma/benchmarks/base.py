@@ -13,7 +13,6 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
 import pandas as pd
-from bexhoma import evaluators, failure_timeline
 
 __all__ = ["Benchmark", "Section", "render_stdout"]
 

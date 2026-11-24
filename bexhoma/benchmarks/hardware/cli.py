@@ -93,7 +93,6 @@ def main() -> None:
     # start with old experiment?
     code = args.experiment
     # only create testbed or also run a benchmark?
-    mode = str(args.mode)  # noqa: F841
     # timeout of a benchmark
     timeout = int(args.timeout)
     # how often to repeat experiment?
@@ -116,7 +115,6 @@ def main() -> None:
         cluster = clusters.AWS(context=args.context)  # noqa: F405
     else:
         cluster = clusters.Kubernetes(context=args.context)  # noqa: F405
-    cluster_name = cluster.contextdata['clustername']  # noqa: F841
     if args.max_sut is not None:
         cluster.max_sut = int(args.max_sut)
     # set experiment

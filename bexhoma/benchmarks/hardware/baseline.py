@@ -42,7 +42,7 @@ import argparse
 from dataclasses import dataclass, field
 from typing import Any, Optional
 
-from bexhoma import configurations, experiments
+from bexhoma import configurations
 from bexhoma.cli_args import make_base_parser
 from bexhoma.benchmarks.hardware.experiment import HardwareExperiment
 
@@ -340,13 +340,13 @@ def _node_nodeselector_patch(node: str) -> str:
     :return: YAML patch string for :meth:`SutConfiguration.patch_benchmarking`.
     :rtype: str
     """
-    return """
+    return f"""
     spec:
       template:
         spec:
           nodeSelector:
             kubernetes.io/hostname: {node}
-    """.format(node=node)
+    """
 
 
 def run_hardware_baseline(

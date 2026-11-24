@@ -109,7 +109,7 @@ def initial_cluster_members(name: str, count: int, port: int, scheme: str = 'htt
     :rtype: str
     """
     return ",".join(
-        "{name}-{i}={scheme}://{name}-{i}.{name}:{port}".format(name=name, i=i, scheme=scheme, port=port)
+        f"{name}-{i}={scheme}://{name}-{i}.{name}:{port}"
         for i in range(count))
 
 
@@ -189,7 +189,7 @@ class LifecycleManager:
         name = cfg.generate_component_name(
             app=app, component=component,
             experiment=experiment, configuration=configuration)
-        cfg.logger.debug("LifecycleManager.create_monitoring({})".format(name))
+        cfg.logger.debug(f"LifecycleManager.create_monitoring({name})")
         return name
 
     def get_deployment_component(self, container: str) -> str:
@@ -237,24 +237,19 @@ class LifecycleManager:
         deployment_template = 'deploymenttemplate-bexhoma-prometheus.yml'
         name = self.create_monitoring(app, component, experiment, configuration)
         name_sut = self.create_monitoring(app, 'sut', experiment, configuration)
-        name_pool = self.create_monitoring(app, 'pool', experiment, configuration)  # noqa: F841
+        self.create_monitoring(app, 'pool', experiment, configuration)
         if 'monitor' in cfg.dockertemplate and 'component' in cfg.dockertemplate['monitor']:
             name_monitor_application_component = cfg.dockertemplate['monitor']['component']
         else:
             name_monitor_application_component = 'sut'
         name_monitor_application = self.create_monitoring(
             app, name_monitor_application_component, experiment, configuration)
-        name_service = cfg.generate_component_name(  # noqa: F841
-            app=app, component='sut',
-            experiment=cfg.get_experiment_name(), configuration=configuration)
-        name_worker = cfg.get_worker_name()
-        name_service_headless = name_worker  # noqa: F841
         if cfg.experiment.cluster.monitor_cluster_active:
-            print("{:30s}: wants to monitor all components in cluster".format(configuration))
+            print(f"{configuration:30s}: wants to monitor all components in cluster")
         if not cfg.experiment.cluster.monitor_cluster_exists:
-            print("{:30s}: cannot rely on preinstalled monitoring".format(configuration))
-        print("{:30s}: starts monitoring with prometheus pod".format(configuration))
-        deployment_experiment = cfg.experiment.path + '/{name}.yml'.format(name=name)
+            print(f"{configuration:30s}: cannot rely on preinstalled monitoring")
+        print(f"{configuration:30s}: starts monitoring with prometheus pod")
+        deployment_experiment = cfg.experiment.path + f'/{name}.yml'
         with open(cfg.experiment.cluster.yamlfolder + deployment_template) as stream:
             try:
                 result = yaml.safe_load_all(stream)
@@ -280,28 +275,24 @@ class LifecycleManager:
                         dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                         dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                         envs = dep['spec']['template']['spec']['containers'][0]['env']
-                        prometheus_config = """global:
+                        prometheus_config = f"""global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: '{master}'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_timeout}
+  - job_name: '{name_sut}'
+    scrape_interval: {cfg.prometheus_interval}
+    scrape_timeout: {cfg.prometheus_timeout}
     static_configs:
-      - targets: ['{master}:9300']
+      - targets: ['{name_sut}:9300']
   - job_name: 'monitor-gpu'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_timeout}
+    scrape_interval: {cfg.prometheus_interval}
+    scrape_timeout: {cfg.prometheus_timeout}
     static_configs:
-      - targets: ['{master}:9400']""".format(
-                            master=name_sut,
-                            prometheus_interval=cfg.prometheus_interval,
-                            prometheus_timeout=cfg.prometheus_timeout)
+      - targets: ['{name_sut}:9400']"""
                         if cfg.monitor_app_active:
                             if 'monitor' in cfg.dockertemplate:
                                 for monitor_component, application_monitoring in cfg.dockertemplate['monitor'].items():
-                                    print("{:30s}: need application monitoring for {}".format(
-                                        configuration, monitor_component))
+                                    print(f"{configuration:30s}: need application monitoring for {monitor_component}")
                                     if ('discovery' in application_monitoring
                                             and application_monitoring['discovery']
                                             and 'discovery_config' in application_monitoring
@@ -316,10 +307,10 @@ scrape_configs:
                                           and application_monitoring['blackbox']):
                                         app_monitor_targets = blackbox_targets(
                                             application_monitoring, cfg.tenant_per, cfg.num_tenants)
-                                        prometheus_config += """
+                                        prometheus_config += f"""
   - job_name: 'monitor-app'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_timeout}
+    scrape_interval: {cfg.prometheus_interval}
+    scrape_timeout: {cfg.prometheus_timeout}
     metrics_path: /probe
     static_configs:
       - targets: {app_monitor_targets}
@@ -331,11 +322,7 @@ scrape_configs:
         replacement: ${{1}}
         target_label: instance
       - target_label: __address__
-        replacement: {master}:9500""".format(
-                                            master=name_monitor_application,
-                                            prometheus_interval=cfg.prometheus_interval,
-                                            prometheus_timeout=cfg.prometheus_timeout,
-                                            app_monitor_targets=app_monitor_targets)
+        replacement: {name_monitor_application}:9500"""
                                     elif ('headless' in application_monitoring
                                           and application_monitoring['headless']):
                                         endpoints_cluster = []
@@ -343,22 +330,16 @@ scrape_configs:
                                         worker_idx = 0
                                         for endpoint in endpoints_worker:
                                             if endpoint in endpoints_cluster:
-                                                print("{:30s}: found worker endpoint (cAdvisor) for application monitoring {} (already monitored by cluster)".format(
-                                                    configuration, endpoint))
+                                                print(f"{configuration:30s}: found worker endpoint (cAdvisor) for application monitoring {endpoint} (already monitored by cluster)")
                                                 continue
-                                            print("{:30s}: found worker endpoint (cAdvisor) for application monitoring {} (added to Prometheus) of sidecar container".format(
-                                                configuration, endpoint))
-                                            prometheus_config += """
+                                            print(f"{configuration:30s}: found worker endpoint (cAdvisor) for application monitoring {endpoint} (added to Prometheus) of sidecar container")
+                                            prometheus_config += f"""
   - job_name: 'monitor-app-{endpoint}'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_timeout}
+    scrape_interval: {cfg.prometheus_interval}
+    scrape_timeout: {cfg.prometheus_timeout}
     metrics_path: /_status/vars
     static_configs:
-      - targets: ['{endpoint}:8080']""".format(  # noqa: F522
-                                                endpoint=endpoint,
-                                                client=worker_idx,
-                                                prometheus_interval=cfg.prometheus_interval,
-                                                prometheus_timeout=cfg.prometheus_timeout)
+      - targets: ['{endpoint}:8080']"""
                                             worker_idx += 1
                                     else:
                                         prometheus_config += """
@@ -378,39 +359,28 @@ scrape_configs:
                             service_name="bexhoma-service-monitoring-default")
                         ep_idx = 0
                         for endpoint in endpoints_cluster:
-                            print("{:30s}: found monitoring endpoint (cAdvisor) for monitoring {} (added to Prometheus) of daemonset".format(
-                                configuration, endpoint))
-                            prometheus_config += """
+                            print(f"{configuration:30s}: found monitoring endpoint (cAdvisor) for monitoring {endpoint} (added to Prometheus) of daemonset")
+                            prometheus_config += f"""
   - job_name: 'monitor-gpu-{endpoint}'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_timeout}
+    scrape_interval: {cfg.prometheus_interval}
+    scrape_timeout: {cfg.prometheus_timeout}
     static_configs:
-      - targets: ['{endpoint}:9300']""".format(  # noqa: F522
-                                endpoint=endpoint,
-                                client=ep_idx,
-                                prometheus_interval=cfg.prometheus_interval,
-                                prometheus_timeout=cfg.prometheus_timeout)
+      - targets: ['{endpoint}:9300']"""
                             ep_idx += 1
                         if len(endpoints_cluster) == 0:
                             endpoints_worker = cfg.get_worker_endpoints()
                             worker_ep_idx = 0
                             for endpoint in endpoints_worker:
                                 if endpoint in endpoints_cluster:
-                                    print("{:30s}: found worker endpoint (cAdvisor) for monitoring GPUs of {} (already monitored by cluster)".format(
-                                        configuration, endpoint))
+                                    print(f"{configuration:30s}: found worker endpoint (cAdvisor) for monitoring GPUs of {endpoint} (already monitored by cluster)")
                                     continue
-                                print("{:30s}: found worker endpoint (cAdvisor) for monitoring GPUs of {} (added to Prometheus) of sidecar container".format(
-                                    configuration, endpoint))
-                                prometheus_config += """
+                                print(f"{configuration:30s}: found worker endpoint (cAdvisor) for monitoring GPUs of {endpoint} (added to Prometheus) of sidecar container")
+                                prometheus_config += f"""
   - job_name: 'monitor-gpu-{endpoint}'
-    scrape_interval: {prometheus_interval}
-    scrape_timeout: {prometheus_timeout}
+    scrape_interval: {cfg.prometheus_interval}
+    scrape_timeout: {cfg.prometheus_timeout}
     static_configs:
-      - targets: ['{endpoint}:9300']""".format(  # noqa: F522
-                                    endpoint=endpoint,
-                                    client=worker_ep_idx,
-                                    prometheus_interval=cfg.prometheus_interval,
-                                    prometheus_timeout=cfg.prometheus_timeout)
+      - targets: ['{endpoint}:9300']"""
                                 worker_ep_idx += 1
                         for env_idx, env_item in enumerate(envs):
                             if env_item['name'] == 'BEXHOMA_SERVICE':
@@ -419,7 +389,7 @@ scrape_configs:
                                 dep['spec']['template']['spec']['containers'][0]['env'][env_idx]['value'] = configuration
                             if env_item['name'] == 'BEXHOMA_WORKERS':
                                 dep['spec']['template']['spec']['containers'][0]['env'][env_idx]['value'] = prometheus_config
-                            cfg.logger.debug('LifecycleManager.start_monitoring({})'.format(str(env_item)))
+                            cfg.logger.debug(f'LifecycleManager.start_monitoring({str(env_item)})')
                         if 'monitoring' in cfg.nodes:
                             if 'nodeSelector' not in dep['spec']['template']['spec']:
                                 dep['spec']['template']['spec']['nodeSelector'] = dict()
@@ -611,7 +581,7 @@ scrape_configs:
         ports = cfg.experiment.cluster.get_ports_of_service(
             app=app, component=component,
             experiment=experiment, configuration=configuration)
-        forward = ['kubectl', '--context {context}'.format(context=context),
+        forward = ['kubectl', f'--context {context}',
                    'port-forward', 'service/' + name]
         forward.extend(ports)
         return " ".join(forward)
@@ -684,15 +654,15 @@ scrape_configs:
 
         def reset_and_remove_pvc(pvc):
             if cfg.removes_storage_now():
-                print("{:30s}: storage {} should be removed".format(configuration, pvc))
+                print(f"{configuration:30s}: storage {pvc} should be removed")
                 cfg.experiment.cluster.delete_pvc(pvc)
                 cfg.wait(10)
                 pvcs_remaining = cfg.experiment.cluster.get_pvc(pvc=pvc)
                 while len(pvcs_remaining) > 0:
-                    print("{:30s}: storage {} still exists".format(configuration, pvc))
+                    print(f"{configuration:30s}: storage {pvc} still exists")
                     cfg.wait(10)
                     pvcs_remaining = cfg.experiment.cluster.get_pvc(pvc=pvc)
-                print("{:30s}: storage {} is gone".format(configuration, pvc))
+                print(f"{configuration:30s}: storage {pvc} is gone")
 
         def check_storage_class_of_existing_pvc(volume):
             # The class is part of the volume name (get_storage_configuration),
@@ -711,12 +681,12 @@ scrape_configs:
         def get_labels_from_loaded_pvc():
             if use_storage and not use_ramdisk and not cfg.removes_storage_now():
                 list_of_pvc = cfg.get_list_of_pvc()
-                print("{:30s}: list of pvcs {}".format(cfg.configuration, list_of_pvc))
+                print(f"{cfg.configuration:30s}: list of pvcs {list_of_pvc}")
                 volume = list_of_pvc[0]
                 pvcs_labels = cfg.experiment.cluster.get_pvc_labels(pvc=volume)
                 cfg.logger.debug(pvcs_labels)
                 if len(pvcs_labels) > 0:
-                    print("{:30s}: storage {} exists".format(configuration, volume))
+                    print(f"{configuration:30s}: storage {volume} exists")
                     check_storage_class_of_existing_pvc(volume)
                     pvc_labels = pvcs_labels[0]
                     cfg.check_volume_shape(volume, pvc_labels)
@@ -749,11 +719,10 @@ scrape_configs:
                 cfg.apply_volume_parameters(getattr(cfg, 'volume_labels', {}))
                 dep['spec']['template']['metadata']['labels']['storage_exists'] = "True"
                 for label in labels_on_existing_pvc:
-                    print("{:30s}: copied label {} = {}".format(
-                        configuration, label, labels_on_existing_pvc[label]))
+                    print(f"{configuration:30s}: copied label {label} = {labels_on_existing_pvc[label]}")
                     dep['spec']['template']['metadata']['labels'][label] = (
                         labels_on_existing_pvc[label])
-                print("{:30s}: loading is set to finished".format(configuration))
+                print(f"{configuration:30s}: loading is set to finished")
                 cfg.loading_active = False
                 cfg.monitor_loading = False
 
@@ -768,13 +737,12 @@ scrape_configs:
         # (even when identical) instead of the SUT being the one component
         # whose manifest never reflects which run it belongs to.
         experiment_run = str(cfg.num_experiment_to_apply_done + 1)
-        deployment_experiment = cfg.experiment.path + '/{name}-{experiment_run}.yml'.format(
-            name=name, experiment_run=experiment_run)
+        deployment_experiment = cfg.experiment.path + f'/{name}-{experiment_run}.yml'
         sut_manifest_file = cfg.experiment.cluster.yamlfolder + template
         deploys, ssets, pvcs = extract_component_labels(sut_manifest_file)
-        print("{:30s}: deployments {}".format(configuration, deploys))
-        print("{:30s}: stateful sets {}".format(configuration, ssets))
-        print("{:30s}: pvcs {}".format(configuration, pvcs))
+        print(f"{configuration:30s}: deployments {deploys}")
+        print(f"{configuration:30s}: stateful sets {ssets}")
+        print(f"{configuration:30s}: pvcs {pvcs}")
         if 'deployment' not in cfg.deployment_infos:
             cfg.deployment_infos['deployment'] = {}
         for deployment in deploys:
@@ -813,15 +781,13 @@ scrape_configs:
             if use_storage and not use_ramdisk:
                 list_of_workers_pvcs = []
                 for worker in range(num_worker_component):
-                    worker_full_name = "bxw-{name_worker}-{worker_number}".format(
-                        name_worker=worker_name, worker_number=worker)
+                    worker_full_name = f"bxw-{worker_name}-{worker}"
                     list_of_workers_pvcs.append(worker_full_name)
                 cfg.deployment_infos['statefulset'][stateful_set]['pvc'] = list_of_workers_pvcs
         cfg.logger.debug(cfg.deployment_infos)
         labels_on_existing_pvc = get_labels_from_loaded_pvc()
         if use_storage and not use_ramdisk:
-            print("{:30s}: found labels on pvc = {}".format(
-                configuration, labels_on_existing_pvc))
+            print(f"{configuration:30s}: found labels on pvc = {labels_on_existing_pvc}")
         cfg.service = name
         name_worker = cfg.get_worker_name(component='worker')
         name_service_headless = name_worker
@@ -832,7 +798,7 @@ scrape_configs:
             app=app, component='pool',
             experiment=cfg.get_experiment_name(), configuration=configuration)
         name_store = cfg.get_worker_name(component='store')
-        cfg.logger.debug('LifecycleManager.start_sut(name={})'.format(name))
+        cfg.logger.debug(f'LifecycleManager.start_sut(name={name})')
         deployments = cfg.experiment.cluster.get_deployments(
             app=app, component=component,
             experiment=cfg.get_experiment_name(), configuration=configuration)
@@ -854,58 +820,47 @@ scrape_configs:
                     name=cfg.tls_secret, service=name,
                     namespace=cfg.experiment.cluster.namespace, labels=labels)
                 cfg.experiment.cluster.apply_secret(secret)
-                print("{:30s}: TLS secret = {}".format(configuration, cfg.tls_secret))
+                print(f"{configuration:30s}: TLS secret = {cfg.tls_secret}")
         else:
             cfg.tls_secret = ''
-        print("{:30s}: name of SUT pods = {}".format(configuration, name))
-        print("{:30s}: name of SUT service = {}".format(configuration, name))
+        print(f"{configuration:30s}: name of SUT pods = {name}")
+        print(f"{configuration:30s}: name of SUT service = {name}")
         if use_storage:
             if use_ramdisk:
-                print("{:30s}: uses RAM disk".format(configuration))
+                print(f"{configuration:30s}: uses RAM disk")
             else:
-                print("{:30s}: name of SUT PVC name = {}".format(configuration, name_pvc))
+                print(f"{configuration:30s}: name of SUT PVC name = {name_pvc}")
         if cfg.num_worker > 0:
-            print("{:30s}: name of worker pods = {}".format(configuration, name_worker))
-            print("{:30s}: name of worker service headless = {}".format(
-                configuration, name_worker))
+            print(f"{configuration:30s}: name of worker pods = {name_worker}")
+            print(f"{configuration:30s}: name of worker service headless = {name_worker}")
         env = cfg.sut_parameters
         store_args = cfg.dockertemplate['store_args'] if 'store_args' in cfg.dockertemplate else True
         worker_port = (":" + str(cfg.dockertemplate['worker_port'])
                        if 'worker_port' in cfg.dockertemplate else "")
         list_of_workers = []
         for worker in range(cfg.num_worker):
-            worker_full_name = "{name_worker}-{worker_number}.{worker_service}{worker_port}".format(
-                name_worker=name_worker, worker_number=worker,
-                worker_service=name_service_headless, worker_port=worker_port)
+            worker_full_name = f"{name_worker}-{worker}.{name_service_headless}{worker_port}"
             list_of_workers.append(worker_full_name)
         list_of_workers_as_string = ",".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST'] = list_of_workers_as_string
         list_of_workers_as_string_space = " ".join(list_of_workers)
         env['BEXHOMA_WORKER_LIST_SPACE'] = list_of_workers_as_string_space
-        env['BEXHOMA_WORKER_NAME'] = "{name_worker}".format(name_worker=name_worker)
-        env['BEXHOMA_WORKER_SERVICE'] = "{worker_service}".format(
-            worker_service=name_service_headless)
+        env['BEXHOMA_WORKER_NAME'] = f"{name_worker}"
+        env['BEXHOMA_WORKER_SERVICE'] = f"{name_service_headless}"
         env['BEXHOMA_SUT_NAME'] = name
         if cfg.num_worker > 0:
-            worker_full_name = "{name_worker}-{worker_number}.{worker_service}".format(
-                name_worker=name_worker, worker_number=0,
-                worker_service=name_service_headless)
+            worker_full_name = f"{name_worker}-{0}.{name_service_headless}"
             env['BEXHOMA_WORKER_FIRST'] = worker_full_name
             env['STATEFULSET_NAME'] = name_worker
-            env['BEXHOMA_STORE_NAME'] = "{name_store}".format(  # noqa: F522
-                name_store=name_store, worker_service=name_store)
-            env['BEXHOMA_STORE_SERVICE'] = "{worker_service}".format(  # noqa: F522
-                name_store=name_store, worker_service=name_store)
+            env['BEXHOMA_STORE_NAME'] = name_store
+            env['BEXHOMA_STORE_SERVICE'] = name_store
             list_of_stores = []
             for worker in range(cfg.num_worker):
-                store_full_name = "{name_store}-{worker_number}.{worker_service}{worker_port}".format(
-                    name_store=name_store, worker_number=worker,
-                    worker_service=name_store, worker_port=worker_port)
+                store_full_name = f"{name_store}-{worker}.{name_store}{worker_port}"
                 list_of_stores.append(store_full_name)
             list_of_stores_as_string = ",".join(list_of_stores)
             if cfg.num_worker > 0:
-                store_full_name = "{name_store}-{worker_number}.{worker_service}".format(
-                    name_store=name_store, worker_number=0, worker_service=name_store)
+                store_full_name = f"{name_store}-{0}.{name_store}"
                 env['BEXHOMA_STORE_FIRST'] = store_full_name
             env['BEXHOMA_STORE_LIST'] = list_of_stores_as_string
             initial_cluster = cfg.dockertemplate.get('initial_cluster')
@@ -921,20 +876,18 @@ scrape_configs:
             num_worker_component = cfg.get_num_worker(component=statefulset_name)
             list_of_workers = []
             for worker in range(num_worker_component):
-                worker_full_name = "{name_worker}-{worker_number}.{worker_service}{worker_port}".format(
-                    name_worker=name_worker, worker_number=worker,
-                    worker_service=name_service_headless, worker_port=worker_port)
+                worker_full_name = f"{name_worker}-{worker}.{name_service_headless}{worker_port}"
                 list_of_workers.append(worker_full_name)
             list_of_workers_as_string = ",".join(list_of_workers)
-            env['BEXHOMA_{}_LIST'.format(statefulset_name.upper())] = list_of_workers_as_string
+            env[f'BEXHOMA_{statefulset_name.upper()}_LIST'] = list_of_workers_as_string
             list_of_workers_as_string_space = " ".join(list_of_workers)
-            env['BEXHOMA_{}_LIST_SPACE'.format(statefulset_name.upper())] = (
+            env[f'BEXHOMA_{statefulset_name.upper()}_LIST_SPACE'] = (
                 list_of_workers_as_string_space)
-            env['BEXHOMA_{}_NAME'.format(statefulset_name.upper())] = (
-                "{name_worker}".format(name_worker=name_worker))
-            env['BEXHOMA_{}_REPLICAS'.format(statefulset_name.upper())] = str(num_worker_component)
-            env['BEXHOMA_{}_SERVICE'.format(statefulset_name.upper())] = (
-                "{worker_service}".format(worker_service=name_service_headless))
+            env[f'BEXHOMA_{statefulset_name.upper()}_NAME'] = (
+                f"{name_worker}")
+            env[f'BEXHOMA_{statefulset_name.upper()}_REPLICAS'] = str(num_worker_component)
+            env[f'BEXHOMA_{statefulset_name.upper()}_SERVICE'] = (
+                f"{name_service_headless}")
         with open(sut_manifest_file) as stream:
             try:
                 result = yaml.safe_load_all(stream)
@@ -954,8 +907,7 @@ scrape_configs:
                 elif use_ramdisk:
                     del result[key]
                 else:
-                    cfg.logger.debug('LifecycleManager.start_sut(PVC={},{})'.format(
-                        pvc, name_pvc))
+                    cfg.logger.debug(f'LifecycleManager.start_sut(PVC={pvc},{name_pvc})')
                     dep['metadata']['name'] = name_pvc
                     dep['metadata']['labels']['loaded'] = "False"
                     dep['metadata']['labels']['app'] = app
@@ -1045,7 +997,7 @@ scrape_configs:
                 if 'initContainers' in dep['spec']['template']['spec']:
                     for i_container, container in enumerate(
                             dep['spec']['template']['spec']['initContainers']):
-                        cfg.logger.debug('LifecycleManager.start_sut(create_manifest_statefulset({}))'.format(env))
+                        cfg.logger.debug(f'LifecycleManager.start_sut(create_manifest_statefulset({env}))')
                         if ('env' not in dep['spec']['template']['spec']['initContainers'][i_container]
                                 or dep['spec']['template']['spec']['containers'][i_container]['env'] is None):
                             dep['spec']['template']['spec']['initContainers'][i_container]['env'] = []
@@ -1063,7 +1015,7 @@ scrape_configs:
                         dep['spec']['template']['spec']['containers']):
                     cfg.deployment_infos['statefulset'][statefulset_type]['containers'].append(
                         container['name'])
-                    cfg.logger.debug('LifecycleManager.start_sut(create_manifest_statefulset({}))'.format(env))
+                    cfg.logger.debug(f'LifecycleManager.start_sut(create_manifest_statefulset({env}))')
                     if ('env' not in dep['spec']['template']['spec']['containers'][i_container]
                             or dep['spec']['template']['spec']['containers'][i_container]['env'] is None):
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = []
@@ -1142,7 +1094,7 @@ scrape_configs:
                         # else: not a data component (see set_data_components), keeps the template's resources
                         # per-component overrides win in both cases (set_resources(requests_<component>=...))
                         for kind in ('requests', 'limits'):
-                            override = cfg.resources.get('{}_{}'.format(kind, statefulset_type)) or {}
+                            override = cfg.resources.get(f'{kind}_{statefulset_type}') or {}
                             for resource_name, resource_value in override.items():
                                 c['resources'][kind][resource_name] = resource_value
                     elif (not cfg.monitoring_active
@@ -1170,8 +1122,7 @@ scrape_configs:
                     else:
                         list_of_workers_pvcs = []
                         for worker in range(cfg.get_num_worker(component=statefulset_type)):
-                            worker_full_name = "bxw-{name_worker}-{worker_number}".format(
-                                name_worker=name_worker_stateful_set, worker_number=worker)
+                            worker_full_name = f"bxw-{name_worker_stateful_set}-{worker}"
                             list_of_workers_pvcs.append(worker_full_name)
                         cfg.deployment_infos['statefulset'][statefulset_type]['pvc'] = (
                             list_of_workers_pvcs)
@@ -1180,25 +1131,21 @@ scrape_configs:
                         for statefulset_name_pvc in list_of_workers_pvcs:
                             pvc_exists = cfg.experiment.cluster.pvc_exists(statefulset_name_pvc)
                             if pvc_exists > 0:
-                                print("{:30s}: storage {} exists".format(
-                                    configuration, statefulset_name_pvc))
+                                print(f"{configuration:30s}: storage {statefulset_name_pvc} exists")
                                 old_pvc_exist = True
                                 if remove_old_pvcs:
-                                    print("{:30s}: storage {} should be removed".format(
-                                        configuration, statefulset_name_pvc))
+                                    print(f"{configuration:30s}: storage {statefulset_name_pvc} should be removed")
                                     cfg.experiment.cluster.delete_pvc(statefulset_name_pvc)
                         if old_pvc_exist and remove_old_pvcs:
                             cfg.wait(10)
                             for statefulset_name_pvc in list_of_workers_pvcs:
                                 pvc_exists = cfg.experiment.cluster.pvc_exists(statefulset_name_pvc)
                                 while pvc_exists:
-                                    print("{:30s}: storage {} still exists".format(
-                                        configuration, statefulset_name_pvc))
+                                    print(f"{configuration:30s}: storage {statefulset_name_pvc} still exists")
                                     cfg.wait(10)
                                     pvc_exists = cfg.experiment.cluster.pvc_exists(
                                         statefulset_name_pvc)
-                                print("{:30s}: storage {} is gone".format(
-                                    configuration, statefulset_name_pvc))
+                                print(f"{configuration:30s}: storage {statefulset_name_pvc} is gone")
                         result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['app'] = app
                         result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['component'] = statefulset_type
                         result[key]['spec']['volumeClaimTemplates'][0]['metadata']['labels']['configuration'] = storageConfiguration
@@ -1218,7 +1165,7 @@ scrape_configs:
                         if (len(cfg.storage['storageSize']) > 0
                                 and cfg.receives_experiment_resources(statefulset_type)):
                             dep['spec']['volumeClaimTemplates'][0]['spec']['resources']['requests']['storage'] = cfg.storage['storageSize']
-                        storage_override = cfg.resources.get('storage_{}'.format(statefulset_type))
+                        storage_override = cfg.resources.get(f'storage_{statefulset_type}')
                         if storage_override:
                             dep['spec']['volumeClaimTemplates'][0]['spec']['resources']['requests']['storage'] = storage_override
             ########################################
@@ -1236,7 +1183,7 @@ scrape_configs:
                 dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                 for i_container, container in enumerate(
                         dep['spec']['template']['spec']['containers']):
-                    cfg.logger.debug('LifecycleManager.start_sut(add_env({}))'.format(env))
+                    cfg.logger.debug(f'LifecycleManager.start_sut(add_env({env}))')
                     if ('env' not in dep['spec']['template']['spec']['containers'][i_container]
                             or dep['spec']['template']['spec']['containers'][i_container]['env'] is None):
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = list()
@@ -1329,7 +1276,7 @@ scrape_configs:
                         dep['spec']['template']['spec']['containers']))):
                     cfg.deployment_infos['deployment'][deployment_type]['containers'].append(
                         container['name'])
-                    cfg.logger.debug('LifecycleManager.start_sut(create_manifest_deployment({}))'.format(env))
+                    cfg.logger.debug(f'LifecycleManager.start_sut(create_manifest_deployment({env}))')
                     if ('env' not in dep['spec']['template']['spec']['containers'][i_container]
                             or dep['spec']['template']['spec']['containers'][i_container]['env'] is None):
                         dep['spec']['template']['spec']['containers'][i_container]['env'] = []

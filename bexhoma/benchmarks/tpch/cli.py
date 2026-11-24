@@ -18,21 +18,12 @@ from bexhoma.system_descriptors import (IncompatibleBenchmark, dbms_choices, def
                                         load_dockers, refresh_template, storage_prefix, unsupported_dimension)
 from bexhoma.experiments.system_builder import (build_configuration, entry_parameters, loading_layouts,
                                                 tenancy_error, tenant_ids)
-from bexhoma.cli_args import storage_suffix as _storage_suffix, set_cell_storage as _set_cell_storage
 # resource sweeps (-rc/-lc/-rr/-lr/-rst lists) are expanded for every DBMS by
 # ExperimentBase.expand_resource_cells(); kept here under its old name
-from bexhoma.cli_args import resource_cells as _resource_cells
 from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
-import time
-from timeit import default_timer
-import datetime
-import subprocess
-import psutil
-import math
-import re
 from bexhoma.benchmarks.tpch.experiment import TpchExperiment
 
 
@@ -156,7 +147,6 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
     # should results be tested for validity?
-    test_result = args.test_result  # noqa: F841
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
@@ -191,11 +181,6 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     if aws:
         cluster = clusters.AWS(context=args.context)  # noqa: F405
         # scale up
-        node_sizes = {  # noqa: F841
-            'auxiliary': 1,
-            'sut-mid': 1,
-            'benchmarker': 1
-        }
         #cluster.scale_nodegroups(node_sizes)
     else:
         cluster = clusters.Kubernetes(context=args.context)  # noqa: F405
@@ -229,8 +214,6 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     num_loading_pods = experiment.get_parameter_as_list('num_loading_pods')
     num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
     num_loading_split = experiment.get_parameter_as_list('num_loading_split')
-    num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')  # noqa: F841
-    num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')  # noqa: F841
     # resource sweep: -rc/-lc/-rr/-lr/-rst may each carry a comma-separated
     # list; experiment.process() then clones every configuration built below
     # once per cell, e.g. -rr 32Gi,64Gi -lr 32Gi,64Gi gives PostgreSQL-1 and

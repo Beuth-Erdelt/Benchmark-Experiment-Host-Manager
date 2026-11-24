@@ -13,17 +13,12 @@ See LICENSE for details.
 import pandas as pd
 import os
 import re
-import matplotlib.pyplot as plt
 pd.set_option("display.max_rows", None)
 pd.set_option('display.max_colwidth', None)
-import pickle  # noqa: E402
 import json  # noqa: E402
 import traceback  # noqa: E402
-import ast  # noqa: E402
-from dbmsbenchmarker import monitor  # noqa: E402
 from datetime import datetime  # noqa: E402
 import glob  # noqa: E402
-from pathlib import Path  # noqa: E402
 
 from bexhoma.evaluators.base import natural_sort  # noqa: E402
 from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
@@ -151,7 +146,7 @@ class BenchbaseEvaluator(LogEvaluator):
                         df["efficiency"] = 0.45 * 60. * 100. * df['Goodput (requests/second)'] / 12.86 / df['sf']
                     return df
                 else:
-                    print("no results found in log file {}".format(filename))
+                    print(f"no results found in log file {filename}")
                     return df_header
             else:
                 return df_header
@@ -178,7 +173,7 @@ class BenchbaseEvaluator(LogEvaluator):
         else:
             has_result = pd.Series(False, index=df.index)
         for pod in df.loc[~has_result, 'pod'] if 'pod' in df.columns else []:
-            print("no benchbase results for pod {}, left out of the summary".format(pod))
+            print(f"no benchbase results for pod {pod}, left out of the summary")
         return df[has_result]
     def benchmarking_set_datatypes(self, df):
         """
@@ -239,7 +234,7 @@ class BenchbaseEvaluator(LogEvaluator):
             'tenant_id': 'int',
         })
         return df_typed
-    def benchmarking_aggregate_by_parallel_pods(self, df, columns=["phase"]):  # noqa: B006
+    def benchmarking_aggregate_by_parallel_pods(self, df, columns=None):
         """
         Aggregates parallel-pod result rows into one row per group.
 
@@ -262,6 +257,8 @@ class BenchbaseEvaluator(LogEvaluator):
         :return: Aggregated DataFrame with one row per group.
         :rtype: pandas.DataFrame
         """
+        if columns is None:
+            columns = ["phase"]
         df_aggregated = pd.DataFrame()
         for key, grp in df.groupby(columns):
             aggregate = {
@@ -388,7 +385,7 @@ class BenchbaseEvaluator(LogEvaluator):
             df_total = pd.DataFrame()
         num_logs = 0
         for file_logs in list_logs:
-            pattern = 'bexhoma-benchmarker-*-{}.log'.format(file_logs)
+            pattern = f'bexhoma-benchmarker-*-{file_logs}.log'
             matching_files = find_matching_files(self.path, pattern)
             for file in matching_files:
                 num_logs = num_logs + 1

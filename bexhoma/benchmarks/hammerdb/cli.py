@@ -17,10 +17,6 @@ from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
-import time
-from timeit import default_timer
-import datetime
-import math
 from bexhoma.benchmarks.hammerdb.experiment import HammerdbExperiment
 
 
@@ -78,7 +74,6 @@ def main() -> None:
     # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
     # should results be tested for validity?
-    test_result = args.test_result  # noqa: F841
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
@@ -107,11 +102,6 @@ def main() -> None:
     if aws:
         cluster = clusters.AWS(context=args.context)  # noqa: F405
         # scale up
-        node_sizes = {  # noqa: F841
-            'auxiliary': 1,
-            'sut-mid': 1,
-            'benchmarker': 1
-        }
         #cluster.scale_nodegroups(node_sizes)
     else:
         cluster = clusters.Kubernetes(context=args.context)  # noqa: F405
@@ -134,7 +124,6 @@ def main() -> None:
     # remove running dbms
     #experiment.clean()
     experiment.prepare_testbed(command_args)
-    num_loading_pods = experiment.get_parameter_as_list('num_loading_pods')  # noqa: F841
     num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
     num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
     num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')

@@ -93,9 +93,9 @@ class HostProbe:
         try:
             s.connect((ip, port))
             found = True
-            print("Somebody is answering at %s:%d" % (ip, port))  # noqa: UP031
+            print(f"Somebody is answering at {ip}:{port}")
         except Exception:
-            print("Nobody is answering yet at %s:%d" % (ip, port))  # noqa: UP031
+            print(f"Nobody is answering yet at {ip}:{port}")
         finally:
             s.close()
         return found
@@ -441,8 +441,7 @@ class HostProbe:
                     experiment=self._config.code)
                 pvc = deployment['pvc'][0]
                 for pod in pods:
-                    print("{:30s}: get size via pod {} and write to pvc {}".format(
-                        self._config.configuration, pod, pvc))
+                    print(f"{self._config.configuration:30s}: get size via pod {pod} and write to pvc {pvc}")
                     if component == 'sut' and pod in measured:
                         size, used = measured[pod]
                     else:
@@ -455,8 +454,7 @@ class HostProbe:
                     if 'pvc' not in statefulset:
                         continue
                     pvc = statefulset['pvc'][i]
-                    print("{:30s}: get size via pod {} and write to pvc {}".format(
-                        self._config.configuration, pod, pvc))
+                    print(f"{self._config.configuration:30s}: get size via pod {pod} and write to pvc {pvc}")
                     size, used = self.get_host_volume(
                         pod=pod, mount_path=statefulset.get('mount_path', ''))
                     self._label_pvc(pvc, size, used)
@@ -471,8 +469,7 @@ class HostProbe:
         written = self.__dict__.setdefault('_pvc_labels_written', {})
         if written.get(pvc) == (size, used):
             return
-        fullcommand = 'label pvc {} --overwrite volume_size="{}" volume_used="{}"'.format(
-            pvc, size, used)
+        fullcommand = f'label pvc {pvc} --overwrite volume_size="{size}" volume_used="{used}"'
         if self._config.experiment.cluster.kubectl(fullcommand) is not None:
             written[pvc] = (size, used)
 
