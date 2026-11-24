@@ -45,7 +45,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_postgresql_collector_tenants_schema.log | Example-Collectors.md | 2026-11-05 | 0.11.12 | 2646s |  |
 | passed | docs_benchbase_postgresql_epinions_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 415s |  |
 | passed | docs_benchbase_postgresql_hyadapt_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 403s |  |
-| passed | docs_benchbase_postgresql_keytime.log | Example-Benchbase.md | 2026-11-14 | 0.11.17 | 403s |  |
+| passed | docs_benchbase_postgresql_keytime.log | Example-Benchbase.md | 2026-11-24 | 0.12.3 | 10083s |  |
 | passed | docs_benchbase_postgresql_load.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 301s |  |
 | passed | docs_benchbase_postgresql_monitoring.log | Example-Benchbase.md | 2026-11-23 | 0.12.3 | 977s |  |
 | passed | docs_benchbase_postgresql_noop_simple.log | Example-Benchbase-Others.md | 2026-11-14 | 0.11.17 | 410s |  |
