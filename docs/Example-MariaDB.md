@@ -1437,7 +1437,7 @@ DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)):
 |---|---|---|---|---|
 | `engine` | TPC-H | `InnoDB`, `Aria`, `MyISAM` | `InnoDB` | storage engine of all tables (for ColumnStore use -dbms MariaDBCS) |
 | `histograms` | TPC-H, SSB, TPC-DS | `off`, `on` | `off` | engine-independent statistics with histograms (ANALYZE TABLE ... PERSISTENT FOR ALL, JSON_HB, a full scan per table) in initstatistics (-xis); off: plain ANALYZE TABLE, which collects none (use_stat_tables = PREFERABLY_FOR_QUERIES, MariaDB 12.3) |
-| `row_format` | YCSB | `default`, `DYNAMIC`, `COMPRESSED` | `default` | InnoDB row format of usertable (default: innodb_default_row_format, DYNAMIC): COMPRESSED stores pages zlib-compressed: less I/O, more CPU |
+| `row_format` | YCSB, TPC-H, TPC-DS, SSB | `default`, `DYNAMIC`, `COMPRESSED` | `default` | InnoDB row format of the tables (TPC-H: only with `engine=InnoDB`) (default: innodb_default_row_format, DYNAMIC): COMPRESSED stores pages zlib-compressed: less I/O, more CPU |
 | `collation` | YCSB | `default`, `utf8mb4_bin`, `latin1` | `default` | character set and collation of usertable (default: the database default): cost of comparing the VARCHAR(255) key (binary vs. linguistic) and bytes per character |
 
 ### Load Durability
