@@ -417,6 +417,55 @@ class LoadDurabilityTest(unittest.TestCase):
         # the experiment loop aborts in its next pass
         self.assertIn('fsync=on', experiment()._loading_abort_reason(cfg, None))
 
+    def _coordinator(self, uid_now: str, uid_first: str):
+        cluster = mock.Mock()
+        cluster.get_pods.return_value = ['sut-pod']
+        cluster.get_pod_status.return_value = 'Running'
+        cluster.get_pod_restart_counts.return_value = {}
+        cluster.get_pod_uid.return_value = uid_now
+        cfg = SimpleNamespace(
+            appname='bexhoma', configuration='DBMS-1',
+            experiment=SimpleNamespace(code='42', cluster=cluster), logger=mock.Mock(),
+            loading_started=False, loading_finished=False, loading_active=True,
+            loading_failed=[], loading_failed_fatal='', sut_pod_uid_at_loading_start=uid_first,
+            apply_load_durability=mock.Mock(), load_durability_conflicts=mock.Mock(return_value=[]))
+        coordinator = LoadingCoordinator(cfg)
+        coordinator.check = mock.Mock()
+        coordinator.load_data = mock.Mock()
+        coordinator.load_data_asynch = mock.Mock()
+        return coordinator, cfg
+
+    def test_replaced_sut_pod_is_not_loaded_again(self) -> None:
+        """P10: a SUT pod replaced after its loading started aborts the repetition (1795557106)."""
+        import contextlib
+        import io
+        coordinator, cfg = self._coordinator(uid_now='uid-new', uid_first='uid-old')
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertFalse(coordinator.start_exec())
+        coordinator.load_data.assert_not_called()
+        self.assertIn('replaced after its loading started (UID uid-old -> uid-new)', cfg.loading_failed_fatal)
+        self.assertEqual(cfg.sut_pod_uid_at_loading_start, 'uid-old')
+        self.assertIn('replaced', experiment()._loading_abort_reason(cfg, None))
+
+    def test_first_load_records_the_uid(self) -> None:
+        for uid_first in ('', 'uid-1'):
+            # '': the first load; 'uid-1': the same pod again, no replacement
+            coordinator, cfg = self._coordinator(uid_now='uid-1', uid_first=uid_first)
+            cfg.initscript = []
+            # loading goes on: stop the test where the scripts would run
+            coordinator.load_data.side_effect = InterruptedError
+            with self.subTest(uid_first=uid_first), contextlib_quiet(), self.assertRaises(InterruptedError):
+                coordinator.start_exec()
+            self.assertEqual(cfg.sut_pod_uid_at_loading_start, 'uid-1')
+            self.assertEqual(cfg.loading_failed_fatal, '')
+
+
+def contextlib_quiet():
+    """Swallow what the code under test prints."""
+    import contextlib
+    import io
+    return contextlib.redirect_stdout(io.StringIO())
+
 
 class UnschedulableLoaderTest(unittest.TestCase):
     """A loading pod the scheduler cannot place aborts the load instead of blocking the barrier forever."""

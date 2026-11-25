@@ -514,8 +514,21 @@ class LoadingCoordinator:
                 # restarts during the load make it a failed load (see check())
                 cfg.sut_restarts_at_loading_start = sum(
                     cfg.experiment.cluster.get_pod_restart_counts(pod_sut).values())
-                # a pod replaced during the load has a new UID, but no restarts
-                cfg.sut_pod_uid_at_loading_start = cfg.experiment.cluster.get_pod_uid(pod_sut)
+                # a pod replaced during the load has a new UID, but no restarts.
+                # Its labels are gone, so it looks "not loaded yet" and would be
+                # loaded again while the old loader jobs may still write through the
+                # service: abort instead. The first UID of the repetition is kept
+                # (reset_sut() clears it between repetitions).
+                uid = cfg.experiment.cluster.get_pod_uid(pod_sut)
+                first_uid = getattr(cfg, 'sut_pod_uid_at_loading_start', '')
+                if first_uid and uid and uid != first_uid:
+                    reason = (f"SUT pod {pod_sut} replaced after its loading started "
+                              f"(UID {first_uid} -> {uid}); it is not loaded again")
+                    print(f"{cfg.configuration:30s}: {reason}")
+                    self.fail_loading_fatally(reason)
+                    return False
+                if not first_uid:
+                    cfg.sut_pod_uid_at_loading_start = uid
                 cfg.apply_load_durability()
                 conflicts = cfg.load_durability_conflicts()
                 if conflicts:
