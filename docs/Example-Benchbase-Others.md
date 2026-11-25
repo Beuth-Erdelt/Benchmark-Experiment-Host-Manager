@@ -53,7 +53,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_twitter_simple.log
@@ -72,7 +71,6 @@ This
     * `-nbp`: first stream 1 pod
     * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
-* tests if results match workflow (`-tr`)
 * shows a summary
 
 ### Evaluate Results
@@ -213,7 +211,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 1600Gi \
@@ -534,7 +531,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 100 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_chbenchmark_simple.log
@@ -553,7 +549,6 @@ This
     * `-nbp`: first stream 1 pod
     * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
-* tests if results match workflow (`-tr`)
 * shows a summary
 
 ### Evaluate Results
@@ -692,7 +687,6 @@ bexhoma benchbase \
   -nbp 1,2,5,10 \
   -nbt 100 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 100Gi \
@@ -939,7 +933,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_c.log
@@ -958,7 +951,6 @@ This
     * `-nbp`: first stream 1 pod, second stream 2 pods
     * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
-* tests if results match workflow (`-tr`)
 * shows a summary
 
 ### Evaluate Results
@@ -1115,7 +1107,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_a.log
@@ -1275,7 +1266,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_b.log
@@ -1437,7 +1427,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_d.log
@@ -1577,7 +1566,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_e.log
@@ -1717,7 +1705,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_f.log
@@ -1897,7 +1884,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_auctionmark_simple.log
@@ -2044,7 +2030,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_epinions_simple.log
@@ -2185,7 +2170,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_hyadapt_simple.log
@@ -2329,7 +2313,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_noop_simple.log
@@ -2471,7 +2454,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_otmetrics_simple.log
@@ -2615,7 +2597,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_resourcestresser_simple.log
@@ -2764,7 +2745,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_seats_simple.log
@@ -2908,7 +2888,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_sibench_simple.log
@@ -3053,7 +3032,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_smallbank_simple.log
@@ -3198,7 +3176,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_tatp_simple.log
@@ -3343,7 +3320,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_voter_simple.log
@@ -3487,7 +3463,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_wikipedia_simple.log

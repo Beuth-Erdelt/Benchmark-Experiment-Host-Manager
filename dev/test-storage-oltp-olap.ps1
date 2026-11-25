@@ -95,7 +95,6 @@ function Test-OltpDepthSweep {
       -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -131,7 +130,6 @@ function Test-OltpRandomPageCost {
       -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -168,7 +166,6 @@ function Test-OltpWalSyncFsync {
       -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -204,7 +201,6 @@ function Test-OltpWalSyncFdatasync {
       -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -244,7 +240,6 @@ function Test-OltpWalGroupCommit {
       -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 150Gi                       <# fio makes one -xts-sized file per backend; 32*4G=128G peak, so 50Gi is not enough #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -281,7 +276,6 @@ function Test-OltpContentionProxy {
       -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -313,7 +307,7 @@ function Test-OltpContentionEngineSweep {
     sync is deliberately excluded: fio's sync ioengine has no queue, so
     combining it with -xfid 64 is an invalid pairing, not a real third
     comparison point - the first run of this test produced 0.00 for every
-    metric on both storage classes and tripped -tr's zero-IOPS check (see
+    metric on both storage classes and tripped the summary's zero-IOPS check (see
     images/hardware/benchmarker/run_fio.sh, which now logs fio's exit code
     and stderr and validates its JSON before parsing, so a repeat of this
     mistake fails loudly instead of silently). A synchronous
@@ -340,7 +334,6 @@ function Test-OltpContentionEngineSweep {
       -m                               <# collect SUT resource metrics #> `
       -mc                              <# collect node-level cluster metrics: check for a CPU-side signal #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -378,7 +371,6 @@ function Test-OltpContentionDepthSweep {
       -m                               <# collect SUT resource metrics #> `
       -mc                              <# collect node-level cluster metrics: check for a CPU-side signal #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -417,7 +409,6 @@ function Test-OltpContentionMixSweep {
       -m                               <# collect SUT resource metrics #> `
       -mc                              <# collect node-level cluster metrics: check for a CPU-side signal #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -468,7 +459,6 @@ function Test-OlapSeqreadBlocksizeSweep {
       -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -505,7 +495,6 @@ function Test-OlapSeqreadDepthSweep {
       -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -543,7 +532,6 @@ function Test-OlapParallelScan {
       -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# fio makes one -xts-sized file per worker; 8*4G=32G peak, so 50Gi is enough #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -578,7 +566,6 @@ function Test-OlapBulkWrite {
       -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -613,7 +600,6 @@ function Test-OlapContentionProxy {
       -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `
@@ -659,7 +645,6 @@ function Test-OlapBulkWriteCliffDepth {
       -m                               <# collect SUT resource metrics #> `
       -mc                              <# collect node-level cluster metrics: check for a CPU-side signal #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so every command starts from a clean volume #> `
       -rss 50Gi                        <# size of the persistent volume claim #> `
       -rst $storageClass               <# storage class for persistent volumes #> `

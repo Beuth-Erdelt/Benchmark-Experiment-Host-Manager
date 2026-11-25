@@ -33,7 +33,6 @@ source ./scripts/testfunctions.sh
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
 # -xop 1                        number of operations for the benchmark phase (in millions)
-# -tr                           verify result meets basic sanity requirements
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
@@ -55,7 +54,6 @@ bexhoma ycsb \
   -nbp 1 \
   -nbt 128 \
   -xop 1 \
-  -tr \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -88,7 +86,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single  sf=1  nbp=1"
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
@@ -113,7 +110,6 @@ bexhoma ycsb \
   -m \
   -ma \
   -mc \
-  -tr \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -146,7 +142,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single monitoring  sf=3
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
@@ -173,7 +168,6 @@ bexhoma ycsb \
   -m \
   -ma \
   -mc \
-  -tr \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -209,7 +203,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single PVC  sf=1  nbp=1
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
@@ -235,7 +228,6 @@ bexhoma ycsb \
   -m \
   -ma \
   -mc \
-  -tr \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -266,7 +258,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3  sf=1  nbp=1"
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
@@ -293,7 +284,6 @@ bexhoma ycsb \
   -m \
   -ma \
   -mc \
-  -tr \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -324,7 +314,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3 replication 3
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
@@ -353,7 +342,6 @@ bexhoma ycsb \
   -m \
   -ma \
   -mc \
-  -tr \
   -ar \
   -lr 16Gi \
   -rr 16Gi \

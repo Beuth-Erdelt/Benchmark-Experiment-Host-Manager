@@ -34,7 +34,6 @@ source ./scripts/testfunctions.sh
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -53,7 +52,6 @@ bexhoma tpch \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -84,7 +82,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB simple  sf=1"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -105,7 +102,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -136,7 +132,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB monitoring  sf=1"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -159,7 +154,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rsr \
@@ -185,7 +179,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB throughput  sf=1  ne=1,2
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rss 150Gi                    size of the persistent volume claim
@@ -205,7 +198,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 150Gi \
@@ -235,7 +227,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB ramdisk  sf=10"
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -254,7 +245,6 @@ bexhoma tpcds \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -280,7 +270,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB simple  sf=1"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -301,7 +290,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -327,7 +315,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB monitoring  sf=1"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -350,7 +337,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rsr \
@@ -378,7 +364,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB throughput  sf=1  ne=1,
 # -nbp 1                        number of benchmarking pods
 # -nbt 160                      total benchmarking threads
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
@@ -397,7 +382,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 160 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
@@ -464,7 +448,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB persistency  sf=16  
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
@@ -485,7 +468,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
@@ -555,7 +537,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB complex  sf=16  nc=2
 # -nbp 1                        number of benchmarking pods
 # -nbt 16                       total benchmarking threads
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
@@ -572,7 +553,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
@@ -688,7 +668,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MariaDB complex  sf=16  nc=2 
 # -nbp 1                        number of benchmarking pods
 # -nbt 64                       total benchmarking threads
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 64Gi                      RAM requested for the SUT container
@@ -710,7 +689,6 @@ bexhoma ycsb \
   -nbp 1 \
   -nbt 64 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
@@ -927,7 +905,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB monitoring  sf=1"
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -943,7 +920,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \

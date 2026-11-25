@@ -34,7 +34,7 @@
 #       Citus:             synchronous_commit off on coordinator and every worker -> on again
 #   - durable with --set (TPC-H MySQL): flush 1 during the load, back to the --set value 2
 #     (initconstraints adds the FKs with foreign_key_checks=0; before, durable was OOM-killed there)
-#   - -tr passes, no SUT restarts
+#   - all tests pass, no SUT restarts
 #   - loading times: relaxed < durable expected; unsafe <= relaxed
 #   - TPC-H PostgreSQL unsafe on -rst with -nc 2: repetition 2 finds the loaded volume
 #     (no durability scripts, loading inherited) and the data is complete
@@ -68,7 +68,6 @@ source ./scripts/testfunctions.sh
 # -xis                          recompute statistics after loading
 # -xld durable                  load durability: crash-safe load
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -82,7 +81,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld durable \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_durable.log
 
@@ -101,7 +99,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PostgreSQL durable"
 # -xis                          recompute statistics after loading
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -115,7 +112,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_relaxed.log
 
@@ -134,7 +130,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PostgreSQL relaxed"
 # -xis                          recompute statistics after loading
 # -xld unsafe                   load durability
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -148,7 +143,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_unsafe.log
 
@@ -167,7 +161,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PostgreSQL unsafe"
 # -xis                          recompute statistics after loading
 # -xld unsafe                   load durability
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          remove an existing volume first, so the load runs
 # -rss 10Gi                     volume size
 # -rst $BEXHOMA_STORAGE_CLASS   storage class
@@ -184,7 +177,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 10Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -206,7 +198,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PostgreSQL unsafe on 
 # -xis                          recompute statistics after loading
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -mtb schema                   one schema per tenant
 # -mtn 2                        number of tenants
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -222,7 +213,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -mtb schema \
   -mtn 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -243,7 +233,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PostgreSQL schema ten
 # -xis                          recompute statistics after loading
 # -xld unsafe                   load durability
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -257,7 +246,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_pgduckdb_unsafe.log
 
@@ -278,7 +266,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PgDuckDB unsafe"
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_flush_log_at_trx_commit=2 relaxed benchmark, visible in the command
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=10G same pool as the -xld comparison 1792540834/1792542350 (template: 8G)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -294,7 +281,6 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_flush_log_at_trx_commit=2 \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=10G \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mysql_durable.log
 
@@ -313,7 +299,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability MySQL durable"
 # -xis                          recompute statistics after loading
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -327,7 +312,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mysql_relaxed.log
 
@@ -346,7 +330,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability MySQL relaxed"
 # -xis                          recompute statistics after loading
 # -xld unsafe                   load durability
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -360,7 +343,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mysql_unsafe.log
 
@@ -379,7 +361,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability MySQL unsafe"
 # -xis                          recompute statistics after loading
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -393,7 +374,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mariadb_relaxed.log
 
@@ -413,7 +393,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability MariaDB relaxed"
 # -xis                          recompute statistics after loading
 # -xld unsafe                   load durability
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -428,7 +407,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_citus_unsafe.log
 
@@ -455,7 +433,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability Citus unsafe"
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       timeout per query in seconds
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -470,7 +447,6 @@ bexhoma tpcds \
   -xld relaxed \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpcds_postgresql_relaxed.log
 
@@ -490,7 +466,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS durability PostgreSQL relaxed"
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       timeout per query in seconds
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -505,7 +480,6 @@ bexhoma tpcds \
   -xld relaxed \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpcds_mysql_relaxed.log
 
@@ -525,7 +499,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS durability MySQL relaxed"
 # -xld unsafe                   load durability
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       timeout per query in seconds
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -540,7 +513,6 @@ bexhoma tpcds \
   -xld unsafe \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpcds_mysql_unsafe.log
 
@@ -570,7 +542,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS durability MySQL unsafe"
 # -xld relaxed                  load durability (default)
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -590,7 +561,6 @@ bexhoma ycsb \
   -xld relaxed \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_postgresql_relaxed.log
 
@@ -613,7 +583,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability PostgreSQL relaxed"
 # -xld unsafe                   load durability
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -633,7 +602,6 @@ bexhoma ycsb \
   -xld unsafe \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_pgbouncer_unsafe.log
 
@@ -656,7 +624,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability PGBouncer unsafe"
 # -xld durable                  load durability
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -676,7 +643,6 @@ bexhoma ycsb \
   -xld durable \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_orioledb_durable.log
 
@@ -699,7 +665,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability OrioleDB durable"
 # -xld unsafe                   load durability
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -719,7 +684,6 @@ bexhoma ycsb \
   -xld unsafe \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_orioledb_unsafe.log
 
@@ -742,7 +706,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability OrioleDB unsafe"
 # -xld relaxed                  load durability (default)
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -762,7 +725,6 @@ bexhoma ycsb \
   -xld relaxed \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_mysql_relaxed.log
 
@@ -785,7 +747,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability MySQL relaxed"
 # -xld unsafe                   load durability
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -805,7 +766,6 @@ bexhoma ycsb \
   -xld unsafe \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_mysql_unsafe.log
 
@@ -831,7 +791,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability MySQL unsafe"
 # -xld relaxed                  load durability (default)
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -854,7 +813,6 @@ bexhoma ycsb \
   -xld relaxed \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_citus_relaxed.log
 
@@ -881,7 +839,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability Citus relaxed"
 # -xld relaxed                  load durability (default)
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 bexhoma ycsb \
   -dbms TiDB \
   -sf 1 \
@@ -902,7 +859,6 @@ bexhoma ycsb \
   -xld relaxed \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   run &>$LOG_DIR/docs_durability_ycsb_tidb_relaxed.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability TiDB relaxed"
@@ -926,7 +882,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability TiDB relaxed"
 # -nbt 4                        threads per benchmarking pod
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -941,7 +896,6 @@ bexhoma hammerdb \
   -nbt 4 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_postgresql_relaxed.log
 
@@ -959,7 +913,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB durability PostgreSQL relaxed
 # -nbt 4                        threads per benchmarking pod
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -974,7 +927,6 @@ bexhoma hammerdb \
   -nbt 4 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_mysql_relaxed.log
 
@@ -992,7 +944,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB durability MySQL relaxed"
 # -nbt 4                        threads per benchmarking pod
 # -xld unsafe                   load durability
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1007,7 +958,6 @@ bexhoma hammerdb \
   -nbt 4 \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_mysql_unsafe.log
 
@@ -1026,7 +976,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB durability MySQL unsafe"
 # -nw 3                         number of worker nodes
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1042,7 +991,6 @@ bexhoma hammerdb \
   -nw 3 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_citus_relaxed.log
 
@@ -1068,7 +1016,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB durability Citus relaxed"
 # -nbt 40                       threads per benchmarking pod
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1084,7 +1031,6 @@ bexhoma benchbase \
   -nbt 40 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_postgresql_relaxed.log
 
@@ -1106,7 +1052,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability TPC-C PostgreSQL 
 # -xnpo 64                      maximum outgoing connections per PGBouncer instance
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1125,7 +1070,6 @@ bexhoma benchbase \
   -xnpo 64 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_pgbouncer_relaxed.log
 
@@ -1144,7 +1088,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability TPC-C PGBouncer r
 # -nbt 40                       threads per benchmarking pod
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1160,7 +1103,6 @@ bexhoma benchbase \
   -nbt 40 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_mysql_relaxed.log
 
@@ -1179,7 +1121,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability TPC-C MySQL relax
 # -nbt 40                       threads per benchmarking pod
 # -xld unsafe                   load durability
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1195,7 +1136,6 @@ bexhoma benchbase \
   -nbt 40 \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_mysql_unsafe.log
 
@@ -1217,7 +1157,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability TPC-C MySQL unsaf
 # -nws 48                       number of shards
 # -xld relaxed                  load durability (default)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1236,7 +1175,6 @@ bexhoma benchbase \
   -nws 48 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_citus_relaxed.log
 
@@ -1256,7 +1194,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability TPC-C Citus relax
 # -nbt 40                       threads per benchmarking pod
 # -xld unsafe                   load durability
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1273,7 +1210,6 @@ bexhoma benchbase \
   -nbt 40 \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_twitter_postgresql_unsafe.log
 

@@ -45,7 +45,6 @@ bexhoma ssb \
   -xdt \
   -ms 1 \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -58,7 +57,6 @@ This
 * creates indexes, primary and foreign keys and statistics after loading (`-xii -xic -xis`)
 * measures the data transfer volume of each query (`-xdt`)
 * runs one DBMS at a time (`-ms`), with a timeout of 1200 s per query (`-t`)
-* tests the result for errors and mismatches (`-tr`)
 * limits and requests 64 GiB RAM for the SUT (`-lr`, `-rr`), with a 50 GiB volume if storage is used (`-rss`)
 * removes the SUT at the end (`-ks no`)
 
@@ -228,7 +226,7 @@ mismatches across DBMS) and tests.
 MonetDB, with the same post-load steps:
 
 ```bash
-bexhoma ssb -dbms MonetDB -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms MonetDB -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
 ```
 
 <details>
@@ -381,7 +379,7 @@ ClickHouse, which has no secondary indexes, constraints or statistics scripts (t
 is part of the schema):
 
 ```bash
-bexhoma ssb -dbms ClickHouse -sf 1 -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms ClickHouse -sf 1 -nlp 8 -xdt -ms 1 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
 ```
 
 <details>
@@ -535,7 +533,7 @@ PgDuckDB runs PostgreSQL with the pg_duckdb extension and uses PostgreSQL's scri
 With `-xdfe` the queries run in DuckDB's engine, otherwise in PostgreSQL's:
 
 ```bash
-bexhoma ssb -dbms PgDuckDB -xdfe -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms PgDuckDB -xdfe -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
 ```
 
 <details>
@@ -694,7 +692,7 @@ table); `-xic` adds the foreign keys. The flat queries have a MySQL variant with
 `CAST(... AS INTEGER)`, which MySQL does not know:
 
 ```bash
-bexhoma ssb -dbms MySQL -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms MySQL -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
 ```
 
 <details>
@@ -846,7 +844,7 @@ No warnings
 </details>
 
 ```bash
-bexhoma ssb -dbms MariaDB -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms MariaDB -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
 ```
 
 <details>
@@ -1001,7 +999,7 @@ No warnings
 CedarDB speaks the PostgreSQL protocol, and runs the same post-load steps:
 
 ```bash
-bexhoma ssb -dbms CedarDB -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms CedarDB -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
 ```
 
 The test script [`scripts/test-docs-cedardb.sh`](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/scripts/test-docs-cedardb.sh) runs SSB on CedarDB; its logs are not part of the repository, see [Example: Other DBMS](Example-Other-DBMS.md#cedardb).
@@ -1021,7 +1019,7 @@ coordinator, which sends the rows to the nodes. For the dimensions there are two
 ClickHouseCluster with replicated dimensions:
 
 ```bash
-bexhoma ssb -dbms ClickHouseCluster -nw 3 -sf 1 -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms ClickHouseCluster -nw 3 -sf 1 -nlp 8 -xdt -ms 1 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
 ```
 
 <details>
@@ -1215,7 +1213,7 @@ No warnings
 ClickHouseCluster with distributed dimensions:
 
 ```bash
-bexhoma ssb -dbms ClickHouseCluster -nw 3 -xdim distributed -sf 1 -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms ClickHouseCluster -nw 3 -xdim distributed -sf 1 -nlp 8 -xdt -ms 1 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
 ```
 
 <details>
@@ -1409,7 +1407,7 @@ No warnings
 Citus with reference tables:
 
 ```bash
-bexhoma ssb -dbms Citus -nw 3 -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms Citus -nw 3 -sf 1 -xii -xic -xis -nlp 8 -xdt -ms 1 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
 ```
 
 <details>
@@ -1636,7 +1634,7 @@ Loading tools: `psql \COPY` (PostgreSQL, PgDuckDB, Citus), `mclient COPY` (Monet
 ## Flat Table
 
 ```bash
-bexhoma ssb -dbms PostgreSQL MonetDB ClickHouse -sf 1 -xsv flat -xii -xis -nlp 8 -xdt -ms 10 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms PostgreSQL MonetDB ClickHouse -sf 1 -xsv flat -xii -xis -nlp 8 -xdt -ms 10 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
 ```
 
 With `-xsv flat` the generator pods build `lineorder_flat.tbl` from their lineorder chunk and
@@ -1860,7 +1858,7 @@ No warnings
 ## Random Parameters
 
 ```bash
-bexhoma ssb -dbms PostgreSQL -sf 1 -xqv random -xrcp -ne 1,2 -xii -xic -xis -nlp 8 -xdt -ms 10 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
+bexhoma ssb -dbms PostgreSQL -sf 1 -xqv random -xrcp -ne 1,2 -xii -xic -xis -nlp 8 -xdt -ms 10 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no run
 ```
 
 With `-xqv random` each query draws its constants: a year, month, week, region, nation, city,
@@ -2070,7 +2068,7 @@ No warnings
 ## Use Persistent Storage
 
 ```bash
-bexhoma ssb -dbms PostgreSQL -sf 1 -nc 2 -xii -xic -xis -nlp 8 -xdt -ms 10 -t 1200 -tr -lr 64Gi -rr 64Gi -rsr -rss 50Gi -rst <storage class> -ks no run
+bexhoma ssb -dbms PostgreSQL -sf 1 -nc 2 -xii -xic -xis -nlp 8 -xdt -ms 10 -t 1200 -lr 64Gi -rr 64Gi -rsr -rss 50Gi -rst <storage class> -ks no run
 ```
 
 As for TPC-H: the first run loads the data into a persistent volume, the second run (`-nc 2`)
@@ -2364,7 +2362,6 @@ bexhoma ssb \
   -mc \
   -ms 1 \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 100Gi \
@@ -3259,7 +3256,7 @@ the replicated dimensions, then runs `sync` on every shard.
 ## Profiling
 
 ```bash
-bexhoma ssb -dbms PostgreSQL MonetDB ClickHouse -sf 1 -nlp 8 -xdt -ms 10 -t 1200 -tr -lr 64Gi -rr 64Gi -rss 50Gi -ks no profiling
+bexhoma ssb -dbms PostgreSQL MonetDB ClickHouse -sf 1 -nlp 8 -xdt -ms 10 -t 1200 -lr 64Gi -rr 64Gi -rss 50Gi -ks no profiling
 ```
 
 Runs count, count distinct, minimum and maximum of the key and date columns of each table

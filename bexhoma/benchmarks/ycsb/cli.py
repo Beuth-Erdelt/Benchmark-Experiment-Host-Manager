@@ -6,6 +6,7 @@ Copyright (C) 2021 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
+import sys
 from bexhoma import *  # noqa: F403
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor, threads_per_pod_error
 from bexhoma.experiments.system_builder import (build_configuration, entry_of, entry_parameters, pooling_variants,
@@ -59,7 +60,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def run(args: argparse.Namespace, on_experiment_built=None) -> None:
+def run(args: argparse.Namespace, on_experiment_built=None) -> int:
     """
     Build and run a YCSB experiment from an already-parsed argparse Namespace.
 
@@ -76,6 +77,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
         experiment right after its result folder is created but before
         ``prepare_testbed()``/``process()`` run. Never called for a plain
         ``python ycsb.py ...`` invocation.
+    :return: exit code of :meth:`~bexhoma.experiments.base.ExperimentBase.process`
+        (``1`` if a test of the summary failed)
+    :rtype: int
     """
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
@@ -275,7 +279,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     ##############
     ### branch for workflows
     ##############
-    experiment.process()
+    return experiment.process()
 
 
 def main() -> None:
@@ -291,8 +295,7 @@ def main() -> None:
         reason = threads_per_pod_error(threads, pods, threads_option, pods_option)
         if reason:
             parser.error(reason)
-    run(args)
-    exit()
+    sys.exit(run(args))
 
 
 if __name__ == '__main__':

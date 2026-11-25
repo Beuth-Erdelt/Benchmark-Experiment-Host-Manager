@@ -85,7 +85,7 @@ Monitor progress with `bexhoma status` while running.
 ### YCSB
 
 ```bash
-bexhoma ycsb run -ms 1 -tr -sf 1 -xwl a -dbms PostgreSQL \
+bexhoma ycsb run -ms 1 -sf 1 -xwl a -dbms PostgreSQL \
   -xtb 16384 -nlp 1 -nlt 64 -xnlf 4 -nbp 1,8 -nbt 64 -xnbf 2,3
 ```
 
@@ -96,7 +96,7 @@ See more details in the [YCSB example](https://bexhoma.readthedocs.io/en/latest/
 ### TPC-C (HammerDB)
 
 ```bash
-bexhoma hammerdb run -ms 1 -tr -sf 16 -xsd 5 -dbms PostgreSQL \
+bexhoma hammerdb run -ms 1 -sf 16 -xsd 5 -dbms PostgreSQL \
   -nlt 16 -nbp 1,2 -nbt 16
 ```
 
@@ -107,7 +107,7 @@ See more details in the [HammerDB example](https://bexhoma.readthedocs.io/en/lat
 ### TPC-C (Benchbase)
 
 ```bash
-bexhoma benchbase run -ms 1 -tr -sf 16 -xsd 5 -dbms PostgreSQL \
+bexhoma benchbase run -ms 1 -sf 16 -xsd 5 -dbms PostgreSQL \
   -nbp 1,2 -nbt 16 -xnbf 16 -xtb 1024
 ```
 

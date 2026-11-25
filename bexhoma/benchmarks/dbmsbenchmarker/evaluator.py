@@ -158,19 +158,6 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         df = df.round(2).T
         df = df.rename_axis(index="DBMS")
         return df
-    def test_results(self):
-        """
-        Refreshes the inspector, then validates results via :meth:`LogEvaluator.test_results`.
-
-        The inspector is reloaded here (in addition to construction time) because
-        this may be called well after construction, e.g. from a post-hoc
-        ``bexhoma summary`` command, when newer results may be on disk.
-
-        :return: ``0`` on success, ``1`` if an exception is raised.
-        :rtype: int
-        """
-        self.load_inspector()
-        return super().test_results()
     def record_results_complete_test(self, experiment, df_connections: pd.DataFrame) -> None:
         """
         Record whether every planned DBMSBenchmarker pod left its connection.

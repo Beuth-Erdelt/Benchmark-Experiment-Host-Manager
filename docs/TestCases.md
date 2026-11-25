@@ -64,7 +64,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -265,7 +264,6 @@ bexhoma tpcds \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \

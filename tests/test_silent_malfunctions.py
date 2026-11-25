@@ -369,5 +369,56 @@ class ConfiguredAmountTest(unittest.TestCase):
         self.assertNotIn('a (', e._test_results[0][1])
 
 
+class ExitCodeTest(unittest.TestCase):
+    """P1: a failed test of any summary makes the run exit 1; there is no -tr."""
+
+    def outcome(self, *blocks: list) -> tuple[int, str]:
+        import contextlib
+        import io
+        e = experiment()
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            for block in blocks:
+                e._test_results = list(block)
+                e._print_test_summary()
+            code = e.tests_outcome()
+        return code, out.getvalue()
+
+    def test_all_passed(self) -> None:
+        code, out = self.outcome([(True, 'a'), (True, 'b')])
+        self.assertEqual(code, 0)
+        self.assertIn('Test successful!', out)
+
+    def test_failed(self) -> None:
+        code, out = self.outcome([(True, 'a'), (False, 'b')])
+        self.assertEqual(code, 1)
+        self.assertIn('Tests failed: 1 of 2', out)
+        self.assertNotIn('Test successful!', out)
+
+    def test_skipped_and_warning_do_not_fail(self) -> None:
+        code, _ = self.outcome([(True, 'a'), (None, 'b'), (test_status.WARNING, 'c')])
+        self.assertEqual(code, 0)
+
+    def test_failure_in_a_later_benchmark_counts(self) -> None:
+        """A mixed experiment resets _test_results per benchmark; the count is kept."""
+        code, out = self.outcome([(True, 'a')], [(False, 'b')], [(True, 'c')])
+        self.assertEqual(code, 1)
+        self.assertIn('Tests failed: 1 of 3', out)
+
+    def test_no_tests_printed(self) -> None:
+        code, out = self.outcome()
+        self.assertEqual(code, 0)
+        self.assertEqual(out, '')
+
+    def test_no_tr_flag(self) -> None:
+        import argparse
+        import contextlib
+        import io
+        from bexhoma.cli_args import make_base_parser
+        parser = argparse.ArgumentParser(parents=[make_base_parser()])
+        with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+            parser.parse_args(['-tr'])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -39,7 +39,6 @@ bexhoma tpch \
   -nc 2 \
   -ar \
   -ks no \
-  -tr \
   run
 ```
 
@@ -79,7 +78,6 @@ bexhoma tpch \
   -nc 2 \
   -ar \
   -ks no \
-  -tr \
   run
 ```
 
@@ -119,7 +117,6 @@ bexhoma tpch \
   -nc 2 \
   -ar \
   -ks no \
-  -tr \
   run
 ```
 
@@ -162,7 +159,6 @@ bexhoma tpch \
   -nc 2 \
   -ar \
   -ks no \
-  -tr \
   run
 ```
 

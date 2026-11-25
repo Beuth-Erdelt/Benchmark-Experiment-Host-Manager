@@ -70,7 +70,7 @@ wait_process "ycsb"
 ########### TPC-H Multi-Tenant ############
 ###########################################
 
-nohup python tpch.py -ms 5 -tr \
+nohup python tpch.py -ms 5 \
   --dbms PostgreSQL \
   -xii -xic -xis -nlp 2 -nlt 1 -nbp 1 -nbt 64 -ss  \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -79,7 +79,7 @@ nohup python tpch.py -ms 5 -tr \
 wait_process "tpch"
 
 
-nohup python tpch.py -ms 5 -tr \
+nohup python tpch.py -ms 5 \
   --dbms PostgreSQL \
   -xii -xic -xis -nlp 2 -nlt 1 -nbp 2 -nbt 64 -ss  \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -126,7 +126,7 @@ ready_nodes=($(
 # MonetDB profiles TPC-DS @SF=30
 for node in "${ready_nodes[@]}"; do
   echo "Ready node: $node"
-  nohup python tpcds.py -xdt -tr \
+  nohup python tpcds.py -xdt \
   -dbms MonetDB \
   -nlp 8 \
   -nlt 8 \
@@ -152,7 +152,7 @@ BEXHOMA_YCSB_SF_OPS=128
 # Single test
 node="cl-worker36"
 
-python ycsb.py -tr \
+python ycsb.py \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -173,7 +173,7 @@ python ycsb.py -tr \
 
 # loop over all nodes
 for node in "${ready_nodes[@]}"; do
-  nohup python ycsb.py -tr \
+  nohup python ycsb.py \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -202,7 +202,7 @@ done
 
 
 # Single test
-nohup python hammerdb.py -tr \
+nohup python hammerdb.py \
   -sf 16 \
   -xsd 20 \
   -xlat \
@@ -224,7 +224,7 @@ nohup python hammerdb.py -tr \
 
 # loop over all nodes
 for node in "${ready_nodes[@]}"; do
-  nohup python hammerdb.py -tr \
+  nohup python hammerdb.py \
   -sf 16 \
   -xsd 20 \
   -xlat \

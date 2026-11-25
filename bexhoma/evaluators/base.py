@@ -127,7 +127,6 @@ class EvaluatorBase:
         self.name: str = name
         self._experiment_dict_cache: dict = {}
         self.experiment = None
-        self.workflow = dict()
         self.workflow_errors = dict()
         self.num_missing_benchmarking_dfs = 0
         self.num_missing_loading_dfs = 0
@@ -547,14 +546,6 @@ class EvaluatorBase:
                 for exp_run in sorted(run_dict)
             ]
         return workflow
-    def test_results(self):
-        """
-        Validates results locally and returns an exit code.
-
-        :return: ``0`` on success; subclasses return ``1`` on failure.
-        :rtype: int
-        """
-        return 0
     def test_results_column(self, df, test_column: str) -> bool:
         """
         Check whether a column in a DataFrame contains any zero or NaN values.

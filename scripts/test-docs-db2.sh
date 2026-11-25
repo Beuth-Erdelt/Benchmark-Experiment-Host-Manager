@@ -38,7 +38,6 @@ prepare_logs
 # -xis                          gather optimizer statistics (RUNSTATS) after data load
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 12Gi                      RAM limit for the SUT container (Db2 uses at most 8 GB)
 # -rr 12Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -57,7 +56,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 12Gi \
   -rr 12Gi \
   -rsr \
@@ -80,7 +78,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DB2 storage  sf=1"
 # -xic                          enforce constraints after data load
 # -xis                          gather optimizer statistics (RUNSTATS) after data load
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 12Gi                      RAM limit for the SUT container (Db2 uses at most 8 GB)
 # -rr 12Gi                      RAM requested for the SUT container
 # -rss 30Gi                     size of the persistent volume claim
@@ -96,7 +93,6 @@ bexhoma tpch \
   -nlp 4 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 12Gi \
   -rr 12Gi \
   -rss 30Gi \
@@ -118,7 +114,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DB2 refresh  sf=1  ne=3"
 # -xis                          gather optimizer statistics (RUNSTATS) after data load
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 12Gi                      RAM limit for the SUT container (Db2 uses at most 8 GB)
 # -rr 12Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -137,7 +132,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 12Gi \
   -rr 12Gi \
   -rsr \
@@ -165,7 +159,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS DB2 storage  sf=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 12Gi                      RAM limit for the SUT container (Db2 uses at most 8 GB)
 # -rr 12Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -190,7 +183,6 @@ bexhoma ycsb \
   -nbp 1 \
   -nbt 32 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 12Gi \
   -rr 12Gi \
   -rsr \
@@ -218,7 +210,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DB2 workload a  sf=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 12Gi                      RAM limit for the SUT container (Db2 uses at most 8 GB)
 # -rr 12Gi                      RAM requested for the SUT container
 # -rss 30Gi                     size of the persistent volume claim
@@ -240,7 +231,6 @@ bexhoma ycsb \
   -nbp 1 \
   -nbt 32 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 12Gi \
   -rr 12Gi \
   -rss 30Gi \
@@ -262,7 +252,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DB2 workload e  sf=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 12Gi                      RAM limit for the SUT container (Db2 uses at most 8 GB)
 # -rr 12Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -284,7 +273,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 12Gi \
   -rr 12Gi \
   -rsr \

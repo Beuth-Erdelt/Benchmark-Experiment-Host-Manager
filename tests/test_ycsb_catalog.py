@@ -111,16 +111,10 @@ class BuildYcsbArgvTest(unittest.TestCase):
         args = ycsb.build_parser().parse_args(self._argv())
         self.assertIsNone(args.loading_timeout)
 
-    def test_verify_result_is_off_by_default(self):
-        args = ycsb.build_parser().parse_args(self._argv())
-        self.assertFalse(args.test_result)
-
-    def test_verify_result_maps_to_tr(self):
-        spec = copy.deepcopy(_BASE_SPEC)
-        spec['workload']['params']['verify_result'] = True
-        argv = catalog_spec.build_argv(self.catalog, spec)
-        args = ycsb.build_parser().parse_args(argv)
-        self.assertTrue(args.test_result)
+    def test_no_test_result_flag(self):
+        """The summary tests always run; there is no -tr to emit."""
+        self.assertNotIn('-tr', self._argv())
+        self.assertFalse(hasattr(ycsb.build_parser().parse_args(self._argv()), 'test_result'))
 
     def test_observe_and_placement_and_resources(self):
         argv = self._argv()

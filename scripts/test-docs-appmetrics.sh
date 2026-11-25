@@ -32,7 +32,6 @@ source ./scripts/testfunctions.sh
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -49,7 +48,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_appmetrics.log
@@ -74,7 +72,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PostgreSQL appmetrics  sf=16
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -96,7 +93,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_appmetrics.log
@@ -118,7 +114,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL appmetrics  sf=3  nbp=
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -136,7 +131,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -159,7 +153,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL appmetrics  sf=3"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -177,7 +170,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -198,7 +190,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL appmetrics  sf=3"
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -215,7 +206,6 @@ bexhoma hammerdb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_appmetrics.log
@@ -240,7 +230,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB PostgreSQL appmetrics  sf=16 
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -257,7 +246,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql_appmetrics.log
@@ -282,7 +270,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL appmetrics  sf=16  nbp
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rss 50Gi                     size of the persistent volume claim
@@ -306,7 +293,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rss 50Gi \
@@ -330,7 +316,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL appmetrics  sf=3  nbp=1,8"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rss 50Gi                     size of the persistent volume claim
@@ -349,7 +334,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rss 50Gi \
@@ -373,7 +357,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL appmetrics  sf=3"
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rr 128Gi                     RAM requested for the SUT container
@@ -393,7 +376,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 128Gi \
@@ -416,7 +398,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL appmetrics  sf=3"
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
 # -rss 50Gi                     size of the persistent volume claim
@@ -435,7 +416,6 @@ bexhoma hammerdb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rss 50Gi \
@@ -469,7 +449,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL appmetrics  sf=16  nbp=
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -495,7 +474,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
@@ -518,7 +496,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB appmetrics  sf=10  nb
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -538,7 +515,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
@@ -570,7 +546,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB appmetrics  sf=1
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -594,7 +569,6 @@ bexhoma ycsb \
   -m \
   -ma \
   -mc \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_redis_appmetrics.log
@@ -628,7 +602,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis appmetrics  sf=3  nbp=1"
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
 bexhoma ycsb \
@@ -653,7 +626,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_tidb_appmetrics.log
@@ -675,7 +647,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB appmetrics  sf=1  nbp=1"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
 bexhoma benchbase \
@@ -693,7 +664,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_tidb_appmetrics.log
@@ -726,7 +696,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB appmetrics  sf=16  nbp=
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 80Gi                     size of the persistent volume claim
@@ -752,7 +721,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 80Gi \
@@ -778,7 +746,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer appmetrics  sf=16  nbp=
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 bexhoma benchbase \
@@ -797,7 +764,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_appmetrics.log

@@ -595,7 +595,12 @@ def show_summary(self, experiment, write_report: bool = False):
 | `### Application Metrics` | from `show_summary_header()`'s `monitoring_applications` — still prints directly |
 | `self.evaluator.record_tests(...)` | records metric-column/workflow pass/fail tests (see §9c2) |
 | `report_writer.write_markdown_report(...)` | only when `write_report=True` — writes `report/*.md` (§9h) |
-| `experiment._print_test_summary()` | `### Tests` pass/fail table |
+| `experiment._print_test_summary()` | `### Tests` pass/fail table; adds to `_tests_printed` / `_tests_failed`, which are never reset |
+
+After all summaries, `ExperimentBase.process()` calls `tests_outcome()`: it prints
+`Test successful!` or `Tests failed: N of M` and returns `1` if a test failed (skipped
+tests and warnings do not fail). The entry scripts exit with that code, so a run with a
+failed test exits 1.
 
 ### 9c. The hooks
 

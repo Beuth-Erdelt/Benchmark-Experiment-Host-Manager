@@ -54,7 +54,6 @@ reference_tpch_postgresql_monitoring() {
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 150Gi                    size of the persistent volume claim
@@ -81,7 +80,6 @@ bexhoma tpch \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 150Gi \
@@ -112,7 +110,6 @@ reference_tpch_postgresql_storage() {
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -140,7 +137,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -172,7 +168,6 @@ reference_tpch_postgresql_refresh() {
 # -xic
 # -xis
 # -ms $BEXHOMA_MS
-# -tr
 # -xrs 3
 # -lr 64Gi
 # -rr 64Gi
@@ -198,7 +193,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -xrs 3 \
   -lr 64Gi \
   -rr 64Gi \
@@ -230,7 +224,6 @@ reference_tpcds_postgresql() {
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -256,7 +249,6 @@ bexhoma tpcds \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -286,7 +278,6 @@ reference_ssb_postgresql() {
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -312,7 +303,6 @@ bexhoma ssb \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -349,7 +339,6 @@ reference_ycsb_postgresql_monitoring() {
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -370,7 +359,6 @@ bexhoma ycsb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_monitoring.log
@@ -388,7 +376,6 @@ reference_benchbase_postgresql_run() {
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -ss                           skip data generation (assume data exists)
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -405,7 +392,6 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -ss \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -425,7 +411,6 @@ reference_hammerdb_postgresql_run() {
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -ss                           skip data generation (assume data exists)
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -442,7 +427,6 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -ss \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -464,7 +448,6 @@ reference_benchbase_postgresql_appmetrics() {
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -481,7 +464,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_appmetrics.log
@@ -510,7 +492,6 @@ reference_hardware_fio_wal_sync_fdatasync() {
 # -nbt 1                        threads per benchmarking pod, fixed (single backend)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -532,7 +513,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \

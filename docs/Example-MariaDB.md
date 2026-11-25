@@ -57,7 +57,6 @@ bexhoma tpch \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -74,7 +73,6 @@ This
   * and a loading container each, which loads the data into the DBMS
 * creates indexes (`-xii`), constraints (`-xic`) and statistics (`-xis`)
 * runs 1 stream of the 22 TPC-H queries (`-ne`) with a timeout of 1200 s per query (`-t`), measuring the data transfer volume per query (`-xdt`)
-* tests if results match workflow (`-tr`)
 * shows a summary
 
 ### Status
@@ -289,7 +287,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -540,7 +537,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rsr \
@@ -928,7 +924,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 150Gi \
@@ -1169,7 +1164,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -1482,7 +1476,6 @@ bexhoma tpcds \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -1741,7 +1734,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -2057,7 +2049,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rsr \
@@ -2513,7 +2504,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 160 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
@@ -2811,7 +2801,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
@@ -3361,7 +3350,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \
@@ -4045,7 +4033,6 @@ bexhoma ycsb \
   -nbp 1 \
   -nbt 64 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
   -rr 64Gi \

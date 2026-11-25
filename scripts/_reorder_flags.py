@@ -50,7 +50,7 @@ FLAG_ORDER = [
     # M: Monitoring
     '-m', '-ma', '-mc', '-mm',
     # N: Experiment control
-    '-ms', '-sl', '-ss', '-t', '-tr',
+    '-ms', '-sl', '-ss', '-t',
     # O: SUT resources
     '-lc', '-lr', '-rc', '-rr',
     '-rct', '-rg', '-rgt',

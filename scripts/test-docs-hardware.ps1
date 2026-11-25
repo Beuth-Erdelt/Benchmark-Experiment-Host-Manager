@@ -36,7 +36,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -66,7 +65,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod (fio numjobs), fixed #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -103,7 +101,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -142,7 +139,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod, fixed (single backend) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -177,7 +173,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -207,7 +202,6 @@ bexhoma hardware `
   -nbt 1,2,4,8,16               <# numjobs per pod to sweep (comma-separated) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 80Gi                     <# fio makes one -xts-sized file per numjobs thread; 16*4G=64G peak, so 50Gi is not enough #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -236,7 +230,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -269,7 +262,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod, fixed (single backend) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -303,7 +295,6 @@ bexhoma hardware `
   -nbt 1,2,4,8,16,32            <# concurrent committing backends to sweep (comma-separated) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 150Gi                    <# fio makes one -xts-sized file per backend; 32*4G=128G peak, so 50Gi is not enough #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -335,7 +326,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod, fixed (single backend) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -364,7 +354,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -400,7 +389,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod (fio numjobs) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, so every command starts from a clean volume #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -452,7 +440,6 @@ bexhoma hardware `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect node-level cluster metrics (CPU throttling) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 2                         <# CPU limit for the SUT pod: calibration ceiling #> `
   -rc 2                         <# CPU request for the SUT pod, matches -lc #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -480,7 +467,6 @@ bexhoma hardware `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect node-level cluster metrics (CPU throttling) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 2                         <# CPU limit for the SUT pod, fixed #> `
   -rc 2                         <# CPU request for the SUT pod, matches -lc #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -509,7 +495,6 @@ bexhoma hardware `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect node-level cluster metrics (CPU throttling) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 2                         <# CPU limit for the SUT pod, fixed #> `
   -rc 2                         <# CPU request for the SUT pod, matches -lc #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -543,7 +528,6 @@ bexhoma hardware `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect node-level cluster metrics (CPU throttling) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 2                         <# CPU limit per tenant SUT pod #> `
   -rc 2                         <# CPU request per tenant SUT pod, matches -lc #> `
   -mtb container                <# tenancy granularity: one SUT pod per tenant #> `
@@ -596,7 +580,6 @@ bexhoma hardware `
   -xnpp tcp                     <# netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_netperf_postgresql_query_latency.log" -Encoding utf8
@@ -627,7 +610,6 @@ bexhoma hardware `
   -xnpp tcp                     <# netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_netperf_postgresql_connection_scaling_sweep.log" -Encoding utf8
@@ -655,7 +637,6 @@ bexhoma hardware `
   -xnpp tcp                     <# netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod(s) on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_netperf_postgresql_pod_scaling_sweep.log" -Encoding utf8
@@ -713,7 +694,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod, fixed (unused by sockperf, one process per pod) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod(s) on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sockperf_pod_scaling_sweep.log" -Encoding utf8
@@ -740,7 +720,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod, fixed (unused by sockperf) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sockperf_postgresql_query_latency.log" -Encoding utf8
@@ -768,7 +747,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod, fixed (unused by sockperf) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sockperf_postgresql_streaming_throughput.log" -Encoding utf8
@@ -800,7 +778,6 @@ bexhoma hardware `
   -nbt 1                        <# threads per benchmarking pod, fixed (unused by sockperf, one process per pod) #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pod(s) on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sockperf_postgresql_latency_scaling_sweep.log" -Encoding utf8

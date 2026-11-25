@@ -550,30 +550,3 @@ class Benchmark(ABC):
         if reset_section is not None:
             children.append(reset_section)
         return Section(heading=self.name, level=3, blank_after_heading=False, children=children)
-
-    def test_results(self, experiment) -> int:
-        """
-        Validate results and print workflow completion status.
-
-        Compares the experiment's full planned workflow
-        (:meth:`~bexhoma.experiments.base.ExperimentBase.get_workflow_list`)
-        against this benchmark's evaluator's reconstructed actual workflow.
-        Both cover the whole client round, not just this benchmark's own
-        entries (see :meth:`~bexhoma.evaluators.logger.LogEvaluator.test_results`),
-        so the comparison is correct whether this benchmark is the primary or a
-        co-running secondary benchmark. Override for a benchmark with no
-        per-query results of its own to validate.
-
-        :param experiment: The owning experiment object.
-        :return: ``0`` if the evaluator's check passed and the workflow is complete, else ``1``.
-        :rtype: int
-        """
-        experiment.cluster.logger.debug(f'{type(self).__name__}.test_results()')
-        code = self.evaluator.test_results() or 0
-        workflow = experiment.get_workflow_list()
-        if workflow == self.evaluator.workflow:
-            print("Result workflow complete")
-        else:
-            print("Result workflow not complete")
-            code = 1
-        return code

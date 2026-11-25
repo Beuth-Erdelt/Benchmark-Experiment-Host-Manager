@@ -29,7 +29,6 @@ source ./scripts/testfunctions.sh
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 160                      threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -43,7 +42,6 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 160 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_scale.log
@@ -62,7 +60,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase scale  sf=16  nbp=1,2"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -78,7 +75,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_monitoring.log
@@ -96,7 +92,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase monitoring  sf=16  nbp=1,2"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 160                      threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC for the SUT before starting
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -113,7 +108,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 160 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -134,7 +128,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase storage  sf=16  nbp=1  nc=2"
 # -nbt 40                       threads per benchmarking pod (10x warehouses)
 # -ar                           activate configured reset scripts before each round
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -149,7 +142,6 @@ bexhoma benchbase \
   -nbt 40 \
   -ar \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_reset.log
 
@@ -166,7 +158,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset script  sf=4  nc=2"
 # -nbp 1,2                      benchmarking pod counts to sweep -- 0 stays unlimited when split over pods
 # -nbt 40                       threads per benchmarking pod (10x warehouses)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -180,7 +171,6 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 40 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_unlimited.log
 
@@ -201,7 +191,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase unlimited target + warmup  s
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -225,7 +214,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rsr \

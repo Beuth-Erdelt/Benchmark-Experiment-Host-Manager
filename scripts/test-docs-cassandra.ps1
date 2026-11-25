@@ -34,7 +34,6 @@ bexhoma ycsb `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 128                      <# threads per benchmarking pod #> `
   -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -ar                           <# flush and wait for compactions before each benchmarking round #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
@@ -70,7 +69,6 @@ bexhoma ycsb `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -ar                           <# flush and wait for compactions before each benchmarking round #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
@@ -106,7 +104,6 @@ bexhoma ycsb `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -ar                           <# flush and wait for compactions before each benchmarking round #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
@@ -145,7 +142,6 @@ bexhoma ycsb `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -ar                           <# flush and wait for compactions before each benchmarking round #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
@@ -178,7 +174,6 @@ bexhoma ycsb `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -ar                           <# flush and wait for compactions before each benchmarking round #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
@@ -211,7 +206,6 @@ bexhoma ycsb `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -ar                           <# flush and wait for compactions before each benchmarking round #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `

@@ -40,7 +40,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_appmetrics.log
@@ -61,7 +60,6 @@ This
     * `-nbp`: first stream 1 pod, second stream 2 pods (8 threads each)
     * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
-* tests if results match workflow (`-tr`)
 * shows a summary
 
 ### Evaluate Results
@@ -289,7 +287,6 @@ bexhoma hammerdb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_appmetrics.log
@@ -517,7 +514,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -783,7 +779,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1129,7 +1124,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_appmetrics.log
@@ -1477,7 +1471,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql_appmetrics.log
@@ -1498,7 +1491,6 @@ This
     * `-nbp`: first stream 1 pod, second stream 2 pods (8 threads each)
     * target is 16x(`-ltf`) 1024 (`-xtb`) ops
 * with a maximum of 1 DBMS per time (`-ms`)
-* tests if results match workflow (`-tr`)
 * shows a summary
 
 
@@ -1722,7 +1714,6 @@ bexhoma hammerdb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rss 50Gi \
@@ -1945,7 +1936,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rss 50Gi \
@@ -2199,7 +2189,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 128Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rr 128Gi \
@@ -2537,7 +2526,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
   -rss 50Gi \
@@ -2877,7 +2865,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
@@ -3115,7 +3102,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -rnw $BEXHOMA_NODES_WORKER \
@@ -3401,7 +3387,6 @@ bexhoma ycsb \
   -m \
   -ma \
   -mc \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_redis_appmetrics.log
@@ -3691,7 +3676,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_tidb_appmetrics.log
@@ -4046,7 +4030,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_tidb_appmetrics.log
@@ -4467,7 +4450,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 80Gi \
@@ -4757,7 +4739,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_appmetrics.log
@@ -5050,7 +5031,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_appmetrics.log
 ```
 
@@ -5327,7 +5307,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   run &>$LOG_DIR/docs_benchbase_yugabytedb_appmetrics.log
 ```
 

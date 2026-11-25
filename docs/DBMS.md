@@ -609,7 +609,7 @@ MariaDB ColumnStore (`MariaDBCS`) is the columnar storage engine of MariaDB, GPL
 The template runs the official image of MariaDB and installs the plugin at every start; loading always uses one loader pod.
 
 ```bash
-bexhoma tpch -dbms MariaDBCS -sf 1 -xis -tr run
+bexhoma tpch -dbms MariaDBCS -sf 1 -xis run
 ```
 
 See [Example: Benchmark MariaDB ColumnStore](Example-MariaDBCS.md) for deployment, loading, schema, query variants and examples.
@@ -692,7 +692,7 @@ CH-benCHmark runs, but `errors` is not 0 and no bexhoma test reports it; the SQL
 CedarDB has no Prometheus endpoint in bexhoma (`-ma`).
 
 ```bash
-bexhoma tpch -dbms CedarDB -sf 1 -nlp 8 -xii -xic -xis -tr run
+bexhoma tpch -dbms CedarDB -sf 1 -nlp 8 -xii -xic -xis run
 ```
 
 See [Example: Other DBMS](Example-Other-DBMS.md#cedardb) for the workloads and the test script.
@@ -746,7 +746,7 @@ YCSB `usertable` has `VARCHAR(MAX)` fields; Benchbase and HammerDB create their 
 TPC-DS and SSB are not supported: the query files have no `TSQL` variants (`LIMIT`, intervals).
 
 ```bash
-bexhoma tpch -dbms SQLServer -sf 1 -xii -xic -xis -tr run
+bexhoma tpch -dbms SQLServer -sf 1 -xii -xic -xis run
 ```
 
 See [Example: Other DBMS](Example-Other-DBMS.md#sql-server) for the workloads and the test script; its logs stay in the git-ignored `logs_tests/local`.
@@ -807,7 +807,7 @@ Benchbase TPC-C runs with `TRANSACTION_SERIALIZABLE` (the default of bexhoma): O
 TPC-DS and SSB are not supported: the query files have no `Oracle` variants (`LIMIT`, intervals).
 
 ```bash
-bexhoma tpch -dbms OracleDB -sf 1 -nlp 4 -xii -xic -xis -lr 8Gi -rr 8Gi -tr run
+bexhoma tpch -dbms OracleDB -sf 1 -nlp 4 -xii -xic -xis -lr 8Gi -rr 8Gi run
 ```
 
 See [Example: Other DBMS](Example-Other-DBMS.md#oracle-database-free) for the workloads and the test script; its logs stay in the git-ignored `logs_tests/local`.
@@ -889,7 +889,7 @@ TPC-DS: Q5, Q12, Q16, Q20, Q21, Q32, Q37, Q40, Q72, Q77, Q80, Q82, Q92, Q94, Q95
 Not supported: SSB (not ported), the other Benchbase benchmarks (no config) and HammerDB TPC-C (the HammerDB image has no Db2 client and no `db2tcl`).
 
 ```bash
-bexhoma tpch -dbms DB2 -sf 1 -nlp 4 -xii -xic -xis -tr run
+bexhoma tpch -dbms DB2 -sf 1 -nlp 4 -xii -xic -xis run
 ```
 
 See [Example: Other DBMS](Example-Other-DBMS.md#ibm-db2-community-edition) for the workloads and the test script; its logs stay in the git-ignored `logs_tests/local`.

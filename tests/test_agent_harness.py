@@ -2083,7 +2083,8 @@ resources:
         self.assertTrue(verdict["valid"], verdict.get("errors"))
         self.assertIn("8 benchmarker pods", verdict["warnings"][0]["message"])
 
-    def test_ycsb_verify_result_is_accepted(self) -> None:
+    def test_ycsb_verify_result_is_rejected(self) -> None:
+        """The summary tests always run, so the former switch is an unknown field."""
         self.workspace.write_file(
             self.path, _YCSB_SPEC.replace(
                 "loading_target_factors: [1], benchmarking_target_factors: [1]}",
@@ -2092,7 +2093,8 @@ resources:
 
         verdict = self.workspace.validate(self.path)
 
-        self.assertTrue(verdict["valid"], verdict.get("errors"))
+        self.assertFalse(verdict["valid"])
+        self.assertIn("verify_result", str(verdict.get("errors")))
 
     def test_workload_bounds_apply_to_the_benchmarking_block(self) -> None:
         self.assertIn("below the declared minimum",

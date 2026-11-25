@@ -30,6 +30,7 @@ See LICENSE for details.
 """
 import importlib
 import argparse
+import sys
 import os
 import shutil
 
@@ -133,7 +134,7 @@ def run_experiment_yaml(
     path: str,
     catalog_path: str = None,
     experiment_code: str = None,
-) -> None:
+) -> int:
     """
     Load an experiment YAML file and run it, dispatching on its schema.
 
@@ -141,6 +142,8 @@ def run_experiment_yaml(
     :param catalog_path: Path to ``catalog.yaml``; only used for catalog-driven
         files. Defaults to ``catalog.yaml`` alongside ``path``.
     :param experiment_code: Optional code assigned before a catalog-driven run.
+    :return: exit code of the experiment (``1`` if a test of the summary failed)
+    :rtype: int
     """
     with open(path, 'r', encoding='utf-8') as experiment_file:
         raw_spec = yaml.safe_load(experiment_file)
@@ -166,7 +169,7 @@ def run_experiment_yaml(
             # catalog-driven run opts in so the experiment.yml's resources: block
             # actually reaches the PostgreSQL configuration (see ycsb.run()).
             parsed_args.apply_sut_resources = 'resources' in raw_spec
-        entry_module.run(
+        return entry_module.run(
             parsed_args,
             on_experiment_built=lambda experiment: _copy_catalog_provenance(
                 experiment.path, path, resolved_catalog_path
@@ -174,7 +177,8 @@ def run_experiment_yaml(
         )
     else:
         tpch_loader.validate_experiment_yaml(raw_spec)
-        tpch_builder.build_experiment(raw_spec, path)
+        experiment = tpch_builder.build_experiment(raw_spec, path)
+        return experiment.exit_code
 
 
 if __name__ == '__main__':
@@ -187,5 +191,4 @@ if __name__ == '__main__':
     parser.add_argument('--experiment-code', default=None,
                         help='assign a new catalog-driven run its result-folder code')
     args = parser.parse_args()
-    run_experiment_yaml(args.file, args.catalog, args.experiment_code)
-    exit()
+    sys.exit(run_experiment_yaml(args.file, args.catalog, args.experiment_code))

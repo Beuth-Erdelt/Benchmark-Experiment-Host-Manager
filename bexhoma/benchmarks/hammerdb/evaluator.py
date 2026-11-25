@@ -189,25 +189,6 @@ class HammerdbEvaluator(LogEvaluator):
             print(e)
             print(traceback.format_exc())
             return pd.DataFrame()
-    def test_results(self):
-        """
-        Validates results by reading all pickle files and delegating to the parent check.
-
-        :return: ``0`` on success, ``1`` if an exception is raised.
-        :rtype: int
-        """
-        try:
-            directory = os.fsencode(self.path)
-            for file in os.listdir(directory):
-                filename = os.fsdecode(file)
-                if filename.endswith(".pickle"):
-                    df = pd.read_pickle(self.path+"/"+filename)
-                    list(df['vusers'])
-            return super().test_results()
-        except Exception as e:
-            print(e)
-            print(traceback.format_exc())
-            return 1
     def benchmarking_set_datatypes(self, df):
         """
         Casts all TPC-C benchmarking result columns to their appropriate data types.

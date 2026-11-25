@@ -51,7 +51,6 @@ bexhoma hardware `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod(s) on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\sockperf_pods_1_vs_2.log" -Encoding utf8
@@ -82,7 +81,6 @@ bexhoma hardware `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod(s) on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\sockperf_pods_1_vs_2_tcp.log" -Encoding utf8

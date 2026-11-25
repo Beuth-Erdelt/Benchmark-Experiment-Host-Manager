@@ -34,7 +34,6 @@ source ./scripts/testfunctions.sh
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
 # -xop 1                        number of operations for the benchmark phase (in millions)
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -55,7 +54,6 @@ bexhoma ycsb \
   -nbp 1 \
   -nbt 128 \
   -xop 1 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -87,7 +85,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single  sf=1  nbp=1"
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -111,7 +108,6 @@ bexhoma ycsb \
   -m \
   -ma \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -143,7 +139,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single monitoring  sf=3
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -170,7 +165,6 @@ bexhoma ycsb \
   -m \
   -ma \
   -mc \
-  -tr \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -207,7 +201,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single PVC  sf=1  nbp=1
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -234,7 +227,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -263,7 +255,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3  sf=1  nbp=1"
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -291,7 +282,6 @@ bexhoma ycsb \
   -m \
   -ma \
   -mc \
-  -tr \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -323,7 +313,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 PVC  sf=1  nb
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -348,7 +337,6 @@ bexhoma ycsb \
   -m \
   -ma \
   -mc \
-  -tr \
   -ar \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -381,7 +369,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 replication  
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -409,7 +396,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -ar \
   -lr 64Gi \
   -rr 64Gi \

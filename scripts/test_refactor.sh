@@ -92,7 +92,7 @@ remove_yugabytedb() {
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
-nohup python ycsb.py -tr \
+nohup python ycsb.py \
   -sf 1 \
   -xop 1 \
   --workload a \
@@ -120,7 +120,7 @@ wait_process "ycsb"
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
-nohup python ycsb.py -tr \
+nohup python ycsb.py \
   -sf 1 \
   -xop 1 \
   --workload a \
@@ -150,7 +150,7 @@ wait_process "ycsb"
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
-nohup python ycsb.py -tr \
+nohup python ycsb.py \
   -sf 1 \
   -xop 1 \
   -nw 3 \
@@ -179,7 +179,7 @@ wait_process "ycsb"
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
-nohup python ycsb.py -tr \
+nohup python ycsb.py \
   -sf 1 \
   -xop 1 \
   -nw 3 \
@@ -210,7 +210,7 @@ wait_process "ycsb"
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
-nohup python ycsb.py -tr \
+nohup python ycsb.py \
   -sf 1 \
   -xop 1 \
   -nw 3 \
@@ -238,7 +238,7 @@ wait_process "ycsb"
 
 
 
-nohup python ycsb.py -tr \
+nohup python ycsb.py \
   -sf 1 \
   -xop 1 \
   -nw 3 \
@@ -281,7 +281,7 @@ sleep 30
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
-nohup python ycsb.py -tr \
+nohup python ycsb.py \
   -sf 1 \
   --workload a \
   -dbms YugabyteDB \
@@ -325,7 +325,7 @@ sleep 10
 
 
 #### YCSB Ingestion (Example-CloudDatabase.md)
-nohup python ycsb.py -tr \
+nohup python ycsb.py \
   -sf 1 \
   -xop 1 \
   --workload a \
@@ -367,7 +367,7 @@ sleep 30
 
 
 
-nohup python benchbase.py -tr \
+nohup python benchbase.py \
   -sf 16 \
   -xsd 5 \
   -dbms PostgreSQL \
@@ -384,7 +384,7 @@ nohup python benchbase.py -tr \
 wait_process "benchbase"
 
 
-nohup python benchbase.py -tr \
+nohup python benchbase.py \
   -sf 16 \
   -xsd 5 \
   -dbms CockroachDB \
@@ -403,7 +403,7 @@ nohup python benchbase.py -tr \
 wait_process "benchbase"
 
 
-nohup python benchbase.py -tr \
+nohup python benchbase.py \
   -sf 16 \
   -xsd 5 \
   -dbms Citus \
@@ -423,7 +423,7 @@ nohup python benchbase.py -tr \
 wait_process "benchbase"
 
 
-nohup python benchbase.py -tr \
+nohup python benchbase.py \
   -sf 16 \
   -xsd 5 \
   -dbms PGBouncer \
@@ -448,7 +448,7 @@ install_yugabytedb
 sleep 30
 
 
-nohup python benchbase.py -tr \
+nohup python benchbase.py \
   -sf 16 \
   -xsd 5 \
   -dbms YugabyteDB \

@@ -31,7 +31,6 @@ source ./scripts/testfunctions.sh
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -57,7 +56,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -95,7 +93,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PgDuckDB  sf=1"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 150Gi                    size of the persistent volume claim
@@ -123,7 +120,6 @@ bexhoma tpch \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 150Gi \
@@ -160,7 +156,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PgDuckDB monitoring  sf=10"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -189,7 +184,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -226,7 +220,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PgDuckDB storage  sf=1  nc=2"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -251,7 +244,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -283,7 +275,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PgDuckDB PostgreSQL engine  sf=1
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -299,7 +290,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \

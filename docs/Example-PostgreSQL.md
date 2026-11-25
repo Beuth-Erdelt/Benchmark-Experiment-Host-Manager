@@ -48,7 +48,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -278,7 +277,6 @@ bexhoma tpch \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 150Gi \
@@ -532,7 +530,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -798,7 +795,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -1030,7 +1026,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \

@@ -57,7 +57,6 @@ bexhoma tpch \
   -nlp 8 \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -77,7 +76,6 @@ This
   * and a loading container each, which sends the flat files with `clickhouse-client` (`INSERT ... FORMAT CSV`)
 * runs the check script (row counts, parts, sizes)
 * runs 1 stream of the 22 TPC-H queries (`-ne`) and measures the data transfer volume per query (`-xdt`)
-* tests if results match workflow (`-tr`)
 * removes the SUT at the end (`-ks no`)
 * shows a summary
 
@@ -288,7 +286,6 @@ bexhoma tpch \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -546,7 +543,6 @@ bexhoma tpch \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -843,7 +839,6 @@ bexhoma tpch \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -1357,7 +1352,6 @@ bexhoma tpcds \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -1686,7 +1680,6 @@ bexhoma tpcds \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -2068,7 +2061,6 @@ bexhoma tpch \
   -xrs 3 \
   -nlp 8 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -2292,7 +2284,6 @@ bexhoma tpch \
   -nlp 8 \
   -nw 3 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \

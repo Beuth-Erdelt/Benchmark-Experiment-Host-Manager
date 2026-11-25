@@ -28,7 +28,6 @@ source ./scripts/testfunctions.sh
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod (virtual users)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -43,7 +42,6 @@ bexhoma hammerdb \
   -nbp 1,2 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -64,7 +62,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB scale  sf=16  nbp=1,2"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -82,7 +79,6 @@ bexhoma hammerdb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -105,7 +101,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB monitoring  sf=48  nbp=1,2"
 # -xlat                         collect per-operation latency histograms
 # -ar                           reset script before each round (VACUUM ANALYZE, CHECKPOINT, stats reset)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -125,7 +120,6 @@ bexhoma hammerdb \
   -xlat \
   -ar \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -146,7 +140,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB transaction counter  sf=16  n
 # -nbt 16                       threads per benchmarking pod (virtual users)
 # -xlat                         collect per-operation latency histograms
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -166,7 +159,6 @@ bexhoma hammerdb \
   -nbt 16 \
   -xlat \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -192,7 +184,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB storage  sf=16  nbp=1  nc=2"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -215,7 +206,6 @@ bexhoma hammerdb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \

@@ -393,6 +393,21 @@ def resolve_scaling_factor(cluster, code, mode: str, cli_scaling_factor) -> str:
     return str(cli_scaling_factor)
 
 
+class _RemovedOption(argparse.Action):
+    """Refuse an option that no longer exists, with what to do instead.
+
+    Without it, argparse reads a removed short option such as ``-tr`` as
+    ``-t r`` (the timeout), and the run fails much later on ``int('r')``.
+    """
+
+    def __init__(self, option_strings, dest, message: str = '', **kwargs):
+        super().__init__(option_strings, dest, nargs=0, default=argparse.SUPPRESS, **kwargs)
+        self.message = message
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        parser.error(f"{option_string} was removed: {self.message}")
+
+
 def make_base_parser():
     """
     Returns an :class:`~argparse.ArgumentParser` (with ``add_help=False``) pre-loaded
@@ -461,7 +476,8 @@ def make_base_parser():
     p.add_argument('-mtn', '--multi-tenant-num', help='number of tenants for multi-tenant experiments', default=0)
     p.add_argument('-mtb', '--multi-tenant-by', help='tenancy granularity: schema, database, or container', default='')
     p.add_argument('-mtv', '--multi-tenant-volume', help='allocate a separate persistent volume per tenant', action='store_true', default=False)
-    p.add_argument('-tr',  '--test-result', help='validate that results meet basic correctness requirements', action='store_true', default=False)
+    p.add_argument('-tr',  '--test-result', action=_RemovedOption, help=argparse.SUPPRESS,
+                   message='the summary tests always run, and a failed test makes the run exit 1')
     p.add_argument('-rp',  '--report', help='also write a tiered Markdown summary report (report/index.md + detail files) to the result folder', action='store_true', default=False, dest='write_report')
     p.add_argument("--set", dest="sets", action="append", default=[], help="override a deployment parameter, e.g. deployment[bexhoma-deployment-postgres].container[dbms].max_worker_processes=128; the name in deployment[...] is metadata.name of the Deployment in the DBMS template (PostgreSQL -c key=value, MySQL/MariaDB --key=value, chosen by the template) or an environment variable via ...container[dbms].env.NAME=VALUE; an emptyDir volume of the SUT via deployment[NAME].volume[VOLUME].sizeLimit=64Gi or .medium=Memory (empty: node disk)")
     return p

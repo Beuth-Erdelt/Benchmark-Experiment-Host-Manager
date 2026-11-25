@@ -29,7 +29,6 @@ source ./scripts/testfunctions.sh
 # -nlp 8                        number of data loader pods (MariaDBCS always uses 1)
 # -xis                          run ANALYZE after data load
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
 bexhoma tpch \
@@ -40,7 +39,6 @@ bexhoma tpch \
   -nlp 8 \
   -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 16Gi \
   -rr 16Gi \
   run &>$LOG_DIR/docs_tpch_mariadbcs.log
@@ -63,7 +61,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDBCS  sf=1"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 bexhoma tpch \
@@ -76,7 +73,6 @@ bexhoma tpch \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   run &>$LOG_DIR/docs_tpch_mariadbcs_monitoring.log
@@ -102,7 +98,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDBCS monitoring  sf=10"
 # -xdt                          store the result sets of the queries
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -119,7 +114,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 16Gi \
   -rr 16Gi \
   -rsr \
@@ -147,7 +141,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB MariaDBCS  sf=1"
 # -xdt
 # -m
 # -ms $BEXHOMA_MS
-# -tr
 # -lr 32Gi
 # -rr 32Gi
 # -rsr
@@ -163,7 +156,6 @@ bexhoma tpcds \
   -xdt \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 32Gi \
   -rr 32Gi \
   -rsr \
@@ -188,7 +180,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDBCS  sf=1"
 # -xis
 # -m
 # -ms $BEXHOMA_MS
-# -tr
 # -lr 16Gi
 # -rr 16Gi
 # -rsr
@@ -203,7 +194,6 @@ bexhoma ssb \
   -xis \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 16Gi \
   -rr 16Gi \
   -rsr \
@@ -224,7 +214,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDBCS  sf=1"
 # -xis
 # -m
 # -ms $BEXHOMA_MS
-# -tr
 # -lr 16Gi
 # -rr 16Gi
 # -rsr
@@ -240,7 +229,6 @@ bexhoma ssb \
   -xis \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 16Gi \
   -rr 16Gi \
   -rsr \
@@ -263,7 +251,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDBCS flat  sf=1"
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -279,7 +266,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \

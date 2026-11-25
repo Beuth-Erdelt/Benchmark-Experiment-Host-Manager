@@ -17,6 +17,7 @@ from dbmsbenchmarker import *  # noqa: F403
 import logging
 import urllib3
 import argparse
+import sys
 import pandas as pd
 from tabulate import tabulate
 from datetime import datetime
@@ -228,6 +229,8 @@ def manage():
                     # if the original run crashed before reaching this point.
                     experiment.store_workflow_results()
                 experiment.show_summary(write_report=args.report)
+                # exit 1 when a test of the summary failed, like a run
+                sys.exit(experiment.tests_outcome())
     elif args.mode == 'dashboard':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)  # noqa: F405
         if args.action == 'start':
@@ -244,7 +247,6 @@ def manage():
             cluster.start_messagequeue()
     elif args.mode == 'localdashboard':
         cluster = clusters.Kubernetes(clusterconfig, context=args.context)  # noqa: F405
-        import sys
         resultfolder = cluster.config['benchmarker']['resultfolder']
         sys.argv += ['-r',resultfolder]
         sys.argv.remove('localdashboard')

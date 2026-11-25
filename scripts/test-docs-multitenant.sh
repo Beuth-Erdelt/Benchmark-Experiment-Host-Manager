@@ -31,7 +31,6 @@ BEXHOMA_NUM_TENANTS=2
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -49,7 +48,6 @@ bexhoma tpch \
   -nbp 1 \
   -nbt 64 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -70,7 +68,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -88,7 +85,6 @@ bexhoma tpch \
   -nbp 1 \
   -nbt 64 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -110,7 +106,6 @@ BEXHOMA_NUM_TENANTS_LOADER=16
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -128,7 +123,6 @@ bexhoma tpch \
   -nbp 1 \
   -nbt 64 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -148,7 +142,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database multiload  tenants=$
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -165,7 +158,6 @@ bexhoma tpch \
   -nlt 1 \
   -nbp 1 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -405,7 +397,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL container  tenants=
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -421,7 +412,6 @@ bexhoma tpch \
   -nlp 1 \
   -nbp 1 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -440,7 +430,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT MySQL container  tenants=$BEX
 # -xii                          create indexes after data load
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -456,7 +445,6 @@ bexhoma tpch \
   -nlp 1 \
   -nbp 1 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \

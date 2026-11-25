@@ -34,7 +34,7 @@
 #       Citus:             synchronous_commit off on coordinator and every worker -> on again
 #   - durable with --set (TPC-H MySQL): flush 1 during the load, back to the --set value 2
 #     (initconstraints adds the FKs with foreign_key_checks=0; before, durable was OOM-killed there)
-#   - -tr passes, no SUT restarts
+#   - all tests pass, no SUT restarts
 #   - loading times: relaxed < durable expected; unsafe <= relaxed
 #   - TPC-H PostgreSQL unsafe on -rst with -nc 2: repetition 2 finds the loaded volume
 #     (no durability scripts, loading inherited) and the data is complete
@@ -68,7 +68,6 @@ bexhoma tpch `
   -xis                          <# recompute statistics after loading #> `
   -xld durable                  <# load durability: crash-safe load #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -90,7 +89,6 @@ bexhoma tpch `
   -xis                          <# recompute statistics after loading #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -112,7 +110,6 @@ bexhoma tpch `
   -xis                          <# recompute statistics after loading #> `
   -xld unsafe                   <# load durability #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -134,7 +131,6 @@ bexhoma tpch `
   -xis                          <# recompute statistics after loading #> `
   -xld unsafe                   <# load durability #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# remove an existing volume first, so the load runs #> `
   -rss 10Gi                     <# volume size #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class #> `
@@ -159,7 +155,6 @@ bexhoma tpch `
   -xis                          <# recompute statistics after loading #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -mtb schema                   <# one schema per tenant #> `
   -mtn 2                        <# number of tenants #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -183,7 +178,6 @@ bexhoma tpch `
   -xis                          <# recompute statistics after loading #> `
   -xld unsafe                   <# load durability #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -207,7 +201,6 @@ bexhoma tpch `
   --set "deployment[bexhoma-deployment-mysql].container[dbms].innodb_flush_log_at_trx_commit=2" <# relaxed benchmark, visible in the command #> `
   --set "deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=10G" <# same pool as the -xld comparison 1792540834/1792542350 (template: 8G) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -229,7 +222,6 @@ bexhoma tpch `
   -xis                          <# recompute statistics after loading #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -251,7 +243,6 @@ bexhoma tpch `
   -xis                          <# recompute statistics after loading #> `
   -xld unsafe                   <# load durability #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -273,7 +264,6 @@ bexhoma tpch `
   -xis                          <# recompute statistics after loading #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -296,7 +286,6 @@ bexhoma tpch `
   -xis                          <# recompute statistics after loading #> `
   -xld unsafe                   <# load durability #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -326,7 +315,6 @@ bexhoma tpcds `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# timeout per query in seconds #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -349,7 +337,6 @@ bexhoma tpcds `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# timeout per query in seconds #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -372,7 +359,6 @@ bexhoma tpcds `
   -xld unsafe                   <# load durability #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# timeout per query in seconds #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -405,7 +391,6 @@ bexhoma ycsb `
   -xld relaxed                  <# load durability (default) #> `
   -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -431,7 +416,6 @@ bexhoma ycsb `
   -xld unsafe                   <# load durability #> `
   -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -457,7 +441,6 @@ bexhoma ycsb `
   -xld durable                  <# load durability #> `
   -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -483,7 +466,6 @@ bexhoma ycsb `
   -xld unsafe                   <# load durability #> `
   -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -509,7 +491,6 @@ bexhoma ycsb `
   -xld relaxed                  <# load durability (default) #> `
   -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -535,7 +516,6 @@ bexhoma ycsb `
   -xld unsafe                   <# load durability #> `
   -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -564,7 +544,6 @@ bexhoma ycsb `
   -xld relaxed                  <# load durability (default) #> `
   -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -594,7 +573,6 @@ bexhoma ycsb `
   -xld relaxed                  <# load durability (default) #> `
   -xop 1                        <# number of operations for the benchmark phase (in millions) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_tidb_relaxed.log" -Encoding utf8
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability TiDB relaxed"
@@ -619,7 +597,6 @@ bexhoma hammerdb `
   -nbt 4                        <# threads per benchmarking pod #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -640,7 +617,6 @@ bexhoma hammerdb `
   -nbt 4                        <# threads per benchmarking pod #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -661,7 +637,6 @@ bexhoma hammerdb `
   -nbt 4                        <# threads per benchmarking pod #> `
   -xld unsafe                   <# load durability #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -683,7 +658,6 @@ bexhoma hammerdb `
   -nw 3                         <# number of worker nodes #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -712,7 +686,6 @@ bexhoma benchbase `
   -nbt 40                       <# threads per benchmarking pod #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -737,7 +710,6 @@ bexhoma benchbase `
   -xnpo 64                      <# maximum outgoing connections per PGBouncer instance #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -759,7 +731,6 @@ bexhoma benchbase `
   -nbt 40                       <# threads per benchmarking pod #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -781,7 +752,6 @@ bexhoma benchbase `
   -nbt 40                       <# threads per benchmarking pod #> `
   -xld unsafe                   <# load durability #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -806,7 +776,6 @@ bexhoma benchbase `
   -nws 48                       <# number of shards #> `
   -xld relaxed                  <# load durability (default) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -829,7 +798,6 @@ bexhoma benchbase `
   -nbt 40                       <# threads per benchmarking pod #> `
   -xld unsafe                   <# load durability #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

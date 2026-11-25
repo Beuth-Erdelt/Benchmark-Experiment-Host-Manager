@@ -83,7 +83,7 @@ sleep 10
 
 
 #### YCSB Ingestion (Example-CloudDatabase.md)
-nohup python ycsb.py -ms 2 -tr \
+nohup python ycsb.py -ms 2 \
   -sf 1 \
   -sfo 1 \
   --workload a \
@@ -107,7 +107,7 @@ wait_process "ycsb"
 
 
 #### YCSB Execution (Example-CloudDatabase.md)
-nohup python ycsb.py -ms 2 -tr \
+nohup python ycsb.py -ms 2 \
   -sf 1 \
   -sfo 10 \
   --workload a \
@@ -150,7 +150,7 @@ sleep 10
 
 
 #### YCSB Persistent Storage (Example-CloudDatabase.md)
-nohup python ycsb.py -ms 2 -tr \
+nohup python ycsb.py -ms 2 \
   -sf 5 \
   -sfo 10 \
   --workload a \
@@ -204,7 +204,7 @@ sleep 10
 
 
 # no PVC
-nohup python benchbase.py -ms 2 -tr \
+nohup python benchbase.py -ms 2 \
   -sf 16 \
   -sd 5 \
   -dbms DatabaseService \
@@ -220,7 +220,7 @@ nohup python benchbase.py -ms 2 -tr \
 wait_process "benchbase"
 
 # no PVC, skip loading
-nohup python benchbase.py -ms 2 -tr \
+nohup python benchbase.py -ms 2 \
   -sf 16 \
   -sd 5 \
   -dbms DatabaseService \
@@ -264,7 +264,7 @@ sleep 10
 
 #### TCP-H Monitoring (Example-CloudDatabase.md)
 # no PVC
-nohup python tpch.py -ms 2 -dt -tr \
+nohup python tpch.py -ms 2 -dt \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -282,7 +282,7 @@ wait_process "tpch"
 
 #### TCP-H Monitoring (Example-TPC-H.md)
 # no PVC, skip loading
-nohup python tpch.py -ms 2 -dt -tr \
+nohup python tpch.py -ms 2 -dt \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -320,7 +320,7 @@ sleep 10
 
 #### TCP-H Monitoring (Example-TPC-H.md)
 # with PVC, ingestion
-nohup python tpch.py -ms 2 -dt -tr \
+nohup python tpch.py -ms 2 -dt \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \
@@ -339,7 +339,7 @@ wait_process "tpch"
 
 #### TCP-H Monitoring (Example-TPC-H.md)
 # with PVC, execution only
-nohup python tpch.py -ms 2 -dt -tr \
+nohup python tpch.py -ms 2 -dt \
   -dbms DatabaseService \
   -nlp 8 \
   -nlt 8 \

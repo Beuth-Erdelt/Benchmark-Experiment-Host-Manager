@@ -36,7 +36,6 @@ source ./scripts/testfunctions.sh
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -54,7 +53,6 @@ bexhoma ycsb \
   -nbp 1 \
   -nbt 32 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_orioledb.log
@@ -84,7 +82,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB OrioleDB  sf=1"
 # -ma                           collect application-level metrics (postgres-exporter)
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -106,7 +103,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_orioledb_monitoring.log
@@ -133,7 +129,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB OrioleDB monitoring  sf=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC for the SUT before starting
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class of the persistent volume
@@ -154,7 +149,6 @@ bexhoma ycsb \
   -nbp 1 \
   -nbt 32 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -184,7 +178,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB OrioleDB storage  sf=1"
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ms 1                         one DBMS at a time, so they do not share the node
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -204,7 +197,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ms 1 \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_orioledb_postgresql.log
@@ -227,7 +219,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL vs OrioleDB  sf=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -242,7 +233,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_tpcc_orioledb.log
@@ -264,7 +254,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase OrioleDB tpcc  sf=16"
 # -nbp 1                        number of benchmarking pods
 # -nbt 16                       total benchmarking threads
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -278,7 +267,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_orioledb.log

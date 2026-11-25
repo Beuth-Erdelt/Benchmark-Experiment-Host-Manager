@@ -79,7 +79,7 @@ What to check per log:
 * the summary shows `load_durability: <level>` per configuration
 * the result folder has `bexhoma-loading-<config>-durability-*` logs (before the load) and `-restoredurability-*` logs (after the load), with no errors in `.stderr` except documented NOTICEs and the mysql password warning
 * the `durability-*` stdout logs show the values during the load, the restore and checkschema logs show the configured values again
-* `-tr` passes, no SUT restarts
+* all tests pass, no SUT restarts
 
 
 ## TPC-H
@@ -100,7 +100,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld durable \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_durable.log
 ```
@@ -123,7 +122,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_relaxed.log
 ```
@@ -146,7 +144,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_unsafe.log
 ```
@@ -169,7 +166,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 10Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -195,7 +191,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -mtb schema \
   -mtn 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -220,7 +215,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_pgduckdb_unsafe.log
 ```
@@ -245,7 +239,6 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_flush_log_at_trx_commit=2 \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=10G \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mysql_durable.log
 ```
@@ -268,7 +261,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mysql_relaxed.log
 ```
@@ -291,7 +283,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mysql_unsafe.log
 ```
@@ -314,7 +305,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mariadb_relaxed.log
 ```
@@ -338,7 +328,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_citus_unsafe.log
 ```
@@ -365,7 +354,6 @@ bexhoma tpcds \
   -xld relaxed \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpcds_postgresql_relaxed.log
 ```
@@ -389,7 +377,6 @@ bexhoma tpcds \
   -xld relaxed \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpcds_mysql_relaxed.log
 ```
@@ -413,7 +400,6 @@ bexhoma tpcds \
   -xld unsafe \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpcds_mysql_unsafe.log
 ```
@@ -445,7 +431,6 @@ bexhoma ycsb \
   -xld relaxed \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_postgresql_relaxed.log
 ```
@@ -474,7 +459,6 @@ bexhoma ycsb \
   -xld unsafe \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_pgbouncer_unsafe.log
 ```
@@ -503,7 +487,6 @@ bexhoma ycsb \
   -xld durable \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_orioledb_durable.log
 ```
@@ -532,7 +515,6 @@ bexhoma ycsb \
   -xld unsafe \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_orioledb_unsafe.log
 ```
@@ -561,7 +543,6 @@ bexhoma ycsb \
   -xld relaxed \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_mysql_relaxed.log
 ```
@@ -590,7 +571,6 @@ bexhoma ycsb \
   -xld unsafe \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_mysql_unsafe.log
 ```
@@ -622,7 +602,6 @@ bexhoma ycsb \
   -xld relaxed \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_citus_relaxed.log
 ```
@@ -655,7 +634,6 @@ bexhoma ycsb \
   -xld relaxed \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   run &>$LOG_DIR/docs_durability_ycsb_tidb_relaxed.log
 ```
 
@@ -681,7 +659,6 @@ bexhoma hammerdb \
   -nbt 4 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_postgresql_relaxed.log
 ```
@@ -705,7 +682,6 @@ bexhoma hammerdb \
   -nbt 4 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_mysql_relaxed.log
 ```
@@ -729,7 +705,6 @@ bexhoma hammerdb \
   -nbt 4 \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_mysql_unsafe.log
 ```
@@ -754,7 +729,6 @@ bexhoma hammerdb \
   -nw 3 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_citus_relaxed.log
 ```
@@ -782,7 +756,6 @@ bexhoma benchbase \
   -nbt 40 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_postgresql_relaxed.log
 ```
@@ -810,7 +783,6 @@ bexhoma benchbase \
   -xnpo 64 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_pgbouncer_relaxed.log
 ```
@@ -835,7 +807,6 @@ bexhoma benchbase \
   -nbt 40 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_mysql_relaxed.log
 ```
@@ -860,7 +831,6 @@ bexhoma benchbase \
   -nbt 40 \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_mysql_unsafe.log
 ```
@@ -888,7 +858,6 @@ bexhoma benchbase \
   -nws 48 \
   -xld relaxed \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_citus_relaxed.log
 ```
@@ -914,7 +883,6 @@ bexhoma benchbase \
   -nbt 40 \
   -xld unsafe \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_twitter_postgresql_unsafe.log
 ```

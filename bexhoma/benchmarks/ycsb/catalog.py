@@ -120,8 +120,6 @@ def build_ycsb_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     _append_flag(argv, "-xli", params.get("logging_interval"))
     _append_flag(argv, "-xio", params.get("insert_order"))
     _append_flag(argv, "-xmet", params.get("max_execution_time"))
-    if params.get("verify_result"):
-        argv.append("-tr")
 
     _append_flag(argv, "-nlp", loading.get("pods"))
     _append_flag(argv, "-nlt", loading.get("threads"))

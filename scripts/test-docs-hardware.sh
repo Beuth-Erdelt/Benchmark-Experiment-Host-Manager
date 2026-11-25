@@ -36,7 +36,6 @@ source ./scripts/testfunctions.sh
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -56,7 +55,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -84,7 +82,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 1. Hardware fio depth sweep  rw=randre
 # -nbt 1                        threads per benchmarking pod (fio numjobs), fixed
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -104,7 +101,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -143,7 +139,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 2. Hardware fio block-size sweep  rw=r
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -163,7 +158,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -202,7 +196,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 3. Hardware fio random_page_cost calib
 # -nbt 1                        threads per benchmarking pod, fixed (single backend)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -224,7 +217,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -257,7 +249,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 4. Hardware fio WAL sync-write fsync  
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -277,7 +268,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -305,7 +295,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 1. Hardware fio depth sweep refine  rw
 # -nbt 1,2,4,8,16               numjobs per pod to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 80Gi                     fio makes one -xts-sized file per numjobs thread; 16*4G=64G peak, so 50Gi is not enough
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -325,7 +314,6 @@ bexhoma hardware \
   -nbt 1,2,4,8,16 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 80Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -352,7 +340,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 2. Hardware fio numjobs sweep  rw=rand
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -372,7 +359,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -403,7 +389,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 3. Hardware fio depth sweep 8k  rw=ran
 # -nbt 1                        threads per benchmarking pod, fixed (single backend)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -425,7 +410,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -457,7 +441,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 4. Hardware fio WAL sync-write fdatasy
 # -nbt 1,2,4,8,16,32            concurrent committing backends to sweep (comma-separated)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 150Gi                    fio makes one -xts-sized file per backend; 32*4G=128G peak, so 50Gi is not enough
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -479,7 +462,6 @@ bexhoma hardware \
   -nbt 1,2,4,8,16,32 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 150Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -509,7 +491,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 5. Hardware fio WAL group commit  bs=8
 # -nbt 1                        threads per benchmarking pod, fixed (single backend)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -531,7 +512,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -558,7 +538,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 6. Hardware fio WAL record size  bs=1k
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -579,7 +558,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -612,7 +590,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 7. Hardware fio checkpoint writeback  
 # -nbt 1                        threads per benchmarking pod (fio numjobs)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rsr                          delete any existing PVC, so every command starts from a clean volume
 # -rss 50Gi                     size of the persistent volume claim
 # -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
@@ -635,7 +612,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -685,7 +661,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 8. Hardware fio OLTP/WAL contention pr
 # -m                            collect SUT resource metrics
 # -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 2                         CPU limit for the SUT pod: calibration ceiling
 # -rc 2                         CPU request for the SUT pod, matches -lc
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -700,7 +675,6 @@ bexhoma hardware \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 2 \
   -rc 2 \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -726,7 +700,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 5. Hardware sysbench CPU quota calibra
 # -m                            collect SUT resource metrics
 # -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 2                         CPU limit for the SUT pod, fixed
 # -rc 2                         CPU request for the SUT pod, matches -lc
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -741,7 +714,6 @@ bexhoma hardware \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 2 \
   -rc 2 \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -768,7 +740,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 6. Hardware sysbench nbp overhead swee
 # -m                            collect SUT resource metrics
 # -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 2                         CPU limit for the SUT pod, fixed
 # -rc 2                         CPU request for the SUT pod, matches -lc
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -783,7 +754,6 @@ bexhoma hardware \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 2 \
   -rc 2 \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -815,7 +785,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 7. Hardware sysbench ne saturation swe
 # -m                            collect SUT resource metrics
 # -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 2                         CPU limit per tenant SUT pod
 # -rc 2                         CPU request per tenant SUT pod, matches -lc
 # -mtb container                tenancy granularity: one SUT pod per tenant
@@ -832,7 +801,6 @@ bexhoma hardware \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 2 \
   -rc 2 \
   -mtb container \
@@ -885,7 +853,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 8. Hardware sysbench noisy-neighbor te
 # -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pod on this node
 bexhoma hardware \
@@ -898,7 +865,6 @@ bexhoma hardware \
   -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_query_latency.log
 
@@ -927,7 +893,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 9. Hardware netperf PostgreSQL query r
 # -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pod on this node
 bexhoma hardware \
@@ -940,7 +905,6 @@ bexhoma hardware \
   -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_connection_scaling_sweep.log
 
@@ -966,7 +930,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 10. Hardware netperf PostgreSQL connec
 # -xnpp tcp                     netperf protocol: tcp (selects TCP_RR, matches PostgreSQL's wire protocol)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pod(s) on this node
 bexhoma hardware \
@@ -979,7 +942,6 @@ bexhoma hardware \
   -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_pod_scaling_sweep.log
 
@@ -1035,7 +997,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 11. Hardware netperf PostgreSQL pod sc
 # -nbt 1                        threads per benchmarking pod, fixed (unused by sockperf, one process per pod)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pod(s) on this node
 bexhoma hardware \
@@ -1051,7 +1012,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_pod_scaling_sweep.log
 
@@ -1076,7 +1036,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 12. Hardware sockperf pod scaling swee
 # -nbt 1                        threads per benchmarking pod, fixed (unused by sockperf)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pod on this node
 bexhoma hardware \
@@ -1092,7 +1051,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_query_latency.log
 
@@ -1118,7 +1076,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 13. Hardware sockperf PostgreSQL query
 # -nbt 1                        threads per benchmarking pod, fixed (unused by sockperf)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pod on this node
 bexhoma hardware \
@@ -1134,7 +1091,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_streaming_throughput.log
 
@@ -1164,7 +1120,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 14. Hardware sockperf PostgreSQL strea
 # -nbt 1                        threads per benchmarking pod, fixed (unused by sockperf, one process per pod)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pod(s) on this node
 bexhoma hardware \
@@ -1180,7 +1135,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_latency_scaling_sweep.log
 

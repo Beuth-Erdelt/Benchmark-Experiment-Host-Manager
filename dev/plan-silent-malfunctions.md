@@ -2,7 +2,8 @@
 
 Status: **implemented on branch silent-malfunctions, cluster-tested 2026-11-24 (section 4c) with the
 rebuilt images.** S1-S9 done (section 4), plus S10 (end marker of scripts) and S11 (aborted summary checks
-the scripts) found by the cluster tests. Open: the proposals of section 5 and the docs page (section 6).
+the scripts) found by the cluster tests. P1 done as S12 (2026-11-25: exit code, `-tr` removed). Open: the
+other proposals of section 5 and the docs page (section 6).
 
 Goal: every run either does what was planned or leaves a failed (or at least a skipped/warning) test in
 the summary. A number in the summary that is wrong because something was missing must not pass silently.
@@ -83,7 +84,7 @@ DBMS clients after a failing statement (local Docker, outputs run through `scrip
 | S6 | `SUT pods not replaced`: UID of the SUT pod when loading started (`sut_pod_uid_loading` in `connections.config`) and of every SUT and worker pod when a round started (`hostsystem['pod_uid']`, read by `get_host_all()` anyway); more than one UID per pod and repetition fails. Hidden in the printed host lists | F7 | done |
 | S7 | Benchbase: `Every pod ran for the configured time` (`Elapsed Time (nanoseconds)` ≥ 99 % of `BENCHBASE_TIME`). YCSB: `Execution Phase: every pod ran its configured operations` (sum of `[<OP>].Operations` incl. FAILED, RMW counted once, against `YCSB_OPERATIONS` of the pod) | F8 | done; HammerDB: section 5 |
 | S8 | `SP2-nnnn` on stdout matches. **Not** `bash -o pipefail`: the only pipes in `experiments/**/*.sh` are the MySQL/MariaDB `$(mysql ... \| cut)` (a failure ends in the flush timeout and `exit 1` anyway) and `while redis-cli ... \| grep -q`, which pipefail could end early through SIGPIPE. Instead the rule is in `experiments/README.md` ("How a failing script is noticed") | F9 | done |
-| S9 | `test_results()` of experiments, mixed experiments and benchmarks return `0`/`1` (the "Test successful!" line could never print). `Host information complete` (warning when RAM, CPU, cores or node is empty); it found the MySQL CPU probe gap (4b) | F10 | done; exit code: section 5 |
+| S9 | `test_results()` of experiments, mixed experiments and benchmarks return `0`/`1` (the "Test successful!" line could never print). `Host information complete` (warning when RAM, CPU, cores or node is empty); it found the MySQL CPU probe gap (4b) | F10 | done; exit code: S12 |
 
 ### 4b. Verification (offline, 2026-11-24)
 
@@ -124,6 +125,7 @@ Added after the cluster tests:
 |---|---|
 | S10 | Every script run in a pod is wrapped (`clusters.wrap_script`): `( cmd ) && echo BEXHOMA_SCRIPT_END:ok \|\| echo BEXHOMA_SCRIPT_END:failed`; `failed` matches, a missing marker (pod or stream gone before the end, whatever kubectl's exit code) adds `bexhoma: script ended without BEXHOMA_SCRIPT_END`. No `$?`, so the local shell (cmd.exe or sh) passes it unchanged; checked through kubectl on the cluster |
 | S11 | `show_summary_aborted()` also records `Init scripts without errors` from the stored script logs |
+| S12 (P1) | Exit code always on, `-tr` removed. `_print_test_summary()` counts printed and failed tests (never reset, so a mixed experiment adds up its benchmarks); `process()` ends with `tests_outcome()`: `Test successful!` or `Tests failed: N of M`, returns 1 on a failed test (skipped and warnings do not fail). Entry scripts, `experiment.py` and `bexhoma summary` exit with it. `-tr` did only a smoke test (results readable, `Test successful!` before the summary) and one workload sentence; removed with the `test_results()` methods of experiments, benchmarks and evaluators, from all scripts and docs, and as YCSB `verify_result` from the catalog (1.15.0). `-tr` is refused with a message: argparse would otherwise read it as `-t r`. Callers checked: test scripts ignore the exit code, the agent harness goes by `report/index.md`. Offline: clean folder exits 0, broken YCSB and HammerDB copies exit 1 |
 
 Not reproduced: a kubectl stream that breaks while the pod keeps running (S1/S10 cover it by exit code and marker).
 Also found while preparing the runs (not a failing run): `-nbp` is silently ignored by TPC-H/TPC-DS
@@ -133,7 +135,7 @@ Also found while preparing the runs (not a failing run): `-nbp` is silently igno
 
 | # | Gap | Proposal |
 |---|---|---|
-| P1 | bexhoma exits 0 even when a test failed | Opt-in exit code (e.g. `BEXHOMA_FAIL_ON_TEST=1` or a flag) after the summary. Not default: the `test-docs-*` scripts run many experiments in a row and grep `TEST failed` already |
+| P1 | done (S12) | - |
 | P2 | A SUT pod replaced after the last round's host information was read (during the last round) is not seen by S6 | Store the UID in the end-of-repetition restart snapshot (`bexhoma-sut-*-restarts.json`) and compare it in the test; one API read per pod and repetition |
 | P3 | done (4c, S10) | - |
 | P4 | done (4c) | - |

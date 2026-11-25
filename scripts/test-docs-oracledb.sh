@@ -37,7 +37,6 @@ prepare_logs
 # -xis                          gather optimizer statistics (DBMS_STATS) after data load
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 8Gi                       RAM limit for the SUT container (Free uses at most 2 GB)
 # -rr 8Gi                       RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -56,7 +55,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 8Gi \
   -rr 8Gi \
   -rsr \
@@ -79,7 +77,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H OracleDB storage  sf=1"
 # -xic                          enforce constraints after data load
 # -xis                          gather optimizer statistics (DBMS_STATS) after data load
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 8Gi                       RAM limit for the SUT container (Free uses at most 2 GB)
 # -rr 8Gi                       RAM requested for the SUT container
 # -rss 30Gi                     size of the persistent volume claim
@@ -95,7 +92,6 @@ bexhoma tpch \
   -nlp 4 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 8Gi \
   -rr 8Gi \
   -rss 30Gi \
@@ -121,7 +117,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H OracleDB refresh  sf=1  ne=3"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 8Gi                       RAM limit for the SUT container (Free uses at most 2 GB)
 # -rr 8Gi                       RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -146,7 +141,6 @@ bexhoma ycsb \
   -nbp 1 \
   -nbt 32 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 8Gi \
   -rr 8Gi \
   -rsr \
@@ -171,7 +165,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB OracleDB workload a  sf=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 8Gi                       RAM limit for the SUT container (Free uses at most 2 GB)
 # -rr 8Gi                       RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -193,7 +186,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 8Gi \
   -rr 8Gi \
   -rsr \
@@ -216,7 +208,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase OracleDB tpcc  sf=16"
 # -nbp 1                        number of benchmarking pods
 # -nbt 16                       total benchmarking threads
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 8Gi                       RAM limit for the SUT container (Free uses at most 2 GB)
 # -rr 8Gi                       RAM requested for the SUT container
 # -rss 30Gi                     size of the persistent volume claim
@@ -234,7 +225,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 8Gi \
   -rr 8Gi \
   -rss 30Gi \

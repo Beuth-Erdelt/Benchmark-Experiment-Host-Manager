@@ -29,7 +29,6 @@ bexhoma tpch `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
@@ -57,7 +56,6 @@ bexhoma tpcds `
   -xdt                          <# also measure data transfer volume per query #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `

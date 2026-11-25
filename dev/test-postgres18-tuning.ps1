@@ -98,7 +98,6 @@ function Test-YcsbDefault {
       -ne 1                            <# parallel client counts (no sweep) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so each variant starts from a clean, freshly loaded DB #> `
       -rss 100Gi                       <# size of the persistent volume claim #> `
       -rst $BEXHOMA_STORAGE_CLASS_OLTP <# storage class for persistent volumes #> `
@@ -131,7 +130,6 @@ function Test-YcsbTuned {
       -ne 1                            <# parallel client counts (no sweep) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so each variant starts from a clean, freshly loaded DB #> `
       -rss 100Gi                       <# size of the persistent volume claim #> `
       -rst $BEXHOMA_STORAGE_CLASS_OLTP <# storage class for persistent volumes #> `
@@ -180,7 +178,6 @@ function Test-BenchbaseTpccDefault {
       -nc 1                            <# repetitions (single measurement) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so each variant starts from a clean, freshly loaded DB #> `
       -rss 80Gi                        <# size of the persistent volume claim #> `
       -rst $BEXHOMA_STORAGE_CLASS_OLTP <# storage class for persistent volumes #> `
@@ -209,7 +206,6 @@ function Test-BenchbaseTpccTuned {
       -nc 1                            <# repetitions (single measurement) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so each variant starts from a clean, freshly loaded DB #> `
       -rss 80Gi                        <# size of the persistent volume claim #> `
       -rst $BEXHOMA_STORAGE_CLASS_OLTP <# storage class for persistent volumes #> `
@@ -259,7 +255,6 @@ function Test-HammerdbTpccDefault {
       -ne 1                            <# parallel client counts (no sweep) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so each variant starts from a clean, freshly loaded DB #> `
       -rss 80Gi                        <# size of the persistent volume claim #> `
       -rst $BEXHOMA_STORAGE_CLASS_OLTP <# storage class for persistent volumes #> `
@@ -288,7 +283,6 @@ function Test-HammerdbTpccTuned {
       -ne 1                            <# parallel client counts (no sweep) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so each variant starts from a clean, freshly loaded DB #> `
       -rss 80Gi                        <# size of the persistent volume claim #> `
       -rst $BEXHOMA_STORAGE_CLASS_OLTP <# storage class for persistent volumes #> `
@@ -339,7 +333,6 @@ function Test-TpchDefault {
       -nc 1                            <# repetitions (single measurement) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so each variant starts from a clean, freshly loaded DB #> `
       -rss 200Gi                       <# size of the persistent volume claim #> `
       -rst $BEXHOMA_STORAGE_CLASS_OLAP <# storage class for persistent volumes #> `
@@ -369,7 +362,6 @@ function Test-TpchTuned {
       -nc 1                            <# repetitions (single measurement) #> `
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so each variant starts from a clean, freshly loaded DB #> `
       -rss 200Gi                       <# size of the persistent volume claim #> `
       -rst $BEXHOMA_STORAGE_CLASS_OLAP <# storage class for persistent volumes #> `
@@ -420,7 +412,6 @@ function Test-TpcdsDefault {
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
       -t 1800                          <# overall experiment timeout in seconds #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so each variant starts from a clean, freshly loaded DB #> `
       -rss 150Gi                       <# size of the persistent volume claim #> `
       -rst $BEXHOMA_STORAGE_CLASS_OLAP <# storage class for persistent volumes #> `
@@ -451,7 +442,6 @@ function Test-TpcdsTuned {
       -m                               <# collect SUT resource metrics #> `
       -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
       -t 1800                          <# overall experiment timeout in seconds #> `
-      -tr                              <# verify result meets basic sanity requirements #> `
       -rsr                             <# delete any existing PVC, so each variant starts from a clean, freshly loaded DB #> `
       -rss 150Gi                       <# size of the persistent volume claim #> `
       -rst $BEXHOMA_STORAGE_CLASS_OLAP <# storage class for persistent volumes #> `

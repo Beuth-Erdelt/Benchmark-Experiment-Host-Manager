@@ -30,7 +30,6 @@ source ./scripts/testfunctions.sh
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 16                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -45,7 +44,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 16 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_twitter_simple.log
@@ -65,7 +63,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter simple  sf=16  nbp=1
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rss 1600Gi                   size of the persistent volume claim
@@ -85,7 +82,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 1600Gi \
@@ -106,7 +102,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter scale  sf=1600  nbp=
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 100                      threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -121,7 +116,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 100 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_chbenchmark_simple.log
@@ -139,7 +133,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark simple  sf=10  n
 # -nbp 1,2,5,10                 benchmarking pod counts to sweep (comma-separated)
 # -nbt 100                      threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rss 100Gi                    size of the persistent volume claim
@@ -156,7 +149,6 @@ bexhoma benchbase \
   -nbp 1,2,5,10 \
   -nbt 100 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 100Gi \
@@ -177,7 +169,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark scale  sf=100  n
 # -nlt 64                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod
-# -tr                           verify result meets basic sanity requirements
 # -rss 1000Gi                   size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -193,7 +184,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_c.log
@@ -212,7 +202,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload c  sf=1000  nb
 # -nlt 64                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod
-# -tr                           verify result meets basic sanity requirements
 # -rss 1000Gi                   size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -228,7 +217,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_a.log
@@ -247,7 +235,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload a  sf=1000  nb
 # -nlt 64                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod
-# -tr                           verify result meets basic sanity requirements
 # -rss 1000Gi                   size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -263,7 +250,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_b.log
@@ -282,7 +268,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload b  sf=1000  nb
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod
-# -tr                           verify result meets basic sanity requirements
 # -rss 1000Gi                   size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -298,7 +283,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_d.log
@@ -317,7 +301,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload d  sf=1000  nb
 # -nlt 64                       threads per loader pod
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod
-# -tr                           verify result meets basic sanity requirements
 # -rss 1000Gi                   size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -333,7 +316,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_e.log
@@ -352,7 +334,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload e  sf=1000  nb
 # -nlt 64                       threads per loader pod
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 32                       threads per benchmarking pod
-# -tr                           verify result meets basic sanity requirements
 # -rss 1000Gi                   size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -368,7 +349,6 @@ bexhoma benchbase \
   -nlt 64 \
   -nbp 1,2 \
   -nbt 32 \
-  -tr \
   -rss 1000Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_f.log
@@ -386,7 +366,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload f  sf=1000  nb
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -401,7 +380,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_auctionmark_simple.log
@@ -419,7 +397,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase auctionmark simple  sf=1  nb
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -434,7 +411,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_epinions_simple.log
@@ -452,7 +428,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase epinions simple  sf=1  nbp=1
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -467,7 +442,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_hyadapt_simple.log
@@ -485,7 +459,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase hyadapt simple  sf=1  nbp=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -500,7 +473,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_noop_simple.log
@@ -518,7 +490,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase noop simple  sf=1  nbp=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -533,7 +504,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_otmetrics_simple.log
@@ -551,7 +521,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase otmetrics simple  sf=1  nbp=
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -566,7 +535,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_resourcestresser_simple.log
@@ -584,7 +552,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase resourcestresser simple  sf=
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -599,7 +566,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_seats_simple.log
@@ -617,7 +583,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase seats simple  sf=1  nbp=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -632,7 +597,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_sibench_simple.log
@@ -650,7 +614,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase sibench simple  sf=1  nbp=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -665,7 +628,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_smallbank_simple.log
@@ -683,7 +645,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase smallbank simple  sf=1  nbp=
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -698,7 +659,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_tatp_simple.log
@@ -716,7 +676,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase tatp simple  sf=1  nbp=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -731,7 +690,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_voter_simple.log
@@ -749,7 +707,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase voter simple  sf=1  nbp=1"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rss 10Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -764,7 +721,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 10Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_wikipedia_simple.log

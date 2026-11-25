@@ -24,6 +24,7 @@ Copyright (C) 2020 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
+import sys
 from bexhoma import *  # noqa: F403
 from bexhoma.cli_args import make_base_parser, threads_per_pod_error
 import itertools
@@ -339,8 +340,7 @@ def main() -> None:
     ##############
     ### branch for workflows
     ##############
-    experiment.process()
-    exit()
+    sys.exit(experiment.process())
 
 
 if __name__ == '__main__':

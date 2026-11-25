@@ -149,7 +149,6 @@ foreach ($dbms in @('PostgreSQL', 'MySQL', 'MariaDB', 'MonetDB')) {
           -xii                          <# create indexes after loading (without them Q17/Q20 run into the query timeout) #> `
           -xrs 1                        <# one RF1/RF2 pair: BEXHOMA_INGEST rf1-orders-1, rf1-lineitem-1, rf2-1 ok #> `
           -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-          -tr                           <# verify result meets basic sanity requirements #> `
           -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
           -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
           -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -221,7 +220,6 @@ if (Test-Step 'B1') {
       -xis                          <# recompute statistics after loading #> `
       -xld relaxed                  <# load with synchronous_commit=off (per database) #> `
       -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-      -tr                           <# verify result meets basic sanity requirements #> `
       -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
       -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
       -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
@@ -245,7 +243,6 @@ if (Test-Step 'B2') {
       -xis                          <# recompute statistics after loading #> `
       -xld relaxed                  <# load with synchronous_commit=off (per database, also on the workers) #> `
       -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-      -tr                           <# verify result meets basic sanity requirements #> `
       -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
       -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
       -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `

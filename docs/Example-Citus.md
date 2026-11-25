@@ -63,7 +63,6 @@ bexhoma ycsb \
   -nws 48 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -86,7 +85,6 @@ This
   * workload A = 50% read / 50% update (`-xwl`)
   * target throughput is 4 * 16384 (`-xnbf`, `-xtb`)
   * threads = 64 (`-nbt`)
-* tests if results match workflow (`-tr`)
 * shows a summary
 
 ### Status
@@ -327,7 +325,6 @@ bexhoma ycsb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -595,7 +592,6 @@ bexhoma ycsb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -1064,7 +1060,6 @@ bexhoma benchbase \
   -nwr 1 \
   -nws 48 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -1309,7 +1304,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -1857,7 +1851,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 100Gi \
@@ -2730,7 +2723,6 @@ bexhoma hammerdb \
   -nws 48 \
   -xlat \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -2905,7 +2897,6 @@ bexhoma hammerdb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -3471,7 +3462,6 @@ bexhoma hammerdb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -4393,7 +4383,6 @@ bexhoma tpch \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -4637,7 +4626,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -5234,7 +5222,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -5821,7 +5808,6 @@ bexhoma tpch \
   -nws 48 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \

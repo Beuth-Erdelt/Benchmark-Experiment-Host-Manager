@@ -77,7 +77,7 @@ wait_process "ycsb"
 
 
 ### YCSB Loader Test for Scaling the Driver (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 16 \
   -xop 16 \
   --workload c \
@@ -103,7 +103,7 @@ wait_process "ycsb"
 
 
 ### YCSB Execution Test for Scaling the Driver (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 16 \
   -xop 16 \
   --workload c \
@@ -126,7 +126,7 @@ wait_process "ycsb"
 
 
 ### YCSB Execution Test for Scaling the Driver with PVC (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 16 \
   -xop 16 \
   --workload c \
@@ -150,7 +150,7 @@ wait_process "ycsb"
 
 
 ### YCSB Loader Test for Scaling the Pooler with 64 connections (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 16 \
   -xop 16 \
   --workload c \
@@ -175,7 +175,7 @@ wait_process "ycsb"
 
 
 ### YCSB Loader Test for Scaling the Pooler with 128 connections (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 16 \
   -xop 16 \
   --workload c \
@@ -200,7 +200,7 @@ wait_process "ycsb"
 
 
 ### YCSB Loader Test for Scaling the Pooler with number of incoming and outgoing connections (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 16 \
   -xop 16 \
   --workload c \
@@ -225,7 +225,7 @@ wait_process "ycsb"
 
 
 ### YCSB Loader Test for Scaling the Pooler with number of incoming and outgoing connections (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 16 \
   -xop 16 \
   --workload c \
@@ -279,7 +279,7 @@ BEXHOMA_YCSB_SF_OPS=16
 ### Fixed nodes
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -308,7 +308,7 @@ wait_process "ycsb"
 ### threads range from 48 to 120 in steps of 8
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -337,7 +337,7 @@ wait_process "ycsb"
 ### threads range from 48 to 120 in steps of 8
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -367,7 +367,7 @@ wait_process "ycsb"
 ### threads range from 48 to 120 in steps of 8
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c2 \
@@ -398,7 +398,7 @@ BEXHOMA_YCSB_SF_OPS=16
 ### Try small amount of data
 ### repeat for 1 driver and 8 drivers
 ### TODO: Set target and threads
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -429,7 +429,7 @@ BEXHOMA_YCSB_SF_OPS=16
 ### repeat for 1 driver and 8 drivers
 ### TODO: Set target and threads
 ### TODO: Size possible?
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -463,7 +463,7 @@ BEXHOMA_YCSB_SF_OPS=64
 ### threads range from 48 to 120 in steps of 8
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -497,7 +497,7 @@ BEXHOMA_YCSB_SF_OPS=128
 ### threads range from 104 to 136 in steps of 8
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -532,7 +532,7 @@ BEXHOMA_YCSB_SF_OPS=256
 ### threads range from 104 to 136 in steps of 8
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -567,7 +567,7 @@ BEXHOMA_YCSB_SF_OPS=512
 ### threads range from 104 to 136 in steps of 8
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -600,7 +600,7 @@ BEXHOMA_YCSB_SF_OPS=16
 ### repeat for 1 driver and 8 drivers
 ### TODO: Set target and threads
 ### TODO: Size possible?
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -635,7 +635,7 @@ BEXHOMA_YCSB_SF_OPS=16
 ### repeat for 1 driver and 8 drivers
 ### TODO: Set target and threads
 ### TODO: Size possible?
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -673,7 +673,7 @@ BEXHOMA_YCSB_SF_OPS=512
 ### threads range from 104 to 136 in steps of 8
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -711,7 +711,7 @@ BEXHOMA_YCSB_SF_OPS=256
 ### threads range from 104 to 136 in steps of 8
 ### repeat for 1 driver and 8 drivers and 16 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -749,7 +749,7 @@ BEXHOMA_YCSB_SF_OPS=256
 ### threads range from 104 to 136 in steps of 8
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c2 \
@@ -783,7 +783,7 @@ BEXHOMA_YCSB_SF_OPS=256
 ### different measurement of latencies - hdrhistogram
 ### repeat for 1 driver and 8 drivers and 16 drivers
 #-p hdrhistogram.fileoutput=true
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -816,7 +816,7 @@ BEXHOMA_YCSB_SF_OPS=64
 ### Fixed nodes
 ### only 128 threads, no target
 ### repeat for 1 driver and 8 drivers and 16 drivers
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -849,7 +849,7 @@ BEXHOMA_YCSB_SF_OPS=64
 ### Fixed nodes
 ### scan for 128 threads, no target
 ### repeat for 1 driver and 8 drivers and 16 drivers
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -888,7 +888,7 @@ BEXHOMA_YCSB_SF_OPS=256
 ### threads range from 104 to 136 in steps of 8
 ### repeat for 1 driver and 8 drivers and 16 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload c \
@@ -925,7 +925,7 @@ BEXHOMA_YCSB_SF_OPS=16
 ### Workload A
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload a \
@@ -962,7 +962,7 @@ BEXHOMA_YCSB_SF_OPS=16
 ### Workload A
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload a \
@@ -996,7 +996,7 @@ BEXHOMA_YCSB_SF_OPS=16
 ### Workload A
 ### repeat for 1 driver and 8 drivers
 ### TODO: Do the same for PGBouncer sidecar? Check resources first
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf $BEXHOMA_YCSB_SF_DATA \
   -xop $BEXHOMA_YCSB_SF_OPS \
   --workload a \

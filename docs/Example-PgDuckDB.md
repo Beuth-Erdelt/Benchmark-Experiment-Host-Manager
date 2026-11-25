@@ -49,7 +49,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -276,7 +275,6 @@ bexhoma tpch \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 150Gi \
@@ -529,7 +527,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -755,7 +752,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -945,7 +941,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \

@@ -31,7 +31,6 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -55,7 +54,6 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -81,7 +79,6 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -104,7 +101,6 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -263,7 +259,6 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
@@ -285,7 +280,6 @@ bexhoma tpch `
   -xii                          <# create indexes after data load #> `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
