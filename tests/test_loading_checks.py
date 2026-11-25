@@ -443,9 +443,19 @@ class LoadDurabilityTest(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertFalse(coordinator.start_exec())
         coordinator.load_data.assert_not_called()
-        self.assertIn('replaced after its loading started (UID uid-old -> uid-new)', cfg.loading_failed_fatal)
+        self.assertIn('replaced during loading (UID uid-old -> uid-new)', cfg.loading_failed_fatal)
         self.assertEqual(cfg.sut_pod_uid_at_loading_start, 'uid-old')
         self.assertIn('replaced', experiment()._loading_abort_reason(cfg, None))
+
+    def test_replaced_sut_pod_during_benchmarking(self) -> None:
+        """The labels of the new pod are gone during benchmarking as well; the message names the phase."""
+        coordinator, cfg = self._coordinator(uid_now='uid-new', uid_first='uid-old')
+        cfg.client = 3
+        with contextlib_quiet():
+            self.assertFalse(coordinator.start_exec())
+        coordinator.load_data.assert_not_called()
+        self.assertIn('replaced during benchmarking (2 rounds submitted) (UID uid-old -> uid-new)',
+                      cfg.loading_failed_fatal)
 
     def test_first_load_records_the_uid(self) -> None:
         for uid_first in ('', 'uid-1'):

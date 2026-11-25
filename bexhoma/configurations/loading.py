@@ -522,7 +522,11 @@ class LoadingCoordinator:
                 uid = cfg.experiment.cluster.get_pod_uid(pod_sut)
                 first_uid = getattr(cfg, 'sut_pod_uid_at_loading_start', '')
                 if first_uid and uid and uid != first_uid:
-                    reason = (f"SUT pod {pod_sut} replaced after its loading started "
+                    # client is 1 until the first benchmark round of the repetition is submitted
+                    rounds = int(getattr(cfg, 'client', 1) or 1) - 1
+                    phase = (f"during benchmarking ({rounds} round{'s' if rounds > 1 else ''} submitted)"
+                             if rounds > 0 else "during loading")
+                    reason = (f"SUT pod {pod_sut} replaced {phase} "
                               f"(UID {first_uid} -> {uid}); it is not loaded again")
                     print(f"{cfg.configuration:30s}: {reason}")
                     self.fail_loading_fatally(reason)
