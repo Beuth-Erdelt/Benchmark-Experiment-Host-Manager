@@ -19,7 +19,7 @@ from datetime import datetime  # noqa: E402
 import glob  # noqa: E402
 
 
-from bexhoma.evaluators.base import natural_sort, natural_sort_rows  # noqa: E402
+from bexhoma.evaluators.base import natural_sort_rows  # noqa: E402
 from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
 
 __all__ = ["HammerdbEvaluator"]
