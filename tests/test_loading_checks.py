@@ -457,6 +457,26 @@ class LoadDurabilityTest(unittest.TestCase):
         self.assertIn('replaced during benchmarking (2 rounds submitted) (UID uid-old -> uid-new)',
                       cfg.loading_failed_fatal)
 
+    def test_replaced_sut_pod_snapshot(self) -> None:
+        """The repetition ends with the abort: its snapshot names the new pod with its UID (run 1795612329)."""
+        import json
+        from bexhoma import sut_restarts
+        coordinator, cfg = self._coordinator(uid_now='uid-new', uid_first='uid-old')
+        cfg.code, cfg.num_experiment_to_apply_done = '42', 0
+        cfg.experiment.cluster.get_pod_restart_counts.return_value = {'dbms': 0, 'monitor': 0}
+        with tempfile.TemporaryDirectory() as folder:
+            cfg.experiment.result_filename_local = lambda name: os.path.join(folder, name)
+            with contextlib_quiet():
+                self.assertFalse(coordinator.start_exec())
+            with open(os.path.join(folder, 'bexhoma-sut-dbms-1-42-1-restarts.json')) as handle:
+                self.assertEqual(json.load(handle)['sut-pod']['uid'], 'uid-new')
+            self.assertEqual(sut_restarts.read_snapshot_uids(folder, '42'), {('dbms-1', '1'): {'sut-pod': 'uid-new'}})
+        # without a result folder (stand-ins) the abort still happens
+        coordinator, cfg = self._coordinator(uid_now='uid-new', uid_first='uid-old')
+        with contextlib_quiet():
+            self.assertFalse(coordinator.start_exec())
+        self.assertIn('replaced', cfg.loading_failed_fatal)
+
     def test_first_load_records_the_uid(self) -> None:
         for uid_first in ('', 'uid-1'):
             # '': the first load; 'uid-1': the same pod again, no replacement

@@ -18,6 +18,7 @@ from ..clusters import (CLUSTER_OUTAGE_BUDGET_SECONDS, exit_code_line, is_cluste
                         script_end_line, start_process, wait_for_cluster, wrap_script)
 from ..cluster_calls import stored_pods
 from .. import ddl_parameters
+from .. import sut_restarts
 
 if TYPE_CHECKING:
     from .base import SutConfiguration
@@ -529,6 +530,7 @@ class LoadingCoordinator:
                     reason = (f"SUT pod {pod_sut} replaced {phase} "
                               f"(UID {first_uid} -> {uid}); it is not loaded again")
                     print(f"{cfg.configuration:30s}: {reason}")
+                    self.store_replaced_pod_snapshot(pod_sut, uid)
                     self.fail_loading_fatally(reason)
                     return False
                 if not first_uid:
@@ -1059,6 +1061,34 @@ class LoadingCoordinator:
                 if key.startswith("time_"):
                     time_type = key[len("time_"):]
                     cfg.times_scripts[time_type] = float(value)
+
+    def store_replaced_pod_snapshot(self, pod: str, uid: str) -> None:
+        """Write this repetition's restart snapshot for a SUT pod that replaced the loaded one.
+
+        The experiment aborts right after, so the snapshot of the end of the
+        repetition (``bexhoma-sut-*-restarts.json``, with the pod UIDs) is never
+        written; this one is. The summary then sees the new UID (``SUT pods not
+        replaced``) and the new pod's restart counts.
+
+        :param pod: Name of the new SUT pod.
+        :param uid: Its UID.
+        """
+        cfg = self._config
+        try:
+            per_container = cfg.experiment.cluster.get_pod_restart_counts(pod)
+            counts = sut_restarts.clean_restart_counts(" ".join(str(count) for count in per_container.values()))
+            experiment_run = str(cfg.num_experiment_to_apply_done + 1)
+            filename = cfg.experiment.result_filename_local(
+                f"bexhoma-sut-{cfg.configuration}-{cfg.code}-{experiment_run}-restarts.json".lower())
+            snapshot = {}
+            if os.path.isfile(filename):
+                with open(filename, encoding='utf-8') as handle:
+                    snapshot = json.load(handle)
+            snapshot[pod] = sut_restarts.restart_snapshot_entry(counts, per_container, uid=uid)
+            with open(filename, 'w', encoding='utf-8') as handle:
+                json.dump(snapshot, handle, indent=2)
+        except (AttributeError, OSError, TypeError, ValueError) as exc:
+            print(f"{cfg.configuration:30s}: restart snapshot of {pod} not stored: {exc}")
 
     def fail_loading_fatally(self, reason: str) -> None:
         """End this configuration's load before it ran, so the experiment aborts.
