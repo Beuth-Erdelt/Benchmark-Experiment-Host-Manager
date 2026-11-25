@@ -60,7 +60,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_garnet.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Garnet single  sf=1  nbp=1"
+report_result $? "YCSB Garnet single  sf=1  nbp=1"
 
 
 ####################################################
@@ -112,7 +112,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_garnet_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Garnet single monitoring  sf=3  nbp=1"
+report_result $? "YCSB Garnet single monitoring  sf=3  nbp=1"
 
 
 ####################################################
@@ -170,7 +170,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_garnet_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Garnet single PVC  sf=1  nbp=1  nc=2"
+report_result $? "YCSB Garnet single PVC  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -226,7 +226,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_garnet_cluster.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Garnet cluster 3  sf=1  nbp=1"
+report_result $? "YCSB Garnet cluster 3  sf=1  nbp=1"
 
 
 # Variant replication: 3 Garnet instances with 1 replica each
@@ -279,7 +279,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_garnet_replica.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Garnet cluster 3 replication  sf=1  nbp=1"
+report_result $? "YCSB Garnet cluster 3 replication  sf=1  nbp=1"
 
 
 #### Variants
@@ -335,7 +335,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_garnet_cluster_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Garnet cluster 3 single PVC  sf=3  nbp=1  nc=2"
+report_result $? "YCSB Garnet cluster 3 single PVC  sf=3  nbp=1  nc=2"
 
 
 ###########################################
@@ -343,4 +343,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Garnet cluster 3 single PVC  sf=3
 ###########################################
 
 
+report_total
 clean_logs

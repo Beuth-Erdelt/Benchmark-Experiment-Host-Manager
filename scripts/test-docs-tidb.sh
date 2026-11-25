@@ -68,7 +68,7 @@ bexhoma ycsb \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_tidb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
+report_result $? "YCSB TiDB  sf=1  nbp=1"
 
 
 ####################################################
@@ -128,7 +128,7 @@ bexhoma ycsb \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_tidb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB  sf=1  nbp=1"
+report_result $? "YCSB TiDB  sf=1  nbp=1"
 
 
 # Application metrics (-ma): run in scripts/test-docs-appmetrics.sh, logs docs_ycsb_tidb_appmetrics.log and docs_benchbase_tidb_appmetrics.log
@@ -195,7 +195,7 @@ bexhoma ycsb \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_tidb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB TiDB storage  sf=1  nbp=1  nc=2"
+report_result $? "YCSB TiDB storage  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -243,7 +243,7 @@ bexhoma benchbase \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_tidb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
+report_result $? "Benchbase TiDB  sf=16  nbp=1,2"
 
 
 # Benchbase TPC-C: on persistent storage
@@ -292,7 +292,7 @@ bexhoma benchbase \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_benchbase_tidb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2  nc=2  nvme"
+report_result $? "Benchbase TiDB  sf=16  nbp=1,2  nc=2  nvme"
 
 
 ###########################################
@@ -300,4 +300,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase TiDB  sf=16  nbp=1,2  nc=2  
 ###########################################
 
 
+report_total
 clean_logs

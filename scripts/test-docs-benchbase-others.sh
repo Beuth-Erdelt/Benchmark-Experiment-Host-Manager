@@ -48,7 +48,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_twitter_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter simple  sf=16  nbp=1"
+report_result $? "Benchbase twitter simple  sf=16  nbp=1"
 
 
 #### Benchbase Twitter Scale (Example-Benchbase-Others.md)
@@ -89,7 +89,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_twitter_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase twitter scale  sf=1600  nbp=1,2,4,8"
+report_result $? "Benchbase twitter scale  sf=1600  nbp=1,2,4,8"
 
 
 #### Benchbase CH-benCHmark Simple (Example-Benchbase-Others.md)
@@ -120,7 +120,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_chbenchmark_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark simple  sf=10  nbp=1"
+report_result $? "Benchbase chbenchmark simple  sf=10  nbp=1"
 
 
 #### Benchbase CH-benCHmark Scale (Example-Benchbase-Others.md)
@@ -155,7 +155,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_chbenchmark_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase chbenchmark scale  sf=100  nbp=1,2,5,10"
+report_result $? "Benchbase chbenchmark scale  sf=100  nbp=1,2,5,10"
 
 
 #### Benchbase YCSB Workload C (Example-Benchbase-Others.md)
@@ -188,7 +188,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_c.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload c  sf=1000  nbp=1,2"
+report_result $? "Benchbase YCSB workload c  sf=1000  nbp=1,2"
 
 
 #### Benchbase YCSB Workload A (Example-Benchbase-Others.md)
@@ -221,7 +221,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_a.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload a  sf=1000  nbp=1,2"
+report_result $? "Benchbase YCSB workload a  sf=1000  nbp=1,2"
 
 
 #### Benchbase YCSB Workload B (Example-Benchbase-Others.md)
@@ -254,7 +254,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_b.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload b  sf=1000  nbp=1,2"
+report_result $? "Benchbase YCSB workload b  sf=1000  nbp=1,2"
 
 
 #### Benchbase YCSB Workload D (Example-Benchbase-Others.md)
@@ -287,7 +287,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_d.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload d  sf=1000  nbp=1"
+report_result $? "Benchbase YCSB workload d  sf=1000  nbp=1"
 
 
 #### Benchbase YCSB Workload E (Example-Benchbase-Others.md)
@@ -320,7 +320,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_e.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload e  sf=1000  nbp=1"
+report_result $? "Benchbase YCSB workload e  sf=1000  nbp=1"
 
 
 #### Benchbase YCSB Workload F (Example-Benchbase-Others.md)
@@ -353,7 +353,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_ycsb_f.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YCSB workload f  sf=1000  nbp=1,2"
+report_result $? "Benchbase YCSB workload f  sf=1000  nbp=1,2"
 
 
 #### Benchbase auctionmark Simple (Example-Benchbase-Others.md)
@@ -384,7 +384,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_auctionmark_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase auctionmark simple  sf=1  nbp=1"
+report_result $? "Benchbase auctionmark simple  sf=1  nbp=1"
 
 
 #### Benchbase epinions Simple (Example-Benchbase-Others.md)
@@ -415,7 +415,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_epinions_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase epinions simple  sf=1  nbp=1"
+report_result $? "Benchbase epinions simple  sf=1  nbp=1"
 
 
 #### Benchbase hyadapt Simple (Example-Benchbase-Others.md)
@@ -446,7 +446,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_hyadapt_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase hyadapt simple  sf=1  nbp=1"
+report_result $? "Benchbase hyadapt simple  sf=1  nbp=1"
 
 
 #### Benchbase noop Simple (Example-Benchbase-Others.md)
@@ -477,7 +477,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_noop_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase noop simple  sf=1  nbp=1"
+report_result $? "Benchbase noop simple  sf=1  nbp=1"
 
 
 #### Benchbase otmetrics Simple (Example-Benchbase-Others.md)
@@ -508,7 +508,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_otmetrics_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase otmetrics simple  sf=1  nbp=1"
+report_result $? "Benchbase otmetrics simple  sf=1  nbp=1"
 
 
 #### Benchbase resourcestresser Simple (Example-Benchbase-Others.md)
@@ -539,7 +539,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_resourcestresser_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase resourcestresser simple  sf=1  nbp=1"
+report_result $? "Benchbase resourcestresser simple  sf=1  nbp=1"
 
 
 #### Benchbase seats Simple (Example-Benchbase-Others.md)
@@ -570,7 +570,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_seats_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase seats simple  sf=1  nbp=1"
+report_result $? "Benchbase seats simple  sf=1  nbp=1"
 
 
 #### Benchbase sibench Simple (Example-Benchbase-Others.md)
@@ -601,7 +601,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_sibench_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase sibench simple  sf=1  nbp=1"
+report_result $? "Benchbase sibench simple  sf=1  nbp=1"
 
 
 #### Benchbase smallbank Simple (Example-Benchbase-Others.md)
@@ -632,7 +632,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_smallbank_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase smallbank simple  sf=1  nbp=1"
+report_result $? "Benchbase smallbank simple  sf=1  nbp=1"
 
 
 #### Benchbase tatp Simple (Example-Benchbase-Others.md)
@@ -663,7 +663,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_tatp_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase tatp simple  sf=1  nbp=1"
+report_result $? "Benchbase tatp simple  sf=1  nbp=1"
 
 
 #### Benchbase voter Simple (Example-Benchbase-Others.md)
@@ -694,7 +694,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_voter_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase voter simple  sf=1  nbp=1"
+report_result $? "Benchbase voter simple  sf=1  nbp=1"
 
 
 #### Benchbase wikipedia Simple (Example-Benchbase-Others.md)
@@ -725,7 +725,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_wikipedia_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase wikipedia simple  sf=1  nbp=1"
+report_result $? "Benchbase wikipedia simple  sf=1  nbp=1"
 
 
 ###########################################
@@ -733,4 +733,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase wikipedia simple  sf=1  nbp=
 ###########################################
 
 
+report_total
 clean_logs

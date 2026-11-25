@@ -37,7 +37,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_compare.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H compare  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H compare  sf=1"
 
 
 ####################################################
@@ -64,7 +64,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_compare.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS compare  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS compare  sf=1"
 
 
 ###########################################
@@ -72,4 +72,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS compare  sf=
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

@@ -37,7 +37,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase scale  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase scale  sf=16  nbp=1,2"
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
@@ -58,7 +58,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase monitoring  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase monitoring  sf=16  nbp=1,2"
 
 
 #### Benchbase Persistent Storage (Example-Benchbase.md)
@@ -80,7 +80,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase storage  sf=16  nbp=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase storage  sf=16  nbp=1  nc=2"
 
 
 #### Benchbase Reset Script (Example-Benchbase.md)
@@ -100,7 +100,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_reset.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset script  sf=4  nc=2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase reset script  sf=4  nc=2"
 
 
 #### Benchbase Unlimited Target and Warmup (Example-Benchbase.md)
@@ -119,7 +119,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_unlimited.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase unlimited target + warmup  sf=4  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase unlimited target + warmup  sf=4  nbp=1,2"
 
 
 #### Benchbase Keying and Thinking Time (Example-Benchbase.md)
@@ -148,7 +148,7 @@ bexhoma benchbase `
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=2000 <# raise connection limit above -nbt terminals #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_keytime.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase keytime  sf=160  nbp=1,2,5,10"
+Write-ExperimentResult $LASTEXITCODE "Benchbase keytime  sf=160  nbp=1,2,5,10"
 
 
 ###########################################
@@ -156,4 +156,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase keytime  
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

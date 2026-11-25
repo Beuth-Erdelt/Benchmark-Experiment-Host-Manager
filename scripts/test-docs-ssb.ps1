@@ -51,7 +51,7 @@ bexhoma ssb `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_postgresql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB PostgreSQL  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB PostgreSQL  sf=1"
 
 
 #### SSB MonetDB (Example-SSB.md)
@@ -74,7 +74,7 @@ bexhoma ssb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_monetdb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB MonetDB  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB MonetDB  sf=1"
 
 
 #### SSB ClickHouse (Example-SSB.md)
@@ -94,7 +94,7 @@ bexhoma ssb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_clickhouse.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB ClickHouse  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB ClickHouse  sf=1"
 
 
 #### SSB Flat (Example-SSB.md)
@@ -127,7 +127,7 @@ bexhoma ssb `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_flat.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB flat  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB flat  sf=1"
 
 
 #### SSB Random Parameters (Example-SSB.md)
@@ -163,7 +163,7 @@ bexhoma ssb `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_random.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB random  sf=1  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "SSB random  sf=1  ne=1,2"
 
 
 #### SSB Persistent Storage (Example-SSB.md)
@@ -199,7 +199,7 @@ bexhoma ssb `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB storage  sf=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "SSB storage  sf=1  nc=2"
 
 
 #### SSB Load (Example-SSB.md)
@@ -232,7 +232,7 @@ bexhoma ssb `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   load 2>&1 | Out-File "$LOG_DIR\docs_ssb_load.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB load  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB load  sf=1"
 
 
 #### SSB Profiling (Example-SSB.md)
@@ -262,7 +262,7 @@ bexhoma ssb `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   profiling 2>&1 | Out-File "$LOG_DIR\docs_ssb_profiling.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB profiling  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB profiling  sf=1"
 
 
 #### SSB ClickHouseCluster (Example-SSB.md)
@@ -284,7 +284,7 @@ bexhoma ssb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_clickhousecluster.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB ClickHouseCluster  sf=1  nw=3"
+Write-ExperimentResult $LASTEXITCODE "SSB ClickHouseCluster  sf=1  nw=3"
 
 
 #### SSB ClickHouseCluster distributed dimensions (Example-SSB.md)
@@ -307,7 +307,7 @@ bexhoma ssb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_clickhousecluster_distributed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB ClickHouseCluster distributed dimensions  sf=1  nw=3  xdim=distributed"
+Write-ExperimentResult $LASTEXITCODE "SSB ClickHouseCluster distributed dimensions  sf=1  nw=3  xdim=distributed"
 
 
 #### SSB PgDuckDB (Example-SSB.md)
@@ -331,7 +331,7 @@ bexhoma ssb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_pgduckdb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB PgDuckDB  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB PgDuckDB  sf=1"
 
 
 #### SSB Citus (Example-SSB.md)
@@ -356,7 +356,7 @@ bexhoma ssb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_citus.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB Citus  sf=1  nw=3"
+Write-ExperimentResult $LASTEXITCODE "SSB Citus  sf=1  nw=3"
 
 
 #### SSB MySQL (Example-SSB.md)
@@ -379,7 +379,7 @@ bexhoma ssb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_mysql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB MySQL  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB MySQL  sf=1"
 
 
 #### SSB MariaDB (Example-SSB.md)
@@ -402,7 +402,7 @@ bexhoma ssb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_mariadb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB MariaDB  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB MariaDB  sf=1"
 
 
 #### SSB Monitoring (Example-SSB.md)
@@ -425,7 +425,7 @@ bexhoma ssb `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB monitoring  sf=10"
+Write-ExperimentResult $LASTEXITCODE "SSB monitoring  sf=10"
 
 
 ###########################################
@@ -433,4 +433,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB monitoring  sf=
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

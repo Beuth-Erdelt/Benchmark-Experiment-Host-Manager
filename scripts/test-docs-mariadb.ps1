@@ -42,7 +42,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDB simple  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MariaDB simple  sf=1"
 
 
 ####################################################
@@ -75,7 +75,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDB monitoring  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MariaDB monitoring  sf=1"
 
 
 ####################################################
@@ -110,7 +110,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDB throughput  sf=1  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MariaDB throughput  sf=1  ne=1,2"
 
 
 # Persistent storage: TPC-H on MariaDB on a RAM disk
@@ -137,7 +137,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadb_ramdisk.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDB ramdisk  sf=10"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MariaDB ramdisk  sf=10"
 
 
 ####################################################
@@ -168,7 +168,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_mariadb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MariaDB simple  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MariaDB simple  sf=1"
 
 
 # TPC-DS monitoring on MariaDB
@@ -196,7 +196,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_mariadb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MariaDB monitoring  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MariaDB monitoring  sf=1"
 
 
 # TPC-DS throughput test on MariaDB, on persistent storage
@@ -226,7 +226,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_mariadb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MariaDB throughput  sf=1  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MariaDB throughput  sf=1  ne=1,2"
 
 
 ####################################################
@@ -255,7 +255,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_mariadb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MariaDB simple  sf=16"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MariaDB simple  sf=16"
 
 
 # Benchbase TPC-C: persistent storage
@@ -281,7 +281,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_mariadb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MariaDB persistency  sf=16  nc=2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MariaDB persistency  sf=16  nc=2"
 
 
 # Benchbase TPC-C: monitoring
@@ -307,7 +307,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_mariadb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MariaDB monitoring  sf=16"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MariaDB monitoring  sf=16"
 
 
 # Benchbase TPC-C: scaling the clients, on the volume of the persistent storage run
@@ -334,7 +334,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_mariadb_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MariaDB complex  sf=16  nc=2  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MariaDB complex  sf=16  nc=2  ne=1,2"
 
 
 ####################################################
@@ -361,7 +361,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_mariadb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB MariaDB simple  sf=16"
+Write-ExperimentResult $LASTEXITCODE "HammerDB MariaDB simple  sf=16"
 
 
 # HammerDB TPC-C: monitoring, on persistent storage
@@ -387,7 +387,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_mariadb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB MariaDB monitoring  sf=16"
+Write-ExperimentResult $LASTEXITCODE "HammerDB MariaDB monitoring  sf=16"
 
 
 # HammerDB TPC-C: scaling the clients, on the volume of the monitoring run
@@ -413,7 +413,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_mariadb_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB MariaDB complex  sf=16  nc=2  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "HammerDB MariaDB complex  sf=16  nc=2  ne=1,2"
 
 
 ####################################################
@@ -445,7 +445,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_mariadb_loading.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MariaDB loader scaling  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB MariaDB loader scaling  sf=1"
 
 
 # YCSB: persistent storage, loads the volume for the following runs
@@ -474,7 +474,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_mariadb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MariaDB persistency  sf=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB MariaDB persistency  sf=1  nc=2"
 
 
 # YCSB: scaling the benchmarker, on the loaded volume
@@ -502,7 +502,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_mariadb_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MariaDB scaling  sf=1  nc=2  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "YCSB MariaDB scaling  sf=1  nc=2  ne=1,2"
 
 
 # YCSB: workload E, on the loaded volume
@@ -530,7 +530,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_mariadb_workload_e.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MariaDB workload e  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB MariaDB workload e  sf=1"
 
 
 # YCSB: monitoring, on the loaded volume
@@ -560,7 +560,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_mariadb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MariaDB monitoring  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB MariaDB monitoring  sf=1"
 
 
 #### TPC-H Refresh Stream (Example-TPC-H.md)
@@ -582,7 +582,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadb_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDB refresh  sf=1  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MariaDB refresh  sf=1  ne=3"
 
 
 ###########################################
@@ -590,4 +590,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDB refre
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

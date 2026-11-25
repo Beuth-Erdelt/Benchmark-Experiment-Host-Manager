@@ -61,7 +61,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_sqlserver_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H SQLServer storage  sf=1"
+report_result $? "TPC-H SQLServer storage  sf=1"
 
 
 #### TPC-H refresh stream
@@ -96,7 +96,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_sqlserver_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H SQLServer refresh  sf=1  ne=3"
+report_result $? "TPC-H SQLServer refresh  sf=1  ne=3"
 
 
 #### YCSB workload a, persistent storage, reset
@@ -147,7 +147,7 @@ bexhoma ycsb \
   -ks no \
   run &>$LOG_DIR/docs_ycsb_sqlserver_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB SQLServer workload a  sf=1"
+report_result $? "YCSB SQLServer workload a  sf=1"
 
 
 #### Benchbase tpcc (the only Benchbase benchmark with a SQL Server config)
@@ -192,7 +192,7 @@ bexhoma benchbase \
   -ks no \
   run &>$LOG_DIR/docs_benchbase_tpcc_sqlserver_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase SQLServer tpcc  sf=16"
+report_result $? "Benchbase SQLServer tpcc  sf=16"
 
 
 #### HammerDB TPC-C
@@ -229,7 +229,7 @@ bexhoma hammerdb \
   -ks no \
   run &>$LOG_DIR/docs_hammerdb_sqlserver.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB SQLServer  sf=16"
+report_result $? "HammerDB SQLServer  sf=16"
 
 
 ###########################################
@@ -237,4 +237,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB SQLServer  sf=16"
 ###########################################
 
 
+report_total
 clean_logs

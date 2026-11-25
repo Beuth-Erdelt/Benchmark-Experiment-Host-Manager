@@ -128,6 +128,32 @@ logs_open_for_writing() {
 }
 
 
+# report_result <exit_code> <label>
+#   Prints "[DONE] <label>" after a bexhoma call that returned 0 and "[FAIL] <label> (exit N)"
+#   otherwise. bexhoma returns 1 if a test of the summary failed or the run crashed; skipped
+#   tests and warnings do not fail. Pass $? right after the call: the redirect &>log does not
+#   change it, a pipe (| tee) would. Counts the calls for report_total.
+BEXHOMA_RUNS=0
+BEXHOMA_RUNS_FAILED=0
+report_result() {
+    local code=$1 label=$2
+    BEXHOMA_RUNS=$((BEXHOMA_RUNS + 1))
+    if [[ "$code" -eq 0 ]]; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] $label"
+    else
+        BEXHOMA_RUNS_FAILED=$((BEXHOMA_RUNS_FAILED + 1))
+        echo "$(date '+%Y-%m-%d %H:%M:%S') [FAIL] $label  (exit $code)"
+    fi
+}
+
+
+# report_total
+#   Prints how many of the bexhoma calls reported by report_result failed.
+report_total() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') [SUMMARY] $BEXHOMA_RUNS_FAILED of $BEXHOMA_RUNS experiments failed"
+}
+
+
 # clean_logs [--force]
 #   Strips kubectl token warnings from the logs and extracts their "## Show Summary" part
 #   into <name>_summary.md. Off by default: runs only with BEXHOMA_CLEAN_LOGS=1 or --force.

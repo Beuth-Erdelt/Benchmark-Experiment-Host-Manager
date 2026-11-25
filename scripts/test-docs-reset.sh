@@ -109,7 +109,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_postgresql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset PostgreSQL"
+report_result $? "YCSB reset PostgreSQL"
 
 
 #### YCSB Reset PGBouncer
@@ -156,7 +156,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_pgbouncer.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset PGBouncer"
+report_result $? "YCSB reset PGBouncer"
 
 
 #### YCSB Reset OrioleDB
@@ -197,7 +197,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_orioledb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset OrioleDB"
+report_result $? "YCSB reset OrioleDB"
 
 
 #### YCSB Reset MySQL
@@ -238,7 +238,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_mysql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset MySQL"
+report_result $? "YCSB reset MySQL"
 
 
 #### YCSB Reset MariaDB
@@ -279,7 +279,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_mariadb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset MariaDB"
+report_result $? "YCSB reset MariaDB"
 
 
 #### YCSB Reset Citus
@@ -326,7 +326,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_citus.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset Citus"
+report_result $? "YCSB reset Citus"
 
 
 #### YCSB Reset CockroachDB
@@ -371,7 +371,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_cockroachdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset CockroachDB"
+report_result $? "YCSB reset CockroachDB"
 
 
 #### YCSB Reset TiDB
@@ -416,7 +416,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   run &>$LOG_DIR/docs_reset_ycsb_tidb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset TiDB"
+report_result $? "YCSB reset TiDB"
 
 
 #### YCSB Reset Dragonfly
@@ -457,7 +457,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_dragonfly.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset Dragonfly"
+report_result $? "YCSB reset Dragonfly"
 
 
 #### YCSB Reset Dragonfly Replica
@@ -502,7 +502,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_dragonfly_replica.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset Dragonfly Replica"
+report_result $? "YCSB reset Dragonfly Replica"
 
 
 #### YCSB Reset Redis
@@ -543,7 +543,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_redis.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset Redis"
+report_result $? "YCSB reset Redis"
 
 
 #### YCSB Reset Redis Cluster
@@ -586,7 +586,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_redis_cluster.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset Redis Cluster"
+report_result $? "YCSB reset Redis Cluster"
 
 
 #### YCSB Reset YugabyteDB
@@ -629,7 +629,7 @@ bexhoma ycsb \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_yugabytedb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset YugabyteDB"
+report_result $? "YCSB reset YugabyteDB"
 
 remove_yugabytedb
 
@@ -671,7 +671,7 @@ bexhoma benchbase \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_postgresql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C PostgreSQL"
+report_result $? "Benchbase reset TPC-C PostgreSQL"
 
 
 #### Benchbase Reset TPC-C PGBouncer
@@ -710,7 +710,7 @@ bexhoma benchbase \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_pgbouncer.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C PGBouncer"
+report_result $? "Benchbase reset TPC-C PGBouncer"
 
 
 #### Benchbase Reset TPC-C MySQL
@@ -743,7 +743,7 @@ bexhoma benchbase \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_mysql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C MySQL"
+report_result $? "Benchbase reset TPC-C MySQL"
 
 
 #### Benchbase Reset TPC-C MariaDB
@@ -776,7 +776,7 @@ bexhoma benchbase \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_mariadb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C MariaDB"
+report_result $? "Benchbase reset TPC-C MariaDB"
 
 
 #### Benchbase Reset Twitter PostgreSQL
@@ -811,7 +811,7 @@ bexhoma benchbase \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_twitter_postgresql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset Twitter PostgreSQL"
+report_result $? "Benchbase reset Twitter PostgreSQL"
 
 
 #### Benchbase Reset TPC-C Citus
@@ -850,7 +850,7 @@ bexhoma benchbase \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_citus.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C Citus"
+report_result $? "Benchbase reset TPC-C Citus"
 
 
 #### Benchbase Reset TPC-C CockroachDB
@@ -887,7 +887,7 @@ bexhoma benchbase \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_cockroachdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C CockroachDB"
+report_result $? "Benchbase reset TPC-C CockroachDB"
 
 
 #### Benchbase Reset TPC-C TiDB
@@ -924,7 +924,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   run &>$LOG_DIR/docs_reset_benchbase_tidb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C TiDB"
+report_result $? "Benchbase reset TPC-C TiDB"
 
 
 #### Benchbase Reset TPC-C YugabyteDB
@@ -959,7 +959,7 @@ bexhoma benchbase \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_yugabytedb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C YugabyteDB"
+report_result $? "Benchbase reset TPC-C YugabyteDB"
 
 remove_yugabytedb
 
@@ -999,7 +999,7 @@ bexhoma hammerdb \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_postgresql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB reset PostgreSQL"
+report_result $? "HammerDB reset PostgreSQL"
 
 
 #### HammerDB Reset MySQL
@@ -1030,7 +1030,7 @@ bexhoma hammerdb \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_mysql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB reset MySQL"
+report_result $? "HammerDB reset MySQL"
 
 
 #### HammerDB Reset MariaDB
@@ -1061,7 +1061,7 @@ bexhoma hammerdb \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_mariadb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB reset MariaDB"
+report_result $? "HammerDB reset MariaDB"
 
 
 #### HammerDB Reset Citus
@@ -1098,7 +1098,7 @@ bexhoma hammerdb \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_citus.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB reset Citus"
+report_result $? "HammerDB reset Citus"
 
 
 
@@ -1136,7 +1136,7 @@ bexhoma tpch \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_postgresql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset PostgreSQL"
+report_result $? "TPC-H reset PostgreSQL"
 
 
 #### TPC-H Reset PgDuckDB
@@ -1167,7 +1167,7 @@ bexhoma tpch \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_pgduckdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset PgDuckDB"
+report_result $? "TPC-H reset PgDuckDB"
 
 
 #### TPC-H Reset MonetDB
@@ -1198,7 +1198,7 @@ bexhoma tpch \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_monetdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset MonetDB"
+report_result $? "TPC-H reset MonetDB"
 
 
 #### TPC-H Reset MySQL
@@ -1229,7 +1229,7 @@ bexhoma tpch \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_mysql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset MySQL"
+report_result $? "TPC-H reset MySQL"
 
 
 #### TPC-H Reset MariaDB
@@ -1260,7 +1260,7 @@ bexhoma tpch \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_mariadb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset MariaDB"
+report_result $? "TPC-H reset MariaDB"
 
 
 #### TPC-H Reset Citus
@@ -1297,7 +1297,7 @@ bexhoma tpch \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_citus.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset Citus"
+report_result $? "TPC-H reset Citus"
 
 
 #### TPC-H Reset PostgreSQL with Refresh Stream
@@ -1330,7 +1330,7 @@ bexhoma tpch \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_refresh_postgresql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset PostgreSQL with Refresh Stream"
+report_result $? "TPC-H reset PostgreSQL with Refresh Stream"
 
 
 
@@ -1370,7 +1370,7 @@ bexhoma tpcds \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_postgresql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS reset PostgreSQL"
+report_result $? "TPC-DS reset PostgreSQL"
 
 
 #### TPC-DS Reset MonetDB
@@ -1403,7 +1403,7 @@ bexhoma tpcds \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_monetdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS reset MonetDB"
+report_result $? "TPC-DS reset MonetDB"
 
 
 #### TPC-DS Reset MySQL
@@ -1436,7 +1436,7 @@ bexhoma tpcds \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_mysql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS reset MySQL"
+report_result $? "TPC-DS reset MySQL"
 
 
 #### TPC-DS Reset MariaDB
@@ -1469,7 +1469,7 @@ bexhoma tpcds \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_mariadb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS reset MariaDB"
+report_result $? "TPC-DS reset MariaDB"
 
 
 
@@ -1479,4 +1479,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS reset MariaDB"
 ###########################################
 
 
+report_total
 clean_logs

@@ -53,7 +53,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService ingestion  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB DatabaseService ingestion  sf=1  nbp=1"
 
 
 #### YCSB Execution (Example-CloudDatabase.md)
@@ -80,7 +80,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService execution skip-load  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB DatabaseService execution skip-load  sf=1  nbp=1"
 
 # delete database service placeholder
 kubectl delete deployment bexhoma-deployment-postgres
@@ -121,7 +121,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_databaseservice_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB DatabaseService storage  sf=5  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB DatabaseService storage  sf=5  nbp=1"
 
 
 
@@ -158,7 +158,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_databaseservice.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DatabaseService  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase DatabaseService  sf=16  nbp=1,2"
 
 # no PVC, skip loading
 bexhoma benchbase `
@@ -176,7 +176,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_databaseservice_execution.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
 
 
 
@@ -217,7 +217,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H DatabaseService  sf=3"
 
 
 #### TPC-H Monitoring (Example-CloudDatabase.md) — no PVC, skip loading
@@ -240,7 +240,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_execution.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService skip-load  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H DatabaseService skip-load  sf=3"
 
 
 # delete database service placeholder
@@ -277,7 +277,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService PVC ingestion  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H DatabaseService PVC ingestion  sf=3"
 
 
 #### TPC-H Monitoring (Example-CloudDatabase.md) — with PVC, execution only
@@ -301,7 +301,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_storage_execution.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService PVC execution  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H DatabaseService PVC execution  sf=3"
 
 
 # delete database service placeholder
@@ -337,7 +337,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_databaseservice_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H DatabaseService refresh  sf=1  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H DatabaseService refresh  sf=1  ne=3"
 
 
 # delete database service placeholder
@@ -350,4 +350,5 @@ kubectl delete svc bexhoma-service
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

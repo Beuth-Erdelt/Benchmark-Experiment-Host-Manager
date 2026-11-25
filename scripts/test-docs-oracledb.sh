@@ -65,7 +65,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_oracledb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H OracleDB storage  sf=1"
+report_result $? "TPC-H OracleDB storage  sf=1"
 
 
 #### TPC-H refresh stream
@@ -100,7 +100,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_oracledb_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H OracleDB refresh  sf=1  ne=3"
+report_result $? "TPC-H OracleDB refresh  sf=1  ne=3"
 
 
 #### YCSB workload a, persistent storage, reset
@@ -151,7 +151,7 @@ bexhoma ycsb \
   -ks no \
   run &>$LOG_DIR/docs_ycsb_oracledb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB OracleDB workload a  sf=1"
+report_result $? "YCSB OracleDB workload a  sf=1"
 
 
 #### Benchbase tpcc (the only Benchbase benchmark with an Oracle config)
@@ -196,7 +196,7 @@ bexhoma benchbase \
   -ks no \
   run &>$LOG_DIR/docs_benchbase_tpcc_oracledb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase OracleDB tpcc  sf=16"
+report_result $? "Benchbase OracleDB tpcc  sf=16"
 
 
 #### HammerDB TPC-C
@@ -233,7 +233,7 @@ bexhoma hammerdb \
   -ks no \
   run &>$LOG_DIR/docs_hammerdb_oracledb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB OracleDB  sf=16"
+report_result $? "HammerDB OracleDB  sf=16"
 
 
 ###########################################
@@ -241,4 +241,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB OracleDB  sf=16"
 ###########################################
 
 
+report_total
 clean_logs

@@ -72,7 +72,7 @@ bexhoma ssb \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_ssb_postgresql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB PostgreSQL  sf=1"
+report_result $? "SSB PostgreSQL  sf=1"
 
 
 #### SSB MonetDB (Example-SSB.md)
@@ -107,7 +107,7 @@ bexhoma ssb \
   -ks no \
   run &>$LOG_DIR/docs_ssb_monetdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MonetDB  sf=1"
+report_result $? "SSB MonetDB  sf=1"
 
 
 #### SSB ClickHouse (Example-SSB.md)
@@ -138,7 +138,7 @@ bexhoma ssb \
   -ks no \
   run &>$LOG_DIR/docs_ssb_clickhouse.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB ClickHouse  sf=1"
+report_result $? "SSB ClickHouse  sf=1"
 
 
 #### SSB Flat (Example-SSB.md)
@@ -194,7 +194,7 @@ bexhoma ssb \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_ssb_flat.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB flat  sf=1"
+report_result $? "SSB flat  sf=1"
 
 
 #### SSB Random Parameters (Example-SSB.md)
@@ -255,7 +255,7 @@ bexhoma ssb \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_ssb_random.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB random  sf=1  ne=1,2"
+report_result $? "SSB random  sf=1  ne=1,2"
 
 
 #### SSB Persistent Storage (Example-SSB.md)
@@ -316,7 +316,7 @@ bexhoma ssb \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_ssb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB storage  sf=1  nc=2"
+report_result $? "SSB storage  sf=1  nc=2"
 
 
 #### SSB Load (Example-SSB.md)
@@ -371,7 +371,7 @@ bexhoma ssb \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   load &>$LOG_DIR/docs_ssb_load.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB load  sf=1"
+report_result $? "SSB load  sf=1"
 
 
 #### SSB Profiling (Example-SSB.md)
@@ -422,7 +422,7 @@ bexhoma ssb \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   profiling &>$LOG_DIR/docs_ssb_profiling.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB profiling  sf=1"
+report_result $? "SSB profiling  sf=1"
 
 
 #### SSB ClickHouseCluster (Example-SSB.md)
@@ -457,7 +457,7 @@ bexhoma ssb \
   -ks no \
   run &>$LOG_DIR/docs_ssb_clickhousecluster.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB ClickHouseCluster  sf=1  nw=3"
+report_result $? "SSB ClickHouseCluster  sf=1  nw=3"
 
 
 #### SSB ClickHouseCluster distributed dimensions (Example-SSB.md)
@@ -494,7 +494,7 @@ bexhoma ssb \
   -ks no \
   run &>$LOG_DIR/docs_ssb_clickhousecluster_distributed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB ClickHouseCluster distributed dimensions  sf=1  nw=3  xdim=distributed"
+report_result $? "SSB ClickHouseCluster distributed dimensions  sf=1  nw=3  xdim=distributed"
 
 
 #### SSB PgDuckDB (Example-SSB.md)
@@ -531,7 +531,7 @@ bexhoma ssb \
   -ks no \
   run &>$LOG_DIR/docs_ssb_pgduckdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB PgDuckDB  sf=1"
+report_result $? "SSB PgDuckDB  sf=1"
 
 
 #### SSB Citus (Example-SSB.md)
@@ -570,7 +570,7 @@ bexhoma ssb \
   -ks no \
   run &>$LOG_DIR/docs_ssb_citus.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB Citus  sf=1  nw=3"
+report_result $? "SSB Citus  sf=1  nw=3"
 
 
 #### SSB MySQL (Example-SSB.md)
@@ -605,7 +605,7 @@ bexhoma ssb \
   -ks no \
   run &>$LOG_DIR/docs_ssb_mysql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MySQL  sf=1"
+report_result $? "SSB MySQL  sf=1"
 
 
 #### SSB MariaDB (Example-SSB.md)
@@ -640,7 +640,7 @@ bexhoma ssb \
   -ks no \
   run &>$LOG_DIR/docs_ssb_mariadb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDB  sf=1"
+report_result $? "SSB MariaDB  sf=1"
 
 
 #### SSB Monitoring (Example-SSB.md)
@@ -678,7 +678,7 @@ bexhoma ssb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ssb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB monitoring  sf=10"
+report_result $? "SSB monitoring  sf=10"
 
 
 ###########################################
@@ -686,4 +686,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB monitoring  sf=10"
 ###########################################
 
 
+report_total
 clean_logs

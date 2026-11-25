@@ -68,7 +68,7 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL  sf=1"
+report_result $? "TPC-H PostgreSQL  sf=1"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
@@ -125,7 +125,7 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H monitoring  sf=10"
+report_result $? "TPC-H monitoring  sf=10"
 
 
 #### TCP-H Throughput (Example-TPC-H.md)
@@ -182,7 +182,7 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql_throughput.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H throughput  sf=1  ne=1,2"
+report_result $? "TPC-H throughput  sf=1  ne=1,2"
 
 
 #### TCP-H Persistent Storage (Example-TPC-H.md)
@@ -241,7 +241,7 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H storage  sf=1  nc=2"
+report_result $? "TPC-H storage  sf=1  nc=2"
 
 
 # TPC-H PostgreSQL on a RAM disk (Example-PostgreSQL.md)
@@ -284,7 +284,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_ramdisk.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PostgreSQL ramdisk  sf=3"
+report_result $? "TPC-H PostgreSQL ramdisk  sf=3"
 
 
 #### TCP-H Fractional Scaling Factor (Example-TPC-H.md)
@@ -319,7 +319,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_fractional.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H fractional  sf=0.1  nc=2"
+report_result $? "TPC-H fractional  sf=0.1  nc=2"
 
 
 #### TCP-H Refresh Stream (Example-TPC-H.md)
@@ -374,7 +374,7 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H refresh  sf=1  ne=3"
+report_result $? "TPC-H refresh  sf=1  ne=3"
 
 
 #### TCP-H Query Subset (Example-TPC-H.md)
@@ -429,7 +429,7 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_postgresql_subset.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H query subset  sf=10  xaq=1,9,14,18"
+report_result $? "TPC-H query subset  sf=10  xaq=1,9,14,18"
 
 
 #### TCP-H Refresh Stream on two DBMS (Example-TPC-H.md)
@@ -466,7 +466,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_refresh_two_dbms.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H refresh on two DBMS  sf=1  ne=3"
+report_result $? "TPC-H refresh on two DBMS  sf=1  ne=3"
 
 
 #### TCP-H from a YAML definition (Design-Yaml-Experiment-Entry-Script.md)
@@ -475,7 +475,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H refresh on two DBMS  sf=1  ne=3"
 # DUCKDB_FORCE_EXECUTION=true in the PgDuckDB SUT, storage prefix of each DBMS.
 bexhoma experiment tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml &>$LOG_DIR/docs_tpch_yaml_experiment.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H from YAML  sf=1  ne=1,2,4"
+report_result $? "TPC-H from YAML  sf=1  ne=1,2,4"
 
 ###########################################
 ############# TPC-H MonetDB ###############
@@ -487,4 +487,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H from YAML  sf=1  ne=1,2,4"
 ###########################################
 
 
+report_total
 clean_logs

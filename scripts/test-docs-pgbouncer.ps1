@@ -47,7 +47,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB PGBouncer  sf=1"
 
 
 ####################################################
@@ -85,7 +85,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer  sf=32  nbp=16"
+Write-ExperimentResult $LASTEXITCODE "YCSB PGBouncer  sf=32  nbp=16"
 
 
 # Application metrics (-ma): run in scripts/test-docs-appmetrics.ps1, logs docs_ycsb_pgbouncer_appmetrics.log and docs_benchbase_pgbouncer_appmetrics.log
@@ -127,7 +127,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer storage  sf=16  nbp=16  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB PGBouncer storage  sf=16  nbp=16  nc=2"
 
 
 ####################################################
@@ -152,7 +152,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_pgbouncer_newconn.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase new-connection PostgreSQL  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase new-connection PostgreSQL  sf=16  nbp=1,2"
 
 
 # Benchbase TPC-C: new connection per transaction, via the pool
@@ -175,7 +175,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_pgbouncer_newconn_pool.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase new-connection PGBouncer  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase new-connection PGBouncer  sf=16  nbp=1,2"
 
 
 # Benchbase TPC-C: sweep of pooler pods and inbound connections, one configuration per combination
@@ -199,7 +199,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_pgbouncer_pool_sweep.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase PGBouncer pool sweep  sf=16  xnpp=1,2  xnpi=32,64"
+Write-ExperimentResult $LASTEXITCODE "Benchbase PGBouncer pool sweep  sf=16  xnpp=1,2  xnpi=32,64"
 
 
 # YCSB: default pool size (no -xnpi/-xnpo) follows the loader threads of each configuration
@@ -228,7 +228,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_pgbouncer_pool_default.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer default pool  sf=1  nlt=16,64"
+Write-ExperimentResult $LASTEXITCODE "YCSB PGBouncer default pool  sf=1  nlt=16,64"
 
 
 ###########################################
@@ -236,4 +236,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PGBouncer defa
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

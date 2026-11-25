@@ -70,7 +70,7 @@ bexhoma tpcds \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpcds_postgresql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS PostgreSQL  sf=1"
+report_result $? "TPC-DS PostgreSQL  sf=1"
 
 
 #### TCP-DS Monitoring (Example-TPC-DS.md)
@@ -129,7 +129,7 @@ bexhoma tpcds \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpcds_postgresql_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS monitoring  sf=3"
+report_result $? "TPC-DS monitoring  sf=3"
 
 
 #### TCP-DS Throughput (Example-TPC-DS.md)
@@ -188,7 +188,7 @@ bexhoma tpcds \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpcds_postgresql_throughput.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS throughput  sf=1  ne=1,2"
+report_result $? "TPC-DS throughput  sf=1  ne=1,2"
 
 
 #### TCP-DS Persistent Storage (Example-TPC-DS.md)
@@ -249,7 +249,7 @@ bexhoma tpcds \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpcds_postgresql_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS storage  sf=1  nc=2"
+report_result $? "TPC-DS storage  sf=1  nc=2"
 
 
 ###########################################
@@ -320,7 +320,7 @@ bexhoma tpcds \
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB \
   profiling &>$LOG_DIR/docs_tpcds_postgresql_profiling.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS profiling  sf=10  ne=1,1"
+report_result $? "TPC-DS profiling  sf=10  ne=1,1"
 
 
 ###########################################
@@ -328,4 +328,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS profiling  sf=10  ne=1,1"
 ###########################################
 
 
+report_total
 clean_logs

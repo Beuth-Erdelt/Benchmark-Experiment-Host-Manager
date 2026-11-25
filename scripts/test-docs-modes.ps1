@@ -30,7 +30,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   start 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_start.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB start PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "YCSB start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
@@ -49,7 +49,7 @@ bexhoma ycsb `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   load 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_load.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB load PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "YCSB load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
@@ -72,7 +72,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_run.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB run PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "YCSB run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
@@ -94,7 +94,7 @@ bexhoma benchbase `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   start 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_start.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase start PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "Benchbase start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
 kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
@@ -112,7 +112,7 @@ bexhoma benchbase `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   load 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_load.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase load PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "Benchbase load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
 kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
@@ -134,7 +134,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_run.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase run PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "Benchbase run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
 kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
@@ -156,7 +156,7 @@ bexhoma hammerdb `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   start 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_start.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB start PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "HammerDB start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
 kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
@@ -174,7 +174,7 @@ bexhoma hammerdb `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   load 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_load.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB load PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "HammerDB load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
 kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
@@ -196,7 +196,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_run.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB run PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "HammerDB run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
 kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
@@ -218,7 +218,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   start 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_start.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H start PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "TPC-H start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-h
 kubectl delete all -l app=bexhoma,usecase=tpc-h
 
@@ -239,7 +239,7 @@ bexhoma tpch `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   load 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_load.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H load PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "TPC-H load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-h
 kubectl delete all -l app=bexhoma,usecase=tpc-h
 
@@ -264,7 +264,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_run.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H run PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "TPC-H run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-h
 kubectl delete all -l app=bexhoma,usecase=tpc-h
 
@@ -286,7 +286,7 @@ bexhoma tpcds `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   start 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_start.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS start PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-ds
 kubectl delete all -l app=bexhoma,usecase=tpc-ds
 
@@ -307,7 +307,7 @@ bexhoma tpcds `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
   load 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_load.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS load PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-ds
 kubectl delete all -l app=bexhoma,usecase=tpc-ds
 
@@ -332,7 +332,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_run.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS run PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-ds
 kubectl delete all -l app=bexhoma,usecase=tpc-ds
 
@@ -342,4 +342,5 @@ kubectl delete all -l app=bexhoma,usecase=tpc-ds
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

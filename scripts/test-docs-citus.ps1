@@ -47,7 +47,7 @@ bexhoma ycsb `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_citus.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Citus  sf=1  nw=3"
+Write-ExperimentResult $LASTEXITCODE "YCSB Citus  sf=1  nw=3"
 
 
 ####################################################
@@ -85,7 +85,7 @@ bexhoma ycsb `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_citus_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Citus  sf=5  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Citus  sf=5  nbp=1"
 
 
 ####################################################
@@ -128,7 +128,7 @@ bexhoma ycsb `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_citus_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB Citus storage  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -158,7 +158,7 @@ bexhoma benchbase `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_citus.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Citus  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase Citus  sf=16  nbp=1,2"
 
 
 # Benchbase TPC-C: scaling the clients, on persistent storage
@@ -190,7 +190,7 @@ bexhoma benchbase `
   -rnw $BEXHOMA_NODES_WORKER_4  <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_citus_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Citus scale  sf=128  nbp=1,2,4,8"
+Write-ExperimentResult $LASTEXITCODE "Benchbase Citus scale  sf=128  nbp=1,2,4,8"
 
 
 # Benchbase TPC-C: realistic, with keying and thinking time
@@ -223,7 +223,7 @@ bexhoma benchbase `
   --set statefulset[bexhoma-worker].container[dbms].max_connections=2000 <# workers too: the coordinator's pool to each worker follows its max_connections #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_citus_keytime.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Citus keytime  sf=128  nbp=1,2,5,10  nc=2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase Citus keytime  sf=128  nbp=1,2,5,10  nc=2"
 
 
 ####################################################
@@ -254,7 +254,7 @@ bexhoma hammerdb `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_citus.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB Citus  sf=16  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "HammerDB Citus  sf=16  nbp=1"
 
 
 # HammerDB TPC-C: scaling the clients, on persistent storage
@@ -289,7 +289,7 @@ bexhoma hammerdb `
   -rnw $BEXHOMA_NODES_WORKER_4  <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_citus_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB Citus scale  sf=128  nbp=1,2,4,8"
+Write-ExperimentResult $LASTEXITCODE "HammerDB Citus scale  sf=128  nbp=1,2,4,8"
 
 
 # HammerDB TPC-C: setup of the referenced paper
@@ -324,7 +324,7 @@ bexhoma hammerdb `
   -rnw $BEXHOMA_NODES_WORKER_4  <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_citus_paper.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB Citus large  sf=500  nbp=1,2,5,10  nc=2"
+Write-ExperimentResult $LASTEXITCODE "HammerDB Citus large  sf=500  nbp=1,2,5,10  nc=2"
 
 
 ####################################################
@@ -358,7 +358,7 @@ bexhoma tpch `
   -rnw $BEXHOMA_NODES_WORKER_4  <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_citus.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H Citus  sf=1  nbp=1"
 
 
 # TPC-H: on persistent storage, with monitoring
@@ -394,7 +394,7 @@ bexhoma tpch `
   -rnw $BEXHOMA_NODES_WORKER_4  <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_citus_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus storage  sf=10  ne=1,1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "TPC-H Citus storage  sf=10  ne=1,1  nc=2"
 
 
 # TPC-H: columnar storage
@@ -428,7 +428,7 @@ bexhoma tpch `
   -rnw $BEXHOMA_NODES_WORKER_4  <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_citus_columnar.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus columnar  sf=10  ne=1,1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "TPC-H Citus columnar  sf=10  ne=1,1  nc=2"
 
 
 ####################################################
@@ -458,7 +458,7 @@ bexhoma tpch `
   -rnw $BEXHOMA_NODES_WORKER_4  <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_citus_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus refresh  sf=1  nw=4  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H Citus refresh  sf=1  nw=4  ne=3"
 
 
 ###########################################
@@ -466,4 +466,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H Citus refresh
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

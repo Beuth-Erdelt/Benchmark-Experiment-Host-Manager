@@ -46,6 +46,8 @@ Shared helper functions live in `testfunctions.sh` and `testfunctions.ps1` and a
 They provide:
 
 - `wait_process` / `Wait-BexhomaProcess` — polls until no `python <name>.py` process remains; called after every `bexhoma` invocation.
+- `report_result $? "<label>"` / `Write-ExperimentResult $LASTEXITCODE "<label>"` — the status line after a `bexhoma` call: `[DONE] <label>` if it returned 0, `[FAIL] <label>  (exit N)` otherwise. bexhoma returns 1 if a test of the summary failed or the run crashed; skipped tests and warnings do not fail. In PowerShell `$?` is not the exit code (Windows PowerShell sets it to `$false` for `2>&1` on a native command), `$LASTEXITCODE` is, also behind `| Out-File`.
+- `report_total` / `Write-ExperimentTotal` — `[SUMMARY] N of M experiments failed`, called before `clean_logs` / `Invoke-CleanLogs` at the end of a script.
 - `clean_logs` / `Invoke-CleanLogs` — strips kubectl token warnings and extracts `## Show Summary` sections from each `.log` file into `<basename>_summary.md` files. Both leave logs and summaries as UTF-8 without BOM with LF line endings; `Invoke-CleanLogs` does not touch a file that needs no change.
   Off by default: the call at the end of a script only cleans with `BEXHOMA_CLEAN_LOGS=1` (bash) or `$env:BEXHOMA_CLEAN_LOGS = '1'` (PowerShell). By hand: `source scripts/testfunctions.sh; clean_logs --force` or `. .\scripts\testfunctions.ps1; Invoke-CleanLogs -Force`.
   Logs that another process has open for writing (runs of other scripts that are still going) are skipped: rewriting them in place mixed them up with other logs. On Linux the check needs `lsof`.
@@ -124,6 +126,7 @@ are listed alphabetically except where noted:
 - Override `BEXHOMA_MS` after sourcing when the script intentionally uses a value other than 1 (e.g., `BEXHOMA_MS=2` for DatabaseService which compares two DBMS simultaneously).
 - Pass `-ms $BEXHOMA_MS` to every `bexhoma` call.
 - Call `wait_process "<name>"` / `Wait-BexhomaProcess "<name>"` after every `bexhoma` invocation.
+- Follow every `bexhoma` call directly with `report_result $? "<label>"` / `Write-ExperimentResult $LASTEXITCODE "<label>"`, and end the script with `report_total` / `Write-ExperimentTotal` before `clean_logs` / `Invoke-CleanLogs`.
 
 **Bash-specific**
 - The `bexhoma <name>` command line carries no inline flags — all flags appear on their own continuation lines (each ending with `\`).
@@ -265,7 +268,7 @@ unchanged (`tests/test_script_sync_tools.py`).
 ### `_sync_cases_sh.py`
 
 `test-docs-cases` is the exception to the rule: its PowerShell file is the canonical source.
-This script regenerates `test-docs-cases.sh` from `test-docs-cases.ps1`, converting PS syntax back to bash and translating `Write-Host`, `Start-Sleep`, and `Invoke-CleanLogs` calls to their bash equivalents.
+This script regenerates `test-docs-cases.sh` from `test-docs-cases.ps1`, converting PS syntax back to bash and translating `Write-Host`, `Write-ExperimentResult $LASTEXITCODE`, `Write-ExperimentTotal`, `Start-Sleep`, and `Invoke-CleanLogs` calls to their bash equivalents.
 
 ```
 python scripts/_sync_cases_sh.py

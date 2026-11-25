@@ -38,7 +38,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB scale  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "HammerDB scale  sf=16  nbp=1,2"
 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
@@ -61,7 +61,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB monitoring  sf=48  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "HammerDB monitoring  sf=48  nbp=1,2"
 
 
 #### HammerDB Transaction Counter (Example-HammerDB.md)
@@ -86,7 +86,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_timeseries.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB transaction counter  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "HammerDB transaction counter  sf=16  nbp=1,2"
 
 
 #### HammerDB Persistent Storage (Example-HammerDB.md)
@@ -111,7 +111,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB storage  sf=16  nbp=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "HammerDB storage  sf=16  nbp=1  nc=2"
 
 
 #### HammerDB Keying and Thinking Time (Example-HammerDB.md)
@@ -139,7 +139,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_keytime.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB keytime  sf=32  nbp=1,2  nc=2"
+Write-ExperimentResult $LASTEXITCODE "HammerDB keytime  sf=32  nbp=1,2  nc=2"
 
 
 ###########################################
@@ -147,4 +147,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB keytime  s
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

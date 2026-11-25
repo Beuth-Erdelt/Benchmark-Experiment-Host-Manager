@@ -58,7 +58,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mysql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL simple  sf=1"
+report_result $? "TPC-H MySQL simple  sf=1"
 
 
 ####################################################
@@ -108,7 +108,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mysql_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL monitoring  sf=10"
+report_result $? "TPC-H MySQL monitoring  sf=10"
 
 
 # Application metrics (-ma): run in scripts/test-docs-appmetrics.sh, logs docs_<benchmark>_mysql_appmetrics.log
@@ -167,7 +167,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mysql_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL throughput  sf=10  ne=1,2"
+report_result $? "TPC-H MySQL throughput  sf=10  ne=1,2"
 
 
 # Persistent storage: TPC-H on MySQL on a RAM disk
@@ -210,7 +210,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mysql_ramdisk.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL ramdisk  sf=10"
+report_result $? "TPC-H MySQL ramdisk  sf=10"
 
 
 ####################################################
@@ -256,7 +256,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_mysql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL simple  sf=1"
+report_result $? "TPC-DS MySQL simple  sf=1"
 
 
 # TPC-DS monitoring on MySQL
@@ -311,7 +311,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_mysql_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL monitoring  sf=3"
+report_result $? "TPC-DS MySQL monitoring  sf=3"
 
 
 # TPC-DS throughput test on MySQL, on persistent storage
@@ -374,7 +374,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_mysql_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MySQL throughput  sf=3  ne=1,2"
+report_result $? "TPC-DS MySQL throughput  sf=3  ne=1,2"
 
 
 ####################################################
@@ -418,7 +418,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL simple  sf=16"
+report_result $? "Benchbase MySQL simple  sf=16"
 
 
 # Benchbase TPC-C: persistent storage
@@ -461,7 +461,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL persistency  sf=16  nc=2"
+report_result $? "Benchbase MySQL persistency  sf=16  nc=2"
 
 
 # Benchbase TPC-C: monitoring
@@ -504,7 +504,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL monitoring  sf=16"
+report_result $? "Benchbase MySQL monitoring  sf=16"
 
 
 # Benchbase TPC-C: scaling the clients, on the volume of the persistent storage run
@@ -549,7 +549,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MySQL complex  sf=16  nc=2  ne=1,2"
+report_result $? "Benchbase MySQL complex  sf=16  nc=2  ne=1,2"
 
 
 ####################################################
@@ -589,7 +589,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_mysql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL simple  sf=16"
+report_result $? "HammerDB MySQL simple  sf=16"
 
 
 # HammerDB TPC-C: monitoring, on persistent storage
@@ -632,7 +632,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_mysql_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL monitoring  sf=16"
+report_result $? "HammerDB MySQL monitoring  sf=16"
 
 
 # HammerDB TPC-C: scaling the clients, on the volume of the monitoring run
@@ -675,7 +675,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_mysql_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MySQL complex  sf=16  nc=2  ne=1,2"
+report_result $? "HammerDB MySQL complex  sf=16  nc=2  ne=1,2"
 
 
 ####################################################
@@ -725,7 +725,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_loading.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL loader scaling  sf=1"
+report_result $? "YCSB MySQL loader scaling  sf=1"
 
 
 # YCSB: persistent storage, loads the volume for the following runs
@@ -774,7 +774,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL persistency  sf=1  nc=2"
+report_result $? "YCSB MySQL persistency  sf=1  nc=2"
 
 
 # YCSB: scaling the benchmarker, on the loaded volume
@@ -821,7 +821,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL scaling  sf=1  nc=2  ne=1,2"
+report_result $? "YCSB MySQL scaling  sf=1  nc=2  ne=1,2"
 
 
 # YCSB: workload E, on the loaded volume
@@ -868,7 +868,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_workload_e.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL workload e  sf=1"
+report_result $? "YCSB MySQL workload e  sf=1"
 
 
 # YCSB: monitoring, on the loaded volume
@@ -919,7 +919,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mysql_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MySQL monitoring  sf=1"
+report_result $? "YCSB MySQL monitoring  sf=1"
 
 
 #### TPC-H Refresh Stream (Example-TPC-H.md)
@@ -955,7 +955,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mysql_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL refresh  sf=1  ne=3"
+report_result $? "TPC-H MySQL refresh  sf=1  ne=3"
 
 
 ###########################################
@@ -963,4 +963,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MySQL refresh  sf=1  ne=3"
 ###########################################
 
 
+report_total
 clean_logs

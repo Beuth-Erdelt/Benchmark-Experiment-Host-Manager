@@ -56,7 +56,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_loading.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB loading  sf=1  nlp=1,8"
+report_result $? "YCSB loading  sf=1  nlp=1,8"
 
 
 #### YCSB Scale Benchmarking (Example-YCSB.md)
@@ -95,7 +95,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_benchmarking.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB benchmarking  sf=1  nbp=1,8"
+report_result $? "YCSB benchmarking  sf=1  nbp=1,8"
 
 
 #### YCSB Monitoring (Example-YCSB.md)
@@ -138,7 +138,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB monitoring  sf=3  nbp=1,8"
+report_result $? "YCSB monitoring  sf=3  nbp=1,8"
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
@@ -181,7 +181,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB storage  sf=1  nbp=1,8  nc=2"
+report_result $? "YCSB storage  sf=1  nbp=1,8  nc=2"
 
 
 #### YCSB Custom Loading Parameters (Example-YCSB.md)
@@ -218,7 +218,7 @@ bexhoma ycsb \
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 \
   run &>$LOG_DIR/docs_ycsb_postgresql_loading_patch.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB loading patch  sf=1  nlp=1"
+report_result $? "YCSB loading patch  sf=1  nlp=1"
 
 
 #### YCSB Reset Script (Example-YCSB.md)
@@ -259,7 +259,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_reset.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset script  sf=1  ne=1,2"
+report_result $? "YCSB reset script  sf=1  ne=1,2"
 
 
 ###########################################
@@ -311,7 +311,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_wl_a.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload a  sf=10  nbp=1,8"
+report_result $? "YCSB workload a  sf=10  nbp=1,8"
 
 
 #### YCSB Workload B (Example-YCSB.md)
@@ -358,7 +358,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_wl_b.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload b  sf=10  nbp=1,8"
+report_result $? "YCSB workload b  sf=10  nbp=1,8"
 
 
 #### YCSB Workload C (Example-YCSB.md)
@@ -405,7 +405,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_wl_c.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload c  sf=10  nbp=1,8"
+report_result $? "YCSB workload c  sf=10  nbp=1,8"
 
 
 #### YCSB Workload D (Example-YCSB.md)
@@ -454,7 +454,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_wl_d.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload d  sf=10  nbp=1"
+report_result $? "YCSB workload d  sf=10  nbp=1"
 
 
 #### YCSB Workload E (Example-YCSB.md)
@@ -503,7 +503,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_wl_e.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload e  sf=10  nbp=1"
+report_result $? "YCSB workload e  sf=10  nbp=1"
 
 
 #### YCSB Workload F (Example-YCSB.md)
@@ -550,7 +550,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_wl_f.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload f  sf=10  nbp=1,8"
+report_result $? "YCSB workload f  sf=10  nbp=1,8"
 
 
 #### YCSB Workload A uniform (Example-YCSB.md)
@@ -597,7 +597,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_wl_a2.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload a2 (uniform)  sf=10  nbp=1,8"
+report_result $? "YCSB workload a2 (uniform)  sf=10  nbp=1,8"
 
 
 #### YCSB Workload C uniform (Example-YCSB.md)
@@ -644,7 +644,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_wl_c2.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload c2 (uniform)  sf=10  nbp=1,8"
+report_result $? "YCSB workload c2 (uniform)  sf=10  nbp=1,8"
 
 
 ###########################################
@@ -652,4 +652,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB workload c2 (uniform)  sf=10  nbp
 ###########################################
 
 
+report_total
 clean_logs

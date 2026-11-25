@@ -46,7 +46,7 @@ bexhoma tpch `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H PostgreSQL  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H PostgreSQL  sf=1"
 
 
 #### TCP-H Monitoring (Example-TPC-H.md)
@@ -80,7 +80,7 @@ bexhoma tpch `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H monitoring  sf=10"
+Write-ExperimentResult $LASTEXITCODE "TPC-H monitoring  sf=10"
 
 
 #### TCP-H Throughput (Example-TPC-H.md)
@@ -114,7 +114,7 @@ bexhoma tpch `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_throughput.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H throughput  sf=1  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "TPC-H throughput  sf=1  ne=1,2"
 
 
 #### TCP-H Persistent Storage (Example-TPC-H.md)
@@ -149,7 +149,7 @@ bexhoma tpch `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H storage  sf=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "TPC-H storage  sf=1  nc=2"
 
 
 # TPC-H PostgreSQL on a RAM disk (Example-PostgreSQL.md)
@@ -176,7 +176,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_ramdisk.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H PostgreSQL ramdisk  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H PostgreSQL ramdisk  sf=3"
 
 
 #### TCP-H Fractional Scaling Factor (Example-TPC-H.md)
@@ -199,7 +199,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_fractional.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H fractional  sf=0.1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "TPC-H fractional  sf=0.1  nc=2"
 
 
 #### TCP-H Refresh Stream (Example-TPC-H.md)
@@ -232,7 +232,7 @@ bexhoma tpch `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H refresh  sf=1  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H refresh  sf=1  ne=3"
 
 
 #### TCP-H Query Subset (Example-TPC-H.md)
@@ -265,7 +265,7 @@ bexhoma tpch `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_subset.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H query subset  sf=10  xaq=1,9,14,18"
+Write-ExperimentResult $LASTEXITCODE "TPC-H query subset  sf=10  xaq=1,9,14,18"
 
 
 #### TCP-H Refresh Stream on two DBMS (Example-TPC-H.md)
@@ -290,7 +290,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_refresh_two_dbms.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H refresh on two DBMS  sf=1  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H refresh on two DBMS  sf=1  ne=3"
 
 
 #### TCP-H from a YAML definition (Design-Yaml-Experiment-Entry-Script.md)
@@ -299,7 +299,7 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H refresh on tw
 # DUCKDB_FORCE_EXECUTION=true in the PgDuckDB SUT, storage prefix of each DBMS.
 bexhoma experiment tests/yaml_experiments/tpch-postgres-vs-pgduckdb.yaml 2>&1 | Out-File "$LOG_DIR\docs_tpch_yaml_experiment.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H from YAML  sf=1  ne=1,2,4"
+Write-ExperimentResult $LASTEXITCODE "TPC-H from YAML  sf=1  ne=1,2,4"
 
 
 ###########################################
@@ -314,4 +314,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H from YAML  sf
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

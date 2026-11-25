@@ -49,7 +49,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_oracledb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H OracleDB storage  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H OracleDB storage  sf=1"
 
 
 #### TPC-H refresh stream
@@ -72,7 +72,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_oracledb_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H OracleDB refresh  sf=1  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H OracleDB refresh  sf=1  ne=3"
 
 
 #### YCSB workload a, persistent storage, reset
@@ -102,7 +102,7 @@ bexhoma ycsb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_oracledb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB OracleDB workload a  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB OracleDB workload a  sf=1"
 
 
 #### Benchbase tpcc (the only Benchbase benchmark with an Oracle config)
@@ -129,7 +129,7 @@ bexhoma benchbase `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tpcc_oracledb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase OracleDB tpcc  sf=16"
+Write-ExperimentResult $LASTEXITCODE "Benchbase OracleDB tpcc  sf=16"
 
 
 #### HammerDB TPC-C
@@ -152,7 +152,7 @@ bexhoma hammerdb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_oracledb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB OracleDB  sf=16"
+Write-ExperimentResult $LASTEXITCODE "HammerDB OracleDB  sf=16"
 
 
 ###########################################
@@ -160,4 +160,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB OracleDB  
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

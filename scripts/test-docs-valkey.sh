@@ -60,7 +60,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_valkey.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Valkey single  sf=1  nbp=1"
+report_result $? "YCSB Valkey single  sf=1  nbp=1"
 
 
 ####################################################
@@ -112,7 +112,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_valkey_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Valkey single monitoring  sf=3  nbp=1"
+report_result $? "YCSB Valkey single monitoring  sf=3  nbp=1"
 
 
 # Application metrics: 3 Valkey instances with 1 replica each (exporter on the workers only)
@@ -165,7 +165,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_valkey_appmetrics.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Valkey appmetrics  sf=1  nbp=1"
+report_result $? "YCSB Valkey appmetrics  sf=1  nbp=1"
 
 
 ####################################################
@@ -221,7 +221,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_valkey_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Valkey single PVC  sf=1  nbp=1  nc=2"
+report_result $? "YCSB Valkey single PVC  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -275,7 +275,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_valkey_cluster.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Valkey cluster 3  sf=1  nbp=1"
+report_result $? "YCSB Valkey cluster 3  sf=1  nbp=1"
 
 
 # Variant cluster: 3 Valkey instances on persistent storage
@@ -328,7 +328,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_valkey_cluster_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Valkey cluster 3 PVC  sf=1  nbp=1  nc=2"
+report_result $? "YCSB Valkey cluster 3 PVC  sf=1  nbp=1  nc=2"
 
 
 # Variant replication: 3 Valkey instances with 1 replica each
@@ -379,7 +379,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_valkey_replica.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Valkey cluster 3 replication  sf=1  nbp=1"
+report_result $? "YCSB Valkey cluster 3 replication  sf=1  nbp=1"
 
 
 ###########################################
@@ -387,4 +387,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Valkey cluster 3 replication  sf=
 ###########################################
 
 
+report_total
 clean_logs

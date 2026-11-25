@@ -42,7 +42,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_valkey.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Valkey single  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Valkey single  sf=1  nbp=1"
 
 
 ####################################################
@@ -75,7 +75,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_valkey_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Valkey single monitoring  sf=3  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Valkey single monitoring  sf=3  nbp=1"
 
 
 # Application metrics: 3 Valkey instances with 1 replica each (exporter on the workers only)
@@ -106,7 +106,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_valkey_appmetrics.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Valkey appmetrics  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Valkey appmetrics  sf=1  nbp=1"
 
 
 ####################################################
@@ -141,7 +141,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_valkey_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Valkey single PVC  sf=1  nbp=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB Valkey single PVC  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -175,7 +175,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_valkey_cluster.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Valkey cluster 3  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Valkey cluster 3  sf=1  nbp=1"
 
 
 # Variant cluster: 3 Valkey instances on persistent storage
@@ -206,7 +206,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_valkey_cluster_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Valkey cluster 3 PVC  sf=1  nbp=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB Valkey cluster 3 PVC  sf=1  nbp=1  nc=2"
 
 
 # Variant replication: 3 Valkey instances with 1 replica each
@@ -236,7 +236,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_valkey_replica.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Valkey cluster 3 replication  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Valkey cluster 3 replication  sf=1  nbp=1"
 
 
 ###########################################
@@ -244,4 +244,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Valkey cluster
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

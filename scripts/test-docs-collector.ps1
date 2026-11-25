@@ -48,7 +48,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_1.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
+Write-ExperimentResult $LASTEXITCODE "Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
 bexhoma benchbase `
@@ -75,7 +75,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_2.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
+Write-ExperimentResult $LASTEXITCODE "Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
 bexhoma benchbase `
@@ -100,7 +100,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_3.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase collector 3/3  sf=16  nbp=4,8  nbf=20"
+Write-ExperimentResult $LASTEXITCODE "Benchbase collector 3/3  sf=16  nbp=4,8  nbf=20"
 
 
 
@@ -138,7 +138,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_tenants_schema.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- DATABASE ----------------
 bexhoma benchbase `
@@ -166,7 +166,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_tenants_database.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # ---------------- CONTAINER ----------------
 bexhoma benchbase `
@@ -194,7 +194,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_collector_tenants_container.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -228,7 +228,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_1.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 1/3  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H collector 1/3  sf=3"
 
 bexhoma tpch `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -253,7 +253,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_2.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 2/3  sf=6"
+Write-ExperimentResult $LASTEXITCODE "TPC-H collector 2/3  sf=6"
 
 bexhoma tpch `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -276,7 +276,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_3.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H collector 3/3  sf=6"
+Write-ExperimentResult $LASTEXITCODE "TPC-H collector 3/3  sf=6"
 
 
 
@@ -315,7 +315,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_tenants_schema.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- DATABASE ----------------
 bexhoma tpch `
@@ -345,7 +345,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_tenants_database.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # ---------------- CONTAINER ----------------
 bexhoma tpch `
@@ -376,7 +376,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_collector_tenants_container.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 
 ###########################################
@@ -411,7 +411,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_collector_1.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB collector 1/3  nbp=1,8  nbf=2"
 
 #### YCSB Monitoring (Example-YCSB.md)
 bexhoma ycsb `
@@ -440,7 +440,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_collector_2.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
+Write-ExperimentResult $LASTEXITCODE "YCSB collector 2/3  nbp=1,8  nbf=3"
 
 #### YCSB Monitoring (Example-YCSB.md)
 bexhoma ycsb `
@@ -467,7 +467,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_collector_3.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
+Write-ExperimentResult $LASTEXITCODE "YCSB collector 3/3  nbp=1,8  nbf=3"
 
 
 
@@ -499,7 +499,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_collector_1.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
+Write-ExperimentResult $LASTEXITCODE "HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
 bexhoma hammerdb `
@@ -523,7 +523,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_collector_2.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
+Write-ExperimentResult $LASTEXITCODE "HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
 bexhoma hammerdb `
@@ -545,7 +545,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_collector_3.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB collector 3/3  sf=16  nbp=1,2  nbt=32"
+Write-ExperimentResult $LASTEXITCODE "HammerDB collector 3/3  sf=16  nbp=1,2  nbt=32"
 
 
 ###########################################
@@ -579,7 +579,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_collector_1.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS collector 1/3  sf=1  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS collector 1/3  sf=1  ne=1,2"
 
 bexhoma tpcds `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -607,7 +607,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_collector_2.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS collector 2/3  sf=3  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS collector 2/3  sf=3  ne=1,2"
 
 bexhoma tpcds `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -634,7 +634,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_collector_3.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS collector 3/3  sf=3  reuse PVC"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS collector 3/3  sf=3  reuse PVC"
 
 
 
@@ -668,7 +668,7 @@ bexhoma ssb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_postgresql_collector_1.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB collector 1/3  sf=1  star schema"
+Write-ExperimentResult $LASTEXITCODE "SSB collector 1/3  sf=1  star schema"
 
 bexhoma ssb `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -695,7 +695,7 @@ bexhoma ssb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_postgresql_collector_2.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB collector 2/3  sf=3  flat schema"
+Write-ExperimentResult $LASTEXITCODE "SSB collector 2/3  sf=3  flat schema"
 
 bexhoma ssb `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -721,7 +721,7 @@ bexhoma ssb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_postgresql_collector_3.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB collector 3/3  sf=1  reuse PVC"
+Write-ExperimentResult $LASTEXITCODE "SSB collector 3/3  sf=1  reuse PVC"
 
 
 
@@ -752,7 +752,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_fio_collector.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware collector 1/4  fio  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Hardware collector 1/4  fio  nbp=1,2"
 
 bexhoma hardware `
   -dbms Hardware                <# hardware target to test #> `
@@ -770,7 +770,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sysbench_collector.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware collector 2/4  sysbench  nbt=1,2"
+Write-ExperimentResult $LASTEXITCODE "Hardware collector 2/4  sysbench  nbt=1,2"
 
 bexhoma hardware `
   -dbms Hardware                <# hardware target to test #> `
@@ -789,7 +789,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_sockperf_collector.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware collector 3/4  sockperf  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Hardware collector 3/4  sockperf  nbp=1,2"
 
 bexhoma hardware `
   -dbms Hardware                <# hardware target to test #> `
@@ -805,7 +805,7 @@ bexhoma hardware `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hardware_netperf_collector.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware collector 4/4  netperf  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Hardware collector 4/4  netperf  nbp=1,2"
 
 
 ###########################################
@@ -813,4 +813,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Hardware collector 
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

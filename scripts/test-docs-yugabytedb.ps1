@@ -97,7 +97,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB YugabyteDB  sf=1  nbp=1"
 
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
@@ -136,7 +136,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB ingestion  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB YugabyteDB ingestion  sf=1  nbp=1"
 
 # Execution only (-sl): on the data loaded by the monitoring run before (same installation)
 bexhoma ycsb `
@@ -162,7 +162,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_execution.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
 
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
@@ -194,7 +194,7 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_appmetrics.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB YugabyteDB appmetrics  sf=1  nbp=1"
 
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
@@ -236,7 +236,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
 
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
@@ -269,7 +269,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_yugabytedb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB simple  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase YugabyteDB simple  sf=16  nbp=1,2"
 
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
@@ -299,7 +299,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_yugabytedb_keytime.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
+Write-ExperimentResult $LASTEXITCODE "Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
 
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
@@ -325,7 +325,7 @@ bexhoma benchbase `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_yugabytedb_appmetrics.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
 
 # remove YugabyteDB installation
 Remove-YugabyteDB -RemovePVC "no"
@@ -338,4 +338,5 @@ Start-Sleep -Seconds 30
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

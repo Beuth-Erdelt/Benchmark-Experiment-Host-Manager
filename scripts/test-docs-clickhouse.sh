@@ -52,7 +52,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse  sf=1"
+report_result $? "TPC-H ClickHouse  sf=1"
 
 
 ####################################################
@@ -100,7 +100,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse monitoring  sf=10"
+report_result $? "TPC-H ClickHouse monitoring  sf=10"
 
 
 ####################################################
@@ -150,7 +150,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse  sf=10  nc=2"
+report_result $? "TPC-H ClickHouse  sf=10  nc=2"
 
 
 ####################################################
@@ -204,7 +204,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse_cluster.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouseCluster  sf=10  nw=3  nc=2"
+report_result $? "TPC-H ClickHouseCluster  sf=10  nw=3  nc=2"
 
 
 ####################################################
@@ -254,7 +254,7 @@ bexhoma tpcds \
   -ks no \
   run &>$LOG_DIR/docs_tpcds_clickhouse.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS ClickHouse  sf=3"
+report_result $? "TPC-DS ClickHouse  sf=3"
 
 
 # TPC-DS on ClickHouseCluster with 3 shards
@@ -303,7 +303,7 @@ bexhoma tpcds \
   -ks no \
   run &>$LOG_DIR/docs_tpcds_clickhouse_cluster.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS ClickHouseCluster  sf=3  nw=3"
+report_result $? "TPC-DS ClickHouseCluster  sf=3  nw=3"
 
 
 ####################################################
@@ -344,7 +344,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse refresh  sf=1  ne=3"
+report_result $? "TPC-H ClickHouse refresh  sf=1  ne=3"
 
 
 #### TPC-H Refresh Stream on ClickHouseCluster (Example-ClickHouse.md)
@@ -388,7 +388,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_clickhouse_cluster_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouseCluster refresh  sf=1  nw=3  ne=3"
+report_result $? "TPC-H ClickHouseCluster refresh  sf=1  nw=3  ne=3"
 
 
 ###########################################
@@ -396,4 +396,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouseCluster refresh  sf=1 
 ###########################################
 
 
+report_total
 clean_logs

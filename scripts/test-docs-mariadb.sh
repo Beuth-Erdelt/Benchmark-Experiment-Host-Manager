@@ -58,7 +58,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mariadb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB simple  sf=1"
+report_result $? "TPC-H MariaDB simple  sf=1"
 
 
 ####################################################
@@ -108,7 +108,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mariadb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB monitoring  sf=1"
+report_result $? "TPC-H MariaDB monitoring  sf=1"
 
 
 ####################################################
@@ -162,7 +162,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mariadb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB throughput  sf=1  ne=1,2"
+report_result $? "TPC-H MariaDB throughput  sf=1  ne=1,2"
 
 
 # Persistent storage: TPC-H on MariaDB on a RAM disk
@@ -205,7 +205,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mariadb_ramdisk.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB ramdisk  sf=10"
+report_result $? "TPC-H MariaDB ramdisk  sf=10"
 
 
 ####################################################
@@ -251,7 +251,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_mariadb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB simple  sf=1"
+report_result $? "TPC-DS MariaDB simple  sf=1"
 
 
 # TPC-DS monitoring on MariaDB
@@ -296,7 +296,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_mariadb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB monitoring  sf=1"
+report_result $? "TPC-DS MariaDB monitoring  sf=1"
 
 
 # TPC-DS throughput test on MariaDB, on persistent storage
@@ -345,7 +345,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_mariadb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDB throughput  sf=1  ne=1,2"
+report_result $? "TPC-DS MariaDB throughput  sf=1  ne=1,2"
 
 
 ####################################################
@@ -389,7 +389,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mariadb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB simple  sf=16"
+report_result $? "Benchbase MariaDB simple  sf=16"
 
 
 # Benchbase TPC-C: persistent storage
@@ -432,7 +432,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mariadb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB persistency  sf=16  nc=2"
+report_result $? "Benchbase MariaDB persistency  sf=16  nc=2"
 
 
 # Benchbase TPC-C: monitoring
@@ -475,7 +475,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mariadb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB monitoring  sf=16"
+report_result $? "Benchbase MariaDB monitoring  sf=16"
 
 
 # Benchbase TPC-C: scaling the clients, on the volume of the persistent storage run
@@ -520,7 +520,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mariadb_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MariaDB complex  sf=16  nc=2  ne=1,2"
+report_result $? "Benchbase MariaDB complex  sf=16  nc=2  ne=1,2"
 
 
 ####################################################
@@ -560,7 +560,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_mariadb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MariaDB simple  sf=16"
+report_result $? "HammerDB MariaDB simple  sf=16"
 
 
 # HammerDB TPC-C: monitoring, on persistent storage
@@ -603,7 +603,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_mariadb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MariaDB monitoring  sf=16"
+report_result $? "HammerDB MariaDB monitoring  sf=16"
 
 
 # HammerDB TPC-C: scaling the clients, on the volume of the monitoring run
@@ -646,7 +646,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_mariadb_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB MariaDB complex  sf=16  nc=2  ne=1,2"
+report_result $? "HammerDB MariaDB complex  sf=16  nc=2  ne=1,2"
 
 
 ####################################################
@@ -696,7 +696,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mariadb_loading.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB loader scaling  sf=1"
+report_result $? "YCSB MariaDB loader scaling  sf=1"
 
 
 # YCSB: persistent storage, loads the volume for the following runs
@@ -745,7 +745,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mariadb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB persistency  sf=1  nc=2"
+report_result $? "YCSB MariaDB persistency  sf=1  nc=2"
 
 
 # YCSB: scaling the benchmarker, on the loaded volume
@@ -792,7 +792,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mariadb_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB scaling  sf=1  nc=2  ne=1,2"
+report_result $? "YCSB MariaDB scaling  sf=1  nc=2  ne=1,2"
 
 
 # YCSB: workload E, on the loaded volume
@@ -839,7 +839,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mariadb_workload_e.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB workload e  sf=1"
+report_result $? "YCSB MariaDB workload e  sf=1"
 
 
 # YCSB: monitoring, on the loaded volume
@@ -890,7 +890,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_mariadb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB MariaDB monitoring  sf=1"
+report_result $? "YCSB MariaDB monitoring  sf=1"
 
 
 #### TPC-H Refresh Stream (Example-TPC-H.md)
@@ -926,7 +926,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mariadb_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB refresh  sf=1  ne=3"
+report_result $? "TPC-H MariaDB refresh  sf=1  ne=3"
 
 
 ###########################################
@@ -934,4 +934,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB refresh  sf=1  ne=3"
 ###########################################
 
 
+report_total
 clean_logs
