@@ -50,7 +50,7 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-ssb.sql"
+        "reset-ssb-flat.sql"
        ],
        "target": "sut",
        "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
@@ -891,7 +891,7 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-ssb.sql"
+        "reset-ssb-flat.sql"
        ],
        "target": "sut",
        "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
@@ -1168,7 +1168,7 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-ssb.sql"
+        "reset-ssb-flat.sql"
        ],
        "target": "sut",
        "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"
@@ -1308,7 +1308,7 @@
         "SF": "1"
        },
        "resetscript": [
-        "reset-ssb.sql"
+        "reset-ssb-flat.sql"
        ],
        "target": "sut",
        "template": "jobtemplate-benchmarking-dbmsbenchmarker.yml"

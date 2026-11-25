@@ -4,7 +4,7 @@ Last recorded runs of the examples in `docs/`, one row per log in `logs_tests/`.
 Nothing is run to create this page: it is read from the committed logs by `scripts/demo-runs.py`,
 so it shows what the runs looked like when they were recorded, not whether the current code still passes.
 
-**399 passed, 0 failed, 1 warn, 0 unchecked** (400 runs)
+**401 passed, 0 failed, 1 warn, 0 unchecked** (402 runs)
 
 | Status | Log | Page | Date | Version | Duration | Failed tests / warnings |
 |---|---|---|---|---|---|---|
@@ -236,7 +236,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpcds_mysql.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 1758s |  |
 | passed | docs_tpcds_mysql_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 2439s |  |
 | passed | docs_tpcds_mysql_monitoring.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 2263s |  |
-| passed | docs_tpcds_mysql_storage.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 2263s |  |
+| passed | docs_tpcds_mysql_storage.log | Example-MySQL.md | 2026-11-24 | 0.12.3 | 4027s |  |
 | passed | docs_tpcds_postgresql.log | Example-TPC-DS.md | 2026-11-19 | 0.12.0 | 632s |  |
 | passed | docs_tpcds_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-15 | 0.11.18 | 1231s |  |
 | passed | docs_tpcds_postgresql_collector_1.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 914s |  |
@@ -270,6 +270,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpch_mariadb_ramdisk.log | Example-MariaDB.md | 2026-11-15 | 0.11.18 | 1821s |  |
 | passed | docs_tpch_mariadb_refresh.log | Example-MariaDB.md | 2026-11-16 | 0.11.18 | 585s |  |
 | passed | docs_tpch_mariadb_storage.log | Example-MariaDB.md | 2026-11-15 | 0.11.18 | 1284s |  |
+| passed | docs_tpch_mariadb_tenants_container.log | Example-Multi-Tenant.md | 2026-11-24 | 0.12.3 | 684s |  |
 | passed | docs_tpch_mariadbcs.log | Example-MariaDBCS.md | 2026-11-16 | 0.11.18 | 466s |  |
 | passed | docs_tpch_mariadbcs_monitoring.log | Example-MariaDBCS.md | 2026-11-16 | 0.11.18 | 1087s |  |
 | passed | docs_tpch_mariadbcs_refresh.log | Example-MariaDBCS.md | 2026-11-16 | 0.11.18 | 324s |  |
@@ -287,6 +288,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpch_mysql_ramdisk.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 2478s |  |
 | passed | docs_tpch_mysql_refresh.log | Example-MySQL.md | 2026-11-15 | 0.11.17 | 635s |  |
 | passed | docs_tpch_mysql_storage.log | Example-MySQL.md | 2026-11-14 | 0.11.17 | 4505s |  |
+| passed | docs_tpch_mysql_tenants_container.log | Example-Multi-Tenant.md | 2026-11-24 | 0.12.3 | 656s |  |
 | passed | docs_tpch_pgduckdb.log | Example-PgDuckDB.md | 2026-11-03 | 0.11.12 | 354s |  |
 | passed | docs_tpch_pgduckdb_monitoring.log | Example-PgDuckDB.md | 2026-11-03 | 0.11.12 | 640s |  |
 | passed | docs_tpch_pgduckdb_postgresql_engine.log | Example-PgDuckDB.md | 2026-11-03 | 0.11.12 | 299s |  |

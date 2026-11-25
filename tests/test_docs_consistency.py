@@ -9,7 +9,11 @@ S3 of dev/plan-software-quality.md:
    ``myst_heading_anchors``, GitHub-style slugs) or an explicit anchor;
 3. every function or method the docs name in code style, ``name()`` or ``obj.name(args)``,
    is defined in the repository's Python code, unless it is a SQL, PromQL or library
-   function (``FOREIGN``). Stale method names after a rename fail here.
+   function (``FOREIGN``). Stale method names after a rename fail here;
+4. no page in ``docs/``, ``README.md`` and no recorded run in ``logs_tests/`` (logs and their
+   summaries) contains a NUL byte. NULs appear when a log is truncated while a run still writes
+   at its old offset; ``scripts/replace-docs.py`` would then copy them into the docs, and git,
+   grep and editors treat the file as binary.
 
 Code blocks are skipped for links and anchors; inline code is skipped for links only.
 """
@@ -100,6 +104,16 @@ def _local_links(page: Path):
             yield number, target
 
 
+def _nul_report(path: Path, data: bytes) -> str | None:
+    """Where NUL bytes are in a file's content, or None if there are none."""
+    first = data.find(b'\x00')
+    if first < 0:
+        return None
+    line = data.count(b'\n', 0, first) + 1
+    count = data.count(b'\x00')
+    return f'{path.relative_to(ROOT).as_posix()}: {count} NUL bytes from line {line}'
+
+
 def _defined_names() -> set:
     """Names of every function and class in the repository's Python code."""
     names = set()
@@ -159,6 +173,14 @@ class DocsConsistencyTest(unittest.TestCase):
                         missing.append(f'{page.relative_to(ROOT).as_posix()}:{number}: {name}()')
         self.assertEqual(missing, [], "renamed or removed? Otherwise add a foreign name to FOREIGN")
 
+    def test_no_nul_bytes_in_docs_and_recorded_runs(self) -> None:
+        files = [*sorted(DOCS.rglob('*.md')), ROOT / 'README.md',
+                 *sorted((ROOT / 'logs_tests').glob('*.log')),
+                 *sorted((ROOT / 'logs_tests').glob('*_summary.md'))]
+        damaged = [report for path in files if (report := _nul_report(path, path.read_bytes()))]
+        self.assertEqual(damaged, [], "a log was written by two processes at once: rerun the experiment, "
+                                      "extract its summary and run scripts/replace-docs.py")
+
     def test_the_checks_see_what_they_check(self) -> None:
         """Guards against a check that silently matches nothing."""
         self.assertEqual(_slug('Example: `bexhoma tpch` (SF 1)'), 'example-bexhoma-tpch-sf-1')
@@ -166,6 +188,10 @@ class DocsConsistencyTest(unittest.TestCase):
         calls = sum(len(_CALL.findall(line)) for page in PAGES
                     for line in page.read_text(encoding='utf-8').splitlines())
         self.assertGreater(calls, 250)
+        sample = ROOT / 'logs_tests' / 'x.log'
+        self.assertEqual(_nul_report(sample, b'a\nb\x00\x00\n'), 'logs_tests/x.log: 2 NUL bytes from line 2')
+        self.assertIsNone(_nul_report(sample, b'a\nb\n'))
+        self.assertGreater(len(list((ROOT / 'logs_tests').glob('*_summary.md'))), 300)
 
 
 if __name__ == '__main__':

@@ -166,9 +166,9 @@ def _resets(config) -> dict:
 class ResetCompletenessTest(unittest.TestCase):
     """Every DBMS of every benchmark CLI has a reset list whose files exist (M9)."""
 
-    def assert_complete(self, script: str, *argv: str, benchmark: str = None) -> None:
+    def assert_complete(self, script: str, *argv: str, benchmark: str = None, expected: dict = None) -> None:
         folder, configurations = _run_script(script, *argv)
-        expected = EXPECTED[script]
+        expected = expected or EXPECTED[script]
         self.assertEqual(set(_dbms_choices(script)) - NO_RESET, set(expected),
                          f'{script}: -dbms choices without an entry in EXPECTED')
         seen = set()
@@ -202,6 +202,12 @@ class ResetCompletenessTest(unittest.TestCase):
 
     def test_ssb(self):
         self.assert_complete('ssb.py')
+
+    def test_ssb_flat(self):
+        """-xsv flat resets only lineorder_flat, with its own script on every DBMS that has one."""
+        flat = {dbms: [name.replace('reset-ssb.sql', 'reset-ssb-flat.sql') for name in names]
+                for dbms, names in EXPECTED['ssb.py'].items()}
+        self.assert_complete('ssb.py', '-xsv', 'flat', expected=flat)
 
     def test_benchbase(self):
         for benchmark in ('tpcc', 'twitter', 'ycsb', 'chbenchmark', 'auctionmark', 'epinions', 'hyadapt', 'noop', 'otmetrics', 'resourcestresser', 'seats', 'sibench', 'smallbank', 'tatp', 'voter', 'wikipedia'):

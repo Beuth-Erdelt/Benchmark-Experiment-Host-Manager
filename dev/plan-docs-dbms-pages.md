@@ -3,8 +3,8 @@
 Status: **done.** Phases 1-6 implemented 2026-11-03, committed in c70a50b6 ("Restructured Docs", 2026-11-05).
 Checked 2026-11-22: every run listed as open in the phase notes below exists in `logs_tests/` (run 2026-11-05..17),
 and `python scripts/scan-docs.py` reports no missing log. The 2026-11-03 phase notes below are kept as history.
-Left over, not part of this plan: `scripts/test-pool.sh` and `scripts/test-cloud-notes.sh` (old, own log names),
-`logs_tests/test_tpcds_testcase_compare_summary.md` (v0.10.0, unreferenced): delete or keep.
+Left over, not part of this plan: `scripts/test-pool.sh` and `scripts/test-cloud-notes.sh` (old, own log names)
+moved to `dev/` (2026-11-24); `logs_tests/test_tpcds_testcase_compare_summary.md` (v0.10.0, unreferenced): delete or keep.
 
 ## Goal
 

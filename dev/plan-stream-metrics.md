@@ -1,10 +1,8 @@
 # Plan: drop the per-stream SUT metrics of DBMS-Benchmarker pods (#239)
 
-Status: **implemented, committed, image rebuilt, verified on the cluster**
-(2026-10-18, 1792347080; see "Verify"), released in v0.11.6. Open:
-release-notes line. Checked 2026-11-22: releases now use GitHub's generated
-notes (`docs/CONTRIBUTING.md`), and the v0.11.6 notes do not mention the change;
-add a line to them by hand or drop this point. Belongs to issue #239 ("Monitoring when
+Status: **done.** Implemented, committed, image rebuilt, verified on the cluster
+(2026-10-18, 1792347080; see "Verify"), released in v0.11.6. The release-notes
+line is dropped (user, 2026-11-24): the v0.11.6 notes stay as GitHub generated them. Belongs to issue #239 ("Monitoring when
 PVC is active"), comment 4 (2024-01-31): stream metrics are collected twice,
 once per stream and once per parallel set of streams; are SUT metrics per
 stream needed? Answer here: no.
@@ -63,7 +61,7 @@ covers the wrong window.
   `transform_monitoring_results` and the log scan in `missing_metrics.py`
   stay for results of old images; they find nothing with the new image.
 - Docs: `images/benchmarker_dbmsbenchmarker/README.md:94` (flag table),
-  release notes (one line: per-stream SUT metrics are no longer fetched).
+  release notes (one line: per-stream SUT metrics are no longer fetched; dropped 2026-11-24).
 
 ## Verify
 

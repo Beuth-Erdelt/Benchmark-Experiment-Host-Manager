@@ -215,7 +215,7 @@ M0 answered from code and templates (no cluster run):
 | 8 | TPC-H/TPC-DS use the experiment-dict path (`experiment_dict_template` in `experiments/tpch.py`, `tpcds.py`), so `set_benchmark_resetscript` reaches the round loop. With `-xrs` the template has a second entry `tpch_refresh`; the reset targets `name='tpch'` only, otherwise it would run twice per round. |
 | 9 | Benchbase twitter/ycsb/chbenchmark folders exist for PostgreSQL only: resets for PostgreSQL and PGBouncer (R4). |
 
-Open on the cluster: M0.1 (Citus worker checkpoint duration, `success` rows), M0.3 (MySQL/MariaDB flush
+Open on the cluster at that time (answered by the M11 run below): M0.1 (Citus worker checkpoint duration, `success` rows), M0.3 (MySQL/MariaDB flush
 duration; timeout set to 600 s = R1 maximum, `reset-flush.sh` has `TIMEOUT=600`), M0.4 (MonetDB
 `sys.flush_log()`), M0.6 (TiDB `FLUSH STATUS`), M0.7 (Dragonfly `CONFIG RESETSTAT`). All of them are in
 the scripts; a statement that is not supported only writes an error to the stderr log, the round still starts.

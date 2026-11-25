@@ -130,6 +130,10 @@ Options (2026-10-22):
 - Option a (T1): `/mysqltmp` as plain `emptyDir` (disk). Safe for any SF; sort files go to node disk.
 - Option b (T2): keep `medium: Memory`, size it inside the budget (pool + tmpfs <= ~80 % of limit).
 - Proposal: a (simpler, no hidden memory use). The MariaDB template has no RAM-backed tmpdir.
+- 2026-11-24: the user wants neither a nor b. Further options:
+  - c: `--tmpdir` on the DBMS's own data volume (e.g. `/var/lib/mysql/../mysqltmp`): sort files count against
+    the PVC, not the node disk or the memory limit. Proposal: c.
+  - d: drop `--tmpdir`, MySQL uses the container's `/tmp`, as MariaDB does.
 - Not part of A3; open.
 
 ### P3. Loaders fail loudly (B1)
@@ -215,7 +219,7 @@ MySQL with 8G vs. the 10G run 1792540834 (same nodes, `-xld relaxed`): 970 s vs.
 ## 4. Open decisions (user)
 
 1. P1: decided A3 (static 8G) on 2026-10-22; A1/A2/A4/A5 kept as later options.
-2. P2: tmpdir on disk (a) or sized tmpfs (b)? **Open.**
+2. P2: tmpdir: a and b rejected 2026-11-24; c (data volume) or d (container `/tmp`)? **Open.**
 3. P4: ~~on a failed load, delete the PVC always, or only with `-xld unsafe` / `-rsr`?~~ Decided in #848 W7:
    never delete automatically; a failed or unfinished volume is refused with "remove it (-rsr)".
 4. P5: implement `-nlt` for MySQL/MariaDB or drop it? **Dropped** 2026-11-23 (bexhoma reports it as ignored).

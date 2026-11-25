@@ -412,6 +412,7 @@ class ExperimentBase():
             print("{:30s}: starts at {} ({})".format("Experiment", start_datetime, start))
             print("{:30s}: {}".format("Experiment", self.workload['info']))
             self.warn_missing_reset_scripts()
+            self.notice_missing_post_load_scripts()
             # persist workflow_planned before work_benchmark_list() so a crash mid-run
             # (e.g. during cube building on resume) still leaves it in queries.config
             self.store_workflow_results()
@@ -2663,6 +2664,35 @@ class ExperimentBase():
                 print(f"{config.configuration:30s}: WARNING - reset scripts {missing} not found in {folder}, they will be skipped")
                 warned.append(config.configuration)
         return warned
+
+    #: Prefix of a post-load script → the step it performs (``-xii``, ``-xic``, ``-xis``).
+    POST_LOAD_STEPS = {'initindexes': 'indexes', 'initconstraints': 'constraints', 'initstatistics': 'statistics'}
+
+    def notice_missing_post_load_scripts(self) -> dict:
+        """Tell at the start which requested post-load steps a DBMS has no script for.
+
+        A step (indexes, constraints, statistics) whose script is not in the
+        configuration's experiment folder is skipped at loading time; it is then
+        listed in the summary ("Init Scripts Not in Folder"). This notice says
+        so before anything runs, so the run is not mistaken for one with the step.
+
+        :return: Skipped steps per configuration.
+        :rtype: dict[str, list[str]]
+        """
+        if not self.loading_is_active():
+            return {}
+        skipped = {}
+        for config in self.configurations:
+            if getattr(config, 'loading_deactivated', False):
+                continue
+            folder = self.cluster.experiments_configfolder + '/' + config.path_experiment_docker
+            for script in config.indexscript or []:
+                step = next((name for prefix, name in self.POST_LOAD_STEPS.items() if script.startswith(prefix)), None)
+                if step and not os.path.isfile(folder + '/' + script):
+                    skipped.setdefault(config.configuration, []).append(step)
+        for configuration, steps in skipped.items():
+            print(f"{configuration:30s}: no script for {', '.join(steps)} in this DBMS, skipped")
+        return skipped
 
     def _next_round_position(self, config) -> Optional[tuple[int, int]]:
         """Return the client round a configuration runs next, as ``(repetition, client)``.

@@ -45,7 +45,7 @@ week 53 one or two. Week 6 of 1994 is 1994-02-04 to 1994-02-10.
 | `<DBMS>/initconstraints-ssb.sql` | `-xic`: primary keys and foreign keys (star schema only; MySQL and MariaDB: foreign keys, the primary keys are in the schema) |
 | `<DBMS>/initstatistics-ssb*.sql` | `-xis`: `ANALYZE` |
 | `<DBMS>/checkschema-ssb*.sql` | Last post-load script: row counts and sizes |
-| `<DBMS>/reset-ssb*.sql`, `reset-flush.sh` | `-ar`: reset before each benchmarking round (`-flat` where the tables differ) |
+| `<DBMS>/reset-ssb*.sql`, `reset-flush.sh` | `-ar`: reset before each benchmarking round (`-flat` for `-xsv flat`) |
 | `<DBMS>/durability-*`, `restoredurability-*` | `-xld`: durability during the load (PostgreSQL, Citus, MySQL, MariaDB) |
 | `<DBMS>/distributed/` | `-xdim distributed` (ClickHouseCluster, Citus): the scripts of the star schema with the dimensions spread over the nodes; the files that do not depend on the placement are copies |
 
