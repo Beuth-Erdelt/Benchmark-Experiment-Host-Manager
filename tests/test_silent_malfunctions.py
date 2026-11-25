@@ -479,6 +479,19 @@ class ExitCodeTest(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn('Tests failed: 1 of 3', out)
 
+    def test_no_summary_fails(self) -> None:
+        """P12: a workload type no benchmark claims is a failed test, not a silent exit 0."""
+        import contextlib
+        import io
+        e = experiment()
+        e.workload = {'type': 'tpcc'}
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            ExperimentBase.show_summary(e)
+            code = e.tests_outcome()
+        self.assertEqual(code, 1)
+        self.assertIn("* TEST failed: No summary: workload type 'tpcc' belongs to no benchmark", out.getvalue())
+
     def test_no_tests_printed(self) -> None:
         code, out = self.outcome()
         self.assertEqual(code, 0)

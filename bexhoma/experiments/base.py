@@ -4118,11 +4118,16 @@ class ExperimentBase():
         this base class has none: ``bexhoma summary`` arrives here for a result folder
         whose workload ``type`` no registered benchmark claims.
 
+        Recorded as a failed test, so ``bexhoma summary`` exits 1 instead of
+        ending without any test.
+
         :param write_report: Accepted for signature parity; no report is written.
         """
         workload_type = self.workload.get('type', '')
         print(f"No summary: experiment {self.code} has the workload type {workload_type!r}, "
               f"which belongs to no benchmark that bexhoma knows.")
+        self._test_results = [(False, f"No summary: workload type {workload_type!r} belongs to no benchmark")]
+        self._print_test_summary()
 
     def scrape_interval(self) -> float:
         """
