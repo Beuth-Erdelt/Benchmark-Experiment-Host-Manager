@@ -12,6 +12,7 @@ Copyright (C) 2026 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
+import sys
 from bexhoma import *  # noqa: F403
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.benchmarks.ssb.benchmark import SCHEMA_VARIANTS, QUERY_VARIANTS, DIMENSION_VARIANTS, resolve_dimension_folder
@@ -191,8 +192,7 @@ def main() -> None:
     ### branch for workflows
     ##############
     experiment.add_benchmark_list(list_clients)
-    experiment.process()
-    exit()
+    sys.exit(experiment.process())
 
 
 if __name__ == '__main__':

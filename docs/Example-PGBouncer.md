@@ -62,7 +62,6 @@ bexhoma ycsb \
   -xnpo 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 80Gi \
@@ -85,7 +84,6 @@ This
   * workload C = 100% read (`-xwl`)
   * target throughput is 11 * 16384 (`-xnbf`, `-xtb`)
   * threads = 128/16 per pod (`-nbt`)
-* tests if results match workflow (`-tr`)
 * shows a summary
 
 ### Status
@@ -322,7 +320,6 @@ bexhoma ycsb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 80Gi \
@@ -594,7 +591,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 80Gi \
@@ -892,7 +888,6 @@ bexhoma ycsb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -1310,7 +1305,6 @@ bexhoma benchbase \
   -nbt 32 \
   -xconn \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_newconn.log
@@ -1469,7 +1463,6 @@ bexhoma benchbase \
   -xnpo 32 \
   -xconn \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_newconn_pool.log
@@ -1639,7 +1632,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_appmetrics.log
@@ -1928,7 +1920,6 @@ bexhoma benchbase \
   -xnpi 32,64 \
   -xnpo 32 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnp $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_pool_sweep.log
@@ -2167,7 +2158,6 @@ bexhoma ycsb \
   -xnpp 1 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnp $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

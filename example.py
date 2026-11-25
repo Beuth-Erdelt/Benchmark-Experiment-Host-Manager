@@ -15,6 +15,7 @@ import logging
 import urllib3
 import logging
 import argparse
+import sys
 import time
 from timeit import default_timer
 import datetime
@@ -52,7 +53,6 @@ if __name__ == '__main__':
     parser.add_argument('-rst', '--request-storage-type', help='request persistent storage of certain type', default=None, choices=[None, '', 'local-hdd', 'shared'])
     parser.add_argument('-rss', '--request-storage-size', help='request persistent storage of certain size', default='10Gi')
     parser.add_argument('-rnn', '--request-node-name', help='request a specific node', default=None)
-    parser.add_argument('-tr', '--test-result', help='test if result fulfills some basic requirements', action='store_true', default=False)
     parser.add_argument('-rcp', '--recreate-parameter', help='recreate parameter for randomized queries', default=None)
     # evaluate args
     args = parser.parse_args()
@@ -81,8 +81,6 @@ if __name__ == '__main__':
     timeout = int(args.timeout)
     # how often to repeat experiment?
     num_experiment_to_apply = int(args.num_config)
-    # should results be tested for validity?
-    test_result = args.test_result
     # configure number of clients per config
     list_clients = args.num_query_executors.split(",")
     if len(list_clients) > 0:
@@ -176,10 +174,6 @@ if __name__ == '__main__':
     experiment.stop_benchmarker()
     experiment.stop_sut()
     #experiment.zip() # OOM? exit code 137
-    if test_result:
-        test_result_code = experiment.test_results()
-        if test_result_code == 0:
-            print("Test successful!")
     cluster.restart_dashboard()
     experiment.show_summary()
-exit()
+    sys.exit(experiment.tests_outcome())

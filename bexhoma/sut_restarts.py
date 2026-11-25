@@ -155,16 +155,48 @@ def _previous_log_name(result_dir: Path, describe_file: str, container: str) -> 
     return name if (result_dir / name).is_file() else ""
 
 
-def restart_snapshot_entry(counts: str, per_container: dict[str, int]) -> dict:
+def restart_snapshot_entry(counts: str, per_container: dict[str, int], uid: str = '') -> dict:
     """
     Build one pod's entry of a ``bexhoma-sut-*-restarts.json`` snapshot.
 
     :param counts: Space-separated restart counts, see :func:`clean_restart_counts`.
     :param per_container: Container name to restart count; empty if unknown.
-    :return: ``{"counts": counts, "containers": per_container}``.
+    :param uid: UID of the pod at the end of the repetition; left out if unknown.
+    :return: ``{"counts": counts, "containers": per_container}``, plus ``"uid"``.
     :rtype: dict
     """
-    return {"counts": counts, "containers": dict(per_container)}
+    entry = {"counts": counts, "containers": dict(per_container)}
+    if uid:
+        entry["uid"] = uid
+    return entry
+
+
+def read_snapshot_uids(result_dir: Path, code: str) -> dict[tuple[str, str], dict[str, str]]:
+    """
+    Read the pod UIDs of every ``bexhoma-sut-*-restarts.json`` snapshot.
+
+    A snapshot is written at the end of each repetition, after its last
+    benchmarking round; its UIDs are the last reading of the pods.
+
+    :param result_dir: The experiment's result folder.
+    :param code: Experiment code, part of the file names.
+    :return: ``(configuration, experiment_run)`` (configuration lower case, as in
+        the file name) to pod name to UID; pods without a UID are left out.
+    :rtype: dict[tuple[str, str], dict[str, str]]
+    """
+    pattern = re.compile(rf"^bexhoma-sut-(.+)-{re.escape(str(code))}-(\d+)-restarts\.json$")
+    uids: dict[tuple[str, str], dict[str, str]] = {}
+    for restarts_file in sorted(Path(result_dir).glob("bexhoma-sut-*-restarts.json")):
+        match = pattern.match(restarts_file.name)
+        if not match:
+            continue
+        with open(restarts_file) as handle:
+            pod_restarts: dict = json.load(handle)
+        pods = {pod: entry["uid"] for pod, entry in pod_restarts.items()
+                if isinstance(entry, dict) and entry.get("uid")}
+        if pods:
+            uids[(match.group(1), match.group(2))] = pods
+    return uids
 
 
 def _read_snapshots(result_dir: Path) -> dict[str, tuple[int, str, dict[str, int]]]:

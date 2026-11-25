@@ -110,7 +110,7 @@ are listed alphabetically except where noted:
 | K — Query/load modifiers | `-xld`, `-xlit`, `-xnls`, `-xrcp`, `-xshq` | alphabetical |
 | L — Extra features | `-xbatch`, `-xconn`, `-xdt`, `-xio`, `-xkey`, `-xlat`, `-xli`, `-xmet`, `-xop`, `-xsbs` | alphabetical |
 | M — Monitoring | `-m`, `-ma`, `-mc` | alphabetical |
-| N — Experiment control | `-ms`, `-sl`, `-ss`, `-t`, `-tr` | alphabetical |
+| N — Experiment control | `-ms`, `-sl`, `-ss`, `-t` | alphabetical |
 | O — SUT resources | `-lc`, `-lr`, `-rc`, `-rr` / `-rct`, `-rg`, `-rgt` / `-rsr`, `-rsrp`, `-rss`, `-rst` | three sub-groups: RAM+CPU, node labels, storage — alphabetical within each |
 | P — Multi-tenancy | `-mtb`, `-mtn`, `-mtv` | alphabetical |
 | Q — Node pinning | `-rnn`, `-rnl`, `-rnp`, `-rnb` | **flow order** (SUT → loaders → pooling → benchmarkers); always on one line in `.sh` |

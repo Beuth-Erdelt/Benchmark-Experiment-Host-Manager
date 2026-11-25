@@ -446,7 +446,9 @@ class Benchmark(ABC):
         :param write_report: When ``True``, also write a tiered Markdown report
             (``report/index.md`` + detail files) to the result folder.
         """
-        experiment._test_results = list(experiment._runtime_test_results)
+        # failures of the run, also those stored in the result folder (stand-ins: memory only)
+        runtime = getattr(experiment, 'runtime_test_results', None)
+        experiment._test_results = runtime() if runtime else list(experiment._runtime_test_results)
         self._prepare_evaluator(experiment)
         connections_sorted, monitoring_applications = experiment.show_summary_header()
         workflow_section: Section | None = None
@@ -483,6 +485,11 @@ class Benchmark(ABC):
             experiment, df_loading, df_aggregated_reduced,
             workflow_actual, workflow_planned, **extra_context
         )
+        if experiment.benchmarking_is_active():
+            if hasattr(self.evaluator, 'record_results_complete_test'):
+                self.evaluator.record_results_complete_test(experiment, df_connections)
+            if hasattr(experiment, '_show_benchmarker_pod_checks') and connections_sorted:
+                experiment._show_benchmarker_pod_checks(connections_sorted)
         self._record_reset_test(experiment, df_connections)
         if write_report:
             print("{:30s}: cleaning up per-connection artefacts".format("Experiment"))
@@ -545,26 +552,3 @@ class Benchmark(ABC):
         if reset_section is not None:
             children.append(reset_section)
         return Section(heading=self.name, level=3, blank_after_heading=False, children=children)
-
-    def test_results(self, experiment) -> None:
-        """
-        Validate results and print workflow completion status.
-
-        Compares the experiment's full planned workflow
-        (:meth:`~bexhoma.experiments.base.ExperimentBase.get_workflow_list`)
-        against this benchmark's evaluator's reconstructed actual workflow.
-        Both cover the whole client round, not just this benchmark's own
-        entries (see :meth:`~bexhoma.evaluators.logger.LogEvaluator.test_results`),
-        so the comparison is correct whether this benchmark is the primary or a
-        co-running secondary benchmark. Override for a benchmark with no
-        per-query results of its own to validate.
-
-        :param experiment: The owning experiment object.
-        """
-        experiment.cluster.logger.debug(f'{type(self).__name__}.test_results()')
-        self.evaluator.test_results()
-        workflow = experiment.get_workflow_list()
-        if workflow == self.evaluator.workflow:
-            print("Result workflow complete")
-        else:
-            print("Result workflow not complete")

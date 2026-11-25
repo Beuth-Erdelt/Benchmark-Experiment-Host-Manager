@@ -8,7 +8,6 @@
 --          ssb.py). Columns as in experiments/ssb/PostgreSQL; the primary key
 --          (lo_orderkey, lo_linenumber) is part of the table, as for lineorder.
 --          Import settings (load durability, -xld) are in durability-*.sh.
---          No curly braces in this file: bexhoma may fill it with str.format().
 
 CREATE TABLE ssb.lineorder_flat (
     lo_orderkey         BIGINT       NOT NULL,
@@ -50,4 +49,4 @@ CREATE TABLE ssb.lineorder_flat (
     p_size              INTEGER      NOT NULL,
     p_container         VARCHAR(10)  NOT NULL,
     PRIMARY KEY (lo_orderkey, lo_linenumber)
-);
+){row_format};

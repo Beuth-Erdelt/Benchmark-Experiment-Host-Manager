@@ -68,7 +68,6 @@ bexhoma tpch \
   -nbp 1 \
   -nbt 64 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -322,7 +321,6 @@ bexhoma tpch \
   -nbp 1 \
   -nbt 64 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -575,7 +573,6 @@ bexhoma tpch \
   -nlt 1 \
   -nbp 1 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -846,7 +843,6 @@ bexhoma tpch \
   -nbp 1 \
   -nbt 64 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -1684,7 +1680,6 @@ bexhoma tpch \
   -nlp 1 \
   -nbp 1 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -2342,7 +2337,6 @@ bexhoma tpch \
   -nlp 1 \
   -nbp 1 \
   -xii -xic -xis \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \

@@ -32,8 +32,8 @@ import os
 import re
 from dataclasses import dataclass, field
 
-__all__ = ['IngestUnit', 'LoaderCheck', 'check_loader_pods', 'parse_ingest_markers',
-           'parse_pod_description', 'parse_job_failed_pods']
+__all__ = ['IngestUnit', 'LoaderCheck', 'check_benchmarker_pods', 'check_job_pods', 'check_loader_pods',
+           'parse_ingest_markers', 'parse_pod_description', 'parse_job_failed_pods']
 
 #: One ingested unit, as printed by a loader container.
 _INGEST_MARKER = re.compile(r'^BEXHOMA_INGEST:([^:\r\n]*):([^:\r\n]*):([^:\r\n]*):(ok|failed)\s*$', re.M)
@@ -138,12 +138,46 @@ def check_loader_pods(folder: str, appname: str, code: str, configurations: list
         pods or jobs; configurations without any are left out.
     :rtype: dict[str, LoaderCheck]
     """
+    return check_job_pods(folder, appname, code, configurations, component='loading')
+
+
+def check_benchmarker_pods(folder: str, appname: str, code: str, configurations: list) -> dict[str, LoaderCheck]:
+    """Collect failed benchmarker pods and failed benchmarking jobs per configuration.
+
+    A benchmarker pod that failed (e.g. evicted) is started again by its job
+    (``backoffLimit``), so the job may still end complete; the stored
+    description of the failed pod is what is left of it.
+
+    :param folder: Result folder of the experiment.
+    :param appname: App label (file name prefix, e.g. ``bexhoma``).
+    :param code: Experiment code.
+    :param configurations: Configuration names of the experiment.
+    :return: One :class:`LoaderCheck` per configuration that has stored
+        benchmarker pods or jobs.
+    :rtype: dict[str, LoaderCheck]
+    """
+    return check_job_pods(folder, appname, code, configurations, component='benchmarker')
+
+
+def check_job_pods(folder: str, appname: str, code: str, configurations: list,
+                   component: str = 'loading') -> dict[str, LoaderCheck]:
+    """Collect failed pods, failed jobs and failed ingestion units of one job component per configuration.
+
+    :param folder: Result folder of the experiment.
+    :param appname: App label (file name prefix, e.g. ``bexhoma``).
+    :param code: Experiment code.
+    :param configurations: Configuration names of the experiment.
+    :param component: Job component in the file names: ``loading`` or ``benchmarker``.
+    :return: One :class:`LoaderCheck` per configuration that has stored pods
+        or jobs of the component; configurations without any are left out.
+    :rtype: dict[str, LoaderCheck]
+    """
     if not folder or not os.path.isdir(folder):
         return {}
     original = {str(c).lower(): c for c in configurations}
     # longest name first: 'postgresql-1-0' before 'postgresql-1'
     names = sorted(original, key=len, reverse=True)
-    prefix = f'{appname.lower()}-loading-'
+    prefix = f'{appname.lower()}-{component}-'
     infix = f'-{str(code).lower()}-'
     checks: dict[str, LoaderCheck] = {}
     jobs_failed: dict[str, tuple[str, int]] = {}

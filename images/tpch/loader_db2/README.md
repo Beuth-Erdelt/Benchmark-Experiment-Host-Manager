@@ -13,6 +13,7 @@ python3 /tmp/load.py <table> <file>
 
 * `load.py` sends the file from the loader pod to the server: `INSERT INTO <table> SELECT * FROM EXTERNAL '<chunk>' USING (DELIMITER '|' REMOTESOURCE 'YES' MAXERRORS 1)`, through `ibm_db` and its IBM Data Server Driver for ODBC and CLI
 * chunks of `DB2_LOAD_CHUNK_ROWS` lines (default 20000), one transaction each, so the transaction log of the server needs room for one chunk per loader pod
+* the chunk files are written to the container's temporary folder, which is also the working directory of `load.py`: Db2 writes a log file per remote load (`BEXHOMA.DB2INST1.SYSTET*.log`) next to the file, which must not be the shared data volume
 * several loader pods load into the same table at the same time; the primary keys of `initschema-tpch.sql` are maintained row by row
 * a chunk holds one row lock per row until its commit: with chunks of 200000 lines, four loaders filled the lock list, Db2 escalated to table locks and the loaders deadlocked (`SQL0911N`, reason code 2); 20000 lines keep them far below it
 * `MAXERRORS 1`: a bad row fails its chunk, which is then not loaded at all

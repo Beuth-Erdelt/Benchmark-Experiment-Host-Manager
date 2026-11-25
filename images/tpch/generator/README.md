@@ -13,11 +13,14 @@ See [images/tpch/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment
    empty rather than defaulting to a fixed child index, since another pod may already own it.
 2. Write child index to `/tmp/tpch/BEXHOMA_CHILD` (loaders read this file).
 3. Multi-tenant handling: `schema` or `database` mode remaps `BEXHOMA_CHILD` and scales `BEXHOMA_NUM_PODS` per tenant (same mapping as the PostgreSQL loader: tenant = `(child-1) % tenants`, part = `(child-1) / tenants + 1`); `container` mode logs but does not remap.
-4. Determine `destination_raw`: `/data/tpch/SF<SF>[/<N>/<child>]` if `STORE_RAW_DATA=1`, else `/tmp/tpch/SF<SF>[/<N>/<child>]`. Exit early if the folder exists **and contains at least one `.tbl` file** (checked via a `nullglob` array, not just directory existence — an empty folder created as a parent for another child's subfolder must not be mistaken for already-generated data) and `STORE_RAW_DATA_RECREATE=0`.
-5. If `BEXHOMA_SYNCH_GENERATE=1`: sync on `bexhoma-generator-podcount-<CONNECTION>-<EXPERIMENT>`.
-6. Run `dbgen -s <SF>` (single pod) or `dbgen -s <SF> -S <child> -C <num_pods>` (multi-pod).
+4. If `BEXHOMA_SYNCH_GENERATE=1`: sync on `bexhoma-generator-podcount-job-<CONNECTION>-<EXPERIMENT>-<DATA_JOB>`. This comes before the check for existing data, so a pod that finds its data complete still checks in; otherwise the pods of the job that do generate wait for it forever.
+5. Determine `destination_raw`: `/data/tpch/SF<SF>[/<N>/<child>]` if `STORE_RAW_DATA=1`, else `/tmp/tpch/SF<SF>[/<N>/<child>]`. Exit early if the folder has the completion marker `.bexhoma_generated` and `STORE_RAW_DATA_RECREATE=0`. With `STORE_RAW_DATA_RECREATE=1` the `.tbl` files and the marker are removed (only the files, not the subfolders of split data). `.tbl` files without the marker are left over from a generator that failed or was killed (or from an image before the marker): they are not reused and are replaced in step 8.
+6. Run `dbgen -s <SF>` (single pod) or `dbgen -s <SF> -S <child> -C <num_pods>` (multi-pod) in the staging folder `<destination>/.staging-<pod name>`.
 7. If `TRANSFORM_RAW_DATA=1`: strip trailing `|` from every `.tbl` file via `sed 's/.$//' -i`.
-8. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
+8. Move the `.tbl` files into the destination with `mv` (atomic rename on the same file system), then write `.bexhoma_generated`. If another pod wrote the marker meanwhile, discard this copy. Remove the staging folder.
+9. Emit `BEXHOMA_DURATION`, `BEXHOMA_START`, `BEXHOMA_END`.
+
+The loading jobs of all DBMS configurations of an experiment run at the same time and share `/data`, so several pods may generate the same folder. The staging folder keeps them apart: a loader never sees a half-written file, no pod deletes files of another pod, and `dbgen` never finds an existing file (it would ask whether to overwrite it). `dbgen` is deterministic, so all copies are equal. Loaders read `<destination>/*tbl*`, which does not match the hidden staging folder.
 
 ## Environment variables
 

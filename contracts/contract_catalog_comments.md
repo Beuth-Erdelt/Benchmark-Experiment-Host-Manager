@@ -58,6 +58,12 @@ per-experiment *selection* choice made via `loading.post_load` /
 fully capable of all three, and an experiment can still choose not to apply
 them there.
 
+## YCSB `verify_result` removed (2026-11-25, 1.15.0)
+
+bexhoma always records and evaluates the summary tests and exits 1 when one
+fails; the `-tr` flag that `verify_result` switched on is gone. A spec that
+still sets `verify_result` is rejected as an unknown field.
+
 ## `observe:` — what is measured, and when it is worth it (2026-09-24)
 
 The three monitoring switches used to carry a one-line `semantics:` each and

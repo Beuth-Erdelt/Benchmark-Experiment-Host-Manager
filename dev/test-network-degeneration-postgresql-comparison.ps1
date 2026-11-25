@@ -87,7 +87,6 @@ bexhoma ycsb `
   -nbt 64                       <# total concurrent threads/connections, split evenly across pods #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -112,7 +111,6 @@ bexhoma benchbase `
   -nbt 64                       <# total concurrent threads/connections, split evenly across pods #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -rsr                          <# delete any existing PVC, start from a clean volume #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -140,7 +138,6 @@ bexhoma hardware `
   -ne 1                            <# parallel client counts to sweep (comma-separated) #> `
   -m                               <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS                  <# max simultaneous DBMS configurations #> `
-  -tr                              <# verify result meets basic sanity requirements #> `
   -rnn $BEXHOMA_NODE_SUT           <# schedule SUT pod on this node #> `
   -rnb $BEXHOMA_NODE_BENCHMARK     <# schedule benchmarker pod(s) on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\netdegen_netperf_postgresql_pod_scaling.log" -Encoding utf8

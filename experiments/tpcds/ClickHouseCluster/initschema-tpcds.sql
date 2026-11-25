@@ -13,7 +13,6 @@
 --          Distributed tables are correct for any sharding
 --          (distributed_product_mode = global in the template).
 --          Columns and sorting keys as in experiments/tpcds/ClickHouse.
---          No curly braces in this file: bexhoma may fill it with str.format().
 
 CREATE TABLE dbgen_version_local ON CLUSTER bexhoma (
     dv_version       Nullable(String),
@@ -41,15 +40,15 @@ CREATE TABLE customer_address_local ON CLUSTER bexhoma (
     ca_address_id     String,
     ca_street_number  Nullable(String),
     ca_street_name    Nullable(String),
-    ca_street_type    Nullable(String),
+    ca_street_type    {low_cardinality},
     ca_suite_number   Nullable(String),
     ca_city           Nullable(String),
     ca_county         Nullable(String),
-    ca_state          Nullable(String),
+    ca_state          {low_cardinality},
     ca_zip            Nullable(String),
-    ca_country        Nullable(String),
+    ca_country        {low_cardinality},
     ca_gmt_offset     Nullable(Decimal(5,2)),
-    ca_location_type  Nullable(String)
+    ca_location_type  {low_cardinality}
 ) ENGINE = MergeTree ORDER BY ca_address_sk;
 
 CREATE TABLE customer_address ON CLUSTER bexhoma (
@@ -57,15 +56,15 @@ CREATE TABLE customer_address ON CLUSTER bexhoma (
     ca_address_id     String,
     ca_street_number  Nullable(String),
     ca_street_name    Nullable(String),
-    ca_street_type    Nullable(String),
+    ca_street_type    {low_cardinality},
     ca_suite_number   Nullable(String),
     ca_city           Nullable(String),
     ca_county         Nullable(String),
-    ca_state          Nullable(String),
+    ca_state          {low_cardinality},
     ca_zip            Nullable(String),
-    ca_country        Nullable(String),
+    ca_country        {low_cardinality},
     ca_gmt_offset     Nullable(Decimal(5,2)),
-    ca_location_type  Nullable(String)
+    ca_location_type  {low_cardinality}
 ) ENGINE = Distributed(bexhoma, currentDatabase(), customer_address_local, ca_address_sk);
 
 CREATE TABLE customer_address (
@@ -73,24 +72,24 @@ CREATE TABLE customer_address (
     ca_address_id     String,
     ca_street_number  Nullable(String),
     ca_street_name    Nullable(String),
-    ca_street_type    Nullable(String),
+    ca_street_type    {low_cardinality},
     ca_suite_number   Nullable(String),
     ca_city           Nullable(String),
     ca_county         Nullable(String),
-    ca_state          Nullable(String),
+    ca_state          {low_cardinality},
     ca_zip            Nullable(String),
-    ca_country        Nullable(String),
+    ca_country        {low_cardinality},
     ca_gmt_offset     Nullable(Decimal(5,2)),
-    ca_location_type  Nullable(String)
+    ca_location_type  {low_cardinality}
 ) ENGINE = Distributed(bexhoma, currentDatabase(), customer_address_local, ca_address_sk);
 
 CREATE TABLE customer_demographics_local ON CLUSTER bexhoma (
     cd_demo_sk             Int32,
-    cd_gender              Nullable(String),
-    cd_marital_status      Nullable(String),
-    cd_education_status    Nullable(String),
+    cd_gender              {low_cardinality},
+    cd_marital_status      {low_cardinality},
+    cd_education_status    {low_cardinality},
     cd_purchase_estimate   Nullable(Int32),
-    cd_credit_rating       Nullable(String),
+    cd_credit_rating       {low_cardinality},
     cd_dep_count           Nullable(Int32),
     cd_dep_employed_count  Nullable(Int32),
     cd_dep_college_count   Nullable(Int32)
@@ -98,11 +97,11 @@ CREATE TABLE customer_demographics_local ON CLUSTER bexhoma (
 
 CREATE TABLE customer_demographics ON CLUSTER bexhoma (
     cd_demo_sk             Int32,
-    cd_gender              Nullable(String),
-    cd_marital_status      Nullable(String),
-    cd_education_status    Nullable(String),
+    cd_gender              {low_cardinality},
+    cd_marital_status      {low_cardinality},
+    cd_education_status    {low_cardinality},
     cd_purchase_estimate   Nullable(Int32),
-    cd_credit_rating       Nullable(String),
+    cd_credit_rating       {low_cardinality},
     cd_dep_count           Nullable(Int32),
     cd_dep_employed_count  Nullable(Int32),
     cd_dep_college_count   Nullable(Int32)
@@ -110,11 +109,11 @@ CREATE TABLE customer_demographics ON CLUSTER bexhoma (
 
 CREATE TABLE customer_demographics (
     cd_demo_sk             Int32,
-    cd_gender              Nullable(String),
-    cd_marital_status      Nullable(String),
-    cd_education_status    Nullable(String),
+    cd_gender              {low_cardinality},
+    cd_marital_status      {low_cardinality},
+    cd_education_status    {low_cardinality},
     cd_purchase_estimate   Nullable(Int32),
-    cd_credit_rating       Nullable(String),
+    cd_credit_rating       {low_cardinality},
     cd_dep_count           Nullable(Int32),
     cd_dep_employed_count  Nullable(Int32),
     cd_dep_college_count   Nullable(Int32)
@@ -135,20 +134,20 @@ CREATE TABLE date_dim_local ON CLUSTER bexhoma (
     d_fy_year            Nullable(Int32),
     d_fy_quarter_seq     Nullable(Int32),
     d_fy_week_seq        Nullable(Int32),
-    d_day_name           Nullable(String),
-    d_quarter_name       Nullable(String),
-    d_holiday            Nullable(String),
-    d_weekend            Nullable(String),
-    d_following_holiday  Nullable(String),
+    d_day_name           {low_cardinality},
+    d_quarter_name       {low_cardinality},
+    d_holiday            {low_cardinality},
+    d_weekend            {low_cardinality},
+    d_following_holiday  {low_cardinality},
     d_first_dom          Nullable(Int32),
     d_last_dom           Nullable(Int32),
     d_same_day_ly        Nullable(Int32),
     d_same_day_lq        Nullable(Int32),
-    d_current_day        Nullable(String),
-    d_current_week       Nullable(String),
-    d_current_month      Nullable(String),
-    d_current_quarter    Nullable(String),
-    d_current_year       Nullable(String)
+    d_current_day        {low_cardinality},
+    d_current_week       {low_cardinality},
+    d_current_month      {low_cardinality},
+    d_current_quarter    {low_cardinality},
+    d_current_year       {low_cardinality}
 ) ENGINE = MergeTree ORDER BY d_date_sk;
 
 CREATE TABLE date_dim ON CLUSTER bexhoma (
@@ -166,20 +165,20 @@ CREATE TABLE date_dim ON CLUSTER bexhoma (
     d_fy_year            Nullable(Int32),
     d_fy_quarter_seq     Nullable(Int32),
     d_fy_week_seq        Nullable(Int32),
-    d_day_name           Nullable(String),
-    d_quarter_name       Nullable(String),
-    d_holiday            Nullable(String),
-    d_weekend            Nullable(String),
-    d_following_holiday  Nullable(String),
+    d_day_name           {low_cardinality},
+    d_quarter_name       {low_cardinality},
+    d_holiday            {low_cardinality},
+    d_weekend            {low_cardinality},
+    d_following_holiday  {low_cardinality},
     d_first_dom          Nullable(Int32),
     d_last_dom           Nullable(Int32),
     d_same_day_ly        Nullable(Int32),
     d_same_day_lq        Nullable(Int32),
-    d_current_day        Nullable(String),
-    d_current_week       Nullable(String),
-    d_current_month      Nullable(String),
-    d_current_quarter    Nullable(String),
-    d_current_year       Nullable(String)
+    d_current_day        {low_cardinality},
+    d_current_week       {low_cardinality},
+    d_current_month      {low_cardinality},
+    d_current_quarter    {low_cardinality},
+    d_current_year       {low_cardinality}
 ) ENGINE = Distributed(bexhoma, currentDatabase(), date_dim_local, d_date_sk);
 
 CREATE TABLE date_dim (
@@ -197,20 +196,20 @@ CREATE TABLE date_dim (
     d_fy_year            Nullable(Int32),
     d_fy_quarter_seq     Nullable(Int32),
     d_fy_week_seq        Nullable(Int32),
-    d_day_name           Nullable(String),
-    d_quarter_name       Nullable(String),
-    d_holiday            Nullable(String),
-    d_weekend            Nullable(String),
-    d_following_holiday  Nullable(String),
+    d_day_name           {low_cardinality},
+    d_quarter_name       {low_cardinality},
+    d_holiday            {low_cardinality},
+    d_weekend            {low_cardinality},
+    d_following_holiday  {low_cardinality},
     d_first_dom          Nullable(Int32),
     d_last_dom           Nullable(Int32),
     d_same_day_ly        Nullable(Int32),
     d_same_day_lq        Nullable(Int32),
-    d_current_day        Nullable(String),
-    d_current_week       Nullable(String),
-    d_current_month      Nullable(String),
-    d_current_quarter    Nullable(String),
-    d_current_year       Nullable(String)
+    d_current_day        {low_cardinality},
+    d_current_week       {low_cardinality},
+    d_current_month      {low_cardinality},
+    d_current_quarter    {low_cardinality},
+    d_current_year       {low_cardinality}
 ) ENGINE = Distributed(bexhoma, currentDatabase(), date_dim_local, d_date_sk);
 
 CREATE TABLE warehouse_local ON CLUSTER bexhoma (
@@ -224,9 +223,9 @@ CREATE TABLE warehouse_local ON CLUSTER bexhoma (
     w_suite_number     Nullable(String),
     w_city             Nullable(String),
     w_county           Nullable(String),
-    w_state            Nullable(String),
+    w_state            {low_cardinality},
     w_zip              Nullable(String),
-    w_country          Nullable(String),
+    w_country          {low_cardinality},
     w_gmt_offset       Nullable(Decimal(5,2))
 ) ENGINE = MergeTree ORDER BY w_warehouse_sk;
 
@@ -241,9 +240,9 @@ CREATE TABLE warehouse ON CLUSTER bexhoma (
     w_suite_number     Nullable(String),
     w_city             Nullable(String),
     w_county           Nullable(String),
-    w_state            Nullable(String),
+    w_state            {low_cardinality},
     w_zip              Nullable(String),
-    w_country          Nullable(String),
+    w_country          {low_cardinality},
     w_gmt_offset       Nullable(Decimal(5,2))
 ) ENGINE = Distributed(bexhoma, currentDatabase(), warehouse_local, w_warehouse_sk);
 
@@ -258,36 +257,36 @@ CREATE TABLE warehouse (
     w_suite_number     Nullable(String),
     w_city             Nullable(String),
     w_county           Nullable(String),
-    w_state            Nullable(String),
+    w_state            {low_cardinality},
     w_zip              Nullable(String),
-    w_country          Nullable(String),
+    w_country          {low_cardinality},
     w_gmt_offset       Nullable(Decimal(5,2))
 ) ENGINE = Distributed(bexhoma, currentDatabase(), warehouse_local, w_warehouse_sk);
 
 CREATE TABLE ship_mode_local ON CLUSTER bexhoma (
     sm_ship_mode_sk  Int32,
     sm_ship_mode_id  String,
-    sm_type          Nullable(String),
-    sm_code          Nullable(String),
-    sm_carrier       Nullable(String),
+    sm_type          {low_cardinality},
+    sm_code          {low_cardinality},
+    sm_carrier       {low_cardinality},
     sm_contract      Nullable(String)
 ) ENGINE = MergeTree ORDER BY sm_ship_mode_sk;
 
 CREATE TABLE ship_mode ON CLUSTER bexhoma (
     sm_ship_mode_sk  Int32,
     sm_ship_mode_id  String,
-    sm_type          Nullable(String),
-    sm_code          Nullable(String),
-    sm_carrier       Nullable(String),
+    sm_type          {low_cardinality},
+    sm_code          {low_cardinality},
+    sm_carrier       {low_cardinality},
     sm_contract      Nullable(String)
 ) ENGINE = Distributed(bexhoma, currentDatabase(), ship_mode_local, sm_ship_mode_sk);
 
 CREATE TABLE ship_mode (
     sm_ship_mode_sk  Int32,
     sm_ship_mode_id  String,
-    sm_type          Nullable(String),
-    sm_code          Nullable(String),
-    sm_carrier       Nullable(String),
+    sm_type          {low_cardinality},
+    sm_code          {low_cardinality},
+    sm_carrier       {low_cardinality},
     sm_contract      Nullable(String)
 ) ENGINE = Distributed(bexhoma, currentDatabase(), ship_mode_local, sm_ship_mode_sk);
 
@@ -298,10 +297,10 @@ CREATE TABLE time_dim_local ON CLUSTER bexhoma (
     t_hour       Nullable(Int32),
     t_minute     Nullable(Int32),
     t_second     Nullable(Int32),
-    t_am_pm      Nullable(String),
-    t_shift      Nullable(String),
-    t_sub_shift  Nullable(String),
-    t_meal_time  Nullable(String)
+    t_am_pm      {low_cardinality},
+    t_shift      {low_cardinality},
+    t_sub_shift  {low_cardinality},
+    t_meal_time  {low_cardinality}
 ) ENGINE = MergeTree ORDER BY t_time_sk;
 
 CREATE TABLE time_dim ON CLUSTER bexhoma (
@@ -311,10 +310,10 @@ CREATE TABLE time_dim ON CLUSTER bexhoma (
     t_hour       Nullable(Int32),
     t_minute     Nullable(Int32),
     t_second     Nullable(Int32),
-    t_am_pm      Nullable(String),
-    t_shift      Nullable(String),
-    t_sub_shift  Nullable(String),
-    t_meal_time  Nullable(String)
+    t_am_pm      {low_cardinality},
+    t_shift      {low_cardinality},
+    t_sub_shift  {low_cardinality},
+    t_meal_time  {low_cardinality}
 ) ENGINE = Distributed(bexhoma, currentDatabase(), time_dim_local, t_time_sk);
 
 CREATE TABLE time_dim (
@@ -324,10 +323,10 @@ CREATE TABLE time_dim (
     t_hour       Nullable(Int32),
     t_minute     Nullable(Int32),
     t_second     Nullable(Int32),
-    t_am_pm      Nullable(String),
-    t_shift      Nullable(String),
-    t_sub_shift  Nullable(String),
-    t_meal_time  Nullable(String)
+    t_am_pm      {low_cardinality},
+    t_shift      {low_cardinality},
+    t_sub_shift  {low_cardinality},
+    t_meal_time  {low_cardinality}
 ) ENGINE = Distributed(bexhoma, currentDatabase(), time_dim_local, t_time_sk);
 
 CREATE TABLE reason_local ON CLUSTER bexhoma (
@@ -375,18 +374,18 @@ CREATE TABLE item_local ON CLUSTER bexhoma (
     i_current_price   Nullable(Decimal(7,2)),
     i_wholesale_cost  Nullable(Decimal(7,2)),
     i_brand_id        Nullable(Int32),
-    i_brand           Nullable(String),
+    i_brand           {low_cardinality},
     i_class_id        Nullable(Int32),
-    i_class           Nullable(String),
+    i_class           {low_cardinality},
     i_category_id     Nullable(Int32),
-    i_category        Nullable(String),
+    i_category        {low_cardinality},
     i_manufact_id     Nullable(Int32),
     i_manufact        Nullable(String),
-    i_size            Nullable(String),
+    i_size            {low_cardinality},
     i_formulation     Nullable(String),
-    i_color           Nullable(String),
-    i_units           Nullable(String),
-    i_container       Nullable(String),
+    i_color           {low_cardinality},
+    i_units           {low_cardinality},
+    i_container       {low_cardinality},
     i_manager_id      Nullable(Int32),
     i_product_name    Nullable(String)
 ) ENGINE = MergeTree ORDER BY i_item_sk;
@@ -400,18 +399,18 @@ CREATE TABLE item ON CLUSTER bexhoma (
     i_current_price   Nullable(Decimal(7,2)),
     i_wholesale_cost  Nullable(Decimal(7,2)),
     i_brand_id        Nullable(Int32),
-    i_brand           Nullable(String),
+    i_brand           {low_cardinality},
     i_class_id        Nullable(Int32),
-    i_class           Nullable(String),
+    i_class           {low_cardinality},
     i_category_id     Nullable(Int32),
-    i_category        Nullable(String),
+    i_category        {low_cardinality},
     i_manufact_id     Nullable(Int32),
     i_manufact        Nullable(String),
-    i_size            Nullable(String),
+    i_size            {low_cardinality},
     i_formulation     Nullable(String),
-    i_color           Nullable(String),
-    i_units           Nullable(String),
-    i_container       Nullable(String),
+    i_color           {low_cardinality},
+    i_units           {low_cardinality},
+    i_container       {low_cardinality},
     i_manager_id      Nullable(Int32),
     i_product_name    Nullable(String)
 ) ENGINE = Distributed(bexhoma, currentDatabase(), item_local, i_item_sk);
@@ -425,18 +424,18 @@ CREATE TABLE item (
     i_current_price   Nullable(Decimal(7,2)),
     i_wholesale_cost  Nullable(Decimal(7,2)),
     i_brand_id        Nullable(Int32),
-    i_brand           Nullable(String),
+    i_brand           {low_cardinality},
     i_class_id        Nullable(Int32),
-    i_class           Nullable(String),
+    i_class           {low_cardinality},
     i_category_id     Nullable(Int32),
-    i_category        Nullable(String),
+    i_category        {low_cardinality},
     i_manufact_id     Nullable(Int32),
     i_manufact        Nullable(String),
-    i_size            Nullable(String),
+    i_size            {low_cardinality},
     i_formulation     Nullable(String),
-    i_color           Nullable(String),
-    i_units           Nullable(String),
-    i_container       Nullable(String),
+    i_color           {low_cardinality},
+    i_units           {low_cardinality},
+    i_container       {low_cardinality},
     i_manager_id      Nullable(Int32),
     i_product_name    Nullable(String)
 ) ENGINE = Distributed(bexhoma, currentDatabase(), item_local, i_item_sk);
@@ -466,9 +465,9 @@ CREATE TABLE store_local ON CLUSTER bexhoma (
     s_suite_number      Nullable(String),
     s_city              Nullable(String),
     s_county            Nullable(String),
-    s_state             Nullable(String),
+    s_state             {low_cardinality},
     s_zip               Nullable(String),
-    s_country           Nullable(String),
+    s_country           {low_cardinality},
     s_gmt_offset        Nullable(Decimal(5,2)),
     s_tax_precentage    Nullable(Decimal(5,2))
 ) ENGINE = MergeTree ORDER BY s_store_sk;
@@ -498,9 +497,9 @@ CREATE TABLE store ON CLUSTER bexhoma (
     s_suite_number      Nullable(String),
     s_city              Nullable(String),
     s_county            Nullable(String),
-    s_state             Nullable(String),
+    s_state             {low_cardinality},
     s_zip               Nullable(String),
-    s_country           Nullable(String),
+    s_country           {low_cardinality},
     s_gmt_offset        Nullable(Decimal(5,2)),
     s_tax_precentage    Nullable(Decimal(5,2))
 ) ENGINE = Distributed(bexhoma, currentDatabase(), store_local, s_store_sk);
@@ -530,9 +529,9 @@ CREATE TABLE store (
     s_suite_number      Nullable(String),
     s_city              Nullable(String),
     s_county            Nullable(String),
-    s_state             Nullable(String),
+    s_state             {low_cardinality},
     s_zip               Nullable(String),
-    s_country           Nullable(String),
+    s_country           {low_cardinality},
     s_gmt_offset        Nullable(Decimal(5,2)),
     s_tax_precentage    Nullable(Decimal(5,2))
 ) ENGINE = Distributed(bexhoma, currentDatabase(), store_local, s_store_sk);
@@ -545,7 +544,7 @@ CREATE TABLE call_center_local ON CLUSTER bexhoma (
     cc_closed_date_sk  Nullable(Int32),
     cc_open_date_sk    Nullable(Int32),
     cc_name            Nullable(String),
-    cc_class           Nullable(String),
+    cc_class           {low_cardinality},
     cc_employees       Nullable(Int32),
     cc_sq_ft           Nullable(Int32),
     cc_hours           Nullable(String),
@@ -564,9 +563,9 @@ CREATE TABLE call_center_local ON CLUSTER bexhoma (
     cc_suite_number    Nullable(String),
     cc_city            Nullable(String),
     cc_county          Nullable(String),
-    cc_state           Nullable(String),
+    cc_state           {low_cardinality},
     cc_zip             Nullable(String),
-    cc_country         Nullable(String),
+    cc_country         {low_cardinality},
     cc_gmt_offset      Nullable(Decimal(5,2)),
     cc_tax_percentage  Nullable(Decimal(5,2))
 ) ENGINE = MergeTree ORDER BY cc_call_center_sk;
@@ -579,7 +578,7 @@ CREATE TABLE call_center ON CLUSTER bexhoma (
     cc_closed_date_sk  Nullable(Int32),
     cc_open_date_sk    Nullable(Int32),
     cc_name            Nullable(String),
-    cc_class           Nullable(String),
+    cc_class           {low_cardinality},
     cc_employees       Nullable(Int32),
     cc_sq_ft           Nullable(Int32),
     cc_hours           Nullable(String),
@@ -598,9 +597,9 @@ CREATE TABLE call_center ON CLUSTER bexhoma (
     cc_suite_number    Nullable(String),
     cc_city            Nullable(String),
     cc_county          Nullable(String),
-    cc_state           Nullable(String),
+    cc_state           {low_cardinality},
     cc_zip             Nullable(String),
-    cc_country         Nullable(String),
+    cc_country         {low_cardinality},
     cc_gmt_offset      Nullable(Decimal(5,2)),
     cc_tax_percentage  Nullable(Decimal(5,2))
 ) ENGINE = Distributed(bexhoma, currentDatabase(), call_center_local, cc_call_center_sk);
@@ -613,7 +612,7 @@ CREATE TABLE call_center (
     cc_closed_date_sk  Nullable(Int32),
     cc_open_date_sk    Nullable(Int32),
     cc_name            Nullable(String),
-    cc_class           Nullable(String),
+    cc_class           {low_cardinality},
     cc_employees       Nullable(Int32),
     cc_sq_ft           Nullable(Int32),
     cc_hours           Nullable(String),
@@ -632,9 +631,9 @@ CREATE TABLE call_center (
     cc_suite_number    Nullable(String),
     cc_city            Nullable(String),
     cc_county          Nullable(String),
-    cc_state           Nullable(String),
+    cc_state           {low_cardinality},
     cc_zip             Nullable(String),
-    cc_country         Nullable(String),
+    cc_country         {low_cardinality},
     cc_gmt_offset      Nullable(Decimal(5,2)),
     cc_tax_percentage  Nullable(Decimal(5,2))
 ) ENGINE = Distributed(bexhoma, currentDatabase(), call_center_local, cc_call_center_sk);
@@ -647,14 +646,14 @@ CREATE TABLE customer_local ON CLUSTER bexhoma (
     c_current_addr_sk       Nullable(Int32),
     c_first_shipto_date_sk  Nullable(Int32),
     c_first_sales_date_sk   Nullable(Int32),
-    c_salutation            Nullable(String),
+    c_salutation            {low_cardinality},
     c_first_name            Nullable(String),
     c_last_name             Nullable(String),
-    c_preferred_cust_flag   Nullable(String),
+    c_preferred_cust_flag   {low_cardinality},
     c_birth_day             Nullable(Int32),
     c_birth_month           Nullable(Int32),
     c_birth_year            Nullable(Int32),
-    c_birth_country         Nullable(String),
+    c_birth_country         {low_cardinality},
     c_login                 Nullable(String),
     c_email_address         Nullable(String),
     c_last_review_date      Nullable(String)
@@ -668,14 +667,14 @@ CREATE TABLE customer ON CLUSTER bexhoma (
     c_current_addr_sk       Nullable(Int32),
     c_first_shipto_date_sk  Nullable(Int32),
     c_first_sales_date_sk   Nullable(Int32),
-    c_salutation            Nullable(String),
+    c_salutation            {low_cardinality},
     c_first_name            Nullable(String),
     c_last_name             Nullable(String),
-    c_preferred_cust_flag   Nullable(String),
+    c_preferred_cust_flag   {low_cardinality},
     c_birth_day             Nullable(Int32),
     c_birth_month           Nullable(Int32),
     c_birth_year            Nullable(Int32),
-    c_birth_country         Nullable(String),
+    c_birth_country         {low_cardinality},
     c_login                 Nullable(String),
     c_email_address         Nullable(String),
     c_last_review_date      Nullable(String)
@@ -689,14 +688,14 @@ CREATE TABLE customer (
     c_current_addr_sk       Nullable(Int32),
     c_first_shipto_date_sk  Nullable(Int32),
     c_first_sales_date_sk   Nullable(Int32),
-    c_salutation            Nullable(String),
+    c_salutation            {low_cardinality},
     c_first_name            Nullable(String),
     c_last_name             Nullable(String),
-    c_preferred_cust_flag   Nullable(String),
+    c_preferred_cust_flag   {low_cardinality},
     c_birth_day             Nullable(Int32),
     c_birth_month           Nullable(Int32),
     c_birth_year            Nullable(Int32),
-    c_birth_country         Nullable(String),
+    c_birth_country         {low_cardinality},
     c_login                 Nullable(String),
     c_email_address         Nullable(String),
     c_last_review_date      Nullable(String)
@@ -710,7 +709,7 @@ CREATE TABLE web_site_local ON CLUSTER bexhoma (
     web_name            Nullable(String),
     web_open_date_sk    Nullable(Int32),
     web_close_date_sk   Nullable(Int32),
-    web_class           Nullable(String),
+    web_class           {low_cardinality},
     web_manager         Nullable(String),
     web_mkt_id          Nullable(Int32),
     web_mkt_class       Nullable(String),
@@ -724,9 +723,9 @@ CREATE TABLE web_site_local ON CLUSTER bexhoma (
     web_suite_number    Nullable(String),
     web_city            Nullable(String),
     web_county          Nullable(String),
-    web_state           Nullable(String),
+    web_state           {low_cardinality},
     web_zip             Nullable(String),
-    web_country         Nullable(String),
+    web_country         {low_cardinality},
     web_gmt_offset      Nullable(Decimal(5,2)),
     web_tax_percentage  Nullable(Decimal(5,2))
 ) ENGINE = MergeTree ORDER BY web_site_sk;
@@ -739,7 +738,7 @@ CREATE TABLE web_site ON CLUSTER bexhoma (
     web_name            Nullable(String),
     web_open_date_sk    Nullable(Int32),
     web_close_date_sk   Nullable(Int32),
-    web_class           Nullable(String),
+    web_class           {low_cardinality},
     web_manager         Nullable(String),
     web_mkt_id          Nullable(Int32),
     web_mkt_class       Nullable(String),
@@ -753,9 +752,9 @@ CREATE TABLE web_site ON CLUSTER bexhoma (
     web_suite_number    Nullable(String),
     web_city            Nullable(String),
     web_county          Nullable(String),
-    web_state           Nullable(String),
+    web_state           {low_cardinality},
     web_zip             Nullable(String),
-    web_country         Nullable(String),
+    web_country         {low_cardinality},
     web_gmt_offset      Nullable(Decimal(5,2)),
     web_tax_percentage  Nullable(Decimal(5,2))
 ) ENGINE = Distributed(bexhoma, currentDatabase(), web_site_local, web_site_sk);
@@ -768,7 +767,7 @@ CREATE TABLE web_site (
     web_name            Nullable(String),
     web_open_date_sk    Nullable(Int32),
     web_close_date_sk   Nullable(Int32),
-    web_class           Nullable(String),
+    web_class           {low_cardinality},
     web_manager         Nullable(String),
     web_mkt_id          Nullable(Int32),
     web_mkt_class       Nullable(String),
@@ -782,35 +781,36 @@ CREATE TABLE web_site (
     web_suite_number    Nullable(String),
     web_city            Nullable(String),
     web_county          Nullable(String),
-    web_state           Nullable(String),
+    web_state           {low_cardinality},
     web_zip             Nullable(String),
-    web_country         Nullable(String),
+    web_country         {low_cardinality},
     web_gmt_offset      Nullable(Decimal(5,2)),
     web_tax_percentage  Nullable(Decimal(5,2))
 ) ENGINE = Distributed(bexhoma, currentDatabase(), web_site_local, web_site_sk);
 
 CREATE TABLE store_returns_local ON CLUSTER bexhoma (
-    sr_returned_date_sk    Nullable(Int32),
-    sr_return_time_sk      Nullable(Int32),
-    sr_item_sk             Int32,
-    sr_customer_sk         Nullable(Int32),
-    sr_cdemo_sk            Nullable(Int32),
-    sr_hdemo_sk            Nullable(Int32),
-    sr_addr_sk             Nullable(Int32),
-    sr_store_sk            Nullable(Int32),
-    sr_reason_sk           Nullable(Int32),
-    sr_ticket_number       Int32,
-    sr_return_quantity     Nullable(Int32),
-    sr_return_amt          Nullable(Decimal(7,2)),
-    sr_return_tax          Nullable(Decimal(7,2)),
-    sr_return_amt_inc_tax  Nullable(Decimal(7,2)),
-    sr_fee                 Nullable(Decimal(7,2)),
-    sr_return_ship_cost    Nullable(Decimal(7,2)),
-    sr_refunded_cash       Nullable(Decimal(7,2)),
-    sr_reversed_charge     Nullable(Decimal(7,2)),
-    sr_store_credit        Nullable(Decimal(7,2)),
-    sr_net_loss            Nullable(Decimal(7,2))
-) ENGINE = MergeTree ORDER BY (sr_item_sk, sr_ticket_number);
+    sr_returned_date_sk    Nullable(Int32){codec},
+    sr_return_time_sk      Nullable(Int32){codec},
+    sr_item_sk             Int32{codec},
+    sr_customer_sk         Nullable(Int32){codec},
+    sr_cdemo_sk            Nullable(Int32){codec},
+    sr_hdemo_sk            Nullable(Int32){codec},
+    sr_addr_sk             Nullable(Int32){codec},
+    sr_store_sk            Nullable(Int32){codec},
+    sr_reason_sk           Nullable(Int32){codec},
+    sr_ticket_number       Int32{codec},
+    sr_return_quantity     Nullable(Int32){codec},
+    sr_return_amt          Nullable(Decimal(7,2)){codec},
+    sr_return_tax          Nullable(Decimal(7,2)){codec},
+    sr_return_amt_inc_tax  Nullable(Decimal(7,2)){codec},
+    sr_fee                 Nullable(Decimal(7,2)){codec},
+    sr_return_ship_cost    Nullable(Decimal(7,2)){codec},
+    sr_refunded_cash       Nullable(Decimal(7,2)){codec},
+    sr_reversed_charge     Nullable(Decimal(7,2)){codec},
+    sr_store_credit        Nullable(Decimal(7,2)){codec},
+    sr_net_loss            Nullable(Decimal(7,2)){codec}
+) ENGINE = MergeTree ORDER BY (sr_item_sk, sr_ticket_number)
+    SETTINGS index_granularity = {index_granularity}, min_bytes_for_wide_part = {wide_parts};
 
 CREATE TABLE store_returns ON CLUSTER bexhoma (
     sr_returned_date_sk    Nullable(Int32),
@@ -861,7 +861,7 @@ CREATE TABLE store_returns (
 CREATE TABLE household_demographics_local ON CLUSTER bexhoma (
     hd_demo_sk         Int32,
     hd_income_band_sk  Nullable(Int32),
-    hd_buy_potential   Nullable(String),
+    hd_buy_potential   {low_cardinality},
     hd_dep_count       Nullable(Int32),
     hd_vehicle_count   Nullable(Int32)
 ) ENGINE = MergeTree ORDER BY hd_demo_sk;
@@ -869,7 +869,7 @@ CREATE TABLE household_demographics_local ON CLUSTER bexhoma (
 CREATE TABLE household_demographics ON CLUSTER bexhoma (
     hd_demo_sk         Int32,
     hd_income_band_sk  Nullable(Int32),
-    hd_buy_potential   Nullable(String),
+    hd_buy_potential   {low_cardinality},
     hd_dep_count       Nullable(Int32),
     hd_vehicle_count   Nullable(Int32)
 ) ENGINE = Distributed(bexhoma, currentDatabase(), household_demographics_local, hd_demo_sk);
@@ -877,7 +877,7 @@ CREATE TABLE household_demographics ON CLUSTER bexhoma (
 CREATE TABLE household_demographics (
     hd_demo_sk         Int32,
     hd_income_band_sk  Nullable(Int32),
-    hd_buy_potential   Nullable(String),
+    hd_buy_potential   {low_cardinality},
     hd_dep_count       Nullable(Int32),
     hd_vehicle_count   Nullable(Int32)
 ) ENGINE = Distributed(bexhoma, currentDatabase(), household_demographics_local, hd_demo_sk);
@@ -889,10 +889,10 @@ CREATE TABLE web_page_local ON CLUSTER bexhoma (
     wp_rec_end_date      Nullable(Date32),
     wp_creation_date_sk  Nullable(Int32),
     wp_access_date_sk    Nullable(Int32),
-    wp_autogen_flag      Nullable(String),
+    wp_autogen_flag      {low_cardinality},
     wp_customer_sk       Nullable(Int32),
     wp_url               Nullable(String),
-    wp_type              Nullable(String),
+    wp_type              {low_cardinality},
     wp_char_count        Nullable(Int32),
     wp_link_count        Nullable(Int32),
     wp_image_count       Nullable(Int32),
@@ -906,10 +906,10 @@ CREATE TABLE web_page ON CLUSTER bexhoma (
     wp_rec_end_date      Nullable(Date32),
     wp_creation_date_sk  Nullable(Int32),
     wp_access_date_sk    Nullable(Int32),
-    wp_autogen_flag      Nullable(String),
+    wp_autogen_flag      {low_cardinality},
     wp_customer_sk       Nullable(Int32),
     wp_url               Nullable(String),
-    wp_type              Nullable(String),
+    wp_type              {low_cardinality},
     wp_char_count        Nullable(Int32),
     wp_link_count        Nullable(Int32),
     wp_image_count       Nullable(Int32),
@@ -923,10 +923,10 @@ CREATE TABLE web_page (
     wp_rec_end_date      Nullable(Date32),
     wp_creation_date_sk  Nullable(Int32),
     wp_access_date_sk    Nullable(Int32),
-    wp_autogen_flag      Nullable(String),
+    wp_autogen_flag      {low_cardinality},
     wp_customer_sk       Nullable(Int32),
     wp_url               Nullable(String),
-    wp_type              Nullable(String),
+    wp_type              {low_cardinality},
     wp_char_count        Nullable(Int32),
     wp_link_count        Nullable(Int32),
     wp_image_count       Nullable(Int32),
@@ -942,17 +942,17 @@ CREATE TABLE promotion_local ON CLUSTER bexhoma (
     p_cost             Nullable(Decimal(15,2)),
     p_response_target  Nullable(Int32),
     p_promo_name       Nullable(String),
-    p_channel_dmail    Nullable(String),
-    p_channel_email    Nullable(String),
-    p_channel_catalog  Nullable(String),
-    p_channel_tv       Nullable(String),
-    p_channel_radio    Nullable(String),
-    p_channel_press    Nullable(String),
-    p_channel_event    Nullable(String),
-    p_channel_demo     Nullable(String),
+    p_channel_dmail    {low_cardinality},
+    p_channel_email    {low_cardinality},
+    p_channel_catalog  {low_cardinality},
+    p_channel_tv       {low_cardinality},
+    p_channel_radio    {low_cardinality},
+    p_channel_press    {low_cardinality},
+    p_channel_event    {low_cardinality},
+    p_channel_demo     {low_cardinality},
     p_channel_details  Nullable(String),
     p_purpose          Nullable(String),
-    p_discount_active  Nullable(String)
+    p_discount_active  {low_cardinality}
 ) ENGINE = MergeTree ORDER BY p_promo_sk;
 
 CREATE TABLE promotion ON CLUSTER bexhoma (
@@ -964,17 +964,17 @@ CREATE TABLE promotion ON CLUSTER bexhoma (
     p_cost             Nullable(Decimal(15,2)),
     p_response_target  Nullable(Int32),
     p_promo_name       Nullable(String),
-    p_channel_dmail    Nullable(String),
-    p_channel_email    Nullable(String),
-    p_channel_catalog  Nullable(String),
-    p_channel_tv       Nullable(String),
-    p_channel_radio    Nullable(String),
-    p_channel_press    Nullable(String),
-    p_channel_event    Nullable(String),
-    p_channel_demo     Nullable(String),
+    p_channel_dmail    {low_cardinality},
+    p_channel_email    {low_cardinality},
+    p_channel_catalog  {low_cardinality},
+    p_channel_tv       {low_cardinality},
+    p_channel_radio    {low_cardinality},
+    p_channel_press    {low_cardinality},
+    p_channel_event    {low_cardinality},
+    p_channel_demo     {low_cardinality},
     p_channel_details  Nullable(String),
     p_purpose          Nullable(String),
-    p_discount_active  Nullable(String)
+    p_discount_active  {low_cardinality}
 ) ENGINE = Distributed(bexhoma, currentDatabase(), promotion_local, p_promo_sk);
 
 CREATE TABLE promotion (
@@ -986,17 +986,17 @@ CREATE TABLE promotion (
     p_cost             Nullable(Decimal(15,2)),
     p_response_target  Nullable(Int32),
     p_promo_name       Nullable(String),
-    p_channel_dmail    Nullable(String),
-    p_channel_email    Nullable(String),
-    p_channel_catalog  Nullable(String),
-    p_channel_tv       Nullable(String),
-    p_channel_radio    Nullable(String),
-    p_channel_press    Nullable(String),
-    p_channel_event    Nullable(String),
-    p_channel_demo     Nullable(String),
+    p_channel_dmail    {low_cardinality},
+    p_channel_email    {low_cardinality},
+    p_channel_catalog  {low_cardinality},
+    p_channel_tv       {low_cardinality},
+    p_channel_radio    {low_cardinality},
+    p_channel_press    {low_cardinality},
+    p_channel_event    {low_cardinality},
+    p_channel_demo     {low_cardinality},
     p_channel_details  Nullable(String),
     p_purpose          Nullable(String),
-    p_discount_active  Nullable(String)
+    p_discount_active  {low_cardinality}
 ) ENGINE = Distributed(bexhoma, currentDatabase(), promotion_local, p_promo_sk);
 
 CREATE TABLE catalog_page_local ON CLUSTER bexhoma (
@@ -1004,11 +1004,11 @@ CREATE TABLE catalog_page_local ON CLUSTER bexhoma (
     cp_catalog_page_id      String,
     cp_start_date_sk        Nullable(Int32),
     cp_end_date_sk          Nullable(Int32),
-    cp_department           Nullable(String),
+    cp_department           {low_cardinality},
     cp_catalog_number       Nullable(Int32),
     cp_catalog_page_number  Nullable(Int32),
     cp_description          Nullable(String),
-    cp_type                 Nullable(String)
+    cp_type                 {low_cardinality}
 ) ENGINE = MergeTree ORDER BY cp_catalog_page_sk;
 
 CREATE TABLE catalog_page ON CLUSTER bexhoma (
@@ -1016,11 +1016,11 @@ CREATE TABLE catalog_page ON CLUSTER bexhoma (
     cp_catalog_page_id      String,
     cp_start_date_sk        Nullable(Int32),
     cp_end_date_sk          Nullable(Int32),
-    cp_department           Nullable(String),
+    cp_department           {low_cardinality},
     cp_catalog_number       Nullable(Int32),
     cp_catalog_page_number  Nullable(Int32),
     cp_description          Nullable(String),
-    cp_type                 Nullable(String)
+    cp_type                 {low_cardinality}
 ) ENGINE = Distributed(bexhoma, currentDatabase(), catalog_page_local, cp_catalog_page_sk);
 
 CREATE TABLE catalog_page (
@@ -1028,19 +1028,20 @@ CREATE TABLE catalog_page (
     cp_catalog_page_id      String,
     cp_start_date_sk        Nullable(Int32),
     cp_end_date_sk          Nullable(Int32),
-    cp_department           Nullable(String),
+    cp_department           {low_cardinality},
     cp_catalog_number       Nullable(Int32),
     cp_catalog_page_number  Nullable(Int32),
     cp_description          Nullable(String),
-    cp_type                 Nullable(String)
+    cp_type                 {low_cardinality}
 ) ENGINE = Distributed(bexhoma, currentDatabase(), catalog_page_local, cp_catalog_page_sk);
 
 CREATE TABLE inventory_local ON CLUSTER bexhoma (
-    inv_date_sk           Int32,
-    inv_item_sk           Int32,
-    inv_warehouse_sk      Int32,
-    inv_quantity_on_hand  Nullable(Int32)
-) ENGINE = MergeTree ORDER BY (inv_date_sk, inv_item_sk, inv_warehouse_sk);
+    inv_date_sk           Int32{codec},
+    inv_item_sk           Int32{codec},
+    inv_warehouse_sk      Int32{codec},
+    inv_quantity_on_hand  Nullable(Int32){codec}
+) ENGINE = MergeTree ORDER BY (inv_date_sk, inv_item_sk, inv_warehouse_sk)
+    SETTINGS index_granularity = {index_granularity}, min_bytes_for_wide_part = {wide_parts};
 
 CREATE TABLE inventory ON CLUSTER bexhoma (
     inv_date_sk           Int32,
@@ -1057,34 +1058,35 @@ CREATE TABLE inventory (
 ) ENGINE = Distributed(bexhoma, currentDatabase(), inventory_local, inv_date_sk);
 
 CREATE TABLE catalog_returns_local ON CLUSTER bexhoma (
-    cr_returned_date_sk       Nullable(Int32),
-    cr_returned_time_sk       Nullable(Int32),
-    cr_item_sk                Int32,
-    cr_refunded_customer_sk   Nullable(Int32),
-    cr_refunded_cdemo_sk      Nullable(Int32),
-    cr_refunded_hdemo_sk      Nullable(Int32),
-    cr_refunded_addr_sk       Nullable(Int32),
-    cr_returning_customer_sk  Nullable(Int32),
-    cr_returning_cdemo_sk     Nullable(Int32),
-    cr_returning_hdemo_sk     Nullable(Int32),
-    cr_returning_addr_sk      Nullable(Int32),
-    cr_call_center_sk         Nullable(Int32),
-    cr_catalog_page_sk        Nullable(Int32),
-    cr_ship_mode_sk           Nullable(Int32),
-    cr_warehouse_sk           Nullable(Int32),
-    cr_reason_sk              Nullable(Int32),
-    cr_order_number           Int32,
-    cr_return_quantity        Nullable(Int32),
-    cr_return_amount          Nullable(Decimal(7,2)),
-    cr_return_tax             Nullable(Decimal(7,2)),
-    cr_return_amt_inc_tax     Nullable(Decimal(7,2)),
-    cr_fee                    Nullable(Decimal(7,2)),
-    cr_return_ship_cost       Nullable(Decimal(7,2)),
-    cr_refunded_cash          Nullable(Decimal(7,2)),
-    cr_reversed_charge        Nullable(Decimal(7,2)),
-    cr_store_credit           Nullable(Decimal(7,2)),
-    cr_net_loss               Nullable(Decimal(7,2))
-) ENGINE = MergeTree ORDER BY (cr_item_sk, cr_order_number);
+    cr_returned_date_sk       Nullable(Int32){codec},
+    cr_returned_time_sk       Nullable(Int32){codec},
+    cr_item_sk                Int32{codec},
+    cr_refunded_customer_sk   Nullable(Int32){codec},
+    cr_refunded_cdemo_sk      Nullable(Int32){codec},
+    cr_refunded_hdemo_sk      Nullable(Int32){codec},
+    cr_refunded_addr_sk       Nullable(Int32){codec},
+    cr_returning_customer_sk  Nullable(Int32){codec},
+    cr_returning_cdemo_sk     Nullable(Int32){codec},
+    cr_returning_hdemo_sk     Nullable(Int32){codec},
+    cr_returning_addr_sk      Nullable(Int32){codec},
+    cr_call_center_sk         Nullable(Int32){codec},
+    cr_catalog_page_sk        Nullable(Int32){codec},
+    cr_ship_mode_sk           Nullable(Int32){codec},
+    cr_warehouse_sk           Nullable(Int32){codec},
+    cr_reason_sk              Nullable(Int32){codec},
+    cr_order_number           Int32{codec},
+    cr_return_quantity        Nullable(Int32){codec},
+    cr_return_amount          Nullable(Decimal(7,2)){codec},
+    cr_return_tax             Nullable(Decimal(7,2)){codec},
+    cr_return_amt_inc_tax     Nullable(Decimal(7,2)){codec},
+    cr_fee                    Nullable(Decimal(7,2)){codec},
+    cr_return_ship_cost       Nullable(Decimal(7,2)){codec},
+    cr_refunded_cash          Nullable(Decimal(7,2)){codec},
+    cr_reversed_charge        Nullable(Decimal(7,2)){codec},
+    cr_store_credit           Nullable(Decimal(7,2)){codec},
+    cr_net_loss               Nullable(Decimal(7,2)){codec}
+) ENGINE = MergeTree ORDER BY (cr_item_sk, cr_order_number)
+    SETTINGS index_granularity = {index_granularity}, min_bytes_for_wide_part = {wide_parts};
 
 CREATE TABLE catalog_returns ON CLUSTER bexhoma (
     cr_returned_date_sk       Nullable(Int32),
@@ -1147,31 +1149,32 @@ CREATE TABLE catalog_returns (
 ) ENGINE = Distributed(bexhoma, currentDatabase(), catalog_returns_local, cr_item_sk);
 
 CREATE TABLE web_returns_local ON CLUSTER bexhoma (
-    wr_returned_date_sk       Nullable(Int32),
-    wr_returned_time_sk       Nullable(Int32),
-    wr_item_sk                Int32,
-    wr_refunded_customer_sk   Nullable(Int32),
-    wr_refunded_cdemo_sk      Nullable(Int32),
-    wr_refunded_hdemo_sk      Nullable(Int32),
-    wr_refunded_addr_sk       Nullable(Int32),
-    wr_returning_customer_sk  Nullable(Int32),
-    wr_returning_cdemo_sk     Nullable(Int32),
-    wr_returning_hdemo_sk     Nullable(Int32),
-    wr_returning_addr_sk      Nullable(Int32),
-    wr_web_page_sk            Nullable(Int32),
-    wr_reason_sk              Nullable(Int32),
-    wr_order_number           Int32,
-    wr_return_quantity        Nullable(Int32),
-    wr_return_amt             Nullable(Decimal(7,2)),
-    wr_return_tax             Nullable(Decimal(7,2)),
-    wr_return_amt_inc_tax     Nullable(Decimal(7,2)),
-    wr_fee                    Nullable(Decimal(7,2)),
-    wr_return_ship_cost       Nullable(Decimal(7,2)),
-    wr_refunded_cash          Nullable(Decimal(7,2)),
-    wr_reversed_charge        Nullable(Decimal(7,2)),
-    wr_account_credit         Nullable(Decimal(7,2)),
-    wr_net_loss               Nullable(Decimal(7,2))
-) ENGINE = MergeTree ORDER BY (wr_item_sk, wr_order_number);
+    wr_returned_date_sk       Nullable(Int32){codec},
+    wr_returned_time_sk       Nullable(Int32){codec},
+    wr_item_sk                Int32{codec},
+    wr_refunded_customer_sk   Nullable(Int32){codec},
+    wr_refunded_cdemo_sk      Nullable(Int32){codec},
+    wr_refunded_hdemo_sk      Nullable(Int32){codec},
+    wr_refunded_addr_sk       Nullable(Int32){codec},
+    wr_returning_customer_sk  Nullable(Int32){codec},
+    wr_returning_cdemo_sk     Nullable(Int32){codec},
+    wr_returning_hdemo_sk     Nullable(Int32){codec},
+    wr_returning_addr_sk      Nullable(Int32){codec},
+    wr_web_page_sk            Nullable(Int32){codec},
+    wr_reason_sk              Nullable(Int32){codec},
+    wr_order_number           Int32{codec},
+    wr_return_quantity        Nullable(Int32){codec},
+    wr_return_amt             Nullable(Decimal(7,2)){codec},
+    wr_return_tax             Nullable(Decimal(7,2)){codec},
+    wr_return_amt_inc_tax     Nullable(Decimal(7,2)){codec},
+    wr_fee                    Nullable(Decimal(7,2)){codec},
+    wr_return_ship_cost       Nullable(Decimal(7,2)){codec},
+    wr_refunded_cash          Nullable(Decimal(7,2)){codec},
+    wr_reversed_charge        Nullable(Decimal(7,2)){codec},
+    wr_account_credit         Nullable(Decimal(7,2)){codec},
+    wr_net_loss               Nullable(Decimal(7,2)){codec}
+) ENGINE = MergeTree ORDER BY (wr_item_sk, wr_order_number)
+    SETTINGS index_granularity = {index_granularity}, min_bytes_for_wide_part = {wide_parts};
 
 CREATE TABLE web_returns ON CLUSTER bexhoma (
     wr_returned_date_sk       Nullable(Int32),
@@ -1228,41 +1231,42 @@ CREATE TABLE web_returns (
 ) ENGINE = Distributed(bexhoma, currentDatabase(), web_returns_local, wr_item_sk);
 
 CREATE TABLE web_sales_local ON CLUSTER bexhoma (
-    ws_sold_date_sk           Nullable(Int32),
-    ws_sold_time_sk           Nullable(Int32),
-    ws_ship_date_sk           Nullable(Int32),
-    ws_item_sk                Int32,
-    ws_bill_customer_sk       Nullable(Int32),
-    ws_bill_cdemo_sk          Nullable(Int32),
-    ws_bill_hdemo_sk          Nullable(Int32),
-    ws_bill_addr_sk           Nullable(Int32),
-    ws_ship_customer_sk       Nullable(Int32),
-    ws_ship_cdemo_sk          Nullable(Int32),
-    ws_ship_hdemo_sk          Nullable(Int32),
-    ws_ship_addr_sk           Nullable(Int32),
-    ws_web_page_sk            Nullable(Int32),
-    ws_web_site_sk            Nullable(Int32),
-    ws_ship_mode_sk           Nullable(Int32),
-    ws_warehouse_sk           Nullable(Int32),
-    ws_promo_sk               Nullable(Int32),
-    ws_order_number           Int32,
-    ws_quantity               Nullable(Int32),
-    ws_wholesale_cost         Nullable(Decimal(7,2)),
-    ws_list_price             Nullable(Decimal(7,2)),
-    ws_sales_price            Nullable(Decimal(7,2)),
-    ws_ext_discount_amt       Nullable(Decimal(7,2)),
-    ws_ext_sales_price        Nullable(Decimal(7,2)),
-    ws_ext_wholesale_cost     Nullable(Decimal(7,2)),
-    ws_ext_list_price         Nullable(Decimal(7,2)),
-    ws_ext_tax                Nullable(Decimal(7,2)),
-    ws_coupon_amt             Nullable(Decimal(7,2)),
-    ws_ext_ship_cost          Nullable(Decimal(7,2)),
-    ws_net_paid               Nullable(Decimal(7,2)),
-    ws_net_paid_inc_tax       Nullable(Decimal(7,2)),
-    ws_net_paid_inc_ship      Nullable(Decimal(7,2)),
-    ws_net_paid_inc_ship_tax  Nullable(Decimal(7,2)),
-    ws_net_profit             Nullable(Decimal(7,2))
-) ENGINE = MergeTree ORDER BY (ws_item_sk, ws_order_number);
+    ws_sold_date_sk           Nullable(Int32){codec},
+    ws_sold_time_sk           Nullable(Int32){codec},
+    ws_ship_date_sk           Nullable(Int32){codec},
+    ws_item_sk                Int32{codec},
+    ws_bill_customer_sk       Nullable(Int32){codec},
+    ws_bill_cdemo_sk          Nullable(Int32){codec},
+    ws_bill_hdemo_sk          Nullable(Int32){codec},
+    ws_bill_addr_sk           Nullable(Int32){codec},
+    ws_ship_customer_sk       Nullable(Int32){codec},
+    ws_ship_cdemo_sk          Nullable(Int32){codec},
+    ws_ship_hdemo_sk          Nullable(Int32){codec},
+    ws_ship_addr_sk           Nullable(Int32){codec},
+    ws_web_page_sk            Nullable(Int32){codec},
+    ws_web_site_sk            Nullable(Int32){codec},
+    ws_ship_mode_sk           Nullable(Int32){codec},
+    ws_warehouse_sk           Nullable(Int32){codec},
+    ws_promo_sk               Nullable(Int32){codec},
+    ws_order_number           Int32{codec},
+    ws_quantity               Nullable(Int32){codec},
+    ws_wholesale_cost         Nullable(Decimal(7,2)){codec},
+    ws_list_price             Nullable(Decimal(7,2)){codec},
+    ws_sales_price            Nullable(Decimal(7,2)){codec},
+    ws_ext_discount_amt       Nullable(Decimal(7,2)){codec},
+    ws_ext_sales_price        Nullable(Decimal(7,2)){codec},
+    ws_ext_wholesale_cost     Nullable(Decimal(7,2)){codec},
+    ws_ext_list_price         Nullable(Decimal(7,2)){codec},
+    ws_ext_tax                Nullable(Decimal(7,2)){codec},
+    ws_coupon_amt             Nullable(Decimal(7,2)){codec},
+    ws_ext_ship_cost          Nullable(Decimal(7,2)){codec},
+    ws_net_paid               Nullable(Decimal(7,2)){codec},
+    ws_net_paid_inc_tax       Nullable(Decimal(7,2)){codec},
+    ws_net_paid_inc_ship      Nullable(Decimal(7,2)){codec},
+    ws_net_paid_inc_ship_tax  Nullable(Decimal(7,2)){codec},
+    ws_net_profit             Nullable(Decimal(7,2)){codec}
+) ENGINE = MergeTree ORDER BY (ws_item_sk, ws_order_number)
+    SETTINGS index_granularity = {index_granularity}, min_bytes_for_wide_part = {wide_parts};
 
 CREATE TABLE web_sales ON CLUSTER bexhoma (
     ws_sold_date_sk           Nullable(Int32),
@@ -1339,41 +1343,42 @@ CREATE TABLE web_sales (
 ) ENGINE = Distributed(bexhoma, currentDatabase(), web_sales_local, ws_item_sk);
 
 CREATE TABLE catalog_sales_local ON CLUSTER bexhoma (
-    cs_sold_date_sk           Nullable(Int32),
-    cs_sold_time_sk           Nullable(Int32),
-    cs_ship_date_sk           Nullable(Int32),
-    cs_bill_customer_sk       Nullable(Int32),
-    cs_bill_cdemo_sk          Nullable(Int32),
-    cs_bill_hdemo_sk          Nullable(Int32),
-    cs_bill_addr_sk           Nullable(Int32),
-    cs_ship_customer_sk       Nullable(Int32),
-    cs_ship_cdemo_sk          Nullable(Int32),
-    cs_ship_hdemo_sk          Nullable(Int32),
-    cs_ship_addr_sk           Nullable(Int32),
-    cs_call_center_sk         Nullable(Int32),
-    cs_catalog_page_sk        Nullable(Int32),
-    cs_ship_mode_sk           Nullable(Int32),
-    cs_warehouse_sk           Nullable(Int32),
-    cs_item_sk                Int32,
-    cs_promo_sk               Nullable(Int32),
-    cs_order_number           Int32,
-    cs_quantity               Nullable(Int32),
-    cs_wholesale_cost         Nullable(Decimal(7,2)),
-    cs_list_price             Nullable(Decimal(7,2)),
-    cs_sales_price            Nullable(Decimal(7,2)),
-    cs_ext_discount_amt       Nullable(Decimal(7,2)),
-    cs_ext_sales_price        Nullable(Decimal(7,2)),
-    cs_ext_wholesale_cost     Nullable(Decimal(7,2)),
-    cs_ext_list_price         Nullable(Decimal(7,2)),
-    cs_ext_tax                Nullable(Decimal(7,2)),
-    cs_coupon_amt             Nullable(Decimal(7,2)),
-    cs_ext_ship_cost          Nullable(Decimal(7,2)),
-    cs_net_paid               Nullable(Decimal(7,2)),
-    cs_net_paid_inc_tax       Nullable(Decimal(7,2)),
-    cs_net_paid_inc_ship      Nullable(Decimal(7,2)),
-    cs_net_paid_inc_ship_tax  Nullable(Decimal(7,2)),
-    cs_net_profit             Nullable(Decimal(7,2))
-) ENGINE = MergeTree ORDER BY (cs_item_sk, cs_order_number);
+    cs_sold_date_sk           Nullable(Int32){codec},
+    cs_sold_time_sk           Nullable(Int32){codec},
+    cs_ship_date_sk           Nullable(Int32){codec},
+    cs_bill_customer_sk       Nullable(Int32){codec},
+    cs_bill_cdemo_sk          Nullable(Int32){codec},
+    cs_bill_hdemo_sk          Nullable(Int32){codec},
+    cs_bill_addr_sk           Nullable(Int32){codec},
+    cs_ship_customer_sk       Nullable(Int32){codec},
+    cs_ship_cdemo_sk          Nullable(Int32){codec},
+    cs_ship_hdemo_sk          Nullable(Int32){codec},
+    cs_ship_addr_sk           Nullable(Int32){codec},
+    cs_call_center_sk         Nullable(Int32){codec},
+    cs_catalog_page_sk        Nullable(Int32){codec},
+    cs_ship_mode_sk           Nullable(Int32){codec},
+    cs_warehouse_sk           Nullable(Int32){codec},
+    cs_item_sk                Int32{codec},
+    cs_promo_sk               Nullable(Int32){codec},
+    cs_order_number           Int32{codec},
+    cs_quantity               Nullable(Int32){codec},
+    cs_wholesale_cost         Nullable(Decimal(7,2)){codec},
+    cs_list_price             Nullable(Decimal(7,2)){codec},
+    cs_sales_price            Nullable(Decimal(7,2)){codec},
+    cs_ext_discount_amt       Nullable(Decimal(7,2)){codec},
+    cs_ext_sales_price        Nullable(Decimal(7,2)){codec},
+    cs_ext_wholesale_cost     Nullable(Decimal(7,2)){codec},
+    cs_ext_list_price         Nullable(Decimal(7,2)){codec},
+    cs_ext_tax                Nullable(Decimal(7,2)){codec},
+    cs_coupon_amt             Nullable(Decimal(7,2)){codec},
+    cs_ext_ship_cost          Nullable(Decimal(7,2)){codec},
+    cs_net_paid               Nullable(Decimal(7,2)){codec},
+    cs_net_paid_inc_tax       Nullable(Decimal(7,2)){codec},
+    cs_net_paid_inc_ship      Nullable(Decimal(7,2)){codec},
+    cs_net_paid_inc_ship_tax  Nullable(Decimal(7,2)){codec},
+    cs_net_profit             Nullable(Decimal(7,2)){codec}
+) ENGINE = MergeTree ORDER BY (cs_item_sk, cs_order_number)
+    SETTINGS index_granularity = {index_granularity}, min_bytes_for_wide_part = {wide_parts};
 
 CREATE TABLE catalog_sales ON CLUSTER bexhoma (
     cs_sold_date_sk           Nullable(Int32),
@@ -1450,30 +1455,31 @@ CREATE TABLE catalog_sales (
 ) ENGINE = Distributed(bexhoma, currentDatabase(), catalog_sales_local, cs_item_sk);
 
 CREATE TABLE store_sales_local ON CLUSTER bexhoma (
-    ss_sold_date_sk        Nullable(Int32),
-    ss_sold_time_sk        Nullable(Int32),
-    ss_item_sk             Int32,
-    ss_customer_sk         Nullable(Int32),
-    ss_cdemo_sk            Nullable(Int32),
-    ss_hdemo_sk            Nullable(Int32),
-    ss_addr_sk             Nullable(Int32),
-    ss_store_sk            Nullable(Int32),
-    ss_promo_sk            Nullable(Int32),
-    ss_ticket_number       Int32,
-    ss_quantity            Nullable(Int32),
-    ss_wholesale_cost      Nullable(Decimal(7,2)),
-    ss_list_price          Nullable(Decimal(7,2)),
-    ss_sales_price         Nullable(Decimal(7,2)),
-    ss_ext_discount_amt    Nullable(Decimal(7,2)),
-    ss_ext_sales_price     Nullable(Decimal(7,2)),
-    ss_ext_wholesale_cost  Nullable(Decimal(7,2)),
-    ss_ext_list_price      Nullable(Decimal(7,2)),
-    ss_ext_tax             Nullable(Decimal(7,2)),
-    ss_coupon_amt          Nullable(Decimal(7,2)),
-    ss_net_paid            Nullable(Decimal(7,2)),
-    ss_net_paid_inc_tax    Nullable(Decimal(7,2)),
-    ss_net_profit          Nullable(Decimal(7,2))
-) ENGINE = MergeTree ORDER BY (ss_item_sk, ss_ticket_number);
+    ss_sold_date_sk        Nullable(Int32){codec},
+    ss_sold_time_sk        Nullable(Int32){codec},
+    ss_item_sk             Int32{codec},
+    ss_customer_sk         Nullable(Int32){codec},
+    ss_cdemo_sk            Nullable(Int32){codec},
+    ss_hdemo_sk            Nullable(Int32){codec},
+    ss_addr_sk             Nullable(Int32){codec},
+    ss_store_sk            Nullable(Int32){codec},
+    ss_promo_sk            Nullable(Int32){codec},
+    ss_ticket_number       Int32{codec},
+    ss_quantity            Nullable(Int32){codec},
+    ss_wholesale_cost      Nullable(Decimal(7,2)){codec},
+    ss_list_price          Nullable(Decimal(7,2)){codec},
+    ss_sales_price         Nullable(Decimal(7,2)){codec},
+    ss_ext_discount_amt    Nullable(Decimal(7,2)){codec},
+    ss_ext_sales_price     Nullable(Decimal(7,2)){codec},
+    ss_ext_wholesale_cost  Nullable(Decimal(7,2)){codec},
+    ss_ext_list_price      Nullable(Decimal(7,2)){codec},
+    ss_ext_tax             Nullable(Decimal(7,2)){codec},
+    ss_coupon_amt          Nullable(Decimal(7,2)){codec},
+    ss_net_paid            Nullable(Decimal(7,2)){codec},
+    ss_net_paid_inc_tax    Nullable(Decimal(7,2)){codec},
+    ss_net_profit          Nullable(Decimal(7,2)){codec}
+) ENGINE = MergeTree ORDER BY (ss_item_sk, ss_ticket_number)
+    SETTINGS index_granularity = {index_granularity}, min_bytes_for_wide_part = {wide_parts};
 
 CREATE TABLE store_sales ON CLUSTER bexhoma (
     ss_sold_date_sk        Nullable(Int32),

@@ -174,6 +174,8 @@ class MetricsCollector:
         c['loading_skipped'] = getattr(cfg, 'loading_skipped', [])
         # why this repetition's load counts as failed (empty: it did not fail)
         c['loading_failed'] = list(getattr(cfg, 'loading_failed', []))
+        # UID of the SUT pod when loading started; hostsystem['pod_uid'] is the one of this round
+        c['sut_pod_uid_loading'] = getattr(cfg, 'sut_pod_uid_at_loading_start', '') or ''
         # collect worker information
         c['worker'] = {}
         components = list(cfg.deployment_infos['statefulset'].keys())

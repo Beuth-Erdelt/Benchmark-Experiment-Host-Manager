@@ -47,7 +47,6 @@ bexhoma tpch \
   -nlp 8 \
   -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 16Gi \
   -rr 16Gi \
   run &>$LOG_DIR/docs_tpch_mariadbcs.log
@@ -62,7 +61,6 @@ This
 * computes statistics (`-xis`); ColumnStore has no keys and no secondary indexes
 * runs the check script (row counts, sizes)
 * runs 1 stream of the 22 TPC-H queries
-* tests if results match workflow (`-tr`)
 * removes the SUT at the end (`-ks no`)
 * shows a summary
 
@@ -269,7 +267,6 @@ bexhoma tpch \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   run &>$LOG_DIR/docs_tpch_mariadbcs_monitoring.log
@@ -503,7 +500,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 16Gi \
   -rr 16Gi \
   -rsr \
@@ -897,7 +893,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -1220,7 +1215,6 @@ bexhoma tpcds \
   -xdt \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 32Gi \
   -rr 32Gi \
   -rsr \
@@ -1669,7 +1663,6 @@ bexhoma ssb \
   -xis \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 16Gi \
   -rr 16Gi \
   -rsr \
@@ -1950,7 +1943,6 @@ bexhoma ssb \
   -xis \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 16Gi \
   -rr 16Gi \
   -rsr \

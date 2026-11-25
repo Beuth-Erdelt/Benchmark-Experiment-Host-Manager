@@ -124,7 +124,6 @@ ev = YcsbEvaluator(code="1777285093", path="/data/benchmarks")
 | Method | Defined in | Returns |
 |---|---|---|
 | `reconstruct_workflow(df)` | `base` / `logger` | Dict mapping configuration → `[[pods], …]` |
-| `test_results()` | all | Exit code `0` if results are intact |
 | `test_results_column(df, col)` | `EvaluatorBase` | `True` if column contains no zero or NaN |
 
 ---
@@ -142,7 +141,6 @@ and the connection-metadata helpers that underpin all downstream aggregation.
 | `self.code` | `__init__` | Experiment identifier string |
 | `self.include_loading` | `__init__` | Flag: loading-phase results expected |
 | `self.include_benchmarking` | `__init__` | Flag: benchmarking-phase results expected |
-| `self.workflow` | `test_results` | Reconstructed workflow dict |
 | `self.workflow_errors` | `log_to_df` | Dict of parse errors keyed by filename |
 
 ### `get_connections_of_experiment()`

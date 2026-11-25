@@ -31,7 +31,7 @@ CREATE TABLE public.customer (
     c_data          VARCHAR(500)    NOT NULL,
     CONSTRAINT customer_pkey PRIMARY KEY (c_w_id, c_d_id, c_id)
     -- customer->district FK not applied: not supported on Citus distributed tables
-);
+) WITH (fillfactor = {fillfactor});
 
 CREATE TABLE public.district (
     d_w_id       INTEGER         NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE public.district (
     d_zip        CHAR(9)         NOT NULL,
     CONSTRAINT district_pkey PRIMARY KEY (d_w_id, d_id)
     -- district->warehouse FK not applied: not supported on Citus distributed tables
-);
+) WITH (fillfactor = {fillfactor});
 
 CREATE TABLE public.history (
     h_c_id    INTEGER        NOT NULL,
@@ -93,7 +93,7 @@ CREATE TABLE public.order_line (
     CONSTRAINT order_line_pkey PRIMARY KEY (ol_w_id, ol_d_id, ol_o_id, ol_number)
     -- order_line->stock FK not applied: not supported on Citus distributed tables
     -- order_line->oorder FK not applied: not supported on Citus distributed tables
-);
+) WITH (fillfactor = {fillfactor});
 
 CREATE TABLE public.oorder (
     o_w_id        INTEGER    NOT NULL,
@@ -106,7 +106,7 @@ CREATE TABLE public.oorder (
     o_entry_d     TIMESTAMP  DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT oorder_pkey PRIMARY KEY (o_w_id, o_d_id, o_id)
     -- oorder->customer FK not applied: not supported on Citus distributed tables
-);
+) WITH (fillfactor = {fillfactor});
 CREATE UNIQUE INDEX oorder_i2 ON public.oorder USING BTREE (o_w_id, o_d_id, o_c_id, o_id);
 
 CREATE TABLE public.stock (
@@ -130,7 +130,7 @@ CREATE TABLE public.stock (
     CONSTRAINT stock_pkey PRIMARY KEY (s_w_id, s_i_id)
     -- stock->item FK not applied: not supported on Citus distributed tables
     -- stock->warehouse FK not applied: not supported on Citus distributed tables
-);
+) WITH (fillfactor = {fillfactor});
 
 CREATE TABLE public.warehouse (
     w_id        INTEGER         NOT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE public.warehouse (
     w_state     CHAR(2)         NOT NULL,
     w_zip       CHAR(9)         NOT NULL,
     CONSTRAINT warehouse_pkey PRIMARY KEY (w_id)
-);
+) WITH (fillfactor = {fillfactor});
 
 -- Shards per distributed table (-nws / -xddl num_worker_shards, see ddl-parameters.config).
 SET citus.shard_count = {num_worker_shards};

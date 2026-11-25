@@ -328,7 +328,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB throughput  sf=100  ne=1
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -345,7 +344,6 @@ bexhoma tpcds \
   -nbp 1 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -369,7 +367,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB simple  sf=3"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -388,7 +385,6 @@ bexhoma tpcds \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rss 50Gi \
@@ -412,7 +408,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB monitoring  sf=3"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -433,7 +428,6 @@ bexhoma tpcds \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 128Gi \
   -rr 128Gi \
   -rsr \
@@ -587,7 +581,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 16                        CPU limit for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
 # -rc 16                        CPU requested for the SUT container
@@ -603,7 +596,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \

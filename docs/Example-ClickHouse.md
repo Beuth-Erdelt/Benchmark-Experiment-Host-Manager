@@ -57,7 +57,6 @@ bexhoma tpch \
   -nlp 8 \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -77,7 +76,6 @@ This
   * and a loading container each, which sends the flat files with `clickhouse-client` (`INSERT ... FORMAT CSV`)
 * runs the check script (row counts, parts, sizes)
 * runs 1 stream of the 22 TPC-H queries (`-ne`) and measures the data transfer volume per query (`-xdt`)
-* tests if results match workflow (`-tr`)
 * removes the SUT at the end (`-ks no`)
 * shows a summary
 
@@ -288,7 +286,6 @@ bexhoma tpch \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -546,7 +543,6 @@ bexhoma tpch \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -843,7 +839,6 @@ bexhoma tpch \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -1302,10 +1297,11 @@ DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)), th
 | `order_lineitem` | TPC-H | `key`, `date` | `key` | sort key (= primary index) of lineitem: by key, or by ship date first so date ranges (Q1, Q6, Q7, Q14, Q15, Q20) skip granules |
 | `partition_orders` | TPC-H | `none`, `year`, `month` | `none` | partitions of orders by order date: queries with a date range skip whole partitions; more partitions mean more parts per insert block |
 | `partition_lineitem` | TPC-H | `none`, `year`, `month` | `none` | partitions of lineitem by ship date: queries with a ship date range (Q1, Q6, Q14, Q15, Q20) skip whole partitions; more partitions mean more parts per insert block |
-| `index_granularity` | TPC-H | integer | `8192` | rows per granule (= entry of the sparse primary index) of orders and lineitem (ClickHouse default 8192): smaller granules skip more precisely, the index grows |
-| `wide_parts` | TPC-H | `default`, `wide`, `compact` | `default` | part format of orders and lineitem by min_bytes_for_wide_part: default (10 MiB: small parts compact, one file; larger parts wide, a file per column), wide (every part), compact (every part up to 1 TiB); parallel loaders write many small parts |
-| `low_cardinality` | TPC-H | `off`, `on` | `off` | dictionary encoding of the string columns with few distinct values (flags, modes, priorities, segments, brands, types, containers, nation and region names): faster filters and GROUP BY |
-| `codec` | TPC-H | `default`, `zstd1`, `zstd3` | `default` | compression of all columns of orders and lineitem (default: the server setting, LZ4): bytes read vs. CPU per scan |
+| `order_lineorder` | SSB | `date`, `key` | `date` | sort key (= primary index) of lineorder (lineorder_flat with -xsv flat): by order date first, so the date filters of all flights skip granules, or by key |
+| `index_granularity` | TPC-H, TPC-DS, SSB | integer | `8192` | rows per granule (= entry of the sparse primary index) of the fact tables (TPC-H: orders and lineitem; TPC-DS: sales, returns, inventory; SSB: lineorder) (ClickHouse default 8192): smaller granules skip more precisely, the index grows |
+| `wide_parts` | TPC-H, TPC-DS, SSB | `default`, `wide`, `compact` | `default` | part format of the fact tables by min_bytes_for_wide_part: default (10 MiB: small parts compact, one file; larger parts wide, a file per column), wide (every part), compact (every part up to 1 TiB); parallel loaders write many small parts |
+| `low_cardinality` | TPC-H, TPC-DS, SSB | `off`, `on` | `off` | dictionary encoding of the string columns with few distinct values (flags, modes, priorities, segments, brands, types, containers, nation and region names): faster filters and GROUP BY |
+| `codec` | TPC-H, TPC-DS, SSB | `default`, `zstd1`, `zstd3` | `default` | compression of all columns of the fact tables (default: the server setting, LZ4): bytes read vs. CPU per scan |
 
 
 ### Query Variants
@@ -1356,7 +1352,6 @@ bexhoma tpcds \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -1685,7 +1680,6 @@ bexhoma tpcds \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -2067,7 +2061,6 @@ bexhoma tpch \
   -xrs 3 \
   -nlp 8 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -2291,7 +2284,6 @@ bexhoma tpch \
   -nlp 8 \
   -nw 3 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \

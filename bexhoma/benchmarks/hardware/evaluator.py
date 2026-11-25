@@ -127,6 +127,7 @@ class HardwareEvaluator(LogEvaluator):
     #: The hardware tools' names for the common columns.
     column_names = {'hardware_threads': 'threads'}
 
+    RESULTS_PER_POD = True
     def log_to_df(self, filename):
         """
         Parses a Hardware pod log file into a DataFrame.
@@ -204,6 +205,20 @@ class HardwareEvaluator(LogEvaluator):
             print(e)
             print(traceback.format_exc())
             return pd.DataFrame()
+
+    def rows_with_results(self, df):
+        """
+        Rows with at least one result value of their tool; ``log_to_df`` fills missing keys with ``''``.
+
+        :param df: Raw per-pod benchmarking rows.
+        :rtype: pandas.DataFrame
+        """
+        columns = [key.lower() for key in _KEYS_RESULTS if key.lower() in df.columns]
+        if not columns:
+            return df.iloc[0:0]
+        values = df[columns].astype(str).apply(lambda column: column.str.strip())
+        has_result = (values.ne('') & values.ne('nan') & values.ne('None')).any(axis=1)
+        return df[has_result]
 
     def benchmarking_set_datatypes(self, df):
         """

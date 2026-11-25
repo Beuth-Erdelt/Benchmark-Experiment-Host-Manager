@@ -55,7 +55,7 @@ bexperiments stop
 ######################################################
 # B1 Default — Wie verhält sich PostgreSQL 18 out-of-the-box auf diesem Storage-Backend? Das ist die Baseline.
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -95,7 +95,7 @@ bexperiments stop
 ######################################################
 # B2 Aggressiv — Was passiert wenn Autovacuum maximalen I/O-Druck macht? Zeigt den worst case für tpmC-Einbrüche — besonders auf Ceph wo Autovacuum direkt mit TPC-C um Netzwerk-I/O konkurriert.
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -135,7 +135,7 @@ bexperiments stop
 ######################################################
 # B3 Konservativ — Kann man durch Drosselung von Autovacuum die tpmC-Varianz reduzieren, ohne dass Dead Tuples unkontrolliert akkumulieren? Das ist die klassische DBA-Tuning-Empfehlung für langsame Storage.
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -175,7 +175,7 @@ bexperiments stop
 ######################################################
 # B4 PG18 Neu - Hilft der neue autovacuum_vacuum_max_threshold Parameter dabei, Autovacuum-Bursts vorhersehbarer zu machen? Das ist der PostgreSQL-18-spezifische Beitrag des Papers.
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -220,7 +220,7 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-${BEXHOMA_WAREHOUSE
 ########################### B1 #######################
 ######################################################
 
-bexhoma benchbase load -tr \
+bexhoma benchbase load \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -247,7 +247,7 @@ bexhoma benchbase load -tr \
 
 bexperiments stop
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -286,7 +286,7 @@ bexperiments stop
 ########################### B2 #######################
 ######################################################
 
-bexhoma benchbase load -tr \
+bexhoma benchbase load \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -313,7 +313,7 @@ bexhoma benchbase load -tr \
 
 bexperiments stop
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -352,7 +352,7 @@ bexperiments stop
 ########################### B3 #######################
 ######################################################
 
-bexhoma benchbase load -tr \
+bexhoma benchbase load \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -379,7 +379,7 @@ bexhoma benchbase load -tr \
 
 bexperiments stop
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -418,7 +418,7 @@ bexperiments stop
 ########################### B4 #######################
 ######################################################
 
-bexhoma benchbase load -tr \
+bexhoma benchbase load \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -445,7 +445,7 @@ bexhoma benchbase load -tr \
 
 bexperiments stop
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -490,7 +490,7 @@ kubectl delete pvc bexhoma-storage-postgresql-benchbase-tpcc-${BEXHOMA_WAREHOUSE
 ########################### B1 #######################
 ######################################################
 
-bexhoma benchbase load -tr \
+bexhoma benchbase load \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -517,7 +517,7 @@ bexhoma benchbase load -tr \
 
 bexperiments stop
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -556,7 +556,7 @@ bexperiments stop
 ########################### B2 #######################
 ######################################################
 
-bexhoma benchbase load -tr \
+bexhoma benchbase load \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -583,7 +583,7 @@ bexhoma benchbase load -tr \
 
 bexperiments stop
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -622,7 +622,7 @@ bexperiments stop
 ########################### B3 #######################
 ######################################################
 
-bexhoma benchbase load -tr \
+bexhoma benchbase load \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -649,7 +649,7 @@ bexhoma benchbase load -tr \
 
 bexperiments stop
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -688,7 +688,7 @@ bexperiments stop
 ########################### B4 #######################
 ######################################################
 
-bexhoma benchbase load -tr \
+bexhoma benchbase load \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \
@@ -715,7 +715,7 @@ bexhoma benchbase load -tr \
 
 bexperiments stop
 
-bexhoma benchbase run -tr \
+bexhoma benchbase run \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -sf $BEXHOMA_WAREHOUSES \
   -sd $BEXHOMA_DURATION \

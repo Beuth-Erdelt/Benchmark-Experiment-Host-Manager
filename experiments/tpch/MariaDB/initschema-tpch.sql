@@ -19,13 +19,13 @@ CREATE TABLE tpch.nation (
     n_name       CHAR(25)      NOT NULL,
     n_regionkey  INTEGER       NOT NULL,
     n_comment    VARCHAR(152)
-) ENGINE = {engine};
+) ENGINE = {engine}{row_format};
 
 CREATE TABLE tpch.region (
     r_regionkey  INTEGER       NOT NULL,
     r_name       CHAR(25)      NOT NULL,
     r_comment    VARCHAR(152)
-) ENGINE = {engine};
+) ENGINE = {engine}{row_format};
 
 CREATE TABLE tpch.part (
     p_partkey      INTEGER       NOT NULL,
@@ -37,7 +37,7 @@ CREATE TABLE tpch.part (
     p_container    CHAR(10)      NOT NULL,
     p_retailprice  DECIMAL(15,2) NOT NULL,
     p_comment      VARCHAR(23)   NOT NULL
-) ENGINE = {engine};
+) ENGINE = {engine}{row_format};
 
 CREATE TABLE tpch.supplier (
     s_suppkey    INTEGER       NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE tpch.supplier (
     s_phone      CHAR(15)      NOT NULL,
     s_acctbal    DECIMAL(15,2) NOT NULL,
     s_comment    VARCHAR(101)  NOT NULL
-) ENGINE = {engine};
+) ENGINE = {engine}{row_format};
 
 CREATE TABLE tpch.partsupp (
     ps_partkey     INTEGER       NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE tpch.partsupp (
     ps_availqty    INTEGER       NOT NULL,
     ps_supplycost  DECIMAL(15,2) NOT NULL,
     ps_comment     VARCHAR(199)  NOT NULL
-) ENGINE = {engine};
+) ENGINE = {engine}{row_format};
 
 CREATE TABLE tpch.customer (
     c_custkey     INTEGER       NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE tpch.customer (
     c_acctbal     DECIMAL(15,2) NOT NULL,
     c_mktsegment  CHAR(10)      NOT NULL,
     c_comment     VARCHAR(117)  NOT NULL
-) ENGINE = {engine};
+) ENGINE = {engine}{row_format};
 
 CREATE TABLE tpch.orders (
     o_orderkey       INTEGER       NOT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE tpch.orders (
     o_clerk          CHAR(15)      NOT NULL,
     o_shippriority   INTEGER       NOT NULL,
     o_comment        VARCHAR(79)   NOT NULL
-) ENGINE = {engine};
+) ENGINE = {engine}{row_format};
 
 CREATE TABLE tpch.lineitem (
     l_orderkey       INTEGER       NOT NULL,
@@ -97,7 +97,7 @@ CREATE TABLE tpch.lineitem (
     l_shipinstruct   CHAR(25)      NOT NULL,
     l_shipmode       CHAR(10)      NOT NULL,
     l_comment        VARCHAR(44)   NOT NULL
-) ENGINE = {engine};
+) ENGINE = {engine}{row_format};
 
 ALTER TABLE tpch.region
     ADD PRIMARY KEY (r_regionkey);

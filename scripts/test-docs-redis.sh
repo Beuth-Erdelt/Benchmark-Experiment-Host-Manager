@@ -34,7 +34,6 @@ source ./scripts/testfunctions.sh
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 128                      threads per benchmarking pod
 # -xop 1                        number of operations for the benchmark phase (in millions)
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -55,7 +54,6 @@ bexhoma ycsb \
   -nbp 1 \
   -nbt 128 \
   -xop 1 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -86,7 +84,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single  sf=1  nbp=1"
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -109,7 +106,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -143,7 +139,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single monitoring  sf=3  nb
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -168,7 +163,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -202,7 +196,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis single PVC  sf=1  nbp=1  nc
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -226,7 +219,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -253,7 +245,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3  sf=1  nbp=1"
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -279,7 +270,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -309,7 +299,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Redis cluster 3 PVC  sf=3  nbp=1 
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -334,7 +323,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \

@@ -11,7 +11,6 @@
 --          table (-xic only adds the foreign keys). The date dimension is named
 --          dates, as for the other DBMS.
 --          Import settings (load durability, -xld) are in durability-*.sh.
---          No curly braces in this file: bexhoma may fill it with str.format().
 
 CREATE TABLE ssb.customer (
     c_custkey     INTEGER      NOT NULL,
@@ -23,7 +22,7 @@ CREATE TABLE ssb.customer (
     c_phone       CHAR(15)     NOT NULL,
     c_mktsegment  VARCHAR(10)  NOT NULL,
     PRIMARY KEY (c_custkey)
-);
+){row_format};
 
 CREATE TABLE ssb.supplier (
     s_suppkey  INTEGER      NOT NULL,
@@ -34,7 +33,7 @@ CREATE TABLE ssb.supplier (
     s_region   VARCHAR(12)  NOT NULL,
     s_phone    CHAR(15)     NOT NULL,
     PRIMARY KEY (s_suppkey)
-);
+){row_format};
 
 CREATE TABLE ssb.part (
     p_partkey    INTEGER      NOT NULL,
@@ -47,7 +46,7 @@ CREATE TABLE ssb.part (
     p_size       INTEGER      NOT NULL,
     p_container  VARCHAR(10)  NOT NULL,
     PRIMARY KEY (p_partkey)
-);
+){row_format};
 
 CREATE TABLE ssb.dates (
     d_datekey           INTEGER      NOT NULL,
@@ -68,7 +67,7 @@ CREATE TABLE ssb.dates (
     d_holidayfl         CHAR(1)      NOT NULL,
     d_weekdayfl         CHAR(1)      NOT NULL,
     PRIMARY KEY (d_datekey)
-);
+){row_format};
 
 CREATE TABLE ssb.lineorder (
     lo_orderkey         BIGINT       NOT NULL,
@@ -89,4 +88,4 @@ CREATE TABLE ssb.lineorder (
     lo_commitdate       INTEGER      NOT NULL,
     lo_shipmode         VARCHAR(10)  NOT NULL,
     PRIMARY KEY (lo_orderkey, lo_linenumber)
-);
+){row_format};

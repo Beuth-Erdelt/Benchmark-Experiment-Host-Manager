@@ -131,7 +131,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_yugabytedb.log
 ```
@@ -149,7 +148,6 @@ This
   * workload A = 50% read / 50% update (`-xwl`)
   * target throughput is 4 * 16384 (`-xnbf`, `-xtb`)
   * threads = 64 (`-nbt`)
-* tests if results match workflow (`-tr`)
 * shows a summary
 
 ### Status
@@ -400,7 +398,6 @@ bexhoma ycsb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_monitoring.log
 ```
@@ -664,7 +661,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_appmetrics.log
 ```
 
@@ -953,7 +949,6 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -sl \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_execution.log
 ```
@@ -1163,7 +1158,6 @@ bexhoma ycsb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -1503,6 +1497,7 @@ DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)):
 |---|---|---|---|---|
 | `pk_sharding` | YCSB | `hash`, `asc` | `hash` | sharding of the primary key: hash spreads load evenly and suits point reads, asc keeps key order for range scans (workload e) but concentrates ordered inserts |
 | `num_tablets` | YCSB | `auto`, `4`, `8`, `16`, `32`, `64`, `128` | `auto` | tablets of usertable from the start (auto: ysql_num_shards_per_tserver and automatic splitting); only with pk_sharding=hash (asc needs SPLIT AT VALUES). Requires `pk_sharding` = `hash` |
+| `colocated` | BenchBase TPC-C | `off`, `small` | `off` | small: database benchbase created WITH colocation = true, so warehouse, district and item share one tablet (fewer RPCs for small tables; district gets a range key instead of a hash key); stock, customer, history, oorder, new_order and order_line keep their own tablets. off: a tablet set per table |
 
 ### Load Durability
 
@@ -1537,7 +1532,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_yugabytedb.log
 ```
@@ -2761,7 +2755,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_yugabytedb_keytime.log
 ```
@@ -3242,7 +3235,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   run &>$LOG_DIR/docs_benchbase_yugabytedb_appmetrics.log
 ```
 

@@ -32,6 +32,8 @@ See [images/tpch_refresh/README.md](https://github.com/Beuth-Erdelt/Benchmark-Ex
 2. Sync with the query stream through the job and round counters in Redis, as the other refresh loaders do.
 3. For each set K:
    * **RF1**: `INSERT INTO orders|lineitem FORMAT CSV` (delimiter `|`) from `orders.tbl.uK` and `lineitem.tbl.uK`.
+     ClickHouse reports no row counts; the loader prints the rows of each file and the order keys of `delete.K`
+     (no extra query).
      On a cluster the tables are Distributed and send the rows to the shards before the INSERT returns.
    * **RF2**: the order keys of `delete.K` in chunks of 10000: `DELETE FROM lineitem WHERE l_orderkey IN (...)`,
      then the same on `orders` (lightweight delete, waits for all replicas). With `BEXHOMA_CLICKHOUSE_CLUSTER`

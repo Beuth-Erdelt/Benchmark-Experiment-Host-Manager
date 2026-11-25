@@ -148,13 +148,16 @@ for K in $(seq $FIRST_SET $LAST_SET); do
     #### RF2: delete orders identified in delete file ####
     # no expected count: a set applied again (reused volume) deletes nothing;
     # the client stops at the first error and exits 1
+    # ROW_COUNT() prints the rows each DELETE removed (session value, reads no table)
     echo "RF2: deleting rows from delete.$K"
     mysql $MYSQL_OPTS $BEXHOMA_DATABASE &> /tmp/OUTPUT.txt <<SQL
 CREATE TEMPORARY TABLE _tpch_refresh_delete (orderkey BIGINT);
 LOAD DATA LOCAL INFILE '$destination_raw/delete.$K'
     INTO TABLE _tpch_refresh_delete FIELDS TERMINATED BY '\n';
 DELETE l FROM lineitem l WHERE l.l_orderkey IN (SELECT orderkey FROM _tpch_refresh_delete);
+SELECT ROW_COUNT() AS lineitem_deleted;
 DELETE o FROM orders o WHERE o.o_orderkey IN (SELECT orderkey FROM _tpch_refresh_delete);
+SELECT ROW_COUNT() AS orders_deleted;
 DROP TEMPORARY TABLE _tpch_refresh_delete;
 SQL
     RC=$?

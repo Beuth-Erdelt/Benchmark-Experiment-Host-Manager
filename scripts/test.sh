@@ -74,7 +74,7 @@ wait_process "ycsb"
 
 
 ### TPC-H Power Test - only PostgreSQL (TestCases.md)
-nohup python tpch.py -ms 1 -tr \
+nohup python tpch.py -ms 1 \
   -sf 1 \
   -xdt \
   -t 1200 \
@@ -96,7 +96,7 @@ wait_process "tpch"
 
 
 ### TPC-H Monitoring (TestCases.md)
-nohup python tpch.py -ms 1 -tr \
+nohup python tpch.py -ms 1 \
   -sf 3 \
   -xdt \
   -t 1200 \
@@ -119,7 +119,7 @@ wait_process "tpch"
 
 
 ### TPC-H Throughput Test (TestCases.md)
-nohup python tpch.py -ms 1 -tr \
+nohup python tpch.py -ms 1 \
   -sf 3 \
   -xdt \
   -t 1200 \
@@ -159,7 +159,7 @@ wait_process "tpch"
 
 
 #### Benchbase Simple (TestCases.md)
-nohup python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 \
   -sf 16 \
   -xsd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -181,7 +181,7 @@ wait_process "benchbase"
 
 
 ### Benchbase Persistency (TestCases.md)
-nohup python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 \
   -sf 16 \
   -xsd 1 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -205,7 +205,7 @@ wait_process "benchbase"
 
 
 ### Benchbase Monitoring (TestCases.md)
-nohup python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 \
   -sf 16 \
   -xsd 5 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -228,7 +228,7 @@ wait_process "benchbase"
 
 
 ### Benchbase Complex (TestCases.md)
-nohup python benchbase.py -ms 1 -tr \
+nohup python benchbase.py -ms 1 \
   -sf 16 \
   -xsd 2 \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -262,7 +262,7 @@ wait_process "benchbase"
 
 
 ### HammerDB Simple (TestCases.md)
-nohup python hammerdb.py -ms 1 -tr \
+nohup python hammerdb.py -ms 1 \
   -sf 16 \
   -xlat \
   -dbms PostgreSQL \
@@ -279,7 +279,7 @@ wait_process "hammerdb"
 
 
 ### HammerDB Monitoring (TestCases.md)
-nohup python hammerdb.py -ms 1 -tr \
+nohup python hammerdb.py -ms 1 \
   -sf 16 \
   -xlat \
   -dbms PostgreSQL \
@@ -299,7 +299,7 @@ wait_process "hammerdb"
 
 
 ### HammerDB Complex (TestCases.md)
-nohup python hammerdb.py -ms 1 -tr \
+nohup python hammerdb.py -ms 1 \
   -sf 16 \
   -xsd 2 \
   -xlat \
@@ -345,7 +345,7 @@ wait_process "hammerdb"
 
 
 ### YCSB Loader Test for Scaling the Driver (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -370,7 +370,7 @@ wait_process "ycsb"
 
 
 ### YCSB Loader Test for Persistency (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -398,7 +398,7 @@ wait_process "ycsb"
 
 
 ### YCSB Execution for Scaling and Repetition (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 1 \
   --workload a \
   -dbms PostgreSQL \
@@ -425,7 +425,7 @@ wait_process "ycsb"
 
 
 ### YCSB Execution Different Workload (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 1 \
   --workload e \
   -dbms PostgreSQL \
@@ -452,7 +452,7 @@ wait_process "ycsb"
 
 
 #### YCSB Execution Monitoring (TestCases.md)
-nohup python ycsb.py -ms 1 -tr \
+nohup python ycsb.py -ms 1 \
   -sf 10 \
   --workload a \
   -dbms PostgreSQL \

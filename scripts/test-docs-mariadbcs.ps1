@@ -29,7 +29,6 @@ bexhoma tpch `
   -nlp 8                        <# number of data loader pods (MariaDBCS always uses 1) #> `
   -xis                          <# run ANALYZE after data load #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadbcs.log" -Encoding utf8
@@ -53,7 +52,6 @@ bexhoma tpch `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadbcs_monitoring.log" -Encoding utf8
@@ -80,7 +78,6 @@ bexhoma tpch `
   -xdt                          <# store the result sets of the queries #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
@@ -109,7 +106,6 @@ bexhoma tpcds `
   -xdt                          <# store the result sets of the queries #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lr 32Gi                      <# RAM limit for the SUT container #> `
   -rr 32Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
@@ -135,7 +131,6 @@ bexhoma ssb `
   -xis                          <# run statistics after data load #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
@@ -157,7 +152,6 @@ bexhoma ssb `
   -xis                          <# run statistics after data load #> `
   -m                            <# collect SUT resource metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
@@ -181,7 +175,6 @@ bexhoma tpch `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `

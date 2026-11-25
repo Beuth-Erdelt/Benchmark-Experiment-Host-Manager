@@ -162,7 +162,6 @@ bexhoma ycsb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
@@ -243,7 +242,6 @@ bexhoma ycsb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -393,7 +391,6 @@ bexhoma ycsb \
   -mc \
   -ms $BEXHOMA_MS \
   -ss \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -601,7 +598,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
@@ -681,7 +677,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -816,7 +811,6 @@ bexhoma benchbase \
   -mc \
   -ms $BEXHOMA_MS \
   -ss \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -1002,7 +996,6 @@ bexhoma hammerdb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
@@ -1080,7 +1073,6 @@ bexhoma hammerdb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -1215,7 +1207,6 @@ bexhoma hammerdb \
   -mc \
   -ms $BEXHOMA_MS \
   -ss \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -1390,7 +1381,6 @@ bexhoma tpch \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
@@ -1469,7 +1459,6 @@ bexhoma tpch \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -1624,7 +1613,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -ss \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -1883,7 +1871,6 @@ bexhoma tpcds \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rnn $BEXHOMA_NODE_SUT \
@@ -1959,7 +1946,6 @@ bexhoma tpcds \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -2101,7 +2087,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -ss \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \

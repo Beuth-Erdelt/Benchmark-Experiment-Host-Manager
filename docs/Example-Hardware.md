@@ -114,7 +114,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -128,7 +127,6 @@ This
 * runs each of the 16 combinations as one more sequential round against the same SUT (16 rounds
   × 60s ≈ 16 minutes)
 * collects SUT resource metrics (`-m`)
-* tests if results match workflow (`-tr`)
 * shows a summary
 
 Doubling the queue depth (rather than a linear step) is standard practice for this kind of sweep:
@@ -702,7 +700,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -1220,7 +1217,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -1404,7 +1400,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -1558,7 +1553,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -1967,7 +1961,6 @@ bexhoma hardware \
   -nbt 1,2,4,8,16 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 80Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -2374,7 +2367,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -2949,7 +2941,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -3106,7 +3097,6 @@ bexhoma hardware \
   -nbt 1,2,4,8,16,32 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 150Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -3401,7 +3391,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -3666,7 +3655,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -3965,7 +3953,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -4155,7 +4142,6 @@ bexhoma hardware \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 2 \
   -rc 2 \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4367,7 +4353,6 @@ bexhoma hardware \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 2 \
   -rc 2 \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4561,7 +4546,6 @@ bexhoma hardware \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 2 \
   -rc 2 \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -4787,7 +4771,6 @@ bexhoma hardware \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 2 \
   -rc 2 \
   -mtb container \
@@ -5039,7 +5022,6 @@ bexhoma hardware \
   -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_query_latency.log
 ```
@@ -5175,7 +5157,6 @@ bexhoma hardware \
   -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_connection_scaling_sweep.log
 ```
@@ -5407,7 +5388,6 @@ bexhoma hardware \
   -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_pod_scaling_sweep.log
 ```
@@ -5598,7 +5578,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_pod_scaling_sweep.log
 ```
@@ -5868,7 +5847,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_query_latency.log
 ```
@@ -6015,7 +5993,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_streaming_throughput.log
 ```
@@ -6163,7 +6140,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_latency_scaling_sweep.log
 ```
@@ -6498,14 +6474,15 @@ and https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/maste
 You maybe want to adjust some of the parameters that are set in the file: `python hardware.py -h`
 
 ```bash
-usage: hardware.py [-h] [-aws] [-db] [-sl] [-ss] [-ar] [-cx CONTEXT]
+usage: hardware.py [-h] [-aws] [-db] [-sl] [-ss] [-ks {auto,yes,no}]
+                   [-xld {durable,relaxed,unsafe}] [-ar] [-cx CONTEXT]
                    [-e EXPERIMENT] [-m] [-ma] [-mc] [-mm MONITORING_METRICS]
                    [-ms MAX_SUT] [-mse MAX_SUT_EXPERIMENT]
                    [-et EXPERIMENT_TIMEOUT] [-lt LOADING_TIMEOUT]
                    [-nc NUM_CONFIG] [-ne NUM_QUERY_EXECUTORS] [-nw NUM_WORKER]
                    [-nwr NUM_WORKER_REPLICAS] [-nws NUM_WORKER_SHARDS]
-                   [-nlp NUM_LOADING_PODS] [-nlt NUM_LOADING_THREADS]
-                   [-nbp NUM_BENCHMARKING_PODS]
+                   [-xddl DDL_PARAMETERS] [-nlp NUM_LOADING_PODS]
+                   [-nlt NUM_LOADING_THREADS] [-nbp NUM_BENCHMARKING_PODS]
                    [-nbt NUM_BENCHMARKING_THREADS] [-sf SCALING_FACTOR]
                    [-t TIMEOUT] [-lr LIMIT_RAM] [-lc LIMIT_CPU]
                    [-rr REQUEST_RAM] [-rc REQUEST_CPU] [-rct REQUEST_CPU_TYPE]
@@ -6514,16 +6491,16 @@ usage: hardware.py [-h] [-aws] [-db] [-sl] [-ss] [-ar] [-cx CONTEXT]
                    [-rsr] [-rsrp] [-rnn [REQUEST_NODE_NAME]]
                    [-rnl [REQUEST_NODE_LOADING]]
                    [-rnb [REQUEST_NODE_BENCHMARKING]]
-                   [-rnp [REQUEST_NODE_POOLING]] [-mtn MULTI_TENANT_NUM]
-                   [-mtb MULTI_TENANT_BY] [-mtv] [-tr] [-rp] [--set SETS]
-                   [-dbms [{Hardware} ...]]
+                   [-rnp [REQUEST_NODE_POOLING]] [-rnw [REQUEST_NODE_WORKER]]
+                   [-mtn MULTI_TENANT_NUM] [-mtb MULTI_TENANT_BY] [-mtv] [-rp]
+                   [--set SETS] [-dbms [{Hardware} ...]]
                    [-xht {fio,sysbench,sockperf,netperf}] [-xts HARDWARE_SIZE]
                    [-xtd HARDWARE_DURATION] [-xfrw FIO_RW] [-xfbs FIO_BS]
                    [-xfid FIO_IODEPTH] [-xfe FIO_ENGINE] [-xfsy FIO_FSYNC]
                    [-xffd FIO_FDATASYNC] [-xfmx FIO_RWMIXREAD]
-                   [-xfow FIO_OVERWRITE] [-xspm SOCKPERF_MODE] [-xspr SOCKPERF_MPS]
-                   [-xsps SOCKPERF_MSGSIZE] [-xspp SOCKPERF_PROTOCOL]
-                   [-xnpp NETPERF_PROTOCOL]
+                   [-xfow FIO_OVERWRITE] [-xspm SOCKPERF_MODE]
+                   [-xspr SOCKPERF_MPS] [-xsps SOCKPERF_MSGSIZE]
+                   [-xspp SOCKPERF_PROTOCOL] [-xnpp NETPERF_PROTOCOL]
                    {run,start,summary}
 
 Run Hardware (fio/sysbench/sockperf/netperf) benchmarks against a SUT in
@@ -6542,88 +6519,114 @@ options:
   -aws, --aws           pin components to AWS EKS node groups
   -db, --debug          enable debug logging
   -sl, --skip-loading   skip data loading and start benchmarking immediately
-  -ss, --skip-shutdown  keep SUT pods running after the experiment finishes
+  -ss, --skip-shutdown  keep SUT pods running after the experiment finishes;
+                        same as --keep-sut yes
+  -ks {auto,yes,no}, --keep-sut {auto,yes,no}
+                        keep the SUT of each configuration's last repetition
+                        running at the end: auto (default) keeps it in modes
+                        load and start and stops it otherwise; yes keeps it,
+                        no stops it. A kept SUT that another configuration
+                        waits for (-ms/-mse) is stopped
+  -xld {durable,relaxed,unsafe}, --load-durability {durable,relaxed,unsafe}
+                        durability of the DBMS during the load only
+                        (afterwards the configured state of template and --set
+                        is restored): durable makes the load crash-safe (e.g.
+                        PostgreSQL synchronous_commit/fsync on, MySQL
+                        innodb_flush_log_at_trx_commit=1); relaxed (default)
+                        commits without flushing and skips checks (e.g.
+                        PostgreSQL synchronous_commit=off, MySQL
+                        innodb_flush_log_at_trx_commit); unsafe uses the
+                        strongest lever of the DBMS (e.g. MySQL redo log off,
+                        PostgreSQL fsync=off), a crash during the load can
+                        lose data. Runs the scripts durability-<level>.* and
+                        restoredurability-<level>.* the DBMS folder has
   -ar, --activate-reset
                         activate configured reset scripts (e.g.
                         CHECKPOINT/VACUUM) when set on a benchmarker entry;
                         off by default
-  -cx, --context CONTEXT
+  -cx CONTEXT, --context CONTEXT
                         kubectl context to use (default: current context)
-  -e, --experiment EXPERIMENT
+  -e EXPERIMENT, --experiment EXPERIMENT
                         resume an existing experiment by its code
   -m, --monitoring      enable Prometheus monitoring for the SUT
   -ma, --monitoring-app
                         enable application-level metrics collection
   -mc, --monitoring-cluster
                         enable node-level monitoring for the entire cluster
-  -mm, --monitoring-metrics MONITORING_METRICS
+  -mm MONITORING_METRICS, --monitoring-metrics MONITORING_METRICS
                         switch single cluster-wide hardware metrics of
                         cluster.config on or off for this experiment,
                         overriding their 'active' flag, e.g.
                         total_gpu_util=on,total_network_rx=off; needs -m or
                         -mc
-  -ms, --max-sut MAX_SUT
+  -ms MAX_SUT, --max-sut MAX_SUT
                         maximum number of DBMS configurations to run in
                         parallel cluster-wide (default: no limit)
-  -mse, --max-sut-experiment MAX_SUT_EXPERIMENT
+  -mse MAX_SUT_EXPERIMENT, --max-sut-experiment MAX_SUT_EXPERIMENT
                         maximum number of DBMS configurations in this
                         experiment to run in parallel (default: no limit)
-  -et, --experiment-timeout EXPERIMENT_TIMEOUT
+  -et EXPERIMENT_TIMEOUT, --experiment-timeout EXPERIMENT_TIMEOUT
                         maximum wall-clock duration of the experiment in
                         minutes; when exceeded, the experiment is stopped and
                         all its components are removed from the cluster
                         (default: no limit)
-  -lt, --loading-timeout LOADING_TIMEOUT
+  -lt LOADING_TIMEOUT, --loading-timeout LOADING_TIMEOUT
                         maximum loading duration per configuration in minutes;
                         captures diagnostics and removes the experiment when
                         exceeded (default: no limit)
-  -nc, --num-config NUM_CONFIG
+  -nc NUM_CONFIG, --num-config NUM_CONFIG
                         number of experiment repetitions per configuration
-  -ne, --num-query-executors NUM_QUERY_EXECUTORS
+  -ne NUM_QUERY_EXECUTORS, --num-query-executors NUM_QUERY_EXECUTORS
                         comma-separated list of parallel client counts to
                         sweep
-  -nw, --num-worker NUM_WORKER
+  -nw NUM_WORKER, --num-worker NUM_WORKER
                         number of worker nodes for distributed DBMS
-  -nwr, --num-worker-replicas NUM_WORKER_REPLICAS
+  -nwr NUM_WORKER_REPLICAS, --num-worker-replicas NUM_WORKER_REPLICAS
                         number of replicas per worker node
-  -nws, --num-worker-shards NUM_WORKER_SHARDS
+  -nws NUM_WORKER_SHARDS, --num-worker-shards NUM_WORKER_SHARDS
                         number of shards per worker node
-  -nlp, --num-loading-pods NUM_LOADING_PODS
+  -xddl DDL_PARAMETERS, --ddl-parameter DDL_PARAMETERS
+                        DDL parameter KEY=VALUE filled into the schema scripts
+                        of every DBMS whose folder declares KEY in ddl-
+                        parameters.config (repeatable); a comma list KEY=V1,V2
+                        sweeps it, one configuration per value (several swept
+                        keys: one per combination)
+  -nlp NUM_LOADING_PODS, --num-loading-pods NUM_LOADING_PODS
                         comma-separated list of total loader pod counts
-  -nlt, --num-loading-threads NUM_LOADING_THREADS
+  -nlt NUM_LOADING_THREADS, --num-loading-threads NUM_LOADING_THREADS
                         comma-separated list of total loader threads (split
                         across pods)
-  -nbp, --num-benchmarking-pods NUM_BENCHMARKING_PODS
+  -nbp NUM_BENCHMARKING_PODS, --num-benchmarking-pods NUM_BENCHMARKING_PODS
                         comma-separated list of benchmarker pod counts
-  -nbt, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
+  -nbt NUM_BENCHMARKING_THREADS, --num-benchmarking-threads NUM_BENCHMARKING_THREADS
                         total benchmarking threads, split evenly across pods
-  -sf, --scaling-factor SCALING_FACTOR
+  -sf SCALING_FACTOR, --scaling-factor SCALING_FACTOR
                         scaling factor controlling dataset size
-  -t, --timeout TIMEOUT
+  -t TIMEOUT, --timeout TIMEOUT
                         per-query timeout in seconds
-  -lr, --limit-ram LIMIT_RAM
+  -lr LIMIT_RAM, --limit-ram LIMIT_RAM
                         RAM limit for the SUT and worker pods (e.g. 64Gi; 0 =
                         no limit); comma-separated to sweep several settings
                         (e.g. 32Gi,64Gi), one configuration per entry
-  -lc, --limit-cpu LIMIT_CPU
+  -lc LIMIT_CPU, --limit-cpu LIMIT_CPU
                         CPU limit for the SUT and worker pods (e.g. 4; 0 = no
                         limit); comma-separated to sweep, must then match the
                         length of any other swept resource list
-  -rr, --request-ram REQUEST_RAM
+  -rr REQUEST_RAM, --request-ram REQUEST_RAM
                         RAM request for the SUT and worker pods (e.g. 16Gi);
                         comma-separated to sweep several settings (e.g.
                         32Gi,64Gi), one configuration per entry
-  -rc, --request-cpu REQUEST_CPU
+  -rc REQUEST_CPU, --request-cpu REQUEST_CPU
                         CPU request for the SUT and worker pods (e.g. 4);
                         comma-separated to sweep, must then match the length
                         of any other swept resource list
-  -rct, --request-cpu-type REQUEST_CPU_TYPE
+  -rct REQUEST_CPU_TYPE, --request-cpu-type REQUEST_CPU_TYPE
                         require SUT node to carry label cpu=<value>
-  -rg, --request-gpu REQUEST_GPU
+  -rg REQUEST_GPU, --request-gpu REQUEST_GPU
                         number of GPUs to request for the SUT pod
-  -rgt, --request-gpu-type REQUEST_GPU_TYPE
+  -rgt REQUEST_GPU_TYPE, --request-gpu-type REQUEST_GPU_TYPE
                         require SUT node to carry label gpu=<value>
-  -rst, --request-storage-type REQUEST_STORAGE_TYPE
+  -rst REQUEST_STORAGE_TYPE, --request-storage-type REQUEST_STORAGE_TYPE
                         storage class for the SUT persistent volume ('' or
                         unset = ephemeral, 'ramdisk' = in-memory; other values
                         must be declared for the active cluster context, see
@@ -6631,7 +6634,7 @@ options:
                         sweep the class, one configuration per entry and
                         paired by position with -rc/-lc/-rr/-lr, an empty
                         entry meaning ephemeral
-  -rss, --request-storage-size REQUEST_STORAGE_SIZE
+  -rss REQUEST_STORAGE_SIZE, --request-storage-size REQUEST_STORAGE_SIZE
                         size of the SUT persistent volume (e.g. 10Gi)
   -rsr, --request-storage-remove
                         delete any existing PVC for the SUT before starting
@@ -6639,77 +6642,90 @@ options:
                         delete the PVC of the SUT before every repetition
                         (-nc), so each repetition loads into a fresh volume;
                         implies -rsr
-  -rnn, --request-node-name [REQUEST_NODE_NAME]
+  -rnn [REQUEST_NODE_NAME], --request-node-name [REQUEST_NODE_NAME]
                         pin the SUT pod to this Kubernetes node
-  -rnl, --request-node-loading [REQUEST_NODE_LOADING]
+  -rnl [REQUEST_NODE_LOADING], --request-node-loading [REQUEST_NODE_LOADING]
                         pin loader pods to this Kubernetes node
-  -rnb, --request-node-benchmarking [REQUEST_NODE_BENCHMARKING]
+  -rnb [REQUEST_NODE_BENCHMARKING], --request-node-benchmarking [REQUEST_NODE_BENCHMARKING]
                         pin benchmarker pods to this Kubernetes node
-  -rnp, --request-node-pooling [REQUEST_NODE_POOLING]
+  -rnp [REQUEST_NODE_POOLING], --request-node-pooling [REQUEST_NODE_POOLING]
                         pin pooling pods to this Kubernetes node
-  -mtn, --multi-tenant-num MULTI_TENANT_NUM
+  -rnw [REQUEST_NODE_WORKER], --request-node-worker [REQUEST_NODE_WORKER]
+                        pin the worker pods (all StatefulSets of the SUT) to
+                        these Kubernetes nodes, joined by '+' and spread
+                        evenly (e.g. cl-worker37+cl-worker38+cl-worker39);
+                        'sut' stands for the -rnn node; comma-separated to
+                        sweep, one configuration per entry and paired by
+                        position with -rc/-lc/-rr/-lr/-rst
+  -mtn MULTI_TENANT_NUM, --multi-tenant-num MULTI_TENANT_NUM
                         number of tenants for multi-tenant experiments
-  -mtb, --multi-tenant-by MULTI_TENANT_BY
+  -mtb MULTI_TENANT_BY, --multi-tenant-by MULTI_TENANT_BY
                         tenancy granularity: schema, database, or container
   -mtv, --multi-tenant-volume
                         allocate a separate persistent volume per tenant
-  -tr, --test-result    validate that results meet basic correctness
-                        requirements
   -rp, --report         also write a tiered Markdown summary report
                         (report/index.md + detail files) to the result folder
   --set SETS            override a deployment parameter, e.g.
-                        deployment[bexhoma-deployment-postgres].container[dbms].
-                        max_worker_processes=128
-  -dbms, --dbms [{Hardware} ...]
+                        deployment[bexhoma-deployment-
+                        postgres].container[dbms].max_worker_processes=128;
+                        the name in deployment[...] is metadata.name of the
+                        Deployment in the DBMS template (PostgreSQL -c
+                        key=value, MySQL/MariaDB --key=value, chosen by the
+                        template) or an environment variable via
+                        ...container[dbms].env.NAME=VALUE; an emptyDir volume
+                        of the SUT via
+                        deployment[NAME].volume[VOLUME].sizeLimit=64Gi or
+                        .medium=Memory (empty: node disk)
+  -dbms [{Hardware} ...], --dbms [{Hardware} ...]
                         hardware target(s) to test
-  -xht, --xhardware-type {fio,sysbench,sockperf,netperf}
+  -xht {fio,sysbench,sockperf,netperf}, --xhardware-type {fio,sysbench,sockperf,netperf}
                         benchmark tool: fio (disk I/O), sysbench (CPU/memory),
                         sockperf (single-connection network
                         latency/throughput), or netperf (many-concurrent-
                         connection request/response)
-  -xts, --xtest-size HARDWARE_SIZE
+  -xts HARDWARE_SIZE, --xtest-size HARDWARE_SIZE
                         fio test file size (e.g. 1G, 64G)
-  -xtd, --xtest-duration HARDWARE_DURATION
+  -xtd HARDWARE_DURATION, --xtest-duration HARDWARE_DURATION
                         fio/sysbench/sockperf run duration in seconds
-  -xfrw, --xfio-rw FIO_RW
+  -xfrw FIO_RW, --xfio-rw FIO_RW
                         comma-separated fio I/O patterns to sweep, each in
                         {write, read, randwrite, randread, randrw}
-  -xfbs, --xfio-blocksize FIO_BS
+  -xfbs FIO_BS, --xfio-blocksize FIO_BS
                         comma-separated fio block sizes to sweep (e.g.
                         4k,64k,1M)
-  -xfid, --xfio-iodepth FIO_IODEPTH
+  -xfid FIO_IODEPTH, --xfio-iodepth FIO_IODEPTH
                         comma-separated fio queue depths to sweep
-  -xfe, --xfio-engine FIO_ENGINE
+  -xfe FIO_ENGINE, --xfio-engine FIO_ENGINE
                         comma-separated fio ioengines to sweep, each in {sync,
                         libaio, io_uring}
-  -xfsy, --xfio-fsync FIO_FSYNC
+  -xfsy FIO_FSYNC, --xfio-fsync FIO_FSYNC
                         comma-separated fsync intervals to sweep (0 disables
                         fsync); use fsync xor fdatasync, not both
-  -xffd, --xfio-fdatasync FIO_FDATASYNC
+  -xffd FIO_FDATASYNC, --xfio-fdatasync FIO_FDATASYNC
                         comma-separated fdatasync intervals to sweep (0
                         disables fdatasync); use fsync xor fdatasync, not both
-  -xfmx, --xfio-rwmixread FIO_RWMIXREAD
+  -xfmx FIO_RWMIXREAD, --xfio-rwmixread FIO_RWMIXREAD
                         comma-separated read percentages to sweep when
                         -xfrw=randrw
-  -xfow, --xfio-overwrite FIO_OVERWRITE
+  -xfow FIO_OVERWRITE, --xfio-overwrite FIO_OVERWRITE
                         comma-separated overwrite modes to sweep, each in {0,
                         1}: 1 lays out (fully writes) the test file before the
                         timed run, so writes go into allocated blocks like
                         PostgreSQL WAL or existing relation files; 0 writes
                         into a fresh file like table growth during a bulk load
-  -xspm, --xsockperf-mode SOCKPERF_MODE
+  -xspm SOCKPERF_MODE, --xsockperf-mode SOCKPERF_MODE
                         comma-separated sockperf modes to sweep, each in {pp,
                         ul}
-  -xspr, --xsockperf-mps SOCKPERF_MPS
+  -xspr SOCKPERF_MPS, --xsockperf-mps SOCKPERF_MPS
                         comma-separated message rates to sweep (messages/sec);
                         each value is a positive integer or the literal "max"
-  -xsps, --xsockperf-msgsize SOCKPERF_MSGSIZE
+  -xsps SOCKPERF_MSGSIZE, --xsockperf-msgsize SOCKPERF_MSGSIZE
                         comma-separated message payload sizes in bytes to
                         sweep
-  -xspp, --xsockperf-protocol SOCKPERF_PROTOCOL
+  -xspp SOCKPERF_PROTOCOL, --xsockperf-protocol SOCKPERF_PROTOCOL
                         comma-separated sockperf protocols to sweep, each in
                         {tcp, udp}
-  -xnpp, --xnetperf-protocol NETPERF_PROTOCOL
+  -xnpp NETPERF_PROTOCOL, --xnetperf-protocol NETPERF_PROTOCOL
                         comma-separated netperf protocols to sweep, each in
                         {tcp, udp} (selects TCP_RR/UDP_RR)
 ```

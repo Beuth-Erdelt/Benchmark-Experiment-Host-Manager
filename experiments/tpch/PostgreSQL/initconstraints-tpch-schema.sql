@@ -35,12 +35,22 @@ ALTER TABLE {BEXHOMA_SCHEMA}.customer
     ADD FOREIGN KEY (c_nationkey)          REFERENCES {BEXHOMA_SCHEMA}.nation(n_nationkey);
 
 ALTER TABLE {BEXHOMA_SCHEMA}.orders
+\if {partition_by}
+    -- the primary key of a partitioned table contains the partition column
+    ADD PRIMARY KEY (o_orderkey, o_orderdate),
+\else
     ADD PRIMARY KEY (o_orderkey),
+\endif
     ADD FOREIGN KEY (o_custkey)            REFERENCES {BEXHOMA_SCHEMA}.customer(c_custkey);
 
 ALTER TABLE {BEXHOMA_SCHEMA}.lineitem
+\if {partition_by}
+    -- no foreign key to orders: o_orderkey alone is not unique in a partitioned orders table
+    ADD PRIMARY KEY (l_orderkey, l_linenumber, l_shipdate),
+\else
     ADD PRIMARY KEY (l_orderkey, l_linenumber),
     ADD FOREIGN KEY (l_orderkey)           REFERENCES {BEXHOMA_SCHEMA}.orders(o_orderkey),
+\endif
     ADD FOREIGN KEY (l_partkey)            REFERENCES {BEXHOMA_SCHEMA}.part(p_partkey),
     ADD FOREIGN KEY (l_suppkey)            REFERENCES {BEXHOMA_SCHEMA}.supplier(s_suppkey),
     ADD FOREIGN KEY (l_partkey, l_suppkey) REFERENCES {BEXHOMA_SCHEMA}.partsupp(ps_partkey, ps_suppkey);

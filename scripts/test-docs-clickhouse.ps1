@@ -28,7 +28,6 @@ bexhoma tpch `
   -nlp 8                        <# number of data loader pods #> `
   -xdt                          <# also measure data transfer volume per query #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 16                        <# CPU limit for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rc 16                        <# CPU requested for the SUT container #> `
@@ -60,7 +59,6 @@ bexhoma tpch `
   -ma                           <# collect application-level metrics #> `
   -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 16                        <# CPU limit for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rc 16                        <# CPU requested for the SUT container #> `
@@ -90,7 +88,6 @@ bexhoma tpch `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 16                        <# CPU limit for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rc 16                        <# CPU requested for the SUT container #> `
@@ -124,7 +121,6 @@ bexhoma tpch `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 16                        <# CPU limit for the SUT container and each worker #> `
   -lr 64Gi                      <# RAM limit for the SUT container and each worker #> `
   -rc 16                        <# CPU requested for the SUT container and each worker #> `
@@ -158,7 +154,6 @@ bexhoma tpcds `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 16                        <# CPU limit for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rc 16                        <# CPU requested for the SUT container #> `
@@ -187,7 +182,6 @@ bexhoma tpcds `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 16                        <# CPU limit for the SUT container and each worker #> `
   -lr 64Gi                      <# RAM limit for the SUT container and each worker #> `
   -rc 16                        <# CPU requested for the SUT container and each worker #> `
@@ -219,7 +213,6 @@ bexhoma tpch `
   -xrs 3                        <# refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams #> `
   -nlp 8                        <# number of data loader pods #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 16                        <# CPU limit for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rc 16                        <# CPU requested for the SUT container #> `
@@ -242,7 +235,6 @@ bexhoma tpch `
   -nlp 8                        <# number of data loader pods #> `
   -nw 3                         <# number of worker nodes (shards) #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
-  -tr                           <# verify result meets basic sanity requirements #> `
   -lc 16                        <# CPU limit for the SUT container and each worker #> `
   -lr 64Gi                      <# RAM limit for the SUT container and each worker #> `
   -rc 16                        <# CPU requested for the SUT container and each worker #> `

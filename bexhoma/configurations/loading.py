@@ -14,9 +14,11 @@ from math import ceil
 from timeit import default_timer
 from typing import TYPE_CHECKING
 
-from ..clusters import CLUSTER_OUTAGE_BUDGET_SECONDS, is_cluster_connection_error, start_process, wait_for_cluster
+from ..clusters import (CLUSTER_OUTAGE_BUDGET_SECONDS, exit_code_line, is_cluster_connection_error,
+                        script_end_line, start_process, wait_for_cluster, wrap_script)
 from ..cluster_calls import stored_pods
 from .. import ddl_parameters
+from .. import sut_restarts
 
 if TYPE_CHECKING:
     from .base import SutConfiguration
@@ -28,11 +30,21 @@ __all__ = ['LoadingCoordinator', 'load_data_asynch', 'loading_script_errors', 's
 # ("psql:/tmp/x.sql:14: ERROR:", mysql "ERROR 1146 ...", cockroach "ERROR: ...")
 # Client errors in other formats (#848): a client's own "<client>: error: ..." (e.g. a
 # connection failure), "Code: 60. DB::Exception: ...", "InvalidRequest: Error from server: ..."
+# "bexhoma: kubectl exit code N" is appended by bexhoma whenever kubectl exits non-zero
+# (clusters.exit_code_line): the script's own exit code, or a broken connection or stream,
+# after which the outcome is unknown. It covers clients whose error lines match nothing
+# here but that exit non-zero (mclient, cqlsh SyntaxException, sqlcmd -b).
 _SCRIPT_ERROR_STDERR = re.compile(
-    r'command terminated with exit code [1-9]|(^|:\s)(ERROR|FATAL|PANIC)\b'
+    r'command terminated with exit code [1-9]|^bexhoma: kubectl exit code [1-9]'
+    r'|^bexhoma: script ended without'
+    r'|(^|:\s)(ERROR|FATAL|PANIC)\b'
     r'|^[\w.-]+: error:|\bDB::Exception\b|\bError from server\b', re.M)
-# redis-cli prints error replies on stdout and exits 0
-_SCRIPT_ERROR_STDOUT = re.compile(r'^(\(error\) )?(ERR|WRONGTYPE|NOAUTH|NOPERM)\b', re.M)
+# redis-cli prints error replies on stdout and exits 0; sqlplus prints its own errors
+# (SP2-nnnn, e.g. an unknown command) on stdout, goes on even under WHENEVER SQLERROR
+# EXIT, and exits 0
+# Scripts run through clusters.wrap_script print BEXHOMA_SCRIPT_END:failed on a non-zero exit
+_SCRIPT_ERROR_STDOUT = re.compile(
+    r'^(\(error\) )?(ERR|WRONGTYPE|NOAUTH|NOPERM)\b|^SP2-\d{4}:|^BEXHOMA_SCRIPT_END:failed', re.M)
 
 
 def script_failed(stdout: str, stderr: str) -> bool:
@@ -102,7 +114,7 @@ def load_data_asynch(
         fullcommand = (
             'kubectl --context {context} exec {pod} --container=dbms -- bash -c "{command}"'
             .format(context=context, pod=pod,
-                    command=command.replace('"', '\\"').replace('\n', '\\n')))
+                    command=wrap_script(command).replace('"', '\\"').replace('\n', '\\n')))
         logger.debug(f'execute_command_in_pod_sut({fullcommand})')
         proc = start_process(
             subprocess.Popen,
@@ -111,7 +123,11 @@ def load_data_asynch(
         stdout, stderr = proc.communicate()
         logger.debug(stdout.decode('utf-8'))
         logger.debug(stderr.decode('utf-8'))
-        return "", stdout.decode('utf-8'), stderr.decode('utf-8')
+        # the end marker (wrap_script) is missing when the pod or the stream went away,
+        # which kubectl may end with exit code 0; kubectl's own exit code for the rest
+        stdout_text = stdout.decode('utf-8')
+        return "", stdout_text, (stderr.decode('utf-8') + script_end_line(command, stdout_text)
+                                 + exit_code_line(proc.returncode))
 
     def kubectl(command, context):
         # Only used for reading and (over)writing labels, which is safe to
@@ -499,6 +515,26 @@ class LoadingCoordinator:
                 # restarts during the load make it a failed load (see check())
                 cfg.sut_restarts_at_loading_start = sum(
                     cfg.experiment.cluster.get_pod_restart_counts(pod_sut).values())
+                # a pod replaced during the load has a new UID, but no restarts.
+                # Its labels are gone, so it looks "not loaded yet" and would be
+                # loaded again while the old loader jobs may still write through the
+                # service: abort instead. The first UID of the repetition is kept
+                # (reset_sut() clears it between repetitions).
+                uid = cfg.experiment.cluster.get_pod_uid(pod_sut)
+                first_uid = getattr(cfg, 'sut_pod_uid_at_loading_start', '')
+                if first_uid and uid and uid != first_uid:
+                    # client is 1 until the first benchmark round of the repetition is submitted
+                    rounds = int(getattr(cfg, 'client', 1) or 1) - 1
+                    phase = (f"during benchmarking ({rounds} round{'s' if rounds > 1 else ''} submitted)"
+                             if rounds > 0 else "during loading")
+                    reason = (f"SUT pod {pod_sut} replaced {phase} "
+                              f"(UID {first_uid} -> {uid}); it is not loaded again")
+                    print(f"{cfg.configuration:30s}: {reason}")
+                    self.store_replaced_pod_snapshot(pod_sut, uid)
+                    self.fail_loading_fatally(reason)
+                    return False
+                if not first_uid:
+                    cfg.sut_pod_uid_at_loading_start = uid
                 cfg.apply_load_durability()
                 conflicts = cfg.load_durability_conflicts()
                 if conflicts:
@@ -1026,6 +1062,34 @@ class LoadingCoordinator:
                     time_type = key[len("time_"):]
                     cfg.times_scripts[time_type] = float(value)
 
+    def store_replaced_pod_snapshot(self, pod: str, uid: str) -> None:
+        """Write this repetition's restart snapshot for a SUT pod that replaced the loaded one.
+
+        The experiment aborts right after, so the snapshot of the end of the
+        repetition (``bexhoma-sut-*-restarts.json``, with the pod UIDs) is never
+        written; this one is. The summary then sees the new UID (``SUT pods not
+        replaced``) and the new pod's restart counts.
+
+        :param pod: Name of the new SUT pod.
+        :param uid: Its UID.
+        """
+        cfg = self._config
+        try:
+            per_container = cfg.experiment.cluster.get_pod_restart_counts(pod)
+            counts = sut_restarts.clean_restart_counts(" ".join(str(count) for count in per_container.values()))
+            experiment_run = str(cfg.num_experiment_to_apply_done + 1)
+            filename = cfg.experiment.result_filename_local(
+                f"bexhoma-sut-{cfg.configuration}-{cfg.code}-{experiment_run}-restarts.json".lower())
+            snapshot = {}
+            if os.path.isfile(filename):
+                with open(filename, encoding='utf-8') as handle:
+                    snapshot = json.load(handle)
+            snapshot[pod] = sut_restarts.restart_snapshot_entry(counts, per_container, uid=uid)
+            with open(filename, 'w', encoding='utf-8') as handle:
+                json.dump(snapshot, handle, indent=2)
+        except (AttributeError, OSError, TypeError, ValueError) as exc:
+            print(f"{cfg.configuration:30s}: restart snapshot of {pod} not stored: {exc}")
+
     def fail_loading_fatally(self, reason: str) -> None:
         """End this configuration's load before it ran, so the experiment aborts.
 
@@ -1122,7 +1186,8 @@ class LoadingCoordinator:
                 cfg.experiment.cluster.execute_command_in_pod(
                     f"sed -i 's/\\r$//' {target}", pod=pod, container='dbms')
                 _, stdout, stderr = cfg.experiment.cluster.execute_command_in_pod(
-                    f'sh -e {target}', pod=pod, container='dbms', retry_interrupted=False)
+                    f'sh -e {target}', pod=pod, container='dbms', retry_interrupted=False,
+                    report_exit=True)
                 if script_failed(stdout, stderr):
                     self.workers_failed.append(f'{script} ({pod})')
                 filename, file_extension = os.path.splitext(script)
@@ -1267,7 +1332,7 @@ class LoadingCoordinator:
             cmd = cmd.replace('\n', '\\n')
             # A reset script may be half-applied when the connection breaks,
             # so it is only retried if it never reached the pod.
-            _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd, retry_interrupted=False)
+            _, stdout, stderr = cfg.execute_command_in_pod_sut(cmd, retry_interrupted=False, report_exit=True)
             if script_failed(stdout, stderr):
                 name = f'{script} ({tenant_tag})' if tenant_tag else script
                 if name not in self.last_reset_failed:

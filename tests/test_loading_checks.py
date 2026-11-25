@@ -191,6 +191,63 @@ class ScriptFailedTest(unittest.TestCase):
                 self.assertIn('CALL bexhoma.check_restored();', text)
                 self.assertLess(text.index('CALL bexhoma.check_restored();'),
                                 text.index('DELETE FROM bexhoma.saved_settings'))
+
+
+#: Pipes in ``experiments/**/*.sh`` that were checked: a failing command in
+#: front of the pipe does not stop ``sh -e``, so each one must fail some other
+#: way. Collapsed whitespace, as :func:`script_pipes` returns them.
+ALLOWED_PIPES = {
+    # empty value, not 0: loops until the flush timeout, then exit 1
+    'dirty=$($MYSQL -e "SHOW GLOBAL STATUS LIKE \'Innodb_buffer_pool_pages_dirty\'" | cut -f2)',
+    # empty value, not 0: loops until the timeout, then exit 1
+    "pending=$(nodetool compactionstats | grep '^pending tasks' | tr -s ' ' | cut -d' ' -f3)",
+    'pending=$(cockroach sql --insecure --host "$HOST" --format=csv -e "$QUERY" | tail -n 1)',
+    # reply=$(redis-cli SAVE) before it already stops sh -e on a failure
+    'if ! echo "$reply" | grep -q "checkpoint already in progress"; then',
+    # a failing client ends the wait; the redis-cli SAVE after it fails or prints ERR
+    'while redis-cli INFO persistence | grep -q "rdb_bgsave_in_progress:1"; do',
+    'while valkey-cli INFO persistence | grep -q "rdb_bgsave_in_progress:1"; do',
+}
+
+
+def script_pipes(text: str) -> list:
+    """Lines of a shell script with a pipe outside quotes and comments.
+
+    :param text: Content of the script.
+    :return: The lines, stripped and with collapsed whitespace.
+    """
+    import re
+    pipes = []
+    for line in text.splitlines():
+        code = re.sub(r"'[^']*'", "''", line)
+        code = re.sub(r'"(?:\\.|[^"\\])*"', '""', code)
+        code = '' if code.lstrip().startswith('#') else code.split(' #', 1)[0]
+        if re.search(r'(?<!\|)\|(?!\|)', code):
+            pipes.append(re.sub(r'\s+', ' ', line.strip()))
+    return pipes
+
+
+class ScriptPipesTest(unittest.TestCase):
+    """A new pipe in a loading, index or reset script is checked before it is allowed (experiments/README.md)."""
+
+    def test_detection(self) -> None:
+        self.assertEqual(script_pipes('psql -c "x" | cut -f2\n'), ['psql -c "x" | cut -f2'])
+        self.assertEqual(script_pipes("bcp t in f.dat -t \"|\" -c\na || b\n# x | y\necho '|'\n"), [])
+
+    def test_only_checked_pipes(self) -> None:
+        import glob
+        files = sorted(glob.glob('experiments/**/*.sh', recursive=True))
+        self.assertTrue(files)
+        found = set()
+        for path in files:
+            for pipe in script_pipes(open(path, encoding='utf-8', errors='replace').read()):
+                found.add(pipe)
+                with self.subTest(script=path, pipe=pipe):
+                    self.assertIn(pipe, ALLOWED_PIPES,
+                                  "a failing command in front of a pipe does not stop sh -e; check the "
+                                  "result instead (experiments/README.md) and add the line to ALLOWED_PIPES")
+        # no stale entries
+        self.assertEqual(ALLOWED_PIPES - found, set())
         for path in glob.glob('experiments/**/MySQL/restoredurability-unsafe.sql', recursive=True):
             with self.subTest(script=path):
                 self.assertIn('CALL bexhoma.check_redo_log();', open(path, encoding='utf-8').read())
@@ -359,6 +416,85 @@ class LoadDurabilityTest(unittest.TestCase):
         self.assertTrue(cfg.loading_finished)
         # the experiment loop aborts in its next pass
         self.assertIn('fsync=on', experiment()._loading_abort_reason(cfg, None))
+
+    def _coordinator(self, uid_now: str, uid_first: str):
+        cluster = mock.Mock()
+        cluster.get_pods.return_value = ['sut-pod']
+        cluster.get_pod_status.return_value = 'Running'
+        cluster.get_pod_restart_counts.return_value = {}
+        cluster.get_pod_uid.return_value = uid_now
+        cfg = SimpleNamespace(
+            appname='bexhoma', configuration='DBMS-1',
+            experiment=SimpleNamespace(code='42', cluster=cluster), logger=mock.Mock(),
+            loading_started=False, loading_finished=False, loading_active=True,
+            loading_failed=[], loading_failed_fatal='', sut_pod_uid_at_loading_start=uid_first,
+            apply_load_durability=mock.Mock(), load_durability_conflicts=mock.Mock(return_value=[]))
+        coordinator = LoadingCoordinator(cfg)
+        coordinator.check = mock.Mock()
+        coordinator.load_data = mock.Mock()
+        coordinator.load_data_asynch = mock.Mock()
+        return coordinator, cfg
+
+    def test_replaced_sut_pod_is_not_loaded_again(self) -> None:
+        """P10: a SUT pod replaced after its loading started aborts the repetition (1795557106)."""
+        import contextlib
+        import io
+        coordinator, cfg = self._coordinator(uid_now='uid-new', uid_first='uid-old')
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertFalse(coordinator.start_exec())
+        coordinator.load_data.assert_not_called()
+        self.assertIn('replaced during loading (UID uid-old -> uid-new)', cfg.loading_failed_fatal)
+        self.assertEqual(cfg.sut_pod_uid_at_loading_start, 'uid-old')
+        self.assertIn('replaced', experiment()._loading_abort_reason(cfg, None))
+
+    def test_replaced_sut_pod_during_benchmarking(self) -> None:
+        """The labels of the new pod are gone during benchmarking as well; the message names the phase."""
+        coordinator, cfg = self._coordinator(uid_now='uid-new', uid_first='uid-old')
+        cfg.client = 3
+        with contextlib_quiet():
+            self.assertFalse(coordinator.start_exec())
+        coordinator.load_data.assert_not_called()
+        self.assertIn('replaced during benchmarking (2 rounds submitted) (UID uid-old -> uid-new)',
+                      cfg.loading_failed_fatal)
+
+    def test_replaced_sut_pod_snapshot(self) -> None:
+        """The repetition ends with the abort: its snapshot names the new pod with its UID (run 1795612329)."""
+        import json
+        from bexhoma import sut_restarts
+        coordinator, cfg = self._coordinator(uid_now='uid-new', uid_first='uid-old')
+        cfg.code, cfg.num_experiment_to_apply_done = '42', 0
+        cfg.experiment.cluster.get_pod_restart_counts.return_value = {'dbms': 0, 'monitor': 0}
+        with tempfile.TemporaryDirectory() as folder:
+            cfg.experiment.result_filename_local = lambda name: os.path.join(folder, name)
+            with contextlib_quiet():
+                self.assertFalse(coordinator.start_exec())
+            with open(os.path.join(folder, 'bexhoma-sut-dbms-1-42-1-restarts.json')) as handle:
+                self.assertEqual(json.load(handle)['sut-pod']['uid'], 'uid-new')
+            self.assertEqual(sut_restarts.read_snapshot_uids(folder, '42'), {('dbms-1', '1'): {'sut-pod': 'uid-new'}})
+        # without a result folder (stand-ins) the abort still happens
+        coordinator, cfg = self._coordinator(uid_now='uid-new', uid_first='uid-old')
+        with contextlib_quiet():
+            self.assertFalse(coordinator.start_exec())
+        self.assertIn('replaced', cfg.loading_failed_fatal)
+
+    def test_first_load_records_the_uid(self) -> None:
+        for uid_first in ('', 'uid-1'):
+            # '': the first load; 'uid-1': the same pod again, no replacement
+            coordinator, cfg = self._coordinator(uid_now='uid-1', uid_first=uid_first)
+            cfg.initscript = []
+            # loading goes on: stop the test where the scripts would run
+            coordinator.load_data.side_effect = InterruptedError
+            with self.subTest(uid_first=uid_first), contextlib_quiet(), self.assertRaises(InterruptedError):
+                coordinator.start_exec()
+            self.assertEqual(cfg.sut_pod_uid_at_loading_start, 'uid-1')
+            self.assertEqual(cfg.loading_failed_fatal, '')
+
+
+def contextlib_quiet():
+    """Swallow what the code under test prints."""
+    import contextlib
+    import io
+    return contextlib.redirect_stdout(io.StringIO())
 
 
 class UnschedulableLoaderTest(unittest.TestCase):

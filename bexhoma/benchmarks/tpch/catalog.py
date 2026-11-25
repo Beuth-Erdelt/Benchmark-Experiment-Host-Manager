@@ -151,8 +151,6 @@ def build_tpch_argv(catalog: dict[str, Any], experiment: dict[str, Any]) -> list
     _append_flag(argv, "-sf", params.get("scaling_factor"))
     _append_flag(argv, "-t", params.get("timeout"))
     _append_flag(argv, "-xqr", params.get("query_repeats"))
-    if params.get("verify_result"):
-        argv.append("-tr")
     if params.get("measure_datatransfer"):
         argv.append("-xdt")
     if params.get("active_queries"):

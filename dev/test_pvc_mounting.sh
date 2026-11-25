@@ -39,7 +39,7 @@ for NODE in $NODES; do
   export BEXHOMA_NODE_SUT="$NODE"
 
   # Start workload
-  nohup python ycsb.py -tr \
+  nohup python ycsb.py \
     -sf 1 \
     -sfo 10 \
     --workload a \

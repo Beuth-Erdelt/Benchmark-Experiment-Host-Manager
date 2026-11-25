@@ -152,13 +152,3 @@ class MixedExperiment(ExperimentBase):
         """
         for benchmark in self.benchmarks:
             benchmark.show_summary(self, write_report=write_report)
-
-    def test_results(self) -> None:
-        """
-        Validate results for every registered benchmark.
-
-        Delegates to :meth:`~bexhoma.benchmarks.base.Benchmark.test_results` on
-        each benchmark in registration order.
-        """
-        for benchmark in self.benchmarks:
-            benchmark.test_results(self)

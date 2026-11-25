@@ -70,7 +70,11 @@ CREATE TABLE public.orders (
     o_clerk         CHAR(15)      NOT NULL,
     o_shippriority  INTEGER       NOT NULL,
     o_comment       VARCHAR(79)   NOT NULL
-);
+)
+\if {partition_by}
+PARTITION BY RANGE (o_orderdate)
+\endif
+;
 
 CREATE TABLE public.lineitem (
     l_orderkey      INTEGER       NOT NULL,
@@ -89,4 +93,29 @@ CREATE TABLE public.lineitem (
     l_shipinstruct  CHAR(25)      NOT NULL,
     l_shipmode      CHAR(10)      NOT NULL,
     l_comment       VARCHAR(44)   NOT NULL
-);
+)
+\if {partition_by}
+PARTITION BY RANGE (l_shipdate)
+\endif
+;
+
+-- DDL parameter partition_by (ddl-parameters.config): one partition per year of the order and
+-- ship dates (1992-1998), and a default partition for anything outside
+\if {partition_by}
+CREATE TABLE public.orders_1992 PARTITION OF public.orders FOR VALUES FROM ('1992-01-01') TO ('1993-01-01');
+CREATE TABLE public.orders_1993 PARTITION OF public.orders FOR VALUES FROM ('1993-01-01') TO ('1994-01-01');
+CREATE TABLE public.orders_1994 PARTITION OF public.orders FOR VALUES FROM ('1994-01-01') TO ('1995-01-01');
+CREATE TABLE public.orders_1995 PARTITION OF public.orders FOR VALUES FROM ('1995-01-01') TO ('1996-01-01');
+CREATE TABLE public.orders_1996 PARTITION OF public.orders FOR VALUES FROM ('1996-01-01') TO ('1997-01-01');
+CREATE TABLE public.orders_1997 PARTITION OF public.orders FOR VALUES FROM ('1997-01-01') TO ('1998-01-01');
+CREATE TABLE public.orders_1998 PARTITION OF public.orders FOR VALUES FROM ('1998-01-01') TO ('1999-01-01');
+CREATE TABLE public.orders_default PARTITION OF public.orders DEFAULT;
+CREATE TABLE public.lineitem_1992 PARTITION OF public.lineitem FOR VALUES FROM ('1992-01-01') TO ('1993-01-01');
+CREATE TABLE public.lineitem_1993 PARTITION OF public.lineitem FOR VALUES FROM ('1993-01-01') TO ('1994-01-01');
+CREATE TABLE public.lineitem_1994 PARTITION OF public.lineitem FOR VALUES FROM ('1994-01-01') TO ('1995-01-01');
+CREATE TABLE public.lineitem_1995 PARTITION OF public.lineitem FOR VALUES FROM ('1995-01-01') TO ('1996-01-01');
+CREATE TABLE public.lineitem_1996 PARTITION OF public.lineitem FOR VALUES FROM ('1996-01-01') TO ('1997-01-01');
+CREATE TABLE public.lineitem_1997 PARTITION OF public.lineitem FOR VALUES FROM ('1997-01-01') TO ('1998-01-01');
+CREATE TABLE public.lineitem_1998 PARTITION OF public.lineitem FOR VALUES FROM ('1998-01-01') TO ('1999-01-01');
+CREATE TABLE public.lineitem_default PARTITION OF public.lineitem DEFAULT;
+\endif

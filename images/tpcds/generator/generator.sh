@@ -93,52 +93,62 @@ SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 
 ######################## Destination of raw data ########################
+# /data/tpcds/SF<SF>[/<N>/<child>] (STORE_RAW_DATA=1, shared) or /tmp/tpcds/SF<SF>/<N>/<child> (local)
 if test $STORE_RAW_DATA -gt 0
 then
-	# store in (distributed) file system
 	if test $BEXHOMA_NUM_PODS -gt 1
 	then
-		# data should be split into parts
-		destination_raw=/data/tpcds/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD/
+		destination_raw=/data/tpcds/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
 	else
-		# data is not split into parts
-		destination_raw=/data/tpcds/SF$SF/
-	fi
-	shopt -s nullglob
-	existing_dat_files=("$destination_raw"*.dat)
-	shopt -u nullglob
-	if [ -d "$destination_raw" ] && [ ${#existing_dat_files[@]} -gt 0 ]; then
-		### raw folder exists and contains generated .dat files ###
-		if test $STORE_RAW_DATA_RECREATE -gt 0
-		then
-			echo "Recreate raw folder"
-			rm -r $destination_raw
-			mkdir -p $destination_raw
-		else
-			### Exit successfully ###
-			echo "Raw folder exists, I do nothing"
-			SECONDS_END_SCRIPT=$SECONDS
-			DURATION_SCRIPT=$((SECONDS_END_SCRIPT-SECONDS_START_SCRIPT))
-			echo "Duration $DURATION_SCRIPT seconds"
-			echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
-			bexhoma_end_epoch=$(date -u +%s)
-			echo "BEXHOMA_START:$bexhoma_start_epoch"
-			echo "BEXHOMA_END:$bexhoma_end_epoch"
-			exit 0
-		fi
-	else
-		###  create raw folder ###
-		mkdir -p $destination_raw
+		destination_raw=/data/tpcds/SF$SF
 	fi
 else
-	# only store locally
 	destination_raw=/tmp/tpcds/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
-	mkdir -p $destination_raw
 fi
+mkdir -p $destination_raw
 echo "destination_raw:$destination_raw"
 
+######################## Exit if data is already there ########################
+# Several pods may generate the same folder at the same time (one job per DBMS configuration,
+# each with its own pods, all sharing /data). So every pod generates into its own staging
+# folder next to the destination (same file system) and moves the finished files in with mv
+# (atomic rename); .bexhoma_generated is written after the move. A loader never sees a
+# half-written file, and no pod deletes files of another pod. dsdgen is deterministic, so all
+# copies are equal. Files without the marker (a generator that failed or was killed, or an
+# image before the marker) are not reused, the move replaces them.
+# Recreate removes only files: with one pod the folder is /data/tpcds/SF<SF> itself, which also
+# holds the <N>/<child> folders of split data.
+if [ -f "$destination_raw/.bexhoma_generated" ]
+then
+	if test $STORE_RAW_DATA_RECREATE -gt 0
+	then
+		echo "Recreate raw folder"
+		rm -f "$destination_raw"/*.dat "$destination_raw/.bexhoma_generated"
+	else
+		echo "Raw folder exists, I do nothing"
+		DURATION_SCRIPT=$((SECONDS-SECONDS_START_SCRIPT))
+		echo "Duration $DURATION_SCRIPT seconds"
+		echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
+		bexhoma_end_epoch=$(date -u +%s)
+		echo "BEXHOMA_START:$bexhoma_start_epoch"
+		echo "BEXHOMA_END:$bexhoma_end_epoch"
+		exit 0
+	fi
+else
+	shopt -s nullglob
+	existing_dat_files=("$destination_raw"/*.dat)
+	shopt -u nullglob
+	if [ ${#existing_dat_files[@]} -gt 0 ]; then
+		echo "Raw folder has no completion marker (generation incomplete, or from an older image): generate again"
+	fi
+fi
+staging_raw=$destination_raw/.staging-${HOSTNAME:-$$}
+rm -rf $staging_raw
+mkdir -p $staging_raw
+echo "staging_raw:$staging_raw"
+
 ######################## Copy generator executables ########################
-cd $destination_raw
+cd $staging_raw
 cp /tmp/tpcds.idx ./tpcds.idx
 cp /tmp/dsdgen ./dsdgen
 
@@ -146,12 +156,12 @@ cp /tmp/dsdgen ./dsdgen
 ############ Differ between single-pod and multi-pod setting ############
 if test $BEXHOMA_NUM_PODS -gt 1
 then
-	echo "./dsdgen -dir $destination_raw -scale $SF -parallel $BEXHOMA_NUM_PODS -child $BEXHOMA_CHILD -RNGSEED $RNGSEED"
-	time ./dsdgen -dir $destination_raw -scale $SF -parallel $BEXHOMA_NUM_PODS -child $BEXHOMA_CHILD -RNGSEED $RNGSEED
+	echo "./dsdgen -dir $staging_raw -scale $SF -parallel $BEXHOMA_NUM_PODS -child $BEXHOMA_CHILD -RNGSEED $RNGSEED"
+	time ./dsdgen -dir $staging_raw -scale $SF -parallel $BEXHOMA_NUM_PODS -child $BEXHOMA_CHILD -RNGSEED $RNGSEED
 	DSDGEN_RC=$?
 else
-	echo "./dsdgen -dir $destination_raw -scale $SF -RNGSEED $RNGSEED"
-	time ./dsdgen -dir $destination_raw -scale $SF -RNGSEED $RNGSEED
+	echo "./dsdgen -dir $staging_raw -scale $SF -RNGSEED $RNGSEED"
+	time ./dsdgen -dir $staging_raw -scale $SF -RNGSEED $RNGSEED
 	DSDGEN_RC=$?
 fi
 # -verbose
@@ -159,19 +169,16 @@ fi
 ######################## Fail if generation failed (#848) ###################
 # Only reached when generating: existing data exits above
 shopt -s nullglob
-generated_dat_files=("$destination_raw"/*.dat)
+generated_dat_files=("$staging_raw"/*.dat)
 shopt -u nullglob
 if [ $DSDGEN_RC -ne 0 ] || [ ${#generated_dat_files[@]} -eq 0 ]; then
-	echo "FATAL: dsdgen failed (exit code $DSDGEN_RC, ${#generated_dat_files[@]} files in $destination_raw)"
+	echo "FATAL: dsdgen failed (exit code $DSDGEN_RC, ${#generated_dat_files[@]} files in $staging_raw)"
 	exit 1
 fi
 
 ######################## Show generated files ###################
-#echo "Move generated files:"
-#time mv *tbl* /tmp/tpch
-#time mv *tbl* $destination_raw
 echo "Generated these files:"
-ls $destination_raw/*.dat -lh
+ls $staging_raw/*.dat -lh
 
 ######################## End time measurement ###################
 SECONDS_END=$SECONDS
@@ -183,29 +190,31 @@ echo "Duration $DURATION seconds"
 ######################## Translate customer to utf8 ###################
 if test $TRANSFORM_RAW_DATA -gt 0
 then
-	if [ -f "$destination_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat" ]
+	if [ -f "$staging_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat" ]
 	then
 		# convert into new file
 		echo "Convert customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat"
-		iconv -f ISO_8859-1 -t UTF-8 $destination_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat > customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.dat
+		if ! iconv -f ISO_8859-1 -t UTF-8 $staging_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat > customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.tmp; then
+			echo "FATAL: converting customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat to UTF-8 failed"
+			exit 1
+		fi
 		# rename to original name
-		mv customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.dat $destination_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat
-		# remove first character (damaged?)
-		#tail -c +2 customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.dat > /tmp/tpcds/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat
+		mv customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.tmp $staging_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat
 		# show head of file
-		head $destination_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat
+		head $staging_raw/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat
 	fi
-	if [ -f "$destination_raw/customer.dat" ]
+	if [ -f "$staging_raw/customer.dat" ]
 	then
 		# convert into new file
 		echo "Convert customer.dat"
-		iconv -f ISO_8859-1 -t UTF-8 $destination_raw/customer.dat > customer_utf8.dat
+		if ! iconv -f ISO_8859-1 -t UTF-8 $staging_raw/customer.dat > customer_utf8.tmp; then
+			echo "FATAL: converting customer.dat to UTF-8 failed"
+			exit 1
+		fi
 		# rename to original name
-		mv customer_utf8.dat $destination_raw/customer.dat
-		# remove first character (damaged?)
-		#tail -c +2 customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}_utf8.dat > /tmp/tpcds/customer_${BEXHOMA_CHILD}_${BEXHOMA_NUM_PODS}.dat
+		mv customer_utf8.tmp $staging_raw/customer.dat
 		# show head of file
-		head $destination_raw/customer.dat
+		head $staging_raw/customer.dat
 	fi
 fi
 
@@ -213,11 +222,34 @@ fi
 if test $TRANSFORM_RAW_DATA -gt 0
 then
 	echo "Remove last character per line"
-	for i in $destination_raw/*.dat; do
+	for i in $staging_raw/*.dat; do
 		echo "$i"
 	    time sed 's/.$//' -i $i
+	    SED_RC=$?
+	    if [ $SED_RC -ne 0 ]; then
+	        echo "FATAL: removing the last character of $i failed (exit code $SED_RC)"
+	        exit 1
+	    fi
 	done
 fi
+
+######################## Move generated files into place and mark them complete ###################
+# Only reached when dsdgen and the transformation succeeded; a later pod reuses
+# the folder only with the marker (see above)
+cd /
+if [ -f "$destination_raw/.bexhoma_generated" ] && test $STORE_RAW_DATA_RECREATE -eq 0
+then
+	echo "Another pod completed $destination_raw meanwhile, discarding this copy"
+else
+	if ! mv -f "${generated_dat_files[@]}" "$destination_raw"/; then
+		echo "FATAL: moving the files to $destination_raw failed"
+		exit 1
+	fi
+	echo "SF=$SF BEXHOMA_CHILD=$BEXHOMA_CHILD BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS generated=$(date -u +%s)" > "$destination_raw/.bexhoma_generated"
+fi
+rm -rf $staging_raw
+echo "Files in $destination_raw:"
+ls $destination_raw/*.dat -lh
 
 ######################## End measurement of time ########################
 bexhoma_end_epoch=$(date -u +%s)

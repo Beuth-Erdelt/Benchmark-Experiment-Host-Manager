@@ -28,7 +28,6 @@ source ./scripts/testfunctions.sh
 # -nlp 8                        number of data loader pods
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 16                        CPU limit for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
 # -rc 16                        CPU requested for the SUT container
@@ -45,7 +44,6 @@ bexhoma tpch \
   -nlp 8 \
   -xdt \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -74,7 +72,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse  sf=1"
 # -ma                           collect application-level metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 16                        CPU limit for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
 # -rc 16                        CPU requested for the SUT container
@@ -95,7 +92,6 @@ bexhoma tpch \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -122,7 +118,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse monitoring  sf=10"
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 16                        CPU limit for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
 # -rc 16                        CPU requested for the SUT container
@@ -144,7 +139,6 @@ bexhoma tpch \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -175,7 +169,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse  sf=10  nc=2"
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 16                        CPU limit for the SUT container and each worker
 # -lr 64Gi                      RAM limit for the SUT container and each worker
 # -rc 16                        CPU requested for the SUT container and each worker
@@ -199,7 +192,6 @@ bexhoma tpch \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -230,7 +222,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouseCluster  sf=10  nw=3  
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 16                        CPU limit for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
 # -rc 16                        CPU requested for the SUT container
@@ -252,7 +243,6 @@ bexhoma tpcds \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -278,7 +268,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS ClickHouse  sf=3"
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 16                        CPU limit for the SUT container and each worker
 # -lr 64Gi                      RAM limit for the SUT container and each worker
 # -rc 16                        CPU requested for the SUT container and each worker
@@ -302,7 +291,6 @@ bexhoma tpcds \
   -m \
   -ma \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -331,7 +319,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS ClickHouseCluster  sf=3  nw=3"
 # -xrs 3                        refresh stream: apply 3 RF1+RF2 pairs per benchmarking round, in parallel with the query streams
 # -nlp 8                        number of data loader pods
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 16                        CPU limit for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
 # -rc 16                        CPU requested for the SUT container
@@ -348,7 +335,6 @@ bexhoma tpch \
   -xrs 3 \
   -nlp 8 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \
@@ -370,7 +356,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H ClickHouse refresh  sf=1  ne=3"
 # -nlp 8                        number of data loader pods
 # -nw 3                         number of worker nodes (shards)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lc 16                        CPU limit for the SUT container and each worker
 # -lr 64Gi                      RAM limit for the SUT container and each worker
 # -rc 16                        CPU requested for the SUT container and each worker
@@ -391,7 +376,6 @@ bexhoma tpch \
   -nlp 8 \
   -nw 3 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 16 \
   -lr 64Gi \
   -rc 16 \

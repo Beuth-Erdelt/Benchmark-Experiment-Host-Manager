@@ -55,7 +55,6 @@ bexhoma ycsb \
   -nbp 1 \
   -nbt 128 \
   -xop 1 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -76,7 +75,6 @@ This
   * workload A = 50% read / 50% update (`-xwl`)
   * target throughput is 4 * 16384 (`-xnbf`, `-xtb`)
   * threads = 128 (`-nbt`)
-* tests if results match workflow (`-tr`)
 * shows a summary
 
 ### Status
@@ -270,7 +268,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -475,7 +472,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -mc \
-  -tr \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -714,7 +710,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -mc \
-  -tr \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -968,7 +963,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -mc \
-  -tr \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -1303,7 +1297,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -mc \
-  -tr \
   -ar \
   -lr 64Gi \
   -rr 64Gi \

@@ -38,7 +38,6 @@ source ./scripts/testfunctions.sh
 # -nws 48                       number of shards per worker node
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rss 50Gi                     size of the persistent volume claim
@@ -64,7 +63,6 @@ bexhoma ycsb \
   -nws 48 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -100,7 +98,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus  sf=1  nw=3"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rss 50Gi                     size of the persistent volume claim
@@ -128,7 +125,6 @@ bexhoma ycsb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -167,7 +163,6 @@ sleep 30
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -197,7 +192,6 @@ bexhoma ycsb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -227,7 +221,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Citus storage  sf=1  nbp=1  nc=2"
 # -nwr 1                        number of worker node replicas
 # -nws 48                       number of shards per worker node
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rss 50Gi                     size of the persistent volume claim
@@ -247,7 +240,6 @@ bexhoma benchbase \
   -nwr 1 \
   -nws 48 \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -275,7 +267,6 @@ sleep 30
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -299,7 +290,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -329,7 +319,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus scale  sf=128  nbp=1,2
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rss 100Gi                    size of the persistent volume claim
@@ -357,7 +346,6 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 100Gi \
@@ -389,7 +377,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase Citus keytime  sf=128  nbp=1
 # -nws 48                       number of shards per worker node
 # -xlat                         collect per-operation latency histograms
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rss 50Gi                     size of the persistent volume claim
@@ -410,7 +397,6 @@ bexhoma hammerdb \
   -nws 48 \
   -xlat \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -441,7 +427,6 @@ sleep 30
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -468,7 +453,6 @@ bexhoma hammerdb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -501,7 +485,6 @@ sleep 30
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -528,7 +511,6 @@ bexhoma hammerdb \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -562,7 +544,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB Citus large  sf=500  nbp=1,2,
 # -xdt                          also measure data transfer volume per query
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rss 50Gi                     size of the persistent volume claim
@@ -584,7 +565,6 @@ bexhoma tpch \
   -xdt \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -616,7 +596,6 @@ sleep 30
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -642,7 +621,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -674,7 +652,6 @@ sleep 30
 # -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
 # -rsr                          delete any existing PVC for the SUT before starting
@@ -700,7 +677,6 @@ bexhoma tpch \
   -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -732,7 +708,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H Citus columnar  sf=10  ne=1,1  n
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -751,7 +726,6 @@ bexhoma tpch \
   -nws 48 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \

@@ -19,7 +19,7 @@ from datetime import datetime  # noqa: E402
 import glob  # noqa: E402
 
 
-from bexhoma.evaluators.base import natural_sort  # noqa: E402
+from bexhoma.evaluators.base import natural_sort_rows  # noqa: E402
 from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
 
 __all__ = ["HammerdbEvaluator"]
@@ -76,6 +76,7 @@ class HammerdbEvaluator(LogEvaluator):
     #: HammerDB's names (virtual users) for the common columns.
     column_names = {'vusers': 'threads', 'vusers_loading': 'threads_loading', 'sf': 'SF'}
 
+    RESULTS_PER_POD = True
     def get_threads(self, loading_parameters):
         """
         Returns the number of HammerDB virtual users from ``HAMMERDB_VUSERS``.
@@ -188,25 +189,6 @@ class HammerdbEvaluator(LogEvaluator):
             print(e)
             print(traceback.format_exc())
             return pd.DataFrame()
-    def test_results(self):
-        """
-        Validates results by reading all pickle files and delegating to the parent check.
-
-        :return: ``0`` on success, ``1`` if an exception is raised.
-        :rtype: int
-        """
-        try:
-            directory = os.fsencode(self.path)
-            for file in os.listdir(directory):
-                filename = os.fsdecode(file)
-                if filename.endswith(".pickle"):
-                    df = pd.read_pickle(self.path+"/"+filename)
-                    list(df['vusers'])
-            return super().test_results()
-        except Exception as e:
-            print(e)
-            print(traceback.format_exc())
-            return 1
     def benchmarking_set_datatypes(self, df):
         """
         Casts all TPC-C benchmarking result columns to their appropriate data types.
@@ -534,7 +516,7 @@ class HammerdbEvaluator(LogEvaluator):
                 df_plot_filtered[col] = df_plot.loc[:,col]
         df_plot_filtered = self.identity_first(df_plot_filtered, self.IDENTITY_PER_CONNECTION, source=df_plot)
         df_plot_filtered = df_plot_filtered.rename_axis(index="connection")
-        df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
+        df_plot_filtered = natural_sort_rows(df_plot_filtered)
         return df_plot_filtered
     def get_summary_benchmark_per_phase(self):
         """
@@ -653,5 +635,95 @@ class HammerdbEvaluator(LogEvaluator):
                 experiment.test_workflow(workflow_actual, workflow_planned),
                 "Workflow as planned"
             )
+            self._test_runs_complete(experiment)
+
+    #: Share of rampup + duration (per VU test) a pod must have run.
+    DURATION_TOLERANCE = 0.99
+
+    @staticmethod
+    def run_markers(text: str) -> dict:
+        """
+        Read how far a benchmarker pod's HammerDB run got from its log.
+
+        ``benchmarker.sh`` prints ``End N seconds`` and ``Duration N seconds``
+        around the call of ``hammerdbcli``; HammerDB prints ``<n> VU TEST`` when a
+        test starts, ``Test complete, Taking end Transaction Count.`` after its
+        timed period and ``Vuser <n>:FINISHED FAILED`` when a virtual user ended
+        with an error (e.g. it could not connect), as opposed to transaction
+        errors, which are counted and reported only.
+
+        :param text: Content of the pod log.
+        :return: ``seconds`` (``None`` if not logged), ``started`` and ``completed``
+            VU tests, ``failed`` virtual user numbers, ``rampup`` and ``duration``
+            in minutes (``None`` if not logged).
+        :rtype: dict
+        """
+        def minutes(name):
+            found = re.findall(rf'^{name}:(\d+(?:\.\d+)?)\s*$', text, re.M)
+            return float(found[0]) if found else None
+        seconds = re.search(r'^End \d+ seconds\r?\nDuration (\d+) seconds', text, re.M)
+        return {
+            'seconds': int(seconds.group(1)) if seconds else None,
+            'started': len(re.findall(r'^\d+ VU TEST\s*$', text, re.M)),
+            'completed': text.count('Test complete, Taking end Transaction Count'),
+            'failed': re.findall(r'Vuser (\d+):FINISHED FAILED', text),
+            'rampup': minutes('HAMMERDB_RAMPUP'),
+            'duration': minutes('HAMMERDB_DURATION'),
+        }
+
+    def _test_runs_complete(self, experiment) -> None:
+        """
+        Record whether every benchmarker pod ran its HammerDB tests to the end.
+
+        Two tests per benchmark, from the logs of the pods with results:
+
+        * ``No virtual user FINISHED FAILED``: a virtual user that ended with
+          an error is a malfunction of the run, not a transaction error.
+        * ``Every pod ran for the configured time``: every VU test that started
+          completed its timed period, and ``hammerdbcli`` ran at least
+          :attr:`DURATION_TOLERANCE` of (rampup + duration) per VU test.
+
+        Logs that do not print these lines (older images) are left out.
+
+        :param experiment: The owning experiment object.
+        """
+        df = self.rows_with_results(self.get_df_benchmarking())
+        if df.empty or 'pod' not in df.columns:
+            return
+        failed, short = [], []
+        checked = 0
+        # the index is named after the connection as well
+        pods = sorted(set(zip(df['connection'].astype(str), df['pod'].astype(str))))
+        for connection, pod in pods:
+            files = glob.glob(os.path.join(self.path, f"*-{pod}.log"))
+            if not files:
+                continue
+            with open(files[0], encoding='utf-8', errors='replace') as handle:
+                markers = self.run_markers(handle.read())
+            if markers['seconds'] is None or markers['rampup'] is None or markers['duration'] is None:
+                continue
+            checked += 1
+            if markers['failed']:
+                failed.append(f"{connection} (Vuser {', '.join(markers['failed'])})")
+            tests = max(markers['started'], 1)
+            planned = (markers['rampup'] + markers['duration']) * 60 * tests
+            if markers['completed'] < markers['started']:
+                short.append(f"{connection} ({markers['completed']} of {markers['started']} VU tests completed)")
+            elif markers['seconds'] < self.DURATION_TOLERANCE * planned:
+                short.append(f"{connection} ({markers['seconds']}s of {planned:.0f}s)")
+        if not checked:
+            return
+        if failed:
+            print("virtual users FINISHED FAILED: " + ", ".join(failed))
+        experiment._record_test(
+            not failed,
+            "No virtual user FINISHED FAILED" if not failed else
+            "Virtual users FINISHED FAILED: " + ", ".join(failed))
+        if short:
+            print("benchmarker pods that ran shorter than configured: " + ", ".join(short))
+        experiment._record_test(
+            not short,
+            "Every pod ran for the configured time" if not short else
+            "Pods ran shorter than configured: " + ", ".join(short))
 
 

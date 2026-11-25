@@ -18,7 +18,7 @@ pd.set_option('display.max_colwidth', None)
 from datetime import datetime  # noqa: E402
 import glob  # noqa: E402
 
-from bexhoma.evaluators.base import natural_sort  # noqa: E402
+from bexhoma.evaluators.base import natural_sort, natural_sort_rows  # noqa: E402
 from bexhoma.evaluators.logger import LogEvaluator  # noqa: E402
 
 __all__ = ["YcsbEvaluator"]
@@ -42,6 +42,7 @@ class YcsbEvaluator(LogEvaluator):
     #: YCSB's names for the common columns.
     column_names = {'exceptions': 'errors'}
 
+    RESULTS_PER_POD = True
     def __init__(self, code, path, include_loading=False, include_benchmarking=True, benchmark_run: int = 0, name: str = ''):
         """
         :param code: Experiment identifier — also the name of the result sub-folder.
@@ -123,6 +124,17 @@ class YcsbEvaluator(LogEvaluator):
         except Exception as exc:
             print(exc)
             return pd.DataFrame()
+    def rows_with_results(self, df):
+        """
+        Rows with a YCSB summary: a log cut before ``[OVERALL]`` still gives a row of metadata.
+
+        :param df: Raw per-pod benchmarking rows.
+        :rtype: pandas.DataFrame
+        """
+        column = '[OVERALL].Throughput(ops/sec)'
+        if column not in df.columns:
+            return df.iloc[0:0]
+        return df[df[column].notna()]
     def benchmarking_set_datatypes(self, df):
         """
         Casts all YCSB benchmarking result columns to their appropriate data types.
@@ -952,7 +964,7 @@ class YcsbEvaluator(LogEvaluator):
                     df_plot_filtered[col] = df_plot.loc[:,col]
             df_plot_filtered = self.identity_first(df_plot_filtered, self.IDENTITY_PER_CONNECTION, source=df_plot)
             df_plot_filtered = df_plot_filtered.rename_axis(index="connection")
-            df_plot_filtered = df_plot_filtered.reindex(index=natural_sort(df_plot_filtered.index))
+            df_plot_filtered = natural_sort_rows(df_plot_filtered)
             return df_plot_filtered
         return pd.DataFrame()
     def get_summary_benchmark_per_phase(self):
@@ -1139,6 +1151,59 @@ class YcsbEvaluator(LogEvaluator):
                 "Execution Phase: contains no FAILED column" if not contains_failed
                 else "Execution Phase: contains FAILED column",
             )
+            self._test_operations_complete(experiment)
+
+    @staticmethod
+    def operations_done(row) -> float:
+        """
+        Operations a YCSB pod ran, from the ``[<OP>].Operations`` counts of its log.
+
+        Failed operations count (``[<OP>-FAILED]``), ``[CLEANUP]`` does not. A
+        read-modify-write is counted three times by YCSB (``[READ]``, ``[UPDATE]``
+        and ``[READ-MODIFY-WRITE]``), so it is taken out twice.
+
+        :param row: One row of :meth:`get_df_benchmarking`.
+        :return: Number of operations.
+        :rtype: float
+        """
+        done = 0.0
+        rmw = 0.0
+        for column, value in row.items():
+            if not (isinstance(column, str) and column.endswith('].Operations')) or column.startswith('[CLEANUP'):
+                continue
+            number = pd.to_numeric(value, errors='coerce')
+            if pd.isna(number):
+                continue
+            done += float(number)
+            if column.startswith('[READ-MODIFY-WRITE'):
+                rmw += float(number)
+        return done - 2 * rmw
+
+    def _test_operations_complete(self, experiment) -> None:
+        """
+        Record whether every benchmarker pod ran the operations it was configured
+        for (``YCSB_OPERATIONS`` of its log); a pod that ran fewer (stopped by a
+        time limit, killed, cut log) would lower the counts without another test failing.
+
+        :param experiment: The owning experiment object.
+        """
+        df = self.rows_with_results(self.get_df_benchmarking())
+        if df.empty or 'operations' not in df.columns:
+            return
+        short = []
+        for _, row in df.iterrows():
+            planned = pd.to_numeric(row['operations'], errors='coerce')
+            if pd.isna(planned) or planned <= 0:
+                continue
+            done = self.operations_done(row)
+            if done < planned:
+                short.append(f"{row.get('connection', '')} ({int(done)} of {int(planned)})")
+        if short:
+            print("benchmarker pods with fewer operations than configured: " + ", ".join(short))
+        experiment._record_test(
+            not short,
+            "Execution Phase: every pod ran its configured operations" if not short else
+            "Execution Phase: pods ran fewer operations than configured: " + ", ".join(short))
 
     def _test_rows_loaded(self, experiment, df_loading: pd.DataFrame) -> None:
         """

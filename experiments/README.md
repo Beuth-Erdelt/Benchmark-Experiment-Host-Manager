@@ -222,6 +222,25 @@ When removing a commented-out block that was an intentional exclusion
 (e.g. a FK that is deliberately not applied), replace it with a single
 `-- <table>-><table> FK not applied: <reason>` comment.
 
+### How a failing script is noticed
+
+bexhoma counts a script as failed when its client prints an error line it knows
+(`ERROR:`, `DB::Exception`, `Error from server`, redis-cli `ERR`, sqlplus `SP2-nnnn`, ...)
+or when `kubectl exec` exits non-zero: the script's exit code, or a broken connection
+(`script_failed()` in `bexhoma/configurations/loading.py`). Shell scripts run with
+`sh -e`, so the first failing command ends the script with its exit code. Two cases
+`sh -e` does not see; avoid them for a command whose failure matters:
+
+- a command inside a pipe (`client ... | cut -f2`): only the last command's exit code
+  counts. Check the result instead (e.g. an empty value) and `exit 1`.
+- a command before `&&` or `||`, or in an `if`/`while` condition.
+
+A check that fails must write to stderr and `exit 1`.
+
+Every pipe in `experiments/**/*.sh` is listed in `ALLOWED_PIPES` of
+`tests/test_loading_checks.py`, with how a failure of the command in front of it is
+noticed; a new pipe fails that test until it is checked and listed.
+
 ### Benchmark-specific findings
 
 #### TPC-H (`experiments/tpch/`)

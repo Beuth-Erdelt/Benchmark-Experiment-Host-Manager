@@ -200,6 +200,63 @@ def is_cluster_connection_error(output: str, include_interrupted: bool = True) -
     return False
 
 
+def exit_code_line(returncode) -> str:
+    """
+    Line to append to the stderr of a script run through ``kubectl exec``.
+
+    kubectl exits with the script's exit code, and with a code of its own when
+    the connection or the stream breaks (then the script's outcome is unknown,
+    and kubectl's own message need not look like an error of the script).
+    The line makes either visible to a check that reads the output only.
+
+    :param returncode: Exit code of the kubectl process.
+    :return: ``"bexhoma: kubectl exit code N\\n"`` for a non-zero code, else ``""``.
+    :rtype: str
+    """
+    if not isinstance(returncode, int) or returncode == 0:
+        return ''
+    return f'\nbexhoma: kubectl exit code {returncode}\n'
+
+
+#: Printed by a script run in a pod (see :func:`wrap_script`): ``ok`` or ``failed``.
+SCRIPT_END_MARKER = 'BEXHOMA_SCRIPT_END:'
+
+
+def wrap_script(command: str) -> str:
+    """
+    Make a script run in a pod print whether it ended, and how.
+
+    The command runs in a subshell; ``BEXHOMA_SCRIPT_END:ok`` or
+    ``BEXHOMA_SCRIPT_END:failed`` follows on stdout, by its exit code. When
+    the pod or the stream goes away before the script ends, the marker is
+    missing, whatever exit code kubectl reports (:func:`script_end_line`).
+    No ``$?``: the command passes the local shell (cmd.exe or sh) inside
+    double quotes, where only the remote shell may expand.
+
+    :param command: Shell command run by ``sh -c`` or ``bash -c`` in the pod.
+    :return: The wrapped command; an empty command stays empty.
+    :rtype: str
+    """
+    if not command.strip():
+        return command
+    return f'( {command} ) && echo {SCRIPT_END_MARKER}ok || echo {SCRIPT_END_MARKER}failed'
+
+
+def script_end_line(command: str, stdout: str) -> str:
+    """
+    Line to append to the stderr of a wrapped script that printed no end marker.
+
+    :param command: The command before :func:`wrap_script`.
+    :param stdout: Standard output of the script.
+    :return: ``"bexhoma: script ended without BEXHOMA_SCRIPT_END ..."``, or ``""``
+        when the marker is there or the command was empty.
+    :rtype: str
+    """
+    if not command.strip() or SCRIPT_END_MARKER in (stdout or ''):
+        return ''
+    return f'\nbexhoma: script ended without {SCRIPT_END_MARKER} (the pod or the connection went away)\n'
+
+
 def wait_for_cluster(deadline: float) -> bool:
     """
     Pause before retrying an unreachable cluster, unless the budget is spent.
@@ -814,6 +871,25 @@ class Kubernetes():
             self.cluster_access()
             self.wait(2)
             return self._read_pod(pod, attempts - 1)
+
+    def get_pod_uid(self, pod) -> str:
+        """
+        Return the UID of a named Pod.
+
+        A Pod that Kubernetes replaces (evicted, rescheduled) gets a new UID,
+        also a StatefulSet Pod that keeps its name.
+
+        :param pod: Name of the Pod.
+        :return: The UID, or ``''`` if the Pod does not exist or cannot be read.
+        :rtype: str
+        """
+        pod_object = self._read_pod(pod)
+        if pod_object is None:
+            return ''
+        if pod_object is not POD_NOT_READ:
+            return pod_object.metadata.uid or ''
+        result = self.kubectl(f'get pod {pod} -o jsonpath="{{.metadata.uid}}"')
+        return (result or '').strip().strip('"')
 
     def get_pod_status(self, pod, app=''):
         """
@@ -1783,7 +1859,7 @@ class Kubernetes():
         return run_with_fallback(fullcommand)
 
     def execute_command_in_pod(self, command, pod='', container='', params='',
-                               retry_interrupted: bool = True):
+                               retry_interrupted: bool = True, report_exit: bool = False):
         """
         Execute a shell command inside a container of a running Pod.
 
@@ -1798,6 +1874,10 @@ class Kubernetes():
         :param container: Container name within the Pod (optional for single-container pods).
         :param params: Unused; reserved for future use.
         :param retry_interrupted: Whether to retry after a connection broke mid-command.
+        :param report_exit: Run the command as a script that is judged by its
+            output (see :func:`bexhoma.configurations.loading.script_failed`):
+            wrapped by :func:`wrap_script`, with :func:`script_end_line` and
+            :func:`exit_code_line` appended to stderr.
         :return: Tuple ``("", stdout_str, stderr_str)``.
         """
         if not pod:
@@ -1805,6 +1885,9 @@ class Kubernetes():
                 f'Kubernetes.execute_command_in_pod({command}): empty pod name given for command'
             )
             return "", "", ""
+        original_command = command
+        if report_exit:
+            command = wrap_script(command)
         command_clean = command.replace('"', '\\"')
         if container:
             fullcommand = (
@@ -1835,6 +1918,8 @@ class Kubernetes():
             if (is_cluster_connection_error(str_stderr, include_interrupted=retry_interrupted)
                     and wait_for_cluster(deadline)):
                 continue
+            if report_exit:
+                str_stderr += script_end_line(original_command, str_stdout) + exit_code_line(proc.returncode)
             return "", str_stdout, str_stderr
 
     def execute_command_in_pod_api(self, command, pod='', container='',
@@ -3466,6 +3551,14 @@ class Kubernetes():
                     return
                 else:
                     attempt += 1
+            # An empty log can be right (a container that prints nothing); only a log
+            # that could not be read at all is a gap. The experiment records these as
+            # failed tests (ExperimentBase._record_runtime_gaps).
+            if stdout is None:
+                print(f"{'Bexhoma':30s}: gave up storing log {filename_log}")
+                if not hasattr(self, 'logs_not_stored'):
+                    self.logs_not_stored = []
+                self.logs_not_stored.append(os.path.basename(filename_log))
 
     def store_previous_pod_logs(self, pod_name, number=None, counts=None):
         """

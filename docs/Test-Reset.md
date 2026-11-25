@@ -104,7 +104,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_postgresql.log
@@ -136,7 +135,6 @@ bexhoma ycsb \
   -xnpo 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_pgbouncer.log
@@ -165,7 +163,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_orioledb.log
@@ -194,7 +191,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_mysql.log
@@ -223,7 +219,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_mariadb.log
@@ -255,7 +250,6 @@ bexhoma ycsb \
   -nws 48 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_citus.log
@@ -286,7 +280,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_cockroachdb.log
@@ -320,7 +313,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   run &>$LOG_DIR/docs_reset_ycsb_tidb.log
 ```
 
@@ -347,7 +339,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_dragonfly.log
@@ -378,7 +369,6 @@ bexhoma ycsb \
   -nwr 1 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_dragonfly_replica.log
@@ -407,7 +397,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_redis.log
@@ -437,7 +426,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_redis_cluster.log
@@ -468,7 +456,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_yugabytedb.log
@@ -496,7 +483,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 40 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_postgresql.log
@@ -524,7 +510,6 @@ bexhoma benchbase \
   -xnpi 128 \
   -xnpo 64 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_pgbouncer.log
@@ -549,7 +534,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 40 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_mysql.log
@@ -574,7 +558,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 40 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_mariadb.log
@@ -600,7 +583,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 40 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_twitter_postgresql.log
@@ -628,7 +610,6 @@ bexhoma benchbase \
   -nwr 1 \
   -nws 48 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_citus.log
@@ -655,7 +636,6 @@ bexhoma benchbase \
   -nw 3 \
   -nwr 3 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_cockroachdb.log
@@ -685,7 +665,6 @@ bexhoma benchbase \
   -ar \
   -nwr 3 \
   -ms $BEXHOMA_MS \
-  -tr \
   run &>$LOG_DIR/docs_reset_benchbase_tidb.log
 ```
 
@@ -710,7 +689,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 40 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_yugabytedb.log
@@ -737,7 +715,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_postgresql.log
@@ -761,7 +738,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_mysql.log
@@ -785,7 +761,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_mariadb.log
@@ -812,7 +787,6 @@ bexhoma hammerdb \
   -nwr 1 \
   -nws 48 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_citus.log
@@ -838,7 +812,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_postgresql.log
@@ -861,7 +834,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_pgduckdb.log
@@ -884,7 +856,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_monetdb.log
@@ -907,7 +878,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_mysql.log
@@ -930,7 +900,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_mariadb.log
@@ -956,7 +925,6 @@ bexhoma tpch \
   -nws 48 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_citus.log
@@ -979,7 +947,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -xrs 1 \
   -ar \
@@ -1007,7 +974,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_postgresql.log
@@ -1031,7 +997,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_monetdb.log
@@ -1055,7 +1020,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_mysql.log
@@ -1079,7 +1043,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_mariadb.log

@@ -11,6 +11,7 @@ Copyright (C) 2023 Patrick K. Erdelt
 SPDX-License-Identifier: AGPL-3.0-or-later
 See LICENSE for details.
 """
+import sys
 from bexhoma import *  # noqa: F403
 from bexhoma.cli_args import make_base_parser, resolve_scaling_factor
 from bexhoma.benchmarks.dbmsbenchmarker.benchmark import DIMENSION_VARIANTS, dimension_folder
@@ -101,7 +102,7 @@ def tenant_parameters(experiment, entry: dict, tenant, storage_prefix: str) -> d
     return result
 
 
-def run(args: argparse.Namespace, on_experiment_built=None) -> None:
+def run(args: argparse.Namespace, on_experiment_built=None) -> int:
     """
     Build and run a TPC-H experiment from an already-parsed argparse Namespace.
 
@@ -120,6 +121,9 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
         was run, the contracts that governed it) into the result folder even
         if the run itself later fails. Never called for a plain
         ``python tpch.py ...`` invocation.
+    :return: exit code of :meth:`~bexhoma.experiments.base.ExperimentBase.process`
+        (``1`` if a test of the summary failed)
+    :rtype: int
     """
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
@@ -309,7 +313,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> None:
     ### branch for workflows
     ##############
     experiment.add_benchmark_list(list_clients)
-    experiment.process()
+    return experiment.process()
 
 
 def main() -> None:
@@ -331,8 +335,7 @@ def main() -> None:
                 refresh_template(dockers, docker, 'tpch')
             except IncompatibleBenchmark as error:
                 parser.error(f'-xrs {args.num_refresh_streams}: {error}')
-    run(args)
-    exit()
+    sys.exit(run(args))
 
 
 if __name__ == '__main__':

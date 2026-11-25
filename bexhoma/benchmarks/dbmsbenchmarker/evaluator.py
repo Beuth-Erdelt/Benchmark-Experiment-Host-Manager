@@ -158,19 +158,46 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         df = df.round(2).T
         df = df.rename_axis(index="DBMS")
         return df
-    def test_results(self):
+    def record_results_complete_test(self, experiment, df_connections: pd.DataFrame) -> None:
         """
-        Refreshes the inspector, then validates results via :meth:`LogEvaluator.test_results`.
+        Record whether every planned DBMSBenchmarker pod left its connection.
 
-        The inspector is reloaded here (in addition to construction time) because
-        this may be called well after construction, e.g. from a post-hoc
-        ``bexhoma summary`` command, when newer results may be on disk.
+        Each pod writes its own entry to ``connections.config`` (``orig_name`` is
+        the job), named after its child number. A pod that never ran leaves no
+        entry; two pods with the same child number (a pod retried by Kubernetes)
+        leave one entry for two. Either way the job has fewer entries than its
+        ``parallelism`` (the ``pods`` column). The label names the missing child
+        numbers (``connection`` is ``<job>-<child>``). Since benchmarker pods exit
+        when the child queue is empty, a retried pod no longer runs as a
+        duplicate child.
 
-        :return: ``0`` on success, ``1`` if an exception is raised.
-        :rtype: int
+        :param experiment: The owning experiment object.
+        :param df_connections: Output of :meth:`get_connections_of_experiment`.
         """
-        self.load_inspector()
-        return super().test_results()
+        if df_connections is None or df_connections.empty or 'job' not in df_connections.columns:
+            return
+        planned = df_connections
+        if self.benchmark_run > 0 and 'benchmark_run' in planned.columns:
+            planned = planned[planned['benchmark_run'].astype(int) == self.benchmark_run]
+        if planned.empty:
+            return
+        incomplete = []
+        for job, rows in planned.groupby('job'):
+            expected = int(rows['pods'].iloc[0])
+            if len(rows) != expected:
+                children = set()
+                for connection in rows.get('connection', pd.Series(dtype=str)).astype(str):
+                    child = connection[len(job) + 1:] if connection.startswith(f"{job}-") else ''
+                    if child.isdigit():
+                        children.add(int(child))
+                missing = [str(child) for child in range(1, expected + 1) if child not in children]
+                detail = f", missing child {', '.join(missing)}" if missing else ""
+                incomplete.append(f"{job} ({len(rows)} of {expected}{detail})")
+        label = "Results of all benchmarker pods"
+        if incomplete:
+            print(f"benchmarker jobs without a result of every pod: {', '.join(incomplete)}")
+            label += " - incomplete: " + ", ".join(incomplete)
+        experiment._record_test(not incomplete, label)
     @staticmethod
     def _phase_of_connection(connection_data):
         """

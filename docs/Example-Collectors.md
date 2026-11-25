@@ -48,7 +48,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -67,7 +66,6 @@ This
   * each stream runs for 5 minutes (`-xsd 5`)
 * monitors SUT metrics (`-m`), application metrics via sidecar (`-ma`), and cluster metrics (`-mc`)
 * runs at most 1 DBMS at a time (`-ms`)
-* verifies workflow matches plan (`-tr`)
 
 The result looks something like
 
@@ -362,7 +360,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -685,7 +682,6 @@ bexhoma benchbase \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -2253,7 +2249,6 @@ bexhoma tpch \
   -m \
   -ma \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -2268,7 +2263,6 @@ This
 * repeats each query 3 times (`-xqr 3`) so even the single-stream configuration runs long enough for resource monitoring to capture samples
 * runs 2 experiment iterations (`-nc 2`) each with two stream configurations (`-ne 1,2`): 1 then 2 concurrent benchmarking pods
 * sets indexes, constraints, and statistics after loading (`-xii -xic -xis`)
-* verifies workflow matches plan (`-tr`)
 
 The result looks something like
 
@@ -2682,7 +2676,6 @@ bexhoma tpch \
   -m \
   -ma \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -3099,7 +3092,6 @@ bexhoma tpch \
   -m \
   -ma \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 60Gi \
@@ -3537,7 +3529,6 @@ bexhoma tpch \
   -m \
   -ma \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -4041,7 +4032,6 @@ bexhoma tpch \
   -m \
   -ma \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -4540,7 +4530,6 @@ bexhoma tpch \
   -m \
   -ma \
   -mc \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -5134,7 +5123,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -5478,7 +5466,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -5821,7 +5808,6 @@ bexhoma ycsb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_3.log
@@ -6169,7 +6155,6 @@ bexhoma hammerdb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -6464,7 +6449,6 @@ bexhoma hammerdb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -6758,7 +6742,6 @@ bexhoma hammerdb \
   -ma \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_collector_3.log
@@ -7067,7 +7050,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -7083,7 +7065,6 @@ This
 * runs 2 experiment iterations (`-nc 2`) each with two stream configurations (`-ne 1,2`): 1 then 2 concurrent benchmarking pods
 * sets indexes, constraints, and statistics after loading (`-xii -xic -xis`)
 * monitors SUT metrics (`-m`), application metrics (`-ma`), and cluster metrics (`-mc`)
-* verifies workflow matches plan (`-tr`)
 
 The result looks something like
 
@@ -7541,7 +7522,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -8004,7 +7984,6 @@ bexhoma tpcds \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -8409,7 +8388,6 @@ bexhoma ssb \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -8424,7 +8402,6 @@ This
 * runs 2 experiment iterations (`-nc 2`) each with two stream configurations (`-ne 1,2`): 1 then 2 concurrent benchmarking pods
 * sets indexes, constraints, and statistics after loading (`-xii -xic -xis`)
 * monitors SUT metrics (`-m`), application metrics (`-ma`), and cluster metrics (`-mc`)
-* verifies workflow matches plan (`-tr`)
 
 The result looks something like
 
@@ -8879,7 +8856,6 @@ bexhoma ssb \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -9313,7 +9289,6 @@ bexhoma ssb \
   -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -9721,7 +9696,6 @@ bexhoma hardware \
   -nbt 2 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rsr \
   -rss 50Gi \
   -rst $BEXHOMA_STORAGE_CLASS \
@@ -9896,7 +9870,6 @@ bexhoma hardware \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
-  -tr \
   -lc 2 \
   -rc 2 \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -10057,7 +10030,6 @@ bexhoma hardware \
   -nbt 1 \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_collector.log
 ```
@@ -10216,7 +10188,6 @@ bexhoma hardware \
   -xnpp tcp \
   -m \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_netperf_collector.log
 ```

@@ -117,7 +117,8 @@ for K in $(seq $FIRST_SET $LAST_SET); do
 
     #### RF1: insert new orders and lineitems ####
     for TABLE in orders lineitem; do
-        echo "RF1: inserting $TABLE.tbl.u$K"
+        # rows in the file; ClickHouse reports no row count, and no extra query is sent
+        echo "RF1: inserting $TABLE.tbl.u$K ($(wc -l < $destination_raw/$TABLE.tbl.u$K) rows in the file)"
         $CLICKHOUSE $CSV_OPTS --query "INSERT INTO $TABLE FORMAT CSV" < $destination_raw/$TABLE.tbl.u$K
         if test $? -ne 0
         then
@@ -127,7 +128,8 @@ for K in $(seq $FIRST_SET $LAST_SET); do
     done
 
     #### RF2: delete orders identified in delete file, lineitem first ####
-    echo "RF2: deleting rows from delete.$K"
+    # order keys in the file; a lightweight DELETE reports no row count
+    echo "RF2: deleting rows from delete.$K ($(wc -l < $destination_raw/delete.$K) order keys in the file)"
     KEY_CHUNKS=/tmp/keys.$K.
     split -l $KEYS_PER_DELETE $destination_raw/delete.$K $KEY_CHUNKS
     for CHUNK in ${KEY_CHUNKS}*; do

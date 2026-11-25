@@ -186,6 +186,7 @@ class SutConfiguration:
         self.loading_failed = []                                                 #: Why this repetition's load counts as failed (SUT restart, script upload); its volume is then never labelled loaded=True.
         self.loading_failed_fatal = ''                                           #: Reason that aborts the experiment (e.g. index scripts could not be uploaded); empty while loading may go on.
         self.sut_restarts_at_loading_start = None                                #: Sum of the SUT pod's container restarts when this repetition's loading started.
+        self.sut_pod_uid_at_loading_start = ''                                   #: UID of the SUT pod when this repetition's loading started ('' if unknown).
         self.storage_monitoring = None                                           #: Storage placeholders for Ceph monitoring (see resolve_storage_monitoring()), resolved once after deployment.
         self.time_generating = 0                                                  #: Seconds taken for data generation.
         self.time_ingesting = 0                                                   #: Seconds taken for ingesting existing data.
@@ -286,6 +287,7 @@ class SutConfiguration:
         self.loading_failed = []
         self.loading_failed_fatal = ''
         self.sut_restarts_at_loading_start = None
+        self.sut_pod_uid_at_loading_start = ''
         self.storage_monitoring = None
         self.client = 1
         self.is_sut_ready = False
@@ -1118,6 +1120,7 @@ class SutConfiguration:
         params: str = '',
         retry_interrupted: bool = True,
         api: bool = False,
+        report_exit: bool = False,
     ):
         """Run a shell command inside the SUT container.
 
@@ -1133,6 +1136,8 @@ class SutConfiguration:
         :param api: Run it through the Python client
             (``cluster.execute_command_in_pod_api()``, falls back to kubectl);
             only for read-only commands that are safe to repeat.
+        :param report_exit: Append kubectl's non-zero exit code to stderr
+            (see :func:`bexhoma.clusters.exit_code_line`).
         :return: stdout of the shell command.
         """
         if len(pod) == 0:
@@ -1146,7 +1151,7 @@ class SutConfiguration:
                 command=command, pod=pod, container=container)
         return self.experiment.cluster.execute_command_in_pod(
             command=command, pod=pod, container=container, params=params,
-            retry_interrupted=retry_interrupted)
+            retry_interrupted=retry_interrupted, report_exit=report_exit)
 
     def upload_experiment_file(self, filename: str):
         """Upload a file to the experiment's result storage.

@@ -27,8 +27,8 @@ while true; do
   fi
   echo "checkpoint in progress, retrying"
   if [ $waited -ge $TIMEOUT ]; then
-    echo "$reply"
-    break
+    echo "ERROR: checkpoint still in progress after $waited s: $reply" >&2
+    exit 1
   fi
   sleep 1
   waited=$((waited+1))

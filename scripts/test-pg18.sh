@@ -72,7 +72,7 @@ wait_process "ycsb"
 
 
 
-nohup python ycsb.py -tr \
+nohup python ycsb.py \
   -sf 100 \
   -xop 5 \
   --workload a \
@@ -105,7 +105,7 @@ nohup python ycsb.py -tr \
 wait_process "ycsb"
 
 
-nohup python ycsb.py -tr \
+nohup python ycsb.py \
   -sf 100 \
   -xop 5 \
   --workload a \
@@ -138,7 +138,7 @@ nohup python ycsb.py -tr \
 wait_process "ycsb"
 
 
-nohup python ycsb.py -tr \
+nohup python ycsb.py \
   -sf 100 \
   -xop 5 \
   --workload a \

@@ -86,7 +86,6 @@ remove_yugabytedb() {
 # -nbt 64                       threads per benchmarking pod
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -106,7 +105,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_postgresql.log
@@ -132,7 +130,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset PostgreSQL"
 # -xnpo 64                      maximum outgoing connections per PGBouncer instance
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -155,7 +152,6 @@ bexhoma ycsb \
   -xnpo 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_pgbouncer.log
@@ -178,7 +174,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset PGBouncer"
 # -nbt 64                       threads per benchmarking pod
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -198,7 +193,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_orioledb.log
@@ -221,7 +215,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset OrioleDB"
 # -nbt 64                       threads per benchmarking pod
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -241,7 +234,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_mysql.log
@@ -264,7 +256,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset MySQL"
 # -nbt 64                       threads per benchmarking pod
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -284,7 +275,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_mariadb.log
@@ -310,7 +300,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset MariaDB"
 # -nws 48                       number of shards
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -333,7 +322,6 @@ bexhoma ycsb \
   -nws 48 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_citus.log
@@ -358,7 +346,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset Citus"
 # -nwr 3                        replication factor (Dragonfly: replica mode)
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -380,7 +367,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_cockroachdb.log
@@ -408,7 +394,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset CockroachDB"
 # -nwr 3                        replication factor (Dragonfly: replica mode)
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 bexhoma ycsb \
   -dbms TiDB \
   -sf 1 \
@@ -429,7 +414,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   run &>$LOG_DIR/docs_reset_ycsb_tidb.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset TiDB"
@@ -450,7 +434,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset TiDB"
 # -nbt 128                      threads per benchmarking pod
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -470,7 +453,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_dragonfly.log
@@ -495,7 +477,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset Dragonfly"
 # -nwr 1                        replication factor (Dragonfly: replica mode)
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -517,7 +498,6 @@ bexhoma ycsb \
   -nwr 1 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_dragonfly_replica.log
@@ -540,7 +520,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset Dragonfly Replica"
 # -nbt 128                      threads per benchmarking pod
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -560,7 +539,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_redis.log
@@ -584,7 +562,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB reset Redis"
 # -nw 3                         number of worker nodes
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -605,7 +582,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_redis_cluster.log
@@ -630,7 +606,6 @@ install_yugabytedb
 # -nbt 64                       threads per benchmarking pod
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -650,7 +625,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 1 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_ycsb_yugabytedb.log
@@ -678,7 +652,6 @@ remove_yugabytedb
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 40                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -694,7 +667,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 40 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_postgresql.log
@@ -716,7 +688,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C PostgreSQL"
 # -xnpi 128                     maximum incoming connections per PGBouncer instance (default: loading threads = 1)
 # -xnpo 64                      maximum outgoing connections per PGBouncer instance
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -735,7 +706,6 @@ bexhoma benchbase \
   -xnpi 128 \
   -xnpo 64 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_pgbouncer.log
@@ -754,7 +724,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C PGBouncer"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 40                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -770,7 +739,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 40 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_mysql.log
@@ -789,7 +757,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C MySQL"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 40                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -805,7 +772,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 40 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_mariadb.log
@@ -825,7 +791,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C MariaDB"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 40                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -842,7 +807,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 40 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_twitter_postgresql.log
@@ -864,7 +828,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset Twitter PostgreSQL"
 # -nwr 1                        replication factor (Dragonfly: replica mode)
 # -nws 48                       number of shards
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -883,7 +846,6 @@ bexhoma benchbase \
   -nwr 1 \
   -nws 48 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_citus.log
@@ -904,7 +866,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C Citus"
 # -nw 3                         number of worker nodes
 # -nwr 3                        replication factor (Dragonfly: replica mode)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -922,7 +883,6 @@ bexhoma benchbase \
   -nw 3 \
   -nwr 3 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_cockroachdb.log
@@ -946,7 +906,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C CockroachDB"
 # -ar                           activate configured reset scripts before each round
 # -nwr 3                        replication factor (Dragonfly: replica mode)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 bexhoma benchbase \
   -dbms TiDB \
   -sf 4 \
@@ -963,7 +922,6 @@ bexhoma benchbase \
   -ar \
   -nwr 3 \
   -ms $BEXHOMA_MS \
-  -tr \
   run &>$LOG_DIR/docs_reset_benchbase_tidb.log
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset TPC-C TiDB"
@@ -982,7 +940,6 @@ install_yugabytedb
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 40                       threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -998,7 +955,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 40 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_benchbase_yugabytedb.log
@@ -1025,7 +981,6 @@ remove_yugabytedb
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1040,7 +995,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_postgresql.log
@@ -1058,7 +1012,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB reset PostgreSQL"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1073,7 +1026,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_mysql.log
@@ -1091,7 +1043,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB reset MySQL"
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        threads per benchmarking pod
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1106,7 +1057,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 4 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_mariadb.log
@@ -1127,7 +1077,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB reset MariaDB"
 # -nwr 1                        replication factor (Dragonfly: replica mode)
 # -nws 48                       number of shards
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1145,7 +1094,6 @@ bexhoma hammerdb \
   -nwr 1 \
   -nws 48 \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_hammerdb_citus.log
@@ -1171,7 +1119,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB reset Citus"
 # -xic                          create constraints after loading
 # -xis                          recompute statistics after loading
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1185,7 +1132,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_postgresql.log
@@ -1204,7 +1150,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset PostgreSQL"
 # -xic                          create constraints after loading
 # -xis                          recompute statistics after loading
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1218,7 +1163,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_pgduckdb.log
@@ -1237,7 +1181,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset PgDuckDB"
 # -xic                          create constraints after loading
 # -xis                          recompute statistics after loading
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1251,7 +1194,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_monetdb.log
@@ -1270,7 +1212,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset MonetDB"
 # -xic                          create constraints after loading
 # -xis                          recompute statistics after loading
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1284,7 +1225,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_mysql.log
@@ -1303,7 +1243,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset MySQL"
 # -xic                          create constraints after loading
 # -xis                          recompute statistics after loading
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1317,7 +1256,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_mariadb.log
@@ -1339,7 +1277,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset MariaDB"
 # -xic                          create constraints after loading
 # -xis                          recompute statistics after loading
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1356,7 +1293,6 @@ bexhoma tpch \
   -nws 48 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpch_citus.log
@@ -1375,7 +1311,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset Citus"
 # -xic                          create constraints after loading
 # -xis                          recompute statistics after loading
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1390,7 +1325,6 @@ bexhoma tpch \
   -nlt 8 \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -xrs 1 \
   -ar \
@@ -1418,7 +1352,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H reset PostgreSQL with Refresh St
 # -xis                          recompute statistics after loading
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       timeout per query in seconds
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1433,7 +1366,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_postgresql.log
@@ -1453,7 +1385,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS reset PostgreSQL"
 # -xis                          recompute statistics after loading
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       timeout per query in seconds
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1468,7 +1399,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_monetdb.log
@@ -1488,7 +1418,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS reset MonetDB"
 # -xis                          recompute statistics after loading
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       timeout per query in seconds
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1503,7 +1432,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_mysql.log
@@ -1523,7 +1451,6 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS reset MySQL"
 # -xis                          recompute statistics after loading
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       timeout per query in seconds
-# -tr                           verify result meets basic sanity requirements
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
@@ -1538,7 +1465,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -ms $BEXHOMA_MS \
   -t 1200 \
-  -tr \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   -ar \
   run &>$LOG_DIR/docs_reset_tpcds_mariadb.log
