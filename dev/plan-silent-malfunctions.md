@@ -20,7 +20,8 @@ Decisions (user, 2026-11-24):
 
 ## 1. How the draft tests were done
 
-Nothing ran on the cluster. Local Docker containers for the DBMS clients, offline replays of the real
+The findings (sections 2, 3) came from draft tests without the cluster; the fixes were then tested on the
+cluster (section 4c). Local Docker containers for the DBMS clients, offline replays of the real
 summary code on copies of real result folders, and a search through `D:\data\benchmarks` (result
 archive) and `logs_tests/` (584 run logs). Draft script (not in the repo):
 `scratchpad/draft/draft_missing_pod.py` copies a Benchbase result folder, removes or cuts one pod's log
@@ -76,8 +77,8 @@ DBMS clients after a failing statement (local Docker, outputs run through `scrip
 |---|---|---|---|
 | S1 | Script outcome from kubectl's exit code. `clusters.exit_code_line()` appends `bexhoma: kubectl exit code N` to stderr when kubectl exits non-zero; `script_failed()` matches it. Loading, index and tenant scripts (`load_data_asynch`), reset scripts and worker scripts (`execute_command_in_pod(..., report_exit=True)`). The line is in the stored stderr log, so the summary's check of the logs sees it too | F1, F9 (mclient, cqlsh, sqlcmd) | done |
 | S2 | New test `Results of all benchmarker pods`, per benchmark. Log-based benchmarks (`LogEvaluator.record_results_complete_test`): planned connections (one per pod) against the pods with a parsed result (`rows_with_results`: Benchbase needs the result JSON, YCSB `[OVERALL]`, hardware one result value); missing or the same child from two pods fails. DBMSBenchmarker: per-pod entries of `connections.config` per job against `parallelism`. `natural_sort_rows()` keeps two rows of one connection, the YCSB/Benchbase/HammerDB per-connection tables crashed on them | F2, F3 | done |
-| S3 | Benchmarker scripts (benchbase, dbmsbenchmarker, hammerdb, hardware, ycsb) exit 1 with `FATAL: no child number in message queue` instead of running as child 1; bexhoma fills the queue before every job, also for one pod. New test `Benchmarker pods without errors` from the stored benchmarker pod and job descriptions (`loading_checks.check_benchmarker_pods`, same parser as the loader pods) | F2 | done, images to build |
-| S4 | TPC-H and TPC-DS generators: `.bexhoma_generated` written at the end, after dbgen/dsdgen, iconv and sed exited 0 (exit codes of iconv and sed are now checked); a raw folder is reused only with it, files without it are deleted (only files: the single-pod folder holds the split subfolders) and generated again. SSB already had `.complete` with staging folders. Consequence: raw folders on the shared volume from images before the marker are generated once more | F4 | done, images to build |
+| S3 | Benchmarker scripts (benchbase, dbmsbenchmarker, hammerdb, hardware, ycsb) exit 1 with `FATAL: no child number in message queue` instead of running as child 1; bexhoma fills the queue before every job, also for one pod. New test `Benchmarker pods without errors` from the stored benchmarker pod and job descriptions (`loading_checks.check_benchmarker_pods`, same parser as the loader pods) | F2 | done, images rebuilt, cluster run A |
+| S4 | TPC-H and TPC-DS generators: `.bexhoma_generated` written at the end, after dbgen/dsdgen, iconv and sed exited 0 (exit codes of iconv and sed are now checked); a raw folder is reused only with it, files without it are deleted (only files: the single-pod folder holds the split subfolders) and generated again. SSB already had `.complete` with staging folders. Consequence: raw folders on the shared volume from images before the marker are generated once more | F4 | done, images rebuilt, cluster runs (4c) |
 | S5 | `Monitoring returned data` fails when monitoring was on, a phase ran and no component returned anything (per component no data can be right, e.g. no loading phase). Runtime failures (`_record_runtime_failure`): `--experiment-timeout`, a pod log without `BEXHOMA_START/END`, a pod log `store_pod_log` gave up on (`cluster.logs_not_stored`) | F5, F6 | done |
 | S6 | `SUT pods not replaced`: UID of the SUT pod when loading started (`sut_pod_uid_loading` in `connections.config`) and of every SUT and worker pod when a round started (`hostsystem['pod_uid']`, read by `get_host_all()` anyway); more than one UID per pod and repetition fails. Hidden in the printed host lists | F7 | done |
 | S7 | Benchbase: `Every pod ran for the configured time` (`Elapsed Time (nanoseconds)` ≥ 99 % of `BENCHBASE_TIME`). YCSB: `Execution Phase: every pod ran its configured operations` (sum of `[<OP>].Operations` incl. FAILED, RMW counted once, against `YCSB_OPERATIONS` of the pod) | F8 | done; HammerDB: section 5 |
@@ -86,7 +87,7 @@ DBMS clients after a failing statement (local Docker, outputs run through `scrip
 
 ### 4b. Verification (offline, 2026-11-24)
 
-- Unit tests: `tests/test_silent_malfunctions.py`.
+- Unit tests: `tests/test_silent_malfunctions.py` (S1-S11, including the end marker and the aborted summary).
 - Full test suite: passes except `test_system_descriptors::test_local_config_declares_the_same` (6 subtests),
   which fails on dev as well (the local `cluster.config` differs from `k8s-cluster.config`).
 - `bexhoma summary` on copies of 78 recent result folders (Benchbase, YCSB, HammerDB, hardware, TPC-H, TPC-DS,
@@ -125,7 +126,8 @@ Added after the cluster tests:
 | S11 | `show_summary_aborted()` also records `Init scripts without errors` from the stored script logs |
 
 Not reproduced: a kubectl stream that breaks while the pod keeps running (S1/S10 cover it by exit code and marker).
-Also found: `-nbp` is silently ignored by TPC-H/TPC-DS (parallel benchmarker pods are `-ne`), see P9.
+Also found while preparing the runs (not a failing run): `-nbp` is silently ignored by TPC-H/TPC-DS
+(parallel benchmarker pods are `-ne`), see P9.
 
 ## 5. Proposals for catches that are still missing
 
