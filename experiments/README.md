@@ -237,6 +237,10 @@ or when `kubectl exec` exits non-zero: the script's exit code, or a broken conne
 
 A check that fails must write to stderr and `exit 1`.
 
+Every pipe in `experiments/**/*.sh` is listed in `ALLOWED_PIPES` of
+`tests/test_loading_checks.py`, with how a failure of the command in front of it is
+noticed; a new pipe fails that test until it is checked and listed.
+
 ### Benchmark-specific findings
 
 #### TPC-H (`experiments/tpch/`)

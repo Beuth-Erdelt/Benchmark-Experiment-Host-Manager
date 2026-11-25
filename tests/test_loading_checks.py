@@ -191,6 +191,63 @@ class ScriptFailedTest(unittest.TestCase):
                 self.assertIn('CALL bexhoma.check_restored();', text)
                 self.assertLess(text.index('CALL bexhoma.check_restored();'),
                                 text.index('DELETE FROM bexhoma.saved_settings'))
+
+
+#: Pipes in ``experiments/**/*.sh`` that were checked: a failing command in
+#: front of the pipe does not stop ``sh -e``, so each one must fail some other
+#: way. Collapsed whitespace, as :func:`script_pipes` returns them.
+ALLOWED_PIPES = {
+    # empty value, not 0: loops until the flush timeout, then exit 1
+    'dirty=$($MYSQL -e "SHOW GLOBAL STATUS LIKE \'Innodb_buffer_pool_pages_dirty\'" | cut -f2)',
+    # empty value, not 0: loops until the timeout, then exit 1
+    "pending=$(nodetool compactionstats | grep '^pending tasks' | tr -s ' ' | cut -d' ' -f3)",
+    'pending=$(cockroach sql --insecure --host "$HOST" --format=csv -e "$QUERY" | tail -n 1)',
+    # reply=$(redis-cli SAVE) before it already stops sh -e on a failure
+    'if ! echo "$reply" | grep -q "checkpoint already in progress"; then',
+    # a failing client ends the wait; the redis-cli SAVE after it fails or prints ERR
+    'while redis-cli INFO persistence | grep -q "rdb_bgsave_in_progress:1"; do',
+    'while valkey-cli INFO persistence | grep -q "rdb_bgsave_in_progress:1"; do',
+}
+
+
+def script_pipes(text: str) -> list:
+    """Lines of a shell script with a pipe outside quotes and comments.
+
+    :param text: Content of the script.
+    :return: The lines, stripped and with collapsed whitespace.
+    """
+    import re
+    pipes = []
+    for line in text.splitlines():
+        code = re.sub(r"'[^']*'", "''", line)
+        code = re.sub(r'"(?:\\.|[^"\\])*"', '""', code)
+        code = '' if code.lstrip().startswith('#') else code.split(' #', 1)[0]
+        if re.search(r'(?<!\|)\|(?!\|)', code):
+            pipes.append(re.sub(r'\s+', ' ', line.strip()))
+    return pipes
+
+
+class ScriptPipesTest(unittest.TestCase):
+    """A new pipe in a loading, index or reset script is checked before it is allowed (experiments/README.md)."""
+
+    def test_detection(self) -> None:
+        self.assertEqual(script_pipes('psql -c "x" | cut -f2\n'), ['psql -c "x" | cut -f2'])
+        self.assertEqual(script_pipes("bcp t in f.dat -t \"|\" -c\na || b\n# x | y\necho '|'\n"), [])
+
+    def test_only_checked_pipes(self) -> None:
+        import glob
+        files = sorted(glob.glob('experiments/**/*.sh', recursive=True))
+        self.assertTrue(files)
+        found = set()
+        for path in files:
+            for pipe in script_pipes(open(path, encoding='utf-8', errors='replace').read()):
+                found.add(pipe)
+                with self.subTest(script=path, pipe=pipe):
+                    self.assertIn(pipe, ALLOWED_PIPES,
+                                  "a failing command in front of a pipe does not stop sh -e; check the "
+                                  "result instead (experiments/README.md) and add the line to ALLOWED_PIPES")
+        # no stale entries
+        self.assertEqual(ALLOWED_PIPES - found, set())
         for path in glob.glob('experiments/**/MySQL/restoredurability-unsafe.sql', recursive=True):
             with self.subTest(script=path):
                 self.assertIn('CALL bexhoma.check_redo_log();', open(path, encoding='utf-8').read())

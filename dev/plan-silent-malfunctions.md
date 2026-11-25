@@ -3,7 +3,7 @@
 Status: **implemented on branch silent-malfunctions, cluster-tested 2026-11-24 (section 4c) with the
 rebuilt images.** S1-S9 done (section 4), plus S10 (end marker of scripts) and S11 (aborted summary checks
 the scripts) found by the cluster tests. P1 done as S12 (2026-11-25: exit code, `-tr` removed), P2 as S13
-(UID at the end of a repetition), P5 as S14 (HammerDB run complete), P12 as S15 (`No summary` fails). Open: the other proposals of section 5 and the docs page (section 6).
+(UID at the end of a repetition), P5 as S14 (HammerDB run complete), P12 as S15 (`No summary` fails), P7 as S16 (pipes in scripts). Open: the other proposals of section 5 and the docs page (section 6).
 
 Goal: every run either does what was planned or leaves a failed (or at least a skipped/warning) test in
 the summary. A number in the summary that is wrong because something was missing must not pass silently.
@@ -83,7 +83,7 @@ DBMS clients after a failing statement (local Docker, outputs run through `scrip
 | S5 | `Monitoring returned data` fails when monitoring was on, a phase ran and no component returned anything (per component no data can be right, e.g. no loading phase). Runtime failures (`_record_runtime_failure`): `--experiment-timeout`, a pod log without `BEXHOMA_START/END`, a pod log `store_pod_log` gave up on (`cluster.logs_not_stored`) | F5, F6 | done |
 | S6 | `SUT pods not replaced`: UID of the SUT pod when loading started (`sut_pod_uid_loading` in `connections.config`) and of every SUT and worker pod when a round started (`hostsystem['pod_uid']`, read by `get_host_all()` anyway); more than one UID per pod and repetition fails. Hidden in the printed host lists | F7 | done |
 | S7 | Benchbase: `Every pod ran for the configured time` (`Elapsed Time (nanoseconds)` ≥ 99 % of `BENCHBASE_TIME`). YCSB: `Execution Phase: every pod ran its configured operations` (sum of `[<OP>].Operations` incl. FAILED, RMW counted once, against `YCSB_OPERATIONS` of the pod) | F8 | done; HammerDB: section 5 |
-| S8 | `SP2-nnnn` on stdout matches. **Not** `bash -o pipefail`: the only pipes in `experiments/**/*.sh` are the MySQL/MariaDB `$(mysql ... \| cut)` (a failure ends in the flush timeout and `exit 1` anyway) and `while redis-cli ... \| grep -q`, which pipefail could end early through SIGPIPE. Instead the rule is in `experiments/README.md` ("How a failing script is noticed") | F9 | done |
+| S8 | `SP2-nnnn` on stdout matches. **Not** `bash -o pipefail`: the pipes in `experiments/**/*.sh` (all six kinds: S16) include the MySQL/MariaDB `$(mysql ... \| cut)` (a failure ends in the flush timeout and `exit 1` anyway) and `while redis-cli ... \| grep -q`, which pipefail could end early through SIGPIPE. Instead the rule is in `experiments/README.md` ("How a failing script is noticed") | F9 | done |
 | S9 | `test_results()` of experiments, mixed experiments and benchmarks return `0`/`1` (the "Test successful!" line could never print). `Host information complete` (warning when RAM, CPU, cores or node is empty); it found the MySQL CPU probe gap (4b) | F10 | done; exit code: S12 |
 
 ### 4b. Verification (offline, 2026-11-24)
@@ -129,6 +129,7 @@ Added after the cluster tests:
 | S13 (P2) | Third UID reading: the end-of-repetition restart snapshot (`bexhoma-sut-*-restarts.json`) stores each pod's `uid` (one `get_pod_uid()` per pod and repetition). `_test_sut_pods_not_replaced()` fails when a snapshot UID is none of the UIDs read at loading start or at a round start of that repetition (`... (after the last round started)`); with one round per repetition, this is the only reading after benchmarking. The restart counter cannot see a replacement: `restartCount` belongs to one pod object, a new pod starts at 0. Also reads the UIDs of additional SUT pods (`sut` list). Older snapshots without `uid`: nothing changes |
 | S14 (P5) | HammerDB, evaluator only (no image change: `benchmarker.sh` already prints `End N seconds` / `Duration N seconds` around `hammerdbcli`, HammerDB prints `<n> VU TEST`, `Test complete, Taking end Transaction Count.`, `Vuser <n>:FINISHED FAILED`). Two tests from the logs of the pods with results: `No virtual user FINISHED FAILED` (a virtual user that ended with an error, e.g. could not connect, is a malfunction; transaction errors stay counted only, D1) and `Every pod ran for the configured time` (every started VU test completed, wall time of `hammerdbcli` >= 99 % of (rampup + duration) per VU test). Archive: 180 pods, ratio 1.02-1.36, no `FINISHED FAILED` in 198 logs, one log with transaction errors and `FINISHED SUCCESS`; 23 recent runs pass both tests. Logs without the lines (older images) are left out |
 | S15 (P12) | `bexhoma summary` of a result folder whose workload `type` no benchmark claims (e.g. the former HammerDB type `tpcc`, 29 results such as 1794418182) records the failed test `No summary: workload type 'tpcc' belongs to no benchmark` and exits 1. Former type names are not mapped |
+| S16 (P7) | `tests/test_loading_checks.py` lists every pipe outside quotes and comments of `experiments/**/*.sh` in `ALLOWED_PIPES`, with how a failure in front of it is noticed; a new pipe fails the test, a stale entry too. 17 pipe lines in 93 scripts, 6 kinds: MySQL/MariaDB `$($MYSQL ... | cut -f2)` (12), Cassandra `nodetool compactionstats | ...`, CockroachDB `cockroach sql ... | tail -n 1` (empty value, loop until timeout, exit 1), Garnet `echo "$reply" | grep -q` (`reply=$(redis-cli SAVE)` already stops `sh -e`), Redis/Valkey `while ...-cli INFO persistence | grep -q` (the `SAVE` after it fails or prints `ERR`); none hides a failure. The scanner leaves out quoted `|` (SQL Server `bcp -t "|"`). Garnet `save-snapshot.sh`: the checkpoint timeout now writes to stderr and exits 1; before, it echoed `ERR checkpoint already in progress`, which `script_failed()` matched already, while the script exited 0. Rule and test named in `experiments/README.md` |
 
 Not reproduced: a kubectl stream that breaks while the pod keeps running (S1/S10 cover it by exit code and marker).
 Also found while preparing the runs (not a failing run): `-nbp` is silently ignored by TPC-H/TPC-DS
@@ -143,13 +144,46 @@ Also found while preparing the runs (not a failing run): `-nbp` is silently igno
 | P3 | done (4c, S10) | - |
 | P4 | done (4c) | - |
 | P5 | done (S14) | - |
-| P6 | Monitoring of one component returns nothing while others do | Needs to know which phases ran per component (e.g. from the connection's timespans); then a skipped/failed test per component |
-| P7 | A new script with a failure-relevant command in a pipe | Test that lists the allowed pipes in `experiments/**/*.sh` (like the restore-script test in `test_loading_checks.py`) |
+| P6 | Monitoring: (case 1) a component's fetch never ran, or (case 2, P13) it ran and failed; neither fails a test, see 5b | Options and costs in 5b; recommended A + C |
+| P7 | done (S16) | - |
 | P8 | Duplicate child for DBMSBenchmarker only shows as "n of m" per job; which child ran twice is not named | DBMSBenchmarker per-pod entries could carry the pod name; then name both pods |
 | P9 | `-nbp` is accepted and silently ignored by TPC-H/TPC-DS (DBMSBenchmarker uses `-ne`) | Refuse `-nbp` other than 1 for these benchmarks, or map it |
 | P10 | A replaced SUT pod during loading makes bexhoma load the new, empty pod again while the old loader jobs still run | Abort the repetition when the SUT pod's UID changes during loading (S6 has the UID at loading start) |
 | P11 | Future benchmarks that terminate pods or containers on purpose (e.g. time to recover) fail `SUT pods not replaced` and `No SUT container restarts` | Not to build now. The benchmark declares its disruptions (which pod or container, which round, how often) next to `workflow_planned`; whatever performs them records pod, time and the UID that went away (the recovery time needs these anyway). The tests then compare observed with planned: as planned passes (`SUT pods replaced as planned (1 of 1)`), an extra one or a planned one without a trace fails. Without a declaration both tests stay strict |
 | P12 | done (S15); mapping `tpcc` to HammerDB not done | - |
+| P13 | Monitoring fetch failed (case 2 of P6): see 5b | part of 5b |
+
+### 5b. Monitoring fetches (P6, P13)
+
+`Monitoring metrics missing` is negative evidence: `collect_missing_metrics()` scans `bexhoma-metrics-*.log`
+for DBMSBenchmarker's `Metrics missing for` lines. Without such a line it passes. `Monitoring returned data`
+fails only when every component is empty; the per-component CPU test exists only for a component with a table.
+
+- Case 1: the fetch of a component never ran (code path skipped it, exception before it). No log, no table, no test.
+- Case 2: the fetch ran and failed before querying (dashboard pod gone, stream broken, `metrics.py` traceback,
+  wrong arguments). The log holds the error, nothing matches. `fetch()` uses `execute_command_in_pod()` without
+  `report_exit=True` and checks nothing. `MetricFetchBatch.run()` repeats a fetch with a traceback once, but
+  does not check the repeat.
+
+Facts: each fetch is queued in `MetricFetchBatch`; the component is registered in
+`workload['monitoring_components']` when queued (experiment level, not per connection).
+
+| | What | Case 1 | Case 2 | Cost |
+|---|---|---|---|---|
+| A. Fetch log check | `report_exit=True` + S10 end marker; summary: the last attempt per `bexhoma-metrics-*.log` has no traceback, no `kubectl exit code`, an end marker. `Monitoring fetches without errors` | no | yes, incl. the unchecked repeat | small (~30 lines, reuses S1/S10); older results partly (tracebacks already logged); no API calls, no image |
+| B. Fetch ledger | `MetricFetchBatch` writes queued (connection, component) and final outcome to `bexhoma-metrics-fetches.json`; summary requires ok for each | partly (queued but lost; not never queued) | yes | small-medium (~50 lines); new results only; overlaps A |
+| C. Per component, coarse | every registered component has data for at least one connection, unless its phase ran nowhere (no load, `load` mode, optional data generator) | yes, component level | consequence (no data) | medium (~60 lines); "phase ran" rules per component type (SUT loading/benchmarking, loader, data generator, benchmarker, workers, pool); archive replay |
+| D. Per connection, exact | per (connection, component) from `connections.config` (`time_loading`, `loading_inherited`/`_deactivated`, job timespans, short phases, tenants, `copy_fetched`): fail if the phase ran without data, else skip with reason | yes, fully | consequence | high (~150 lines), most special cases, false-alarm risk; broad replay (`-nc`, `-sl`, reused volumes, multi-tenant); older results too |
+
+| Combination | Covers | Cost | Left |
+|---|---|---|---|
+| A + C (recommended) | case 2 directly; case 1 when a whole component has no data | ~90 lines, a day with replay | one connection without data while others have it (e.g. repetition 2) |
+| A + D | both, per connection | ~180 lines, several days | zero-filled case stays with `Monitoring metrics missing` |
+| B + C | as A + C, a lost fetch named | ~110 lines | ledger only for new results; same per-connection gap |
+| A alone | case 2 | smallest | case 1 |
+
+Recommendation: A + C now; D later if the per-connection gap matters (C's rules are its first part).
+Not decided yet.
 
 ## 6. Later: docs page
 
