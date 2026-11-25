@@ -166,7 +166,10 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         the job), named after its child number. A pod that never ran leaves no
         entry; two pods with the same child number (a pod retried by Kubernetes)
         leave one entry for two. Either way the job has fewer entries than its
-        ``parallelism`` (the ``pods`` column).
+        ``parallelism`` (the ``pods`` column). The label names the missing child
+        numbers (``connection`` is ``<job>-<child>``). Since benchmarker pods exit
+        when the child queue is empty, a retried pod no longer runs as a
+        duplicate child.
 
         :param experiment: The owning experiment object.
         :param df_connections: Output of :meth:`get_connections_of_experiment`.
@@ -182,7 +185,14 @@ class DbmsBenchmarkerEvaluator(LogEvaluator):
         for job, rows in planned.groupby('job'):
             expected = int(rows['pods'].iloc[0])
             if len(rows) != expected:
-                incomplete.append(f"{job} ({len(rows)} of {expected})")
+                children = set()
+                for connection in rows.get('connection', pd.Series(dtype=str)).astype(str):
+                    child = connection[len(job) + 1:] if connection.startswith(f"{job}-") else ''
+                    if child.isdigit():
+                        children.add(int(child))
+                missing = [str(child) for child in range(1, expected + 1) if child not in children]
+                detail = f", missing child {', '.join(missing)}" if missing else ""
+                incomplete.append(f"{job} ({len(rows)} of {expected}{detail})")
         label = "Results of all benchmarker pods"
         if incomplete:
             print(f"benchmarker jobs without a result of every pod: {', '.join(incomplete)}")

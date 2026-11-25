@@ -178,7 +178,18 @@ class ResultsCompleteTest(unittest.TestCase):
         e = experiment()
         evaluator.record_results_complete_test(e, planned('x-1-1-1-1'))
         self.assertFalse(e._test_results[0][0])
-        self.assertIn('x-1-1-1 (1 of 2)', e._test_results[0][1])
+        self.assertIn('x-1-1-1 (1 of 2, missing child 2)', e._test_results[0][1])
+
+    def test_dbmsbenchmarker_names_missing_children(self) -> None:
+        """P8: the missing child numbers of a job are named."""
+        evaluator = DbmsBenchmarkerEvaluator.__new__(DbmsBenchmarkerEvaluator)
+        evaluator.benchmark_run = 1
+        rows = planned('x-1-1-1-1', 'x-1-1-1-4')
+        rows['pods'] = 4
+        e = experiment()
+        evaluator.record_results_complete_test(e, rows)
+        self.assertEqual(e._test_results[0][1],
+                         'Results of all benchmarker pods - incomplete: x-1-1-1 (2 of 4, missing child 2, 3)')
 
     def test_sort_keeps_rows_with_the_same_index(self) -> None:
         df = pd.DataFrame({'v': [1, 2, 3]}, index=['a-10', 'a-2', 'a-2'])
