@@ -322,6 +322,37 @@ class SutPodsTest(unittest.TestCase):
         e._test_sut_pods_not_replaced([{'name': 'PG-1-1-1', 'hostsystem': {'RAM': 1}}])
         self.assertEqual(e._test_results, [])
 
+    def test_replaced_during_last_round(self) -> None:
+        """P2: the end-of-repetition snapshot has a UID no earlier reading saw."""
+        e = experiment()
+        e._test_sut_pods_not_replaced([self.connection('u1')], {('pg-1', '1'): {'sut-a': 'u9'}})
+        self.assertFalse(e._test_results[0][0])
+        self.assertIn('pg-1 repetition 1 sut-a (after the last round started)', e._test_results[0][1])
+
+    def test_snapshot_same_pods(self) -> None:
+        e = experiment()
+        first = self.connection('u1')
+        first['worker'] = {'worker': [{'pod_uid': 'w1'}]}
+        e._test_sut_pods_not_replaced([first], {('pg-1', '1'): {'sut-a': 'u1', 'worker-0': 'w1'}})
+        self.assertEqual(e._test_results, [(True, 'SUT pods not replaced')])
+
+    def test_snapshot_of_a_repetition_without_readings(self) -> None:
+        e = experiment()
+        e._test_sut_pods_not_replaced([self.connection('u1')], {('pg-1', '2'): {'sut-a': 'u9'}})
+        self.assertEqual(e._test_results, [(True, 'SUT pods not replaced')])
+
+    def test_read_snapshot_uids(self) -> None:
+        import json
+        from bexhoma import sut_restarts
+        entry = sut_restarts.restart_snapshot_entry('0 0', {'dbms': 0, 'exporter': 0}, uid='u1')
+        self.assertEqual(entry['uid'], 'u1')
+        self.assertNotIn('uid', sut_restarts.restart_snapshot_entry('0', {'dbms': 0}))
+        with tempfile.TemporaryDirectory() as folder:
+            with open(os.path.join(folder, 'bexhoma-sut-pg-1-42-2-restarts.json'), 'w') as file:
+                json.dump({'sut-a': entry, 'sut-b': {'counts': '0', 'containers': {}}, 'old': '0'}, file)
+            uids = sut_restarts.read_snapshot_uids(folder, '42')
+        self.assertEqual(uids, {('pg-1', '2'): {'sut-a': 'u1'}})
+
     def test_host_info(self) -> None:
         e = experiment()
         e._test_host_info_complete([self.connection('u1')])

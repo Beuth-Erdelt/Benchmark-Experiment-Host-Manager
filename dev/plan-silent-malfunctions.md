@@ -2,8 +2,8 @@
 
 Status: **implemented on branch silent-malfunctions, cluster-tested 2026-11-24 (section 4c) with the
 rebuilt images.** S1-S9 done (section 4), plus S10 (end marker of scripts) and S11 (aborted summary checks
-the scripts) found by the cluster tests. P1 done as S12 (2026-11-25: exit code, `-tr` removed). Open: the
-other proposals of section 5 and the docs page (section 6).
+the scripts) found by the cluster tests. P1 done as S12 (2026-11-25: exit code, `-tr` removed), P2 as S13
+(UID at the end of a repetition). Open: the other proposals of section 5 and the docs page (section 6).
 
 Goal: every run either does what was planned or leaves a failed (or at least a skipped/warning) test in
 the summary. A number in the summary that is wrong because something was missing must not pass silently.
@@ -126,6 +126,7 @@ Added after the cluster tests:
 | S10 | Every script run in a pod is wrapped (`clusters.wrap_script`): `( cmd ) && echo BEXHOMA_SCRIPT_END:ok \|\| echo BEXHOMA_SCRIPT_END:failed`; `failed` matches, a missing marker (pod or stream gone before the end, whatever kubectl's exit code) adds `bexhoma: script ended without BEXHOMA_SCRIPT_END`. No `$?`, so the local shell (cmd.exe or sh) passes it unchanged; checked through kubectl on the cluster |
 | S11 | `show_summary_aborted()` also records `Init scripts without errors` from the stored script logs |
 | S12 (P1) | Exit code always on, `-tr` removed. `_print_test_summary()` counts printed and failed tests (never reset, so a mixed experiment adds up its benchmarks); `process()` ends with `tests_outcome()`: `Test successful!` or `Tests failed: N of M`, returns 1 on a failed test (skipped and warnings do not fail). Entry scripts, `experiment.py` and `bexhoma summary` exit with it. `-tr` did only a smoke test (results readable, `Test successful!` before the summary) and one workload sentence; removed with the `test_results()` methods of experiments, benchmarks and evaluators, from all scripts and docs, and as YCSB `verify_result` from the catalog (1.15.0). `-tr` is refused with a message: argparse would otherwise read it as `-t r`. Callers checked: test scripts ignore the exit code, the agent harness goes by `report/index.md`. Offline: clean folder exits 0, broken YCSB and HammerDB copies exit 1 |
+| S13 (P2) | Third UID reading: the end-of-repetition restart snapshot (`bexhoma-sut-*-restarts.json`) stores each pod's `uid` (one `get_pod_uid()` per pod and repetition). `_test_sut_pods_not_replaced()` fails when a snapshot UID is none of the UIDs read at loading start or at a round start of that repetition (`... (after the last round started)`); with one round per repetition, this is the only reading after benchmarking. The restart counter cannot see a replacement: `restartCount` belongs to one pod object, a new pod starts at 0. Also reads the UIDs of additional SUT pods (`sut` list). Older snapshots without `uid`: nothing changes |
 
 Not reproduced: a kubectl stream that breaks while the pod keeps running (S1/S10 cover it by exit code and marker).
 Also found while preparing the runs (not a failing run): `-nbp` is silently ignored by TPC-H/TPC-DS
@@ -136,7 +137,7 @@ Also found while preparing the runs (not a failing run): `-nbp` is silently igno
 | # | Gap | Proposal |
 |---|---|---|
 | P1 | done (S12) | - |
-| P2 | A SUT pod replaced after the last round's host information was read (during the last round) is not seen by S6 | Store the UID in the end-of-repetition restart snapshot (`bexhoma-sut-*-restarts.json`) and compare it in the test; one API read per pod and repetition |
+| P2 | done (S13) | - |
 | P3 | done (4c, S10) | - |
 | P4 | done (4c) | - |
 | P5 | HammerDB: a run shorter than `HAMMERDB_DURATION` is not compared | HammerDB prints no elapsed time; add `BEXHOMA_START/END` around the timed test in the benchmarker script and compare with rampup + duration |
@@ -145,6 +146,7 @@ Also found while preparing the runs (not a failing run): `-nbp` is silently igno
 | P8 | Duplicate child for DBMSBenchmarker only shows as "n of m" per job; which child ran twice is not named | DBMSBenchmarker per-pod entries could carry the pod name; then name both pods |
 | P9 | `-nbp` is accepted and silently ignored by TPC-H/TPC-DS (DBMSBenchmarker uses `-ne`) | Refuse `-nbp` other than 1 for these benchmarks, or map it |
 | P10 | A replaced SUT pod during loading makes bexhoma load the new, empty pod again while the old loader jobs still run | Abort the repetition when the SUT pod's UID changes during loading (S6 has the UID at loading start) |
+| P11 | Future benchmarks that terminate pods or containers on purpose (e.g. time to recover) fail `SUT pods not replaced` and `No SUT container restarts` | Not to build now. The benchmark declares its disruptions (which pod or container, which round, how often) next to `workflow_planned`; whatever performs them records pod, time and the UID that went away (the recovery time needs these anyway). The tests then compare observed with planned: as planned passes (`SUT pods replaced as planned (1 of 1)`), an extra one or a planned one without a trace fails. Without a declaration both tests stay strict |
 
 ## 6. Later: docs page
 

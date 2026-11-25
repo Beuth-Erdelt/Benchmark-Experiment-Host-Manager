@@ -3349,7 +3349,8 @@ class ExperimentBase():
                                         self.cluster.logger.debug(f"Store description of pod {pod}")
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod, counts=per_container)
-                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(restarts, per_container)
+                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(
+                                        restarts, per_container, uid=self.cluster.get_pod_uid(pod))
                                     summary = sut_restarts.format_restart_summary(restarts, per_container)
                                     print(f"{config.configuration:30s}: had {summary} restarts at worker {pod}")
                             statefulsets = list(config.deployment_infos['statefulset'].keys())
@@ -3365,7 +3366,8 @@ class ExperimentBase():
                                         self.cluster.logger.debug(f"Store description of pod {pod}")
                                         self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
                                     restarts = config.host.get_host_restarts(pod, counts=per_container)
-                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(restarts, per_container)
+                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(
+                                        restarts, per_container, uid=self.cluster.get_pod_uid(pod))
                                     summary = sut_restarts.format_restart_summary(restarts, per_container)
                                     print(f"{config.configuration:30s}: had {summary} restarts at worker {pod}")
                             experiment_run = str(config.num_experiment_to_apply_done + 1)
@@ -4022,7 +4024,7 @@ class ExperimentBase():
                 self._record_skipped_test("SUT data survived container restarts (no describe log)")
             else:
                 self._record_skipped_test("SUT data survived container restarts (no restarts)")
-        self._test_sut_pods_not_replaced(connections_sorted)
+        self._test_sut_pods_not_replaced(connections_sorted, sut_restarts.read_snapshot_uids(result_dir, code))
         self._test_host_info_complete(connections_sorted)
         return connections_sorted, monitoring_applications
     #: Host information every SUT pod must report; a failed probe leaves '' or 0.
@@ -4052,28 +4054,40 @@ class ExperimentBase():
             self._record_warning_test("Host information incomplete (" + "; ".join(sorted(incomplete)) + ")")
         else:
             self._record_test(True, "Host information complete")
-    def _test_sut_pods_not_replaced(self, connections_sorted: list) -> None:
+    def _test_sut_pods_not_replaced(self, connections_sorted: list, snapshot_uids: Optional[dict] = None) -> None:
         """
         Record the test ``SUT pods not replaced``: the SUT pod and every worker pod
         kept their UID through each repetition.
 
         Kubernetes replaces an evicted or rescheduled pod by a new one; its
         containers start with no restarts, so the restart test does not see it.
-        The UIDs come from ``connections.config``: the SUT pod's when loading
-        started (``sut_pod_uid_loading``) and every pod's when a benchmarking
-        round started (``pod_uid`` of the host information). Records nothing for
-        results without UIDs.
+        The UIDs come from three readings: the SUT pod's when loading started
+        (``sut_pod_uid_loading``), every pod's when a benchmarking round started
+        (``pod_uid`` of the host information in ``connections.config``) and every
+        pod's at the end of the repetition (``snapshot_uids``, from the restart
+        snapshots). A UID at the end that no earlier reading saw is a pod replaced
+        during the last round. Records nothing for results without UIDs.
+
+        A benchmark that replaces pods on purpose (e.g. to measure the time to
+        recover) has to declare it; this test does not know about that yet.
 
         :param connections_sorted: Connection dicts of ``connections.config``.
+        :param snapshot_uids: ``(configuration lower case, experiment_run)`` to pod
+            name to UID, see :func:`bexhoma.sut_restarts.read_snapshot_uids`.
         """
         uids: dict = {}
+        known: dict = {}
         def add(key, uid):
             if uid:
                 uids.setdefault(key, set()).add(uid)
+                known.setdefault((key[0].lower(), key[1]), set()).add(uid)
         for c in connections_sorted:
             run = (c.get('configuration', c['name']), str(c.get('parameter', {}).get('numExperiment', '')))
             add(run + ('sut',), c.get('sut_pod_uid_loading', ''))
             add(run + ('sut',), c.get('hostsystem', {}).get('pod_uid', ''))
+            for index, sut in enumerate(c.get('sut') or []):
+                if isinstance(sut, dict):
+                    add(run + (f'sut {index}',), sut.get('pod_uid', ''))
             for component, workers in (c.get('worker') or {}).items():
                 for index, worker in enumerate(workers or []):
                     if isinstance(worker, dict):
@@ -4082,6 +4096,12 @@ class ExperimentBase():
             return
         replaced = sorted(f"{configuration} repetition {run} {pod}"
                           for (configuration, run, pod), found in uids.items() if len(found) > 1)
+        for (configuration, run), pods in sorted((snapshot_uids or {}).items()):
+            seen = known.get((configuration, run))
+            if not seen:
+                continue
+            replaced += [f"{configuration} repetition {run} {pod} (after the last round started)"
+                         for pod, uid in sorted(pods.items()) if uid not in seen]
         if replaced:
             print("\n### SUT Pods Replaced")
             for entry in replaced:
