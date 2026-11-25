@@ -5209,6 +5209,11 @@ class HarnessRevisionTest(unittest.TestCase):
         self.assertNotEqual(_harness_revision()["sources_sha256"], before)
 
 
+def _http_response(status: int) -> httpx.Response:
+    """Build a real response with no headers, as the openai errors inspect it."""
+    return httpx.Response(status, request=httpx.Request("POST", "http://model"))
+
+
 class ChatModelTest(unittest.TestCase):
     @staticmethod
     def _model(max_tokens: int = 100, window: Any = None, usage: Any = None) -> ChatModel:
@@ -5256,13 +5261,13 @@ class ChatModelTest(unittest.TestCase):
     @staticmethod
     def _rate_limited() -> RateLimitError:
         """Build the refusal a metered endpoint raises, with no retry-after header."""
-        response = mock.Mock(headers={})
+        response = _http_response(429)
         return RateLimitError("rate limit exceeded", response=response, body=None)
 
     @staticmethod
     def _bad_request(message: str) -> BadRequestError:
         """Build the 400 a server raises, carrying ``message`` as its text."""
-        return BadRequestError(message, response=mock.Mock(headers={}), body=None)
+        return BadRequestError(message, response=_http_response(400), body=None)
 
     def test_a_metered_endpoint_refusing_a_turn_is_waited_out(self) -> None:
         """A per-minute quota clears on its own; losing the phase to it does not."""
@@ -5284,7 +5289,7 @@ class ChatModelTest(unittest.TestCase):
         model = self._model()
         answer = model._client.chat.completions.create.return_value
         failure = InternalServerError(
-            "upstream connect error", response=mock.Mock(headers={}), body=None)
+            "upstream connect error", response=_http_response(503), body=None)
         model._client.chat.completions.create.side_effect = [failure, answer]
 
         reply = model.reply([{"role": "user", "content": "question"}])
@@ -5296,7 +5301,7 @@ class ChatModelTest(unittest.TestCase):
         """A restart of the local server should not lose the investigation either."""
         model = self._model()
         answer = model._client.chat.completions.create.return_value
-        failure = APIConnectionError(message="Connection error.", request=mock.Mock())
+        failure = APIConnectionError(message="Connection error.", request=httpx.Request("POST", "http://model"))
         model._client.chat.completions.create.side_effect = [failure, answer]
 
         reply = model.reply([{"role": "user", "content": "question"}])
@@ -5344,7 +5349,7 @@ class ChatModelTest(unittest.TestCase):
         """A wrong --base-url must not hang the phase waiting for an answer."""
         model = self._model()
         model._client.chat.completions.create.side_effect = APIConnectionError(
-            message="Connection error.", request=mock.Mock())
+            message="Connection error.", request=httpx.Request("POST", "http://model"))
 
         with self.assertRaises(ModelUnreachable):
             model.reply([{"role": "user", "content": "question"}])

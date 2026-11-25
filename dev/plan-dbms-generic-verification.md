@@ -1,6 +1,6 @@
 # Plan: what is left after the DBMS-generic refactor (#850)
 
-Status: **open, 2026-11-22.** The refactor (branch dbms-agnostic-code, #850) is in v0.11.13. The full
+Status: **done, 2026-11-24** (opened 2026-11-22). The refactor (branch dbms-agnostic-code, #850) is in v0.11.13. The full
 test-docs suite (~490 logs, 2026-11-11..18) passed and covers most of the old checklist. This plan lists only
 what was never checked after the refactor, and what follows from it.
 
@@ -9,8 +9,9 @@ constraints and statistics `true` (`tests/yaml_experiments/tpch-postgres-vs-pgdu
 the docs placeholders are filled, `logs_tests/SUMMARY.md` has no unchecked row.
 Done 2026-11-23 on branch `small-corrections` (local, not pushed): section 3 in code (a87f1894, `-sl` makes the
 loading test skipped; result contract 1.15.0), section 7 (48b41866, both sync tools fixed, with tests).
-Still open: section 2 (CedarDB SSB never ran; `docs_tpch_databaseservice_execution.log` is still 0.11.12, and its
-rerun is also the cluster check of section 3), sections 4 and 5.
+Done 2026-11-23: section 2 (CedarDB SSB, DatabaseService `-sl` rerun, which also verified section 3).
+Done 2026-11-24 on branch `verification-decisions`: section 5 (4.1, 4.2, 4.3 decided and done).
+Done 2026-11-24: the cluster run of the multi-DBMS refresh in section 4. Left: the side findings in section 8.
 Side finding of 1.5, not fixed: the PgDuckDB force-execution workload note ignores a system's own `sut_parameters`
 (belongs to [plan-pgduckdb-force-execution.md](plan-pgduckdb-force-execution.md), deferred by the user 2026-11-23).
 
@@ -38,7 +39,7 @@ Results (2026-11-22, bexhoma 0.12.2, 11:27-13:04):
 
 - [x] 1.1 passed (7 min): `tpch_refresh` job per DBMS (`pgduckdb-1-1-1-2`, `postgresql-1-1-1-2`), no SQL errors.
   The summary shows only the refresh job times, not RF1/RF2 row counts, so that part of the check is not visible.
-- [ ] 1.5 **failed** (73 min): `SQL errors` and `Some active queries missing from the totals`: PostgreSQL
+- [x] 1.5 **failed** first (73 min), passed in the rerun of 2026-11-23 (see status above): `SQL errors` and `Some active queries missing from the totals`: PostgreSQL
   Q17 and Q20 cancelled by the 600 s timeout in every phase (`canceling statement due to user request`).
   Cause: the YAML sets `init_indexes/init_constraints/init_statistics: false`; the command line examples use
   `-xii -xic -xis`. The rest is right (checked in the result folder): alias `DBMS A2` for PostgreSQL,
@@ -46,19 +47,19 @@ Results (2026-11-22, bexhoma 0.12.2, 11:27-13:04):
   the PgDuckDB SUT manifest. Side finding: the workload note "PgDuckDB queries are forced through the DuckDB
   execution engine" is missing, because the note follows only the global `tpch.duckdb_force_execution`, not a
   system's own `sut_parameters`.
-  Fix proposal: indexes, constraints, statistics `true` in the YAML, then rerun only this block.
+  Fix: indexes, constraints, statistics `true` in the YAML, rerun of only this block passed (#901).
 - [x] 3.1 passed (11 min): 4 configurations; pooler pods 1, 1, 2, 2; MAX_CLIENT_CONN 32, 64, 32, 64;
   DEFAULT/MIN_POOL_SIZE 32 everywhere (from the pool pods' describe logs; the summary does not show pool sizes).
 - [x] 3.2 passed (4 min): DEFAULT/MIN_POOL_SIZE and MAX_CLIENT_CONN = 16 for PGBouncer-1, 64 for PGBouncer-2.
 
 After the runs:
 
-- [ ] Check every log against its "Check:" column; any failed test is a finding, not a doc edit.
-- [ ] `python scripts/replace-docs.py`: fills the "(not run yet)" placeholders in
+- [x] Check every log against its "Check:" column; any failed test is a finding, not a doc edit.
+- [x] `python scripts/replace-docs.py`: fills the "(not run yet)" placeholders in
   `docs/Example-TPC-H.md` ("Refresh Stream on two DBMS"), `docs/Example-PGBouncer.md` ("Sweeping the Pool"),
   `dev/Design-Yaml-Experiment-Entry-Script.md` ("Example Run").
-- [ ] `python scripts/demo-runs.py`: regenerate `logs_tests/SUMMARY.md` (now 4 unchecked rows; CI `--check`).
-- [ ] Commit logs, summaries, docs on the branch (`Test: ...`), do not push.
+- [x] `python scripts/demo-runs.py`: regenerate `logs_tests/SUMMARY.md` (now 4 unchecked rows; CI `--check`).
+- [x] Commit logs, summaries, docs on the branch (`Test: ...`), do not push.
 
 ## 2. Existing blocks that never ran after the refactor
 
@@ -90,7 +91,7 @@ unknown), so `storage_reused` is False and the test is recorded as passed.
   1.15.0 (`skipped_when` extended).
 - [x] Unit tests in `tests/test_storage_classes.py::LoadingProvenanceTest` (with/without `-sl`, both reasons,
   old results); the report's interpretation text in `report_writer.py` describes the skipped variant.
-- [ ] Verified by the 2.1 rerun (section 2): the summary must show the skipped test.
+- [x] Verified by the 2.1 rerun (section 2, 2026-11-23): the summary shows the skipped test.
 
 ## 4. Phase 0: local refusals (no cluster; kubectl context without access)
 
@@ -107,17 +108,23 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
   Changed the same day (user): the refusal of DBMS with different refresh jobs is gone. Each configuration's
   refresh entry gets the `refresh_template` of its own DBMS (`TpchExperiment.add_configuration()`), so
   `-dbms PostgreSQL ClickHouse -xrs 1` runs, each DBMS with its own job. Only a DBMS without a refresh job is
-  refused (none in TPC-H). Not yet run on the cluster: `bexhoma tpch -dbms PostgreSQL ClickHouse MySQL -sf 1
-  -xrs 1 -ne 1 run`, check one `tpch_refresh` job per DBMS with its own template and no SQL errors.
+  refused (none in TPC-H). Run on the cluster 2026-11-24 (1795550789, bexhoma 0.12.4, `-sf 1 -ne 1 -xii -xic
+  -xis -tr -xrs 1`, `logs_tests/local/refresh_three_dbms.log`, 8 min): every test passed, one `tpch_refresh`
+  job per DBMS, the same generator image, the loader image of each DBMS (`loader_tpch_refresh_postgresql`,
+  `_clickhouse`, `_mysql`), RF1 and RF2 ran in all three, no SQL errors.
 - [x] Unit tests instead of runs, so they need no rerun.
 
 ## 5. Decisions for the user (before any run)
 
-- [ ] 4.1 SSB `-xsv flat`: PostgreSQL/MonetDB/CedarDB/PgDuckDB use `reset-ssb.sql`,
-  MySQL/MariaDB/MariaDBCS/ClickHouseCluster/Citus `reset-ssb-flat.sql`. Intended?
-  Test: `bexhoma ssb -dbms PostgreSQL -xsv flat -ar run`.
-- [ ] 4.2 Container tenancy for MySQL/MariaDB: try `bexhoma tpch -dbms MySQL -mtn 2 -mtb container -nlp 2 run`;
-  if it works, add `multi_tenancy: [container]` to their tpch entries in cluster.config.
+- [x] 4.1 SSB `-xsv flat`: decided 2026-11-24, flat has its own reset scripts. PostgreSQL (also PgDuckDB),
+  CedarDB and MonetDB got `reset-ssb-flat.sql` (only `lineorder_flat`); their `reset-ssb.sql` names the five
+  star-schema tables instead of the whole database; cluster.config uses `reset-ssb{schema_suffix}.sql` (b0d7d0c9).
+  Cluster check passed 2026-11-24 (1795527352, `logs_tests/local/p3_ssb_flat_reset.log`): every test passed,
+  the reset logs show `reset-ssb-flat` for all four DBMS; CedarDB accepts the table-scoped `VACUUM`.
+- [x] 4.2 Container tenancy for MySQL/MariaDB in TPC-H: done 2026-11-24. `multi_tenancy: ['container']` declared
+  in their tpch entries; small docs runs in test-docs-multitenant.sh (SF 1, 2 tenants, `-xii -xic -xis`), shown in
+  Example-Multi-Tenant.md: `docs_tpch_mysql_tenants_container` (1795529289) and
+  `docs_tpch_mariadb_tenants_container` (1795529977), all tests passed.
 - [x] 4.3 Dragonfly cluster with `-m`: "Monitoring metrics missing" (worker filesystem series absent for
   in-memory runs). Solved differently (user, checked 2026-11-23), no `sparse_metrics`: a missing series of a
   component whose pods were scraped is a `warning` reason, and a warning needs judgement but is no failure.
@@ -146,3 +153,15 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
 ## Order
 
 1 (done) → 3 (code done; verified by 2.1) → 2 → 7 (done) → 4 → 5 after decisions.
+
+
+## 8. Side findings of the refresh run (2026-11-24), not fixed
+
+- RF2 row counts: only the PostgreSQL refresh loader prints them (`DELETE 6005`, `DELETE 1500`). The MySQL loader
+  runs RF2 without `SELECT ROW_COUNT()` (RF1 has it), the ClickHouse loader prints no counts for RF1 or RF2
+  (lightweight `DELETE` reports none). Note for the 1.1 check: RF2 deletes other orders than RF1 inserts, so only
+  orders match (1500 = 1500); lineitem counts differ by design (5822 inserted, 6005 deleted at SF 1).
+- Db2 external-table logs: `load.py` of the Db2 loaders (`images/{tpch,tpcds,tpch_refresh}/loader_db2`) writes its
+  chunk files next to the source file, and Db2 writes one `BEXHOMA.DB2INST1.SYSTET*.log` per load there. In the
+  shared folder `/data/tpch-refresh/SF1` 12 of them were left from the run of 2026-11-11 (removed 2026-11-24; no
+  others under `/data`). Fix: chunk files to `/tmp` and `LOGDIR '/tmp'` in the external-table options.

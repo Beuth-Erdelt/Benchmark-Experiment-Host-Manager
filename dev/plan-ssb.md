@@ -5,8 +5,9 @@ Status: **implemented and run on the cluster** (2026-10-25, branch
 released in v0.11.9. Checked 2026-11-22: ClickHouseCluster (C1-C6 below) is done
 too, with replicated (`docs_ssb_clickhousecluster`) and distributed dimensions
 (`docs_ssb_clickhousecluster_distributed`), and MariaDB ColumnStore runs SSB
-(`docs_ssb_mariadbcs`, `_flat`). Still open: the SF10 comparison replicated vs
-distributed (both logs are SF 1); multi-tenancy (`-mtn` is still refused).
+(`docs_ssb_mariadbcs`, `_flat`). Still open: multi-tenancy (`-mtn` is still refused).
+Dropped 2026-11-24: an SF10 comparison replicated vs distributed (the docs runs are
+functional tests, SF 1 is enough).
 Code moved 2026-11-13: `ssb.py`, `bexhoma/benchmarks/ssb.py` and
 `bexhoma/experiments/ssb.py` are now `bexhoma/benchmarks/ssb/{cli,benchmark,experiment}.py`.
 Tracks issue
@@ -168,7 +169,7 @@ MySQL, MariaDB. These notes override the sketches below where they differ.
   MariaDB (1793208774), `-xii -xic -xis`, passed; flat check PostgreSQL vs MySQL vs
   MariaDB (1793209328, `-nlp 2`): no errors, no result mismatches (MySQL variant of the
   year expression).
-- Open: SF10 comparison replicated vs distributed.
+- Dropped (2026-11-24): SF10 comparison replicated vs distributed; the docs runs are functional tests.
 
 ## Next: ClickHouseCluster (planned 2026-10-28)
 

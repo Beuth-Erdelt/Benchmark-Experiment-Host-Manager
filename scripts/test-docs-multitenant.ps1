@@ -254,6 +254,50 @@ bexhoma benchbase `
 
 Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
+bexhoma tpch `
+  -dbms MySQL                   <# DBMS under test #> `
+  -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -ne "1,1"                     <# parallel client counts for loading and benchmarking #> `
+  -nlp 1                        <# number of data loader pods #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -mtb container                <# tenant isolation level (schema / database / container) #> `
+  -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mysql_tenants_container.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+
+bexhoma tpch `
+  -dbms MariaDB                 <# DBMS under test #> `
+  -sf 1                         <# scaling factor (controls database size in GB) #> `
+  -ne "1,1"                     <# parallel client counts for loading and benchmarking #> `
+  -nlp 1                        <# number of data loader pods #> `
+  -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -tr                           <# verify result meets basic sanity requirements #> `
+  -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -mtb container                <# tenant isolation level (schema / database / container) #> `
+  -mtn $BEXHOMA_NUM_TENANTS     <# number of tenants #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadb_tenants_container.log" -Encoding utf8
+
+Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT MariaDB container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+
 
 ###########################################
 ############## Clean Folder ###############

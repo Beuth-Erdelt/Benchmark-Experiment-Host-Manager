@@ -3,16 +3,21 @@
 -- Copyright (C) 2026 Patrick K. Erdelt
 -- SPDX-License-Identifier: AGPL-3.0-or-later
 -- See LICENSE for details.
--- Purpose: Pre-benchmark reset for SSB on CedarDB, run before each
---          benchmarking round with -ar. Steps of the reset contract
+-- Purpose: Pre-benchmark reset for SSB (star schema) on CedarDB, run before
+--          each benchmarking round with -ar. Steps of the reset contract
 --          (docs/DBMS.md): 1 statistics, 2 persist, 3 counters. \timing reports
---          elapsed time per statement on stdout. Whole database, so both schema variants are covered.
+--          elapsed time per statement on stdout. -xsv flat uses
+--          reset-ssb-flat.sql.
 --          No curly braces in this file: bexhoma may fill it with str.format().
 
 \timing on
 
 -- step 1 (statistics)
-VACUUM VERBOSE ANALYZE;
+VACUUM VERBOSE ANALYZE public.customer;
+VACUUM VERBOSE ANALYZE public.supplier;
+VACUUM VERBOSE ANALYZE public.part;
+VACUUM VERBOSE ANALYZE public.dates;
+VACUUM VERBOSE ANALYZE public.lineorder;
 
 -- step 2 (persist): n/a - CHECKPOINT is not implemented in CedarDB
 
