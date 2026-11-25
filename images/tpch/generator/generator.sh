@@ -56,8 +56,6 @@ echo "SF:$SF"
 echo "$BEXHOMA_CHILD" > /tmp/tpch/BEXHOMA_CHILD
 
 ######################## Multi-Tenant parameters ########################
-BEXHOMA_NUM_PODS_TMP=$BEXHOMA_NUM_PODS
-BEXHOMA_CHILD_TMP=$BEXHOMA_CHILD
 if [ "$BEXHOMA_TENANT_BY" = "schema" ]; then
     echo "BEXHOMA_TENANT_BY is schema"
     #BEXHOMA_NUM_PODS=1
@@ -91,76 +89,11 @@ elif [ "$BEXHOMA_TENANT_BY" = "container" ]; then
 else
     echo "BEXHOMA_TENANT_BY is not set"
 fi
-BEXHOMA_NUM_PODS_REDUCED=$BEXHOMA_NUM_PODS
-
-######################## Destination of raw data ########################
-if test $STORE_RAW_DATA -gt 0
-then
-	# store in (distributed) file system
-	if test $BEXHOMA_NUM_PODS -gt 1
-	then
-		# data should be split into parts
-		destination_raw=/data/tpch/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
-	else
-		# data is not split into parts
-		destination_raw=/data/tpch/SF$SF
-	fi
-	# *tbl* also matches the split files (customer.tbl.2) of children > 1
-	shopt -s nullglob
-	existing_tbl_files=("$destination_raw"/*tbl*)
-	shopt -u nullglob
-	# .bexhoma_generated is written only after a complete generation (below); files
-	# without it are what is left of a failed or killed generator (or of an image
-	# before the marker), and are generated again. Only the files of this folder go:
-	# the folder of a single pod also holds the split subfolders <pods>/<child>.
-	if [ -d "$destination_raw" ] && [ ${#existing_tbl_files[@]} -gt 0 ] && [ ! -f "$destination_raw/.bexhoma_generated" ]; then
-		echo "Raw folder has no completion marker (generation incomplete, or from an older image): generate again"
-		rm -f "${existing_tbl_files[@]}"
-		existing_tbl_files=()
-	fi
-	if [ -d "$destination_raw" ] && [ ${#existing_tbl_files[@]} -gt 0 ]; then
-		### raw folder exists and contains completely generated .tbl files ###
-		if test $STORE_RAW_DATA_RECREATE -gt 0
-		then
-			echo "Recreate raw folder"
-			rm -r $destination_raw
-			mkdir -p $destination_raw
-		else
-			### Exit successfully ###
-			echo "Raw folder exists, I do nothing"
-			SECONDS_END_SCRIPT=$SECONDS
-			DURATION_SCRIPT=$((SECONDS_END_SCRIPT-SECONDS_START_SCRIPT))
-			echo "Duration $DURATION_SCRIPT seconds"
-			echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
-			bexhoma_end_epoch=$(date -u +%s)
-			echo "BEXHOMA_START:$bexhoma_start_epoch"
-			echo "BEXHOMA_END:$bexhoma_end_epoch"
-			exit 0
-		fi
-	else
-		###  create raw folder ###
-		mkdir -p $destination_raw
-	fi
-else
-	# only store locally
-	if test $BEXHOMA_NUM_PODS -gt 1
-	then
-		# data should be split into parts
-		#destination_raw=/data/tpch/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
-		destination_raw=/tmp/tpch/SF$SF/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
-	else
-		# data is not split into parts
-		#destination_raw=/data/tpch/SF$SF
-		destination_raw=/tmp/tpch/SF$SF
-	fi
-	mkdir -p $destination_raw
-fi
-echo "destination_raw:$destination_raw"
-
-######################## Multi-Tenant parameters ########################
-BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_TMP
 
 ######################## Wait until all pods of job are ready ########################
+# Before the check for existing data: a pod that exits early must still check in, or the
+# pods of the job that do generate wait for it forever (other configurations or earlier
+# experiments may have completed some of the folders already).
 if test $BEXHOMA_SYNCH_GENERATE -gt 0
 then
 	echo "Decrementing job counter bexhoma-generator-podcount-job-$BEXHOMA_CONNECTION-$BEXHOMA_EXPERIMENT-$BEXHOMA_DATA_JOB"
@@ -194,19 +127,76 @@ then
 	fi
 fi
 
+######################## Destination of raw data ########################
+# /data/tpch/SF<SF>[/<N>/<child>] (STORE_RAW_DATA=1, shared) or /tmp/tpch/... (local);
+# <N> and <child> are the per-tenant values of the multi-tenant remapping above
+if test $STORE_RAW_DATA -gt 0
+then
+	base_raw=/data/tpch/SF$SF
+else
+	base_raw=/tmp/tpch/SF$SF
+fi
+if test $BEXHOMA_NUM_PODS -gt 1
+then
+	destination_raw=$base_raw/$BEXHOMA_NUM_PODS/$BEXHOMA_CHILD
+else
+	destination_raw=$base_raw
+fi
+mkdir -p $destination_raw
+echo "destination_raw:$destination_raw"
+
+######################## Exit if data is already there ########################
+# Several pods may generate the same folder at the same time (one job per DBMS configuration,
+# each with its own pods, all sharing /data). So every pod generates into its own staging
+# folder next to the destination (same file system) and moves the finished files in with mv
+# (atomic rename); .bexhoma_generated is written after the move. A loader never sees a
+# half-written file, and no pod deletes files of another pod. dbgen is deterministic, so all
+# copies are equal. Files without the marker (a generator that failed or was killed, or an
+# image before the marker) are not reused, the move replaces them.
+# Recreate removes only files: with one pod the folder is /data/tpch/SF<SF> itself, which also
+# holds the <N>/<child> folders of split data.
+if [ -f "$destination_raw/.bexhoma_generated" ]
+then
+	if test $STORE_RAW_DATA_RECREATE -gt 0
+	then
+		echo "Recreate raw folder"
+		rm -f "$destination_raw"/*tbl* "$destination_raw/.bexhoma_generated"
+	else
+		echo "Raw folder exists, I do nothing"
+		DURATION_SCRIPT=$((SECONDS-SECONDS_START_SCRIPT))
+		echo "Duration $DURATION_SCRIPT seconds"
+		echo "BEXHOMA_DURATION:$DURATION_SCRIPT"
+		bexhoma_end_epoch=$(date -u +%s)
+		echo "BEXHOMA_START:$bexhoma_start_epoch"
+		echo "BEXHOMA_END:$bexhoma_end_epoch"
+		exit 0
+	fi
+else
+	# *tbl* also matches the split files (customer.tbl.2) of children > 1
+	shopt -s nullglob
+	existing_tbl_files=("$destination_raw"/*tbl*)
+	shopt -u nullglob
+	if [ ${#existing_tbl_files[@]} -gt 0 ]; then
+		echo "Raw folder has no completion marker (generation incomplete, or from an older image): generate again"
+	fi
+fi
+staging_raw=$destination_raw/.staging-${HOSTNAME:-$$}
+rm -rf $staging_raw
+mkdir -p $staging_raw
+echo "staging_raw:$staging_raw"
+
 ######################## Start measurement of time ########################
 bexhoma_start_epoch=$(date -u +%s)
 SECONDS_START=$SECONDS
 echo "Start $SECONDS_START seconds"
 
 ######################## Copy generator executables ########################
-cd $destination_raw
+cd $staging_raw
 cp /tmp/dists.dss ./dists.dss
 cp /tmp/dbgen ./dbgen
 
 ######################## Execute workload ###################
 ############ Differ between single-pod and multi-pod setting ############
-BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS_REDUCED
 if test $BEXHOMA_NUM_PODS -gt 1
 then
 	echo "./dbgen -s $SF -S $BEXHOMA_CHILD -C $BEXHOMA_NUM_PODS"
@@ -221,10 +211,10 @@ fi
 ######################## Fail if generation failed ###################
 # Only reached when generating: existing data exits above
 shopt -s nullglob
-generated_tbl_files=("$destination_raw"/*tbl*)
+generated_tbl_files=("$staging_raw"/*tbl*)
 shopt -u nullglob
 if [ $DBGEN_RC -ne 0 ] || [ ${#generated_tbl_files[@]} -eq 0 ]; then
-	echo "FATAL: dbgen failed (exit code $DBGEN_RC, ${#generated_tbl_files[@]} files in $destination_raw)"
+	echo "FATAL: dbgen failed (exit code $DBGEN_RC, ${#generated_tbl_files[@]} files in $staging_raw)"
 	exit 1
 fi
 
@@ -237,7 +227,7 @@ fi
 #time mv *tbl* /tmp/tpch
 #time mv *tbl* $destination_raw
 echo "Generated these files:"
-ls $destination_raw/*tbl* -lh
+ls $staging_raw/*tbl* -lh
 
 ######################## End timing before transformation and show timing information ###################
 #bexhoma_end_epoch=$(date -u +%s)
@@ -263,7 +253,7 @@ ls $destination_raw/*tbl* -lh
 if test $TRANSFORM_RAW_DATA -gt 0
 then
 	echo "Remove last character per line"
-	for i in $destination_raw/*tbl*; do
+	for i in $staging_raw/*tbl*; do
 		echo "$i"
 	    time sed 's/.$//' -i $i
 	    SED_RC=$?
@@ -274,10 +264,23 @@ then
 	done
 fi
 
-######################## Mark generation as complete ###################
+######################## Move generated files into place and mark them complete ###################
 # Only reached when dbgen and the transformation succeeded; a later pod reuses
-# the folder only with this marker (see above)
-echo "SF=$SF BEXHOMA_CHILD=$BEXHOMA_CHILD BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS generated=$(date -u +%s)" > "$destination_raw/.bexhoma_generated"
+# the folder only with the marker (see above)
+cd /
+if [ -f "$destination_raw/.bexhoma_generated" ] && test $STORE_RAW_DATA_RECREATE -eq 0
+then
+	echo "Another pod completed $destination_raw meanwhile, discarding this copy"
+else
+	if ! mv -f "${generated_tbl_files[@]}" "$destination_raw"/; then
+		echo "FATAL: moving the files to $destination_raw failed"
+		exit 1
+	fi
+	echo "SF=$SF BEXHOMA_CHILD=$BEXHOMA_CHILD BEXHOMA_NUM_PODS=$BEXHOMA_NUM_PODS generated=$(date -u +%s)" > "$destination_raw/.bexhoma_generated"
+fi
+rm -rf $staging_raw
+echo "Files in $destination_raw:"
+ls $destination_raw/*tbl* -lh
 
 ######################## End measurement of time ########################
 bexhoma_end_epoch=$(date -u +%s)

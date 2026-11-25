@@ -240,10 +240,25 @@ class GeneratorMarkerTest(unittest.TestCase):
                 text = file.read()
             with self.subTest(script=path):
                 self.assertIn('no completion marker', text)
-                written = text.index('> "${destination_raw%/}/.bexhoma_generated"'
-                                     if 'tpcds' in path else '> "$destination_raw/.bexhoma_generated"')
+                written = text.index('> "$destination_raw/.bexhoma_generated"')
                 self.assertLess(text.rindex('FATAL:'), written)
                 self.assertLess(text.index('I do nothing'), written)
+
+    def test_synch_before_reuse_and_staging(self) -> None:
+        """A pod that reuses existing data still checks in, and pods of several DBMS configurations
+        that generate the same folder at the same time do not write into or delete each other's files."""
+        for path in ('images/tpch/generator/generator.sh', 'images/tpcds/generator/generator.sh',
+                     'images/ssb/generator/generator.sh'):
+            with open(path, encoding='utf-8') as file:
+                text = file.read()
+            with self.subTest(script=path):
+                self.assertLess(text.index('redis-cli -h \'bexhoma-messagequeue\' decr "bexhoma-generator-podcount-job-'),
+                                text.index('I do nothing'))
+                self.assertIn('staging_raw=$destination_raw/.staging-${HOSTNAME:-$$}', text)
+                self.assertIn('Another pod completed $destination_raw meanwhile, discarding this copy', text)
+                # files are deleted only on an explicit recreate, never because the marker is missing
+                self.assertEqual(text.count('rm -f "$destination_raw"/'), 1)
+                self.assertNotIn('rm -r $destination_raw', text)
 
 
 class RuntimeGapsTest(unittest.TestCase):
