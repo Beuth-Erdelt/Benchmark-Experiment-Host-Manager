@@ -399,6 +399,49 @@ class ConfiguredAmountTest(unittest.TestCase):
         self.assertIn('b (120s of 300s)', e._test_results[0][1])
         self.assertNotIn('a (', e._test_results[0][1])
 
+    HAMMERDB_LOG = ("HAMMERDB_DURATION:5\nHAMMERDB_RAMPUP:2\nStart 0 seconds\n16 VU TEST\n"
+                    "Vuser 1:Rampup complete, Taking start Transaction Count.\n"
+                    "Vuser 1:Test complete, Taking end Transaction Count.\n"
+                    "Vuser 1:FINISHED SUCCESS\nEnd 429 seconds\nDuration 429 seconds\n"
+                    "Benchmarking done\nDuration 470 seconds\n")
+
+    def test_hammerdb_markers(self) -> None:
+        from bexhoma.benchmarks.hammerdb.evaluator import HammerdbEvaluator
+        markers = HammerdbEvaluator.run_markers(self.HAMMERDB_LOG)
+        self.assertEqual(markers, {'seconds': 429, 'started': 1, 'completed': 1, 'failed': [],
+                                   'rampup': 2.0, 'duration': 5.0})
+        failed = self.HAMMERDB_LOG.replace('Vuser 1:FINISHED SUCCESS', 'Vuser 3:FINISHED FAILED')
+        self.assertEqual(HammerdbEvaluator.run_markers(failed)['failed'], ['3'])
+
+    def test_hammerdb_tests(self) -> None:
+        """P5: a short run and a failed virtual user fail; transaction errors are not looked at."""
+        from bexhoma.benchmarks.hammerdb.evaluator import HammerdbEvaluator
+        logs = {
+            'ok': self.HAMMERDB_LOG.replace('FINISHED SUCCESS', 'FINISHED SUCCESS\nError in Virtual User 2: deadlock'),
+            'short': self.HAMMERDB_LOG.replace('429 seconds', '200 seconds'),
+            'cut': self.HAMMERDB_LOG.replace('Vuser 1:Test complete, Taking end Transaction Count.\n', ''),
+            'vufail': self.HAMMERDB_LOG.replace('Vuser 1:FINISHED SUCCESS', 'Vuser 4:FINISHED FAILED'),
+            'old': 'HAMMERDB_DURATION:5\nHAMMERDB_RAMPUP:2\n',
+        }
+        with tempfile.TemporaryDirectory() as folder:
+            for pod, text in logs.items():
+                with open(os.path.join(folder, f'bexhoma-benchmarker-pg-1-42-1-1-1-{pod}.dbmsbenchmarker.log'), 'w') as file:
+                    file.write(text)
+            evaluator = HammerdbEvaluator.__new__(HammerdbEvaluator)
+            evaluator.path = folder
+            rows = pd.DataFrame([{'connection': f'pg-{pod}', 'pod': f'{pod}.dbmsbenchmarker'} for pod in logs])
+            e = experiment()
+            with mock.patch.object(HammerdbEvaluator, 'get_df_benchmarking', return_value=rows):
+                evaluator._test_runs_complete(e)
+        (vu_passed, vu_label), (time_passed, time_label) = e._test_results
+        self.assertFalse(vu_passed)
+        self.assertEqual(vu_label, 'Virtual users FINISHED FAILED: pg-vufail (Vuser 4)')
+        self.assertFalse(time_passed)
+        self.assertIn('pg-short (200s of 420s)', time_label)
+        self.assertIn('pg-cut (0 of 1 VU tests completed)', time_label)
+        self.assertNotIn('pg-ok', time_label + vu_label)
+        self.assertNotIn('pg-old', time_label + vu_label)
+
 
 class ExitCodeTest(unittest.TestCase):
     """P1: a failed test of any summary makes the run exit 1; there is no -tr."""

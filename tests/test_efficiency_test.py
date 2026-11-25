@@ -98,13 +98,13 @@ class EvaluatorRecordTestsTest(unittest.TestCase):
     def test_hammerdb_without_keying_skips(self):
         exp = _experiment(HAMMERDB_KEYANDTHINK="false")
         df = pd.DataFrame({'threads': [40], 'NOPM': [1000], 'efficiency': [50.0]})
-        HammerdbEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
+        HammerdbEvaluator.record_tests(_no_results(HammerdbEvaluator), exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp)[0][0], None)
 
     def test_hammerdb_with_keying_tests(self):
         exp = _experiment(HAMMERDB_KEYANDTHINK="true")
         df = pd.DataFrame({'threads': [40], 'NOPM': [500], 'efficiency': [97.2]})
-        HammerdbEvaluator.record_tests(None, exp, pd.DataFrame(), df, {}, {})
+        HammerdbEvaluator.record_tests(_no_results(HammerdbEvaluator), exp, pd.DataFrame(), df, {}, {})
         self.assertEqual(_labels(exp), [(True, "efficiency contains no 0 or NaN")])
 
 
