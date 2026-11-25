@@ -18,8 +18,7 @@
     ./Monitoring.md
     ./Evaluators.md
     ./Collectors.md
-    ./Adding-a-Benchmark.md
-    ./Adding-a-DBMS.md
+    ./Modularity.md
     ./Environment.md
     ./Prepare-Testbeds.md
     ./Example-YCSB.md

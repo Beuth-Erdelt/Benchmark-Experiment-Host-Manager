@@ -2,8 +2,8 @@
 
 Contributions are welcome. Areas where help is most useful:
 
-- **New workloads** — a benchmark is one folder `bexhoma/benchmarks/<name>/`, plus its scripts in `experiments/`, job templates in `k8s/` and Docker images in `images/`, see [Adding a Benchmark](Adding-a-Benchmark.md).
-- **New DBMS** — a DBMS is added by configuration: an entry in the `dockers` section of the cluster configuration, a deployment manifest in `k8s/` and DDL scripts in `experiments/`, see [Adding a DBMS](Adding-a-DBMS.md).
+- **New workloads** — a benchmark is one folder `bexhoma/benchmarks/<name>/`, plus its scripts in `experiments/`, job templates in `k8s/` and Docker images in `images/`, see [Adding a Benchmark](Modularity.md#adding-a-benchmark).
+- **New DBMS** — a DBMS is added by configuration: an entry in the `dockers` section of the cluster configuration, a deployment manifest in `k8s/` and DDL scripts in `experiments/`, see [Adding a DBMS](Modularity.md#adding-a-dbms).
 - **Bug fixes and testing** — report bugs via the [issue tracker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/issues) or open a pull request.
 - **Documentation** — corrections, clarifications, and new examples are all welcome.
 
@@ -170,7 +170,7 @@ Some tests compare the code with recorded data. A deliberate change is accepted 
 |---|---|---|
 | `test_dbms_snapshots.py` | an entry script builds a different experiment than recorded in `tests/snapshots/` | `BEXHOMA_UPDATE_SNAPSHOTS=1 python -m pytest tests/test_dbms_snapshots.py`, then review the diff of `tests/snapshots/` |
 | `test_no_dbms_in_python.py`, `test_no_benchmark_in_generic.py` | a file names a DBMS or a benchmark more (or less) often than its baseline in `tests/` allows | more: move the detail to `cluster.config`'s `dockers:` section or the benchmark's folder `bexhoma/benchmarks/<name>/`; less: shrink the baseline with `BEXHOMA_UPDATE_SNAPSHOTS=1` and the same test |
-| `test_benchmark_contract.py` | a benchmark folder lacks something generic code relies on: classes, asset folder, job templates, summary tables, entry script shim | complete the folder, see [Adding a Benchmark](Adding-a-Benchmark.md#tests) |
+| `test_benchmark_contract.py` | a benchmark folder lacks something generic code relies on: classes, asset folder, job templates, summary tables, entry script shim | complete the folder, see [Adding a Benchmark](Modularity.md#tests) |
 | `test_system_descriptors.py` | an entry in `dockers` of `k8s-cluster.config` is invalid, its job template is missing, or a local `cluster.config` declares other `benchmarks`, `base_system` or aliases | fix the entry; add a new DBMS to both files |
 | `test_reset_scripts.py` | a DBMS that an entry script offers has no reset scripts for `-ar` | add them, or list the DBMS in `NO_RESET` |
 | `test_naming_conformance.py` | `contracts/contract_result.yml` or `contract_catalog.yml` and the code disagree, e.g. on the contract version or the naming of result folders | change both together; a new contract version also goes into `report_writer.SCHEMA_VERSION` or `spec.CATALOG_CONTRACT_VERSION` |

@@ -47,6 +47,8 @@ They provide:
 
 - `wait_process` / `Wait-BexhomaProcess` — polls until no `python <name>.py` process remains; called after every `bexhoma` invocation.
 - `clean_logs` / `Invoke-CleanLogs` — strips kubectl token warnings and extracts `## Show Summary` sections from each `.log` file into `<basename>_summary.md` files. Both leave logs and summaries as UTF-8 without BOM with LF line endings; `Invoke-CleanLogs` does not touch a file that needs no change.
+  Off by default: the call at the end of a script only cleans with `BEXHOMA_CLEAN_LOGS=1` (bash) or `$env:BEXHOMA_CLEAN_LOGS = '1'` (PowerShell). By hand: `source scripts/testfunctions.sh; clean_logs --force` or `. .\scripts\testfunctions.ps1; Invoke-CleanLogs -Force`.
+  Logs that another process has open for writing (runs of other scripts that are still going) are skipped: rewriting them in place mixed them up with other logs. On Linux the check needs `lsof`.
 
 ---
 
@@ -55,7 +57,7 @@ They provide:
 The `test-docs-*` scripts are the primary source of example output shown in the documentation pages.
 
 Each script runs a fixed sequence of bexhoma benchmark experiments for one topic (a DBMS, a benchmark type, or a feature set) and writes log files to `logs_tests/`.
-After the experiments finish, `clean_logs`/`Invoke-CleanLogs` extracts the `## Show Summary` section of each log into a matching `_summary.md` file in the same directory.
+`clean_logs`/`Invoke-CleanLogs` (enabled with `BEXHOMA_CLEAN_LOGS=1`, or called by hand with `--force`/`-Force`) extracts the `## Show Summary` section of each log into a matching `_summary.md` file in the same directory.
 
 The summary files are the content embedded inside ` ```markdown ``` ` blocks in the `docs/` pages.
 

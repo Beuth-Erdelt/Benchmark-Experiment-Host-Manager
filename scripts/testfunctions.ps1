@@ -96,9 +96,36 @@ function Write-LogFile {
     [IO.File]::WriteAllBytes($Path, $bytes)
 }
 
+function Test-LogOpenForWriting {
+    # True if another process has the file open for writing, i.e. the log of a run that is
+    # still going (readers such as tail -F do not count). An open for reading that does not
+    # share write access fails while a writer holds the file. Rewriting such a log in place
+    # mixes it up with other logs.
+    param([string]$Path)
+    try { [IO.File]::Open($Path, 'Open', 'Read', 'Read').Close(); return $false }
+    catch [IO.IOException] { return $true }
+}
+
 function Invoke-CleanLogs {
+    # Strips kubectl token warnings from the logs and extracts their "## Show Summary" part
+    # into <name>_summary.md. Off by default: runs only with $env:BEXHOMA_CLEAN_LOGS = '1'
+    # or -Force. Logs that are still being written are left alone.
+    param([switch]$Force)
+    if (-not $Force -and $env:BEXHOMA_CLEAN_LOGS -ne '1') {
+        Write-Host "Skipping log cleaning (set `$env:BEXHOMA_CLEAN_LOGS = '1' or call Invoke-CleanLogs -Force)."
+        return
+    }
+
+    $logs = @(Get-ChildItem -Path $LOG_DIR -Filter "*.log" -Recurse | Sort-Object FullName | Where-Object {
+        if (Test-LogOpenForWriting $_.FullName) {
+            Write-Host "Skipping $($_.FullName) (still being written)"
+            $false
+        } else { $true }
+    })
+    $logDirFull = (Get-Item $LOG_DIR).FullName.TrimEnd('\')
+
     Write-Host "Removing connection warning lines from log files..."
-    Get-ChildItem -Path $LOG_DIR -Filter "*.log" -Recurse | ForEach-Object {
+    $logs | ForEach-Object {
         # .NET reads UTF-8 without a BOM correctly, Get-Content takes it for ANSI
         $content = [IO.File]::ReadAllText($_.FullName) -replace "`r`n", "`n"
         $content = $content -replace '(?m)^Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens\.\n', ''
@@ -107,7 +134,8 @@ function Invoke-CleanLogs {
     }
 
     Write-Host "Extracting summaries from log files..."
-    Get-ChildItem -Path $LOG_DIR -Filter "*.log" | ForEach-Object {
+    # summaries only for the logs directly in LOG_DIR, as before
+    $logs | Where-Object { $_.DirectoryName.TrimEnd('\') -eq $logDirFull } | ForEach-Object {
         Write-Host "Cleaning $($_.FullName)"
         $content = [IO.File]::ReadAllText($_.FullName)
         $start = [regex]::Match($content, '(?m)^.*## Show Summary')

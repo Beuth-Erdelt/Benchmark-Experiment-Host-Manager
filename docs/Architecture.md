@@ -2,7 +2,7 @@
 
 This page describes how the Python code of Bexhoma is organised, so that you know where a change belongs.
 For what runs inside the Kubernetes cluster (SUT, loaders, benchmarkers, monitoring, dashboard), see [Concepts](Concepts.md#architecture).
-For adding a benchmark or a DBMS, see [Adding a Benchmark](Adding-a-Benchmark.md) and [Adding a DBMS](Adding-a-DBMS.md).
+For adding a benchmark or a DBMS, and for making a benchmark run on a DBMS, see [Concept: Modularity](Modularity.md).
 
 Bexhoma is an orchestrator. It runs on your machine, talks to the cluster through `kubectl` and the Kubernetes API, and never runs a benchmark itself: every loader, benchmarker and evaluation runs in a pod.
 
@@ -96,7 +96,7 @@ A benchmark is one folder `bexhoma/benchmarks/<name>/`. Its `__init__.py` regist
 - `evaluator.py` and `collector.py`: reading one result folder and comparing several,
 - `catalog.py`, if the benchmark can be run from an `experiment.yml`.
 
-Generic code must not name a benchmark; `test_no_benchmark_in_generic.py` checks that. Details: [Adding a Benchmark](Adding-a-Benchmark.md).
+Generic code must not name a benchmark; `test_no_benchmark_in_generic.py` checks that. Details: [Adding a Benchmark](Modularity.md#adding-a-benchmark).
 
 ## DBMS
 

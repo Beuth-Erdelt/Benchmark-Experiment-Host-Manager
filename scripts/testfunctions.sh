@@ -96,29 +96,82 @@ wait_yugabytedb() {
 }
 
 
+# logs_open_for_writing
+#   Reads log paths on stdin and prints those that another process has open for writing,
+#   i.e. logs of runs that are still going (readers such as tail -F do not count).
+#   Rewriting such a log in place (sed -i, perl -i, dos2unix) mixes it up with other logs
+#   on Windows and cuts it off on Linux. Windows (Git Bash): an open for reading that does
+#   not share write access fails while a writer holds the file. Linux: lsof access mode w/u.
+#   Returns 2 if neither powershell.exe nor lsof is available.
+logs_open_for_writing() {
+    local files=()
+    mapfile -t files
+    [[ ${#files[@]} -eq 0 ]] && return 0
+    if command -v powershell.exe >/dev/null 2>&1 && command -v cygpath >/dev/null 2>&1; then
+        paste <(printf '%s\n' "${files[@]}") <(printf '%s\n' "${files[@]}" | cygpath -w -f -) \
+        | powershell.exe -NoProfile -NonInteractive -Command '$input | ForEach-Object {
+            $path, $win = $_ -split "`t", 2
+            try { [IO.File]::Open($win, "Open", "Read", "Read").Close() } catch [IO.IOException] { $path }
+          }' \
+        | tr -d '\r'
+    elif command -v lsof >/dev/null 2>&1; then
+        local open file
+        open=$(lsof -w -F an -- "${files[@]}" 2>/dev/null \
+               | awk '/^a/ {mode = substr($0, 2)} /^n/ {if (mode ~ /[wu]/) print substr($0, 2)}')
+        for file in "${files[@]}"; do
+            grep -qxF -- "$(realpath "$file")" <<<"$open" && echo "$file"
+        done
+        return 0
+    else
+        return 2
+    fi
+}
+
+
+# clean_logs [--force]
+#   Strips kubectl token warnings from the logs and extracts their "## Show Summary" part
+#   into <name>_summary.md. Off by default: runs only with BEXHOMA_CLEAN_LOGS=1 or --force.
+#   Logs that are still being written (see logs_open_for_writing) are left alone.
 clean_logs() {
-    export MYDIR=$(pwd)
+    if [[ "${BEXHOMA_CLEAN_LOGS:-0}" != "1" && "$1" != "--force" ]]; then
+        echo "Skipping log cleaning (set BEXHOMA_CLEAN_LOGS=1 or call clean_logs --force)."
+        return 0
+    fi
 
     if [[ -z "$LOG_DIR" ]]; then
         echo "LOG_DIR is not set. Please set it before calling clean_logs."
         return 1
     fi
 
-    cd "$LOG_DIR" || { echo "Failed to change directory to $LOG_DIR"; return 1; }
+    local logs=() open file
+    mapfile -t logs < <(find "$LOG_DIR" -name '*.log' -type f | sort)
+    if ! open=$(printf '%s\n' "${logs[@]}" | logs_open_for_writing); then
+        echo "Error: cannot tell which logs are still being written (needs powershell.exe or lsof); logs not cleaned." >&2
+        return 1
+    fi
+    local idle=()
+    for file in "${logs[@]}"; do
+        if [[ -n "$open" ]] && grep -qxF -- "$file" <<<"$open"; then
+            echo "Skipping $file (still being written)"
+        else
+            idle+=("$file")
+        fi
+    done
+    [[ ${#idle[@]} -eq 0 ]] && { echo "No logs to clean."; return 0; }
 
     echo "Removing connection warning lines from log files..."
 
-    grep -rl "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens." . \
-    | xargs sed -i '/Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens./d'
+    grep -l "Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens." -- "${idle[@]}" \
+    | xargs -r -d '\n' sed -i '/Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens./d'
 
-    grep -rl "Exception when calling CoreV1Api->" . \
-    | xargs perl -0777 -i -pe 's/^Exception when calling CoreV1Api->.*\nReason: Unauthorized\nHTTP response headers: HTTPHeaderDict\(.*\nHTTP response body: .*\n(\n)*Create new access token\n//mg'
-
-    cd "$MYDIR" || return
+    grep -l "Exception when calling CoreV1Api->" -- "${idle[@]}" \
+    | xargs -r -d '\n' perl -0777 -i -pe 's/^Exception when calling CoreV1Api->.*\nReason: Unauthorized\nHTTP response headers: HTTPHeaderDict\(.*\nHTTP response body: .*\n(\n)*Create new access token\n//mg'
 
     echo "Extracting summaries from log files..."
 
-    for file in "$LOG_DIR"/*.log; do
+    for file in "${idle[@]}"; do
+        # summaries only for the logs directly in LOG_DIR, as before
+        [[ "${file%/*}" == "${LOG_DIR%/}" ]] || continue
         echo "Cleaning $file"
         filename=$(basename "$file" .log)
         dos2unix "$file"
