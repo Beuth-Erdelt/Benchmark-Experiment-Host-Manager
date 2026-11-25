@@ -774,11 +774,22 @@ like the existing `Index`/`Constraints` keys in `cluster.config`.
     order_line). YugabyteDB BenchBase TPC-C `colocated` (off/small, psql `\if`: database `WITH colocation =
     true`, the six large tables `WITH (colocation = false)`). Not checked on Citus or YugabyteDB; the `\if`
     lines ran on PostgreSQL with `off`.
-  - Cluster checks to run (SF 1, `-tr`, each key away from its default): MySQL and MariaDB TPC-H/TPC-DS/SSB
-    `row_format=COMPRESSED` + MySQL `histograms=on stats_sample_pages=100`; PostgreSQL TPC-H
-    `partition_by=year` with `-xii -xic -xis -ar` and `-xrs 1` (refresh into partitions), PgDuckDB the same;
-    PostgreSQL TPC-DS `index_method=hash`; ClickHouse and ClickHouseCluster SSB (star and `-xsv flat`) and
-    TPC-DS with all four keys; Citus BenchBase `fillfactor=80`; YugabyteDB BenchBase `colocated=small`.
+  - Cluster checks 2026-11-25 (SF 1, `-ks no`, each key away from its default, logs
+    `logs_tests/local/ddl_m4_*.log`):
+    - All passed: 1795594191 ClickHouse+ClickHouseCluster SSB `order_lineorder=key index_granularity=4096
+      wide_parts=wide low_cardinality=on codec=zstd1`; 1795594627 the same `-xsv flat`; 1795595027 TPC-DS
+      the four keys without `order_lineorder`; 1795594651 PostgreSQL TPC-DS `index_method=hash`; 1795594211
+      Citus BenchBase `fillfactor=80`; MySQL+MariaDB `row_format=COMPRESSED`, MySQL also `histograms=on
+      stats_sample_pages=100`: 1795606511 TPC-DS, 1795608200 SSB, 1795608794 SSB flat.
+    - Keys work, test red by the node: 1795611403 TPC-H MySQL+MariaDB `row_format=COMPRESSED` and 1795611419
+      PostgreSQL+PgDuckDB `partition_by=year` with `-xii -xic -xis -ar -xrs 1` (-nc 2): loading, reset,
+      22 queries in all runs without errors, RF1/RF2 into the partitions (1,500 orders each way). One
+      benchmarker pod each was evicted on cl-worker25 (DiskPressure) and replaced by the job, so
+      `Benchmarker pods without errors` and `Pod log stored` failed (loaders and benchmarkers not pinned).
+    - Found and fixed: concurrent generators of one TPC-H chunk folder without completion marker deleted
+      each other's files (1795594171, 1795605580; fixed by the user, images rebuilt). YugabyteDB
+      `colocated=small` failed with "cannot colocate hash partitioned table" (district has a HASH key);
+      district now gets a range key `(d_w_id ASC, d_id ASC)` when colocated. Rerun 1795613830 passed.
 - **M5** "More candidates" that need only placeholders or script variants (done: `wide_parts`, `btree_dedup`, extended statistics, statistics target, `tpcc_item`);
   those needing images, volumes or loader changes are a separate decision.
 

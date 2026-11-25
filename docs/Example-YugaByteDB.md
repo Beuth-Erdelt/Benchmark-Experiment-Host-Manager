@@ -1497,7 +1497,7 @@ DDL parameters (`-xddl`, see [DDL parameters](DBMS.md#ddl-parameters--xddl)):
 |---|---|---|---|---|
 | `pk_sharding` | YCSB | `hash`, `asc` | `hash` | sharding of the primary key: hash spreads load evenly and suits point reads, asc keeps key order for range scans (workload e) but concentrates ordered inserts |
 | `num_tablets` | YCSB | `auto`, `4`, `8`, `16`, `32`, `64`, `128` | `auto` | tablets of usertable from the start (auto: ysql_num_shards_per_tserver and automatic splitting); only with pk_sharding=hash (asc needs SPLIT AT VALUES). Requires `pk_sharding` = `hash` |
-| `colocated` | BenchBase TPC-C | `off`, `small` | `off` | small: database benchbase created WITH colocation = true, so warehouse, district and item share one tablet (fewer RPCs for small tables); stock, customer, history, oorder, new_order and order_line keep their own tablets. off: a tablet set per table |
+| `colocated` | BenchBase TPC-C | `off`, `small` | `off` | small: database benchbase created WITH colocation = true, so warehouse, district and item share one tablet (fewer RPCs for small tables; district gets a range key instead of a hash key); stock, customer, history, oorder, new_order and order_line keep their own tablets. off: a tablet set per table |
 
 ### Load Durability
 

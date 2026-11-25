@@ -80,7 +80,12 @@ CREATE TABLE district (
     d_city       VARCHAR(20)     NOT NULL,
     d_state      CHAR(2)         NOT NULL,
     d_zip        CHAR(9)         NOT NULL,
+\if {colocated}
+    -- a colocated table cannot be hash partitioned: range key
+    CONSTRAINT district_pkey PRIMARY KEY (d_w_id ASC, d_id ASC)
+\else
     CONSTRAINT district_pkey PRIMARY KEY ((d_w_id,d_id) HASH)
+\endif
     -- district->warehouse FK not applied: not supported on YugabyteDB distributed tables
 );
 
