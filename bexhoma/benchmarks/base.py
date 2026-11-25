@@ -446,7 +446,9 @@ class Benchmark(ABC):
         :param write_report: When ``True``, also write a tiered Markdown report
             (``report/index.md`` + detail files) to the result folder.
         """
-        experiment._test_results = list(experiment._runtime_test_results)
+        # failures of the run, also those stored in the result folder (stand-ins: memory only)
+        runtime = getattr(experiment, 'runtime_test_results', None)
+        experiment._test_results = runtime() if runtime else list(experiment._runtime_test_results)
         self._prepare_evaluator(experiment)
         connections_sorted, monitoring_applications = experiment.show_summary_header()
         workflow_section: Section | None = None

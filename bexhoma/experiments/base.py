@@ -465,13 +465,77 @@ class ExperimentBase():
         return all(os.path.isfile(self.result_filename_local(name))
                    for name in ('queries.config', 'connections.config'))
 
+    #: Result file with the failed tests found while the experiment ran (one reason per entry).
+    RUNTIME_FAILURES_FILE = 'bexhoma-runtime-failures.json'
+
     def _record_runtime_failure(self, reason: str) -> None:
         """Record a failed test found while the experiment ran, once per reason.
 
+        The reasons are also written to :attr:`RUNTIME_FAILURES_FILE` in the result
+        folder, so a later ``bexhoma summary`` shows them as well
+        (:meth:`runtime_test_results`).
+
         :param reason: Label of the failed test.
         """
-        if (False, reason) not in self._runtime_test_results:
-            self._runtime_test_results.append((False, reason))
+        if (False, reason) in self._runtime_test_results:
+            return
+        self._runtime_test_results.append((False, reason))
+        filename = self._runtime_failures_filename()
+        if filename is None:
+            # stand-ins without a result folder; the reason is kept in memory
+            return
+        try:
+            reasons = self._read_runtime_failures(filename)
+            if reason not in reasons:
+                reasons.append(reason)
+                tmp_filename = filename + '.tmp'
+                with open(tmp_filename, 'w', encoding='utf-8') as handle:
+                    json.dump(reasons, handle, indent=2)
+                os.replace(tmp_filename, filename)
+        except OSError as exc:
+            print(f"{'Experiment':30s}: runtime failure not stored in the result folder: {exc}")
+
+    def _runtime_failures_filename(self):
+        """Path of :attr:`RUNTIME_FAILURES_FILE`, or ``None`` without an existing result folder.
+
+        :rtype: str | None
+        """
+        folder = getattr(self, 'path', '')
+        if not folder or not os.path.isdir(folder):
+            return None
+        return self.result_filename_local(self.RUNTIME_FAILURES_FILE)
+
+    @staticmethod
+    def _read_runtime_failures(filename: str) -> list:
+        """The reasons stored in a :attr:`RUNTIME_FAILURES_FILE`; empty if there is none.
+
+        :param filename: Path of the file.
+        :rtype: list[str]
+        """
+        if not os.path.isfile(filename):
+            return []
+        try:
+            with open(filename, encoding='utf-8') as handle:
+                reasons = json.load(handle)
+        except (OSError, ValueError):
+            return []
+        return [str(reason) for reason in reasons] if isinstance(reasons, list) else []
+
+    def runtime_test_results(self) -> list:
+        """Failed tests found while the experiment ran: in memory and stored in the result folder.
+
+        A summary built later (``bexhoma summary``) has nothing in memory; the
+        stored reasons are its only source. Each reason appears once.
+
+        :return: ``(False, reason)`` pairs.
+        :rtype: list[tuple[bool, str]]
+        """
+        results = list(getattr(self, '_runtime_test_results', []))
+        filename = self._runtime_failures_filename()
+        for reason in (self._read_runtime_failures(filename) if filename else []):
+            if (False, reason) not in results:
+                results.append((False, reason))
+        return results
 
     def _record_runtime_gaps(self) -> None:
         """Record what the cluster layer gave up on while the experiment ran as failed tests.
@@ -503,7 +567,7 @@ class ExperimentBase():
         if self.workload.get('info'):
             print("* " + self.workload['info'].replace('\n', '\n  * '))
         print("* No results: the experiment ended before its first result was written, see the tests")
-        self._test_results = list(self._runtime_test_results)
+        self._test_results = self.runtime_test_results()
         # the logs of the loading scripts and loader pods are in the result folder even then
         connections = [{'name': c.configuration, 'configuration': c.configuration}
                        for c in getattr(self, 'configurations', [])]
@@ -2389,7 +2453,7 @@ class ExperimentBase():
             f"{'Experiment':30s}: {reason}; capturing diagnostics and "
             "removing all components"
         )
-        self._runtime_test_results.append((False, reason))
+        self._record_runtime_failure(reason)
         self.remove_experiment()
         return True
 
@@ -2419,7 +2483,7 @@ class ExperimentBase():
                       f"({', '.join(sorted(set(reasons)))}); loading times of repetition "
                       f"{config.num_experiment_to_apply_done + 1} include that wait")
             print(f"{config.configuration:30s}: {reason}")
-            self._runtime_test_results.append((False, reason))
+            self._record_runtime_failure(reason)
 
     def _benchmark_start_abort_reason(
         self,
@@ -2468,7 +2532,7 @@ class ExperimentBase():
         if reason is None:
             return False
         print(f"{config.configuration:30s}: {reason}; capturing diagnostics and skipping the round")
-        self._runtime_test_results.append((False, reason))
+        self._record_runtime_failure(reason)
         pods = self.cluster.get_job_pods(
             app=self.cluster.appname, component='benchmarker',
             experiment=self.code, configuration=config.configuration)
@@ -2921,7 +2985,7 @@ class ExperimentBase():
                     continue
                 reason = f"Benchmarking job {job} for {configuration} reached Kubernetes' terminal Failed condition"
                 print(f"{'Experiment':30s}: {reason}")
-                self._runtime_test_results.append((False, reason))
+                self._record_runtime_failure(reason)
             # status per pod
             for p in pods:
                 status = self.cluster.get_pod_status(p)

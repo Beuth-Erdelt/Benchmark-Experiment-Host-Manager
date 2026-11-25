@@ -270,6 +270,27 @@ class RuntimeGapsTest(unittest.TestCase):
         e._record_runtime_failure('x')
         self.assertEqual(e._runtime_test_results, [(False, 'x')])
 
+    def test_runtime_failures_stored_for_a_later_summary(self) -> None:
+        """P14: bexhoma summary shows the failures of the run (run E: 3 failed in the run, 2 in the summary)."""
+        import json
+        with tempfile.TemporaryDirectory() as folder:
+            run = experiment(folder)
+            run._record_runtime_failure('Loading of PG-1 failed: SUT pod p replaced during benchmarking')
+            run._record_runtime_failure('Experiment ended by --experiment-timeout after 40 minutes')
+            run._record_runtime_failure('Experiment ended by --experiment-timeout after 40 minutes')
+            with open(os.path.join(folder, ExperimentBase.RUNTIME_FAILURES_FILE), encoding='utf-8') as handle:
+                self.assertEqual(len(json.load(handle)), 2)
+            later = experiment(folder)
+            self.assertEqual(later.runtime_test_results(), run._runtime_test_results)
+            # the run itself: memory and file hold the same reasons once
+            self.assertEqual(run.runtime_test_results(), run._runtime_test_results)
+
+    def test_runtime_failures_without_result_folder(self) -> None:
+        e = experiment()
+        e._record_runtime_failure('x')
+        self.assertFalse(os.path.exists(ExperimentBase.RUNTIME_FAILURES_FILE))
+        self.assertEqual(e.runtime_test_results(), [(False, 'x')])
+
     def test_logs_not_stored(self) -> None:
         e = experiment()
         e.cluster = mock.Mock(logs_not_stored=['b.log', 'a.log', 'a.log'])
