@@ -89,9 +89,9 @@ injection whenever `template.JDBC` is absent.
 ### Benchmarks of a DBMS
 
 The entry scripts (`tpch.py`, `tpcds.py`, `ssb.py`, `ycsb.py`, `benchbase.py`, `hammerdb.py`) contain nothing that is specific to a DBMS.
-Everything a script needs to know about a DBMS is in its `dockers` entry, so a DBMS is added by configuration alone, see [Adding a DBMS](Adding-a-DBMS.md).
+Everything a script needs to know about a DBMS is in its `dockers` entry, so a DBMS is added by configuration alone, see [Adding a DBMS](Modularity.md#adding-a-dbms).
 
-`benchmarks` has one key per benchmark the DBMS can run: `tpch`, `tpcds`, `ssb`, `ycsb`, `benchbase` and `tpcc` (HammerDB).
+`benchmarks` has one key per benchmark the DBMS can run: `tpch`, `tpcds`, `ssb`, `ycsb`, `benchbase` and `hammerdb`.
 **A missing key means that the DBMS cannot run that benchmark**: the `-dbms` of a script offers exactly the DBMS that have an entry for it.
 For example, MariaDB ColumnStore has no `ycsb` key:
 
