@@ -13,24 +13,39 @@ $script:RootDir = if ($PSScriptRoot) { Split-Path $PSScriptRoot } else { $PWD.Pa
 $script:Jobs    = [System.Collections.Generic.List[hashtable]]::new()
 $script:AnyFailed = $false
 
-# At most this many docker pushes run at the same time; builds are not limited.
-# The jobs are separate processes, so they share a named system semaphore.
+# At most this many docker builds and this many docker pushes run at the
+# same time. The two limits are independent.
+# The jobs are separate processes, so they share named system semaphores.
+$script:MaxParallelBuilds = 10
 $script:MaxParallelPushes = 10
+$script:BuildSemaphore    = "bexhoma_build_build_$PID"
 $script:PushSemaphore     = "bexhoma_build_push_$PID"
 
-# Runs inside each job: docker push, holding one semaphore slot while it runs.
-$script:PushCode = {
-    param($image, $semName, $maxPushes)
-    $sem = New-Object System.Threading.Semaphore($maxPushes, $maxPushes, $semName)
+# Runs inside each job: a command, holding one semaphore slot while it runs.
+# Usage: & SlotCode <semName> <max> <exe> <args...>
+$script:SlotCode = {
+    param($semName, $max, $exe, [string[]]$cmdArgs)
+    $sem = New-Object System.Threading.Semaphore($max, $max, $semName)
     $null = $sem.WaitOne()
     try {
-        & docker push $image
-        if ($LASTEXITCODE -ne 0) { throw "docker push failed (exit $LASTEXITCODE)" }
+        & $exe @cmdArgs
+        if ($LASTEXITCODE -ne 0) { throw "$exe $($cmdArgs[0]) failed (exit $LASTEXITCODE)" }
     } finally {
         $null = $sem.Release()
         $sem.Dispose()
     }
 }.ToString()
+
+# Semaphore names and limits, handed to each job.
+function _SlotArgs {
+    @{
+        Code      = $script:SlotCode
+        BuildSem  = $script:BuildSemaphore
+        MaxBuilds = $script:MaxParallelBuilds
+        PushSem   = $script:PushSemaphore
+        MaxPushes = $script:MaxParallelPushes
+    }
+}
 
 
 #### Job tracking helpers ####
@@ -47,12 +62,12 @@ function _BgDockerJob {
     )
     $rootDir = $script:RootDir
     $job = Start-Job -ScriptBlock {
-        param($rootDir, $workDir, $image, $version, $dockerfile, $pushCode, $semName, $maxPushes)
+        param($rootDir, $workDir, $image, $version, $dockerfile, $slot)
         Set-Location (Join-Path $rootDir $workDir)
-        & docker build -f $dockerfile -t "bexhoma/${image}:${version}" .
-        if ($LASTEXITCODE -ne 0) { throw "docker build failed (exit $LASTEXITCODE)" }
-        & ([scriptblock]::Create($pushCode)) "bexhoma/${image}:${version}" $semName $maxPushes
-    } -ArgumentList $rootDir, $WorkDir, $Image, $Version, $Dockerfile, $script:PushCode, $script:PushSemaphore, $script:MaxParallelPushes
+        $run = [scriptblock]::Create($slot.Code)
+        & $run $slot.BuildSem $slot.MaxBuilds docker @('build', '-f', $dockerfile, '-t', "bexhoma/${image}:${version}", '.')
+        & $run $slot.PushSem  $slot.MaxPushes docker @('push', "bexhoma/${image}:${version}")
+    } -ArgumentList $rootDir, $WorkDir, $Image, $Version, $Dockerfile, (_SlotArgs)
     $script:Jobs.Add(@{ Job = $job; Label = $Label })
 }
 
@@ -69,12 +84,13 @@ function _BgPyJob {
     )
     $rootDir = $script:RootDir
     $job = Start-Job -ScriptBlock {
-        param($rootDir, $workDir, $image, $version, $dbmsbenchmarker, $pushCode, $semName, $maxPushes)
+        param($rootDir, $workDir, $image, $version, $dbmsbenchmarker, $slot)
         Set-Location (Join-Path $rootDir $workDir)
-        & python create_Dockerfiles.py --version $dbmsbenchmarker --image-tag $version
-        if ($LASTEXITCODE -ne 0) { throw "create_Dockerfiles.py failed (exit $LASTEXITCODE)" }
-        & ([scriptblock]::Create($pushCode)) "bexhoma/${image}:${version}" $semName $maxPushes
-    } -ArgumentList $rootDir, $WorkDir, $Image, $Version, $DbmsBenchmarker, $script:PushCode, $script:PushSemaphore, $script:MaxParallelPushes
+        $run = [scriptblock]::Create($slot.Code)
+        # create_Dockerfiles.py runs docker build itself, so it takes a build slot.
+        & $run $slot.BuildSem $slot.MaxBuilds python @('create_Dockerfiles.py', '--version', $dbmsbenchmarker, '--image-tag', $version)
+        & $run $slot.PushSem  $slot.MaxPushes docker @('push', "bexhoma/${image}:${version}")
+    } -ArgumentList $rootDir, $WorkDir, $Image, $Version, $DbmsBenchmarker, (_SlotArgs)
     $script:Jobs.Add(@{ Job = $job; Label = $Label })
 }
 
