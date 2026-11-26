@@ -68,6 +68,41 @@ def init_containers_without_storage(init_containers: list) -> list:
     return [c for c in init_containers if c['name'] in INIT_CONTAINERS_WITHOUT_STORAGE]
 
 
+def record_manifest_containers(deployment_infos: dict, manifest: list) -> None:
+    """
+    Record the init containers and the Jobs of a final SUT manifest in ``deployment_infos``.
+
+    Read from the manifest as it is deployed, after every edit (e.g. a SUT
+    without storage keeps only some init containers). For each Deployment and
+    StatefulSet already in ``deployment_infos``, sets ``init_containers``;
+    ``containers`` (regular containers only) stays as recorded while editing.
+    Each Job is recorded under ``deployment_infos['job'][<component label>]``
+    with ``name``, ``containers`` and ``init_containers``. A Job's pods carry
+    the same component label as a StatefulSet's (e.g. CockroachDB's
+    ``cluster-init`` job, ``component=worker``), so they are told apart by the
+    Job's name.
+
+    :param deployment_infos: :attr:`SutConfiguration.deployment_infos`, changed in place.
+    :param manifest: The parsed objects of the manifest.
+    """
+    deployment_infos['job'] = {}
+    kinds = {'Deployment': 'deployment', 'StatefulSet': 'statefulset'}
+    for obj in manifest:
+        if not isinstance(obj, dict) or obj.get('kind') not in ('Deployment', 'StatefulSet', 'Job'):
+            continue
+        component = (obj.get('metadata', {}).get('labels') or {}).get('component', '')
+        pod_spec = obj.get('spec', {}).get('template', {}).get('spec', {}) or {}
+        init_containers = [c['name'] for c in (pod_spec.get('initContainers') or [])]
+        if obj['kind'] == 'Job':
+            deployment_infos['job'][component] = {
+                'name': obj['metadata']['name'],
+                'containers': [c['name'] for c in (pod_spec.get('containers') or [])],
+                'init_containers': init_containers,
+            }
+        elif component in deployment_infos.get(kinds[obj['kind']], {}):
+            deployment_infos[kinds[obj['kind']]][component]['init_containers'] = init_containers
+
+
 def blackbox_targets(application_monitoring: dict, tenant_per: str, num_tenants: int) -> str:
     """
     Return the blackbox probe targets of the application monitoring of a SUT.
@@ -1511,6 +1546,8 @@ scrape_configs:
                 apply_tls_volume(dep['spec']['template']['spec'], getattr(cfg, 'tls_secret', ''))
         # what the whole SUT requests (SUT pod plus all StatefulSets), for the summary
         cfg.connection_parameter['resources_total'] = sum_requested_resources(result)
+        # init containers and Jobs as deployed, so their logs get stored too
+        record_manifest_containers(cfg.deployment_infos, result)
         with open(deployment_experiment, "w+") as stream:
             try:
                 stream.write(yaml.dump_all(result))

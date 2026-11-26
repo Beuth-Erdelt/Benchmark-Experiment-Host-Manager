@@ -3400,40 +3400,40 @@ class ExperimentBase():
                             print(f"{config.configuration:30s}: can be stopped")
                             app = self.cluster.appname
                             pod_restarts: dict[str, dict] = {}
-                            deployments = list(config.deployment_infos['deployment'].keys())
-                            for deployment in deployments:
-                                pods = self.cluster.get_pods(app, deployment, self.code, config.configuration)
-                                for pod in pods:
-                                    for container in config.deployment_infos['deployment'][deployment]['containers']:
-                                        self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
-                                    # one read of the restart counts for the previous logs, the summary and the snapshot
-                                    per_container = self.cluster.get_pod_restart_counts(pod)
-                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1, counts=per_container)
-                                    if not self.cluster.pod_description_exists(pod_name=pod):
-                                        self.cluster.logger.debug(f"Store description of pod {pod}")
-                                        self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
-                                    restarts = config.host.get_host_restarts(pod, counts=per_container)
-                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(
-                                        restarts, per_container, uid=self.cluster.get_pod_uid(pod))
-                                    summary = sut_restarts.format_restart_summary(restarts, per_container)
-                                    print(f"{config.configuration:30s}: had {summary} restarts at worker {pod}")
-                            statefulsets = list(config.deployment_infos['statefulset'].keys())
-                            for statefulset in statefulsets:
-                                pods = config.get_worker_pods(component=statefulset)
-                                for pod in pods:
-                                    for container in config.deployment_infos['statefulset'][statefulset]['containers']:
-                                        self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
-                                    # one read of the restart counts for the previous logs, the summary and the snapshot
-                                    per_container = self.cluster.get_pod_restart_counts(pod)
-                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1, counts=per_container)
-                                    if not self.cluster.pod_description_exists(pod_name=pod):
-                                        self.cluster.logger.debug(f"Store description of pod {pod}")
-                                        self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
-                                    restarts = config.host.get_host_restarts(pod, counts=per_container)
-                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(
-                                        restarts, per_container, uid=self.cluster.get_pod_uid(pod))
-                                    summary = sut_restarts.format_restart_summary(restarts, per_container)
-                                    print(f"{config.configuration:30s}: had {summary} restarts at worker {pod}")
+                            # the pods of the SUT's Deployments, StatefulSets and Jobs, each with the containers
+                            # and init containers of its manifest (deployment_infos)
+                            infos = config.deployment_infos
+                            pods_with_containers = []
+                            for deployment, info in infos.get('deployment', {}).items():
+                                for pod in self.cluster.get_pods(app, deployment, self.code, config.configuration):
+                                    pods_with_containers.append((pod, info))
+                            # a Job's pods carry the component label of a StatefulSet (e.g. CockroachDB's
+                            # cluster-init job, component=worker): found by the Job's name, they are kept
+                            # out of the StatefulSet's pods
+                            job_pods = []
+                            for info in infos.get('job', {}).values():
+                                for pod in self.cluster.get_job_pods(app=app, experiment=self.code, configuration=config.configuration, jobname=info['name']) or []:
+                                    job_pods.append((pod, info))
+                            job_pod_names = {pod for pod, _ in job_pods}
+                            for statefulset, info in infos.get('statefulset', {}).items():
+                                for pod in config.get_worker_pods(component=statefulset):
+                                    if pod not in job_pod_names:
+                                        pods_with_containers.append((pod, info))
+                            pods_with_containers.extend(job_pods)
+                            for pod, info in pods_with_containers:
+                                for container in info.get('containers', []) + info.get('init_containers', []):
+                                    self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
+                                # one read of the restart counts for the previous logs, the summary and the snapshot
+                                per_container = self.cluster.get_pod_restart_counts(pod)
+                                self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1, counts=per_container)
+                                if not self.cluster.pod_description_exists(pod_name=pod):
+                                    self.cluster.logger.debug(f"Store description of pod {pod}")
+                                    self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
+                                restarts = config.host.get_host_restarts(pod, counts=per_container)
+                                pod_restarts[pod] = sut_restarts.restart_snapshot_entry(
+                                    restarts, per_container, uid=self.cluster.get_pod_uid(pod))
+                                summary = sut_restarts.format_restart_summary(restarts, per_container)
+                                print(f"{config.configuration:30s}: had {summary} restarts at worker {pod}")
                             experiment_run = str(config.num_experiment_to_apply_done + 1)
                             restarts_filename = self.result_filename_local(
                                 f"bexhoma-sut-{config.configuration}-{self.code}-{experiment_run}-restarts.json".lower())

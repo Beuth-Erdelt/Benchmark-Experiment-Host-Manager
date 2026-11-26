@@ -2412,6 +2412,27 @@ class Kubernetes():
             return {}
         return {name: int(count) for name, count in zip(names, counts) if count.isdigit()}
 
+    def get_terminated_containers(self, pod):
+        """
+        Return the regular containers of a Pod whose current instance has terminated.
+
+        E.g. the container of a completed Job pod. The kubelet keeps only the
+        last instance of a terminated container, so it has no previous
+        instance whose log could be read.
+
+        :param pod: Name of the Pod.
+        :return: Set of container names; empty if the Pod is gone.
+        """
+        pod_object = self._read_pod(pod)
+        if pod_object is None:
+            return set()
+        if pod_object is not POD_NOT_READ:
+            statuses = (pod_object.status.container_statuses or []) if pod_object.status else []
+            return {status.name for status in statuses
+                    if status.state is not None and status.state.terminated is not None}
+        names = self.kubectl('get pods ' + pod + ' -o jsonpath="{.status.containerStatuses[?(@.state.terminated)].name}"')
+        return set(names.split()) if names else set()
+
     def get_pod_waiting_reasons(self, pod):
         """
         Return why containers of a Pod are waiting (e.g. ``ImagePullBackOff``).
@@ -2689,7 +2710,10 @@ class Kubernetes():
                 )
                 jobname = jobs[0]
             self.logger.debug(f'Kubernetes.delete_job({jobname})')
-            self.v1batches.delete_namespaced_job(jobname, self.namespace)
+            # The API default for Jobs is to orphan their pods (kubectl cascades, the
+            # client does not): e.g. a completed cluster-init pod outlived its SUT.
+            self.v1batches.delete_namespaced_job(
+                jobname, self.namespace, propagation_policy='Background')
             return True
         except ApiException as e:
             print(f"Exception when calling BatchV1Api->delete_namespaced_job: {e}\n")
@@ -3567,7 +3591,10 @@ class Kubernetes():
         The running container's log starts after the restart, so it never says
         why the container died; ``kubectl logs --previous`` does, until the
         next restart replaces it. Containers that never restarted have no
-        previous instance and are skipped.
+        previous instance and are skipped. So are containers that have
+        terminated (:meth:`get_terminated_containers`): the kubelet has already
+        removed their previous instances, and their own log is the log of the
+        last instance.
 
         :param pod_name: Name of the Pod.
         :param number: Optional experiment-run index, as for :meth:`store_pod_log`.
@@ -3576,8 +3603,12 @@ class Kubernetes():
         """
         if counts is None:
             counts = self.get_pod_restart_counts(pod_name)
-        for container, restarts in counts.items():
-            if restarts > 0:
+        restarted = [container for container, restarts in counts.items() if restarts > 0]
+        if not restarted:
+            return
+        terminated = self.get_terminated_containers(pod_name)
+        for container in restarted:
+            if container not in terminated:
                 self.store_pod_log(pod_name, container, number=number, previous=True)
 
     def pod_log_exists(self, pod_name, container=''):

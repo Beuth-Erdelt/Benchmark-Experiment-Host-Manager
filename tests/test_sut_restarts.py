@@ -251,9 +251,35 @@ class PreviousPodLogTest(unittest.TestCase):
     def test_stores_only_restarted_containers(self) -> None:
         cluster = self._cluster()
         cluster.get_pod_restart_counts = mock.Mock(return_value={"dbms": 1, "monitor-application": 0})
+        cluster.get_terminated_containers = mock.Mock(return_value=set())
         cluster.store_pod_log = mock.Mock()
         cluster.store_previous_pod_logs("sut-pod", number=3)
         cluster.store_pod_log.assert_called_once_with("sut-pod", "dbms", number=3, previous=True)
+
+    def test_skips_terminated_containers(self) -> None:
+        # a completed job pod (e.g. CockroachDB cluster-init) that restarted:
+        # the kubelet has removed the previous instances, --previous is "not found"
+        cluster = self._cluster()
+        cluster.get_pod_restart_counts = mock.Mock(return_value={"cluster-init": 2})
+        cluster.get_terminated_containers = mock.Mock(return_value={"cluster-init"})
+        cluster.store_pod_log = mock.Mock()
+        cluster.store_previous_pod_logs("init-pod", number=2)
+        cluster.store_pod_log.assert_not_called()
+
+    def test_no_state_read_without_restarts(self) -> None:
+        cluster = self._cluster()
+        cluster.get_terminated_containers = mock.Mock()
+        cluster.store_pod_log = mock.Mock()
+        cluster.store_previous_pod_logs("sut-pod", counts={"dbms": 0})
+        cluster.get_terminated_containers.assert_not_called()
+        cluster.store_pod_log.assert_not_called()
+
+    def test_terminated_containers_by_kubectl(self) -> None:
+        cluster = self._cluster()
+        cluster.kubectl.return_value = "cluster-init"
+        self.assertEqual(cluster.get_terminated_containers("init-pod"), {"cluster-init"})
+        cluster.kubectl.return_value = None
+        self.assertEqual(cluster.get_terminated_containers("init-pod"), set())
 
 
 if __name__ == "__main__":
