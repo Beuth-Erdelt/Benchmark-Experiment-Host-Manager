@@ -629,7 +629,7 @@ class LoopTest(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory()
         self.addCleanup(tmp.cleanup)
         job = 'bexhoma-benchmarker-postgresql-1-42-1-1'
-        with open(os.path.join(tmp.name, f'{job}-pod.dbmsbenchmarker.log'), 'w') as f:
+        with open(os.path.join(tmp.name, f'{job}-qp9nt.dbmsbenchmarker.log'), 'w') as f:
             f.write('BEXHOMA_START:100\nBEXHOMA_END:200\n')
         with open(os.path.join(tmp.name, 'conn.config'), 'w') as f:
             f.write(str([{'name': 'conn', 'hostsystem': {}}]))
@@ -649,6 +649,28 @@ class LoopTest(unittest.TestCase):
         self.assertEqual(pending, ['conn.config'])
         experiment.upload_experiment_file.assert_not_called()
         self.assertEqual(config.benchmarking_timespans, {'benchmarker': [(100, 200)]})
+
+    def test_end_benchmarking_without_timing_is_a_failed_test(self) -> None:
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        job = 'bexhoma-benchmarker-postgresql-1-42-1-1'
+        # a log of job ...-1-10, not of job ...-1-1
+        with open(os.path.join(tmp.name, f'{job}0-qp9nt.dbmsbenchmarker.log'), 'w') as f:
+            f.write('BEXHOMA_START:100\nBEXHOMA_END:200\n')
+        experiment = _experiment()
+        experiment.path = tmp.name
+        experiment.code = '42'
+        experiment.monitoring_active = False
+        experiment.benchmarks = []
+        experiment.evaluator = mock.Mock()
+        experiment.upload_experiment_file = mock.Mock()
+        experiment._record_runtime_failure = mock.Mock()
+        experiment.cluster.get_jobs_labels.return_value = {job: {'start_time': '90', 'connection': 'conn'}}
+        config = SimpleNamespace(benchmarking_timespans=None, benchmark=None)
+        with mock.patch('builtins.print'):
+            experiment.end_benchmarking(job, config, pending_uploads=[])
+        experiment._record_runtime_failure.assert_called_once_with(f'Start and end times of job {job}')
+        self.assertIsNone(config.benchmarking_timespans)
 
 
 class ParallelStepsTest(unittest.TestCase):

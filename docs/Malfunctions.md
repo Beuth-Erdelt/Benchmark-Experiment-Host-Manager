@@ -95,6 +95,7 @@ Failed operations of YCSB are an exception: they fail the test `Execution Phase:
 | CPU of a component is zero | The component was not measured, or idle | Resource numbers per component are wrong | Test `... contains no 0 or NaN in CPU [CPUs]`, skipped for phases too short to be measured |
 | A required metric is switched off | `-mm` switches off CPU or memory metrics | Core resource numbers are missing | `-mm` refuses to switch off the required metrics (CPU utilization and time, memory with and without cache) |
 | A job's metrics include other pods | A loader or benchmarker query selects pods of other jobs | Resource numbers of one job include another's | Each job's queries select only its own pods, by the pod names Kubernetes gives them (see below for the limits) |
+| A job name is too long | A long configuration name: Kubernetes names the pods of a job `<job>-<5 characters>`, but cuts `<job>-` to 58 characters first | Jobs that differ only at the end (repetition, round, benchmark or loading job number) share their pod names, so their metrics mix and their start and end times are lost | Refused before anything is started: `<configuration>: job name ... has ... characters, at most 57 are allowed`. Loading and benchmarker job names are checked with the highest numbers the experiment reaches |
 
 ## Results and the experiment
 
@@ -102,6 +103,8 @@ Failed operations of YCSB are an exception: they fail the test `Execution Phase:
 |---|---|---|---|
 | A pod log cannot be stored | The log could not be read from the cluster after several attempts | Results or diagnostics of that pod are missing | Failed test `Pod log stored: <file>` |
 | A pod log has no start or end time | The pod ended before it printed them | The pod is left out of the job's timing, so the phase may look shorter | Failed test `Start and end time in pod log <file>` |
+| A job has no start and end times | No pod log of the job was stored, or none has times | The job's phase has no timing; for a benchmarker job, no monitoring of that round is fetched | Failed test `Start and end times of job <job>` |
+| A job takes the times of another job | Job `...-1` would match the logs of `...-10` to `...-19` by name prefix | The phase of job `...-1` spans the pods of other jobs | The times are read only from logs named `<job>-<5 characters>.<container>.log` |
 | The experiment hits its time limit | `--experiment-timeout` ends a run that takes too long | Parts of the plan did not run | Failed test `Experiment ended by --experiment-timeout ...` |
 | Host information is incomplete | A probe in the SUT pod finds no value, e.g. a missing tool in the image | Results lack the hardware they ran on | Warning `Host information incomplete (...)` |
 | A result folder has no summary | Its workload type belongs to no benchmark | Nothing is evaluated | Failed test `No summary: workload type ... belongs to no benchmark` |
@@ -111,8 +114,6 @@ Failed operations of YCSB are an exception: they fail the test `Execution Phase:
 
 Pods of similar names:
 
-* **Long job names.** Kubernetes names the pods of a job `<job>-<5 characters>`, but cuts `<job>-` to 58 characters first. Jobs whose names agree in the first 58 characters (a long configuration name, differing only in repetition, round or benchmark number) get the same monitoring query, so each job's loader or benchmarker metrics include the pods of the others. The start and end times of a job are found by its full name in the log file names, so for a cut name none are found: for a benchmarker job, bexhoma prints `no timing data found for job` and fetches no monitoring for that round. No test fails.
-* **Numbers 1 and 10.** Start and end times of a job are collected from the logs whose names start with the job name. Job `...-1` also takes the logs of `...-10` to `...-19`, when they are stored before it ends: ten or more loading jobs, or benchmarks of one round, running in parallel.
 * **Configuration names.** The SUT's queries select pods whose name contains `<configuration>-<code>`. If one configuration name ends with another one of the same experiment (e.g. `PG-1` and `XPG-1`), the SUT metrics of the shorter one include the DBMS container of the other.
 * **DBMS not managed by bexhoma.** For a system whose components bexhoma did not deploy (e.g. YugabyteDB via Helm), workers are selected by component name only and without a container filter: any other pod of the namespace with that name part counts too.
 

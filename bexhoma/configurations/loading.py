@@ -907,6 +907,9 @@ class LoadingCoordinator:
                         cfg.loading_timespans['datagenerator'] = timing_datagenerator
                         cfg.loading_timespans['sensor'] = timing_sensor
                         cfg.loading_timespans['total'] = timing_total
+                        if not timing_total:
+                            print(f"{cfg.configuration:30s}: no timing data found for job {job}")
+                            cfg.experiment._record_runtime_failure(f"Start and end times of job {job}")
                         if len(timing_datagenerator) > 0:
                             cfg.experiment.cluster.logger.debug(
                                 f"Generator times (duration per pod [s]): {[end - start for (start, end) in timing_datagenerator]}")

@@ -355,6 +355,7 @@ class ExperimentBase():
         """
         self.resolve_ddl_parameters()
         self.expand_resource_cells()
+        self.check_job_name_lengths()
         if self.args.mode == 'start':
             start = default_timer()
             start_datetime = str(datetime.now())
@@ -1369,6 +1370,21 @@ class ExperimentBase():
         :param configuration: Configuration object
         """
         self.configurations.append(configuration)
+
+    def check_job_name_lengths(self) -> None:
+        """Refuse configurations whose loading or benchmarker job names are too long.
+
+        Called by :meth:`process` before anything is started, after
+        :meth:`expand_resource_cells` has given the clones their names. Mode
+        ``start`` and ``summary`` create no jobs, ``load`` only loading jobs.
+
+        :raises ValueError: See :meth:`~bexhoma.configurations.base.SutConfiguration.check_job_name_lengths`.
+        """
+        mode = getattr(getattr(self, 'args', None), 'mode', None)
+        if mode in ('start', 'summary'):
+            return
+        for config in self.configurations:
+            config.check_job_name_lengths(benchmarking=mode != 'load')
 
     def resolve_ddl_parameters(self) -> None:
         """
@@ -3608,11 +3624,15 @@ class ExperimentBase():
         directory = os.fsencode(self.path)
         #print(jobname)
         timing = []
-        self.cluster.logger.debug(f"Looking for files {jobname}*.{container}.log")
-        for file in os.listdir(directory):
+        # Kubernetes names a job's pods <jobname>-<5 characters> (same rule as
+        # SutConfiguration.job_pods_pattern()). A plain prefix match would let
+        # job ...-1 also take the logs of ...-10 to ...-19.
+        pattern_logfile = re.compile(
+            re.escape(jobname + "-") + "[a-z0-9]{5}" + re.escape(f".{container}.log"))
+        self.cluster.logger.debug(f"Looking for files {pattern_logfile.pattern}")
+        for file in sorted(os.listdir(directory)):
             filename = os.fsdecode(file)
-            #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
-            if filename.startswith(jobname) and filename.endswith(f".{container}.log"):
+            if pattern_logfile.fullmatch(filename):
                 self.cluster.logger.debug(f"Found jobcontainer file {filename}")
                 filename_local = self.result_filename_local(filename)
                 (timing_start, timing_end) = get_job_timing(filename_local)
@@ -3674,6 +3694,7 @@ class ExperimentBase():
             #print("timing_benchmarker", timing_benchmarker)
             if not timing_benchmarker:
                 print(f"{jobname:30s}: no timing data found for job {jobname}")
+                self._record_runtime_failure(f"Start and end times of job {jobname}")
                 return
             # Unzip the pairs into two separate lists: firsts and seconds
             firsts, seconds = zip(*timing_benchmarker)
