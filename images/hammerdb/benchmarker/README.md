@@ -77,3 +77,4 @@ Pods always synchronise before starting: each pod increments the Redis counter
 * `HAMMERDB_TIMEPROFILE`: When `true`, per-transaction latency profiles are written to `/tmp/hdbxtprofile.log`.
 * `HAMMERDB_ALLWAREHOUSES`: When `true`, virtual users are not pinned to a fixed warehouse at startup.
 * `HAMMERDB_KEYANDTHINK`: When `true`, key-and-think time is added between transactions.
+* `HAMMERDB_KEEPALIVE_MARGIN`: Seconds `vurun` waits beyond rampup + duration for the virtual users to finish before they are killed (default `300`, HammerDB's own default is `60`). With key-and-think, a worker's last think time can exceed 60 seconds. The monitor writes the time profile only after all workers have reported, so a short margin loses the profile.

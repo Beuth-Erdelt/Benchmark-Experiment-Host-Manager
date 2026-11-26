@@ -62,6 +62,8 @@ ENV HAMMERDB_MYSQL_ENGINE=innodb
 ENV HAMMERDB_TIMEPROFILE=true
 ENV HAMMERDB_ALLWAREHOUSES=false
 ENV HAMMERDB_KEYANDTHINK=false
+# Seconds vurun waits beyond rampup + duration for the VUs to finish (HammerDB default 60)
+ENV HAMMERDB_KEEPALIVE_MARGIN=300
 
 # TLS: bexhoma sets true and mounts the SUT's CA at /etc/mysql/certs/ca-cert.pem (MySQL 9)
 ENV BEXHOMA_TLS=false

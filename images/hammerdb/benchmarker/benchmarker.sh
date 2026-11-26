@@ -157,6 +157,17 @@ tcset timestamps 1
 tcset unique 1
 tcset logtotemp 1"
 
+######################## Keepalive margin ########################
+# The CLI's vurun returns after rampup + duration + keepalive_margin seconds (60 by
+# default), or earlier once all VUs are complete; vudestroy then kills the VUs still
+# running. With key-and-think a worker finishes its last think time (up to 10x the
+# mean, ~2 minutes) after the test ends, and the monitor VU writes the time profile
+# only after all workers have reported. 60 seconds then kills the monitor before
+# /tmp/hdbxtprofile.log is written. A larger margin costs nothing when VUs finish early.
+HAMMERDB_KEEPALIVE_MARGIN=${HAMMERDB_KEEPALIVE_MARGIN:-300}
+echo "HAMMERDB_KEEPALIVE_MARGIN:$HAMMERDB_KEEPALIVE_MARGIN"
+KEEPALIVE_CONFIG="giset commandline keepalive_margin $HAMMERDB_KEEPALIVE_MARGIN"
+
 ######################## Generate workflow file (MySQL) ########################
 
 if [ "$HAMMERDB_TYPE" = "mysql" ]; then
@@ -194,6 +205,7 @@ diset tpcc mysql_allwarehouse $HAMMERDB_ALLWAREHOUSES
 diset tpcc mysql_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
 $TCOUNT_CONFIG
+$KEEPALIVE_CONFIG
 loadscript
 puts \"SEQUENCE STARTED\"
 foreach z { $HAMMERDB_VUSERS } {
@@ -246,6 +258,7 @@ diset tpcc maria_allwarehouse $HAMMERDB_ALLWAREHOUSES
 diset tpcc maria_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
 $TCOUNT_CONFIG
+$KEEPALIVE_CONFIG
 loadscript
 puts \"SEQUENCE STARTED\"
 foreach z { $HAMMERDB_VUSERS } {
@@ -287,6 +300,7 @@ diset tpcc pg_allwarehouse $HAMMERDB_ALLWAREHOUSES
 diset tpcc pg_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
 $TCOUNT_CONFIG
+$KEEPALIVE_CONFIG
 loadscript
 puts \"SEQUENCE STARTED\"
 foreach z { $HAMMERDB_VUSERS } {
@@ -344,6 +358,7 @@ diset tpcc pg_allwarehouse $HAMMERDB_ALLWAREHOUSES
 diset tpcc pg_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
 $TCOUNT_CONFIG
+$KEEPALIVE_CONFIG
 loadscript
 print vuconf
 puts \"SEQUENCE STARTED\"
@@ -404,6 +419,7 @@ diset tpcc mssqls_allwarehouse $HAMMERDB_ALLWAREHOUSES
 diset tpcc mssqls_keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
 $TCOUNT_CONFIG
+$KEEPALIVE_CONFIG
 loadscript
 puts \"SEQUENCE STARTED\"
 foreach z { $HAMMERDB_VUSERS } {
@@ -458,6 +474,7 @@ diset tpcc allwarehouse $HAMMERDB_ALLWAREHOUSES
 diset tpcc keyandthink $HAMMERDB_KEYANDTHINK
 vuset logtotemp 1
 $TCOUNT_CONFIG
+$KEEPALIVE_CONFIG
 loadscript
 puts \"SEQUENCE STARTED\"
 foreach z { $HAMMERDB_VUSERS } {

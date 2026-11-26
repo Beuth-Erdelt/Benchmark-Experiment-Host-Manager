@@ -34,6 +34,7 @@ This file covers the shared design and decisions that apply across both.
 | Generator has no Redis dependency | The TPC-C load is single-pod only; no key-space partitioning is needed |
 | `runtimer` proc only in mysql/mariadb/citus/mssqlserver/oracle | PostgreSQL's HammerDB driver does not require the explicit timer proc |
 | `HAMMERDB_TIMEPROFILE=true` by default | The evaluator reads `/tmp/hdbxtprofile.log` to extract per-transaction latency statistics |
+| `keepalive_margin` 300 s instead of 60 s | The monitor writes the time profile only after all workers have reported; with key-and-think the last think time outlasts 60 s and `vudestroy` kills the monitor first |
 
 ## Supported backends
 
