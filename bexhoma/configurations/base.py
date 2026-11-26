@@ -1002,17 +1002,16 @@ class SutConfiguration:
         """
         return f"{app.lower()}-[a-z0-9]+-{configuration}-{experiment}-.*"
 
-    def deployment_pods_pattern(self, configuration: str, experiment: str) -> str:
+    def deployment_pods_pattern(self) -> str:
         """Pod regex for ``{pods}`` of the SUT query set: the pods of this configuration's Deployments.
 
         ``(<deployment>|…)-.*`` with the names of :attr:`deployment_infos` (the SUT
         and, e.g., its pool), so the configuration's loading and benchmarker jobs are
         not counted as the SUT: their pods carry no ``dbms`` container, but the
         network and "CPU Others" queries have no such filter. Without known
-        Deployments (a DBMS not deployed by bexhoma), :meth:`sut_pods_pattern`.
+        Deployments (a DBMS not deployed by bexhoma), :meth:`sut_pods_pattern` of
+        this configuration and experiment.
 
-        :param configuration: Configuration name, lower case.
-        :param experiment: Experiment code.
         :return: The regex.
         :rtype: str
         """
@@ -1020,7 +1019,7 @@ class SutConfiguration:
             deployment['name'] for deployment in (self.deployment_infos or {}).get('deployment', {}).values()
             if deployment.get('name'))
         if not names:
-            return self.sut_pods_pattern(self.appname, configuration, experiment)
+            return self.sut_pods_pattern(self.appname, self.configuration.lower(), self.get_experiment_name())
         return f"({'|'.join(names)})-.*"
 
     #: Longest name of a loading or benchmarker job. Kubernetes names a job's pods
@@ -1125,7 +1124,7 @@ class SutConfiguration:
         configuration = self.configuration.lower()
         experiment_name = self.get_experiment_name()
         if pods is None:
-            pods = self.deployment_pods_pattern(configuration, experiment_name)
+            pods = self.deployment_pods_pattern()
         return metric.format(
             host=host,
             gpuid=gpuid,
