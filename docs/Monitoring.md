@@ -179,6 +179,7 @@ The cAdvisor queries in `k8s-cluster.config` handle this in two ways:
 `{namespace}` keeps pods of other namespaces out: worker pod names carry no experiment code.
 
 A scoped job's counter starts at 0 before its first scrape, so its first value counts as growth: a loader with a single scrape gets its CPU total instead of 0.
+What a job pod does after its last scrape is lost: its counter totals are too low by up to one scrape interval of work per pod (see [Malfunctions](Malfunctions.md#not-noticed)).
 Whether a connection is scoped is read from its stored queries (its job query set differs from `metrics`); with a literal pod pattern in `cluster.config`, the job query sets equal `metrics` and the rule is `max - min`, without a message.
 The scoped queries are the cAdvisor metric definitions of `k8s-cluster.config`.
 

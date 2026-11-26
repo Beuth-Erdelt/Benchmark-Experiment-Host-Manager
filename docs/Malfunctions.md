@@ -124,3 +124,4 @@ Monitoring:
 * a fetch of metrics that failed before it queried anything;
 * a required metric switched off in the cluster configuration itself (`active: False`): it is not fetched, so it is not reported as missing; only `-mm` is checked;
 * zeros in other columns than CPU (memory, network, disk) are not tested; only a missing series is.
+* the last seconds of a job pod: Prometheus scrapes every `scrape_interval` (30 s), and a loader or benchmarker pod usually ends between two scrapes. What it did after its last scrape (CPU seconds, network and disk bytes) is never recorded, so the job's counter totals are too low by up to one scrape interval of work per pod. Pods that work fastest at the end lose most: in a TPC-DS SF10 loading of PostgreSQL with 8 loader pods, the loaders' network transmit missed about 2,000 of 12,450 MiB (16%) that the SUT received. The SUT's counters are complete, since its pod lives through the whole phase.
