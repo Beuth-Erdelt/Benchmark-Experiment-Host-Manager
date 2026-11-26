@@ -100,10 +100,21 @@ class FormattingTest(unittest.TestCase):
 
     query = 'm{{pod=~"{pods}", namespace="{namespace}"}}'
 
-    def test_default_is_the_old_pattern(self) -> None:
+    def test_default_is_the_sut_pattern(self) -> None:
         cfg = _configuration()
         self.assertEqual(cfg.set_metric_of_config_default(self.query, host='', gpuid='', schema='', database=''),
-                         'm{pod=~"(.*)postgresql-1-1792334082(.*)", namespace="perdelt"}')
+                         'm{pod=~"bexhoma-[a-z0-9]+-postgresql-1-1792334082-.*", namespace="perdelt"}')
+
+    def test_sut_pattern_excludes_configurations_ending_with_this_one(self) -> None:
+        """#940: PG-1 and XPG-1 in one experiment."""
+        pattern = SutConfiguration.sut_pods_pattern('bexhoma', 'pg-1', '1792334082')
+        for pod in ('bexhoma-sut-pg-1-1792334082-6d9f7c8b5-x7k2p', 'bexhoma-pool-pg-1-1792334082-5f8d9-qp9nt'):
+            with self.subTest(pod):
+                self.assertTrue(re.fullmatch(pattern, pod))
+        for pod in ('bexhoma-sut-xpg-1-1792334082-6d9f7c8b5-x7k2p', 'bexhoma-sut-x-pg-1-1792334082-6d9f7c8b5-x7k2p',
+                    'bexhoma-sut-pg-1-17923340821-6d9f7c8b5-x7k2p', 'bx-w-pg-1-1792334082-0'):
+            with self.subTest(pod):
+                self.assertFalse(re.fullmatch(pattern, pod))
 
     def test_job_pods(self) -> None:
         cfg = _configuration()

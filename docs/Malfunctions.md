@@ -95,6 +95,7 @@ Failed operations of YCSB are an exception: they fail the test `Execution Phase:
 | CPU of a component is zero | The component was not measured, or idle | Resource numbers per component are wrong | Test `... contains no 0 or NaN in CPU [CPUs]`, skipped for phases too short to be measured |
 | A required metric is switched off | `-mm` switches off CPU or memory metrics | Core resource numbers are missing | `-mm` refuses to switch off the required metrics (CPU utilization and time, memory with and without cache) |
 | A job's metrics include other pods | A loader or benchmarker query selects pods of other jobs | Resource numbers of one job include another's | Each job's queries select only its own pods, by the pod names Kubernetes gives them (see below for the limits) |
+| The SUT's metrics include another configuration | One configuration name ends with another one of the same experiment (e.g. `PG-1` and `XPG-1`) | The SUT metrics of the shorter one include the DBMS container of the other | The SUT's queries select `bexhoma-<component>-<configuration>-<code>-...`; component names contain no `-`, so `bexhoma-sut-xpg-1-...` does not match `PG-1` |
 | A job name is too long | A long configuration name: Kubernetes names the pods of a job `<job>-<5 characters>`, but cuts `<job>-` to 58 characters first | Jobs that differ only at the end (repetition, round, benchmark or loading job number) share their pod names, so their metrics mix and their start and end times are lost | Refused before anything is started: `<configuration>: job name ... has ... characters, at most 57 are allowed`. Loading and benchmarker job names are checked with the highest numbers the experiment reaches |
 
 ## Results and the experiment
@@ -114,7 +115,6 @@ Failed operations of YCSB are an exception: they fail the test `Execution Phase:
 
 Pods of similar names:
 
-* **Configuration names.** The SUT's queries select pods whose name contains `<configuration>-<code>`. If one configuration name ends with another one of the same experiment (e.g. `PG-1` and `XPG-1`), the SUT metrics of the shorter one include the DBMS container of the other.
 * **DBMS not managed by bexhoma.** For a system whose components bexhoma did not deploy (e.g. YugabyteDB via Helm), workers are selected by component name only and without a container filter: any other pod of the namespace with that name part counts too.
 
 Monitoring:

@@ -972,9 +972,10 @@ class SutConfiguration:
 
     @staticmethod
     def pods_pattern(configuration: str, experiment: str) -> str:
-        """Pod regex for ``{pods}``: every pod whose name contains ``<configuration>-<experiment>``.
+        """Pod regex for ``{pods}`` of workers: every pod whose name contains ``<configuration>-<experiment>``.
 
-        The pattern the cAdvisor templates had literally before ``{pods}``.
+        The pattern the cAdvisor templates had literally before ``{pods}``; the SUT
+        query set uses :meth:`sut_pods_pattern`.
 
         :param configuration: Configuration name, or a regex group of worker names.
         :param experiment: Experiment code; empty for workers.
@@ -982,6 +983,23 @@ class SutConfiguration:
         :rtype: str
         """
         return f"(.*){configuration}-{experiment}(.*)"
+
+    @staticmethod
+    def sut_pods_pattern(app: str, configuration: str, experiment: str) -> str:
+        """Pod regex for ``{pods}`` of the SUT query set: the pods of this configuration's components.
+
+        ``<app>-<component>-<configuration>-<experiment>-…``: the SUT, its pool and its
+        jobs. Component names contain no ``-`` and Prometheus anchors the regex, so
+        a configuration whose name ends with this one (``xpg-1`` for ``pg-1``) does
+        not match.
+
+        :param app: App name, e.g. ``bexhoma``.
+        :param configuration: Configuration name, lower case.
+        :param experiment: Experiment code.
+        :return: The regex.
+        :rtype: str
+        """
+        return f"{app.lower()}-[a-z0-9]+-{configuration}-{experiment}-.*"
 
     #: Longest name of a loading or benchmarker job. Kubernetes names a job's pods
     #: ``<jobname>-<5 characters>`` and cuts ``<jobname>-`` to 58 characters first;
@@ -1075,7 +1093,7 @@ class SutConfiguration:
         :param schema: Database schema name.
         :param database: Database name.
         :param experiment: Experiment code; defaults to :attr:`code`.
-        :param pods: Pod regex for ``{pods}``; defaults to :meth:`pods_pattern`
+        :param pods: Pod regex for ``{pods}``; defaults to :meth:`sut_pods_pattern`
             of this configuration (a job's own pods: :meth:`job_pods_pattern`).
         :return: Filled PromQL query string.
         :rtype: str
@@ -1085,7 +1103,7 @@ class SutConfiguration:
         configuration = self.configuration.lower()
         experiment_name = self.get_experiment_name()
         if pods is None:
-            pods = self.pods_pattern(configuration, experiment_name)
+            pods = self.sut_pods_pattern(self.appname, configuration, experiment_name)
         return metric.format(
             host=host,
             gpuid=gpuid,

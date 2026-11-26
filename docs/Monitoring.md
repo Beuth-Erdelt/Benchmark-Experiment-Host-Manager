@@ -162,7 +162,7 @@ The cAdvisor queries in `k8s-cluster.config` handle this in two ways:
 
   | Query set | `{pods}` | Used for |
   |---|---|---|
-  | `metrics` | `(.*)<configuration>-<experiment>(.*)` | the SUT and other deployments |
+  | `metrics` | `bexhoma-[a-z0-9]+-<configuration>-<experiment>-.*` | the SUT and other deployments; a configuration whose name ends with this one (`XPG-1` for `PG-1`) does not match |
   | `metrics_benchmarker` | `<benchmarker job name>-[a-z0-9]{5}` | the benchmarker job of exactly this connection |
   | `metrics_loading` | `bexhoma-loading-<configuration>-<experiment>-<run>-.+` | all loading jobs of this repetition (loader, data generator) |
   | `metrics_<statefulset>` | `(.*)<worker name>-(.*)` | workers |
