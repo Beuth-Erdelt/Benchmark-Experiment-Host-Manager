@@ -169,6 +169,7 @@ The cAdvisor queries in `k8s-cluster.config` handle this in two ways:
 
   The job names are those of the job manifests, so a job's queries see only its own pods, whatever the gap to the previous round.
   The SUT's network and "CPU Others" queries have no `container="dbms"` filter; results of bexhoma v0.12.3 and earlier also count the configuration's loading and benchmarker pods.
+  A pool (e.g. PGBouncer) belongs to the SUT: every request passes through it. It has no `dbms` container, so it adds only to network and "CPU Others", and traffic between pool and DBMS counts on both sides.
   Several benchmarker jobs in one round each get their own row instead of the sum of all of them.
 - **Stale series filter**: every instant selector `X` is written `(X and (time() - timestamp(X)) < 90)`, which drops a series whose newest sample is older than 90 s.
   This keeps the previous SUT pod out of the next repetition, which starts minutes later.
