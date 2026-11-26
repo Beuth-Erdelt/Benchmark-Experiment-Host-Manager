@@ -184,6 +184,10 @@ staging_raw=$destination_raw/.staging-${HOSTNAME:-$$}
 rm -rf $staging_raw
 mkdir -p $staging_raw
 echo "staging_raw:$staging_raw"
+# Remove the staging folder on every exit, also on failure: leftover copies fill the shared /data.
+# The TERM/INT trap turns a signal into an exit, so the EXIT trap also runs when the pod is stopped.
+trap 'rm -rf "$staging_raw"' EXIT
+trap 'exit 143' TERM INT
 
 ######################## Start measurement of time ########################
 bexhoma_start_epoch=$(date -u +%s)
