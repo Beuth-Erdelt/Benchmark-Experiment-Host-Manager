@@ -162,12 +162,13 @@ The cAdvisor queries in `k8s-cluster.config` handle this in two ways:
 
   | Query set | `{pods}` | Used for |
   |---|---|---|
-  | `metrics` | `bexhoma-[a-z0-9]+-<configuration>-<experiment>-.*` | the SUT and other deployments; a configuration whose name ends with this one (`XPG-1` for `PG-1`) does not match |
+  | `metrics` | `(<deployment>\|...)-.*`, e.g. `(bexhoma-pool-pg-1-<experiment>\|bexhoma-sut-pg-1-<experiment>)-.*` | the SUT and the other Deployments of the configuration (e.g. a pool), not its loading and benchmarker jobs. Without Deployments of bexhoma: `bexhoma-[a-z0-9]+-<configuration>-<experiment>-.*` |
   | `metrics_benchmarker` | `<benchmarker job name>-[a-z0-9]{5}` | the benchmarker job of exactly this connection |
   | `metrics_loading` | `bexhoma-loading-<configuration>-<experiment>-<run>-.+` | all loading jobs of this repetition (loader, data generator) |
   | `metrics_<statefulset>` | `(.*)<worker name>-(.*)` | workers |
 
   The job names are those of the job manifests, so a job's queries see only its own pods, whatever the gap to the previous round.
+  The SUT's network and "CPU Others" queries have no `container="dbms"` filter; results of bexhoma v0.12.3 and earlier also count the configuration's loading and benchmarker pods.
   Several benchmarker jobs in one round each get their own row instead of the sum of all of them.
 - **Stale series filter**: every instant selector `X` is written `(X and (time() - timestamp(X)) < 90)`, which drops a series whose newest sample is older than 90 s.
   This keeps the previous SUT pod out of the next repetition, which starts minutes later.

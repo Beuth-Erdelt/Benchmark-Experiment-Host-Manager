@@ -100,7 +100,7 @@ class FormattingTest(unittest.TestCase):
 
     query = 'm{{pod=~"{pods}", namespace="{namespace}"}}'
 
-    def test_default_is_the_sut_pattern(self) -> None:
+    def test_without_deployments_the_component_pattern(self) -> None:
         cfg = _configuration()
         self.assertEqual(cfg.set_metric_of_config_default(self.query, host='', gpuid='', schema='', database=''),
                          'm{pod=~"bexhoma-[a-z0-9]+-postgresql-1-1792334082-.*", namespace="perdelt"}')
@@ -113,6 +113,25 @@ class FormattingTest(unittest.TestCase):
                 self.assertTrue(re.fullmatch(pattern, pod))
         for pod in ('bexhoma-sut-xpg-1-1792334082-6d9f7c8b5-x7k2p', 'bexhoma-sut-x-pg-1-1792334082-6d9f7c8b5-x7k2p',
                     'bexhoma-sut-pg-1-17923340821-6d9f7c8b5-x7k2p', 'bx-w-pg-1-1792334082-0'):
+            with self.subTest(pod):
+                self.assertFalse(re.fullmatch(pattern, pod))
+
+    def test_sut_and_pool_deployments_without_their_jobs(self) -> None:
+        """The SUT query set selects the configuration's Deployments, not its loading and benchmarker jobs."""
+        cfg = _configuration()
+        code = '1792334082'
+        cfg.deployment_infos = {"deployment": {
+            "sut": {"name": f"bexhoma-sut-postgresql-1-{code}", "pvc": []},
+            "pool": {"name": f"bexhoma-pool-postgresql-1-{code}", "pvc": []}}, "statefulset": {}}
+        query = cfg.set_metric_of_config_default(self.query, host='', gpuid='', schema='', database='')
+        pattern = f"(bexhoma-pool-postgresql-1-{code}|bexhoma-sut-postgresql-1-{code})-.*"
+        self.assertEqual(query, f'm{{pod=~"{pattern}", namespace="perdelt"}}')
+        for pod in (f'bexhoma-sut-postgresql-1-{code}-6d9f7c8b5-x7k2p', f'bexhoma-pool-postgresql-1-{code}-5f8d9-qp9nt'):
+            with self.subTest(pod):
+                self.assertTrue(re.fullmatch(pattern, pod))
+        for pod in (f'bexhoma-loading-postgresql-1-{code}-1-1-1-qp9nt',
+                    f'bexhoma-benchmarker-postgresql-1-{code}-1-1-1-qp9nt',
+                    f'bexhoma-sut-xpostgresql-1-{code}-6d9f7c8b5-x7k2p'):
             with self.subTest(pod):
                 self.assertFalse(re.fullmatch(pattern, pod))
 

@@ -975,7 +975,7 @@ class SutConfiguration:
         """Pod regex for ``{pods}`` of workers: every pod whose name contains ``<configuration>-<experiment>``.
 
         The pattern the cAdvisor templates had literally before ``{pods}``; the SUT
-        query set uses :meth:`sut_pods_pattern`.
+        query set uses :meth:`deployment_pods_pattern`.
 
         :param configuration: Configuration name, or a regex group of worker names.
         :param experiment: Experiment code; empty for workers.
@@ -986,10 +986,11 @@ class SutConfiguration:
 
     @staticmethod
     def sut_pods_pattern(app: str, configuration: str, experiment: str) -> str:
-        """Pod regex for ``{pods}`` of the SUT query set: the pods of this configuration's components.
+        """Pod regex for ``{pods}``: the pods of this configuration's components.
 
         ``<app>-<component>-<configuration>-<experiment>-…``: the SUT, its pool and its
-        jobs. Component names contain no ``-`` and Prometheus anchors the regex, so
+        jobs; the SUT query set falls back to it when no Deployments are known
+        (:meth:`deployment_pods_pattern`). Component names contain no ``-`` and Prometheus anchors the regex, so
         a configuration whose name ends with this one (``xpg-1`` for ``pg-1``) does
         not match.
 
@@ -1000,6 +1001,27 @@ class SutConfiguration:
         :rtype: str
         """
         return f"{app.lower()}-[a-z0-9]+-{configuration}-{experiment}-.*"
+
+    def deployment_pods_pattern(self, configuration: str, experiment: str) -> str:
+        """Pod regex for ``{pods}`` of the SUT query set: the pods of this configuration's Deployments.
+
+        ``(<deployment>|…)-.*`` with the names of :attr:`deployment_infos` (the SUT
+        and, e.g., its pool), so the configuration's loading and benchmarker jobs are
+        not counted as the SUT: their pods carry no ``dbms`` container, but the
+        network and "CPU Others" queries have no such filter. Without known
+        Deployments (a DBMS not deployed by bexhoma), :meth:`sut_pods_pattern`.
+
+        :param configuration: Configuration name, lower case.
+        :param experiment: Experiment code.
+        :return: The regex.
+        :rtype: str
+        """
+        names = sorted(
+            deployment['name'] for deployment in (self.deployment_infos or {}).get('deployment', {}).values()
+            if deployment.get('name'))
+        if not names:
+            return self.sut_pods_pattern(self.appname, configuration, experiment)
+        return f"({'|'.join(names)})-.*"
 
     #: Longest name of a loading or benchmarker job. Kubernetes names a job's pods
     #: ``<jobname>-<5 characters>`` and cuts ``<jobname>-`` to 58 characters first;
@@ -1093,7 +1115,7 @@ class SutConfiguration:
         :param schema: Database schema name.
         :param database: Database name.
         :param experiment: Experiment code; defaults to :attr:`code`.
-        :param pods: Pod regex for ``{pods}``; defaults to :meth:`sut_pods_pattern`
+        :param pods: Pod regex for ``{pods}``; defaults to :meth:`deployment_pods_pattern`
             of this configuration (a job's own pods: :meth:`job_pods_pattern`).
         :return: Filled PromQL query string.
         :rtype: str
@@ -1103,7 +1125,7 @@ class SutConfiguration:
         configuration = self.configuration.lower()
         experiment_name = self.get_experiment_name()
         if pods is None:
-            pods = self.sut_pods_pattern(self.appname, configuration, experiment_name)
+            pods = self.deployment_pods_pattern(configuration, experiment_name)
         return metric.format(
             host=host,
             gpuid=gpuid,
