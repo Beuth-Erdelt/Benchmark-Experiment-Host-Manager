@@ -296,14 +296,27 @@ spec:
 
             HOST="${BEXHOMA_WORKER_FIRST}"
 
-            echo "Checking cluster status on $HOST ..."
-            if cockroach node status --insecure --host="$HOST" >/dev/null 2>&1; then
-              echo "Cluster already initialized. Nothing to do."
-            else
-              echo "Cluster NOT initialized. Running init..."
-              cockroach init --insecure --host="$HOST"
-              echo "Cluster init completed."
-            fi
+            # The job starts together with the workers; until the first worker
+            # resolves and listens, init fails. Retry here instead of failing the
+            # container, so a restart of this job means a real failure.
+            LIMIT=""
+            if command -v timeout >/dev/null 2>&1; then LIMIT="timeout 30"; fi
+            for attempt in $(seq 1 60); do
+              echo "Attempt $attempt: running init on $HOST ..."
+              if output=$($LIMIT cockroach init --insecure --host="$HOST" 2>&1); then
+                echo "$output"
+                echo "Cluster init completed."
+                exit 0
+              fi
+              echo "$output"
+              if echo "$output" | grep -q "already been initialized"; then
+                echo "Cluster already initialized. Nothing to do."
+                exit 0
+              fi
+              sleep 5
+            done
+            echo "Cluster init failed: $HOST not reachable."
+            exit 1
   ttlSecondsAfterFinished: 300
 ---
 apiVersion: apps/v1
