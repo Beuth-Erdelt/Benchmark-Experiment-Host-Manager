@@ -3,14 +3,14 @@
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1193s 
-* Code: 1795445710
+* Duration: 1208s 
+* Code: 1795628486
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 5 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.12.3.
+  * Experiment uses bexhoma version 0.12.4.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -22,7 +22,6 @@ Benchbase Workload tpcc SF=16
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run 2 times.
   * Maximum DBMS across the whole cluster is 10.
-  * Results are validated against basic correctness requirements.
   * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
   * SUT requests 4 CPU and 16Gi RAM.
 
@@ -33,7 +32,7 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:817229
+  * disk:1222614
   * datadisk:4307
   * volume_size:49G
   * volume_used:4.3G
@@ -45,7 +44,7 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795445710
+    * code:1795628486
     * TENANT_VOL:False
 * postgresql-1-2-1-1 uses docker image postgres:18.6
   * RAM:2164173156352
@@ -53,8 +52,8 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:817232
-  * datadisk:18045
+  * disk:1222815
+  * datadisk:17831
   * volume_size:49G
   * volume_used:18G
   * cpu_list:0-223
@@ -65,7 +64,7 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795445710
+    * code:1795628486
     * TENANT_VOL:False
 
 ### Inherited Loading
@@ -78,8 +77,8 @@ Benchbase Workload tpcc SF=16
 * PostgreSQL-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1795445710-5874d8d654-swvfj: 0
-* bexhoma-sut-postgresql-1-1795445710-cbc9b57d8-78fgd: 0
+* bexhoma-sut-postgresql-1-1795628486-6bb5d99cbc-kswvs: 0
+* bexhoma-sut-postgresql-1-1795628486-78cd5b6478-tn2wr: 0
 
 ### Workflow
 
@@ -108,15 +107,15 @@ Benchbase Workload tpcc SF=16
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       57 |                       12831.42 |                    12693.77 |         0.00 |                                                      33480.00 |                                              12453.00 |
-| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       21 |                        8071.58 |                     7998.27 |         0.00 |                                                      37095.00 |                                              19806.00 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       38 |                       12796.19 |                    12657.18 |         0.00 |                                                      35177.00 |                                              12486.00 |
+| postgresql-1-2-1-1-1 | postgresql-1-2-1 | postgresql-1-2-1-1 |                2 |        1 |               1 |       1 |       160 |    16384 |           0 | 300.00 |       23 |                        7630.15 |                     7562.10 |         0.00 |                                                      39616.00 |                                              20951.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       57 |                       12831.42 |                    12693.77 |         0.00 |                                                      33480.00 |                                              12453.00 |
-| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       21 |                        8071.58 |                     7998.27 |         0.00 |                                                      37095.00 |                                              19806.00 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       38 |                       12796.19 |                    12657.18 |         0.00 |                                                      35177.00 |                                              12486.00 |
+| postgresql-1-2-1 | postgresql-1-2-1 |                2 |        1 |               1 |           1 |       160 |    16384 |           0 | 300.00 |       23 |                        7630.15 |                     7562.10 |         0.00 |                                                      39616.00 |                                              20951.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -126,6 +125,13 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
 * TEST passed: Workflow as planned
+* TEST passed: Every pod ran for the configured time
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

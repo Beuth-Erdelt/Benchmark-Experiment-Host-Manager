@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 656s 
-* Code: 1795529289
+* Duration: 699s 
+* Code: 1795667022
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -13,7 +13,7 @@ TPC-H Queries SF=1
   * Timeout per query is 1800.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.12.3.
+  * Experiment uses bexhoma version 0.12.4.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -25,56 +25,16 @@ TPC-H Queries SF=1
   * Benchmarking is run as [1, 1] times the number of benchmarking pods.
   * Number of tenants is 2, one container per tenant.
   * Experiment is run once.
-  * Results are validated against basic correctness requirements.
   * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
 * mysql-1-1-1-1-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1107520
-  * datadisk:34809
-  * volume_size:49G
-  * volume_used:34G
-  * cpu_list:0-223
-  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
-  * requests_cpu:4
-  * requests_memory:16Gi
-  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
-  * load_durability: relaxed
-  * eval_parameters
-    * code:1795529289
-    * TENANT_BY:container
-    * TENANT_NUM:2
-* mysql-1-1-2-1-1 uses docker image mysql:9.7.2
-  * RAM:2164173156352
-  * Cores:224
-  * host:6.8.0-147-generic
-  * node:cl-worker36
-  * disk:1108351
-  * datadisk:34809
-  * volume_size:49G
-  * volume_used:34G
-  * cpu_list:0-223
-  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
-  * requests_cpu:4
-  * requests_memory:16Gi
-  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
-    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
-  * load_durability: relaxed
-  * eval_parameters
-    * code:1795529289
-    * TENANT_BY:container
-    * TENANT_NUM:2
-* mysql-2-1-1-1-1 uses docker image mysql:9.7.2
-  * RAM:2164173156352
-  * Cores:224
-  * host:6.8.0-147-generic
-  * node:cl-worker36
-  * disk:1107520
+  * disk:655442
   * datadisk:34825
   * volume_size:49G
   * volume_used:35G
@@ -86,16 +46,59 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795529289
+    * code:1795667022
+    * TENANT_BY:container
+    * TENANT_NUM:2
+* mysql-1-1-2-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:655961
+  * datadisk:34825
+  * volume_size:49G
+  * volume_used:35G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1795667022
+    * TENANT_BY:container
+    * TENANT_NUM:2
+* mysql-2-1-1-1-1 uses docker image mysql:9.7.2
+  * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
+  * Cores:224
+  * host:6.8.0-147-generic
+  * node:cl-worker36
+  * disk:655442
+  * datadisk:34825
+  * volume_size:49G
+  * volume_used:35G
+  * cpu_list:0-223
+  * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
+  * requests_cpu:4
+  * requests_memory:16Gi
+  * resources_total: 4.0 CPU, 16.0 GiB RAM requested in 1 pods
+    * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
+  * load_durability: relaxed
+  * eval_parameters
+    * code:1795667022
     * TENANT_BY:container
     * TENANT_NUM:2
     * TENANT:1
 * mysql-2-1-2-1-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1108351
+  * disk:655967
   * datadisk:34825
   * volume_size:49G
   * volume_used:35G
@@ -107,7 +110,7 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795529289
+    * code:1795667022
     * TENANT_BY:container
     * TENANT_NUM:2
     * TENANT:1
@@ -117,8 +120,8 @@ TPC-H Queries SF=1
 * MySQL-2: 8 of 8 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1795529289-78df99c8cc-n2bnx: 0
-* bexhoma-sut-mysql-2-1795529289-868dd65566-9h8s6: 0
+* bexhoma-sut-mysql-1-1795667022-646d88b5b5-9knk8: 0
+* bexhoma-sut-mysql-2-1795667022-86b99bc978-glwsw: 0
 
 ### Workflow
 
@@ -142,8 +145,8 @@ TPC-H Queries SF=1
 
 |                        |   experiment_run | type_tenants   | vol_tenants   |   num_tenants |   tenant_id |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads |   Throughput [SF/h] | loading_inherited   |
 |:-----------------------|-----------------:|:---------------|:--------------|--------------:|------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|--------------------:|:--------------------|
-| 1795529289-MySQL-1-1-0 |                1 | container      | False         |             2 |           0 |    1 |      123.00 |           3.00 |            0.00 |         56.00 |           52.00 |              1 |         0 |               29.27 | False               |
-| 1795529289-MySQL-2-1-1 |                1 | container      | False         |             2 |           1 |    1 |      113.00 |           2.00 |            0.00 |         57.00 |           53.00 |              1 |         0 |               31.86 | False               |
+| 1795667022-MySQL-1-1-0 |                1 | container      | False         |             2 |           0 |    1 |      129.00 |           2.00 |           13.00 |         55.00 |           57.00 |              1 |         0 |               27.91 | False               |
+| 1795667022-MySQL-2-1-1 |                1 | container      | False         |             2 |           1 |    1 |      121.00 |           5.00 |            0.00 |         54.00 |           58.00 |              1 |         0 |               29.75 | False               |
 
 ### Benchmarking
 
@@ -151,19 +154,19 @@ TPC-H Queries SF=1
 
 | connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         52 |            0.85 |             4214.34 |           1523.08 |           0 |
-| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         45 |            0.74 |             4841.38 |           1760.00 |           0 |
-| mysql-2-1-1-1-1 | mysql-2-1-1 | mysql-2-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         52 |            0.99 |             3647.10 |           1523.08 |           1 |
-| mysql-2-1-2-1-1 | mysql-2-1-2 | mysql-2-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         47 |            0.82 |             4382.40 |           1685.11 |           1 |
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         51 |            0.87 |             4129.78 |           1552.94 |           0 |
+| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         40 |            0.67 |             5389.50 |           1980.00 |           0 |
+| mysql-2-1-1-1-1 | mysql-2-1-1 | mysql-2-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         53 |            0.90 |             4009.69 |           1494.34 |           1 |
+| mysql-2-1-2-1-1 | mysql-2-1-2 | mysql-2-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         42 |            0.71 |             5061.06 |           1885.71 |           1 |
 
 #### Per Phase
 
 | DBMS          | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:--------------|:------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mysql-1-1-1_0 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         52 |            0.85 |             4214.34 |           1523.08 |           0 |
-| mysql-1-1-2_0 | mysql-1-1-2 |                1 |        2 |               1 |           1 | 1.00 |               22 |                  22 |         45 |            0.74 |             4841.38 |           1760.00 |           0 |
-| mysql-2-1-1_1 | mysql-2-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         52 |            0.99 |             3647.10 |           1523.08 |           1 |
-| mysql-2-1-2_1 | mysql-2-1-2 |                1 |        2 |               1 |           1 | 1.00 |               22 |                  22 |         47 |            0.82 |             4382.40 |           1685.11 |           1 |
+| mysql-1-1-1_0 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         51 |            0.87 |             4129.78 |           1552.94 |           0 |
+| mysql-1-1-2_0 | mysql-1-1-2 |                1 |        2 |               1 |           1 | 1.00 |               22 |                  22 |         40 |            0.67 |             5389.50 |           1980.00 |           0 |
+| mysql-2-1-1_1 | mysql-2-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         53 |            0.90 |             4009.69 |           1494.34 |           1 |
+| mysql-2-1-2_1 | mysql-2-1-2 |                1 |        2 |               1 |           1 | 1.00 |               22 |                  22 |         42 |            0.71 |             5061.06 |           1885.71 |           1 |
 
 #### Query Completion per Phase
 
@@ -179,28 +182,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   mysql-1-1-1-1-1 |   mysql-1-1-2-1-1 |   mysql-2-1-1-1-1 |   mysql-2-1-2-1-1 |
 |:----------------------------------------------------|------------------:|------------------:|------------------:|------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |           7430.64 |           5980.91 |           7646.70 |           5979.31 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |             87.07 |             65.21 |             79.39 |             73.41 |
-| Shipping Priority (TPC-H Q3)                        |           1638.63 |            861.14 |           1516.47 |           1133.48 |
-| Order Priority Checking Query (TPC-H Q4)            |            322.47 |            299.17 |            347.63 |            340.25 |
-| Local Supplier Volume (TPC-H Q5)                    |            893.06 |            731.61 |            836.08 |            814.41 |
-| Forecasting Revenue Change (TPC-H Q6)               |            810.20 |            784.10 |            885.97 |           1101.43 |
-| Volume Shipping Query (TPC-H Q7)                    |            657.29 |            764.55 |           2594.41 |           1742.65 |
-| National Market Share (TPC-H Q8)                    |           2270.06 |           2237.96 |           2079.85 |           2138.82 |
-| Product Type Profit Measure (TPC-H Q9)              |           5517.81 |           1544.12 |           5909.26 |           1881.79 |
-| Returned Item Reporting Query (TPC-H Q10)           |            923.40 |           1436.67 |           1552.98 |            936.98 |
-| Important Stock Identification (TPC-H Q11)          |            150.87 |            130.18 |            211.06 |            292.82 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |           1823.86 |           1176.23 |           1474.66 |           2024.82 |
-| Customer Distribution (TPC-H Q13)                   |           2349.99 |           3912.76 |           2557.57 |           2787.78 |
-| Promotion Effect Query (TPC-H Q14)                  |            974.90 |           1048.75 |           1204.93 |           1565.32 |
-| Top Supplier Query (TPC-H Q15)                      |          15100.64 |          11494.49 |          14262.18 |          10804.16 |
-| Parts/Supplier Relationship (TPC-H Q16)             |            228.20 |            219.39 |            412.06 |            252.79 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |            219.39 |            194.16 |            231.59 |            191.85 |
-| Large Volume Customer (TPC-H Q18)                   |           1190.90 |           1158.41 |           1199.27 |           1787.08 |
-| Discounted Revenue (TPC-H Q19)                      |            166.23 |             86.07 |            198.75 |             91.41 |
-| Potential Part Promotion (TPC-H Q20)                |            481.61 |            211.80 |            643.12 |            192.51 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |           4092.72 |           3773.99 |           3323.88 |           3288.00 |
-| Global Sales Opportunity Query (TPC-H Q22)          |             89.31 |            275.30 |             96.22 |             94.44 |
+| Pricing Summary Report (TPC-H Q1)                   |           7121.57 |           6009.66 |           7145.89 |           6604.61 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |             76.67 |             72.39 |             78.21 |             74.91 |
+| Shipping Priority (TPC-H Q3)                        |           1111.96 |            935.07 |           1206.43 |           1031.51 |
+| Order Priority Checking Query (TPC-H Q4)            |            343.57 |            334.92 |            326.26 |            332.90 |
+| Local Supplier Volume (TPC-H Q5)                    |            725.36 |            744.88 |           1646.75 |            774.44 |
+| Forecasting Revenue Change (TPC-H Q6)               |           1778.06 |            777.26 |            903.02 |            773.38 |
+| Volume Shipping Query (TPC-H Q7)                    |            556.95 |            527.69 |            635.61 |            586.00 |
+| National Market Share (TPC-H Q8)                    |           2130.71 |           1898.31 |           1920.42 |           2183.79 |
+| Product Type Profit Measure (TPC-H Q9)              |           5811.72 |           1476.57 |           5947.14 |           1938.82 |
+| Returned Item Reporting Query (TPC-H Q10)           |            927.85 |            942.80 |            972.67 |           1075.89 |
+| Important Stock Identification (TPC-H Q11)          |            144.25 |            120.87 |            165.07 |            141.72 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |           1155.42 |           1310.77 |           1312.68 |           1303.82 |
+| Customer Distribution (TPC-H Q13)                   |           3224.75 |           2470.23 |           2692.74 |           2384.41 |
+| Promotion Effect Query (TPC-H Q14)                  |           1058.33 |           1027.43 |           1102.76 |           1101.24 |
+| Top Supplier Query (TPC-H Q15)                      |          15576.18 |          10196.26 |          16151.93 |          11079.94 |
+| Parts/Supplier Relationship (TPC-H Q16)             |            243.62 |            361.87 |            318.34 |            314.59 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |            232.41 |            191.23 |            313.10 |            196.01 |
+| Large Volume Customer (TPC-H Q18)                   |           1255.48 |           1192.17 |           1236.42 |           1216.42 |
+| Discounted Revenue (TPC-H Q19)                      |            238.31 |             76.59 |            196.51 |             82.28 |
+| Potential Part Promotion (TPC-H Q20)                |            690.52 |            182.36 |            562.16 |            186.91 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |           3030.33 |           3014.25 |           3202.31 |           3041.29 |
+| Global Sales Opportunity Query (TPC-H Q22)          |             90.22 |             89.06 |             89.22 |            108.61 |
 
 ### Errors (failed queries)
 
@@ -218,6 +221,8 @@ No warnings
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
@@ -226,3 +231,7 @@ No warnings
 * TEST passed: All active queries counted in the totals
 * TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

@@ -3,14 +3,14 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: hammerdb
-* Duration: 858s 
-* Code: 1794775807
+* Duration: 796s 
+* Code: 1795673404
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 5 minutes. Ramp-up period is 2 minutes before measurements begin.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 1 processes (pods).
@@ -33,8 +33,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1055819
-  * datadisk:1700
+  * disk:624066
+  * datadisk:1734
   * volume_size:49G
   * volume_used:1.7G
   * cpu_list:0-223
@@ -46,13 +46,13 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794775807
+    * code:1795673404
 
 ### Ingestion
 * MariaDB-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1794775807-647974c49d-gb9rw: 0
+* bexhoma-sut-mariadb-1-1795673404-f9c5594dd-6h4f5: 0
 
 ### Workflow
 
@@ -70,7 +70,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS        |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MariaDB-1-1 |                1 |   16 |       65.00 |           5.00 |            0.00 |         55.00 |            5.00 |              1 |         8 |             | None           |             0 | False         |              886.15 | False               |
+| MariaDB-1-1 |                1 |   16 |       60.00 |           3.00 |            0.00 |         55.00 |            2.00 |              1 |         8 |             | None           |             0 | False         |              960.00 | False               |
 
 ### Benchmarking
 
@@ -78,13 +78,13 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   threads |   NOPM |    TPM |   efficiency |   duration |   errors |
 |:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|-------:|-------:|-------------:|-----------:|---------:|
-| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |        16 | 109266 | 253855 |         0.00 |          5 |        0 |
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |        16 | 105248 | 244157 |         0.00 |          5 |        0 |
 
 #### Per Phase
 
 | DBMS          | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   efficiency |      NOPM |       TPM |   duration |   errors |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|----------:|-------------:|----------:|----------:|-----------:|---------:|
-| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 |        16 |         0.00 | 109266.00 | 253855.00 |          5 |        0 |
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 |        16 |         0.00 | 105248.00 | 244157.00 |          5 |        0 |
 
 ### Monitoring
 
@@ -92,25 +92,25 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1 |        88.13 |      1.68 |           2.57 |                  2.58 |
+| mariadb-1-1-1-1 |        78.51 |      1.70 |           2.58 |                  2.59 |
 
 ### Loading phase: component loader
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1 |       232.06 |      5.32 |           0.09 |                  0.09 |
+| mariadb-1-1-1-1 |       233.00 |      5.77 |           0.10 |                  0.10 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1 |      1933.02 |      4.98 |           3.35 |                  3.37 |
+| mariadb-1-1-1-1 |      1648.17 |      4.21 |           3.34 |                  3.35 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1 |       406.04 |      1.35 |           0.08 |                  0.08 |
+| mariadb-1-1-1-1 |       537.89 |      1.48 |           0.08 |                  0.08 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -130,11 +130,20 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Monitoring returned data
 * TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: NOPM contains no 0 or NaN
 * TEST skipped: efficiency (not computed: needs key-and-think time (-xkey))
 * TEST passed: Workflow as planned
+* TEST passed: No virtual user FINISHED FAILED
+* TEST passed: Every pod ran for the configured time
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

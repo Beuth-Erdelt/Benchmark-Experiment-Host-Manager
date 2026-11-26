@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1794792598
-Experiment                    : starts at 2026-11-16 02:29:58.357892 (54071.0239202)
+Experiment                    : has code 1795689780
+Experiment                    : starts at 2026-11-26 11:43:00.667466 (951234.997222)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'E'.
 Number of rows to insert is 1000000.
@@ -15,7 +15,7 @@ Factors for loading are [1].
 Factors for benchmarking are [1].
 Status is logged every 10s.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.18.
+Experiment uses bexhoma version 0.12.4.
 Experiment is limited to DBMS ['MariaDB'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker38.
@@ -36,9 +36,9 @@ MariaDB-1                     : stateful sets []
 MariaDB-1                     : pvcs ['sut']
 MariaDB-1                     : list of pvcs ['bexhoma-storage-ma-nvme-ycsb-1']
 MariaDB-1                     : storage bexhoma-storage-ma-nvme-ycsb-1 exists
-MariaDB-1                     : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '6', 'time_ingested': '978', 'time_initschema': '2', 'time_loading': '988', 'time_loading_end': '1794783489', 'time_loading_start': '1794782438', 'time_schema': '4'}
-MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1794792598
-MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1794792598
+MariaDB-1                     : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '2', 'time_ingested': '978', 'time_initschema': '1', 'time_loading': '982', 'time_loading_end': '1795680744', 'time_loading_start': '1795679707', 'time_schema': '2'}
+MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1795689780
+MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1795689780
 MariaDB-1                     : name of SUT PVC name = bexhoma-storage-ma-nvme-ycsb-1
 MariaDB-1                     : updated deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size = 32G
 MariaDB-1                     : DDL values taken from the volume: row_format=default, collation=default
@@ -48,146 +48,159 @@ MariaDB-1                     : copied label index = True
 MariaDB-1                     : copied label loaded = True
 MariaDB-1                     : copied label schema = True
 MariaDB-1                     : copied label time_generated = 0
-MariaDB-1                     : copied label time_index = 6
+MariaDB-1                     : copied label time_index = 2
 MariaDB-1                     : copied label time_ingested = 978
-MariaDB-1                     : copied label time_initschema = 2
-MariaDB-1                     : copied label time_loading = 988
-MariaDB-1                     : copied label time_loading_end = 1794783489
-MariaDB-1                     : copied label time_loading_start = 1794782438
-MariaDB-1                     : copied label time_schema = 4
+MariaDB-1                     : copied label time_initschema = 1
+MariaDB-1                     : copied label time_loading = 982
+MariaDB-1                     : copied label time_loading_end = 1795680744
+MariaDB-1                     : copied label time_loading_start = 1795679707
+MariaDB-1                     : copied label time_schema = 2
 MariaDB-1                     : loading is set to finished
-Loop pass                     : took 2.9s (1 kubectl calls 1.1s, 12 API requests 0.9s)
+Loop pass                     : took 1.4s (1 kubectl calls 0.5s, 12 API requests 0.5s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 15 API requests 0.9s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 15 API requests 0.8s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 15 API requests 0.9s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 15 API requests 0.8s)
+- waiting 30s -               : done
+- waiting 2s -                : done
+MariaDB-1                     : waits for health check to succeed
+Loop pass                     : took 3.8s (0 kubectl calls 0.0s, 16 API requests 0.9s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 15 API requests 0.9s)
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 15 API requests 0.4s)
 - waiting 30s -               : done
-MariaDB-1                     : waits for health check to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 15 API requests 0.9s)
+MariaDB-1                     : will start benchmarking but not before 2026-11-26 10:46:39 (that is in 60 secs)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.5s)
 - waiting 30s -               : done
-MariaDB-1                     : will start benchmarking but not before 2026-11-16 01:33:38 (that is in 60 secs)
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 15 API requests 0.6s)
-- waiting 30s -               : done
-MariaDB-1                     : will start benchmarking but not before 2026-11-16 01:33:38
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 12 API requests 0.5s)
+MariaDB-1                     : will start benchmarking but not before 2026-11-26 10:46:39
+Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 12 API requests 0.3s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1794792598 initialized to 8.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1795689780 initialized to 8.
 MariaDB-1                     : benchmarks done 0 of 1. This will be client 1
 mariadb-1-1-1-1               : start benchmarking (benchmark_run=1)
-MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1794792598-865496dccb-pdvfg and write to pvc bexhoma-storage-ma-nvme-ycsb-1
-MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1794792598
-MariaDB-1                     : submitted benchmarker job in 10.8s (5 kubectl calls 5.2s, 25 API requests 2.9s)
-Loop pass                     : took 17.4s (5 kubectl calls 5.2s, 51 API requests 4.4s)
+MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1795689780-b98cb4d59-9wxl6 and write to pvc bexhoma-storage-ma-nvme-ycsb-1
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1795689780
+MariaDB-1                     : submitted benchmarker job in 6.7s (5 kubectl calls 2.3s, 25 API requests 3.2s)
+Loop pass                     : took 8.0s (5 kubectl calls 2.3s, 51 API requests 4.3s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 2.5s (0 kubectl calls 0.0s, 26 API requests 1.5s)
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 26 API requests 1.1s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 24 API requests 0.8s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 24 API requests 0.9s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 24 API requests 0.8s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 24 API requests 0.7s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 24 API requests 0.8s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 24 API requests 0.9s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 24 API requests 0.7s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 24 API requests 0.9s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 10.3s (0 kubectl calls 0.0s, 24 API requests 1.0s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 24 API requests 0.8s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 24 API requests 0.8s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 24 API requests 1.0s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 24 API requests 0.8s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 24 API requests 1.0s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 24 API requests 0.7s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 24 API requests 0.7s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 24 API requests 1.2s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 24 API requests 0.8s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 8.5s (0 kubectl calls 0.0s, 24 API requests 0.8s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 24 API requests 0.7s)
-- waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 24 API requests 1.1s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 24 API requests 0.8s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 0.7s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 24 API requests 0.7s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 0.7s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 24 API requests 0.8s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 0.8s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 24 API requests 0.8s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 0.7s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 10.3s (0 kubectl calls 0.0s, 24 API requests 1.0s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 0.9s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 24 API requests 0.8s)
 - waiting 30s -               : done
-mariadb-1-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1794792598/mariadb-1-1-1-1.config
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 24 API requests 0.8s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 24 API requests 0.8s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 24 API requests 0.8s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 24 API requests 1.0s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 24 API requests 1.1s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 24 API requests 1.0s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 24 API requests 1.1s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 24 API requests 1.1s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 24 API requests 1.1s)
+- waiting 30s -               : done
+Exception when calling BatchV1Api->list_namespaced_job: (401)
+Reason: Unauthorized
+HTTP response headers: HTTPHeaderDict({'Audit-Id': '49a50a0f-3b26-40fe-bb9d-f56d25e05349', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Thu, 26 Nov 2026 10:59:46 GMT', 'Content-Length': '129'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
+
+
+
+Create new access token
+- waiting 2s -                : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 4.3s (0 kubectl calls 0.0s, 25 API requests 1.3s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 24 API requests 1.1s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 24 API requests 1.2s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 24 API requests 0.8s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+- waiting 30s -               : done
+MariaDB-1                     : has running benchmarks
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 24 API requests 1.0s)
+- waiting 30s -               : done
+mariadb-1-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1795689780/mariadb-1-1-1-1.config
 mariadb-1-1-1-1               : showing benchmarker times
-mariadb-1-1-1-1               : benchmarker timespan job from 1794792830 to 1794793855
-mariadb-1-1-1-1               : benchmarker timespan pods from 1794792838 to 1794793817
-mariadb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 979
-mariadb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1794792839, 1794793816), (1794792839, 1794793816), (1794792838, 1794793816), (1794792839, 1794793817), (1794792839, 1794793816), (1794792839, 1794793816), (1794792839, 1794793816), (1794792838, 1794793816)]
-mariadb-1-1-1-1               : found and updated times {'benchmarker': [(1794792839, 1794793816), (1794792839, 1794793816), (1794792838, 1794793816), (1794792839, 1794793817), (1794792839, 1794793816), (1794792839, 1794793816), (1794792839, 1794793816), (1794792838, 1794793816)]}
-MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1794792598-865496dccb-pdvfg and write to pvc bexhoma-storage-ma-nvme-ycsb-1
-Loop pass                     : took 22.6s (19 kubectl calls 19.8s, 52 API requests 2.5s)
+mariadb-1-1-1-1               : benchmarker timespan job from 1795690007 to 1795691019
+mariadb-1-1-1-1               : benchmarker timespan pods from 1795690015 to 1795690993
+mariadb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 978
+mariadb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1795690016, 1795690993), (1795690015, 1795690992), (1795690016, 1795690993), (1795690016, 1795690993), (1795690015, 1795690992), (1795690015, 1795690992), (1795690016, 1795690993), (1795690015, 1795690993)]
+mariadb-1-1-1-1               : found and updated times {'benchmarker': [(1795690016, 1795690993), (1795690015, 1795690992), (1795690016, 1795690993), (1795690016, 1795690993), (1795690015, 1795690992), (1795690015, 1795690992), (1795690016, 1795690993), (1795690015, 1795690993)]}
+MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1795689780-b98cb4d59-9wxl6 and write to pvc bexhoma-storage-ma-nvme-ycsb-1
+Loop pass                     : took 14.0s (19 kubectl calls 10.7s, 52 API requests 2.3s)
 MariaDB-1                     : can be stopped
-MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1794792598-865496dccb-pdvfg
-Loop pass                     : took 4.5s (3 kubectl calls 3.1s, 27 API requests 1.0s)
-Experiment                    : ends at 2026-11-16 02:51:03.720165 (55336.3580658) - 1265.33s total
+MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1795689780-b98cb4d59-9wxl6
+Loop pass                     : took 2.5s (3 kubectl calls 1.2s, 28 API requests 1.1s)
+Experiment                    : ends at 2026-11-26 12:03:44.340536 (952478.6395667) - 1243.64s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
@@ -197,8 +210,8 @@ Experiment                    : uploading workload file
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 1266s 
-* Code: 1794792598
+* Duration: 1244s 
+* Code: 1795689780
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'E'.
@@ -211,7 +224,7 @@ YCSB SF=1
   * Factors for benchmarking are [1].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -233,8 +246,8 @@ YCSB SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1053197
-  * datadisk:1766
+  * disk:636119
+  * datadisk:1774
   * volume_size:49G
   * volume_used:1.8G
   * cpu_list:0-223
@@ -245,7 +258,7 @@ YCSB SF=1
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794792598
+    * code:1795689780
 
 ### Reused Storage
 * loading skipped, loading times inherited from an earlier experiment: MariaDB-1
@@ -255,7 +268,7 @@ YCSB SF=1
 * MariaDB-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1794792598-865496dccb-pdvfg: 0
+* bexhoma-sut-mariadb-1-1795689780-b98cb4d59-9wxl6: 0
 
 ### Workflow
 
@@ -273,20 +286,20 @@ YCSB SF=1
 
 | connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |
 |:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|
-| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |         8 |      128 |        0 |                          127.95 |               976927.00 |                 6172 |                              3707.00 |             118828 |                            1484.00 |
-| mariadb-1-1-1-1-2 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       2 |         8 |      128 |        0 |                          127.96 |               976904.00 |                 6298 |                              3777.00 |             118702 |                            1476.00 |
-| mariadb-1-1-1-1-3 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       3 |         8 |      128 |        0 |                          127.96 |               976881.00 |                 6289 |                              3853.00 |             118711 |                            1472.00 |
-| mariadb-1-1-1-1-4 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       4 |         8 |      128 |        0 |                          127.96 |               976889.00 |                 6253 |                              3885.00 |             118747 |                            1474.00 |
-| mariadb-1-1-1-1-5 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       5 |         8 |      128 |        0 |                          127.95 |               976925.00 |                 6246 |                              3885.00 |             118754 |                            1508.00 |
-| mariadb-1-1-1-1-6 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       6 |         8 |      128 |        0 |                          127.96 |               976903.00 |                 6103 |                              3849.00 |             118897 |                            1506.00 |
-| mariadb-1-1-1-1-7 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       7 |         8 |      128 |        0 |                          127.96 |               976900.00 |                 6218 |                              3971.00 |             118782 |                            1481.00 |
-| mariadb-1-1-1-1-8 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       8 |         8 |      128 |        0 |                          127.95 |               976907.00 |                 6147 |                              3895.00 |             118853 |                            1467.00 |
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |         8 |      128 |        0 |                          127.95 |               976919.00 |                 6305 |                              3933.00 |             118695 |                            1581.00 |
+| mariadb-1-1-1-1-2 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       2 |         8 |      128 |        0 |                          127.96 |               976902.00 |                 6259 |                              3911.00 |             118741 |                            1579.00 |
+| mariadb-1-1-1-1-3 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       3 |         8 |      128 |        0 |                          127.95 |               976907.00 |                 6234 |                              3887.00 |             118766 |                            1545.00 |
+| mariadb-1-1-1-1-4 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       4 |         8 |      128 |        0 |                          127.96 |               976873.00 |                 6308 |                              3757.00 |             118692 |                            1555.00 |
+| mariadb-1-1-1-1-5 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       5 |         8 |      128 |        0 |                          127.96 |               976898.00 |                 6362 |                              3935.00 |             118638 |                            1553.00 |
+| mariadb-1-1-1-1-6 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       6 |         8 |      128 |        0 |                          127.96 |               976896.00 |                 6208 |                              3935.00 |             118792 |                            1541.00 |
+| mariadb-1-1-1-1-7 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       7 |         8 |      128 |        0 |                          127.96 |               976898.00 |                 6364 |                              3783.00 |             118636 |                            1560.00 |
+| mariadb-1-1-1-1-8 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       8 |         8 |      128 |        0 |                          127.95 |               976925.00 |                 6409 |                              3753.00 |             118591 |                            1527.00 |
 
 #### Per Phase
 
 | DBMS          | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   [SCAN].Return=OK |   [SCAN].99thPercentileLatency(us) |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-------------------:|-----------------------------------:|
-| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           8 |        64 |     1024 |        0 |                         1023.64 |               976927.00 |                49726 |                              3971.00 |             950274 |                            1508.00 |
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           8 |        64 |     1024 |        0 |                         1023.64 |               976925.00 |                50449 |                              3935.00 |             949551 |                            1581.00 |
 
 ### Tests
 * TEST skipped: Loading measured in this experiment (storage reused, loading times inherited: MariaDB-1)
@@ -295,6 +308,13 @@ YCSB SF=1
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
+* TEST passed: Execution Phase: every pod ran its configured operations
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

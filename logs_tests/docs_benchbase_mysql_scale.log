@@ -2,13 +2,13 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1794695341
-Experiment                    : starts at 2026-11-14 23:29:03.479440 (331884.3163854)
+Experiment                    : has code 1795676816
+Experiment                    : starts at 2026-11-26 08:06:56.815080 (938271.4100996)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
 Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [8]. Benchmarking runs for 2 minutes.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.17.
+Experiment uses bexhoma version 0.12.4.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['MySQL'].
 Import is handled by 1 processes (pods).
@@ -31,10 +31,10 @@ MySQL-1                       : stateful sets []
 MySQL-1                       : pvcs ['sut']
 MySQL-1                       : list of pvcs ['bexhoma-storage-my-nvme-benchbase-tpcc-16']
 MySQL-1                       : storage bexhoma-storage-my-nvme-benchbase-tpcc-16 exists
-MySQL-1                       : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '5', 'time_ingested': '72', 'time_initschema': '2', 'time_loading': '81', 'time_loading_end': '1794693895', 'time_loading_start': '1794693775', 'time_schema': '4'}
-MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1794695341
-MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1794695341
-MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1794695341
+MySQL-1                       : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '2', 'time_ingested': '111', 'time_initschema': '1', 'time_loading': '115', 'time_loading_end': '1795675369', 'time_loading_start': '1795675232', 'time_schema': '2'}
+MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1795676816
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1795676816
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1795676816
 MySQL-1                       : name of SUT PVC name = bexhoma-storage-my-nvme-benchbase-tpcc-16
 MySQL-1                       : updated deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size = 32G
 MySQL-1                       : loading values taken from the volume: script=Schema, indexing=Checks
@@ -43,220 +43,225 @@ MySQL-1                       : copied label index = True
 MySQL-1                       : copied label loaded = True
 MySQL-1                       : copied label schema = True
 MySQL-1                       : copied label time_generated = 0
-MySQL-1                       : copied label time_index = 5
-MySQL-1                       : copied label time_ingested = 72
-MySQL-1                       : copied label time_initschema = 2
-MySQL-1                       : copied label time_loading = 81
-MySQL-1                       : copied label time_loading_end = 1794693895
-MySQL-1                       : copied label time_loading_start = 1794693775
-MySQL-1                       : copied label time_schema = 4
+MySQL-1                       : copied label time_index = 2
+MySQL-1                       : copied label time_ingested = 111
+MySQL-1                       : copied label time_initschema = 1
+MySQL-1                       : copied label time_loading = 115
+MySQL-1                       : copied label time_loading_end = 1795675369
+MySQL-1                       : copied label time_loading_start = 1795675232
+MySQL-1                       : copied label time_schema = 2
 MySQL-1                       : loading is set to finished
-Loop pass                     : took 3.2s (1 kubectl calls 1.2s, 13 API requests 1.0s)
+Loop pass                     : took 1.6s (1 kubectl calls 0.5s, 13 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 15 API requests 1.0s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 15 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 15 API requests 0.9s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 15 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.7s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 15 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 15 API requests 0.9s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 15 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 15 API requests 0.9s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 15 API requests 0.8s)
 - waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-11-14 22:34:17 (that is in 120 secs)
-Loop pass                     : took 6.7s (0 kubectl calls 0.0s, 15 API requests 0.7s)
+MySQL-1                       : will start benchmarking but not before 2026-11-26 07:12:04 (that is in 120 secs)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 15 API requests 0.6s)
 - waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-11-14 22:34:17
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 12 API requests 0.4s)
+MySQL-1                       : will start benchmarking but not before 2026-11-26 07:12:04
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 12 API requests 0.5s)
 - waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-11-14 22:34:17
-Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 12 API requests 0.4s)
+MySQL-1                       : will start benchmarking but not before 2026-11-26 07:12:04
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 12 API requests 0.4s)
 - waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-11-14 22:34:17
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 12 API requests 0.4s)
+MySQL-1                       : will start benchmarking but not before 2026-11-26 07:12:04
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 12 API requests 0.5s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1794695341 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MySQL-1-1795676816 initialized to 1.
 MySQL-1                       : benchmarks done 0 of 2. This will be client 1
 mysql-1-1-1-1                 : start benchmarking (benchmark_run=1)
 mysql-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-6cf7f55896-67xn2 and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1794695341
-MySQL-1                       : submitted benchmarker job in 9.5s (5 kubectl calls 5.8s, 30 API requests 3.0s)
-Loop pass                     : took 10.9s (5 kubectl calls 5.8s, 49 API requests 4.3s)
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-68f45b744b-7w4gw and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1795676816
+MySQL-1                       : submitted benchmarker job in 5.4s (5 kubectl calls 2.3s, 30 API requests 2.6s)
+Loop pass                     : took 6.6s (5 kubectl calls 2.3s, 49 API requests 3.5s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 17 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 17 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 17 API requests 0.7s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 17 API requests 0.6s)
 - waiting 30s -               : done
-mysql-1-1-1-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1794695341/mysql-1-1-1-1.config
+mysql-1-1-1-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1795676816/mysql-1-1-1-1.config
 mysql-1-1-1-1                 : showing benchmarker times
-mysql-1-1-1-1                 : benchmarker timespan job from 1794695673 to 1794695840
-mysql-1-1-1-1                 : benchmarker timespan pods from 1794695675 to 1794695800
+mysql-1-1-1-1                 : benchmarker timespan job from 1795677132 to 1795677289
+mysql-1-1-1-1                 : benchmarker timespan pods from 1795677134 to 1795677259
 mysql-1-1-1-1                 : benchmarker timespan (start to end single container [s]) = 125
-mysql-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1794695675, 1794695800)]
-mysql-1-1-1-1                 : found and updated times {'benchmarker': [(1794695675, 1794695800)]}
+mysql-1-1-1-1                 : benchmarker times (start/end per pod and container) = [(1795677134, 1795677259)]
+mysql-1-1-1-1                 : found and updated times {'benchmarker': [(1795677134, 1795677259)]}
 mysql-1-1-1-1                 : needs monitoring (common metrics) for deployment sut
 mysql-1-1-1-1                 : collecting execution metrics of SUT at connection mysql-1-1-1-1
 mysql-1-1-1-1                 : collecting metrics of benchmarker at connection mysql-1-1-1-1
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-6cf7f55896-67xn2 and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
-mysql-1-1-1-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-68f45b744b-7w4gw and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mysql-1-1-1-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 mysql-1-1-1-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.1s, 0 API requests 0.0s)
-Loop pass                     : took 23.7s (10 kubectl calls 16.7s, 24 API requests 1.5s)
+mysql-1-1-1-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+mysql-1-1-1-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 7.6s, 0 API requests 0.0s)
+Loop pass                     : took 9.3s (10 kubectl calls 11.4s, 24 API requests 1.0s)
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MySQL-1-1794695341 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MySQL-1-1795676816 initialized to 2.
 MySQL-1                       : benchmarks done 0 of 2. This will be client 2
 mysql-1-1-2-1                 : start benchmarking (benchmark_run=1)
 mysql-1-1-2-1                 : needs monitoring (common metrics) for deployment sut
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-6cf7f55896-67xn2 and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1794695341
-MySQL-1                       : submitted benchmarker job in 6.1s (3 kubectl calls 3.5s, 24 API requests 2.6s)
-Loop pass                     : took 7.8s (3 kubectl calls 3.5s, 44 API requests 3.8s)
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-68f45b744b-7w4gw and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1795676816
+MySQL-1                       : submitted benchmarker job in 3.8s (3 kubectl calls 1.6s, 14 API requests 2.1s)
+Loop pass                     : took 4.8s (3 kubectl calls 1.6s, 34 API requests 3.0s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 20 API requests 1.0s)
+- waiting 30s -               : done
+- waiting 2s -                : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 3.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 0.9s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 18 API requests 0.9s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 18 API requests 0.8s)
-- waiting 30s -               : done
-mysql-1-1-2-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1794695341/mysql-1-1-2-1.config
+mysql-1-1-2-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1795676816/mysql-1-1-2-1.config
 mysql-1-1-2-1                 : showing benchmarker times
-mysql-1-1-2-1                 : benchmarker timespan job from 1794695860 to 1794696022
-mysql-1-1-2-1                 : benchmarker timespan pods from 1794695863 to 1794695989
-mysql-1-1-2-1                 : benchmarker timespan (start to end single container [s]) = 126
-mysql-1-1-2-1                 : benchmarker times (start/end per pod and container) = [(1794695863, 1794695988), (1794695864, 1794695989)]
-mysql-1-1-2-1                 : found and updated times {'benchmarker': [(1794695863, 1794695988), (1794695864, 1794695989)]}
+mysql-1-1-2-1                 : benchmarker timespan job from 1795677299 to 1795677460
+mysql-1-1-2-1                 : benchmarker timespan pods from 1795677302 to 1795677429
+mysql-1-1-2-1                 : benchmarker timespan (start to end single container [s]) = 127
+mysql-1-1-2-1                 : benchmarker times (start/end per pod and container) = [(1795677302, 1795677428), (1795677303, 1795677429)]
+mysql-1-1-2-1                 : found and updated times {'benchmarker': [(1795677302, 1795677428), (1795677303, 1795677429)]}
 mysql-1-1-2-1                 : needs monitoring (common metrics) for deployment sut
 mysql-1-1-2-1                 : collecting execution metrics of SUT at connection mysql-1-1-2-1
 mysql-1-1-2-1                 : collecting metrics of benchmarker at connection mysql-1-1-2-1
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-6cf7f55896-67xn2 and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-mysql-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-1-2-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
-mysql-1-1-2-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-68f45b744b-7w4gw and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+mysql-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mysql-1-1-2-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 mysql-1-1-2-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.6s, 0 API requests 0.0s)
-Loop pass                     : took 16.9s (12 kubectl calls 19.3s, 28 API requests 1.7s)
+mysql-1-1-2-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+mysql-1-1-2-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 6.9s, 0 API requests 0.0s)
+Loop pass                     : took 9.2s (12 kubectl calls 10.7s, 28 API requests 1.3s)
 Experiment                    : Reset experiment counter. This is first run of client number 3.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-3-MySQL-1-1794695341 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-3-MySQL-1-1795676816 initialized to 2.
 MySQL-1                       : benchmarks done 0 of 2. This will be client 3
 mysql-1-1-3-1                 : start benchmarking (benchmark_run=1)
 mysql-1-1-3-1                 : needs monitoring (common metrics) for deployment sut
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-6cf7f55896-67xn2 and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1794695341
-MySQL-1                       : submitted benchmarker job in 5.9s (3 kubectl calls 3.4s, 24 API requests 2.4s)
-Loop pass                     : took 6.7s (3 kubectl calls 3.4s, 44 API requests 3.2s)
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-68f45b744b-7w4gw and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1795676816
+MySQL-1                       : submitted benchmarker job in 2.8s (3 kubectl calls 1.6s, 14 API requests 1.0s)
+Loop pass                     : took 3.6s (3 kubectl calls 1.6s, 34 API requests 1.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 20 API requests 0.9s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 20 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 18 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 7.9s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
-mysql-1-1-3-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1794695341/mysql-1-1-3-1.config
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 18 API requests 0.5s)
+- waiting 30s -               : done
+mysql-1-1-3-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1795676816/mysql-1-1-3-1.config
 mysql-1-1-3-1                 : showing benchmarker times
-mysql-1-1-3-1                 : benchmarker timespan job from 1794696039 to 1794696177
-mysql-1-1-3-1                 : benchmarker timespan pods from 1794696042 to 1794696166
+mysql-1-1-3-1                 : benchmarker timespan job from 1795677469 to 1795677627
+mysql-1-1-3-1                 : benchmarker timespan pods from 1795677478 to 1795677602
 mysql-1-1-3-1                 : benchmarker timespan (start to end single container [s]) = 124
-mysql-1-1-3-1                 : benchmarker times (start/end per pod and container) = [(1794696043, 1794696166), (1794696042, 1794696166)]
-mysql-1-1-3-1                 : found and updated times {'benchmarker': [(1794696043, 1794696166), (1794696042, 1794696166)]}
+mysql-1-1-3-1                 : benchmarker times (start/end per pod and container) = [(1795677478, 1795677601), (1795677478, 1795677602)]
+mysql-1-1-3-1                 : found and updated times {'benchmarker': [(1795677478, 1795677601), (1795677478, 1795677602)]}
 mysql-1-1-3-1                 : needs monitoring (common metrics) for deployment sut
 mysql-1-1-3-1                 : collecting execution metrics of SUT at connection mysql-1-1-3-1
 mysql-1-1-3-1                 : collecting metrics of benchmarker at connection mysql-1-1-3-1
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-6cf7f55896-67xn2 and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-mysql-1-1-3-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-1-3-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-1-3-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-1-3-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-68f45b744b-7w4gw and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+mysql-1-1-3-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-3-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-1-3-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-1-3-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mysql-1-1-3-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 mysql-1-1-3-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
 mysql-1-1-3-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 mysql-1-1-3-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.8s, 0 API requests 0.0s)
-Loop pass                     : took 17.5s (12 kubectl calls 18.6s, 28 API requests 1.7s)
+Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 7.1s, 0 API requests 0.0s)
+Loop pass                     : took 9.4s (12 kubectl calls 10.7s, 28 API requests 1.2s)
 Experiment                    : Reset experiment counter. This is first run of client number 4.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-4-MySQL-1-1794695341 initialized to 4.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-4-MySQL-1-1795676816 initialized to 4.
 MySQL-1                       : benchmarks done 0 of 2. This will be client 4
 mysql-1-1-4-1                 : start benchmarking (benchmark_run=1)
 mysql-1-1-4-1                 : needs monitoring (common metrics) for deployment sut
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-6cf7f55896-67xn2 and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1794695341
-MySQL-1                       : submitted benchmarker job in 6.2s (3 kubectl calls 3.5s, 24 API requests 2.7s)
-Loop pass                     : took 7.4s (3 kubectl calls 3.5s, 46 API requests 3.8s)
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-68f45b744b-7w4gw and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1795676816
+MySQL-1                       : submitted benchmarker job in 2.7s (3 kubectl calls 1.5s, 14 API requests 1.1s)
+Loop pass                     : took 3.5s (3 kubectl calls 1.5s, 36 API requests 1.8s)
+- waiting 30s -               : done
+- waiting 2s -                : done
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 4.6s (0 kubectl calls 0.0s, 23 API requests 1.3s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 22 API requests 0.8s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 20 API requests 1.0s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 20 API requests 0.8s)
 - waiting 30s -               : done
-MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 20 API requests 0.8s)
-- waiting 30s -               : done
-mysql-1-1-4-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1794695341/mysql-1-1-4-1.config
+mysql-1-1-4-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1795676816/mysql-1-1-4-1.config
 mysql-1-1-4-1                 : showing benchmarker times
-mysql-1-1-4-1                 : benchmarker timespan job from 1794696195 to 1794696362
-mysql-1-1-4-1                 : benchmarker timespan pods from 1794696202 to 1794696326
-mysql-1-1-4-1                 : benchmarker timespan (start to end single container [s]) = 124
-mysql-1-1-4-1                 : benchmarker times (start/end per pod and container) = [(1794696203, 1794696326), (1794696202, 1794696326), (1794696203, 1794696326), (1794696203, 1794696326)]
-mysql-1-1-4-1                 : found and updated times {'benchmarker': [(1794696203, 1794696326), (1794696202, 1794696326), (1794696203, 1794696326), (1794696203, 1794696326)]}
+mysql-1-1-4-1                 : benchmarker timespan job from 1795677636 to 1795677799
+mysql-1-1-4-1                 : benchmarker timespan pods from 1795677641 to 1795677766
+mysql-1-1-4-1                 : benchmarker timespan (start to end single container [s]) = 125
+mysql-1-1-4-1                 : benchmarker times (start/end per pod and container) = [(1795677642, 1795677766), (1795677641, 1795677765), (1795677641, 1795677764), (1795677641, 1795677765)]
+mysql-1-1-4-1                 : found and updated times {'benchmarker': [(1795677642, 1795677766), (1795677641, 1795677765), (1795677641, 1795677764), (1795677641, 1795677765)]}
 mysql-1-1-4-1                 : needs monitoring (common metrics) for deployment sut
 mysql-1-1-4-1                 : collecting execution metrics of SUT at connection mysql-1-1-4-1
 mysql-1-1-4-1                 : collecting metrics of benchmarker at connection mysql-1-1-4-1
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-6cf7f55896-67xn2 and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-mysql-1-1-4-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-1-4-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-1-4-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-1-4-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-68f45b744b-7w4gw and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+mysql-1-1-4-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-1-4-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-1-4-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-1-4-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mysql-1-1-4-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 mysql-1-1-4-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
 mysql-1-1-4-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 mysql-1-1-4-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 7s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.7s, 0 API requests 0.0s)
-Loop pass                     : took 22.7s (16 kubectl calls 24.7s, 36 API requests 2.0s)
+Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 6.4s, 0 API requests 0.0s)
+Loop pass                     : took 11.1s (16 kubectl calls 11.9s, 36 API requests 1.4s)
 MySQL-1                       : can be stopped
-MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1794695341-6cf7f55896-67xn2
-Loop pass                     : took 6.2s (4 kubectl calls 4.1s, 30 API requests 1.2s)
+MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1795676816-68f45b744b-7w4gw
+Loop pass                     : took 2.8s (4 kubectl calls 1.6s, 31 API requests 1.0s)
 - waiting 30s -               : done
 MySQL-1                       : starts again
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 7 API requests 0.4s)
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 7 API requests 0.5s)
 MySQL-1                       : will start now
 MySQL-1                       : deployments ['sut']
 MySQL-1                       : stateful sets []
 MySQL-1                       : pvcs ['sut']
 MySQL-1                       : list of pvcs ['bexhoma-storage-my-nvme-benchbase-tpcc-16']
 MySQL-1                       : storage bexhoma-storage-my-nvme-benchbase-tpcc-16 exists
-MySQL-1                       : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '5', 'time_ingested': '72', 'time_initschema': '2', 'time_loading': '81', 'time_loading_end': '1794693895', 'time_loading_start': '1794693775', 'time_schema': '4'}
-MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1794695341
-MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1794695341
-MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1794695341
+MySQL-1                       : found labels on pvc = {'data': 'True', 'index': 'True', 'loaded': 'True', 'schema': 'True', 'time_generated': '0', 'time_index': '2', 'time_ingested': '111', 'time_initschema': '1', 'time_loading': '115', 'time_loading_end': '1795675369', 'time_loading_start': '1795675232', 'time_schema': '2'}
+MySQL-1                       : TLS secret = bexhoma-tls-mysql-1-1795676816
+MySQL-1                       : name of SUT pods = bexhoma-sut-mysql-1-1795676816
+MySQL-1                       : name of SUT service = bexhoma-sut-mysql-1-1795676816
 MySQL-1                       : name of SUT PVC name = bexhoma-storage-my-nvme-benchbase-tpcc-16
 MySQL-1                       : updated deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size = 32G
 MySQL-1                       : loading values taken from the volume: script=Schema, indexing=Checks
@@ -265,203 +270,210 @@ MySQL-1                       : copied label index = True
 MySQL-1                       : copied label loaded = True
 MySQL-1                       : copied label schema = True
 MySQL-1                       : copied label time_generated = 0
-MySQL-1                       : copied label time_index = 5
-MySQL-1                       : copied label time_ingested = 72
-MySQL-1                       : copied label time_initschema = 2
-MySQL-1                       : copied label time_loading = 81
-MySQL-1                       : copied label time_loading_end = 1794693895
-MySQL-1                       : copied label time_loading_start = 1794693775
-MySQL-1                       : copied label time_schema = 4
+MySQL-1                       : copied label time_index = 2
+MySQL-1                       : copied label time_ingested = 111
+MySQL-1                       : copied label time_initschema = 1
+MySQL-1                       : copied label time_loading = 115
+MySQL-1                       : copied label time_loading_end = 1795675369
+MySQL-1                       : copied label time_loading_start = 1795675232
+MySQL-1                       : copied label time_schema = 2
 MySQL-1                       : loading is set to finished
-Loop pass                     : took 1.9s (1 kubectl calls 1.1s, 13 API requests 0.7s)
+Loop pass                     : took 1.5s (1 kubectl calls 0.5s, 13 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 6.5s (0 kubectl calls 0.0s, 15 API requests 0.7s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 15 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 15 API requests 0.5s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.6s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 15 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : waits for health check to succeed
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 15 API requests 0.6s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.7s)
 - waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-11-14 22:51:34 (that is in 120 secs)
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 15 API requests 0.6s)
+MySQL-1                       : will start benchmarking but not before 2026-11-26 07:28:34 (that is in 120 secs)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 15 API requests 0.6s)
 - waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-11-14 22:51:34
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 12 API requests 0.6s)
+MySQL-1                       : will start benchmarking but not before 2026-11-26 07:28:34
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 12 API requests 0.7s)
 - waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-11-14 22:51:34
-Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 12 API requests 0.5s)
+MySQL-1                       : will start benchmarking but not before 2026-11-26 07:28:34
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 12 API requests 0.3s)
 - waiting 30s -               : done
-MySQL-1                       : will start benchmarking but not before 2026-11-14 22:51:34
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 12 API requests 0.4s)
+MySQL-1                       : will start benchmarking but not before 2026-11-26 07:28:34
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 12 API requests 0.7s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MySQL-1-1794695341 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-1-MySQL-1-1795676816 initialized to 1.
 MySQL-1                       : benchmarks done 1 of 2. This will be client 1
 mysql-1-2-1-1                 : start benchmarking (benchmark_run=1)
 mysql-1-2-1-1                 : needs monitoring (common metrics) for deployment sut
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-8568d65c57-44psq and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1794695341
-MySQL-1                       : submitted benchmarker job in 7.2s (3 kubectl calls 3.6s, 27 API requests 2.6s)
-Loop pass                     : took 8.5s (3 kubectl calls 3.6s, 46 API requests 3.8s)
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-5d787f6c5-nlt2d and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1795676816
+MySQL-1                       : submitted benchmarker job in 5.2s (3 kubectl calls 1.5s, 27 API requests 3.3s)
+Loop pass                     : took 6.3s (3 kubectl calls 1.5s, 46 API requests 4.1s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 8.6s (0 kubectl calls 0.0s, 19 API requests 1.3s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 17 API requests 0.8s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 17 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
 Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 17 API requests 0.6s)
 - waiting 30s -               : done
-mysql-1-2-1-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1794695341/mysql-1-2-1-1.config
+MySQL-1                       : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 17 API requests 0.6s)
+- waiting 30s -               : done
+- waiting 2s -                : done
+mysql-1-2-1-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1795676816/mysql-1-2-1-1.config
 mysql-1-2-1-1                 : showing benchmarker times
-mysql-1-2-1-1                 : benchmarker timespan job from 1794696704 to 1794696841
-mysql-1-2-1-1                 : benchmarker timespan pods from 1794696707 to 1794696832
-mysql-1-2-1-1                 : benchmarker timespan (start to end single container [s]) = 125
-mysql-1-2-1-1                 : benchmarker times (start/end per pod and container) = [(1794696707, 1794696832)]
-mysql-1-2-1-1                 : found and updated times {'benchmarker': [(1794696707, 1794696832)]}
+mysql-1-2-1-1                 : benchmarker timespan job from 1795678123 to 1795678282
+mysql-1-2-1-1                 : benchmarker timespan pods from 1795678125 to 1795678251
+mysql-1-2-1-1                 : benchmarker timespan (start to end single container [s]) = 126
+mysql-1-2-1-1                 : benchmarker times (start/end per pod and container) = [(1795678125, 1795678251)]
+mysql-1-2-1-1                 : found and updated times {'benchmarker': [(1795678125, 1795678251)]}
 mysql-1-2-1-1                 : needs monitoring (common metrics) for deployment sut
 mysql-1-2-1-1                 : collecting execution metrics of SUT at connection mysql-1-2-1-1
 mysql-1-2-1-1                 : collecting metrics of benchmarker at connection mysql-1-2-1-1
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-8568d65c57-44psq and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-mysql-1-2-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-2-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-5d787f6c5-nlt2d and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+mysql-1-2-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-2-1-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-2-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mysql-1-2-1-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 mysql-1-2-1-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
 mysql-1-2-1-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 mysql-1-2-1-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.5s, 0 API requests 0.0s)
-Loop pass                     : took 14.7s (10 kubectl calls 16.0s, 24 API requests 1.3s)
+Experiment                    : fetched 2 metric sets in 5s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 8.7s, 0 API requests 0.0s)
+Loop pass                     : took 12.5s (10 kubectl calls 11.5s, 25 API requests 1.2s)
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-MySQL-1-1794695341 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-2-MySQL-1-1795676816 initialized to 2.
 MySQL-1                       : benchmarks done 1 of 2. This will be client 2
 mysql-1-2-2-1                 : start benchmarking (benchmark_run=1)
 mysql-1-2-2-1                 : needs monitoring (common metrics) for deployment sut
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-8568d65c57-44psq and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1794695341
-MySQL-1                       : submitted benchmarker job in 6.0s (3 kubectl calls 3.5s, 24 API requests 2.4s)
-Loop pass                     : took 6.8s (3 kubectl calls 3.5s, 44 API requests 3.1s)
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-5d787f6c5-nlt2d and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1795676816
+MySQL-1                       : submitted benchmarker job in 3.2s (3 kubectl calls 1.8s, 14 API requests 1.3s)
+Loop pass                     : took 3.9s (3 kubectl calls 1.8s, 34 API requests 2.0s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 20 API requests 1.0s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 18 API requests 0.6s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 18 API requests 0.5s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 18 API requests 0.9s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 18 API requests 0.7s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 0.7s)
 - waiting 30s -               : done
-mysql-1-2-2-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1794695341/mysql-1-2-2-1.config
+mysql-1-2-2-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1795676816/mysql-1-2-2-1.config
 mysql-1-2-2-1                 : showing benchmarker times
-mysql-1-2-2-1                 : benchmarker timespan job from 1794696858 to 1794697019
-mysql-1-2-2-1                 : benchmarker timespan pods from 1794696862 to 1794696989
-mysql-1-2-2-1                 : benchmarker timespan (start to end single container [s]) = 127
-mysql-1-2-2-1                 : benchmarker times (start/end per pod and container) = [(1794696862, 1794696989), (1794696862, 1794696986)]
-mysql-1-2-2-1                 : found and updated times {'benchmarker': [(1794696862, 1794696989), (1794696862, 1794696986)]}
+mysql-1-2-2-1                 : benchmarker timespan job from 1795678293 to 1795678450
+mysql-1-2-2-1                 : benchmarker timespan pods from 1795678296 to 1795678422
+mysql-1-2-2-1                 : benchmarker timespan (start to end single container [s]) = 126
+mysql-1-2-2-1                 : benchmarker times (start/end per pod and container) = [(1795678296, 1795678421), (1795678296, 1795678422)]
+mysql-1-2-2-1                 : found and updated times {'benchmarker': [(1795678296, 1795678421), (1795678296, 1795678422)]}
 mysql-1-2-2-1                 : needs monitoring (common metrics) for deployment sut
 mysql-1-2-2-1                 : collecting execution metrics of SUT at connection mysql-1-2-2-1
 mysql-1-2-2-1                 : collecting metrics of benchmarker at connection mysql-1-2-2-1
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-8568d65c57-44psq and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-mysql-1-2-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-2-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-2-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-2-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-5d787f6c5-nlt2d and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+mysql-1-2-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-2-2-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-2-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-2-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mysql-1-2-2-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 mysql-1-2-2-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
 mysql-1-2-2-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 mysql-1-2-2-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 8.6s, 0 API requests 0.0s)
-Loop pass                     : took 15.9s (12 kubectl calls 17.2s, 28 API requests 1.6s)
+Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 6.3s, 0 API requests 0.0s)
+Loop pass                     : took 9.8s (12 kubectl calls 10.9s, 28 API requests 1.3s)
 Experiment                    : Reset experiment counter. This is first run of client number 3.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-3-MySQL-1-1794695341 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-3-MySQL-1-1795676816 initialized to 2.
 MySQL-1                       : benchmarks done 1 of 2. This will be client 3
 mysql-1-2-3-1                 : start benchmarking (benchmark_run=1)
 mysql-1-2-3-1                 : needs monitoring (common metrics) for deployment sut
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-8568d65c57-44psq and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1794695341
-MySQL-1                       : submitted benchmarker job in 12.7s (3 kubectl calls 3.6s, 24 API requests 6.8s)
-Loop pass                     : took 16.5s (3 kubectl calls 3.6s, 44 API requests 7.9s)
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-5d787f6c5-nlt2d and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1795676816
+MySQL-1                       : submitted benchmarker job in 2.9s (3 kubectl calls 1.6s, 14 API requests 1.1s)
+Loop pass                     : took 4.0s (3 kubectl calls 1.6s, 34 API requests 2.2s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 20 API requests 1.2s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 20 API requests 0.6s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 18 API requests 0.9s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 18 API requests 0.8s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 18 API requests 0.9s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 18 API requests 0.6s)
 - waiting 30s -               : done
+- waiting 2s -                : done
 MySQL-1                       : has running benchmarks
-mysql-1-2-3-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1794695341/mysql-1-2-3-1.config
+Loop pass                     : took 3.7s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+mysql-1-2-3-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1795676816/mysql-1-2-3-1.config
 mysql-1-2-3-1                 : showing benchmarker times
-mysql-1-2-3-1                 : benchmarker timespan job from 1794697042 to 1794697178
-mysql-1-2-3-1                 : benchmarker timespan pods from 1794697046 to 1794697171
+mysql-1-2-3-1                 : benchmarker timespan job from 1795678460 to 1795678620
+mysql-1-2-3-1                 : benchmarker timespan pods from 1795678463 to 1795678588
 mysql-1-2-3-1                 : benchmarker timespan (start to end single container [s]) = 125
-mysql-1-2-3-1                 : benchmarker times (start/end per pod and container) = [(1794697046, 1794697170), (1794697047, 1794697171)]
-mysql-1-2-3-1                 : found and updated times {'benchmarker': [(1794697046, 1794697170), (1794697047, 1794697171)]}
+mysql-1-2-3-1                 : benchmarker times (start/end per pod and container) = [(1795678464, 1795678588), (1795678463, 1795678587)]
+mysql-1-2-3-1                 : found and updated times {'benchmarker': [(1795678464, 1795678588), (1795678463, 1795678587)]}
 mysql-1-2-3-1                 : needs monitoring (common metrics) for deployment sut
 mysql-1-2-3-1                 : collecting execution metrics of SUT at connection mysql-1-2-3-1
 mysql-1-2-3-1                 : collecting metrics of benchmarker at connection mysql-1-2-3-1
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-8568d65c57-44psq and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-mysql-1-2-3-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-2-3-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-2-3-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-2-3-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-5d787f6c5-nlt2d and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+mysql-1-2-3-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-2-3-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-2-3-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-2-3-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mysql-1-2-3-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 mysql-1-2-3-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
 mysql-1-2-3-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 mysql-1-2-3-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.1s, 0 API requests 0.0s)
-Loop pass                     : took 16.8s (12 kubectl calls 19.0s, 28 API requests 1.4s)
+Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 6.9s, 0 API requests 0.0s)
+Loop pass                     : took 9.2s (12 kubectl calls 10.7s, 28 API requests 1.0s)
 Experiment                    : Reset experiment counter. This is first run of client number 4.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-4-MySQL-1-1794695341 initialized to 4.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-2-4-MySQL-1-1795676816 initialized to 4.
 MySQL-1                       : benchmarks done 1 of 2. This will be client 4
 mysql-1-2-4-1                 : start benchmarking (benchmark_run=1)
 mysql-1-2-4-1                 : needs monitoring (common metrics) for deployment sut
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-8568d65c57-44psq and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1794695341
-MySQL-1                       : submitted benchmarker job in 6.2s (3 kubectl calls 3.7s, 24 API requests 2.4s)
-Loop pass                     : took 7.1s (3 kubectl calls 3.7s, 46 API requests 3.2s)
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-5d787f6c5-nlt2d and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+MySQL-1                       : benchmarking results in folder D:\data\benchmarks/1795676816
+MySQL-1                       : submitted benchmarker job in 2.8s (3 kubectl calls 1.6s, 14 API requests 1.0s)
+Loop pass                     : took 3.5s (3 kubectl calls 1.6s, 36 API requests 1.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 22 API requests 1.2s)
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 22 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 20 API requests 0.9s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 20 API requests 0.7s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 20 API requests 0.7s)
 - waiting 30s -               : done
 MySQL-1                       : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 20 API requests 1.0s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 20 API requests 0.6s)
 - waiting 30s -               : done
-mysql-1-2-4-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1794695341/mysql-1-2-4-1.config
+mysql-1-2-4-1                 : wrote benchmarking_timespans to D:/data/benchmarks/1795676816/mysql-1-2-4-1.config
 mysql-1-2-4-1                 : showing benchmarker times
-mysql-1-2-4-1                 : benchmarker timespan job from 1794697195 to 1794697373
-mysql-1-2-4-1                 : benchmarker timespan pods from 1794697201 to 1794697324
-mysql-1-2-4-1                 : benchmarker timespan (start to end single container [s]) = 123
-mysql-1-2-4-1                 : benchmarker times (start/end per pod and container) = [(1794697201, 1794697324), (1794697201, 1794697324), (1794697201, 1794697324), (1794697201, 1794697324)]
-mysql-1-2-4-1                 : found and updated times {'benchmarker': [(1794697201, 1794697324), (1794697201, 1794697324), (1794697201, 1794697324), (1794697201, 1794697324)]}
+mysql-1-2-4-1                 : benchmarker timespan job from 1795678630 to 1795678790
+mysql-1-2-4-1                 : benchmarker timespan pods from 1795678635 to 1795678768
+mysql-1-2-4-1                 : benchmarker timespan (start to end single container [s]) = 133
+mysql-1-2-4-1                 : benchmarker times (start/end per pod and container) = [(1795678635, 1795678768), (1795678636, 1795678764), (1795678635, 1795678766), (1795678635, 1795678764)]
+mysql-1-2-4-1                 : found and updated times {'benchmarker': [(1795678635, 1795678768), (1795678636, 1795678764), (1795678635, 1795678766), (1795678635, 1795678764)]}
 mysql-1-2-4-1                 : needs monitoring (common metrics) for deployment sut
 mysql-1-2-4-1                 : collecting execution metrics of SUT at connection mysql-1-2-4-1
 mysql-1-2-4-1                 : collecting metrics of benchmarker at connection mysql-1-2-4-1
-MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1794695341-8568d65c57-44psq and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
-mysql-1-2-4-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1794695341(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-2-4-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-2-4-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1794695341-2-4-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-mysql-1-2-4-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
-mysql-1-2-4-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+MySQL-1                       : get size via pod bexhoma-sut-mysql-1-1795676816-5d787f6c5-nlt2d and write to pvc bexhoma-storage-my-nvme-benchbase-tpcc-16
+mysql-1-2-4-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)mysql-1-1795676816(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+mysql-1-2-4-1                 : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-2-4-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-mysql-1-1795676816-2-4-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 mysql-1-2-4-1                 : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 mysql-1-2-4-1                 : WARNING metric missing for benchmarker: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.6s, 0 API requests 0.0s)
-Loop pass                     : took 31.7s (16 kubectl calls 22.7s, 36 API requests 2.1s)
+mysql-1-2-4-1                 : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+mysql-1-2-4-1                 : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 6.4s, 0 API requests 0.0s)
+Loop pass                     : took 11.4s (16 kubectl calls 12.2s, 36 API requests 1.5s)
 MySQL-1                       : can be stopped
-MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1794695341-8568d65c57-44psq
-Loop pass                     : took 5.7s (4 kubectl calls 4.1s, 30 API requests 1.2s)
-Experiment                    : ends at 2026-11-15 00:03:10.093125 (333930.889336) - 2046.57s total
+MySQL-1                       : had 0 restarts at worker bexhoma-sut-mysql-1-1795676816-5d787f6c5-nlt2d
+Loop pass                     : took 2.9s (4 kubectl calls 1.7s, 31 API requests 1.0s)
+Experiment                    : ends at 2026-11-26 08:39:59.297022 (940253.8486105) - 1982.44s total
 Experiment                    : transforming metrics for loading
 Experiment                    : transforming metrics for loading completed
 Experiment                    : transforming metrics for benchmarking
@@ -483,14 +495,14 @@ Experiment                    : uploading workload file
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 2047s 
-* Code: 1794695341
+* Duration: 1983s 
+* Code: 1795676816
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [8]. Benchmarking runs for 2 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.4.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 1 processes (pods).
@@ -510,11 +522,12 @@ Benchbase Workload tpcc SF=16
 ### Connections
 * mysql-1-1-1-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1046889
-  * datadisk:35512
+  * disk:638736
+  * datadisk:35298
   * volume_size:49G
   * volume_used:35G
   * cpu_list:0-223
@@ -525,15 +538,16 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794695341
+    * code:1795676816
     * TENANT_VOL:False
 * mysql-1-1-2-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1049775
-  * datadisk:36204
+  * disk:639033
+  * datadisk:35967
   * volume_size:49G
   * volume_used:36G
   * cpu_list:0-223
@@ -544,15 +558,16 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794695341
+    * code:1795676816
     * TENANT_VOL:False
 * mysql-1-1-3-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1049931
-  * datadisk:37576
+  * disk:640306
+  * datadisk:37352
   * volume_size:49G
   * volume_used:37G
   * cpu_list:0-223
@@ -563,15 +578,16 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794695341
+    * code:1795676816
     * TENANT_VOL:False
 * mysql-1-1-4-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1045222
-  * datadisk:38260
+  * disk:641912
+  * datadisk:38044
   * volume_size:49G
   * volume_used:38G
   * cpu_list:0-223
@@ -582,15 +598,16 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794695341
+    * code:1795676816
     * TENANT_VOL:False
 * mysql-1-2-1-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1048100
-  * datadisk:39568
+  * disk:646243
+  * datadisk:39372
   * volume_size:49G
   * volume_used:39G
   * cpu_list:0-223
@@ -601,15 +618,16 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794695341
+    * code:1795676816
     * TENANT_VOL:False
 * mysql-1-2-2-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1048807
-  * datadisk:40565
+  * disk:647866
+  * datadisk:40356
   * volume_size:49G
   * volume_used:40G
   * cpu_list:0-223
@@ -620,15 +638,16 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794695341
+    * code:1795676816
     * TENANT_VOL:False
 * mysql-1-2-3-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1049406
-  * datadisk:41825
+  * disk:648478
+  * datadisk:41676
   * volume_size:49G
   * volume_used:41G
   * cpu_list:0-223
@@ -639,15 +658,16 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794695341
+    * code:1795676816
     * TENANT_VOL:False
 * mysql-1-2-4-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1043976
-  * datadisk:42521
+  * disk:629684
+  * datadisk:42380
   * volume_size:49G
   * volume_used:42G
   * cpu_list:0-223
@@ -658,7 +678,7 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794695341
+    * code:1795676816
     * TENANT_VOL:False
 
 ### Reused Storage
@@ -668,8 +688,8 @@ Benchbase Workload tpcc SF=16
 * MySQL-1: loading values of the volume: script=Schema, indexing=Checks
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1794695341-6cf7f55896-67xn2: 0
-* bexhoma-sut-mysql-1-1794695341-8568d65c57-44psq: 0
+* bexhoma-sut-mysql-1-1795676816-68f45b744b-7w4gw: 0
+* bexhoma-sut-mysql-1-1795676816-5d787f6c5-nlt2d: 0
 
 ### Workflow
 
@@ -701,8 +721,8 @@ Benchbase Workload tpcc SF=16
 
 | DBMS      |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MySQL-1-1 |                1 |   16 |       81.00 |           4.00 |            0.00 |         72.00 |            5.00 |              0 |         1 |             |                |             0 | False         |              711.11 | True                |
-| MySQL-1-2 |                2 |   16 |       81.00 |           4.00 |            0.00 |         72.00 |            5.00 |              0 |         1 |             |                |             0 | False         |              711.11 | True                |
+| MySQL-1-1 |                1 |   16 |      115.00 |           2.00 |            0.00 |        111.00 |            2.00 |              0 |         1 |             |                |             0 | False         |              500.87 | True                |
+| MySQL-1-2 |                2 |   16 |      115.00 |           2.00 |            0.00 |        111.00 |            2.00 |              0 |         1 |             |                |             0 | False         |              500.87 | True                |
 
 ### Benchmarking
 
@@ -710,37 +730,37 @@ Benchbase Workload tpcc SF=16
 
 | connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        8192.15 |                     8106.06 |         0.00 |                                                      17513.00 |                                               9574.00 |
-| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        8176.36 |                     8054.58 |         0.00 |                                                      38179.00 |                                              16578.00 |
-| mysql-1-1-2-1-2 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       2 |       160 |     8192 |          -1 | 120.00 |        0 |                        8191.60 |                     8067.66 |         0.00 |                                                      38157.00 |                                              16437.00 |
-| mysql-1-1-3-1-1 | mysql-1-1-3 | mysql-1-1-3-1 |                1 |        3 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        4095.82 |                     4051.65 |         0.00 |                                                      17601.00 |                                               8914.00 |
-| mysql-1-1-3-1-2 | mysql-1-1-3 | mysql-1-1-3-1 |                1 |        3 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        4095.41 |                     4052.27 |         0.00 |                                                      17521.00 |                                               8873.00 |
-| mysql-1-1-4-1-1 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        3888.92 |                     3828.38 |         0.00 |                                                      44730.00 |                                              20557.00 |
-| mysql-1-1-4-1-2 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        3933.24 |                     3871.41 |         0.00 |                                                      44529.00 |                                              20327.00 |
-| mysql-1-1-4-1-3 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       3 |        80 |     4096 |          -1 | 120.00 |        0 |                        3912.59 |                     3851.14 |         0.00 |                                                      44578.00 |                                              20435.00 |
-| mysql-1-1-4-1-4 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       4 |        80 |     4096 |          -1 | 120.00 |        0 |                        3897.09 |                     3835.52 |         0.00 |                                                      44720.00 |                                              20515.00 |
-| mysql-1-2-1-1-1 | mysql-1-2-1 | mysql-1-2-1-1 |                2 |        1 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        8191.84 |                     8095.09 |         0.00 |                                                      22259.00 |                                              11410.00 |
-| mysql-1-2-2-1-1 | mysql-1-2-2 | mysql-1-2-2-1 |                2 |        2 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        7456.47 |                     7331.72 |         0.00 |                                                      44388.00 |                                              21437.00 |
-| mysql-1-2-2-1-2 | mysql-1-2-2 | mysql-1-2-2-1 |                2 |        2 |               1 |       2 |       160 |     8192 |          -1 | 120.00 |        0 |                        7606.34 |                     7477.68 |         0.00 |                                                      43846.00 |                                              21013.00 |
-| mysql-1-2-3-1-1 | mysql-1-2-3 | mysql-1-2-3-1 |                2 |        3 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        4096.14 |                     4052.36 |         0.00 |                                                      17273.00 |                                               9066.00 |
-| mysql-1-2-3-1-2 | mysql-1-2-3 | mysql-1-2-3-1 |                2 |        3 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        4095.81 |                     4050.75 |         0.00 |                                                      16957.00 |                                               8870.00 |
-| mysql-1-2-4-1-1 | mysql-1-2-4 | mysql-1-2-4-1 |                2 |        4 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        3992.49 |                     3925.28 |         0.00 |                                                      42551.00 |                                              20025.00 |
-| mysql-1-2-4-1-2 | mysql-1-2-4 | mysql-1-2-4-1 |                2 |        4 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        4042.53 |                     3974.39 |         0.00 |                                                      42220.00 |                                              19777.00 |
-| mysql-1-2-4-1-3 | mysql-1-2-4 | mysql-1-2-4-1 |                2 |        4 |               1 |       3 |        80 |     4096 |          -1 | 120.00 |        0 |                        4001.26 |                     3934.53 |         0.00 |                                                      42475.00 |                                              19981.00 |
-| mysql-1-2-4-1-4 | mysql-1-2-4 | mysql-1-2-4-1 |                2 |        4 |               1 |       4 |        80 |     4096 |          -1 | 120.00 |        0 |                        3992.10 |                     3924.74 |         0.00 |                                                      42533.00 |                                              20027.00 |
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        8186.52 |                     8107.41 |         0.00 |                                                      14932.00 |                                               8460.00 |
+| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        8078.12 |                     7956.05 |         0.00 |                                                      36209.00 |                                              15416.00 |
+| mysql-1-1-2-1-2 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       2 |       160 |     8192 |          -1 | 120.00 |        0 |                        8130.87 |                     8007.62 |         0.00 |                                                      36044.00 |                                              15241.00 |
+| mysql-1-1-3-1-1 | mysql-1-1-3 | mysql-1-1-3-1 |                1 |        3 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        4096.38 |                     4053.23 |         0.00 |                                                      15664.00 |                                               8140.00 |
+| mysql-1-1-3-1-2 | mysql-1-1-3 | mysql-1-1-3-1 |                1 |        3 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        4095.82 |                     4052.97 |         0.00 |                                                      15603.00 |                                               8040.00 |
+| mysql-1-1-4-1-1 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        3908.80 |                     3847.63 |         0.00 |                                                      43727.00 |                                              20453.00 |
+| mysql-1-1-4-1-2 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        3997.34 |                     3933.72 |         0.00 |                                                      43509.00 |                                              20001.00 |
+| mysql-1-1-4-1-3 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       3 |        80 |     4096 |          -1 | 120.00 |        0 |                        3970.39 |                     3906.31 |         0.00 |                                                      43588.00 |                                              20138.00 |
+| mysql-1-1-4-1-4 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       4 |        80 |     4096 |          -1 | 120.00 |        0 |                        3943.76 |                     3881.76 |         0.00 |                                                      43556.00 |                                              20266.00 |
+| mysql-1-2-1-1-1 | mysql-1-2-1 | mysql-1-2-1-1 |                2 |        1 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        8154.06 |                     8063.32 |         0.00 |                                                      16890.00 |                                               9129.00 |
+| mysql-1-2-2-1-1 | mysql-1-2-2 | mysql-1-2-2-1 |                2 |        2 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        7919.38 |                     7785.94 |         0.00 |                                                      42714.00 |                                              20183.00 |
+| mysql-1-2-2-1-2 | mysql-1-2-2 | mysql-1-2-2-1 |                2 |        2 |               1 |       2 |       160 |     8192 |          -1 | 120.00 |        0 |                        8024.95 |                     7889.54 |         0.00 |                                                      42482.00 |                                              19918.00 |
+| mysql-1-2-3-1-1 | mysql-1-2-3 | mysql-1-2-3-1 |                2 |        3 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        4096.51 |                     4052.16 |         0.00 |                                                      17161.00 |                                               9458.00 |
+| mysql-1-2-3-1-2 | mysql-1-2-3 | mysql-1-2-3-1 |                2 |        3 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        4096.05 |                     4052.28 |         0.00 |                                                      17099.00 |                                               9389.00 |
+| mysql-1-2-4-1-1 | mysql-1-2-4 | mysql-1-2-4-1 |                2 |        4 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        4020.55 |                     3954.25 |         0.00 |                                                      40532.00 |                                              18760.00 |
+| mysql-1-2-4-1-2 | mysql-1-2-4 | mysql-1-2-4-1 |                2 |        4 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        4039.09 |                     3972.86 |         0.00 |                                                      40581.00 |                                              18689.00 |
+| mysql-1-2-4-1-3 | mysql-1-2-4 | mysql-1-2-4-1 |                2 |        4 |               1 |       3 |        80 |     4096 |          -1 | 120.00 |        0 |                        4030.24 |                     3964.71 |         0.00 |                                                      40579.00 |                                              18736.00 |
+| mysql-1-2-4-1-4 | mysql-1-2-4 | mysql-1-2-4-1 |                2 |        4 |               1 |       4 |        80 |     4096 |          -1 | 120.00 |        0 |                        4019.89 |                     3953.50 |         0.00 |                                                      40572.00 |                                              18785.00 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:------------|:------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 |       160 |     8192 |          -1 | 120.00 |        0 |                        8192.15 |                     8106.06 |         0.00 |                                                      17513.00 |                                               9574.00 |
-| mysql-1-1-2 | mysql-1-1-2 |                1 |        2 |               1 |           2 |       320 |    16384 |          -1 | 120.00 |        0 |                       16367.95 |                    16122.24 |         0.00 |                                                      38179.00 |                                              16507.50 |
-| mysql-1-1-3 | mysql-1-1-3 |                1 |        3 |               1 |           2 |       160 |     8192 |          -1 | 120.00 |        0 |                        8191.23 |                     8103.93 |         0.00 |                                                      17601.00 |                                               8893.50 |
-| mysql-1-1-4 | mysql-1-1-4 |                1 |        4 |               1 |           4 |       320 |    16384 |          -1 | 120.00 |        0 |                       15631.84 |                    15386.46 |         0.00 |                                                      44730.00 |                                              20458.50 |
-| mysql-1-2-1 | mysql-1-2-1 |                2 |        1 |               1 |           1 |       160 |     8192 |          -1 | 120.00 |        0 |                        8191.84 |                     8095.09 |         0.00 |                                                      22259.00 |                                              11410.00 |
-| mysql-1-2-2 | mysql-1-2-2 |                2 |        2 |               1 |           2 |       320 |    16384 |          -1 | 120.00 |        0 |                       15062.81 |                    14809.40 |         0.00 |                                                      44388.00 |                                              21225.00 |
-| mysql-1-2-3 | mysql-1-2-3 |                2 |        3 |               1 |           2 |       160 |     8192 |          -1 | 120.00 |        0 |                        8191.95 |                     8103.11 |         0.00 |                                                      17273.00 |                                               8968.00 |
-| mysql-1-2-4 | mysql-1-2-4 |                2 |        4 |               1 |           4 |       320 |    16384 |          -1 | 120.00 |        0 |                       16028.38 |                    15758.94 |         0.00 |                                                      42551.00 |                                              19952.50 |
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 |       160 |     8192 |          -1 | 120.00 |        0 |                        8186.52 |                     8107.41 |         0.00 |                                                      14932.00 |                                               8460.00 |
+| mysql-1-1-2 | mysql-1-1-2 |                1 |        2 |               1 |           2 |       320 |    16384 |          -1 | 120.00 |        0 |                       16208.99 |                    15963.67 |         0.00 |                                                      36209.00 |                                              15328.50 |
+| mysql-1-1-3 | mysql-1-1-3 |                1 |        3 |               1 |           2 |       160 |     8192 |          -1 | 120.00 |        0 |                        8192.20 |                     8106.19 |         0.00 |                                                      15664.00 |                                               8090.00 |
+| mysql-1-1-4 | mysql-1-1-4 |                1 |        4 |               1 |           4 |       320 |    16384 |          -1 | 120.00 |        0 |                       15820.29 |                    15569.42 |         0.00 |                                                      43727.00 |                                              20214.50 |
+| mysql-1-2-1 | mysql-1-2-1 |                2 |        1 |               1 |           1 |       160 |     8192 |          -1 | 120.00 |        0 |                        8154.06 |                     8063.32 |         0.00 |                                                      16890.00 |                                               9129.00 |
+| mysql-1-2-2 | mysql-1-2-2 |                2 |        2 |               1 |           2 |       320 |    16384 |          -1 | 120.00 |        0 |                       15944.32 |                    15675.48 |         0.00 |                                                      42714.00 |                                              20050.50 |
+| mysql-1-2-3 | mysql-1-2-3 |                2 |        3 |               1 |           2 |       160 |     8192 |          -1 | 120.00 |        0 |                        8192.56 |                     8104.44 |         0.00 |                                                      17161.00 |                                               9423.50 |
+| mysql-1-2-4 | mysql-1-2-4 |                2 |        4 |               1 |           4 |       320 |    16384 |          -1 | 120.00 |        0 |                       16109.77 |                    15845.31 |         0.00 |                                                      40581.00 |                                              18742.50 |
 
 ### Monitoring
 
@@ -748,27 +768,27 @@ Benchbase Workload tpcc SF=16
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |      1605.82 |     16.03 |           5.80 |                  7.97 |
-| mysql-1-1-2-1 |      3824.36 |     32.57 |           7.75 |                 15.08 |
-| mysql-1-1-3-1 |      1404.63 |     14.93 |           8.38 |                 17.68 |
-| mysql-1-1-4-1 |      3417.61 |     31.55 |           9.88 |                 23.96 |
-| mysql-1-2-1-1 |      1990.19 |     16.91 |           7.66 |                 10.39 |
-| mysql-1-2-2-1 |      3749.29 |     32.10 |          10.01 |                 17.25 |
-| mysql-1-2-3-1 |      1702.90 |     14.53 |          10.88 |                 20.60 |
-| mysql-1-2-4-1 |      3539.39 |     31.89 |          12.40 |                 26.55 |
+| mysql-1-1-1-1 |      1755.04 |     15.79 |           5.79 |                  8.27 |
+| mysql-1-1-2-1 |      3709.45 |     34.77 |           7.50 |                 14.38 |
+| mysql-1-1-3-1 |      1672.57 |     16.23 |           8.28 |                 17.72 |
+| mysql-1-1-4-1 |      3093.34 |     33.42 |           9.54 |                 22.94 |
+| mysql-1-2-1-1 |      1684.16 |     17.58 |           7.31 |                  9.53 |
+| mysql-1-2-2-1 |      3854.83 |     38.30 |           9.86 |                 16.90 |
+| mysql-1-2-3-1 |      1554.67 |     13.95 |          10.85 |                 20.82 |
+| mysql-1-2-4-1 |      3544.57 |     31.31 |          12.44 |                 27.14 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |      1433.26 |     13.95 |           1.41 |                  1.41 |
-| mysql-1-1-2-1 |      2027.18 |     19.09 |           1.45 |                  1.45 |
-| mysql-1-1-3-1 |      1440.33 |     12.66 |           1.16 |                  1.16 |
-| mysql-1-1-4-1 |      2145.25 |     21.01 |           1.01 |                  1.01 |
-| mysql-1-2-1-1 |      1403.71 |     12.75 |           1.38 |                  1.38 |
-| mysql-1-2-2-1 |      1889.48 |     19.70 |           1.57 |                  1.57 |
-| mysql-1-2-3-1 |      1051.35 |     11.44 |           1.26 |                  1.26 |
-| mysql-1-2-4-1 |      1892.67 |     21.76 |           1.05 |                  1.05 |
+| mysql-1-1-1-1 |       980.65 |     14.88 |           1.82 |                  1.82 |
+| mysql-1-1-2-1 |      2106.24 |     21.15 |           1.58 |                  1.58 |
+| mysql-1-1-3-1 |      1158.72 |      9.88 |           1.23 |                  1.23 |
+| mysql-1-1-4-1 |      1931.32 |     24.26 |           1.00 |                  1.00 |
+| mysql-1-2-1-1 |      1242.89 |     14.09 |           1.87 |                  1.87 |
+| mysql-1-2-2-1 |      1974.52 |     21.32 |           1.59 |                  1.59 |
+| mysql-1-2-3-1 |      1450.13 |     12.52 |           1.24 |                  1.24 |
+| mysql-1-2-4-1 |      2691.25 |     26.95 |           1.13 |                  1.13 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -811,9 +831,17 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Monitoring returned data
 * TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
 * TEST passed: Workflow as planned
+* TEST passed: Every pod ran for the configured time
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

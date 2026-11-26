@@ -3,14 +3,14 @@
 ### Workload
 Benchbase Workload tpcc SF=128
 * Type: benchbase
-* Duration: 4589s 
-* Code: 1794700900
+* Duration: 4827s 
+* Code: 1795673651
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 128. Target is based on multiples of '1024'. Factors for benchmarking are [16]. Benchmarking runs for 10 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.4.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['CockroachDB'].
@@ -25,181 +25,196 @@ Benchbase Workload tpcc SF=128
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
-  * Results are validated against basic correctness requirements.
   * Distributed DBMS uses 3 worker nodes, 3 replicas and 0 shards per node.
   * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
 * cockroachdb-1-1-1-1 uses docker image cockroachdb/cockroach:v24.2.4
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1185955
+  * disk:632600
   * cpu_list:0-223
   * args:['-c', 'while true; do echo hello; sleep 10;done']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:1081853952000
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:673180
-    * datadisk:10024
-    * cpu_list:0-127
-  * worker 1
-    * RAM:1081742753792
-    * Cores:128
-    * host:6.8.0-146-generic
-    * node:cl-worker29
-    * disk:1391243
-    * datadisk:9926
-    * cpu_list:0-127
-  * worker 2
     * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
     * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:1185985
-    * datadisk:9738
+    * disk:632600
+    * datadisk:10029
     * cpu_list:0-223
+  * worker 1
+    * RAM:1081742733312
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:713648
+    * datadisk:9778
+    * cpu_list:0-127
+  * worker 2
+    * RAM:1081853997056
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:661509
+    * datadisk:10304
+    * cpu_list:0-127
   * resources_total: 12.25 CPU, 192.5 GiB RAM requested in 4 pods
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794700900
+    * code:1795673651
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 * cockroachdb-1-1-2-1 uses docker image cockroachdb/cockroach:v24.2.4
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1193840
+  * disk:670866
   * cpu_list:0-223
   * args:['-c', 'while true; do echo hello; sleep 10;done']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:1081853952000
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:676146
-    * datadisk:12979
-    * cpu_list:0-127
-  * worker 1
-    * RAM:1081742753792
-    * Cores:128
-    * host:6.8.0-146-generic
-    * node:cl-worker29
-    * disk:1394076
-    * datadisk:12758
-    * cpu_list:0-127
-  * worker 2
     * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
     * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:1193932
-    * datadisk:12776
+    * disk:670866
+    * datadisk:13099
     * cpu_list:0-223
+  * worker 1
+    * RAM:1081742733312
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:716676
+    * datadisk:12936
+    * cpu_list:0-127
+  * worker 2
+    * RAM:1081853997056
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:664069
+    * datadisk:12863
+    * cpu_list:0-127
   * resources_total: 12.25 CPU, 192.5 GiB RAM requested in 4 pods
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794700900
+    * code:1795673651
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 * cockroachdb-1-1-3-1 uses docker image cockroachdb/cockroach:v24.2.4
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1198525
+  * disk:638539
   * cpu_list:0-223
   * args:['-c', 'while true; do echo hello; sleep 10;done']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:1081853952000
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:678563
-    * datadisk:15387
-    * cpu_list:0-127
-  * worker 1
-    * RAM:1081742753792
-    * Cores:128
-    * host:6.8.0-146-generic
-    * node:cl-worker29
-    * disk:1396480
-    * datadisk:15162
-    * cpu_list:0-127
-  * worker 2
     * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
     * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:1198525
-    * datadisk:15195
+    * disk:638539
+    * datadisk:15316
     * cpu_list:0-223
+  * worker 1
+    * RAM:1081742733312
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:718942
+    * datadisk:15201
+    * cpu_list:0-127
+  * worker 2
+    * RAM:1081853997056
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:666335
+    * datadisk:15128
+    * cpu_list:0-127
   * resources_total: 12.25 CPU, 192.5 GiB RAM requested in 4 pods
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794700900
+    * code:1795673651
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 * cockroachdb-1-1-4-1 uses docker image cockroachdb/cockroach:v24.2.4
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1200427
+  * disk:643190
   * cpu_list:0-223
   * args:['-c', 'while true; do echo hello; sleep 10;done']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:1081853952000
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:680514
-    * datadisk:17320
-    * cpu_list:0-127
-  * worker 1
-    * RAM:1081742753792
-    * Cores:128
-    * host:6.8.0-146-generic
-    * node:cl-worker29
-    * disk:1398399
-    * datadisk:17081
-    * cpu_list:0-127
-  * worker 2
     * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
     * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:1200431
-    * datadisk:17097
+    * disk:643202
+    * datadisk:17147
     * cpu_list:0-223
+  * worker 1
+    * RAM:1081742733312
+    * CPU:AMD EPYC 7502 32-Core Processor
+    * Cores:128
+    * host:6.8.0-146-generic
+    * node:cl-worker29
+    * disk:720751
+    * datadisk:17010
+    * cpu_list:0-127
+  * worker 2
+    * RAM:1081853997056
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:668153
+    * datadisk:16946
+    * cpu_list:0-127
   * resources_total: 12.25 CPU, 192.5 GiB RAM requested in 4 pods
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794700900
+    * code:1795673651
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 
@@ -210,10 +225,10 @@ Benchbase Workload tpcc SF=128
 * CockroachDB-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-cockroachdb-1-1794700900-586d54c45c-ntw59: 0
-* bx-w-cr-1-1794700900-0: 0
-* bx-w-cr-1-1794700900-1: 0
-* bx-w-cr-1-1794700900-2: 0
+* bexhoma-sut-cockroachdb-1-1795673651-5667559d5d-qbzlb: 0
+* bx-w-cr-1-1795673651-0: 0
+* bx-w-cr-1-1795673651-1: 0
+* bx-w-cr-1-1795673651-2: 0
 
 ### Workflow
 
@@ -237,7 +252,7 @@ Benchbase Workload tpcc SF=128
 
 | DBMS            |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:----------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| CockroachDB-1-1 |                1 |  128 |     1608.00 |           1.00 |            0.00 |       1604.00 |            3.00 |              1 |         1 |             | None           |             0 | False         |              286.57 | False               |
+| CockroachDB-1-1 |                1 |  128 |     1888.00 |           0.00 |            0.00 |       1886.00 |            2.00 |              1 |         1 |             | None           |             0 | False         |              244.07 | False               |
 
 ### Benchmarking
 
@@ -245,30 +260,30 @@ Benchbase Workload tpcc SF=128
 
 | connection            | phase             | job                 |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------------|:------------------|:--------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| cockroachdb-1-1-1-1-1 | cockroachdb-1-1-1 | cockroachdb-1-1-1-1 |                1 |        1 |               1 |       1 |      1280 |    16384 |          -1 | 600.00 |        0 |                        2985.80 |                     2974.32 |         0.00 |                                                    1079972.00 |                                             428222.00 |
-| cockroachdb-1-1-2-1-1 | cockroachdb-1-1-2 | cockroachdb-1-1-2-1 |                1 |        2 |               1 |       1 |       640 |     8192 |          -1 | 600.00 |        0 |                        1485.75 |                     1479.92 |         0.00 |                                                    1116480.00 |                                             430350.00 |
-| cockroachdb-1-1-2-1-2 | cockroachdb-1-1-2 | cockroachdb-1-1-2-1 |                1 |        2 |               1 |       2 |       640 |     8192 |          -1 | 600.00 |        0 |                        1483.92 |                     1478.16 |         0.00 |                                                    1117800.00 |                                             431160.00 |
-| cockroachdb-1-1-3-1-1 | cockroachdb-1-1-3 | cockroachdb-1-1-3-1 |                1 |        3 |               1 |       1 |       320 |     4096 |          -1 | 600.00 |        0 |                         725.66 |                      722.82 |         0.00 |                                                    1547691.00 |                                             440437.00 |
-| cockroachdb-1-1-3-1-2 | cockroachdb-1-1-3 | cockroachdb-1-1-3-1 |                1 |        3 |               1 |       2 |       320 |     4096 |          -1 | 600.00 |        0 |                         724.00 |                      721.16 |         0.00 |                                                    1549123.00 |                                             441720.00 |
-| cockroachdb-1-1-3-1-3 | cockroachdb-1-1-3 | cockroachdb-1-1-3-1 |                1 |        3 |               1 |       3 |       320 |     4096 |          -1 | 600.00 |        0 |                         720.65 |                      717.71 |         0.00 |                                                    1550585.00 |                                             443707.00 |
-| cockroachdb-1-1-3-1-4 | cockroachdb-1-1-3 | cockroachdb-1-1-3-1 |                1 |        3 |               1 |       4 |       320 |     4096 |          -1 | 600.00 |        0 |                         722.13 |                      719.22 |         0.00 |                                                    1554894.00 |                                             442773.00 |
-| cockroachdb-1-1-4-1-1 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       1 |       160 |     2048 |          -1 | 600.00 |        0 |                         340.34 |                      338.86 |         0.00 |                                                    1870724.00 |                                             469658.00 |
-| cockroachdb-1-1-4-1-2 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       2 |       160 |     2048 |          -1 | 600.00 |        0 |                         343.87 |                      342.34 |         0.00 |                                                    1854932.00 |                                             465146.00 |
-| cockroachdb-1-1-4-1-3 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       3 |       160 |     2048 |          -1 | 600.00 |        0 |                         343.19 |                      341.71 |         0.00 |                                                    1859900.00 |                                             465830.00 |
-| cockroachdb-1-1-4-1-4 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       4 |       160 |     2048 |          -1 | 600.00 |        0 |                         341.11 |                      339.70 |         0.00 |                                                    1868516.00 |                                             468350.00 |
-| cockroachdb-1-1-4-1-5 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       5 |       160 |     2048 |          -1 | 600.00 |        0 |                         345.48 |                      343.98 |         0.00 |                                                    1849422.00 |                                             462361.00 |
-| cockroachdb-1-1-4-1-6 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       6 |       160 |     2048 |          -1 | 600.00 |        0 |                         342.12 |                      340.63 |         0.00 |                                                    1864028.00 |                                             467444.00 |
-| cockroachdb-1-1-4-1-7 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       7 |       160 |     2048 |          -1 | 600.00 |        0 |                         343.88 |                      342.43 |         0.00 |                                                    1849495.00 |                                             464580.00 |
-| cockroachdb-1-1-4-1-8 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       8 |       160 |     2048 |          -1 | 600.00 |        0 |                         338.34 |                      336.84 |         0.00 |                                                    1869567.00 |                                             472164.00 |
+| cockroachdb-1-1-1-1-1 | cockroachdb-1-1-1 | cockroachdb-1-1-1-1 |                1 |        1 |               1 |       1 |      1280 |    16384 |          -1 | 600.00 |        0 |                        3196.61 |                     3167.66 |         0.00 |                                                    1265087.00 |                                             399868.00 |
+| cockroachdb-1-1-2-1-1 | cockroachdb-1-1-2 | cockroachdb-1-1-2-1 |                1 |        2 |               1 |       1 |       640 |     8192 |          -1 | 600.00 |        0 |                        1401.57 |                     1393.30 |         0.00 |                                                    1248522.00 |                                             456174.00 |
+| cockroachdb-1-1-2-1-2 | cockroachdb-1-1-2 | cockroachdb-1-1-2-1 |                1 |        2 |               1 |       2 |       640 |     8192 |          -1 | 600.00 |        0 |                        1409.15 |                     1400.92 |         0.00 |                                                    1247248.00 |                                             453866.00 |
+| cockroachdb-1-1-3-1-1 | cockroachdb-1-1-3 | cockroachdb-1-1-3-1 |                1 |        3 |               1 |       1 |       320 |     4096 |          -1 | 600.00 |        0 |                         665.01 |                      661.60 |         0.00 |                                                    1470126.00 |                                             480772.00 |
+| cockroachdb-1-1-3-1-2 | cockroachdb-1-1-3 | cockroachdb-1-1-3-1 |                1 |        3 |               1 |       2 |       320 |     4096 |          -1 | 600.00 |        0 |                         665.96 |                      662.74 |         0.00 |                                                    1472659.00 |                                             480140.00 |
+| cockroachdb-1-1-3-1-3 | cockroachdb-1-1-3 | cockroachdb-1-1-3-1 |                1 |        3 |               1 |       3 |       320 |     4096 |          -1 | 600.00 |        0 |                         663.42 |                      660.13 |         0.00 |                                                    1475603.00 |                                             481842.00 |
+| cockroachdb-1-1-3-1-4 | cockroachdb-1-1-3 | cockroachdb-1-1-3-1 |                1 |        3 |               1 |       4 |       320 |     4096 |          -1 | 600.00 |        0 |                         668.10 |                      664.92 |         0.00 |                                                    1468005.00 |                                             478758.00 |
+| cockroachdb-1-1-4-1-1 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       1 |       160 |     2048 |          -1 | 600.00 |        0 |                         320.54 |                      318.92 |         0.00 |                                                    1749108.00 |                                             498670.00 |
+| cockroachdb-1-1-4-1-2 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       2 |       160 |     2048 |          -1 | 600.00 |        0 |                         321.19 |                      319.68 |         0.00 |                                                    1741449.00 |                                             497798.00 |
+| cockroachdb-1-1-4-1-3 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       3 |       160 |     2048 |          -1 | 600.00 |        0 |                         319.40 |                      317.92 |         0.00 |                                                    1758193.00 |                                             500499.00 |
+| cockroachdb-1-1-4-1-4 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       4 |       160 |     2048 |          -1 | 600.00 |        0 |                         320.81 |                      319.17 |         0.00 |                                                    1748554.00 |                                             498192.00 |
+| cockroachdb-1-1-4-1-5 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       5 |       160 |     2048 |          -1 | 600.00 |        0 |                         318.57 |                      316.96 |         0.00 |                                                    1747841.00 |                                             501725.00 |
+| cockroachdb-1-1-4-1-6 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       6 |       160 |     2048 |          -1 | 600.00 |        0 |                         324.58 |                      323.04 |         0.00 |                                                    1738373.00 |                                             492486.00 |
+| cockroachdb-1-1-4-1-7 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       7 |       160 |     2048 |          -1 | 600.00 |        0 |                         321.54 |                      319.98 |         0.00 |                                                    1752719.00 |                                             497265.00 |
+| cockroachdb-1-1-4-1-8 | cockroachdb-1-1-4 | cockroachdb-1-1-4-1 |                1 |        4 |               1 |       8 |       160 |     2048 |          -1 | 600.00 |        0 |                         326.56 |                      324.84 |         0.00 |                                                    1730051.00 |                                             489428.00 |
 
 #### Per Phase
 
 | DBMS              | phase             |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:------------------|:------------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| cockroachdb-1-1-1 | cockroachdb-1-1-1 |                1 |        1 |               1 |           1 |      1280 |    16384 |          -1 | 600.00 |        0 |                        2985.80 |                     2974.32 |         0.00 |                                                    1079972.00 |                                             428222.00 |
-| cockroachdb-1-1-2 | cockroachdb-1-1-2 |                1 |        2 |               1 |           2 |      1280 |    16384 |          -1 | 600.00 |        0 |                        2969.68 |                     2958.08 |         0.00 |                                                    1117800.00 |                                             430755.00 |
-| cockroachdb-1-1-3 | cockroachdb-1-1-3 |                1 |        3 |               1 |           4 |      1280 |    16384 |          -1 | 600.00 |        0 |                        2892.45 |                     2880.92 |         0.00 |                                                    1554894.00 |                                             442159.25 |
-| cockroachdb-1-1-4 | cockroachdb-1-1-4 |                1 |        4 |               1 |           8 |      1280 |    16384 |          -1 | 600.00 |        0 |                        2738.34 |                     2726.48 |         0.00 |                                                    1870724.00 |                                             466941.62 |
+| cockroachdb-1-1-1 | cockroachdb-1-1-1 |                1 |        1 |               1 |           1 |      1280 |    16384 |          -1 | 600.00 |        0 |                        3196.61 |                     3167.66 |         0.00 |                                                    1265087.00 |                                             399868.00 |
+| cockroachdb-1-1-2 | cockroachdb-1-1-2 |                1 |        2 |               1 |           2 |      1280 |    16384 |          -1 | 600.00 |        0 |                        2810.72 |                     2794.22 |         0.00 |                                                    1248522.00 |                                             455020.00 |
+| cockroachdb-1-1-3 | cockroachdb-1-1-3 |                1 |        3 |               1 |           4 |      1280 |    16384 |          -1 | 600.00 |        0 |                        2662.51 |                     2649.39 |         0.00 |                                                    1475603.00 |                                             480378.00 |
+| cockroachdb-1-1-4 | cockroachdb-1-1-4 |                1 |        4 |               1 |           8 |      1280 |    16384 |          -1 | 600.00 |        0 |                        2573.19 |                     2560.51 |         0.00 |                                                    1758193.00 |                                             497007.88 |
 
 ### Monitoring
 
@@ -276,45 +291,45 @@ Benchbase Workload tpcc SF=128
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |     15757.80 |     43.71 |          24.70 |                 54.84 |
-| cockroachdb-1-1-2-1 |     15757.80 |     43.71 |          24.70 |                 54.84 |
-| cockroachdb-1-1-3-1 |     15757.80 |     43.71 |          24.70 |                 54.84 |
-| cockroachdb-1-1-4-1 |     15757.80 |     43.71 |          24.70 |                 54.84 |
+| cockroachdb-1-1-1-1 |     15790.60 |     43.68 |          25.02 |                 52.76 |
+| cockroachdb-1-1-2-1 |     15790.60 |     43.68 |          25.02 |                 52.76 |
+| cockroachdb-1-1-3-1 |     15790.60 |     43.68 |          25.02 |                 52.76 |
+| cockroachdb-1-1-4-1 |     15790.60 |     43.68 |          25.02 |                 52.76 |
 
 ### Loading phase: component loader
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |    172985.97 |    118.95 |           0.39 |                  0.39 |
-| cockroachdb-1-1-2-1 |    172985.97 |    118.95 |           0.39 |                  0.39 |
-| cockroachdb-1-1-3-1 |    172985.97 |    118.95 |           0.39 |                  0.39 |
-| cockroachdb-1-1-4-1 |    172985.97 |    118.95 |           0.39 |                  0.39 |
+| cockroachdb-1-1-1-1 |    199464.16 |    119.49 |           0.45 |                  0.45 |
+| cockroachdb-1-1-2-1 |    199464.16 |    119.49 |           0.45 |                  0.45 |
+| cockroachdb-1-1-3-1 |    199464.16 |    119.49 |           0.45 |                  0.45 |
+| cockroachdb-1-1-4-1 |    199464.16 |    119.49 |           0.45 |                  0.45 |
 
 ### Benchmarking phase: component worker
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |    106843.22 |    191.72 |          35.15 |                 69.67 |
-| cockroachdb-1-1-2-1 |    109186.03 |    185.85 |          36.16 |                 77.01 |
-| cockroachdb-1-1-3-1 |    108797.93 |    186.03 |          40.54 |                 87.93 |
-| cockroachdb-1-1-4-1 |    108491.63 |    185.24 |          45.49 |                 97.88 |
+| cockroachdb-1-1-1-1 |    115702.94 |    210.40 |          35.60 |                 70.70 |
+| cockroachdb-1-1-2-1 |    105165.71 |    195.32 |          35.91 |                 77.39 |
+| cockroachdb-1-1-3-1 |    101849.83 |    190.18 |          42.84 |                 92.59 |
+| cockroachdb-1-1-4-1 |    101510.21 |    190.78 |          42.34 |                 94.33 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |      2279.51 |      4.63 |           4.28 |                  4.28 |
-| cockroachdb-1-1-2-1 |      2571.23 |      5.36 |           2.99 |                  2.99 |
-| cockroachdb-1-1-3-1 |      2735.73 |      5.37 |           1.84 |                  1.84 |
-| cockroachdb-1-1-4-1 |      3019.51 |     10.44 |           1.47 |                  1.47 |
+| cockroachdb-1-1-1-1 |      2466.14 |      6.71 |           4.31 |                  4.31 |
+| cockroachdb-1-1-2-1 |      2175.45 |      6.66 |           2.56 |                  2.56 |
+| cockroachdb-1-1-3-1 |      1957.35 |      4.60 |           1.83 |                  1.83 |
+| cockroachdb-1-1-4-1 |      2627.13 |      6.70 |           1.57 |                  1.57 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
+* CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-workerloading.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection cockroachdb-1-1-2-1 (bexhoma-metrics-cockroachdb-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
@@ -336,19 +351,19 @@ Benchbase Workload tpcc SF=128
 
 | DBMS                |   Raft Messages Received (AppResp) [msgs/s] |   Raft Network In [B/s] |   Raft Recovery Snapshot In [B/s] |   Replicate Queue Adds Attempted [adds/s] |   Replicate Queue Purgatory Count |
 |:--------------------|--------------------------------------------:|------------------------:|----------------------------------:|------------------------------------------:|----------------------------------:|
-| cockroachdb-1-1-1-1 |                                     5953.31 |             36435403.00 |                              0.00 |                                      0.00 |                              0.00 |
-| cockroachdb-1-1-2-1 |                                     5953.31 |             36435403.00 |                              0.00 |                                      0.00 |                              0.00 |
-| cockroachdb-1-1-3-1 |                                     5953.31 |             36435403.00 |                              0.00 |                                      0.00 |                              0.00 |
-| cockroachdb-1-1-4-1 |                                     5953.31 |             36435403.00 |                              0.00 |                                      0.00 |                              0.00 |
+| cockroachdb-1-1-1-1 |                                     7812.31 |             48358331.11 |                              0.00 |                                      0.00 |                              0.00 |
+| cockroachdb-1-1-2-1 |                                     7812.31 |             48358331.11 |                              0.00 |                                      0.00 |                              0.00 |
+| cockroachdb-1-1-3-1 |                                     7812.31 |             48358331.11 |                              0.00 |                                      0.00 |                              0.00 |
+| cockroachdb-1-1-4-1 |                                     7812.31 |             48358331.11 |                              0.00 |                                      0.00 |                              0.00 |
 
 #### Benchmarking phase: component worker
 
 | DBMS                |   Raft Messages Received (AppResp) [msgs/s] |   Raft Network In [B/s] |   Raft Recovery Snapshot In [B/s] |   Replicate Queue Adds Attempted [adds/s] |   Replicate Queue Purgatory Count |
 |:--------------------|--------------------------------------------:|------------------------:|----------------------------------:|------------------------------------------:|----------------------------------:|
-| cockroachdb-1-1-1-1 |                                   152605.64 |             60621460.94 |                              0.00 |                                      0.00 |                              0.00 |
-| cockroachdb-1-1-2-1 |                                   154392.77 |             60664622.23 |                              0.00 |                                      0.00 |                              0.00 |
-| cockroachdb-1-1-3-1 |                                   157217.72 |             61356218.70 |                              0.00 |                                      0.00 |                              0.00 |
-| cockroachdb-1-1-4-1 |                                   159404.12 |             62394968.73 |                              0.00 |                                      0.00 |                              0.00 |
+| cockroachdb-1-1-1-1 |                                   151707.93 |             64623481.76 |                              0.00 |                                      0.00 |                              0.00 |
+| cockroachdb-1-1-2-1 |                                   153192.09 |             59689713.62 |                              0.00 |                                      0.00 |                              0.00 |
+| cockroachdb-1-1-3-1 |                                   150542.23 |             58201351.70 |                              0.00 |                                      0.00 |                              0.00 |
+| cockroachdb-1-1-4-1 |                                   153775.42 |             59894125.79 |                              0.00 |                                      0.00 |                              0.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -358,11 +373,19 @@ Benchbase Workload tpcc SF=128
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component worker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Monitoring returned data
 * TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
 * TEST passed: Workflow as planned
+* TEST passed: Every pod ran for the configured time
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

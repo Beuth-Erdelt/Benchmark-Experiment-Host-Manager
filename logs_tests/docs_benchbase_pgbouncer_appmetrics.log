@@ -2,13 +2,13 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1794779515
-Experiment                    : starts at 2026-11-15 22:51:57.094983 (40989.9994653)
+Experiment                    : has code 1795658029
+Experiment                    : starts at 2026-11-26 02:53:49.586731 (919484.5862266)
 Experiment                    : This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
 Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
 Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction. Benchmarking runs for 10 minutes.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.18.
+Experiment uses bexhoma version 0.12.4.
 System metrics are monitored by a cluster-wide installation.
 Application metrics are monitored by sidecar containers.
 Experiment is limited to DBMS ['PGBouncer'].
@@ -21,7 +21,6 @@ Pooling is done with [2] pods having [32] inbound and [32] outbound connections 
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Maximum DBMS across the whole cluster is 10.
-Results are validated against basic correctness requirements.
 Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
 SUT requests 4 CPU and 16Gi RAM.
 Cluster monitoring            : is running
@@ -29,44 +28,41 @@ PGBouncer-1                   : will start now
 PGBouncer-1                   : deployments ['pool', 'sut']
 PGBouncer-1                   : stateful sets []
 PGBouncer-1                   : pvcs ['sut']
-PGBouncer-1                   : name of SUT pods = bexhoma-sut-pgbouncer-1-1794779515
-PGBouncer-1                   : name of SUT service = bexhoma-sut-pgbouncer-1-1794779515
-Loop pass                     : took 2.8s (1 kubectl calls 1.3s, 9 API requests 0.7s)
+PGBouncer-1                   : name of SUT pods = bexhoma-sut-pgbouncer-1-1795658029
+PGBouncer-1                   : name of SUT service = bexhoma-sut-pgbouncer-1-1795658029
+Loop pass                     : took 1.5s (1 kubectl calls 0.6s, 9 API requests 0.6s)
 - waiting 30s -               : done
 PGBouncer-1                   : waits for monitoring
 PGBouncer-1                   : wants to monitor all components in cluster
 PGBouncer-1                   : starts monitoring with prometheus pod
 PGBouncer-1                   : need application monitoring for sut
 PGBouncer-1                   : need application monitoring for pool
-Loop pass                     : took 2.7s (2 kubectl calls 2.0s, 14 API requests 0.7s)
+Loop pass                     : took 1.6s (2 kubectl calls 0.9s, 14 API requests 0.7s)
 - waiting 30s -               : done
 PGBouncer-1                   : found 2 / 2 running pool pods
 PGBouncer-1                   : is not loaded yet
 PGBouncer-1                   : load durability relaxed, scripts ['durability-relaxed.sql', 'restoredurability-relaxed.sql']
-PGBouncer-1                   : connect to pod bexhoma-sut-pgbouncer-1-1794779515-7d6c84df-lv6cz to load scripts
+PGBouncer-1                   : connect to pod bexhoma-sut-pgbouncer-1-1795658029-77d8db585d-fqwsr to load scripts
 PGBouncer-1                   : start asynch loading scripts of type schema
 PGBouncer-1                   : waits for the Schema scripts (schema=True) before starting the loading jobs
-PGBouncer-1                   : Schema scripts done after 6s
+PGBouncer-1                   : Schema scripts done after 4s
 PGBouncer-1                   : is loading
-Loop pass                     : took 19.3s (8 kubectl calls 9.4s, 46 API requests 3.0s)
+Loop pass                     : took 12.0s (8 kubectl calls 4.2s, 46 API requests 3.5s)
 - waiting 30s -               : done
 PGBouncer-1                   : is loading
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 20 API requests 0.8s)
-- waiting 30s -               : done
-PGBouncer-1                   : is loading
-Loop pass                     : took 8.5s (0 kubectl calls 0.0s, 20 API requests 0.8s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 21 API requests 1.1s)
 - waiting 30s -               : done
 PGBouncer-1                   : showing loader times (benchbase-loader)
 PGBouncer-1                   : generator times (start/end per pod and container) []
-PGBouncer-1                   : loader times (start/end per pod and container) [(1794779608, 1794779678)]
-PGBouncer-1                   : total times (start/end per pod and container) [(1794779608, 1794779678)]
-PGBouncer-1                   : loader timespan (first to last [s]) = 70
-PGBouncer-1                   : connect to pod bexhoma-sut-pgbouncer-1-1794779515-7d6c84df-lv6cz to load scripts
+PGBouncer-1                   : loader times (start/end per pod and container) [(1795658106, 1795658141)]
+PGBouncer-1                   : total times (start/end per pod and container) [(1795658106, 1795658141)]
+PGBouncer-1                   : loader timespan (first to last [s]) = 35
+PGBouncer-1                   : connect to pod bexhoma-sut-pgbouncer-1-1795658029-77d8db585d-fqwsr to load scripts
 PGBouncer-1                   : start asynch loading scripts of type index
 PGBouncer-1                   : is loading
-Loop pass                     : took 13.2s (10 kubectl calls 11.3s, 27 API requests 1.1s)
+Loop pass                     : took 6.5s (10 kubectl calls 5.1s, 28 API requests 1.1s)
 bexhoma : ERROR:root:invalid literal for int() with base 10: ''
-In C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\scripts\test-docs-appmetrics.ps1:479 Zeichen:1
+In C:\Users\Patrick\eclipse-workspace\Benchmark-Experiment-Host-Manager\scripts\test-docs-appmetrics.ps1:463 Zeichen:1
 + bexhoma benchbase `
 + ~~~~~~~~~~~~~~~~~~~
     + CategoryInfo          : NotSpecified: (ERROR:root:inva...ith base 10: '':String) [], RemoteException
@@ -79,93 +75,100 @@ ERROR:root:invalid literal for int() with base 10: ''
 ERROR:root:invalid literal for int() with base 10: ''
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PGBouncer-1-1794779515 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-PGBouncer-1-1795658029 initialized to 1.
 PGBouncer-1                   : benchmarks done 0 of 1. This will be client 1
 pgbouncer-1-1-1-1             : start benchmarking (benchmark_run=1)
-PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1794779515-66ff998d6c-9dql8
-PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1794779515-66ff998d6c-gv76s
+PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1795658029-5fbfc985f8-dmcpr
+PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1795658029-5fbfc985f8-xmxrm
 pgbouncer-1-1-1-1             : needs monitoring (common metrics) for deployment pool
 pgbouncer-1-1-1-1             : needs monitoring (common metrics) for deployment sut
 PGBouncer-1                   : need application metrics for sut
 PGBouncer-1                   : load application metrics of type postgresql
 PGBouncer-1                   : need application metrics for pool
 PGBouncer-1                   : load application metrics of type pgbouncer
-PGBouncer-1                   : benchmarking results in folder D:\data\benchmarks/1794779515
-PGBouncer-1                   : submitted benchmarker job in 35.7s (30 kubectl calls 30.7s, 55 API requests 4.4s)
+PGBouncer-1                   : benchmarking results in folder D:\data\benchmarks/1795658029
+PGBouncer-1                   : submitted benchmarker job in 17.1s (30 kubectl calls 12.4s, 55 API requests 4.4s)
 pgbouncer-1-1-1-1             : needs monitoring (common metrics) for deployment pool
 pgbouncer-1-1-1-1             : collecting loading metrics of pool at connection pgbouncer-1-1-1-1
 pgbouncer-1-1-1-1             : needs monitoring (common metrics) for deployment sut
 pgbouncer-1-1-1-1             : collecting loading metrics of SUT at connection pgbouncer-1-1-1-1
 pgbouncer-1-1-1-1             : collecting metrics of data injector at connection pgbouncer-1-1-1-1
-pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="pgbouncer-exporter"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="pgbouncer-exporter"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-pgbouncer-1-1794779515-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-pgbouncer-1-1794779515-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-pgbouncer-1-1-1-1             : WARNING metric missing for loader: CPU Throttling Rate [s/s]
-pgbouncer-1-1-1-1             : WARNING metric missing for loader: CPU Throttled Time [s]
-pgbouncer-1-1-1-1             : WARNING metric missing for loading: CPU Throttling Rate [s/s]
-pgbouncer-1-1-1-1             : WARNING metric missing for loading: CPU Throttled Time [s]
-pgbouncer-1-1-1-1             : WARNING metric missing for loading: Active Backends Waiting on Locks [sessions]
-pgbouncer-1-1-1-1             : WARNING metric missing for loading: Max Transaction Duration (Lock Wait) [s]
+pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="pgbouncer-exporter"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="pgbouncer-exporter"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-pgbouncer-1-1795658029-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-pgbouncer-1-1795658029-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 pgbouncer-1-1-1-1             : WARNING metric missing for poolloading: CPU Throttling Rate [s/s]
 pgbouncer-1-1-1-1             : WARNING metric missing for poolloading: CPU Throttled Time [s]
 pgbouncer-1-1-1-1             : WARNING metric missing for poolloading: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
 pgbouncer-1-1-1-1             : WARNING metric missing for poolloading: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
-Experiment                    : fetched 3 metric sets in 6s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 12.6s, 0 API requests 0.0s)
-Loop pass                     : took 45.7s (37 kubectl calls 45.3s, 81 API requests 6.1s)
+pgbouncer-1-1-1-1             : WARNING metric missing for loader: CPU Utilization [CPUs]
+pgbouncer-1-1-1-1             : WARNING metric missing for loader: CPU Throttling Rate [s/s]
+pgbouncer-1-1-1-1             : WARNING metric missing for loader: CPU Throttled Time [s]
+pgbouncer-1-1-1-1             : WARNING metric missing for loading: CPU Throttling Rate [s/s]
+pgbouncer-1-1-1-1             : WARNING metric missing for loading: CPU Throttled Time [s]
+pgbouncer-1-1-1-1             : WARNING metric missing for loading: Active Backends Waiting on I/O [sessions]
+pgbouncer-1-1-1-1             : WARNING metric missing for loading: Active Backends Waiting on WAL [sessions]
+pgbouncer-1-1-1-1             : WARNING metric missing for loading: Max Transaction Duration (I/O Wait) [s]
+pgbouncer-1-1-1-1             : WARNING metric missing for loading: Max Transaction Duration (WAL Wait) [s]
+Experiment                    : fetched 3 metric sets in 4s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 9.6s, 0 API requests 0.0s)
+Loop pass                     : took 23.4s (37 kubectl calls 22.8s, 81 API requests 5.9s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 25 API requests 1.3s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 23 API requests 0.9s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 23 API requests 1.0s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 23 API requests 1.0s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 23 API requests 0.7s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 10.3s (0 kubectl calls 0.0s, 23 API requests 1.1s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 23 API requests 1.0s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 23 API requests 0.9s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 23 API requests 0.9s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 23 API requests 0.9s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 23 API requests 0.9s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 25 API requests 1.2s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
 Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 23 API requests 1.0s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 23 API requests 0.9s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 23 API requests 1.2s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 23 API requests 1.0s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 23 API requests 1.3s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 23 API requests 0.8s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 23 API requests 1.2s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 8.4s (0 kubectl calls 0.0s, 23 API requests 0.9s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 23 API requests 1.2s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 23 API requests 0.9s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 23 API requests 1.2s)
+- waiting 30s -               : done
+- waiting 2s -                : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 4.2s (0 kubectl calls 0.0s, 24 API requests 1.3s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 23 API requests 0.8s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 23 API requests 1.0s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 23 API requests 0.8s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 23 API requests 0.8s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 23 API requests 1.2s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 23 API requests 1.3s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 23 API requests 1.1s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 23 API requests 0.9s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 23 API requests 0.7s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 23 API requests 0.8s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 23 API requests 1.1s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 23 API requests 1.2s)
 ERROR:root:invalid literal for int() with base 10: ''
 ERROR:root:invalid literal for int() with base 10: ''
 ERROR:root:invalid literal for int() with base 10: ''
@@ -173,138 +176,147 @@ ERROR:root:invalid literal for int() with base 10: ''
 ERROR:root:invalid literal for int() with base 10: ''
 ERROR:root:invalid literal for int() with base 10: ''
 - waiting 30s -               : done
-pgbouncer-1-1-1-1             : wrote benchmarking_timespans to D:/data/benchmarks/1794779515/pgbouncer-1-1-1-1.config
+pgbouncer-1-1-1-1             : wrote benchmarking_timespans to D:/data/benchmarks/1795658029/pgbouncer-1-1-1-1.config
 pgbouncer-1-1-1-1             : showing benchmarker times
-pgbouncer-1-1-1-1             : benchmarker timespan job from 1794779782 to 1794780408
-pgbouncer-1-1-1-1             : benchmarker timespan pods from 1794779785 to 1794780389
+pgbouncer-1-1-1-1             : benchmarker timespan job from 1795658221 to 1795658856
+pgbouncer-1-1-1-1             : benchmarker timespan pods from 1795658225 to 1795658829
 pgbouncer-1-1-1-1             : benchmarker timespan (start to end single container [s]) = 604
-pgbouncer-1-1-1-1             : benchmarker times (start/end per pod and container) = [(1794779785, 1794780389)]
-pgbouncer-1-1-1-1             : found and updated times {'benchmarker': [(1794779785, 1794780389)]}
+pgbouncer-1-1-1-1             : benchmarker times (start/end per pod and container) = [(1795658225, 1795658829)]
+pgbouncer-1-1-1-1             : found and updated times {'benchmarker': [(1795658225, 1795658829)]}
 pgbouncer-1-1-1-1             : needs monitoring (common metrics) for deployment pool
 pgbouncer-1-1-1-1             : collecting execution metrics of pool at connection pgbouncer-1-1-1-1
 pgbouncer-1-1-1-1             : needs monitoring (common metrics) for deployment sut
 pgbouncer-1-1-1-1             : collecting execution metrics of SUT at connection pgbouncer-1-1-1-1
 pgbouncer-1-1-1-1             : collecting metrics of benchmarker at connection pgbouncer-1-1-1-1
-pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="pgbouncer-exporter"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="pgbouncer-exporter"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-pgbouncer-1-1794779515-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-pgbouncer-1-1794779515-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-pgbouncer-1-1-1-1             : WARNING metric missing for poolbenchmarking: CPU Throttling Rate [s/s]
-pgbouncer-1-1-1-1             : WARNING metric missing for poolbenchmarking: CPU Throttled Time [s]
+pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="pgbouncer-exporter"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="pgbouncer-exporter"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+pgbouncer-1-1-1-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-pgbouncer-1-1795658029-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-pgbouncer-1-1795658029-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 pgbouncer-1-1-1-1             : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 pgbouncer-1-1-1-1             : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+pgbouncer-1-1-1-1             : WARNING metric missing for poolbenchmarking: CPU Throttling Rate [s/s]
+pgbouncer-1-1-1-1             : WARNING metric missing for poolbenchmarking: CPU Throttled Time [s]
+pgbouncer-1-1-1-1             : WARNING metric missing for poolbenchmarking: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+pgbouncer-1-1-1-1             : WARNING metric missing for poolbenchmarking: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
 pgbouncer-1-1-1-1             : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
 pgbouncer-1-1-1-1             : WARNING metric missing for benchmarking: CPU Throttled Time [s]
 pgbouncer-1-1-1-1             : WARNING metric missing for benchmarking: Active Backends Waiting on I/O [sessions]
 pgbouncer-1-1-1-1             : WARNING metric missing for benchmarking: Active Backends Waiting on WAL [sessions]
 pgbouncer-1-1-1-1             : WARNING metric missing for benchmarking: Max Transaction Duration (I/O Wait) [s]
 pgbouncer-1-1-1-1             : WARNING metric missing for benchmarking: Max Transaction Duration (WAL Wait) [s]
-Experiment                    : fetched 3 metric sets in 7s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 14.9s, 0 API requests 0.0s)
-Loop pass                     : took 13.2s (10 kubectl calls 20.4s, 28 API requests 1.0s)
+Experiment                    : fetched 3 metric sets in 4s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 9.5s, 0 API requests 0.0s)
+Loop pass                     : took 7.7s (10 kubectl calls 11.9s, 28 API requests 1.0s)
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PGBouncer-1-1794779515 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-PGBouncer-1-1795658029 initialized to 2.
 PGBouncer-1                   : benchmarks done 0 of 1. This will be client 2
 pgbouncer-1-1-2-1             : start benchmarking (benchmark_run=1)
-PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1794779515-66ff998d6c-9dql8
-PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1794779515-66ff998d6c-gv76s
+PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1795658029-5fbfc985f8-dmcpr
+PGBouncer-1                   : distributed system - get host info for worker bexhoma-pool-pgbouncer-1-1795658029-5fbfc985f8-xmxrm
 pgbouncer-1-1-2-1             : needs monitoring (common metrics) for deployment pool
 pgbouncer-1-1-2-1             : needs monitoring (common metrics) for deployment sut
 PGBouncer-1                   : need application metrics for sut
 PGBouncer-1                   : load application metrics of type postgresql
 PGBouncer-1                   : need application metrics for pool
 PGBouncer-1                   : load application metrics of type pgbouncer
-PGBouncer-1                   : benchmarking results in folder D:\data\benchmarks/1794779515
-PGBouncer-1                   : submitted benchmarker job in 33.5s (29 kubectl calls 29.5s, 44 API requests 3.5s)
+PGBouncer-1                   : benchmarking results in folder D:\data\benchmarks/1795658029
+PGBouncer-1                   : submitted benchmarker job in 15.2s (29 kubectl calls 11.8s, 44 API requests 3.2s)
 pgbouncer-1-1-2-1             : reused loading metrics of pgbouncer-1-1-1-1 (poolloading, loading, loader)
-Experiment                    : ran 1 follow-up actions (e.g. reused loading metrics) in 4s
-Loop pass                     : took 39.1s (32 kubectl calls 33.1s, 70 API requests 5.0s)
+Experiment                    : ran 1 follow-up actions (e.g. reused loading metrics) in 2s
+Loop pass                     : took 18.7s (32 kubectl calls 14.1s, 70 API requests 4.3s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 26 API requests 1.4s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 26 API requests 1.2s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 24 API requests 1.1s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
 Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 0.9s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 10.9s (0 kubectl calls 0.0s, 24 API requests 0.9s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 24 API requests 0.8s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 24 API requests 1.1s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 24 API requests 1.0s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 24 API requests 0.8s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 24 API requests 1.0s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 24 API requests 0.9s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 2.0s (0 kubectl calls 0.0s, 24 API requests 1.1s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 24 API requests 1.0s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 24 API requests 0.9s)
-- waiting 30s -               : done
-PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 5.4s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 24 API requests 0.9s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
 Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 1.0s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 24 API requests 1.1s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 24 API requests 1.2s)
+- waiting 30s -               : done
+- waiting 2s -                : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 4.2s (0 kubectl calls 0.0s, 25 API requests 1.2s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 0.9s)
 - waiting 30s -               : done
 PGBouncer-1                   : has running benchmarks
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 24 API requests 1.0s)
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 24 API requests 0.9s)
 - waiting 30s -               : done
-pgbouncer-1-1-2-1             : wrote benchmarking_timespans to D:/data/benchmarks/1794779515/pgbouncer-1-1-2-1.config
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 24 API requests 1.1s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 24 API requests 1.3s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 24 API requests 1.0s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 24 API requests 1.2s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 24 API requests 0.9s)
+- waiting 30s -               : done
+- waiting 2s -                : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 3.9s (0 kubectl calls 0.0s, 25 API requests 0.9s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 24 API requests 0.7s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 24 API requests 0.8s)
+- waiting 30s -               : done
+PGBouncer-1                   : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 24 API requests 1.0s)
+- waiting 30s -               : done
+pgbouncer-1-1-2-1             : wrote benchmarking_timespans to D:/data/benchmarks/1795658029/pgbouncer-1-1-2-1.config
 pgbouncer-1-1-2-1             : showing benchmarker times
-pgbouncer-1-1-2-1             : benchmarker timespan job from 1794780452 to 1794781075
-pgbouncer-1-1-2-1             : benchmarker timespan pods from 1794780457 to 1794781060
-pgbouncer-1-1-2-1             : benchmarker timespan (start to end single container [s]) = 603
-pgbouncer-1-1-2-1             : benchmarker times (start/end per pod and container) = [(1794780457, 1794781059), (1794780457, 1794781060)]
-pgbouncer-1-1-2-1             : found and updated times {'benchmarker': [(1794780457, 1794781059), (1794780457, 1794781060)]}
+pgbouncer-1-1-2-1             : benchmarker timespan job from 1795658877 to 1795659513
+pgbouncer-1-1-2-1             : benchmarker timespan pods from 1795658880 to 1795659484
+pgbouncer-1-1-2-1             : benchmarker timespan (start to end single container [s]) = 604
+pgbouncer-1-1-2-1             : benchmarker times (start/end per pod and container) = [(1795658880, 1795659483), (1795658881, 1795659484)]
+pgbouncer-1-1-2-1             : found and updated times {'benchmarker': [(1795658880, 1795659483), (1795658881, 1795659484)]}
 pgbouncer-1-1-2-1             : needs monitoring (common metrics) for deployment pool
 pgbouncer-1-1-2-1             : collecting execution metrics of pool at connection pgbouncer-1-1-2-1
 pgbouncer-1-1-2-1             : needs monitoring (common metrics) for deployment sut
 pgbouncer-1-1-2-1             : collecting execution metrics of SUT at connection pgbouncer-1-1-2-1
 pgbouncer-1-1-2-1             : collecting metrics of benchmarker at connection pgbouncer-1-1-2-1
-pgbouncer-1-1-2-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="pgbouncer-exporter"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="pgbouncer-exporter"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-pgbouncer-1-1-2-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1794779515(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-pgbouncer-1-1-2-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-pgbouncer-1-1794779515-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-pgbouncer-1-1794779515-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-pgbouncer-1-1-2-1             : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
-pgbouncer-1-1-2-1             : WARNING metric missing for benchmarker: CPU Throttled Time [s]
+pgbouncer-1-1-2-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="pgbouncer-exporter"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="pgbouncer-exporter"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+pgbouncer-1-1-2-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)pgbouncer-1-1795658029(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+pgbouncer-1-1-2-1             : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-pgbouncer-1-1795658029-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-pgbouncer-1-1795658029-1-2-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 pgbouncer-1-1-2-1             : WARNING metric missing for poolbenchmarking: CPU Throttling Rate [s/s]
 pgbouncer-1-1-2-1             : WARNING metric missing for poolbenchmarking: CPU Throttled Time [s]
-pgbouncer-1-1-2-1             : WARNING metric missing for benchmarking: CPU Throttled Time [s]
+pgbouncer-1-1-2-1             : WARNING metric missing for poolbenchmarking: Filesystem Read Total, Largest Device (RAID Counted Once) [MiB]
+pgbouncer-1-1-2-1             : WARNING metric missing for poolbenchmarking: Filesystem Write Total, Largest Device (RAID Counted Once) [MiB]
+pgbouncer-1-1-2-1             : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
+pgbouncer-1-1-2-1             : WARNING metric missing for benchmarker: CPU Throttled Time [s]
 pgbouncer-1-1-2-1             : WARNING metric missing for benchmarking: CPU Throttling Rate [s/s]
+pgbouncer-1-1-2-1             : WARNING metric missing for benchmarking: CPU Throttled Time [s]
 pgbouncer-1-1-2-1             : WARNING metric missing for benchmarking: Active Backends Waiting on I/O [sessions]
 pgbouncer-1-1-2-1             : WARNING metric missing for benchmarking: Active Backends Waiting on WAL [sessions]
 pgbouncer-1-1-2-1             : WARNING metric missing for benchmarking: Max Transaction Duration (I/O Wait) [s]
 pgbouncer-1-1-2-1             : WARNING metric missing for benchmarking: Max Transaction Duration (WAL Wait) [s]
-Experiment                    : fetched 3 metric sets in 6s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 13.5s, 0 API requests 0.0s)
-Loop pass                     : took 15.7s (12 kubectl calls 21.5s, 32 API requests 1.2s)
+Experiment                    : fetched 3 metric sets in 4s (3 at once, 0 repeated, 0 follow-up actions; 5 kubectl calls 9.3s, 0 API requests 0.0s)
+Loop pass                     : took 8.4s (12 kubectl calls 12.5s, 32 API requests 1.0s)
 PGBouncer-1                   : can be stopped
-PGBouncer-1                   : had 0 restarts at worker bexhoma-pool-pgbouncer-1-1794779515-66ff998d6c-9dql8
-PGBouncer-1                   : had 0 restarts at worker bexhoma-pool-pgbouncer-1-1794779515-66ff998d6c-gv76s
-PGBouncer-1                   : had 0 restarts at worker bexhoma-sut-pgbouncer-1-1794779515-7d6c84df-lv6cz
-Loop pass                     : took 17.4s (12 kubectl calls 14.3s, 44 API requests 1.7s)
-Experiment                    : ends at 2026-11-15 23:18:22.579861 (42575.4067447) - 1585.41s total
+PGBouncer-1                   : had 0 restarts at worker bexhoma-pool-pgbouncer-1-1795658029-5fbfc985f8-dmcpr
+PGBouncer-1                   : had 0 restarts at worker bexhoma-pool-pgbouncer-1-1795658029-5fbfc985f8-xmxrm
+PGBouncer-1                   : had 0 restarts at worker bexhoma-sut-pgbouncer-1-1795658029-77d8db585d-fqwsr
+Loop pass                     : took 10.1s (12 kubectl calls 8.2s, 47 API requests 1.6s)
+Experiment                    : ends at 2026-11-26 03:18:49.038329 (920984.0006571) - 1499.41s total
 Experiment                    : transforming metrics for loading
 Experiment                    : transforming metrics for loading completed
 Experiment                    : transforming metrics for benchmarking
@@ -328,21 +340,20 @@ Experiment                    : transforming metrics for benchmarker completed
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow complete
 
 ## Show Summary
 
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1586s 
-* Code: 1794779515
+* Duration: 1500s 
+* Code: 1795658029
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [16]. There is a reconnect for each transaction. Benchmarking runs for 10 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['PGBouncer'].
@@ -355,7 +366,6 @@ Benchbase Workload tpcc SF=16
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
-  * Results are validated against basic correctness requirements.
   * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
   * SUT requests 4 CPU and 16Gi RAM.
 
@@ -366,16 +376,16 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1057463
-  * datadisk:4308
+  * disk:678098
+  * datadisk:4309
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:663G
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
   * requests_memory:16Gi
   * pool 0
-    * node:cl-worker29
+    * node:cl-worker37
     * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * pool 1
     * node:cl-worker27
@@ -384,23 +394,23 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794779515
+    * code:1795658029
 * pgbouncer-1-1-2-1 uses docker image postgres:18.6
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1060949
+  * disk:678580
   * datadisk:4585
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:663G
   * cpu_list:0-223
   * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * requests_cpu:4
   * requests_memory:16Gi
   * pool 0
-    * node:cl-worker29
+    * node:cl-worker37
     * args:['-c', 'max_worker_processes=64', '-c', 'max_parallel_workers=64', '-c', 'max_parallel_workers_per_gather=64', '-c', 'max_parallel_maintenance_workers=64', '-c', 'max_wal_size=32GB', '-c', 'shared_buffers=64GB', '-c', 'max_connections=2048', '-c', 'autovacuum_max_workers=10', '-c', 'autovacuum_vacuum_cost_limit=3000', '-c', 'vacuum_cost_limit=1000', '-c', 'checkpoint_completion_target=0.9', '-c', 'cpu_tuple_cost=0.03', '-c', 'effective_cache_size=64GB', '-c', 'maintenance_work_mem=2GB', '-c', 'wal_buffers=1GB', '-c', 'work_mem=32GB', '-c', 'temp_buffers=4GB', '-c', 'autovacuum_work_mem=-1', '-c', 'max_stack_depth=7MB', '-c', 'max_files_per_process=4000', '-c', 'effective_io_concurrency=32', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_warning=0', '-c', 'autovacuum=off', '-c', 'max_locks_per_transaction=64', '-c', 'max_pred_locks_per_transaction=64', '-c', 'default_statistics_target=1000', '-c', 'random_page_cost=60']
   * pool 1
     * node:cl-worker27
@@ -409,15 +419,15 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794779515
+    * code:1795658029
 
 ### Ingestion
 * PGBouncer-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-pool-pgbouncer-1-1794779515-66ff998d6c-9dql8: 0
-* bexhoma-pool-pgbouncer-1-1794779515-66ff998d6c-gv76s: 0
-* bexhoma-sut-pgbouncer-1-1794779515-7d6c84df-lv6cz: 0
+* bexhoma-pool-pgbouncer-1-1795658029-5fbfc985f8-dmcpr: 0
+* bexhoma-pool-pgbouncer-1-1795658029-5fbfc985f8-xmxrm: 0
+* bexhoma-sut-pgbouncer-1-1795658029-77d8db585d-fqwsr: 0
 
 ### Workflow
 
@@ -437,7 +447,7 @@ Benchbase Workload tpcc SF=16
 
 | DBMS          |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:--------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PGBouncer-1-1 |                1 |   16 |       97.00 |           4.00 |            0.00 |         70.00 |           23.00 |              1 |         1 |             | None           |             0 | False         |              593.81 | False               |
+| PGBouncer-1-1 |                1 |   16 |       57.00 |           4.00 |            0.00 |         35.00 |           18.00 |              1 |         1 |             | None           |             0 | False         |             1010.53 | False               |
 
 ### Benchmarking
 
@@ -445,16 +455,16 @@ Benchbase Workload tpcc SF=16
 
 | connection          | phase           | job               |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:--------------------|:----------------|:------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| pgbouncer-1-1-1-1-1 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       1 |        32 |    16384 |          -1 | 600.00 |        2 |                        1276.21 |                      467.14 |         0.00 |                                                      36326.00 |                                              25067.00 |
-| pgbouncer-1-1-2-1-1 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |        2 |               1 |       1 |        16 |     8192 |          -1 | 600.00 |        0 |                         654.98 |                      459.70 |         0.00 |                                                      51562.00 |                                              24420.00 |
-| pgbouncer-1-1-2-1-2 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |        2 |               1 |       2 |        16 |     8192 |          -1 | 600.00 |        0 |                         658.55 |                      460.02 |         0.00 |                                                      51350.00 |                                              24287.00 |
+| pgbouncer-1-1-1-1-1 | pgbouncer-1-1-1 | pgbouncer-1-1-1-1 |                1 |        1 |               1 |       1 |        32 |    16384 |          -1 | 600.00 |        1 |                        1153.00 |                      467.00 |         0.00 |                                                      42131.00 |                                              27747.00 |
+| pgbouncer-1-1-2-1-1 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |        2 |               1 |       1 |        16 |     8192 |          -1 | 600.00 |        0 |                         666.58 |                      461.48 |         0.00 |                                                      51073.00 |                                              23994.00 |
+| pgbouncer-1-1-2-1-2 | pgbouncer-1-1-2 | pgbouncer-1-1-2-1 |                1 |        2 |               1 |       2 |        16 |     8192 |          -1 | 600.00 |        0 |                         674.06 |                      461.50 |         0.00 |                                                      50947.00 |                                              23729.00 |
 
 #### Per Phase
 
 | DBMS            | phase           |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------|:----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| pgbouncer-1-1-1 | pgbouncer-1-1-1 |                1 |        1 |               1 |           1 |        32 |    16384 |          -1 | 600.00 |        2 |                        1276.21 |                      467.14 |         0.00 |                                                      36326.00 |                                              25067.00 |
-| pgbouncer-1-1-2 | pgbouncer-1-1-2 |                1 |        2 |               1 |           2 |        32 |    16384 |          -1 | 600.00 |        0 |                        1313.53 |                      919.72 |         0.00 |                                                      51562.00 |                                              24353.50 |
+| pgbouncer-1-1-1 | pgbouncer-1-1-1 |                1 |        1 |               1 |           1 |        32 |    16384 |          -1 | 600.00 |        1 |                        1153.00 |                      467.00 |         0.00 |                                                      42131.00 |                                              27747.00 |
+| pgbouncer-1-1-2 | pgbouncer-1-1-2 |                1 |        2 |               1 |           2 |        32 |    16384 |          -1 | 600.00 |        0 |                        1340.64 |                      922.99 |         0.00 |                                                      51073.00 |                                              23861.50 |
 
 ### Monitoring
 
@@ -462,43 +472,43 @@ Benchbase Workload tpcc SF=16
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |         0.38 |      0.00 |           0.04 |                  0.04 |
-| pgbouncer-1-1-2-1 |         0.38 |      0.00 |           0.04 |                  0.04 |
+| pgbouncer-1-1-1-1 |         0.29 |      0.00 |           0.04 |                  0.04 |
+| pgbouncer-1-1-2-1 |         0.29 |      0.00 |           0.04 |                  0.04 |
 
 ### Loading phase: SUT deployment
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |       197.20 |      2.73 |           4.41 |                  6.05 |
-| pgbouncer-1-1-2-1 |       197.20 |      2.73 |           4.41 |                  6.05 |
+| pgbouncer-1-1-1-1 |       190.04 |      5.50 |           4.41 |                  6.05 |
+| pgbouncer-1-1-2-1 |       190.04 |      5.50 |           4.41 |                  6.05 |
 
 ### Loading phase: component loader
 
-| DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |       748.85 |     13.28 |           0.35 |                  0.35 |
-| pgbouncer-1-1-2-1 |       748.85 |     13.28 |           0.35 |                  0.35 |
+| DBMS              | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
+|:------------------|:-------------|----------:|---------------:|----------------------:|
+| pgbouncer-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
+| pgbouncer-1-1-2-1 | n/a          |         0 |           0.00 |                  0.00 |
 
 ### Benchmarking phase: component pool
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |         1.83 |      0.01 |           0.05 |                  0.05 |
-| pgbouncer-1-1-2-1 |         2.17 |      0.01 |           0.06 |                  0.06 |
+| pgbouncer-1-1-1-1 |         1.84 |      0.00 |           0.05 |                  0.05 |
+| pgbouncer-1-1-2-1 |         1.78 |      0.01 |           0.06 |                  0.06 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |       703.13 |      3.67 |           5.05 |                  6.96 |
-| pgbouncer-1-1-2-1 |      1311.67 |      4.90 |           5.59 |                  7.94 |
+| pgbouncer-1-1-1-1 |       735.65 |      2.29 |           5.04 |                  6.95 |
+| pgbouncer-1-1-2-1 |      1446.87 |      5.61 |           5.59 |                  7.94 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS              |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:------------------|-------------:|----------:|---------------:|----------------------:|
-| pgbouncer-1-1-1-1 |     15695.20 |     32.13 |           0.54 |                  0.54 |
-| pgbouncer-1-1-2-1 |     12841.40 |     30.72 |           0.41 |                  0.41 |
+| pgbouncer-1-1-1-1 |     15546.20 |     32.10 |           0.53 |                  0.53 |
+| pgbouncer-1-1-2-1 |     13106.45 |     30.52 |           0.42 |                  0.42 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -509,28 +519,35 @@ Benchbase Workload tpcc SF=16
 * Active Backends Waiting on WAL [sessions] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * Max Transaction Duration (I/O Wait) [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * Max Transaction Duration (WAL Wait) [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Utilization [CPUs] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
-* Active Backends Waiting on Locks [sessions] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
-* Max Transaction Duration (Lock Wait) [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on I/O [sessions] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Active Backends Waiting on WAL [sessions] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (I/O Wait) [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
+* Max Transaction Duration (WAL Wait) [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolbenchmarking.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolbenchmarking.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolloading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolloading.log, expected: series exists only while non-zero)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolloading.log, expected: series exists only while non-zero)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-1-1 (bexhoma-metrics-pgbouncer-1-1-1-1-poolloading.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarker.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 * Active Backends Waiting on I/O [sessions] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 * Active Backends Waiting on WAL [sessions] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 * Max Transaction Duration (I/O Wait) [s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 * Max Transaction Duration (WAL Wait) [s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-poolbenchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-poolbenchmarking.log, expected: series exists only while non-zero)
+* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-poolbenchmarking.log, expected: series exists only while non-zero)
+* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection pgbouncer-1-1-2-1 (bexhoma-metrics-pgbouncer-1-1-2-1-poolbenchmarking.log, expected: series exists only while non-zero)
 
 ### Application Metrics
 
@@ -538,29 +555,29 @@ Benchbase Workload tpcc SF=16
 
 | DBMS              |   PgBouncer Query Throughput [queries/s] |   PgBouncer Client Wait Time [s] |   PgBouncer Waiting Clients [clients] |   PgBouncer Idle Connections [connections] |   PgBouncer Pool Utilization, Active Server Connections [%] |
 |:------------------|-----------------------------------------:|---------------------------------:|--------------------------------------:|-------------------------------------------:|------------------------------------------------------------:|
-| pgbouncer-1-1-1-1 |                                   239.83 |                             0.21 |                                  0.00 |                                      48.00 |                                                       50.00 |
-| pgbouncer-1-1-2-1 |                                   239.83 |                             0.21 |                                  0.00 |                                      48.00 |                                                       50.00 |
+| pgbouncer-1-1-1-1 |                                   262.52 |                             0.16 |                                  0.00 |                                      54.00 |                                                       35.71 |
+| pgbouncer-1-1-2-1 |                                   262.52 |                             0.16 |                                  0.00 |                                      54.00 |                                                       35.71 |
 
 #### Loading phase: SUT deployment
 
 | DBMS              |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
 |:------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
-| pgbouncer-1-1-1-1 |                                65.00 |                                                0.00 |                                                        0.00 |                                   9.00 |                                               9.00 |
-| pgbouncer-1-1-2-1 |                                65.00 |                                                0.00 |                                                        0.00 |                                   9.00 |                                               9.00 |
+| pgbouncer-1-1-1-1 |                                65.00 |                                                0.00 |                                                        0.00 |                                  13.00 |                                              13.00 |
+| pgbouncer-1-1-2-1 |                                65.00 |                                                0.00 |                                                        0.00 |                                  13.00 |                                              13.00 |
 
 #### Benchmarking phase: component pool
 
 | DBMS              |   PgBouncer Query Throughput [queries/s] |   PgBouncer Client Wait Time [s] |   PgBouncer Waiting Clients [clients] |   PgBouncer Idle Connections [connections] |   PgBouncer Pool Utilization, Active Server Connections [%] |
 |:------------------|-----------------------------------------:|---------------------------------:|--------------------------------------:|-------------------------------------------:|------------------------------------------------------------:|
-| pgbouncer-1-1-1-1 |                                  9655.95 |                             0.47 |                                  0.00 |                                      62.00 |                                                       70.97 |
-| pgbouncer-1-1-2-1 |                                 19850.58 |                             0.25 |                                  0.00 |                                      62.00 |                                                       61.29 |
+| pgbouncer-1-1-1-1 |                                  9647.18 |                             0.56 |                                  0.00 |                                      61.00 |                                                       69.84 |
+| pgbouncer-1-1-2-1 |                                 19833.56 |                             0.30 |                                  0.00 |                                      61.00 |                                                       71.43 |
 
 #### Benchmarking phase: SUT deployment
 
 | DBMS              |   Number of Idle Sessions [sessions] |   Number of Idle-in-transaction Sessions [sessions] |   Number of Idle-in-transaction Aborted Sessions [sessions] |   Number of Active Sessions [sessions] |   Number of Active Application Sessions [sessions] |
 |:------------------|-------------------------------------:|----------------------------------------------------:|------------------------------------------------------------:|---------------------------------------:|---------------------------------------------------:|
-| pgbouncer-1-1-1-1 |                                65.00 |                                               23.00 |                                                        0.00 |                                   7.00 |                                               7.00 |
-| pgbouncer-1-1-2-1 |                                65.00 |                                               25.00 |                                                        0.00 |                                   8.00 |                                               8.00 |
+| pgbouncer-1-1-1-1 |                                65.00 |                                               23.00 |                                                        0.00 |                                  10.00 |                                              10.00 |
+| pgbouncer-1-1-2-1 |                                65.00 |                                               23.00 |                                                        0.00 |                                  11.00 |                                              11.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -570,13 +587,21 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Loading phase: component pool contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
+* TEST skipped: Loading phase: component loader contains 0 or NaN in CPU [CPUs] (phase shorter than monitoring scrape interval)
 * TEST passed: Benchmarking phase: component pool contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
-* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
+* TEST passed: Monitoring returned data
+* TEST skipped: Monitoring metrics missing (job pods ran shorter than scrape interval; series exists only while non-zero)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
 * TEST passed: Workflow as planned
+* TEST passed: Every pod ran for the configured time
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=3
 * Type: ycsb
-* Duration: 1031s 
-* Code: 1794767516
+* Duration: 1109s 
+* Code: 1795645932
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -17,7 +17,7 @@ YCSB SF=3
   * Factors for benchmarking are [2, 3].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['MySQL'].
@@ -31,20 +31,20 @@ YCSB SF=3
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
-  * Results are validated against basic correctness requirements.
   * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size', 'target': 'container'}, '32G')].
   * SUT requests 4 CPU and 16Gi RAM. RAM limit is 64Gi.
 
 ### Connections
 * mysql-1-1-1-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1091500
+  * disk:708110
   * datadisk:38374
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:692G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
@@ -54,16 +54,17 @@ YCSB SF=3
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794767516
+    * code:1795645932
 * mysql-1-1-2-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1091501
+  * disk:707042
   * datadisk:38374
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:691G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
@@ -73,16 +74,17 @@ YCSB SF=3
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794767516
+    * code:1795645932
 * mysql-1-1-3-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1091502
+  * disk:711733
   * datadisk:38374
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:696G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
@@ -92,16 +94,17 @@ YCSB SF=3
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794767516
+    * code:1795645932
 * mysql-1-1-4-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1091504
+  * disk:719918
   * datadisk:38374
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:704G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
@@ -111,13 +114,13 @@ YCSB SF=3
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794767516
+    * code:1795645932
 
 ### Ingestion
 * MySQL-1: 8 of 8 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1794767516-676b47d8b7-tx4nd: 0
+* bexhoma-sut-mysql-1-1795645932-54f765f599-hfkxd: 0
 
 ### Workflow
 
@@ -141,20 +144,20 @@ YCSB SF=3
 
 | connection      |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   SF |   Throughput [SF/h] |
 |:----------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| mysql-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7919.91 |                47349.00 |            375000.00 |                              7763.00 | 3.00 |              228.09 |
-| mysql-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7949.46 |                47173.00 |            375000.00 |                              7631.00 | 3.00 |              228.94 |
-| mysql-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7998.29 |                46885.00 |            375000.00 |                              8147.00 | 3.00 |              230.35 |
-| mysql-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7961.45 |                47102.00 |            375000.00 |                              7739.00 | 3.00 |              229.29 |
-| mysql-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7965.50 |                47078.00 |            375000.00 |                              7803.00 | 3.00 |              229.41 |
-| mysql-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7960.43 |                47108.00 |            375000.00 |                              7751.00 | 3.00 |              229.26 |
-| mysql-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7977.70 |                47006.00 |            375000.00 |                              7671.00 | 3.00 |              229.76 |
-| mysql-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         7979.91 |                46993.00 |            375000.00 |                              7747.00 | 3.00 |              229.82 |
+| mysql-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         4429.85 |                84653.00 |            375000.00 |                             24911.00 | 3.00 |              127.58 |
+| mysql-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         4436.03 |                84535.00 |            375000.00 |                             24831.00 | 3.00 |              127.76 |
+| mysql-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         4424.20 |                84761.00 |            375000.00 |                             24719.00 | 3.00 |              127.42 |
+| mysql-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         4443.97 |                84384.00 |            375000.00 |                             24879.00 | 3.00 |              127.99 |
+| mysql-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         4472.54 |                83845.00 |            375000.00 |                             24975.00 | 3.00 |              128.81 |
+| mysql-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         4421.02 |                84822.00 |            375000.00 |                             25023.00 | 3.00 |              127.33 |
+| mysql-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         4403.48 |                85160.00 |            375000.00 |                             24847.00 | 3.00 |              126.82 |
+| mysql-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         4438.87 |                84481.00 |            375000.00 |                             24687.00 | 3.00 |              127.84 |
 
 #### Per Run
 
 | DBMS      |   experiment_run |   threads |   target |   pod_count |   errors |   SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:----------|-----------------:|----------:|---------:|------------:|---------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| MySQL-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |     0.00 | 3.00 |              228.09 |                        63712.67 |                47349.00 |           3000000.00 |                              7781.50 |
+| MySQL-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |     0.00 | 3.00 |              126.82 |                        35469.96 |                85160.00 |           3000000.00 |                             24859.00 |
 
 ### Benchmarking
 
@@ -162,33 +165,33 @@ YCSB SF=3
 
 | connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    32768 |        0 |                        32109.26 |                93431.00 |            1500261 |                             725.00 |              1499739 |                              4223.00 |
-| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       1 |         8 |     4096 |        0 |                         4038.51 |                92856.00 |             187467 |                             795.00 |               187533 |                              4435.00 |
-| mysql-1-1-2-1-2 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       2 |         8 |     4096 |        0 |                         4034.90 |                92939.00 |             187710 |                             884.00 |               187290 |                              4467.00 |
-| mysql-1-1-2-1-3 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       3 |         8 |     4096 |        0 |                         4038.51 |                92856.00 |             188040 |                             817.00 |               186960 |                              4435.00 |
-| mysql-1-1-2-1-4 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       4 |         8 |     4096 |        0 |                         4039.69 |                92829.00 |             187682 |                             778.00 |               187318 |                              4391.00 |
-| mysql-1-1-2-1-5 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       5 |         8 |     4096 |        0 |                         4053.62 |                92510.00 |             187428 |                             774.00 |               187572 |                              4427.00 |
-| mysql-1-1-2-1-6 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       6 |         8 |     4096 |        0 |                         4038.69 |                92852.00 |             187551 |                             809.00 |               187449 |                              4455.00 |
-| mysql-1-1-2-1-7 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       7 |         8 |     4096 |        0 |                         4046.57 |                92671.00 |             187704 |                             768.00 |               187296 |                              4411.00 |
-| mysql-1-1-2-1-8 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       8 |         8 |     4096 |        0 |                         4049.11 |                92613.00 |             187978 |                             794.00 |               187022 |                              4387.00 |
-| mysql-1-1-3-1-1 | mysql-1-1-3 | mysql-1-1-3-1 |                1 |        3 |               1 |       1 |        64 |    49152 |        0 |                        45293.27 |                66235.00 |            1499362 |                             652.00 |              1500638 |                              4863.00 |
-| mysql-1-1-4-1-1 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       1 |         8 |     6144 |        0 |                         5968.96 |                62825.00 |             187720 |                             738.00 |               187280 |                              4061.00 |
-| mysql-1-1-4-1-2 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       2 |         8 |     6144 |        0 |                         5977.14 |                62739.00 |             187527 |                             804.00 |               187473 |                              4073.00 |
-| mysql-1-1-4-1-3 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       3 |         8 |     6144 |        0 |                         5953.42 |                62989.00 |             187287 |                             803.00 |               187713 |                              4091.00 |
-| mysql-1-1-4-1-4 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       4 |         8 |     6144 |        0 |                         5997.70 |                62524.00 |             187349 |                             838.00 |               187651 |                              4127.00 |
-| mysql-1-1-4-1-5 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       5 |         8 |     6144 |        0 |                         5995.40 |                62548.00 |             187883 |                             801.00 |               187117 |                              4069.00 |
-| mysql-1-1-4-1-6 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       6 |         8 |     6144 |        0 |                         5988.02 |                62625.00 |             187154 |                             821.00 |               187846 |                              4119.00 |
-| mysql-1-1-4-1-7 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       7 |         8 |     6144 |        0 |                         5975.81 |                62753.00 |             187401 |                             771.00 |               187599 |                              4099.00 |
-| mysql-1-1-4-1-8 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       8 |         8 |     6144 |        0 |                         6004.90 |                62449.00 |             187224 |                             792.00 |               187776 |                              4063.00 |
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    32768 |        0 |                        32127.83 |                93377.00 |            1498616 |                             663.00 |              1501384 |                              4979.00 |
+| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       1 |         8 |     4096 |        0 |                         2847.92 |               131675.00 |             187426 |                             728.00 |               187574 |                            115647.00 |
+| mysql-1-1-2-1-2 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       2 |         8 |     4096 |        0 |                         2855.51 |               131325.00 |             187304 |                             731.00 |               187696 |                            115135.00 |
+| mysql-1-1-2-1-3 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       3 |         8 |     4096 |        0 |                         2852.06 |               131484.00 |             187981 |                             731.00 |               187019 |                            115775.00 |
+| mysql-1-1-2-1-4 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       4 |         8 |     4096 |        0 |                         2851.60 |               131505.00 |             187325 |                             726.00 |               187675 |                            116607.00 |
+| mysql-1-1-2-1-5 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       5 |         8 |     4096 |        0 |                         2843.65 |               131873.00 |             187180 |                             722.00 |               187820 |                            115135.00 |
+| mysql-1-1-2-1-6 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       6 |         8 |     4096 |        0 |                         2854.69 |               131363.00 |             187714 |                             761.00 |               187286 |                            115327.00 |
+| mysql-1-1-2-1-7 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       7 |         8 |     4096 |        0 |                         2849.83 |               131587.00 |             187254 |                             731.00 |               187746 |                            114239.00 |
+| mysql-1-1-2-1-8 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       8 |         8 |     4096 |        0 |                         2846.21 |               131754.00 |             187570 |                             749.00 |               187430 |                            115775.00 |
+| mysql-1-1-3-1-1 | mysql-1-1-3 | mysql-1-1-3-1 |                1 |        3 |               1 |       1 |        64 |    49152 |        0 |                        30723.54 |                97645.00 |            1500725 |                             973.00 |              1499275 |                             84735.00 |
+| mysql-1-1-4-1-1 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       1 |         8 |     6144 |        0 |                         5245.78 |                71486.00 |             186962 |                             785.00 |               188038 |                              6959.00 |
+| mysql-1-1-4-1-2 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       2 |         8 |     6144 |        0 |                         5257.84 |                71322.00 |             187577 |                             782.00 |               187423 |                              6907.00 |
+| mysql-1-1-4-1-3 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       3 |         8 |     6144 |        0 |                         5296.01 |                70808.00 |             187493 |                             770.00 |               187507 |                              6939.00 |
+| mysql-1-1-4-1-4 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       4 |         8 |     6144 |        0 |                         5287.72 |                70919.00 |             187124 |                             754.00 |               187876 |                              6947.00 |
+| mysql-1-1-4-1-5 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       5 |         8 |     6144 |        0 |                         5226.41 |                71751.00 |             187353 |                             799.00 |               187647 |                              6971.00 |
+| mysql-1-1-4-1-6 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       6 |         8 |     6144 |        0 |                         5292.72 |                70852.00 |             187892 |                             754.00 |               187108 |                              6831.00 |
+| mysql-1-1-4-1-7 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       7 |         8 |     6144 |        0 |                         5299.83 |                70757.00 |             187481 |                             764.00 |               187519 |                              6883.00 |
+| mysql-1-1-4-1-8 | mysql-1-1-4 | mysql-1-1-4-1 |                1 |        4 |               1 |       8 |         8 |     6144 |        0 |                         5259.69 |                71297.00 |             187197 |                             749.00 |               187803 |                              6971.00 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------|:------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 |        64 |    32768 |        0 |                        32109.26 |                93431.00 |            1500261 |                             725.00 |              1499739 |                              4223.00 |
-| mysql-1-1-2 | mysql-1-1-2 |                1 |        2 |               1 |           8 |        64 |    32768 |        0 |                        32339.59 |                92939.00 |            1501560 |                             884.00 |              1498440 |                              4467.00 |
-| mysql-1-1-3 | mysql-1-1-3 |                1 |        3 |               1 |           1 |        64 |    49152 |        0 |                        45293.27 |                66235.00 |            1499362 |                             652.00 |              1500638 |                              4863.00 |
-| mysql-1-1-4 | mysql-1-1-4 |                1 |        4 |               1 |           8 |        64 |    49152 |        0 |                        47861.35 |                62989.00 |            1499545 |                             838.00 |              1500455 |                              4127.00 |
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 |        64 |    32768 |        0 |                        32127.83 |                93377.00 |            1498616 |                             663.00 |              1501384 |                              4979.00 |
+| mysql-1-1-2 | mysql-1-1-2 |                1 |        2 |               1 |           8 |        64 |    32768 |        0 |                        22801.46 |               131873.00 |            1499754 |                             761.00 |              1500246 |                            116607.00 |
+| mysql-1-1-3 | mysql-1-1-3 |                1 |        3 |               1 |           1 |        64 |    49152 |        0 |                        30723.54 |                97645.00 |            1500725 |                             973.00 |              1499275 |                             84735.00 |
+| mysql-1-1-4 | mysql-1-1-4 |                1 |        4 |               1 |           8 |        64 |    49152 |        0 |                        42166.01 |                71751.00 |            1499079 |                             799.00 |              1500921 |                              6971.00 |
 
 ### Monitoring
 
@@ -196,37 +199,37 @@ YCSB SF=3
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |       483.22 |      9.87 |           8.92 |                 14.62 |
-| mysql-1-1-2-1 |       483.22 |      9.87 |           8.92 |                 14.62 |
-| mysql-1-1-3-1 |       483.22 |      9.87 |           8.92 |                 14.62 |
-| mysql-1-1-4-1 |       483.22 |      9.87 |           8.92 |                 14.62 |
+| mysql-1-1-1-1 |      1225.06 |     15.80 |           8.92 |                 14.62 |
+| mysql-1-1-2-1 |      1225.06 |     15.80 |           8.92 |                 14.62 |
+| mysql-1-1-3-1 |      1225.06 |     15.80 |           8.92 |                 14.62 |
+| mysql-1-1-4-1 |      1225.06 |     15.80 |           8.92 |                 14.62 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |       182.14 |      0.00 |           1.04 |                  1.05 |
-| mysql-1-1-2-1 |       182.14 |      0.00 |           1.04 |                  1.05 |
-| mysql-1-1-3-1 |       182.14 |      0.00 |           1.04 |                  1.05 |
-| mysql-1-1-4-1 |       182.14 |      0.00 |           1.04 |                  1.05 |
+| mysql-1-1-1-1 |       299.15 |      6.40 |           0.56 |                  0.57 |
+| mysql-1-1-2-1 |       299.15 |      6.40 |           0.56 |                  0.57 |
+| mysql-1-1-3-1 |       299.15 |      6.40 |           0.56 |                  0.57 |
+| mysql-1-1-4-1 |       299.15 |      6.40 |           0.56 |                  0.57 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |       408.66 |      6.15 |           8.06 |                 14.30 |
-| mysql-1-1-2-1 |       421.50 |      6.52 |           8.09 |                 15.09 |
-| mysql-1-1-3-1 |       282.09 |      5.22 |           8.12 |                 15.97 |
-| mysql-1-1-4-1 |       308.63 |      6.09 |           8.15 |                 16.78 |
+| mysql-1-1-1-1 |       460.04 |      6.41 |           8.05 |                 14.37 |
+| mysql-1-1-2-1 |       484.52 |      7.47 |           8.07 |                 15.15 |
+| mysql-1-1-3-1 |       566.34 |      7.10 |           8.10 |                 15.99 |
+| mysql-1-1-4-1 |       507.11 |      8.59 |           8.14 |                 16.79 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |       297.62 |      6.46 |           0.90 |                  0.90 |
-| mysql-1-1-2-1 |       522.89 |      8.82 |           0.32 |                  0.32 |
-| mysql-1-1-3-1 |       304.00 |      4.92 |           1.31 |                  1.31 |
-| mysql-1-1-4-1 |       346.66 |      6.84 |           0.30 |                  0.31 |
+| mysql-1-1-1-1 |       342.76 |      3.61 |           1.33 |                  1.34 |
+| mysql-1-1-2-1 |       413.80 |      4.58 |           0.19 |                  0.20 |
+| mysql-1-1-3-1 |       462.18 |      4.02 |           1.34 |                  1.35 |
+| mysql-1-1-4-1 |       346.66 |      6.43 |           0.31 |                  0.32 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -234,7 +237,6 @@ YCSB SF=3
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU Utilization [CPUs] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: job pods ran shorter than scrape interval)
 * CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
@@ -257,19 +259,19 @@ YCSB SF=3
 
 | DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
 |:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
-| mysql-1-1-1-1 |                                  1.00 |                         15500.86 |                            0.04 |                            0.00 |                              0.00 |
-| mysql-1-1-2-1 |                                  1.00 |                         15500.86 |                            0.04 |                            0.00 |                              0.00 |
-| mysql-1-1-3-1 |                                  1.00 |                         15500.86 |                            0.04 |                            0.00 |                              0.00 |
-| mysql-1-1-4-1 |                                  1.00 |                         15500.86 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-1-1 |                                  1.00 |                         12364.63 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-2-1 |                                  1.00 |                         12364.63 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-3-1 |                                  1.00 |                         12364.63 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-4-1 |                                  1.00 |                         12364.63 |                            0.04 |                            0.00 |                              0.00 |
 
 #### Benchmarking phase: SUT deployment
 
 | DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
 |:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
-| mysql-1-1-1-1 |                                  1.00 |                         18544.15 |                            0.04 |                            0.00 |                              0.00 |
-| mysql-1-1-2-1 |                                  1.00 |                         20979.49 |                            0.04 |                            0.00 |                              0.00 |
-| mysql-1-1-3-1 |                                  1.00 |                         22226.56 |                            0.04 |                            0.00 |                              0.00 |
-| mysql-1-1-4-1 |                                  1.00 |                         22519.92 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-1-1 |                                  1.00 |                         19805.22 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-2-1 |                                  1.00 |                         21800.33 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-3-1 |                                  1.00 |                         22226.25 |                            0.04 |                            0.00 |                              0.00 |
+| mysql-1-1-4-1 |                                  1.00 |                         22437.12 |                            0.04 |                            0.00 |                              0.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -279,13 +281,21 @@ YCSB SF=3
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
-* TEST skipped: Monitoring metrics missing (job pods ran shorter than scrape interval; series exists only while non-zero)
+* TEST passed: Monitoring returned data
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
+* TEST passed: Execution Phase: every pod ran its configured operations
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

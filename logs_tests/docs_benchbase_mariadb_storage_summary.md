@@ -3,14 +3,14 @@
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 882s 
-* Code: 1794771351
+* Duration: 866s 
+* Code: 1795669136
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [8]. Benchmarking runs for 1 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -33,8 +33,8 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1100369
-  * datadisk:1892
+  * disk:626546
+  * datadisk:1880
   * volume_size:49G
   * volume_used:1.9G
   * cpu_list:0-223
@@ -46,15 +46,15 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794771351
+    * code:1795669136
 * mariadb-1-2-1-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1086029
-  * datadisk:2345
+  * disk:628180
+  * datadisk:2333
   * volume_size:49G
   * volume_used:2.3G
   * cpu_list:0-223
@@ -66,7 +66,7 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794771351
+    * code:1795669136
 
 ### Inherited Loading
 * loading skipped, loading times copied from an earlier repetition: MariaDB-1-2
@@ -78,8 +78,8 @@ Benchbase Workload tpcc SF=16
 * MariaDB-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1794771351-7748747b4d-pq7pk: 0
-* bexhoma-sut-mariadb-1-1794771351-568b945b4f-pdlr8: 0
+* bexhoma-sut-mariadb-1-1795669136-5c7fdb788-6q4bv: 0
+* bexhoma-sut-mariadb-1-1795669136-674574565-jspdz: 0
 
 ### Workflow
 
@@ -99,8 +99,8 @@ Benchbase Workload tpcc SF=16
 
 | DBMS        |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MariaDB-1-1 |                1 |   16 |      103.00 |           4.00 |            0.00 |         94.00 |            5.00 |              1 |         1 |             | None           |             0 | False         |              559.22 | False               |
-| MariaDB-1-2 |                2 |   16 |      103.00 |           4.00 |            0.00 |         94.00 |            5.00 |              1 |         1 |             | None           |             0 | False         |              559.22 | True                |
+| MariaDB-1-1 |                1 |   16 |      108.00 |           2.00 |            0.00 |        101.00 |            5.00 |              1 |         1 |             | None           |             0 | False         |              533.33 | False               |
+| MariaDB-1-2 |                2 |   16 |      108.00 |           2.00 |            0.00 |        101.00 |            5.00 |              1 |         1 |             | None           |             0 | False         |              533.33 | True                |
 
 ### Benchmarking
 
@@ -108,15 +108,15 @@ Benchbase Workload tpcc SF=16
 
 | connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |     8192 |          -1 |  60.00 |        0 |                        6146.74 |                     6051.79 |         0.00 |                                                      92390.00 |                                              24941.00 |
-| mariadb-1-2-1-1-1 | mariadb-1-2-1 | mariadb-1-2-1-1 |                2 |        1 |               1 |       1 |       160 |     8192 |          -1 |  60.00 |        0 |                        5637.13 |                     5548.81 |         0.00 |                                                      99084.00 |                                              27110.00 |
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |     8192 |          -1 |  60.00 |        0 |                        6238.82 |                     6142.57 |         0.00 |                                                      90582.00 |                                              24699.00 |
+| mariadb-1-2-1-1-1 | mariadb-1-2-1 | mariadb-1-2-1-1 |                2 |        1 |               1 |       1 |       160 |     8192 |          -1 |  60.00 |        0 |                        5653.57 |                     5564.55 |         0.00 |                                                      99876.00 |                                              27233.00 |
 
 #### Per Phase
 
 | DBMS          | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 |       160 |     8192 |          -1 |  60.00 |        0 |                        6146.74 |                     6051.79 |         0.00 |                                                      92390.00 |                                              24941.00 |
-| mariadb-1-2-1 | mariadb-1-2-1 |                2 |        1 |               1 |           1 |       160 |     8192 |          -1 |  60.00 |        0 |                        5637.13 |                     5548.81 |         0.00 |                                                      99084.00 |                                              27110.00 |
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 |       160 |     8192 |          -1 |  60.00 |        0 |                        6238.82 |                     6142.57 |         0.00 |                                                      90582.00 |                                              24699.00 |
+| mariadb-1-2-1 | mariadb-1-2-1 |                2 |        1 |               1 |           1 |       160 |     8192 |          -1 |  60.00 |        0 |                        5653.57 |                     5564.55 |         0.00 |                                                      99876.00 |                                              27233.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -126,6 +126,13 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
 * TEST passed: Workflow as planned
+* TEST passed: Every pod ran for the configured time
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!
