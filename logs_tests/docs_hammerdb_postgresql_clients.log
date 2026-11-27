@@ -55,14 +55,6 @@ Loop pass                     : took 10.9s (8 kubectl calls 4.4s, 39 API request
 PostgreSQL-1                  : is loading
 Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 21 API requests 1.0s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '3c69ef29-2ec0-430d-8748-e5430b453cf8', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 27 Nov 2026 10:06:44 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 PostgreSQL-1                  : is loading
 Loop pass                     : took 4.2s (0 kubectl calls 0.0s, 22 API requests 1.2s)
@@ -114,14 +106,6 @@ Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests
 PostgreSQL-1                  : has running benchmarks
 Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '061442cf-8d56-4a6c-8d33-7b9b8bede65e', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 27 Nov 2026 10:11:43 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 PostgreSQL-1                  : has running benchmarks
 Loop pass                     : took 4.1s (0 kubectl calls 0.0s, 20 API requests 1.1s)
@@ -176,14 +160,6 @@ Loop pass                     : took 6.6s (6 kubectl calls 4.5s, 34 API requests
 PostgreSQL-1                  : has running benchmarks
 Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 21 API requests 0.9s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '45f3b124-6638-4f22-8cb7-d8be287aaacc', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 27 Nov 2026 10:16:40 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 PostgreSQL-1                  : has running benchmarks
 Loop pass                     : took 3.7s (0 kubectl calls 0.0s, 20 API requests 0.7s)
@@ -268,14 +244,6 @@ Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 19 API requests
 PostgreSQL-1                  : has running benchmarks
 Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'd24e70b8-ad2d-47fa-a1d9-9195db3fc48a', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 27 Nov 2026 10:26:42 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 PostgreSQL-1                  : has running benchmarks
 Loop pass                     : took 4.0s (0 kubectl calls 0.0s, 20 API requests 0.8s)
