@@ -63,6 +63,10 @@ In order:
   Ceph), application metrics, and the full catalog of every collected
   metric. A configuration whose storage has no such metric shows `n/a` and
   the reason.
+- `metrics-check.csv`: one line per expected metric (connection, component,
+  metric, fetched or copied) with its status in the result folder: `present`,
+  `missing`, or `not fetched` for a phase that ran without any fetch (see
+  [Monitoring](Monitoring.md#expected-metrics)).
 - `connections.md`: SUT restarts with reason, exit code, data volume and links
   to the describe log and the crashed instance's log; then the parameters of
   every connection, each listed once where it stops varying (all connections,

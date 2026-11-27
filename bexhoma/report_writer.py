@@ -72,6 +72,7 @@ import pandas as pd
 import yaml
 
 from bexhoma import evaluators
+from bexhoma import expected_metrics
 from bexhoma import failure_timeline
 from bexhoma import missing_metrics
 from bexhoma import sut_restarts
@@ -178,6 +179,10 @@ _FILE_KINDS: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
      "Output of each Prometheus fetch bexhoma ran in the dashboard pod, one file "
      "per connection and component - a `Metrics missing for` line marks a "
      "metric that returned no data and was filled with zeros."),
+    ("metrics-expected", "Expected Metrics", ("bexhoma-metrics-expected.csv",),
+     "Every metric file a fetch was going to write (connection, component, metric, "
+     "window, fetched or copied); `report/metrics-check.csv` gives the status of "
+     "each row in this folder."),
     ("other", "Other Result Files", ("*",),
      "Further raw outputs of the benchmark driver and evaluator that no tier-2 "
      "page aggregates directly."),
@@ -1162,6 +1167,10 @@ def write_markdown_report(
     result_dir = Path(benchmark.evaluator.path)
     report_dir = result_dir / "report"
     report_dir.mkdir(parents=True, exist_ok=True)
+    # status of every expected metric, as the summary's test saw it (before the -rp cleanup)
+    expected_result = getattr(experiment, '_expected_metrics_result', None)
+    if expected_result is not None and expected_result.rows:
+        expected_metrics.write_check(report_dir / "metrics-check.csv", expected_result)
 
     connections_index = _connections_index(df_connections)
     written_sections: list[dict] = []
@@ -1209,7 +1218,8 @@ def write_markdown_report(
         _write_tier2_file(
             report_dir, "monitoring.md", "monitoring",
             "SUT CPU/RAM/application monitoring, and the full catalog of every collected metric.",
-            monitoring_sections, connections_index, _provenance_lines(groups, ("monitoring", "metrics-fetch")),
+            monitoring_sections, connections_index,
+            _provenance_lines(groups, ("monitoring", "metrics-fetch", "metrics-expected")),
         )
         written_sections.append({"title": "Monitoring", "file": "monitoring.md", "description": "CPU/RAM/application metrics, Ceph storage when the SUT's volume is on Ceph, plus the full metric catalog (all configured Prometheus metrics, not just the curated few)."})
 

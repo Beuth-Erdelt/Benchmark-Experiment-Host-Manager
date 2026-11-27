@@ -15,7 +15,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | Plan | State | Open |
 |---|---|---|
 | [ddl-parameters](plan-ddl-parameters.md) | open | M5 keys, 13b, catalog size, small items |
-| [silent-malfunctions](plan-silent-malfunctions.md) | open | P6/P13 monitoring fetches, P9, P12 rest |
+| [silent-malfunctions](plan-silent-malfunctions.md) | open | P6/P13 cluster check (S20), P9, P12 rest |
 | [software-quality](plan-software-quality.md) | open | S4, S6, S7 blocking |
 | [fewer-kubectl-calls](plan-fewer-kubectl-calls.md) | open | M5, M15 |
 | [load-failure-and-sizing](plan-load-failure-and-sizing.md) | open | P2 tmpdir (decision c/d), A4 |
@@ -72,7 +72,7 @@ says the cluster checks are open.
 ### [silent-malfunctions](plan-silent-malfunctions.md)
 
 S1-S19 done, merged in #937; the docs page (section 6) is [docs/Malfunctions.md](../docs/Malfunctions.md).
-- **P6/P13:** a monitoring fetch that never ran or failed fails no test. Options A-E in 5b, recommended E (list of expected metric files checked against the CSVs, also by `bexhoma summary`)
+- **P6/P13:** done as S20 (option E: `bexhoma-metrics-expected.csv`, test `All expected metrics present`; also `Caught an error fetching` now counts as a missing metric); cluster check open
   (fetch log check plus per-component data check, ~90 lines). Not decided.
 - **P9:** `-nbp`/`-nbt` are silently ignored by TPC-H, TPC-DS and SSB. Deferred (DBMSBenchmarker may get
   multi-threading); then refuse (A) or declare used flags per entry script (C).

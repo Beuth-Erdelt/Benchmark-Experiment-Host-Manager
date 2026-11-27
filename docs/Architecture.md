@@ -38,7 +38,7 @@ The package has three layers: benchmark-specific code builds on generic orchestr
 | | `configurations/` | `SutConfiguration`: one DBMS configuration and its helpers, see [Configuration](#configuration) |
 | | `evaluators/`, `collectors/` | generic base classes for the results of one experiment (evaluator) or of several (collector); `evaluators/logger.py` has `LogEvaluator`, which parses benchmarker logs and is the parent of every benchmark-specific evaluator |
 | | `monitoring_math.py` | reduces monitoring time series to one value per connection (counter metrics across pod restarts and leftover pods) |
-| | `report_writer.py`, `failure_timeline.py`, `sut_restarts.py`, `loading_checks.py`, `missing_metrics.py`, `test_status.py` | the Markdown report and the checks it shows; they read only the result folder |
+| | `report_writer.py`, `failure_timeline.py`, `sut_restarts.py`, `loading_checks.py`, `missing_metrics.py`, `expected_metrics.py`, `test_status.py` | the Markdown report and the checks it shows; they read only the result folder |
 | | `spec.py`, `spec_argv.py`, `environment.py` | catalog contract: validate an `experiment.yml`, build the command line, describe the cluster in `environment.yml` |
 | | `system_descriptors.py`, `ddl_parameters.py`, `load_durability.py` | read DBMS-specific settings from the cluster configuration and the script folders |
 | Cluster access | `clusters.py` | `Kubernetes` (and `AWS`): pods, jobs, deployments, PVCs, `kubectl exec`/`cp`, the dashboard and message queue |

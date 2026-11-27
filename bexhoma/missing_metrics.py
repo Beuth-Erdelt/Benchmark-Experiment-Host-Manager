@@ -66,6 +66,10 @@ __all__ = [
 _LOG_PATTERNS = ("bexhoma-metrics-*.log", "bexhoma-benchmarker-*.log")
 
 _MARKER = re.compile(r"Metrics missing for (?P<label>.+?)(?:: \S*)?$")
+#: ``_getMetrics()`` catches an exception of the request (Prometheus unreachable, HTTP
+#: error, no JSON) and logs this line instead; it zero-fills the window as for a gap.
+#: The label ends with the query's ``)`` or with ``for connection <c>``, the error follows.
+_ERROR_MARKER = re.compile(r"Caught an error fetching (?P<label>.+?(?:\)| for connection \S+)): ")
 _CONNECTION = re.compile(r"^(?P<label>.*) for connection (?P<connection>\S+)$")
 _FETCH_LOG = re.compile(r"^bexhoma-metrics-.+-(?P<component>[^-]+)\.log$")
 #: Printed by ``metrics.py`` once per fetch: the phase window without ``extend``.
@@ -100,6 +104,8 @@ class MissingMetric:
     component: str = ""
     expected: str = ""
     warning: str = ""
+    #: The request failed (``Caught an error fetching``): never expected, never a warning.
+    failed: bool = False
 
 
 def _component_of(source: str) -> str:
@@ -197,6 +203,10 @@ def parse_missing_metrics(text: str, source: str = "") -> list[MissingMetric]:
     found: dict[MissingMetric, None] = {}
     for line in text.splitlines():
         match = _MARKER.search(line.strip())
+        failed = False
+        if not match:
+            match = _ERROR_MARKER.search(line.strip())
+            failed = True
         if not match:
             continue
         label = match.group("label")
@@ -204,9 +214,9 @@ def parse_missing_metrics(text: str, source: str = "") -> list[MissingMetric]:
         parts = _split_label(label)
         if parts:
             title, query, connection = parts
-            entry = MissingMetric(source, title, connection, query, component)
+            entry = MissingMetric(source, title, connection, query, component, failed=failed)
         else:
-            entry = MissingMetric(source, label, component=component)
+            entry = MissingMetric(source, label, component=component, failed=failed)
         found.setdefault(entry, None)
     return list(found)
 
@@ -308,7 +318,10 @@ def collect_missing_metrics(
         window = _WINDOW.search(text) if _FETCH_LOG.match(path.name) else None
         too_short = (scrape_interval is not None and window is not None)
         for entry in parse_missing_metrics(text, path.name):
-            if entry.component in optional:
+            if entry.failed:
+                # no reason excuses a request that failed: the zeros are not a measurement
+                pass
+            elif entry.component in optional:
                 entry = replace(entry, expected=EXPECTED_DATA_PREEXISTING)
             elif entry.title in sparse or (entry.title, entry.component) in sparse_components:
                 entry = replace(entry, expected=EXPECTED_SPARSE)
@@ -348,7 +361,7 @@ def collect_missing_metrics(
         return any((activity[entry.title], name, entry.component) in missing_pairs for name in names)
     return [
         replace(entry, warning=WARNING_NO_ACTIVITY)
-        if not entry.expected and entry.title in activity and not reference_missing(entry)
+        if not entry.expected and not entry.failed and entry.title in activity and not reference_missing(entry)
         else entry
         for entry in found
     ]

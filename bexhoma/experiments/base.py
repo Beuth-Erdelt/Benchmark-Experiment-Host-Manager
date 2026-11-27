@@ -33,6 +33,7 @@ import math
 from typing import TYPE_CHECKING, Tuple, Optional
 
 from bexhoma import evaluators
+from bexhoma import expected_metrics
 from bexhoma import missing_metrics
 from bexhoma import test_status
 from bexhoma.monitoring_math import (counter_total, job_lifetime, min_measurable_window, read_connections,
@@ -4375,6 +4376,7 @@ class ExperimentBase():
         if self.workload['monitoring_components'] and phase_ran:
             self._record_test(header_printed, "Monitoring returned data" if header_printed
                               else "Monitoring returned no data for any component")
+        self._show_expected_metrics_check()
         # dbmsbenchmarker zero-fills a metric Prometheus did not return, so a
         # missing metric is only visible in the logs of the processes fetching it
         missing = missing_metrics.collect_missing_metrics(
@@ -4385,7 +4387,8 @@ class ExperimentBase():
                 connection = f" for connection {entry.connection}" if entry.connection else ""
                 expected = f", expected: {entry.expected}" if entry.expected else ""
                 warning = f", warning: {entry.warning}" if entry.warning else ""
-                print(f"* {entry.title}{connection} ({entry.source}{expected}{warning})")
+                failed = ", request failed" if entry.failed else ""
+                print(f"* {entry.title}{connection} ({entry.source}{failed}{expected}{warning})")
         unexpected = [entry for entry in missing if not entry.expected and not entry.warning]
         warned = [entry for entry in missing if entry.warning]
         if unexpected:
@@ -4402,6 +4405,47 @@ class ExperimentBase():
             self._record_skipped_test(f"Monitoring metrics missing ({reasons})")
         else:
             self._record_test(True, "No monitoring metrics missing")
+
+    def _show_expected_metrics_check(self) -> None:
+        """Record ``All expected metrics present`` from the result folder (see :mod:`bexhoma.expected_metrics`).
+
+        Every metric a fetch was going to write must be in the folder, as its own
+        file or, after ``-rp``, as a column of the aggregate. Only presence is
+        checked: 0 or NaN over a whole window can be a correct value. Reads only
+        local files, so ``bexhoma summary`` gives the same result on the run's
+        folder, on one cleaned by ``-rp`` and on a published copy. The outcome is
+        kept for ``report/metrics-check.csv``.
+        """
+        path = Path(self.evaluator.path)
+        result = expected_metrics.check(path, self.workload.get(expected_metrics.WORKLOAD_KEY))
+        self._expected_metrics_result = result
+        label = "All expected metrics present"
+        if result.skipped:
+            if self.workload.get('monitoring_components'):
+                self._record_skipped_test(f"{label} ({result.skipped})")
+            return
+        if result.list_missing:
+            self._record_test(False, "{} (list missing: {} although queries.config records {} rows)".format(
+                label, expected_metrics.FILENAME, self.workload.get(expected_metrics.WORKLOAD_KEY)))
+            return
+        if not result.rows:
+            return
+        if result.passed:
+            self._record_test(True, f"{label} ({len(result.rows)} metric files)")
+            return
+        groups = expected_metrics.describe(result)
+        print("\n### Expected Monitoring Metrics Missing")
+        for connection, component_type, text in groups:
+            print(f"* {connection} {component_type}: {text}")
+            # the fetch log names the cause (traceback, kubectl exit code), when it is in the folder
+            log = path / missing_metrics.fetch_log_name(connection, component_type)
+            if log.is_file():
+                lines = [line for line in log.read_text(encoding='utf-8', errors='replace').splitlines() if line.strip()]
+                for line in lines[-3:]:
+                    print(f"  * `{line[:200]}`")
+        total = len(result.rows) + sum(1 for m in result.misses if m.status == expected_metrics.STATUS_NOT_FETCHED)
+        examples = "; ".join(f"{c} {t}" for c, t, _ in groups[:5]) + ("; ..." if len(groups) > 5 else "")
+        self._record_test(False, f"{label} (missing: {len(result.misses)} of {total}; {examples})")
 
 
 
