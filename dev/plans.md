@@ -72,7 +72,7 @@ says the cluster checks are open.
 ### [silent-malfunctions](plan-silent-malfunctions.md)
 
 S1-S19 done, merged in #937; the docs page (section 6) is [docs/Malfunctions.md](../docs/Malfunctions.md).
-- **P6/P13:** a monitoring fetch that never ran or failed fails no test. Options A-D in 5b, recommended A + C
+- **P6/P13:** a monitoring fetch that never ran or failed fails no test. Options A-E in 5b, recommended E (list of expected metric files checked against the CSVs, also by `bexhoma summary`)
   (fetch log check plus per-component data check, ~90 lines). Not decided.
 - **P9:** `-nbp`/`-nbt` are silently ignored by TPC-H, TPC-DS and SSB. Deferred (DBMSBenchmarker may get
   multi-threading); then refuse (A) or declare used flags per entry script (C).

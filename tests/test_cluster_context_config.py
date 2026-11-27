@@ -5,6 +5,7 @@ import ast
 import contextlib
 import io
 import os
+import socket
 import tempfile
 import unittest
 from unittest import mock
@@ -72,13 +73,13 @@ class ContextConfigTest(unittest.TestCase):
         cluster, out = self.cluster('unknown')
         self.assertEqual(cluster.context, 'unknown')
         self.assertEqual(cluster.contextdata, {})
-        self.assertIsNone(cluster.port)
+        self.assertEqual(cluster.port, 9091)
         self.assertEqual(cluster.namespace, 'bexhoma')
         self.assertIn('context unknown not found', out)
 
     def test_context_without_port_and_namespace(self) -> None:
         cluster, out = self.cluster('incomplete')
-        self.assertIsNone(cluster.port)
+        self.assertEqual(cluster.port, 9091)
         self.assertEqual(cluster.namespace, 'bexhoma')
         self.assertIn("has no 'port'", out)
         self.assertIn("has no 'namespace'", out)
@@ -90,6 +91,40 @@ class ContextConfigTest(unittest.TestCase):
         self.assertIsNone(cluster.context)
         self.assertEqual(cluster.contextdata, {})
         self.assertIn('No current Kubernetes context found in kubeconfig', out)
+
+
+class PortForwardTest(unittest.TestCase):
+    """The context's ``port`` is the local base port, the remote port is ``port-dbms`` (#946)."""
+
+    def test_first_free_port(self) -> None:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind(('0.0.0.0', 0))
+            s.listen()
+            busy = s.getsockname()[1]
+            self.assertEqual(Kubernetes.find_free_local_port(busy), busy + 1)
+
+    def test_no_free_port(self) -> None:
+        with mock.patch.object(clusters.socket.socket, 'bind', side_effect=OSError):
+            self.assertIsNone(Kubernetes.find_free_local_port(9091, tries=3))
+
+    def test_forward_sut_port(self) -> None:
+        cluster = Kubernetes.__new__(Kubernetes)
+        cluster.port = 9191
+        cluster.get_services = mock.Mock(return_value=['bexhoma-sut-pg-1'])
+        cluster.kubectl = mock.Mock()
+        with mock.patch.object(Kubernetes, 'find_free_local_port', return_value=9192) as free, \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            cluster.forward_sut_port(experiment='1', configuration='pg')
+        free.assert_called_once_with(9191)
+        cluster.kubectl.assert_called_once_with('port-forward svc/bexhoma-sut-pg-1 9192:port-dbms --address 0.0.0.0')
+        self.assertIn('localhost:9192', out.getvalue())
+
+    def test_summary_command(self) -> None:
+        from bexhoma.experiments.base import ExperimentBase
+        experiment = ExperimentBase.__new__(ExperimentBase)
+        experiment.cluster = mock.Mock(context='other', port=9092)
+        self.assertEqual(experiment.generate_port_forward('bexhoma-sut-pg-1'),
+                         'kubectl --context other port-forward service/bexhoma-sut-pg-1 9092:port-dbms')
 
 
 if __name__ == '__main__':

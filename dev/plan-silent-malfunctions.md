@@ -147,7 +147,7 @@ Also found while preparing the runs (not a failing run): `-nbp` is silently igno
 | P3 | done (4c, S10) | - |
 | P4 | done (4c) | - |
 | P5 | done (S14) | - |
-| P6 | Monitoring: (case 1) a component's fetch never ran, or (case 2, P13) it ran and failed; neither fails a test, see 5b | Options and costs in 5b; recommended A + C |
+| P6 | Monitoring: (case 1) a component's fetch never ran, or (case 2, P13) it ran and failed; neither fails a test, see 5b | Options and costs in 5b; recommended E (expected-metrics list, 2026-11-27) |
 | P7 | done (S16) | - |
 | P8 | done (S17) | - |
 | P9 | `-nbp` and `-nbt` are accepted and silently ignored by TPC-H, TPC-DS and SSB (DBMSBenchmarker); no script or docs page passes them there | Deferred (user, 2026-11-25): DBMSBenchmarker may get multi-threading later. Semantics: elsewhere `-nbp`/`-nbt` split one client's load over pods (total constant), `-ne` multiplies whole clients; a DBMSBenchmarker stream (`numProcesses` 1) cannot be split, its parallel streams are `-ne`. So mapping `-nbp` to `-ne` is wrong. Options then: A refuse with that explanation (small, 3 entry scripts), C every entry script declares the base flags it uses (medium, ~40 flags) |
@@ -186,8 +186,122 @@ Facts: each fetch is queued in `MetricFetchBatch`; the component is registered i
 | B + C | as A + C, a lost fetch named | ~110 lines | ledger only for new results; same per-connection gap |
 | A alone | case 2 | smallest | case 1 |
 
-Recommendation: A + C now; D later if the per-connection gap matters (C's rules are its first part).
-Not decided yet.
+Earlier recommendation: A + C now; D later if the per-connection gap matters. Replaced by E (user, 2026-11-27).
+
+#### E. Expected-metrics list, checked against the result folder (recommended)
+
+Check the result instead of the logs: bexhoma writes down every metric it fetches, the summary checks that
+each one is in the result folder. Three rules (user, 2026-11-27):
+
+- **Presence only, never values.** A metric that is 0 over the whole window can be correct (e.g. number of
+  vacuums when none ran), so can NaN (e.g. a ratio without activity). Values stay with the tests that know
+  the metric: `Monitoring metrics missing` (Prometheus returned no series, with its `sparse` /
+  `activity_dependent` reasons) and the CPU test per component. E does not read the `Metrics missing for`
+  lines.
+- **Nothing from the dashboard pod.** The pod may delete results. The check reads only the local result
+  folder; nothing is restored from or compared with the pod.
+- **Works on a cleaned and a published folder.** It needs only files that `-rp` and an export keep.
+
+File layout (from 1793529751): per connection `query_{component_type}_metric_{metric}_{connection}.csv`
+(the pattern of `bexhoma-copy-metrics.sh`), header line = connection name, then one value per line, no
+timestamps. Aggregate `query_{component_type}_metric_{metric}.csv`, one column per connection, written by
+`metrics.evaluation.py` in the pod and by `transform_monitoring_results()` locally.
+
+**E1. List, written while running.** `MetricFetchBatch.add_fetch()` appends one row per active metric of the
+fetch's metric set (`connectiondata['monitoring'][metrics_type]` after `JOB_QUERY_SETS`, without metrics
+switched off by `switch_off_unresolved`) to `bexhoma-metrics-expected.csv`:
+
+```
+connection,component_type,metrics_type,metric,time_start,time_end,source
+postgresql-1-1-1024-1,loading,metrics,total_cpu_util,1795553600,1795553900,fetch
+postgresql-1-1-1024-2,loading,metrics,total_cpu_util,1795553600,1795553900,copy
+```
+
+- Rows go in under the batch lock (`parallel_steps` queues from several threads); the file is rewritten
+  atomically (tmp + rename), key (connection, component_type, metric), a later row replaces an earlier one.
+- `copy_fetched()` adds the target's rows with `source=copy` (same window and metrics as the source).
+- The number of rows goes into the workload (`queries.config`, `monitoring_expected_metrics: N`). A folder
+  whose `queries.config` names a list that is not there fails (`list missing`) instead of being skipped as
+  an older result: a removed list must not turn the check off.
+- The list holds connection, component and metric names and Unix times only: nothing that
+  `dev/plan-publish-bundle.md` redacts (nodes, IPs, paths, endpoints, credentials).
+- Uploaded with `connections.config` at the end of every batch, only because `-fe` downloads the pod folder
+  over the local one and an older list in the pod would overwrite the newer local one. The check never
+  needs the pod's copy.
+
+**E2. Check per row** (pure function on a folder, next to `missing_metrics`). A row is present when either:
+
+- the per-connection file exists (run, first summary; also a folder `-rp` did not clean), or
+- the aggregate has a column for the connection (after `-rp`: `transform_monitoring_results()` merges the
+  per-connection files into the aggregate and **deletes them**). The column is named `orig_name` of the
+  connection (job level), falling back to `name`; the row's connection is mapped to both through
+  `connections.config`.
+
+A per-connection file and a column correspond one to one: a header-only file becomes a column of NaN, a
+missing file no column. So "present" gives the same answer before and after the cleanup, which a value
+check (empty, all NaN) could not. Status `missing` otherwise.
+
+No exceptions are needed for short windows or optional components: `metrics.py` writes a file for every
+metric it queried, also when Prometheus returned nothing (zero-filled). To be confirmed in E5 for a query
+that fails with an HTTP error or an exception inside `metrics.py`; if no file is written then, that is
+exactly the case to catch.
+
+**E3. Fetch never queued (case 1).** The list cannot see a fetch that was never queued, so a second source
+the fetch code does not write: the phase times in `connections.config`.
+
+- `time_loading` > 0 and not `loading_inherited` / `loading_deactivated` → rows for `loading` and `loader`
+  of that connection must exist.
+- a benchmarker job with a timespan → rows for `benchmarking` and `benchmarker`.
+- extra components (data generator, workers, pool) only through the list (their "phase ran" rules are D's
+  expensive part).
+
+A missing row is status `not fetched`.
+
+**E4. Test and `bexhoma summary`.** One test: `All expected metrics present` (`missing: n of m`, up to 5
+examples). When the fetch log `bexhoma-metrics-{connection}-{component}.log` is in the folder, its last lines
+are quoted (what A did); without it the test is the same, only shorter. `bexhoma summary` must give the same
+test lines as the run's own summary, on the run folder, on a folder cleaned by `-rp`, and on a published copy.
+
+| Needed | Why | Kept by `-rp` | Kept by an export |
+|---|---|---|---|
+| `queries.config` | workload, `monitoring_expected_metrics` | yes | yes (needed by every summary) |
+| `connections.config` | E3, `orig_name` of a connection | yes | yes |
+| `bexhoma-metrics-expected.csv` | E1 | yes | must be kept (add to the bundle's file list) |
+| per-connection CSVs or aggregates | E2 | aggregates | at least the aggregates |
+| `bexhoma-metrics-*.log` | only the quoted lines | yes | optional |
+
+- No list and no `monitoring_expected_metrics` (results before E): **skipped**, reason `no expected-metrics
+  list (older result)`; E3 is skipped too. The archive keeps its exit codes.
+- Monitoring off (no rows, `monitoring_components` empty): no test.
+- The summary writes no file of its own into the result folder except `report/metrics-check.csv` with `-rp`,
+  so a repeated summary gives the same output.
+- Order in `show_summary()`: the tests run before the `-rp` cleanup, so the first `-rp` summary sees the
+  per-connection files, every later one the aggregates; E2 makes both the same.
+- `-fe` on a folder the pod lost files of: the download overwrites only what the pod still has, local files
+  stay. If the pod's aggregates lack connections and overwrite complete local ones after a cleanup, the
+  folder really lost data and E reports it as `missing`.
+- Aborted experiment: `show_summary_aborted()` records the test too (as S11); rows exist only for phases that
+  ended.
+- Exit code: a `missing`, `not fetched` or `list missing` row fails the test → `tests_outcome()` 1.
+
+**E5. Verification.**
+
+- Unit tests on small synthetic folders: clean; file deleted; header-only file (present); all-zero and
+  all-NaN files (present); connection without rows although `time_loading` > 0; `loading_inherited`; `copy`
+  rows; list deleted although `queries.config` names it (fails); older folder (skipped). Each case also after
+  `transform_monitoring_results()` (aggregate only, per-pod `name` vs. job `orig_name`): same statuses.
+- `bexhoma summary -rp` twice on the same copy: same test lines and exit code both times.
+- A copy with only the files of the E4 table (aggregates, no fetch logs, no connection subfolders): same
+  statuses as the full folder.
+- `metrics.py` with a broken query (HTTP error) and with an exception: does it write a file? (see E2).
+- Replay with `bexhoma summary` on copies of the 78 folders of 4b: all skipped, exit codes as before.
+- Cluster: one normal run each of TPC-H (`-nc 2`, copy rows), YCSB, Benchbase with monitoring; on copies
+  delete one CSV, remove all files of repetition 2, delete the list → `bexhoma summary` fails the test and
+  exits 1; the untouched folder passes and gives the same test lines as the run's own summary.
+
+Cost: ~110 lines + tests, no image change, no extra API calls. Left: an extra component that is never
+queued; a stale file of an earlier fetch with the same connection name (not possible today: every
+repetition has its own connection name).
 
 ## 6. Later: docs page
 

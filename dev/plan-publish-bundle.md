@@ -175,6 +175,11 @@ setups.
   but names none of them.
 - **Hardware labels** such as `cpu: e5-2630` or `gpu: k80`. They describe
   what the numbers were measured on.
+- **What `bexhoma summary` needs to re-check a folder:** `queries.config`,
+  `connections.config`, `bexhoma-metrics-expected.csv` and the metric CSVs
+  (at least the aggregates `query_{component}_metric_{metric}.csv`). Without
+  the list, `All expected metrics present` fails (`list missing`), see
+  option E in `dev/plan-silent-malfunctions.md` 5b.
 
 ### Leftover checks: refuse unless allowed
 
