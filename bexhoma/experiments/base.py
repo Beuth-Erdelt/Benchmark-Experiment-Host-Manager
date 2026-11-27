@@ -1812,7 +1812,7 @@ class ExperimentBase():
         self.stop_sut()
         self.cluster.kubectl('delete all -l experiment='+self.code)
         # "all" does not include Secrets (TLS material of the SUTs, see bexhoma.tls)
-        self.cluster.kubectl('delete secret -l experiment='+self.code+',component='+TLS_COMPONENT)
+        self.cluster.delete_secrets('experiment='+self.code+',component='+TLS_COMPONENT)
     def start_monitoring(self):
         """
         Start monitoring for all dbms configurations of this experiment.

@@ -377,7 +377,7 @@ class ExecResetScriptTest(unittest.TestCase):
         cluster = self.cfg.experiment.cluster
         cluster.namespace = 'ns'
         cluster.get_pods = lambda **kw: ['sut-pod']
-        cluster.kubectl = lambda command: None
+        cluster.label_pod = lambda pod, labels: True
         self.cfg.experiment.path = self.cfg.experiment.cluster.experiments_configfolder
         self.cfg.__dict__.update(
             path_experiment_docker='MonetDB', appname='bexhoma', code='1', num_tenants=0, tenant_per='',
@@ -401,7 +401,7 @@ class ExecResetScriptTest(unittest.TestCase):
         cluster = self.cfg.experiment.cluster
         cluster.namespace = 'ns'
         cluster.get_pods = lambda **kw: ['sut-pod']
-        cluster.kubectl = lambda command: None
+        cluster.label_pod = lambda pod, labels: True
         self.cfg.experiment.path = cluster.experiments_configfolder
         self.cfg.__dict__.update(
             appname='bexhoma', code='1', num_tenants=3, tenant_per=tenant_per, script_target='sut',
@@ -525,7 +525,7 @@ class ResetFailedRecordedTest(unittest.TestCase):
                        'reset-flush.sh': ('', 'flush timeout\ncommand terminated with exit code 1\n')}
             cluster = types.SimpleNamespace(
                 experiments_configfolder=tmp_dir, namespace='ns',
-                get_pods=lambda **kw: ['sut-pod'], kubectl=lambda command: None)
+                get_pods=lambda **kw: ['sut-pod'], label_pod=lambda pod, labels: True)
             cfg = types.SimpleNamespace(
                 configuration='MySQL-1', path_experiment_docker='MySQL', appname='bexhoma', code='1',
                 num_tenants=0, tenant_per='', script_target='sut',
