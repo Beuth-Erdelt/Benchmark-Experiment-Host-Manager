@@ -452,7 +452,7 @@ usage: tpcds.py [-h] [-aws] [-db] [-sl] [-ss] [-ks {auto,yes,no}]
                 [-dbms [{PostgreSQL,MySQL,MariaDB,MariaDBCS,MonetDB,ClickHouse,ClickHouseCluster,DB2} ...]]
                 [-xlit LIMIT_IMPORT_TABLE] [-xdt] [-xqr NUM_RUN]
                 [-xnls NUM_LOADING_SPLIT] [-xii] [-xic] [-xis] [-xcol] [-xrcp]
-                [-xshq] [-xaq ACTIVE_QUERIES] [-xve] [-xse]
+                [-xrd] [-xshq] [-xaq ACTIVE_QUERIES] [-xve] [-xse]
                 {profiling,run,start,load,empty,summary}
 
 Run TPC-DS benchmark queries against a DBMS in Kubernetes. Data is generated
@@ -649,6 +649,12 @@ options:
                         use columnar storage (Citus only)
   -xrcp, --xrecreate-parameter
                         regenerate random query parameters for each stream
+  -xrd, --xrecreate-data
+                        generate the raw data again although it exists on the
+                        shared data volume, e.g. to measure the data generator
+                        (-mc); run one configuration at a time (-ms 1): a
+                        generator of a parallel configuration with the same SF
+                        and pods removes the files while the other loads
   -xshq, --xshuffle-queries
                         shuffle query execution order independently per stream
   -xaq ACTIVE_QUERIES, --xactive-queries ACTIVE_QUERIES

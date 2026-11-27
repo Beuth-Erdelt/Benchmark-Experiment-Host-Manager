@@ -3472,6 +3472,7 @@ No warnings
 | `-xdfe` | PgDuckDB: run the queries in DuckDB's engine |
 | `-xii`, `-xic`, `-xis` | indexes, primary and foreign keys (star schema only), statistics after loading |
 | `-xrcp` | with `-xqv random`: new parameters per stream |
+| `-xrd` | generate the raw data again although it exists on the shared data volume, e.g. to measure the data generator; one configuration at a time (`-ms 1`) |
 | `-xshq` | shuffle the query order per stream |
 | `-xaq 1,4,7` | run only these queries (1-based: Q1.1 = 1, Q4.3 = 13) |
 | `-xlit <table>` | load only this table |

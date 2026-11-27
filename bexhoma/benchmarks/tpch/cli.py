@@ -60,6 +60,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument('-xcol',  '--xinit-columns', help='use columnar storage (Citus only)', action='store_true', default=False, dest='init_columns')
     parser.add_argument('-xdim',  '--xdimensions', help='ClickHouseCluster: replicated = a full copy of part, partsupp, supplier and customer on every node, joins with orders/lineitem run locally per shard; distributed = these four spread over the shards like orders and lineitem, joined across nodes per query; nation and region are a full copy in both. Citus always uses reference tables (distributed is refused), single-node DBMS ignore it', choices=DIMENSION_VARIANTS, default='replicated', dest='dimensions')
     parser.add_argument('-xrcp',  '--xrecreate-parameter', help='regenerate random query parameters for each stream', action='store_true', default=False, dest='recreate_parameter')
+    parser.add_argument('-xrd',   '--xrecreate-data', help='generate the raw data again although it exists on the shared data volume, e.g. to measure the data generator (-mc); run one configuration at a time (-ms 1): a generator of a parallel configuration with the same SF and pods removes the files while the other loads', action='store_true', default=False, dest='recreate_data')
     parser.add_argument('-xshq',  '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')
     parser.add_argument('-xrs',   '--xnum-refresh-streams', help='enable a TPC-H RF1/RF2 refresh stream running in parallel with the query streams; value is the number of RF1+RF2 pairs applied per benchmarking round (set equal to the number of parallel query streams for a spec-compliant throughput test; 0 = disabled)', default=0, type=int, dest='num_refresh_streams')
     parser.add_argument('-xrso',  '--xrefresh-stream-offset', help='start the refresh stream at set OFFSET+1, so that sets 1..OFFSET are skipped (use to continue from a previous run without re-applying already-applied sets)', default=0, type=int, dest='num_refresh_stream_offset')
@@ -239,7 +240,7 @@ def run(args: argparse.Namespace, on_experiment_built=None) -> int:
     experiment.set_default_loading_parameters(
         SF = SF,
         STORE_RAW_DATA = 1,
-        STORE_RAW_DATA_RECREATE = 0,
+        STORE_RAW_DATA_RECREATE = int(args.recreate_data),
         BEXHOMA_SYNCH_LOAD = 1,
         BEXHOMA_SYNCH_GENERATE = 1,
         TRANSFORM_RAW_DATA = 1,

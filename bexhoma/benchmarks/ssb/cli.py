@@ -50,6 +50,7 @@ def main() -> None:
     parser.add_argument('-xic',   '--xinit-constraints', help='add primary-key and foreign-key constraints after loading (star schema only)', action='store_true', default=False, dest='init_constraints')
     parser.add_argument('-xis',   '--xinit-statistics', help='run ANALYZE after loading', action='store_true', default=False, dest='init_statistics')
     parser.add_argument('-xrcp',  '--xrecreate-parameter', help='with -xqv random: draw new random query parameters for each stream', action='store_true', default=False, dest='recreate_parameter')
+    parser.add_argument('-xrd',   '--xrecreate-data', help='generate the raw data again although it exists on the shared data volume, e.g. to measure the data generator (-mc); run one configuration at a time (-ms 1): a generator of a parallel configuration with the same SF and pods removes the files while the other loads', action='store_true', default=False, dest='recreate_data')
     parser.add_argument('-xshq',  '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')
     parser.add_argument('-xaq',   '--xactive-queries', help='comma-separated 1-based query numbers to run, e.g. 1,4,7 for Q1.1, Q2.1, Q3.1 (all other queries are set inactive in the query config uploaded to the cluster; unset = run all 13 queries)', default='', dest='active_queries')
     parser.add_argument('-xdfe',  '--xduckdb-force-execution', help='run queries on PostgreSQL tables in pg_duckdb\'s DuckDB engine (PgDuckDB only); off by default, so they run in PostgreSQL\'s own executor', action='store_true', default=False, dest='duckdb_force_execution')
@@ -152,7 +153,7 @@ def main() -> None:
     experiment.set_default_loading_parameters(
         SF = SF,
         STORE_RAW_DATA = 1,
-        STORE_RAW_DATA_RECREATE = 0,
+        STORE_RAW_DATA_RECREATE = int(args.recreate_data),
         BEXHOMA_SYNCH_LOAD = 1,
         BEXHOMA_SYNCH_GENERATE = 1,
         SSB_SCHEMA_VARIANT = schema_variant,

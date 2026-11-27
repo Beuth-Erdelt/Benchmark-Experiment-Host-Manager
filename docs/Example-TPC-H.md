@@ -353,7 +353,7 @@ usage: tpch.py [-h] [-aws] [-db] [-sl] [-ss] [-ks {auto,yes,no}]
                [-dbms [{PostgreSQL,PgDuckDB,CedarDB,MySQL,MariaDB,MariaDBCS,MonetDB,ClickHouse,ClickHouseCluster,Citus,SQLServer,OracleDB,DB2,DatabaseService} ...]]
                [-xlit LIMIT_IMPORT_TABLE] [-xdt] [-xqr NUM_RUN]
                [-xnls NUM_LOADING_SPLIT] [-xii] [-xic] [-xis] [-xcol]
-               [-xdim {replicated,distributed}] [-xrcp] [-xshq]
+               [-xdim {replicated,distributed}] [-xrcp] [-xrd] [-xshq]
                [-xrs NUM_REFRESH_STREAMS] [-xrso NUM_REFRESH_STREAM_OFFSET]
                [-xaq ACTIVE_QUERIES] [-xdfe] [-xve] [-xse]
                {profiling,run,start,load,empty,summary}
@@ -561,6 +561,12 @@ options:
                         single-node DBMS ignore it
   -xrcp, --xrecreate-parameter
                         regenerate random query parameters for each stream
+  -xrd, --xrecreate-data
+                        generate the raw data again although it exists on the
+                        shared data volume, e.g. to measure the data generator
+                        (-mc); run one configuration at a time (-ms 1): a
+                        generator of a parallel configuration with the same SF
+                        and pods removes the files while the other loads
   -xshq, --xshuffle-queries
                         shuffle query execution order independently per stream
   -xrs NUM_REFRESH_STREAMS, --xnum-refresh-streams NUM_REFRESH_STREAMS
