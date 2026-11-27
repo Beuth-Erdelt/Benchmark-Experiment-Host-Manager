@@ -22,7 +22,7 @@ source ./scripts/testfunctions.sh
 # Main example: single host Cassandra, quick, without monitoring
 # -dbms Cassandra               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -72,7 +72,7 @@ report_result $? "YCSB Cassandra single  sf=1  nbp=1"
 # Monitoring: single host Cassandra with application metrics, at least 1 minute of benchmarking
 # -dbms Cassandra               DBMS under test
 # -sf 3                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -126,7 +126,7 @@ report_result $? "YCSB Cassandra single monitoring  sf=3  nbp=1"
 # Persistent storage: single host Cassandra
 # -dbms Cassandra               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -184,7 +184,7 @@ report_result $? "YCSB Cassandra single PVC  sf=1  nbp=1  nc=2"
 # Variant cluster: 3 Cassandra nodes
 # -dbms Cassandra               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -236,7 +236,7 @@ report_result $? "YCSB Cassandra cluster 3  sf=1  nbp=1"
 # Variant replication: 3 Cassandra nodes and replication factor 3
 # -dbms Cassandra               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -290,7 +290,7 @@ report_result $? "YCSB Cassandra cluster 3 replication 3  sf=1  nbp=1"
 # Variant replication: 3 Cassandra nodes, replication factor 3 and persistent storage
 # -dbms Cassandra               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s

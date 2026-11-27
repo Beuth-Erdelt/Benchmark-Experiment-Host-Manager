@@ -205,7 +205,7 @@ Write-ExperimentResult $LASTEXITCODE "Benchbase PGBouncer pool sweep  sf=16  xnp
 bexhoma ycsb `
   -dbms PGBouncer               <# DBMS under test #> `
   -sf 1                         <# scaling factor (number of records in millions) #> `
-  -xwl c                        <# YCSB workload template (c = 100%% read) #> `
+  -xwl c                        <# YCSB workload template (c = 100% read) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# throughput target as a multiple of the base ops/s #> `
   -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `

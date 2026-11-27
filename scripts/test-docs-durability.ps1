@@ -428,7 +428,7 @@ Write-ExperimentResult $LASTEXITCODE "YCSB durability PGBouncer unsafe"
 bexhoma ycsb `
   -dbms OrioleDB                <# PostgreSQL scripts (path PostgreSQL), OrioleDB tables #> `
   -sf 1                         <# scaling factor #> `
-  -xwl a                        <# YCSB workload template (a = 50%% read / 50%% update) #> `
+  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute the throughput target #> `
   -xnbf 1                       <# benchmarking throughput target as a multiple of the base ops/s #> `
   -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `
@@ -453,7 +453,7 @@ Write-ExperimentResult $LASTEXITCODE "YCSB durability OrioleDB durable"
 bexhoma ycsb `
   -dbms OrioleDB                <# PostgreSQL scripts (path PostgreSQL), OrioleDB tables #> `
   -sf 1                         <# scaling factor #> `
-  -xwl a                        <# YCSB workload template (a = 50%% read / 50%% update) #> `
+  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute the throughput target #> `
   -xnbf 1                       <# benchmarking throughput target as a multiple of the base ops/s #> `
   -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `

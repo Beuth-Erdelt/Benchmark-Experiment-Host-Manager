@@ -124,7 +124,7 @@ Write-ExperimentResult $LASTEXITCODE "YCSB storage  sf=1  nbp=1,8  nc=2"
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
   -sf 1                         <# scaling factor (number of records in millions) #> `
-  -xwl a                        <# YCSB workload template (a = 50%% read / 50%% update) #> `
+  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 2                       <# throughput target as a multiple of the base ops/s #> `
   -xnlf 1                       <# loading throughput target as a multiple of the base ops/s #> `

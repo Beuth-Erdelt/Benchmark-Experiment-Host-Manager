@@ -23,7 +23,7 @@ source ./scripts/testfunctions.sh
 # Main example: single host Dragonfly, quick, without monitoring
 # -dbms Dragonfly               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -71,7 +71,7 @@ report_result $? "YCSB Dragonfly single  sf=1  nbp=1"
 # Monitoring: single host Dragonfly with application metrics, at least 1 minute of benchmarking
 # -dbms Dragonfly               DBMS under test
 # -sf 3                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -123,7 +123,7 @@ report_result $? "YCSB Dragonfly single monitoring  sf=3  nbp=1"
 # Persistent storage: single host Dragonfly
 # -dbms Dragonfly               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -181,7 +181,7 @@ report_result $? "YCSB Dragonfly single PVC  sf=1  nbp=1  nc=2"
 # Variant cluster: 3 Dragonfly instances
 # -dbms Dragonfly               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -234,7 +234,7 @@ report_result $? "YCSB Dragonfly cluster 3  sf=1  nbp=1"
 # Variant cluster: 3 Dragonfly instances on persistent storage
 # -dbms Dragonfly               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -289,7 +289,7 @@ report_result $? "YCSB Dragonfly cluster 3 PVC  sf=1  nbp=1  nc=2"
 # Variant replication: 3 Dragonfly instances, 1 master and 2 replicas
 # -dbms Dragonfly               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -343,7 +343,7 @@ report_result $? "YCSB Dragonfly cluster 3 replication  sf=1  nbp=1"
 # Technical details: cluster of 3 Dragonfly instances with a changed setting (--set)
 # -dbms Dragonfly               DBMS under test
 # -sf 10                        scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s

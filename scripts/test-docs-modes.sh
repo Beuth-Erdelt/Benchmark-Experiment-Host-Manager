@@ -21,7 +21,7 @@ source ./scripts/testfunctions.sh
 
 
 # -dbms PostgreSQL              DBMS under test
-# -xwl c                        YCSB workload template (c = 100%% read)
+# -xwl c                        YCSB workload template (c = 100% read)
 # -m                            collect SUT resource metrics
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
@@ -42,7 +42,7 @@ kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
 # -dbms PostgreSQL              DBMS under test
-# -xwl c                        YCSB workload template (c = 100%% read)
+# -xwl c                        YCSB workload template (c = 100% read)
 # -nlp 8                        number of data loader pods
 # -nlt 64                       threads per loader pod
 # -m                            collect SUT resource metrics
@@ -70,7 +70,7 @@ kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
 # -dbms PostgreSQL              DBMS under test
-# -xwl c                        YCSB workload template (c = 100%% read)
+# -xwl c                        YCSB workload template (c = 100% read)
 # -nlp 8                        number of data loader pods
 # -nlt 64                       threads per loader pod
 # -nbp 8                        benchmarking pod counts to sweep (comma-separated)

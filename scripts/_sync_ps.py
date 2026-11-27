@@ -107,7 +107,8 @@ def _parse_sh_header_comment(line: str) -> tuple[str | None, str | None, str]:
         desc = content[30:].strip()
     else:
         desc = content[prefix_end:].strip()
-    return flag, value, desc
+    # a comment is not a format string: '%%' is a literal percent written twice
+    return flag, value, desc.replace('%%', '%')
 
 
 def _collect_bash_block(lines: list[str], start: int) -> tuple[list[str], int]:

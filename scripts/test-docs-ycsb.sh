@@ -23,7 +23,7 @@ source ./scripts/testfunctions.sh
 #### YCSB Scale Loading (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2                       throughput target as a multiple of the base ops/s
 # -xnlf 1,4                     loading throughput target as a multiple of the base ops/s
@@ -62,7 +62,7 @@ report_result $? "YCSB loading  sf=1  nlp=1,8"
 #### YCSB Scale Benchmarking (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2,3                     throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -101,7 +101,7 @@ report_result $? "YCSB benchmarking  sf=1  nbp=1,8"
 #### YCSB Monitoring (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 3                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2,3                     throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -142,7 +142,7 @@ report_result $? "YCSB monitoring  sf=3  nbp=1,8"
 #### YCSB Persistent Storage (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2,3                     throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -185,7 +185,7 @@ report_result $? "YCSB storage  sf=1  nbp=1,8  nc=2"
 #### YCSB Custom Loading Parameters (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2                       throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s
@@ -222,7 +222,7 @@ report_result $? "YCSB loading patch  sf=1  nlp=1"
 #### YCSB Reset Script (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 1024                     base ops/s used to compute throughput targets
 # -xnbf 1                       throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s
@@ -268,7 +268,7 @@ report_result $? "YCSB reset script  sf=1  ne=1,2"
 #### YCSB Workload A (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 10                        scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -313,7 +313,7 @@ report_result $? "YCSB workload a  sf=10  nbp=1,8"
 #### YCSB Workload B (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 10                        scaling factor (number of records in millions)
-# -xwl b                        YCSB workload template (b = 95%% read / 5%% update)
+# -xwl b                        YCSB workload template (b = 95% read / 5% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -358,7 +358,7 @@ report_result $? "YCSB workload b  sf=10  nbp=1,8"
 #### YCSB Workload C (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 10                        scaling factor (number of records in millions)
-# -xwl c                        YCSB workload template (c = 100%% read)
+# -xwl c                        YCSB workload template (c = 100% read)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -403,7 +403,7 @@ report_result $? "YCSB workload c  sf=10  nbp=1,8"
 #### YCSB Workload D (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 10                        scaling factor (number of records in millions)
-# -xwl d                        YCSB workload template (d = 95%% read / 5%% insert)
+# -xwl d                        YCSB workload template (d = 95% read / 5% insert)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -450,7 +450,7 @@ report_result $? "YCSB workload d  sf=10  nbp=1"
 #### YCSB Workload E (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 10                        scaling factor (number of records in millions)
-# -xwl e                        YCSB workload template (e = 95%% scan / 5%% insert)
+# -xwl e                        YCSB workload template (e = 95% scan / 5% insert)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -497,7 +497,7 @@ report_result $? "YCSB workload e  sf=10  nbp=1"
 #### YCSB Workload F (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 10                        scaling factor (number of records in millions)
-# -xwl f                        YCSB workload template (f = 50%% read / 50%% read-modify-write)
+# -xwl f                        YCSB workload template (f = 50% read / 50% read-modify-write)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -542,7 +542,7 @@ report_result $? "YCSB workload f  sf=10  nbp=1,8"
 #### YCSB Workload A uniform (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 10                        scaling factor (number of records in millions)
-# -xwl a2                       YCSB workload template (a2 = 50%% read / 50%% update, uniform request distribution)
+# -xwl a2                       YCSB workload template (a2 = 50% read / 50% update, uniform request distribution)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -587,7 +587,7 @@ report_result $? "YCSB workload a2 (uniform)  sf=10  nbp=1,8"
 #### YCSB Workload C uniform (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 10                        scaling factor (number of records in millions)
-# -xwl c2                       YCSB workload template (c2 = 100%% read, uniform request distribution)
+# -xwl c2                       YCSB workload template (c2 = 100% read, uniform request distribution)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s

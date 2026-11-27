@@ -120,7 +120,7 @@ sleep 30
 # Main example: YCSB on YugabyteDB, quick, without monitoring
 # -dbms YugabyteDB              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -172,7 +172,7 @@ sleep 30
 # Monitoring: YCSB on YugabyteDB
 # -dbms YugabyteDB              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -212,7 +212,7 @@ report_result $? "YCSB YugabyteDB ingestion  sf=1  nbp=1"
 # Execution only (-sl): on the data loaded by the monitoring run before (same installation)
 # -dbms YugabyteDB              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -263,7 +263,7 @@ sleep 30
 # Application metrics: YCSB on YugabyteDB
 # -dbms YugabyteDB              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -315,7 +315,7 @@ sleep 30
 # Persistent storage: status volume of bexhoma (YugabyteDB itself is ephemeral)
 # -dbms YugabyteDB              DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s

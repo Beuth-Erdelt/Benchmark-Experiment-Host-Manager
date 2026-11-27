@@ -23,7 +23,7 @@ source ./scripts/testfunctions.sh
 # Main example: YCSB on TiDB, quick, without monitoring
 # -dbms TiDB                    DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 1                       throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s
@@ -79,7 +79,7 @@ report_result $? "YCSB TiDB  sf=1  nbp=1"
 # Monitoring: YCSB on TiDB
 # -dbms TiDB                    DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 1                       throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s
@@ -140,7 +140,7 @@ report_result $? "YCSB TiDB  sf=1  nbp=1"
 # Persistent storage: YCSB on TiDB
 # -dbms TiDB                    DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 1                       throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s

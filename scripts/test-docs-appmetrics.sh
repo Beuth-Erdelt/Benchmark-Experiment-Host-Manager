@@ -56,7 +56,7 @@ report_result $? "Benchbase PostgreSQL appmetrics  sf=16  nbp=1,2"
 #### YCSB Application Metrics (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
 # -sf 3                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2,3                     throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -244,7 +244,7 @@ report_result $? "Benchbase MySQL appmetrics  sf=16  nbp=1,2"
 #### YCSB MySQL Application Metrics
 # -dbms MySQL                   DBMS under test
 # -sf 3                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 2,3                     throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -412,7 +412,7 @@ report_result $? "HammerDB MySQL appmetrics  sf=16  nbp=1,2"
 
 # -dbms CockroachDB             DBMS under test
 # -sf 10                        scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -506,7 +506,7 @@ report_result $? "Benchbase CockroachDB appmetrics  sf=16  nbp=1,2"
 
 # -dbms Redis                   DBMS under test
 # -sf 3                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -557,7 +557,7 @@ report_result $? "YCSB Redis appmetrics  sf=3  nbp=1"
 
 # -dbms TiDB                    DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 1                       throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s
@@ -648,7 +648,7 @@ report_result $? "Benchbase TiDB appmetrics  sf=16  nbp=1,2"
 
 # -dbms PGBouncer               DBMS under test
 # -sf 16                        scaling factor (number of records in millions)
-# -xwl c                        YCSB workload template (c = 100%% read)
+# -xwl c                        YCSB workload template (c = 100% read)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 11                      throughput target as a multiple of the base ops/s
 # -xnlf 11                      loading throughput target as a multiple of the base ops/s

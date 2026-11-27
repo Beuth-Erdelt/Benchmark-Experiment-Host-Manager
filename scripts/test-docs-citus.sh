@@ -23,7 +23,7 @@ source ./scripts/testfunctions.sh
 # Main example: YCSB on Citus with 3 workers, quick, without monitoring
 # -dbms Citus                   DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -81,7 +81,7 @@ report_result $? "YCSB Citus  sf=1  nw=3"
 # Monitoring: YCSB on Citus with 3 workers
 # -dbms Citus                   DBMS under test
 # -sf 5                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -144,7 +144,7 @@ sleep 30
 
 # -dbms Citus                   DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s

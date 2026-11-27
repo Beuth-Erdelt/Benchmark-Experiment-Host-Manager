@@ -23,7 +23,7 @@ source ./scripts/testfunctions.sh
 # Main example: YCSB on PostgreSQL with PGBouncer, quick, without monitoring
 # -dbms PGBouncer               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl c                        YCSB workload template (c = 100%% read)
+# -xwl c                        YCSB workload template (c = 100% read)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 11                      throughput target as a multiple of the base ops/s
 # -xnlf 11                      loading throughput target as a multiple of the base ops/s
@@ -80,7 +80,7 @@ report_result $? "YCSB PGBouncer  sf=1"
 # Monitoring: YCSB on PostgreSQL with PGBouncer
 # -dbms PGBouncer               DBMS under test
 # -sf 32                        scaling factor (number of records in millions)
-# -xwl c                        YCSB workload template (c = 100%% read)
+# -xwl c                        YCSB workload template (c = 100% read)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 11                      throughput target as a multiple of the base ops/s
 # -xnlf 11                      loading throughput target as a multiple of the base ops/s
@@ -142,7 +142,7 @@ report_result $? "YCSB PGBouncer  sf=32  nbp=16"
 # Persistent storage: YCSB on PostgreSQL with PGBouncer
 # -dbms PGBouncer               DBMS under test
 # -sf 16                        scaling factor (number of records in millions)
-# -xwl c                        YCSB workload template (c = 100%% read)
+# -xwl c                        YCSB workload template (c = 100% read)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 11                      throughput target as a multiple of the base ops/s
 # -xnlf 11                      loading throughput target as a multiple of the base ops/s
@@ -310,7 +310,7 @@ report_result $? "Benchbase PGBouncer pool sweep  sf=16  xnpp=1,2  xnpi=32,64"
 # Check: 2 configurations, pool sizes 16 and 64 (before the DBMS-generic refactor both got the first value).
 # -dbms PGBouncer               DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl c                        YCSB workload template (c = 100%% read)
+# -xwl c                        YCSB workload template (c = 100% read)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s

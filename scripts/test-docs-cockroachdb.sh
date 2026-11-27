@@ -23,7 +23,7 @@ source ./scripts/testfunctions.sh
 # Main example: YCSB on CockroachDB with 3 workers, quick, without monitoring
 # -dbms CockroachDB             DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -79,7 +79,7 @@ report_result $? "YCSB CockroachDB  sf=1  nw=3"
 # Monitoring: YCSB on CockroachDB with 3 workers
 # -dbms CockroachDB             DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -140,7 +140,7 @@ report_result $? "YCSB CockroachDB ingestion  sf=1  nbp=1"
 # Persistent storage: YCSB on CockroachDB with 3 workers
 # -dbms CockroachDB             DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -202,7 +202,7 @@ report_result $? "YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
 # YCSB at SF 10
 # -dbms CockroachDB             DBMS under test
 # -sf 10                        scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
