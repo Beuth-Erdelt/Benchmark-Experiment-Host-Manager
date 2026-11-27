@@ -564,11 +564,9 @@ options:
   -xrd, --xrecreate-data
                         generate the raw data again although it exists on the
                         shared data volume, e.g. to measure the data generator
-                        (-mc); use -ms 1: a generator of a parallel
-                        configuration with the same SF and pods removes the
-                        files while the other loads. -ms counts the SUTs of
-                        the whole cluster, so the experiment also waits until
-                        no SUT of another experiment runs
+                        (-mc); the new files replace the old ones atomically,
+                        so a loader of a parallel configuration keeps reading
+                        complete files
   -xshq, --xshuffle-queries
                         shuffle query execution order independently per stream
   -xrs NUM_REFRESH_STREAMS, --xnum-refresh-streams NUM_REFRESH_STREAMS
@@ -859,7 +857,7 @@ Metrics are fetched every 30 seconds, so a short phase has few samples.
 
 To get an impression of the resources the clients need, `-mc` also monitors the components outside the SUT.
 This run uses MonetDB at SF 100, so that every phase lasts long enough for the monitoring.
-`-xrd` generates the raw data again although it exists on the shared data volume, so that the summary also contains the data generator; with `-xrd` only one configuration may run at a time (`-ms 1`). `-ms` counts the SUTs of the whole cluster, so the experiment also waits until no SUT of another experiment runs.
+`-xrd` generates the raw data again although it exists on the shared data volume, so that the summary also contains the data generator; `-ms 1` keeps other SUTs off the cluster during the measurement: `-ms` counts the SUTs of the whole cluster, so the experiment waits until no SUT of another experiment runs.
 `-ne 1,2` runs one and then two parallel query streams.
 
 ```bash
