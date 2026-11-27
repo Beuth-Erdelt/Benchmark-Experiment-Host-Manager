@@ -143,7 +143,7 @@ report_result $? "TPC-DS monitoring  sf=3"
 # -xrd                          generate the raw data again, so the data generator is measured
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics of loader, data generator and benchmarker
-# -ms 1                         one configuration at a time, required by -xrd
+# -ms 1                         one SUT in the whole cluster at a time, required by -xrd
 # -t 14400                      query timeout in seconds
 # -lr 1024Gi                    RAM limit for the SUT container
 # -rr 900Gi                     RAM requested for the SUT container

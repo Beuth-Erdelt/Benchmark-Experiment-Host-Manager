@@ -95,7 +95,7 @@ bexhoma tpch `
   -xrd                          <# generate the raw data again, so the data generator is measured #> `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics of loader, data generator and benchmarker #> `
-  -ms 1                         <# one configuration at a time, required by -xrd #> `
+  -ms 1                         <# one SUT in the whole cluster at a time, required by -xrd #> `
   -t 3600                       <# query timeout in seconds #> `
   -lc 16                        <# CPU limit for the SUT container #> `
   -lr 256Gi                     <# RAM limit for the SUT container #> `

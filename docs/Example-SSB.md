@@ -2351,7 +2351,7 @@ With `-m` (SUT) and `-mc` (cluster), bexhoma collects the resource use of the SU
 A phase needs at least two scrapes of the monitoring to show up.
 At scaling factor 10, loading is long enough for that, while the benchmarking of a single stream is not: its gaps are marked as expected in the tests.
 The DBMS run one after another (`-ms 1`), which keeps the metrics of one SUT free of the others.
-`-xrd` generates the raw data again for every DBMS although it exists on the shared data volume, so that the data generator is measured too; this also needs one configuration at a time.
+`-xrd` generates the raw data again for every DBMS although it exists on the shared data volume, so that the data generator is measured too; this also needs one configuration at a time. `-ms` counts the SUTs of the whole cluster, so with `-ms 1` the experiment also waits until no SUT of another experiment runs.
 The tables of the components data generator, loader and benchmarker give an impression of the resources the clients need: `CPU [CPUs]` is the CPU time in seconds, `Max CPU` the peak number of cores and `Max RAM [Gb]` the peak working set of all pods of the component.
 
 ```bash
@@ -3475,7 +3475,7 @@ No warnings
 | `-xdfe` | PgDuckDB: run the queries in DuckDB's engine |
 | `-xii`, `-xic`, `-xis` | indexes, primary and foreign keys (star schema only), statistics after loading |
 | `-xrcp` | with `-xqv random`: new parameters per stream |
-| `-xrd` | generate the raw data again although it exists on the shared data volume, e.g. to measure the data generator; one configuration at a time (`-ms 1`) |
+| `-xrd` | generate the raw data again although it exists on the shared data volume, e.g. to measure the data generator; needs `-ms 1`, which counts the SUTs of the whole cluster |
 | `-xshq` | shuffle the query order per stream |
 | `-xaq 1,4,7` | run only these queries (1-based: Q1.1 = 1, Q4.3 = 13) |
 | `-xlit <table>` | load only this table |
