@@ -252,6 +252,10 @@ class LifecycleManager:
     ) -> None:
         """Start a Prometheus monitoring deployment for this configuration.
 
+        It scrapes the application exporters (``-ma``) and, when the cluster has
+        no preinstalled Prometheus, the cAdvisor daemonset bexhoma deployed.
+        System metrics never come from a container inside the SUT pod.
+
         :param app: App label.
         :param component: Component label (default ``'monitoring'``).
         :param experiment: Experiment code.
@@ -259,8 +263,7 @@ class LifecycleManager:
         """
         cfg = self._config
         if not cfg.experiment.monitoring_active or (
-                cfg.experiment.cluster.monitor_cluster_active
-                and cfg.experiment.cluster.monitor_cluster_exists
+                cfg.experiment.cluster.monitor_cluster_exists
                 and not cfg.monitor_app_active):
             return
         if len(app) == 0:
@@ -310,20 +313,10 @@ class LifecycleManager:
                         dep['spec']['template']['metadata']['labels'] = dep['metadata']['labels'].copy()
                         dep['spec']['selector']['matchLabels'] = dep['metadata']['labels'].copy()
                         envs = dep['spec']['template']['spec']['containers'][0]['env']
-                        prometheus_config = f"""global:
+                        prometheus_config = """global:
   scrape_interval: 15s
 
-scrape_configs:
-  - job_name: '{name_sut}'
-    scrape_interval: {cfg.prometheus_interval}
-    scrape_timeout: {cfg.prometheus_timeout}
-    static_configs:
-      - targets: ['{name_sut}:9300']
-  - job_name: 'monitor-gpu'
-    scrape_interval: {cfg.prometheus_interval}
-    scrape_timeout: {cfg.prometheus_timeout}
-    static_configs:
-      - targets: ['{name_sut}:9400']"""
+scrape_configs:"""
                         if cfg.monitor_app_active:
                             if 'monitor' in cfg.dockertemplate:
                                 for monitor_component, application_monitoring in cfg.dockertemplate['monitor'].items():
@@ -360,14 +353,8 @@ scrape_configs:
         replacement: {name_monitor_application}:9500"""
                                     elif ('headless' in application_monitoring
                                           and application_monitoring['headless']):
-                                        endpoints_cluster = []
-                                        endpoints_worker = cfg.get_worker_endpoints()
-                                        worker_idx = 0
-                                        for endpoint in endpoints_worker:
-                                            if endpoint in endpoints_cluster:
-                                                print(f"{configuration:30s}: found worker endpoint (cAdvisor) for application monitoring {endpoint} (already monitored by cluster)")
-                                                continue
-                                            print(f"{configuration:30s}: found worker endpoint (cAdvisor) for application monitoring {endpoint} (added to Prometheus) of sidecar container")
+                                        for endpoint in cfg.get_worker_endpoints():
+                                            print(f"{configuration:30s}: found worker endpoint for application monitoring {endpoint} (added to Prometheus)")
                                             prometheus_config += f"""
   - job_name: 'monitor-app-{endpoint}'
     scrape_interval: {cfg.prometheus_interval}
@@ -375,7 +362,6 @@ scrape_configs:
     metrics_path: /_status/vars
     static_configs:
       - targets: ['{endpoint}:8080']"""
-                                            worker_idx += 1
                                     else:
                                         prometheus_config += """
   - job_name: 'monitor-app'
@@ -390,33 +376,20 @@ scrape_configs:
                                             app_label=cfg.docker.lower() + '-app',
                                             prometheus_interval=cfg.prometheus_interval,
                                             prometheus_timeout=cfg.prometheus_timeout)
-                        endpoints_cluster = cfg.experiment.cluster.get_service_endpoints(
-                            service_name="bexhoma-service-monitoring-default")
-                        ep_idx = 0
-                        for endpoint in endpoints_cluster:
-                            print(f"{configuration:30s}: found monitoring endpoint (cAdvisor) for monitoring {endpoint} (added to Prometheus) of daemonset")
-                            prometheus_config += f"""
-  - job_name: 'monitor-gpu-{endpoint}'
-    scrape_interval: {cfg.prometheus_interval}
-    scrape_timeout: {cfg.prometheus_timeout}
-    static_configs:
-      - targets: ['{endpoint}:9300']"""
-                            ep_idx += 1
-                        if len(endpoints_cluster) == 0:
-                            endpoints_worker = cfg.get_worker_endpoints()
-                            worker_ep_idx = 0
-                            for endpoint in endpoints_worker:
-                                if endpoint in endpoints_cluster:
-                                    print(f"{configuration:30s}: found worker endpoint (cAdvisor) for monitoring GPUs of {endpoint} (already monitored by cluster)")
-                                    continue
-                                print(f"{configuration:30s}: found worker endpoint (cAdvisor) for monitoring GPUs of {endpoint} (added to Prometheus) of sidecar container")
+                        if not cfg.experiment.cluster.monitor_cluster_exists:
+                            # no preinstalled Prometheus: scrape the cAdvisor daemonset bexhoma deployed
+                            endpoints_cluster = cfg.experiment.cluster.get_service_endpoints(
+                                service_name="bexhoma-service-monitoring-default")
+                            for endpoint in endpoints_cluster:
+                                print(f"{configuration:30s}: found monitoring endpoint (cAdvisor) for monitoring {endpoint} (added to Prometheus) of daemonset")
                                 prometheus_config += f"""
-  - job_name: 'monitor-gpu-{endpoint}'
+  - job_name: 'monitor-cadvisor-{endpoint}'
     scrape_interval: {cfg.prometheus_interval}
     scrape_timeout: {cfg.prometheus_timeout}
     static_configs:
       - targets: ['{endpoint}:9300']"""
-                                worker_ep_idx += 1
+                        if prometheus_config.endswith('scrape_configs:'):
+                            prometheus_config += ' []'
                         for env_idx, env_item in enumerate(envs):
                             if env_item['name'] == 'BEXHOMA_SERVICE':
                                 dep['spec']['template']['spec']['containers'][0]['env'][env_idx]['value'] = name_sut
@@ -1132,15 +1105,6 @@ scrape_configs:
                             override = cfg.resources.get(f'{kind}_{statefulset_type}') or {}
                             for resource_name, resource_value in override.items():
                                 c['resources'][kind][resource_name] = resource_value
-                    elif (not cfg.monitoring_active
-                          or cfg.experiment.cluster.monitor_cluster_active
-                          or cfg.experiment.cluster.monitor_cluster_exists):
-                        if container['name'] == 'cadvisor':
-                            del result[key]['spec']['template']['spec']['containers'][i_container]
-                            cfg.deployment_infos['statefulset'][statefulset_type]['containers'].pop()
-                        if container['name'] == 'dcgm-exporter':
-                            del result[key]['spec']['template']['spec']['containers'][i_container]
-                            cfg.deployment_infos['statefulset'][statefulset_type]['containers'].pop()
                 if 'volumes' in dep['spec']['template']['spec']:
                     for j, vol in enumerate(dep['spec']['template']['spec']['volumes']):
                         if vol['name'] == 'bxw':
@@ -1266,13 +1230,11 @@ scrape_configs:
                     dep['spec']['selector']['experiment'] = experiment
                     dep['spec']['selector']['dbms'] = cfg.docker
                     dep['spec']['selector']['volume'] = cfg.volume
-                if not cfg.monitoring_active or (
-                        cfg.experiment.cluster.monitor_cluster_exists
-                        and not cfg.monitor_app_active):
+                if not (cfg.monitoring_active and cfg.monitor_app_active):
                     # port-dbms/port-bus/port-web and port-sut-* are functional
                     # (SUT connectivity / Hardware benchmark traffic), not
-                    # monitoring sidecars, so they survive this monitoring-only
-                    # port cleanup - unlike e.g. port-monitoring (cadvisor).
+                    # application monitoring, so they survive this monitoring-only
+                    # port cleanup - unlike e.g. port-monitoring-application.
                     for i, ports in reversed(list(enumerate(dep['spec']['ports']))):
                         if ('name' in ports
                                 and ports['name'] not in SERVICE_PORT_NAMES_ALWAYS_KEPT
@@ -1363,15 +1325,6 @@ scrape_configs:
                                 # keep the unresolved placeholder for connections.config/summary display
                                 cfg.dockerimage = result[key]['spec']['template']['spec']['containers'][i_container]['image'].replace(
                                     "BEXHOMA_PACKAGE_VERSION", __version__)
-                    elif (not cfg.monitoring_active
-                          or cfg.experiment.cluster.monitor_cluster_active
-                          or cfg.experiment.cluster.monitor_cluster_exists):
-                        if container['name'] == 'cadvisor':
-                            del result[key]['spec']['template']['spec']['containers'][i_container]
-                            cfg.deployment_infos['deployment'][deployment_type]['containers'].pop()
-                        if container['name'] == 'dcgm-exporter':
-                            del result[key]['spec']['template']['spec']['containers'][i_container]
-                            cfg.deployment_infos['deployment'][deployment_type]['containers'].pop()
                 if ('volumes' in dep['spec']['template']['spec']
                         and dep['spec']['template']['spec']['volumes'] is not None):
                     for i, vol in reversed(list(enumerate(
@@ -1398,8 +1351,6 @@ scrape_configs:
                         if vol['name'] == 'benchmark-data-volume':
                             if not use_data:
                                 del result[key]['spec']['template']['spec']['volumes'][i]
-                        if 'hostPath' in vol and not cfg.monitoring_active:
-                            del result[key]['spec']['template']['spec']['volumes'][i]
                 if 'initContainers' in result[key]['spec']['template']['spec']:
                     if not use_storage:
                         kept = init_containers_without_storage(

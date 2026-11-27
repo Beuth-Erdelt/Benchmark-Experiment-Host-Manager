@@ -930,19 +930,18 @@ class ExperimentBase():
         self.cluster.start_messagequeue()
         bexhoma_version = version('bexhoma')
         self.workload['info'] = self.workload['info']+f"\nExperiment uses bexhoma version {bexhoma_version}."
-        if monitoring_cluster:
-            # monitor all nodes of cluster (for not missing any component)
+        if monitoring or monitoring_cluster:
+            # system metrics always come from a cluster-wide installation;
+            # -m and -mc only differ in the components whose metrics are fetched
             self.monitoring_active = True
+            self.cluster.monitor_cluster_active = bool(monitoring_cluster)
             if numRun > 0:
                 self.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
             self.cluster.start_monitoring_cluster()
-            self.workload['info'] = self.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation."
-        elif monitoring:
-            # we want to monitor resource consumption
-            self.monitoring_active = True
-            if numRun > 0:
-                self.set_querymanagement_monitoring(numRun=numRun, delay=10, datatransfer=datatransfer)
-            self.workload['info'] = self.workload['info']+"\nSystem metrics are monitored by sidecar containers."
+            if monitoring_cluster:
+                self.workload['info'] = self.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation for all components."
+            else:
+                self.workload['info'] = self.workload['info']+"\nSystem metrics are monitored by a cluster-wide installation for the SUT."
         else:
             # we want to just run the queries
             self.set_querymanagement_quicktest(numRun=numRun, datatransfer=datatransfer)
@@ -3900,9 +3899,8 @@ class ExperimentBase():
                             self.cluster.logger.debug(stdout)
                             """
                     # get metrics of benchmarker components
-                    # only if general monitoring is on
-                    endpoints_cluster = self.cluster.get_service_endpoints(service_name="bexhoma-service-monitoring-default")
-                    if len(endpoints_cluster)>0 or self.cluster.monitor_cluster_exists:
+                    # they are not part of the SUT: only -mc fetches them
+                    if self.cluster.monitor_cluster_active:
                         print(f"{connection:30s}: collecting metrics of benchmarker at connection {connection}")
                         fetch(
                             title="Benchmarking phase: component benchmarker",

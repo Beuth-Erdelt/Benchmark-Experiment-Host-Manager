@@ -1875,7 +1875,7 @@ There is no `JDBC` section, as Redis has no JDBC driver.
 
 ### Deployment
 
-* Single host: [deploymenttemplate-Redis.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Redis.yml), one SUT pod with Redis, a `redis_exporter` and a cAdvisor sidecar.
+* Single host: [deploymenttemplate-Redis.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Redis.yml), one SUT pod with Redis and a `redis_exporter`.
 * Cluster (`-nw` > 0): [deploymenttemplate-RedisCluster.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-RedisCluster.yml), a stateful set of `-nw` * (1 + `-nwr`) worker pods with `--cluster-enabled yes` and `--appendonly yes`, and a job that creates the cluster with `redis-cli --cluster create` once all workers answer.
   * The SUT pod is a placeholder: the data lives in the workers, and the SUT pod is not monitored.
   * Shell scripts run on every worker (script target `workers`).

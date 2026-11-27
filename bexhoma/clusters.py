@@ -435,6 +435,7 @@ class Kubernetes():
         self.workload = {}
         self.monitoring_active = True
         self.monitor_app_active = True
+        # True with -mc: fetch system metrics of all components, not only of the SUT
         self.monitor_cluster_active = False
         # True if cAdvisors and Prometheus run independently of bexhoma
         self.monitor_cluster_exists = False
@@ -2917,15 +2918,16 @@ class Kubernetes():
 
     def start_monitoring_cluster(self, app='', component='monitoring'):
         """
-        Start cluster-level monitoring (Prometheus + node exporters) if not healthy.
+        Make sure cluster-wide system metrics exist: a preinstalled Prometheus, or else the cAdvisor daemonset.
 
         Waits up to 100 seconds for an existing Prometheus to become healthy before
         deploying the daemonset.  Manifest template: ``daemonsettemplate-monitoring.yml``.
+        The daemonset is scraped by the per-experiment Prometheus.
+        Used by ``-m`` and ``-mc`` alike; :attr:`monitor_cluster_active` tells them apart.
 
         :param app: App name (unused; kept for API consistency).
         :param component: Component label.  Defaults to ``monitoring``.
         """
-        self.monitor_cluster_active = True
         self.monitor_cluster_exists = self.is_monitoring_healthy()
         if self.monitor_cluster_exists:
             return

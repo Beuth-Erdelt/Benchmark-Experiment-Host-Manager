@@ -383,7 +383,7 @@ This run uses 10.000.000 operations (`-xop`).
 All metrics in monitoring are summed across all matching components.
 In this example, this means that used memory, CPU time, etc. are summed across all 3 tservers of the YugabyteDB cluster.
 
-The `-mc` option is mandatory here: the sidecar container approach does not work (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
+System metrics come from a cluster-wide installation (a preinstalled Prometheus or the cAdvisor daemonset bexhoma deploys), so they are available although bexhoma does not manage the YugabyteDB deployment.
 See [Monitoring](Monitoring.md) for further explanation.
 
 ```bash
@@ -1514,7 +1514,7 @@ BEXHOMA_PORT = 5433,
   * `config.sut_container_name`: fixed name for the container of the SUT (empty)
   * `config.get_worker_pods()`: finds the pods of the worker nodes (`yb-tserver-0`, `yb-tserver-1`, `yb-tserver-2`), for host infos like CPU, RAM, node name
   * `config.create_monitoring()`: creates names for monitored components (for the SUT `yb-tserver-`), so the placeholder does not contribute to the monitoring
-  * `config.get_worker_endpoints()`: finds the sidecar containers of the workers of a distributed DBMS for monitoring
+  * `config.get_worker_endpoints()`: finds the endpoints of the workers of a distributed DBMS for application monitoring
   * `config.set_metric_of_config()`: creates PromQL queries from templates (pod like `yb-tserver`, no container name)
 * The YCSB images include the YugabyteDB JDBC driver ([generator](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/generator/Dockerfile), [benchmarker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/benchmarker/Dockerfile)):
 

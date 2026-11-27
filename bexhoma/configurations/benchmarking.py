@@ -318,9 +318,8 @@ class BenchmarkRunner:
                 print(f"{connection:30s}: needs monitoring (custom metrics) for stateful set {name}")
                 fetches.append(dict(title=f"Loading phase: component {name}", container="dbms", component=name,
                                     component_type=f"{name}loading", metrics_type=f"metrics_{name}"))
-        endpoints_cluster = cfg.experiment.cluster.get_service_endpoints(
-            service_name="bexhoma-service-monitoring-default")
-        if len(endpoints_cluster) > 0 or cfg.experiment.cluster.monitor_cluster_exists:
+        # loader components are not part of the SUT: only -mc fetches them
+        if cfg.experiment.cluster.monitor_cluster_active:
             if "datagenerator" in cfg.experiment.components["loader"]:
                 print(f"{connection:30s}: collecting metrics of data generator at connection {connection}")
                 fetches.append(dict(title="Loading phase: component data generator", container="datagenerator",

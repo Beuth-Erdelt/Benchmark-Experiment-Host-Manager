@@ -1720,7 +1720,7 @@ DBMSBenchmarker cannot connect, so only YCSB is offered.
 
 ### Deployment
 
-* Single node: [deploymenttemplate-Cassandra.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Cassandra.yml), one SUT pod with Cassandra, a `cassandra_exporter` and a cAdvisor sidecar.
+* Single node: [deploymenttemplate-Cassandra.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Cassandra.yml), one SUT pod with Cassandra and a `cassandra_exporter`.
 * Cluster (`-nw` > 0): [deploymenttemplate-CassandraCluster.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-CassandraCluster.yml), a stateful set of nodes with a headless service.
   * The first worker is the seed.
   * The nodes start one after the other, as Cassandra refuses to bootstrap them in parallel, and bexhoma starts loading when the last one has joined.

@@ -9,7 +9,6 @@ spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 26257}
   - {port: 8080, protocol: TCP, name: port-web, targetPort: 8080}
-  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
 #metadata:
 #  # This service is meant to be used by clients of the database. It exposes a ClusterIP that will
@@ -58,8 +57,6 @@ spec:
   - {port: 26257, protocol: TCP, name: port-dbms, targetPort: 26257}
   - {port: 9500, protocol: TCP, name: port-monitoring-application, targetPort: 8080}
   - {port: 8080, protocol: TCP, name: port-web, targetPort: 8080}
-  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
-  #- {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   # We want all pods in the StatefulSet to have their addresses published for
   # the sake of the other CockroachDB pods even before they're ready, since they
   # have to be able to talk to each other in order to become ready.
@@ -192,34 +189,6 @@ spec:
             --join $(expr $BEXHOMA_WORKER_LIST)
             --cache $(expr $MEMORY_LIMIT_MIB / 5)MiB
             --max-sql-memory $(expr $MEMORY_LIMIT_MIB / 5)MiB
-      - name: cadvisor
-        image: gcr.io/cadvisor/cadvisor:v0.47.0
-        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
-        ports:
-        - containerPort: 9300
-          #hostPort: 9300
-          name: http
-          protocol: TCP
-        resources:
-          requests:
-            cpu: 150m
-            memory: 200Mi
-        volumeMounts:
-        - name: rootfs
-          mountPath: /rootfs
-          readOnly: true
-        - name: var-run
-          mountPath: /var/run
-          readOnly: true
-        - name: sys
-          mountPath: /sys
-          readOnly: true
-        - name: docker
-          mountPath: /var/lib/docker
-          readOnly: true
-        - name: disk
-          mountPath: /dev/disk
-          readOnly: true
       # No pre-stop hook is required, a SIGTERM plus some time is all that's
       # needed for graceful shutdown of a node.
       terminationGracePeriodSeconds: 60
@@ -228,21 +197,6 @@ spec:
         persistentVolumeClaim: {claimName: bexhoma-data}
       - name: bxw
         persistentVolumeClaim: {claimName: bxw}
-      - name: rootfs
-        hostPath:
-          path: /
-      - name: var-run
-        hostPath:
-          path: /var/run
-      - name: sys
-        hostPath:
-          path: /sys
-      - name: docker
-        hostPath:
-          path: /var/lib/docker
-      - name: disk
-        hostPath:
-          path: /dev/disk
       - name: dshm
         emptyDir:
           medium: Memory

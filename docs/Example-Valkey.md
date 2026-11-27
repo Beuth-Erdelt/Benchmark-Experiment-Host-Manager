@@ -2064,7 +2064,7 @@ There is no `JDBC` section, as Valkey has no JDBC driver.
 
 ### Deployment
 
-* Single host: [deploymenttemplate-Valkey.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Valkey.yml), one SUT pod with Valkey, a `redis_exporter` and a cAdvisor sidecar.
+* Single host: [deploymenttemplate-Valkey.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Valkey.yml), one SUT pod with Valkey and a `redis_exporter`.
 * Cluster (`-nw` > 0): [deploymenttemplate-ValkeyCluster.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-ValkeyCluster.yml), a stateful set of `-nw` * (1 + `-nwr`) worker pods with `--appendonly yes`, and a job that creates the cluster once all workers answer.
   * The SUT pod is a placeholder: the data lives in the workers, and the SUT pod is not monitored.
   * Shell scripts run on every worker (script target `workers`).

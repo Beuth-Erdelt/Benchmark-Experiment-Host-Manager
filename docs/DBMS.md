@@ -305,9 +305,9 @@ These names must be used exactly:
 |---|---|---|
 | `dbms` | SUT Deployment / StatefulSet | Primary DBMS process. `start_sut()` reads its `args` for the summary and manages its volume mounts. |
 | `monitor-application` | SUT Deployment | Application metrics exporter (e.g. postgres-exporter). Removed when app monitoring is disabled. |
-| `cadvisor` | SUT / worker (sidecar) | Node metrics. Removed when cluster-level monitoring already exists. |
-| `dcgm-exporter` | SUT / worker (sidecar) | GPU metrics. Removed when cluster-level monitoring already exists. |
 | `pool` | Connection-pool Deployment | PGBouncer or equivalent. |
+
+Templates contain no container for system metrics: those come from a cluster-wide installation (see [Monitoring](Monitoring.md)).
 
 For **job templates** (loading and benchmarking) the reserved names are `datagenerator` (initContainer), `sensor` (loader), and `dbmsbenchmarker` (benchmarker).
 See the [Kubernetes manifests README](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/README.md) for details.
@@ -325,7 +325,7 @@ The following volume names in pod specs are matched by name in `start_sut()`:
 
 ### Service port names
 
-`start_sut()` strips Service ports by name when monitoring is disabled.
+`start_sut()` strips Service ports by name when application monitoring is disabled.
 Always name the DBMS connection port `port-dbms` so it is never stripped.
 
 | Port name | Always kept |
@@ -333,7 +333,7 @@ Always name the DBMS connection port `port-dbms` so it is never stripped.
 | `port-dbms` | Yes |
 | `port-bus` | Yes (cluster bus for distributed DBMSs) |
 | `port-web` | Yes |
-| `port-monitoring` | Stripped when monitoring inactive |
+| `port-sut-*` | Yes |
 | `port-monitoring-application` | Stripped when app monitoring inactive |
 
 ### Server options via `--set`
