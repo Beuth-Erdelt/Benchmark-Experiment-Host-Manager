@@ -26,16 +26,13 @@ Copy it to `cluster.config` and adjust the sections below before running any exp
 
 ```python
 'benchmarker': {
-    'resultfolder': '/home/myself/benchmarks',
-    'jarfolder':    './jars/'
+    'resultfolder': '/home/myself/benchmarks'
 },
 ```
 
 | Key | Description |
 |---|---|
 | `resultfolder` | Absolute path on the **local machine** where experiment results are written. Must exist and be writable. This directory is also mounted into the evaluator container so results are accessible from inside the cluster. |
-| `jarfolder` | Path to the directory holding JDBC driver jars. The default `./jars/` works if you keep drivers next to `cluster.config`. Only needed for SQL DBMS used with DBMSBenchmarker. |
-
 ---
 
 ## `credentials` — Kubernetes Access and Monitoring
