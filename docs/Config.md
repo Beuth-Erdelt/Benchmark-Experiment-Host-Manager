@@ -26,16 +26,13 @@ Copy it to `cluster.config` and adjust the sections below before running any exp
 
 ```python
 'benchmarker': {
-    'resultfolder': '/home/myself/benchmarks',
-    'jarfolder':    './jars/'
+    'resultfolder': '/home/myself/benchmarks'
 },
 ```
 
 | Key | Description |
 |---|---|
 | `resultfolder` | Absolute path on the **local machine** where experiment results are written. Must exist and be writable. This directory is also mounted into the evaluator container so results are accessible from inside the cluster. |
-| `jarfolder` | Path to the directory holding JDBC driver jars. The default `./jars/` works if you keep drivers next to `cluster.config`. Only needed for SQL DBMS used with DBMSBenchmarker. |
-
 ---
 
 ## `credentials` — Kubernetes Access and Monitoring
@@ -67,7 +64,7 @@ Copy it to `cluster.config` and adjust the sections below before running any exp
 | `context.<name>.namespace` | Kubernetes namespace in which bexhoma deploys all components. Ensure your kubeconfig user has `get`/`create`/`delete` rights on this namespace. |
 | `context.<name>.clustername` | Human-readable label shown in experiment summaries and reports. |
 | `context.<name>.service_sut` | DNS name template for reaching the SUT (System Under Test) service from within the cluster. The placeholders `{service}` and `{namespace}` are filled in automatically. The default follows the standard Kubernetes in-cluster DNS pattern. |
-| `context.<name>.port` | Port on the local machine used when forwarding traffic to the SUT via `kubectl port-forward`. Defaults to `9091`. This is also the port exposed by all SUT services inside the cluster. |
+| `context.<name>.port` | Local base port for forwarding traffic to the SUT via `kubectl port-forward`. Defaults to `9091`. The remote port is always the SUT service's `port-dbms` (9091 inside the cluster). `bexperiments master` uses the first free local port from this one on, so several DBMS can be forwarded at the same time; give each context its own range (e.g. 9091 and 9191) to forward to several clusters at once. |
 | `context.<name>.storage_classes` | Optional list of Kubernetes StorageClass names available in this cluster for the SUT persistent volume, e.g. `['local-hdd', 'shared', 'cephcsi']`. Each name must match an actual `StorageClass` object in the cluster. Passed via `-rst`/`--request-storage-type`. `''`/unset (ephemeral storage) and `'ramdisk'` (in-memory) are always valid and do not need to be listed here. |
 
 To use a **second cluster** simply add another entry under `context`:

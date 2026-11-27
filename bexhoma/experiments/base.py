@@ -1110,11 +1110,12 @@ class ExperimentBase():
         Generate a ``kubectl port-forward`` command string for a given service.
 
         :param service: Name of the Kubernetes service to forward.
-        :return: Shell command string that forwards the cluster port to localhost.
+        :return: Shell command string that forwards the service's ``port-dbms``
+            to the context's local ``port``.
         """
         context = self.cluster.context
         port = self.cluster.port
-        forward = ['kubectl', f'--context {context}', 'port-forward', 'service/'+service, f"{port}:{port}"]
+        forward = ['kubectl', f'--context {context}', 'port-forward', 'service/'+service, f"{port}:port-dbms"]
         command = " ".join(forward)
         #print("{:30s}: {}".format(configuration, command))
         return command

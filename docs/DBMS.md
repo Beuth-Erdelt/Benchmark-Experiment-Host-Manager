@@ -52,7 +52,7 @@ Every entry in the `dockers` section of `cluster.config` may contain the followi
 | `template.JDBC.driver` | yes¹ | Fully qualified Java class name of the JDBC driver |
 | `template.JDBC.auth` | yes¹ | `[username, password]` pair |
 | `template.JDBC.url` | yes¹ | JDBC URL template. Placeholders: `{serverip}`, `{database}`, `{schema}`, `{dbname}`, `{timeout_ms}`, `{namespace}` |
-| `template.JDBC.jar` | yes¹ | JDBC jar filename(s) expected in `jarfolder` |
+| `template.JDBC.jar` | yes¹ | JDBC jar filename(s) expected in the benchmarker image's `jars/` folder |
 | `template.JDBC.database` | no | Default database name (substituted into `{database}` in `loadData` and the JDBC URL; overridden per tenant in multi-tenant mode) |
 | `template.JDBC.schema` | no | Default schema name (substituted into `{schema}`; overridden per tenant) |
 | `template.init_SQL` | no | SQL statement executed after connection is established (e.g., `SET optimizer_switch = ...`) |

@@ -400,21 +400,18 @@ class Kubernetes():
         self.yamlfolder = yamlfolder
         self.contextdata = {}
         self.host = 'localhost'
-        self.port = None
+        # Local base port for port-forwards to the SUT (the remote port is the service's port-dbms)
+        self.port = 9091
         self.storage_classes = []
 
+        # The given context, otherwise the current one of the kubeconfig
         if context is None:
             try:
                 context = kubernetes_config.list_kube_config_contexts()[1]['name']
-                self.contextdata = self.config['credentials']['k8s']['context'][context]
-                self.host = 'localhost'
-                self.port = self.contextdata['port']
-                self.namespace = self.contextdata['namespace']
-                self.appname = self.config['credentials']['k8s']['appname']
-                self.yamlfolder = yamlfolder
-                self.storage_classes = self.contextdata.get('storage_classes', [])
-            except Exception:
-                print("WARN: No Kubernetes context found")
+            except (kubernetes_config.ConfigException, OSError) as e:
+                print(f"WARN: No current Kubernetes context found in kubeconfig: {e}")
+        if context is not None:
+            self._read_context_config(context)
 
         self.context = context
         self.experiments = []
@@ -458,6 +455,31 @@ class Kubernetes():
         if connect:
             self.cluster_access()
         self.experiments = []
+
+    def _read_context_config(self, context):
+        """
+        Read the settings of a context from ``credentials.k8s`` in ``cluster.config``.
+
+        Sets ``contextdata``, ``port``, ``namespace``, ``appname`` and
+        ``storage_classes``. Missing entries keep their defaults and print a
+        warning naming what is missing.
+
+        :param context: kubectl context name.
+        """
+        config_k8s = self.config.get('credentials', {}).get('k8s', {})
+        contexts = config_k8s.get('context', {})
+        if context not in contexts:
+            print(f"WARN: Kubernetes context {context} not found in {self.clusterconfig} "
+                  f"(credentials.k8s.context has: {', '.join(contexts) or 'none'})")
+            return
+        self.contextdata = contexts[context]
+        for key in ('port', 'namespace'):
+            if key not in self.contextdata:
+                print(f"WARN: Kubernetes context {context} in {self.clusterconfig} has no '{key}'")
+        self.port = self.contextdata.get('port', self.port)
+        self.namespace = self.contextdata.get('namespace', self.namespace)
+        self.appname = config_k8s.get('appname', self.appname)
+        self.storage_classes = self.contextdata.get('storage_classes', [])
 
     def cluster_access(self):
         """
@@ -2887,7 +2909,7 @@ class Kubernetes():
         config_k8s = self.config['credentials']['k8s']
         if 'service_monitoring' in config_k8s['monitor']:
             url = config_k8s['monitor']['service_monitoring'].format(
-                namespace=self.contextdata['namespace'], service="monitoring"
+                namespace=self.namespace, service="monitoring"
             )
             query = "sum(node_memory_MemTotal_bytes)"
             safe_query = urllib.parse.quote_plus(query)
@@ -3193,9 +3215,34 @@ class Kubernetes():
             fullcommand = f'port-forward pod/{pod_dashboard} 8050:8050 8888:8888 --address 0.0.0.0'
             self.kubectl(fullcommand)
 
+    @staticmethod
+    def find_free_local_port(base_port, tries=100, address='0.0.0.0'):
+        """
+        Return the first local port from ``base_port`` on that can be bound.
+
+        Tries ``base_port``, ``base_port+1``, ... so that several port-forwards
+        (several DBMS, several clusters) can run at the same time.
+
+        :param base_port: First port to try (the context's ``port``).
+        :param tries: Number of ports to try.
+        :param address: Local address the port-forward listens on.
+        :return: Free port number, or ``None`` if none of the ports is free.
+        """
+        for port in range(int(base_port), int(base_port) + tries):
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                try:
+                    s.bind((address, port))
+                    return port
+                except OSError:
+                    continue
+        return None
+
     def forward_sut_port(self, experiment='', configuration=''):
         """
         Forward the SUT master service port to localhost.
+
+        The local port is the first free one from the context's ``port`` on,
+        the remote port is the service's ``port-dbms``.
 
         :param experiment: Filter by experiment code (optional).
         :param configuration: Filter by DBMS configuration name (optional).
@@ -3210,8 +3257,12 @@ class Kubernetes():
         )
         if pods_master:
             pod_master = pods_master[0]
-            print(f"Connect to {pod_master}")
-            fullcommand = f'port-forward svc/{pod_master} {self.port} --address 0.0.0.0'
+            port = self.find_free_local_port(self.port)
+            if port is None:
+                print(f"ERROR: No free local port from {self.port} on")
+                return
+            print(f"Connect to {pod_master} via localhost:{port}")
+            fullcommand = f'port-forward svc/{pod_master} {port}:port-dbms --address 0.0.0.0'
             self.kubectl(fullcommand)
 
     def add_to_messagequeue(self, queue, data):
