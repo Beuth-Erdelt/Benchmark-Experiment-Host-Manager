@@ -62,6 +62,29 @@ bexhoma hammerdb `
 
 Write-ExperimentResult $LASTEXITCODE "HammerDB monitoring  sf=48  nbp=1,2"
 
+#### HammerDB client resources (Example-HammerDB.md)
+bexhoma hammerdb `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 48                        <# scaling factor (number of warehouses) #> `
+  -xsd 5                        <# benchmark duration in minutes #> `
+  -nlt 16                       <# threads per loader pod (virtual users building the schema) #> `
+  -nbp 1                        <# one benchmarking pod #> `
+  -nbt "8,16,32,64"             <# virtual users to sweep (comma-separated) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics of loader and benchmarker #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rsr                          <# delete and recreate the PVC at experiment start, so the loader is measured #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_postgresql_clients.log" -Encoding utf8
+
+Write-ExperimentResult $LASTEXITCODE "HammerDB clients  sf=48  nbt=8,16,32,64"
+
+
 
 #### HammerDB Transaction Counter (Example-HammerDB.md)
 bexhoma hammerdb `

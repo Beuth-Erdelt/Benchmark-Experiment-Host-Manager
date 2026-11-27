@@ -125,6 +125,58 @@ bexhoma tpch \
 
 report_result $? "TPC-H monitoring  sf=10"
 
+#### TPC-H client resources (Example-TPC-H.md)
+# Resources of the clients at SF 100: data generator, loader and benchmarker, data generated again
+# -dbms MonetDB                 DBMS under test
+# -sf 100                       scaling factor (controls database size in GB)
+# -nc 1                         number of repeated runs per configuration
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xrd                          generate the raw data again, so the data generator is measured
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics of loader, data generator and benchmarker
+# -ms 1                         one configuration at a time, required by -xrd
+# -t 3600                       query timeout in seconds
+# -lc 16                        CPU limit for the SUT container
+# -lr 256Gi                     RAM limit for the SUT container
+# -rc 16                        CPU requested for the SUT container
+# -rr 256Gi                     RAM requested for the SUT container
+# -rsr                          delete and recreate the PVC at experiment start
+# -rss 1000Gi                   size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpch \
+  -dbms MonetDB \
+  -sf 100 \
+  -nc 1 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xrd \
+  -m \
+  -mc \
+  -ms 1 \
+  -t 3600 \
+  -lc 16 \
+  -lr 256Gi \
+  -rc 16 \
+  -rr 256Gi \
+  -rsr \
+  -rss 1000Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_tpch_monetdb_clients.log
+
+report_result $? "TPC-H MonetDB clients  sf=100  ne=1,2"
+
+
 
 #### TCP-H Throughput (Example-TPC-H.md)
 # -dbms PostgreSQL              DBMS under test

@@ -853,6 +853,51 @@ This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during load
 Metrics are fetched every 30 seconds, so a short phase has few samples.
 
 
+## Resources of the Clients
+
+To get an impression of the resources the clients need, `-mc` also monitors the components outside the SUT.
+This run uses MonetDB at SF 100, so that every phase lasts long enough for the monitoring.
+`-xrd` generates the raw data again although it exists on the shared data volume, so that the summary also contains the data generator; with `-xrd` only one configuration runs at a time (`-ms 1`).
+`-ne 1,2` runs one and then two parallel query streams.
+
+```bash
+bexhoma tpch \
+  -dbms MonetDB \
+  -sf 100 \
+  -nc 1 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xrd \
+  -m \
+  -mc \
+  -ms 1 \
+  -t 3600 \
+  -lc 16 \
+  -lr 256Gi \
+  -rc 16 \
+  -rr 256Gi \
+  -rsr \
+  -rss 1000Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_tpch_monetdb_clients.log
+```
+
+The tables *Loading phase: component data generator*, *Loading phase: component loader* and *Benchmarking phase: component benchmarker* show the clients: `CPU [CPUs]` is the CPU time in seconds, `Max CPU` the peak number of cores and `Max RAM [Gb]` the peak working set of all pods of the component.
+The data generator and the loader run in 8 pods (`-nlp 8`); the benchmarker runs one pod per stream.
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_tpch_monetdb_clients_summary.md" target="_blank" rel="noopener">docs_tpch_monetdb_clients.log</a></summary>
+
+```markdown
+
+```
+
+</details>
+
+
 ## Perform Benchmark - Throughput Test
 
 The experiment is run with the [tpch file](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/tpch.py).

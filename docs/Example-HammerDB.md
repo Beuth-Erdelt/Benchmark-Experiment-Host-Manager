@@ -712,6 +712,43 @@ This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during load
 In this example, metrics are very instable. Metrics are fetched every 30 seconds.
 This is too coarse for such a quick example.
 
+## Resources of the Clients
+
+To get an impression of the resources the clients need, `-mc` also monitors the components outside the SUT.
+This run builds 48 warehouses with 16 virtual users (`-nlt 16`) and sweeps the number of virtual users of one benchmarker pod (`-nbt 8,16,32,64`).
+
+```bash
+bexhoma hammerdb \
+  -dbms PostgreSQL \
+  -sf 48 \
+  -xsd 5 \
+  -nlt 16 \
+  -nbp 1 \
+  -nbt 8,16,32,64 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -lr 64Gi \
+  -rr 64Gi \
+  -rsr \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_hammerdb_postgresql_clients.log
+```
+
+The tables *Loading phase: component loader* and *Benchmarking phase: component benchmarker* show the clients: `CPU [CPUs]` is the CPU time in seconds, `Max CPU` the peak number of cores and `Max RAM [Gb]` the peak working set.
+One row per number of virtual users shows how CPU and RAM of the benchmarker grow with the virtual users.
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_hammerdb_postgresql_clients_summary.md" target="_blank" rel="noopener">docs_hammerdb_postgresql_clients.log</a></summary>
+
+```markdown
+
+```
+
+</details>
+
+
 ## Transaction Counter
 
 HammerDB's summary reports one NOPM and one TPM value per run.

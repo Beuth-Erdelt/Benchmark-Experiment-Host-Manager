@@ -138,6 +138,52 @@ bexhoma ycsb \
 
 report_result $? "YCSB monitoring  sf=3  nbp=1,8"
 
+#### YCSB client resources (Example-YCSB.md)
+# Resources of the clients: loader and benchmarker at a high throughput target
+# -dbms PostgreSQL              DBMS under test
+# -sf 10                        scaling factor (number of records in millions)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
+# -xtb 16384                    base ops/s used to compute throughput targets (2^14)
+# -xnbf 4                       throughput target as a multiple of the base ops/s
+# -xnlf 4                       loading throughput target as a multiple of the base ops/s
+# -nc 1                         number of repeated runs per configuration
+# -ne 1                         parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 64                       threads per loader pod
+# -nbp 1,8                      benchmarking pod counts to sweep (comma-separated)
+# -nbt 64                       threads per benchmarking pod
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics of loader and benchmarker
+# -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -rsr                          delete and recreate the PVC at experiment start, so the loader is measured
+# -rss 50Gi                     size of the persistent volume claim
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma ycsb \
+  -dbms PostgreSQL \
+  -sf 10 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rsr \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ycsb_postgresql_clients.log
+
+report_result $? "YCSB clients  sf=10  nbp=1,8"
+
+
 
 #### YCSB Persistent Storage (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test

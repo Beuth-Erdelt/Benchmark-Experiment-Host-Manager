@@ -755,6 +755,42 @@ In this example, metrics are very instable. Metrics are fetched every 30 seconds
 This is too coarse for such a quick example.
 
 
+## Resources of the Clients
+
+To get an impression of the resources the clients need, `-mc` also monitors the components outside the SUT.
+This run sweeps the number of terminals of one benchmarker pod (`-nbt 40,80,160,320`) without a throughput target (`-xtb 0`), so every terminal sends as fast as the SUT answers.
+The loader of Benchbase starts one thread per processor it sees, independent of `-nlt`: `-nlt` sets the terminals, which only matter for benchmarking. A loader pod without CPU limit therefore uses the cores of its node.
+
+```bash
+bexhoma benchbase \
+  -dbms PostgreSQL \
+  -sf 16 \
+  -xsd 5 \
+  -xtb 0 \
+  -nbp 1 \
+  -nbt 40,80,160,320 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rsr \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_benchbase_postgresql_clients.log
+```
+
+The tables *Loading phase: component loader* and *Benchmarking phase: component benchmarker* show the clients: `CPU [CPUs]` is the CPU time in seconds, `Max CPU` the peak number of cores and `Max RAM [Gb]` the peak working set.
+One row per number of terminals shows how CPU and RAM of the benchmarker grow with the terminals.
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_benchbase_postgresql_clients_summary.md" target="_blank" rel="noopener">docs_benchbase_postgresql_clients.log</a></summary>
+
+```markdown
+
+```
+
+</details>
+
+
 ## Use Persistent Storage
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.

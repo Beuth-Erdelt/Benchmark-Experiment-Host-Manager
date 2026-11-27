@@ -81,6 +81,37 @@ bexhoma tpch `
 
 Write-ExperimentResult $LASTEXITCODE "TPC-H monitoring  sf=10"
 
+#### TPC-H client resources (Example-TPC-H.md)
+bexhoma tpch `
+  -dbms MonetDB                 <# DBMS under test #> `
+  -sf 100                       <# scaling factor (controls database size in GB) #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne "1,2"                     <# parallel client counts to sweep (comma-separated) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 8                        <# threads per loader pod #> `
+  -xii                          <# create indexes after data load #> `
+  -xic                          <# enforce constraints after data load #> `
+  -xis                          <# run ANALYZE after data load #> `
+  -xrd                          <# generate the raw data again, so the data generator is measured #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics of loader, data generator and benchmarker #> `
+  -ms 1                         <# one configuration at a time, required by -xrd #> `
+  -t 3600                       <# query timeout in seconds #> `
+  -lc 16                        <# CPU limit for the SUT container #> `
+  -lr 256Gi                     <# RAM limit for the SUT container #> `
+  -rc 16                        <# CPU requested for the SUT container #> `
+  -rr 256Gi                     <# RAM requested for the SUT container #> `
+  -rsr                          <# delete and recreate the PVC at experiment start #> `
+  -rss 1000Gi                   <# size of the persistent volume claim #> `
+  -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_tpch_monetdb_clients.log" -Encoding utf8
+
+Write-ExperimentResult $LASTEXITCODE "TPC-H MonetDB clients  sf=100  ne=1,2"
+
+
 
 #### TCP-H Throughput (Example-TPC-H.md)
 bexhoma tpch `

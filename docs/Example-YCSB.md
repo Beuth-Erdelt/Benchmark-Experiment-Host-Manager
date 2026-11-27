@@ -1194,6 +1194,47 @@ This gives a survey about CPU (in CPU seconds) and RAM usage (in Gb) during load
 In this example, metrics are very instable. Metrics are fetched every 30 seconds.
 This is too coarse for such a quick example.
 
+## Resources of the Clients
+
+To get an impression of the resources the clients need, `-mc` also monitors the components outside the SUT.
+This run loads 10 million records with 8 loader pods and runs workload A at a target of 65536 operations per second (`-xtb 16384 -xnbf 4`), first in one benchmarker pod and then split into 8 pods (`-nbp 1,8`) with the same 64 threads in total.
+
+```bash
+bexhoma ycsb \
+  -dbms PostgreSQL \
+  -sf 10 \
+  -xwl a \
+  -xtb 16384 \
+  -xnbf 4 \
+  -xnlf 4 \
+  -nc 1 \
+  -ne 1 \
+  -nlp 8 \
+  -nlt 64 \
+  -nbp 1,8 \
+  -nbt 64 \
+  -m \
+  -mc \
+  -ms $BEXHOMA_MS \
+  -rsr \
+  -rss 50Gi \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_ycsb_postgresql_clients.log
+```
+
+The tables *Loading phase: component loader* and *Benchmarking phase: component benchmarker* show the clients: `CPU [CPUs]` is the CPU time in seconds, `Max CPU` the peak number of cores and `Max RAM [Gb]` the peak working set of all pods of the component.
+Comparing the rows of one and of 8 benchmarker pods shows the overhead of splitting the same load into more pods.
+
+<details>
+<summary>Show <a href="https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/logs_tests/docs_ycsb_postgresql_clients_summary.md" target="_blank" rel="noopener">docs_ycsb_postgresql_clients.log</a></summary>
+
+```markdown
+
+```
+
+</details>
+
+
 ## Use Persistent Storage
 
 The default behaviour of bexhoma is that the database is stored inside the ephemeral storage of the Docker container.
