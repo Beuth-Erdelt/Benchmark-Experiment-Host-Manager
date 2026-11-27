@@ -129,7 +129,6 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -154,7 +153,6 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -sl                           <# skip loading phase (reuse existing data) #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -190,7 +188,6 @@ bexhoma ycsb `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_yugabytedb_appmetrics.log" -Encoding utf8
 
@@ -226,7 +223,6 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -rsr                          <# delete any existing PVC for the SUT before starting #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
@@ -262,7 +258,6 @@ bexhoma benchbase `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 16                       <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -292,7 +287,6 @@ bexhoma benchbase `
   -xkey                         <# simulate user think time and keying delays #> `
   -xli 30                       <# log status to stdout every x seconds #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
   -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
@@ -321,7 +315,6 @@ bexhoma benchbase `
   -nbt 16                       <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_yugabytedb_appmetrics.log" -Encoding utf8
 

@@ -383,7 +383,7 @@ This run uses 10.000.000 operations (`-xop`).
 All metrics in monitoring are summed across all matching components.
 In this example, this means that used memory, CPU time, etc. are summed across all 3 tservers of the YugabyteDB cluster.
 
-The `-mc` option is mandatory here: the sidecar container approach does not work (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
+System metrics come from a cluster-wide installation (a preinstalled Prometheus or the cAdvisor daemonset bexhoma deploys), so they are available although bexhoma does not manage the YugabyteDB deployment.
 See [Monitoring](Monitoring.md) for further explanation.
 
 ```bash
@@ -402,7 +402,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_monitoring.log
@@ -651,7 +650,7 @@ Test successful!
 ### Application Metrics
 
 Collecting application metrics for YugabyteDB is supported.
-It can be activated by `-m -mc -ma`.
+It can be activated by `-m -ma`.
 Prometheus discovers the master pods (port 7000) and the tserver pods (port 9000) and scrapes the native endpoint `/prometheus-metrics` of YugabyteDB, with the metric sets `yb-master` and `yb-tserver`.
 See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
@@ -672,7 +671,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_appmetrics.log
 ```
@@ -966,7 +964,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -sl \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1186,7 +1183,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rsr \
   -rss 50Gi \
@@ -1514,7 +1510,7 @@ BEXHOMA_PORT = 5433,
   * `config.sut_container_name`: fixed name for the container of the SUT (empty)
   * `config.get_worker_pods()`: finds the pods of the worker nodes (`yb-tserver-0`, `yb-tserver-1`, `yb-tserver-2`), for host infos like CPU, RAM, node name
   * `config.create_monitoring()`: creates names for monitored components (for the SUT `yb-tserver-`), so the placeholder does not contribute to the monitoring
-  * `config.get_worker_endpoints()`: finds the sidecar containers of the workers of a distributed DBMS for monitoring
+  * `config.get_worker_endpoints()`: finds the endpoints of the workers of a distributed DBMS for application monitoring
   * `config.set_metric_of_config()`: creates PromQL queries from templates (pod like `yb-tserver`, no container name)
 * The YCSB images include the YugabyteDB JDBC driver ([generator](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/generator/Dockerfile), [benchmarker](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/images/ycsb/benchmarker/Dockerfile)):
 
@@ -1567,7 +1563,6 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 16 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_yugabytedb.log
@@ -1888,7 +1883,6 @@ bexhoma benchbase \
   -xkey \
   -xli 30 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_yugabytedb_keytime.log
@@ -2375,7 +2369,6 @@ bexhoma benchbase \
   -nbt 16 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   run &>$LOG_DIR/docs_benchbase_yugabytedb_appmetrics.log
 ```

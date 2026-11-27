@@ -288,8 +288,7 @@ This forwards ports, so you have
 
 [Monitoring](Monitoring.md) can be activated for DBMS only (`-m`) or for all components (`-mc`).
 
-The `-mc` option is mandatory here: The sidecar container approach is not working (since bexhoma does not manage the deployment), so either you have Prometheus / Node exporter already installed in your cluster or a daemonset is needed.
-Moreover the SUT itself cannot be monitored, since it is outside of the cluster.
+The `-mc` option is needed here: the SUT itself cannot be monitored, since it is outside of the cluster, so only the other components (loader, benchmarker) have system metrics.
 For further explanation see the monitoring section of this documentation.
 
 The following run skips loading (`-sl`), as the data of the run above is still present in the database, and monitors the components (`-m -mc`):

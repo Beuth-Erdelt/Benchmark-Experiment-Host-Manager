@@ -57,7 +57,6 @@ bexhoma tpch `
   -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lc 16                        <# CPU limit for the SUT container #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `

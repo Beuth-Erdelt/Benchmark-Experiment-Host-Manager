@@ -529,7 +529,7 @@ report_result $? "TPC-DS durability MySQL unsafe"
 #### YCSB Durability PostgreSQL relaxed
 # -dbms PostgreSQL              new: synchronous_commit off during the load
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -570,7 +570,7 @@ report_result $? "YCSB durability PostgreSQL relaxed"
 #### YCSB Durability PGBouncer unsafe
 # -dbms PGBouncer               PostgreSQL scripts in the dbms container behind the pooler
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -611,7 +611,7 @@ report_result $? "YCSB durability PGBouncer unsafe"
 #### YCSB Durability OrioleDB durable
 # -dbms OrioleDB                PostgreSQL scripts (path PostgreSQL), OrioleDB tables
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -652,7 +652,7 @@ report_result $? "YCSB durability OrioleDB durable"
 #### YCSB Durability OrioleDB unsafe
 # -dbms OrioleDB                PostgreSQL scripts (path PostgreSQL), OrioleDB tables
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -693,7 +693,7 @@ report_result $? "YCSB durability OrioleDB unsafe"
 #### YCSB Durability MySQL relaxed
 # -dbms MySQL                   flush 0 and 1G log buffer (YCSB variant)
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -734,7 +734,7 @@ report_result $? "YCSB durability MySQL relaxed"
 #### YCSB Durability MySQL unsafe
 # -dbms MySQL                   also InnoDB redo log off during the load
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -775,7 +775,7 @@ report_result $? "YCSB durability MySQL unsafe"
 #### YCSB Durability Citus relaxed
 # -dbms Citus                   new: synchronous_commit off on coordinator and workers
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -822,7 +822,7 @@ report_result $? "YCSB durability Citus relaxed"
 #### YCSB Durability TiDB relaxed
 # -dbms TiDB                    no durability scripts: loads as configured, scripts []
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s

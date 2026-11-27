@@ -23,7 +23,7 @@ source ./scripts/testfunctions.sh
 # Main example: YCSB on TiDB, quick, without monitoring
 # -dbms TiDB                    DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 1                       throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s
@@ -79,7 +79,7 @@ report_result $? "YCSB TiDB  sf=1  nbp=1"
 # Monitoring: YCSB on TiDB
 # -dbms TiDB                    DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 1                       throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s
@@ -95,7 +95,6 @@ report_result $? "YCSB TiDB  sf=1  nbp=1"
 # -nwr 3                        number of worker node replicas
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -120,7 +119,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 1 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -142,7 +140,7 @@ report_result $? "YCSB TiDB  sf=1  nbp=1"
 # Persistent storage: YCSB on TiDB
 # -dbms TiDB                    DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 1                       throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s
@@ -158,7 +156,6 @@ report_result $? "YCSB TiDB  sf=1  nbp=1"
 # -nwr 3                        number of worker node replicas
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -185,7 +182,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 1 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -216,7 +212,6 @@ report_result $? "YCSB TiDB storage  sf=1  nbp=1  nc=2"
 # -xnpd 3                       number of PD (Placement Driver) nodes
 # -nwr 3                        number of worker node replicas
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -235,7 +230,6 @@ bexhoma benchbase \
   -xnpd 3 \
   -nwr 3 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -260,7 +254,6 @@ report_result $? "Benchbase TiDB  sf=16  nbp=1,2"
 # -xnpd 3                       number of PD (Placement Driver) nodes
 # -nwr 3                        number of worker node replicas
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -282,7 +275,6 @@ bexhoma benchbase \
   -xnpd 3 \
   -nwr 3 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \

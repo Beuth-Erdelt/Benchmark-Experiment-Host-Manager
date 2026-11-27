@@ -61,7 +61,6 @@ report_result $? "Benchbase twitter simple  sf=16  nbp=1"
 # -nbp 1,2,4,8                  benchmarking pod counts to sweep (comma-separated)
 # -nbt 160                      threads per benchmarking pod
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
@@ -80,7 +79,6 @@ bexhoma benchbase \
   -nbp 1,2,4,8 \
   -nbt 160 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 128Gi \
   -rr 128Gi \
@@ -162,7 +160,7 @@ report_result $? "Benchbase chbenchmark scale  sf=100  nbp=1,2,5,10"
 # -dbms PostgreSQL              DBMS under test
 # -sf 1000                      scaling factor (controls database size)
 # -xbt ycsb                     Benchbase benchmark type
-# -xwl c                        YCSB workload template (c = 100%% read)
+# -xwl c                        YCSB workload template (c = 100% read)
 # -xsd 5                        benchmark duration in minutes
 # -xtb 1024                     base ops/s used to compute the throughput target (2^10)
 # -xnbf 16                      throughput target as a multiple of the base ops/s
@@ -195,7 +193,7 @@ report_result $? "Benchbase YCSB workload c  sf=1000  nbp=1,2"
 # -dbms PostgreSQL              DBMS under test
 # -sf 1000                      scaling factor (controls database size)
 # -xbt ycsb                     Benchbase benchmark type
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xsd 5                        benchmark duration in minutes
 # -xtb 1024                     base ops/s used to compute the throughput target (2^10)
 # -xnbf 16                      throughput target as a multiple of the base ops/s
@@ -228,7 +226,7 @@ report_result $? "Benchbase YCSB workload a  sf=1000  nbp=1,2"
 # -dbms PostgreSQL              DBMS under test
 # -sf 1000                      scaling factor (controls database size)
 # -xbt ycsb                     Benchbase benchmark type
-# -xwl b                        YCSB workload template (b = 95%% read / 5%% update)
+# -xwl b                        YCSB workload template (b = 95% read / 5% update)
 # -xsd 5                        benchmark duration in minutes
 # -xtb 1024                     base ops/s used to compute the throughput target (2^10)
 # -xnbf 16                      throughput target as a multiple of the base ops/s
@@ -261,7 +259,7 @@ report_result $? "Benchbase YCSB workload b  sf=1000  nbp=1,2"
 # -dbms PostgreSQL              DBMS under test
 # -sf 1000                      scaling factor (controls database size)
 # -xbt ycsb                     Benchbase benchmark type
-# -xwl d                        YCSB workload template (d = 95%% read / 5%% insert)
+# -xwl d                        YCSB workload template (d = 95% read / 5% insert)
 # -xsd 5                        benchmark duration in minutes
 # -xtb 1024                     base ops/s used to compute the throughput target (2^10)
 # -xnbf 16                      throughput target as a multiple of the base ops/s
@@ -294,7 +292,7 @@ report_result $? "Benchbase YCSB workload d  sf=1000  nbp=1"
 # -dbms PostgreSQL              DBMS under test
 # -sf 1000                      scaling factor (controls database size)
 # -xbt ycsb                     Benchbase benchmark type
-# -xwl e                        YCSB workload template (e = 95%% scan / 5%% insert)
+# -xwl e                        YCSB workload template (e = 95% scan / 5% insert)
 # -xsd 5                        benchmark duration in minutes
 # -xtb 1024                     base ops/s used to compute the throughput target (2^10)
 # -xnbf 16                      throughput target as a multiple of the base ops/s
@@ -327,7 +325,7 @@ report_result $? "Benchbase YCSB workload e  sf=1000  nbp=1"
 # -dbms PostgreSQL              DBMS under test
 # -sf 1000                      scaling factor (controls database size)
 # -xbt ycsb                     Benchbase benchmark type
-# -xwl f                        YCSB workload template (f = 50%% read / 50%% read-modify-write)
+# -xwl f                        YCSB workload template (f = 50% read / 50% read-modify-write)
 # -xsd 5                        benchmark duration in minutes
 # -xtb 1024                     base ops/s used to compute the throughput target (2^10)
 # -xnbf 16                      throughput target as a multiple of the base ops/s

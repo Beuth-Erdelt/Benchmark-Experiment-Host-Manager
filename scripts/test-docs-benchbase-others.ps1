@@ -52,7 +52,6 @@ bexhoma benchbase `
   -nbp 1,2,4,8                  <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 160                      <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `

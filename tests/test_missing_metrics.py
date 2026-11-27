@@ -117,6 +117,38 @@ class CollectMissingMetricsTest(unittest.TestCase):
             ("benchmarking", "CPU Memory"): "",
         })
 
+    def test_optional_component_that_ran_is_not_pre_existing(self) -> None:
+        """A data generator with CPU data ran (-xrd): its gaps are judged like any other.
+
+        One that left no CPU data either did not run: the data was pre-existing.
+        """
+        connections = [{"name": "pg", "monitoring": {"metrics": {
+            "total_cpu_util": {"title": "CPU Utilization"},
+            "throttle": {"title": "CPU Throttle", "sparse": True},
+            "fs_write": {"title": "FS Write", "activity_dependent": "total_cpu_util"},
+        }}}]
+
+        def line(title: str, connection: str) -> str:
+            return f'ERROR:root:Metrics missing for {title} (sum(x)) for connection {connection}: {_URL}'
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result_dir = Path(tmp_dir)
+            (result_dir / "connections.config").write_text(repr(connections))
+            # pg-1: the generator ran, only throttling and disk writes have no series
+            (result_dir / missing_metrics.fetch_log_name("pg-1", "datagenerator")).write_text(
+                line("CPU Throttle", "pg-1") + "\n" + line("FS Write", "pg-1"))
+            # pg-2: the generator left no trace, CPU utilization is missing too
+            (result_dir / missing_metrics.fetch_log_name("pg-2", "datagenerator")).write_text(
+                "\n".join(line(title, "pg-2") for title in ("CPU Utilization", "CPU Throttle", "FS Write")))
+            missing = missing_metrics.collect_missing_metrics(result_dir, ["datagenerator"])
+        reasons = {(entry.connection, entry.title): (entry.expected, entry.warning) for entry in missing}
+        self.assertEqual(reasons, {
+            ("pg-1", "CPU Throttle"): (missing_metrics.EXPECTED_SPARSE, ""),
+            ("pg-1", "FS Write"): ("", missing_metrics.WARNING_NO_ACTIVITY),
+            ("pg-2", "CPU Utilization"): (missing_metrics.EXPECTED_DATA_PREEXISTING, ""),
+            ("pg-2", "CPU Throttle"): (missing_metrics.EXPECTED_DATA_PREEXISTING, ""),
+            ("pg-2", "FS Write"): (missing_metrics.EXPECTED_DATA_PREEXISTING, ""),
+        })
+
     def test_sparse_components_only_excuse_the_listed_components(self) -> None:
         connections = [{"name": "pg", "monitoring": {"metrics": {
             "memory": {"title": "CPU Memory", "sparse_components": ["loader", "benchmarker"]},

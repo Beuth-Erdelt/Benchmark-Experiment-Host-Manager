@@ -17,12 +17,6 @@
 ######################################################################################
 FROM prom/prometheus:v3.10.0
 
-######################################################################################
-# Bundle a default Prometheus configuration for reference
-# (overwritten at runtime by the content of BEXHOMA_WORKERS)
-######################################################################################
-COPY prometheus.yml /etc/prometheus/prometheus.yml
-
 USER       nobody
 EXPOSE     9090
 VOLUME     [ "/prometheus" ]

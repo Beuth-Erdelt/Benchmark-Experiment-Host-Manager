@@ -2,10 +2,10 @@
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
-This page shows examples for running benchmarks with all three collector types active simultaneously:
-* `-m`: SUT (system under test) metrics collected by a cluster-wide Prometheus installation
-* `-ma`: Application metrics collected by sidecar containers attached to the SUT pod
-* `-mc`: Cluster-wide metrics collected by the cluster-wide Prometheus installation
+This page shows examples for running benchmarks with all three monitoring options active simultaneously:
+* `-m`: system metrics of the SUT (system under test), collected by a cluster-wide Prometheus installation
+* `-ma`: application metrics collected by sidecar containers attached to the SUT pod
+* `-mc`: system metrics of the other components (loader, data generator, benchmarker), collected by the same installation
 
 The script `scripts/test-docs-collector.sh` runs 28 experiments covering Benchbase TPC-C, TPC-H, YCSB, and HammerDB — each in single-tenant and multi-tenant configurations — as well as TPC-DS, SSB and Hardware. Each benchmark group runs three experiments: two with a fresh persistent volume (`-rsr`) to test data generation and loading, and a third that reuses the existing volume to test repeated benchmarking runs. TPC-DS runs 22 of its 99 queries (`-xaq`), SSB's second experiment uses the flat schema (`-xsv flat`), and Hardware runs one experiment per tool (fio, sysbench, sockperf, netperf), since each tool has its own result columns.
 
@@ -64,7 +64,7 @@ This
   * 1 pod × 160 threads; then 2 pods × 80 threads each
   * target is 16×(`-xnbf`) × 1024 (`-xtb`) ops per pod
   * each stream runs for 5 minutes (`-xsd 5`)
-* monitors SUT metrics (`-m`), application metrics via sidecar (`-ma`), and cluster metrics (`-mc`)
+* monitors SUT metrics (`-m`), application metrics via sidecar (`-ma`), and metrics of the other components (`-mc`)
 * runs at most 1 DBMS at a time (`-ms`)
 
 The result looks something like
@@ -6166,7 +6166,7 @@ This
 * loads TPC-C data for 16 warehouses (`-sf 16`) using 16 loading threads (`-nlt 16`) into a fresh 15Gi volume
 * runs HammerDB for 5 minutes (`-xsd 5`) per stream with two benchmarking configurations: 1 then 2 pods, 16 virtual users each (`-nbp 1,2 -nbt 16`)
 * logs latencies (`-xlat`)
-* monitors SUT metrics (`-m`), application metrics (`-ma`), and cluster metrics (`-mc`)
+* monitors SUT metrics (`-m`), application metrics (`-ma`), and metrics of the other components (`-mc`)
 
 The result looks something like
 
@@ -7064,7 +7064,7 @@ This
 * runs 22 of the 99 queries (`-xaq`), as many as TPC-H has, so the collector reads about as much as for TPC-H
 * runs 2 experiment iterations (`-nc 2`) each with two stream configurations (`-ne 1,2`): 1 then 2 concurrent benchmarking pods
 * sets indexes, constraints, and statistics after loading (`-xii -xic -xis`)
-* monitors SUT metrics (`-m`), application metrics (`-ma`), and cluster metrics (`-mc`)
+* monitors SUT metrics (`-m`), application metrics (`-ma`), and metrics of the other components (`-mc`)
 
 The result looks something like
 
@@ -8401,7 +8401,7 @@ This
 * loads SSB data at SF=1 in the star schema using 8 parallel loader pods (`-nlp 8`) into a fresh volume
 * runs 2 experiment iterations (`-nc 2`) each with two stream configurations (`-ne 1,2`): 1 then 2 concurrent benchmarking pods
 * sets indexes, constraints, and statistics after loading (`-xii -xic -xis`)
-* monitors SUT metrics (`-m`), application metrics (`-ma`), and cluster metrics (`-mc`)
+* monitors SUT metrics (`-m`), application metrics (`-ma`), and metrics of the other components (`-mc`)
 
 The result looks something like
 
@@ -9879,7 +9879,7 @@ bexhoma hardware \
 This
 * runs the CPU and memory tests of sysbench (`-xht sysbench`) for 60 seconds each (`-xtd 60`)
 * uses 1 pod with 1, then 2 threads (`-nbp 1 -nbt 1,2`)
-* limits the SUT container to 2 CPUs (`-lc 2 -rc 2`) and also collects cluster metrics (`-mc`)
+* limits the SUT container to 2 CPUs (`-lc 2 -rc 2`) and also collects metrics of the other components (`-mc`)
 
 The result looks something like
 

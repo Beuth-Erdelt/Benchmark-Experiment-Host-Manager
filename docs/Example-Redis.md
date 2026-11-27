@@ -269,7 +269,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -452,7 +451,7 @@ YCSB SF=3
 ### Application Metrics
 
 Collecting application metrics for Redis is supported for a cluster (`-nw`).
-It can be activated by `-m -mc -ma`.
+It can be activated by `-m -ma`.
 A `redis_exporter` sidecar in every worker pod exposes the metrics on port 9121.
 Prometheus discovers the worker pods only, so a single host has no application metrics.
 See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
@@ -476,7 +475,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_redis_appmetrics.log
@@ -761,7 +759,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -1022,7 +1019,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -1258,7 +1254,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -1593,7 +1588,6 @@ bexhoma ycsb \
   -nwr 1 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -1875,7 +1869,7 @@ There is no `JDBC` section, as Redis has no JDBC driver.
 
 ### Deployment
 
-* Single host: [deploymenttemplate-Redis.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Redis.yml), one SUT pod with Redis, a `redis_exporter` and a cAdvisor sidecar.
+* Single host: [deploymenttemplate-Redis.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-Redis.yml), one SUT pod with Redis and a `redis_exporter`.
 * Cluster (`-nw` > 0): [deploymenttemplate-RedisCluster.yml](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s/deploymenttemplate-RedisCluster.yml), a stateful set of `-nw` * (1 + `-nwr`) worker pods with `--cluster-enabled yes` and `--appendonly yes`, and a job that creates the cluster with `redis-cli --cluster create` once all workers answer.
   * The SUT pod is a placeholder: the data lives in the workers, and the SUT pod is not monitored.
   * Shell scripts run on every worker (script target `workers`).

@@ -117,8 +117,7 @@ Container names inside pods are fixed; `start_sut()` and the evaluator pipeline 
 |---|---|---|
 | `dbms` | SUT Deployment/StatefulSet templates | Primary DBMS; `start_sut()` reads its `args` and manages volume mounts |
 | `monitor-application` | SUT Deployment templates | Application metrics exporter (e.g. postgres-exporter); removed when app monitoring is disabled |
-| `cadvisor` | SUT/worker templates (sidecar) | Node metrics; removed when cluster-level monitoring already exists |
-| `dcgm-exporter` | SUT/worker templates (sidecar) | GPU metrics; removed when cluster-level monitoring already exists |
+| `cadvisor` | `daemonsettemplate-monitoring.yml` only | Container metrics of every node; SUT and worker templates have no system-metrics sidecar |
 | `datagenerator` | Loading Job templates (initContainer) | Data generation before loading; logs saved as `.datagenerator.log` |
 | `sensor` | Loading Job templates (main container) | Loader; logs saved as `.sensor.log` |
 | `dbmsbenchmarker` | Benchmarking Job templates | Benchmarker; logs saved as `.dbmsbenchmarker.log`; **must be named `dbmsbenchmarker`** for timing extraction |
@@ -139,15 +138,15 @@ Volume names in pod specs are matched by name in `start_sut()`:
 
 ### Service port names
 
-`start_sut()` strips Service ports by name when monitoring is inactive.
+`start_sut()` strips Service ports by name when application monitoring is inactive.
 
 | Port name | Always kept | Notes |
 |---|---|---|
 | `port-dbms` | Yes | DBMS connection port |
 | `port-bus` | Yes | Cluster bus port for distributed DBMSs |
 | `port-web` | Yes | Web UI |
-| `port-monitoring` | Stripped when monitoring inactive | cAdvisor metrics |
-| `port-monitoring-application` | Stripped when monitoring inactive | Application metrics exporter |
+| `port-sut-*` | Yes | Hardware benchmark traffic |
+| `port-monitoring-application` | Stripped when app monitoring inactive | Application metrics exporter |
 
 ### Global PVCs (not per-experiment)
 

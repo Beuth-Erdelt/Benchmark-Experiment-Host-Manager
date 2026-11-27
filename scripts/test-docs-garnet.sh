@@ -23,7 +23,7 @@ source ./scripts/testfunctions.sh
 # Main example: single host Garnet, quick, without monitoring
 # -dbms Garnet                  DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -71,7 +71,7 @@ report_result $? "YCSB Garnet single  sf=1  nbp=1"
 # Monitoring: single host Garnet, at least 1 minute of benchmarking
 # -dbms Garnet                  DBMS under test
 # -sf 3                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -83,7 +83,6 @@ report_result $? "YCSB Garnet single  sf=1  nbp=1"
 # -nbt 128                      threads per benchmarking pod
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -105,7 +104,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -123,7 +121,7 @@ report_result $? "YCSB Garnet single monitoring  sf=3  nbp=1"
 # Persistent storage: single host Garnet
 # -dbms Garnet                  DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -135,7 +133,6 @@ report_result $? "YCSB Garnet single monitoring  sf=3  nbp=1"
 # -nbt 128                      threads per benchmarking pod
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -160,7 +157,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 10 \
   -m \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -181,7 +177,7 @@ report_result $? "YCSB Garnet single PVC  sf=1  nbp=1  nc=2"
 # Variant cluster: 3 Garnet instances
 # -dbms Garnet                  DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -194,7 +190,6 @@ report_result $? "YCSB Garnet single PVC  sf=1  nbp=1  nc=2"
 # -nw 3                         number of worker nodes in the cluster
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -218,7 +213,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 10 \
   -m \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -232,7 +226,7 @@ report_result $? "YCSB Garnet cluster 3  sf=1  nbp=1"
 # Variant replication: 3 Garnet instances with 1 replica each
 # -dbms Garnet                  DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -246,7 +240,6 @@ report_result $? "YCSB Garnet cluster 3  sf=1  nbp=1"
 # -nwr 1                        number of worker node replicas
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -271,7 +264,6 @@ bexhoma ycsb \
   -nwr 1 \
   -xop 10 \
   -m \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -286,7 +278,7 @@ report_result $? "YCSB Garnet cluster 3 replication  sf=1  nbp=1"
 # Variant cluster: 3 Garnet instances on persistent storage
 # -dbms Garnet                  DBMS under test
 # -sf 3                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -299,7 +291,6 @@ report_result $? "YCSB Garnet cluster 3 replication  sf=1  nbp=1"
 # -nw 3                         number of Garnet instances (cluster mode)
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -325,7 +316,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 10 \
   -m \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \

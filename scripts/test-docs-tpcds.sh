@@ -83,7 +83,6 @@ report_result $? "TPC-DS PostgreSQL  sf=1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 64Gi                      RAM limit for the SUT container
@@ -110,7 +109,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -130,6 +128,54 @@ bexhoma tpcds \
   run &>$LOG_DIR/docs_tpcds_postgresql_monitoring.log
 
 report_result $? "TPC-DS monitoring  sf=3"
+
+#### TPC-DS client resources (Example-TPC-DS.md)
+# Resources of the clients at SF 30: data generator, loader and benchmarker, data generated again
+# -dbms MonetDB                 DBMS under test
+# -sf 30                        scaling factor (controls database size in GB)
+# -nc 1                         number of repeated runs per configuration
+# -ne 1,2                       parallel client counts to sweep (comma-separated)
+# -nlp 8                        number of data loader pods
+# -nlt 8                        threads per loader pod
+# -xii                          create indexes after data load
+# -xic                          enforce constraints after data load
+# -xis                          run ANALYZE after data load
+# -xrd                          generate the raw data again, so the data generator is measured
+# -m                            collect SUT resource metrics
+# -mc                           collect metrics of loader, data generator and benchmarker
+# -ms 1                         one SUT in the whole cluster at a time, so no other SUT disturbs the measurement
+# -t 14400                      query timeout in seconds
+# -lr 1024Gi                    RAM limit for the SUT container
+# -rr 900Gi                     RAM requested for the SUT container
+# -rsr                          delete and recreate the PVC at experiment start
+# -rss 3000Gi                   size of the persistent volume claim
+# -rst $BEXHOMA_STORAGE_CLASS   storage class for persistent volumes
+# -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
+# -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
+# -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pods on this node
+bexhoma tpcds \
+  -dbms MonetDB \
+  -sf 30 \
+  -nc 1 \
+  -ne 1,2 \
+  -nlp 8 \
+  -nlt 8 \
+  -xii -xic -xis \
+  -xrd \
+  -m \
+  -mc \
+  -ms 1 \
+  -t 14400 \
+  -lr 1024Gi \
+  -rr 900Gi \
+  -rsr \
+  -rss 3000Gi \
+  -rst $BEXHOMA_STORAGE_CLASS \
+  -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
+  run &>$LOG_DIR/docs_tpcds_monetdb_clients.log
+
+report_result $? "TPC-DS MonetDB clients  sf=30  ne=1,2"
+
 
 
 #### TCP-DS Throughput (Example-TPC-DS.md)
@@ -273,7 +319,6 @@ report_result $? "TPC-DS storage  sf=1  nc=2"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -301,7 +346,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \

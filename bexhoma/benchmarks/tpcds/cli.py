@@ -45,6 +45,7 @@ def main() -> None:
     parser.add_argument('-xis',   '--xinit-statistics', help='run ANALYZE / UPDATE STATISTICS after loading', action='store_true', default=False, dest='init_statistics')
     parser.add_argument('-xcol',  '--xinit-columns', help='use columnar storage (Citus only)', action='store_true', default=False, dest='init_columns')
     parser.add_argument('-xrcp',  '--xrecreate-parameter', help='regenerate random query parameters for each stream', action='store_true', default=False, dest='recreate_parameter')
+    parser.add_argument('-xrd',   '--xrecreate-data', help='generate the raw data again although it exists on the shared data volume, e.g. to measure the data generator (-mc); the new files replace the old ones atomically, so a loader of a parallel configuration keeps reading complete files', action='store_true', default=False, dest='recreate_data')
     parser.add_argument('-xshq',  '--xshuffle-queries', help='shuffle query execution order independently per stream', action='store_true', default=False, dest='shuffle_queries')
     parser.add_argument('-xaq',   '--xactive-queries', help='comma-separated 1-based query numbers to run, e.g. 3,5,6,7 (all other queries are set inactive in the query config uploaded to the cluster; unset = run all queries as defined in the query config file)', default='', dest='active_queries')
     parser.add_argument('-xve',   '--xverbose-explain', help='run and print configured EXPLAIN statements after each benchmark query (requires an \'explain\' key in the DBMS connection\'s JDBC config)', action='store_true', default=False, dest='verbose_explain')
@@ -151,7 +152,7 @@ def main() -> None:
     experiment.set_default_loading_parameters(
         SF = SF,
         STORE_RAW_DATA = 1,
-        STORE_RAW_DATA_RECREATE = 0,
+        STORE_RAW_DATA_RECREATE = int(args.recreate_data),
         BEXHOMA_SYNCH_LOAD = 1,
         BEXHOMA_SYNCH_GENERATE = 1,
         TRANSFORM_RAW_DATA = 1,

@@ -64,7 +64,6 @@ bexhoma ycsb `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics (postgres-exporter) #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `

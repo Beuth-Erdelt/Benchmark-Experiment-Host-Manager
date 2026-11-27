@@ -79,7 +79,6 @@ report_result $? "TPC-H MySQL simple  sf=1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1800                       query timeout in seconds
 # -lr 128Gi                     RAM limit for the SUT container
@@ -99,7 +98,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1800 \
   -lr 128Gi \
@@ -132,7 +130,6 @@ report_result $? "TPC-H MySQL monitoring  sf=10"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 128Gi                     RAM limit for the SUT container
@@ -155,7 +152,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 128Gi \
@@ -181,7 +177,6 @@ report_result $? "TPC-H MySQL throughput  sf=10  ne=1,2"
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -ma                           collect metrics for the whole experiment
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 128Gi                     RAM limit for the SUT container
@@ -200,7 +195,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 128Gi \
@@ -272,7 +266,6 @@ report_result $? "TPC-DS MySQL simple  sf=1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 128Gi                     RAM limit for the SUT container
@@ -297,7 +290,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 128Gi \
@@ -327,7 +319,6 @@ report_result $? "TPC-DS MySQL monitoring  sf=3"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 128Gi                     RAM limit for the SUT container
@@ -356,7 +347,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 128Gi \
@@ -475,7 +465,6 @@ report_result $? "Benchbase MySQL persistency  sf=16  nc=2"
 # -nbp 1                        number of benchmarking pods
 # -nbt 160                      total benchmarking threads
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -495,7 +484,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 160 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
@@ -518,7 +506,6 @@ report_result $? "Benchbase MySQL monitoring  sf=16"
 # -nbp 1,2                      number of benchmarking pods
 # -nbt 160                      total benchmarking threads
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -539,7 +526,6 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 160 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
@@ -601,7 +587,6 @@ report_result $? "HammerDB MySQL simple  sf=16"
 # -nbp 1                        number of benchmarking pods
 # -nbt 16                       total benchmarking threads
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -621,7 +606,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 16 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
@@ -645,7 +629,6 @@ report_result $? "HammerDB MySQL monitoring  sf=16"
 # -nbp 1,2                      number of benchmarking pods
 # -nbt 16                       total benchmarking threads
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -665,7 +648,6 @@ bexhoma hammerdb \
   -nbp 1,2 \
   -nbt 16 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
@@ -885,7 +867,6 @@ report_result $? "YCSB MySQL workload e  sf=1"
 # -nbp 1,8                      number of benchmarking pods
 # -nbt 64                       total benchmarking threads
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -909,7 +890,6 @@ bexhoma ycsb \
   -nbp 1,8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \

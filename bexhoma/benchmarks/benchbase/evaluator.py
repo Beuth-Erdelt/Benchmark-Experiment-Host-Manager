@@ -47,13 +47,18 @@ class BenchbaseEvaluator(LogEvaluator):
     RESULTS_PER_POD = True
     def get_threads(self, loading_parameters):
         """
-        Returns the number of Benchbase terminals from ``BENCHBASE_TERMINALS``.
+        Returns the number of Benchbase loader threads from ``BENCHBASE_LOADER_THREADS``.
+
+        ``0`` means one thread per processor of the loader pod. Results written before
+        ``-nlt`` reached the loader carry ``BENCHBASE_TERMINALS`` instead.
 
         :param loading_parameters: The connection's ``loading_parameters`` dict.
         :type loading_parameters: dict
-        :return: Terminal count, or ``0`` when not set.
+        :return: Loader thread count, or ``0`` when not set.
         :rtype: int
         """
+        if 'BENCHBASE_LOADER_THREADS' in loading_parameters:
+            return loading_parameters['BENCHBASE_LOADER_THREADS']
         return loading_parameters.get('BENCHBASE_TERMINALS', 0)
 
     def log_to_df(self, filename):

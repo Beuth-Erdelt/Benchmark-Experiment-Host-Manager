@@ -16,6 +16,7 @@
 
     <!-- The workload -->
     <!-- Number of terminal per workload -->
+    <loaderThreads>BENCHBASE_LOADER_THREADS</loaderThreads>
     <terminals>BENCHBASE_TERMINALS</terminals>
 
     <!-- Extra Features (Commented Out) -->

@@ -39,7 +39,7 @@ To add a DBMS called `NewDBMS`:
 
    * a short introduction and references (as links), including the test script
    * the main use case (`Perform <Benchmark> Benchmark`): a quick run without monitoring, with subsections Status, Cleanup and Evaluate Results
-   * Monitoring: a run of at least one minute of benchmarking with `-m -mc`, and Application Metrics (`-ma`) where the DBMS has an exporter
+   * Monitoring: a run of at least one minute of benchmarking with `-m`, and Application Metrics (`-ma`) where the DBMS has an exporter
    * Persistent Storage: a run with `-rst` and `-nc 2`, so the second repetition uses the loaded volume
    * Variants, where the DBMS has them (cluster, replication, components, ...), one subsection with an example result each
    * Technical Details: configuration of bexhoma, deployment, schema and scripts, DDL parameters, load durability and reset scripts

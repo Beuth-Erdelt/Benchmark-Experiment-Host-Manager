@@ -238,7 +238,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

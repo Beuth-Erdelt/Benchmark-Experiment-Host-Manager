@@ -323,7 +323,6 @@ bexhoma ycsb \
   -nws 48 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -590,7 +589,6 @@ bexhoma ycsb \
   -nws 48 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1302,7 +1300,6 @@ bexhoma benchbase \
   -nwr 1 \
   -nws 48 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1849,7 +1846,6 @@ bexhoma benchbase \
   -xkey \
   -xli 30 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -2895,7 +2891,6 @@ bexhoma hammerdb \
   -nws 48 \
   -xlat \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -3460,7 +3455,6 @@ bexhoma hammerdb \
   -nws 48 \
   -xlat \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -4623,7 +4617,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 64Gi \
@@ -5219,7 +5212,6 @@ bexhoma tpch \
   -xcol \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 64Gi \

@@ -66,7 +66,6 @@ bexhoma ycsb `
   -nbt 128                      <# threads per benchmarking pod #> `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
@@ -97,7 +96,6 @@ bexhoma ycsb `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
@@ -130,7 +128,6 @@ bexhoma ycsb `
   -nbt 128                      <# threads per benchmarking pod #> `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
@@ -166,7 +163,6 @@ bexhoma ycsb `
   -nw 3                         <# number of worker nodes #> `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
@@ -195,7 +191,6 @@ bexhoma ycsb `
   -nw 3                         <# number of worker nodes #> `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start #> `
@@ -227,7 +222,6 @@ bexhoma ycsb `
   -nwr 1                        <# replication factor #> `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `

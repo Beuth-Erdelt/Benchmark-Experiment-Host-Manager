@@ -165,7 +165,6 @@ metadata:
 spec:
   ports:
   - {port: 9092, protocol: TCP, name: port-dbms, targetPort: 5432}
-  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   - {port: 9500, protocol: TCP, name: port-monitoring-application, targetPort: 9187}
   selector: {app: bexhoma, component: sut, configuration: default, experiment: default}
 ---
@@ -315,21 +314,6 @@ spec:
         persistentVolumeClaim: {claimName: bexhoma-data}
       - name: benchmark-storage-volume
         persistentVolumeClaim: {claimName: bexhoma-storage}
-      - name: rootfs
-        hostPath:
-          path: /
-      - name: var-run
-        hostPath:
-          path: /var/run
-      - name: sys
-        hostPath:
-          path: /sys
-      - name: docker
-        hostPath:
-          path: /var/lib/docker
-      - name: disk
-        hostPath:
-          path: /dev/disk
       - name: dshm
         emptyDir:
           medium: Memory

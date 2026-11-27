@@ -215,7 +215,6 @@ bexhoma benchbase \
   -nbp 1,2,4,8 \
   -nbt 160 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 128Gi \
   -rr 128Gi \

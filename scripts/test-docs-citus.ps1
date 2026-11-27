@@ -74,7 +74,6 @@ bexhoma ycsb `
   -nws 48                       <# number of shards #> `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
   -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
@@ -115,7 +114,6 @@ bexhoma ycsb `
   -nws 48                       <# number of shards #> `
   -xop 10                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
   -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
@@ -177,7 +175,6 @@ bexhoma benchbase `
   -nwr 1                        <# replication factor #> `
   -nws 48                       <# number of shards #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
   -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
@@ -209,7 +206,6 @@ bexhoma benchbase `
   -xkey                         <# simulate user think time and keying delays #> `
   -xli 30                       <# log status to stdout every x seconds #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
   -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
@@ -276,7 +272,6 @@ bexhoma hammerdb `
   -nws 48                       <# number of shards #> `
   -xlat                         <# collect per-operation latency histograms #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
   -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
@@ -311,7 +306,6 @@ bexhoma hammerdb `
   -nws 48                       <# number of shards #> `
   -xlat                         <# collect per-operation latency histograms #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
   -rr 64Gi                      <# RAM requested for the SUT and worker containers #> `
@@ -380,7 +374,6 @@ bexhoma tpch `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 14400                      <# query timeout in seconds #> `
   -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `
@@ -414,7 +407,6 @@ bexhoma tpch `
   -xcol                         <# use columnar storage for analytics #> `
   -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 14400                      <# query timeout in seconds #> `
   -lr 64Gi                      <# RAM limit for the SUT and worker containers #> `

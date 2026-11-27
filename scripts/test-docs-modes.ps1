@@ -23,7 +23,6 @@ bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
   -xwl c                        <# YCSB workload template (c = 100% read) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -40,7 +39,6 @@ bexhoma ycsb `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -61,7 +59,6 @@ bexhoma ycsb `
   -nbp 8                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -ss                           <# skip loading phase (reuse existing data) #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
@@ -87,7 +84,6 @@ kubectl delete all -l app=bexhoma,usecase=ycsb
 bexhoma benchbase `
   -dbms PostgreSQL              <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -103,7 +99,6 @@ bexhoma benchbase `
   -nlp 8                        <# number of data loader pods #> `
   -nlt 64                       <# threads per loader pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -123,7 +118,6 @@ bexhoma benchbase `
   -nbp 8                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -ss                           <# skip loading phase (reuse existing data) #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
@@ -149,7 +143,6 @@ kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 bexhoma hammerdb `
   -dbms PostgreSQL              <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -165,7 +158,6 @@ bexhoma hammerdb `
   -nlp 1                        <# number of data loader pods #> `
   -nlt 1                        <# threads per loader pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -185,7 +177,6 @@ bexhoma hammerdb `
   -nbp 1                        <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod (virtual users) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -ss                           <# skip loading phase (reuse existing data) #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
@@ -211,7 +202,6 @@ kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 bexhoma tpch `
   -dbms PostgreSQL              <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -230,7 +220,6 @@ bexhoma tpch `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -253,7 +242,6 @@ bexhoma tpch `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -ss                           <# skip loading phase (reuse existing data) #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
@@ -279,7 +267,6 @@ kubectl delete all -l app=bexhoma,usecase=tpc-h
 bexhoma tpcds `
   -dbms PostgreSQL              <# DBMS under test #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -298,7 +285,6 @@ bexhoma tpcds `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -321,7 +307,6 @@ bexhoma tpcds `
   -xic                          <# enforce constraints after data load #> `
   -xis                          <# run ANALYZE after data load #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -ss                           <# skip loading phase (reuse existing data) #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `

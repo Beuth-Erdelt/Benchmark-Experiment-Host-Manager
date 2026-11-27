@@ -177,7 +177,7 @@ See more details in the [sockperf network benchmark example](https://bexhoma.rea
 
 ## Architecture
 
-Bexhoma deploys [Prometheus](https://prometheus.io/) for monitoring and [cAdvisor](https://github.com/google/cadvisor) for resource metrics alongside every DBMS container.
+Bexhoma deploys [Prometheus](https://prometheus.io/) for monitoring and [cAdvisor](https://github.com/google/cadvisor) on every cluster node for resource metrics, unless the cluster has a Prometheus already.
 For analytical benchmarks the [dbmsbenchmarker](https://github.com/Beuth-Erdelt/DBMS-Benchmarker) package [3] is used as query executor and evaluator [1,2].
 For transactional workloads, HammerDB, Benchbase, and YCSB act as drivers [4].
 

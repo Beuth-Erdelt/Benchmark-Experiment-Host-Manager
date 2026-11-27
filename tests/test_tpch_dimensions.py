@@ -74,6 +74,9 @@ class EntryScriptTest(unittest.TestCase):
         stderr = io.StringIO()
         with (
             mock.patch.object(sys, 'argv', ['tpch.py', 'run', '-dbms', 'Citus', '-xdim', 'distributed']),
+            # not refused: fail instead of starting an experiment on the real cluster
+            mock.patch('bexhoma.clusters.Kubernetes', side_effect=AssertionError('reached the cluster')),
+            mock.patch('bexhoma.clusters.AWS', side_effect=AssertionError('reached the cluster')),
             contextlib.redirect_stdout(io.StringIO()),
             contextlib.redirect_stderr(stderr),
             self.assertRaises(SystemExit) as exit_,

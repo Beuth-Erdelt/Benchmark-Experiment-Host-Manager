@@ -12,6 +12,7 @@
 
     <scalefactor>BEXHOMA_SF</scalefactor>
 
+    <loaderThreads>BENCHBASE_LOADER_THREADS</loaderThreads>
     <terminals>BENCHBASE_TERMINALS</terminals>
     <works>
         <work>
