@@ -15,7 +15,6 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | Plan | State | Open |
 |---|---|---|
 | [ddl-parameters](plan-ddl-parameters.md) | open | M5 keys, 13b, catalog size, small items |
-| [software-quality](plan-software-quality.md) | open | S4, S6, S7 blocking |
 | [fewer-kubectl-calls](plan-fewer-kubectl-calls.md) | open | M5, M15 |
 | [load-failure-and-sizing](plan-load-failure-and-sizing.md) | open | P2 tmpdir (decision c/d), A4 |
 | [dbms-generic-verification](plan-dbms-generic-verification.md) | done | 2 side findings, aliases deferred |
@@ -46,6 +45,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [oltp-storage-dbms](plan-oltp-storage-dbms.md) | done | - |
 | [reset-scripts](plan-reset-scripts.md) | done | optional: flush time at large SF |
 | [silent-malfunctions](plan-silent-malfunctions.md) | done | P9 is an issue, P11 in planned-disruptions |
+| [software-quality](plan-software-quality.md) | done | rest is issues #957-#960 |
 | [storage-class-sweep](plan-storage-class-sweep.md) | done | risks only |
 | [storage-remove-per-repetition](plan-storage-remove-per-repetition.md) | done | - |
 | [stream-metrics](plan-stream-metrics.md) | done | rest of #239 elsewhere |
@@ -68,16 +68,6 @@ says the cluster checks are open.
 - Optional: item 11, an obsolete "No curly braces" comment in many scripts.
 - Outside the plan: Python client calls do not wait out a cluster outage (`MaxRetryError`); old-named volumes
   from another machine's older bexhoma.
-
-### [software-quality](plan-software-quality.md)
-
-S1, S2, S3, S5, S7 done (#931, #933).
-- **S4:** one argument check (`argument_error()`) used by `main()` and the catalog paths, so a catalog
-  experiment with invalid tenancy or a 0-thread split is refused.
-- **S6:** split `work_benchmark_list()` into phase handlers and remove the legacy `benchmark_list` path; needs
-  cluster runs.
-- **S7 blocking:** diff coverage is reported but `continue-on-error`; make it fail.
-- S2 left out long lines (E501).
 
 ### [fewer-kubectl-calls](plan-fewer-kubectl-calls.md)
 
@@ -260,6 +250,9 @@ interaction with `-nc`/`-rsrp`.
   [docs/Malfunctions.md](../docs/Malfunctions.md). P9 (`-nbp`/`-nbt` ignored by TPC-H, TPC-DS, SSB) is an
   issue; P11 is [planned-disruptions](plan-planned-disruptions.md); mapping `tpcc` to HammerDB (P12) will not
   be done.
+- [software-quality](plan-software-quality.md): S1, S2, S3, S5, S7 merged (#931, #933). The rest is tracked
+  as issues: #957 (S7 blocking), #958 (S4 argument check), #959 (S6 split `work_benchmark_list()`), #960
+  (long lines, star imports, E402, shadowed built-ins, type checks).
 - [storage-class-sweep](plan-storage-class-sweep.md): risks only (stale PVCs, placement warning).
 - [storage-remove-per-repetition](plan-storage-remove-per-repetition.md)
 - [stream-metrics](plan-stream-metrics.md): the rest of #239 is in metrics-pod-scope.
