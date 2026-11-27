@@ -3,7 +3,7 @@
 Status: **implemented on branch silent-malfunctions, cluster-tested 2026-11-24 (section 4c) with the
 rebuilt images.** S1-S9 done (section 4), plus S10 (end marker of scripts) and S11 (aborted summary checks
 the scripts) found by the cluster tests. P1 done as S12 (2026-11-25: exit code, `-tr` removed), P2 as S13
-(UID at the end of a repetition), P5 as S14 (HammerDB run complete), P12 as S15 (`No summary` fails), P7 as S16 (pipes in scripts), P8 as S17 (missing DBMSBenchmarker child named), P10 as S18 (replaced SUT pod not loaded again), P14 as S19 (runtime failures stored); P6/P13 as S20 (expected-metrics list, option E of 5b, 2026-11-27, branch `feature/expected-metrics`; offline replay done, cluster check open); P9 deferred. Open: the other proposals of section 5 and the docs page (section 6).
+(UID at the end of a repetition), P5 as S14 (HammerDB run complete), P12 as S15 (`No summary` fails), P7 as S16 (pipes in scripts), P8 as S17 (missing DBMSBenchmarker child named), P10 as S18 (replaced SUT pod not loaded again), P14 as S19 (runtime failures stored); P6/P13 as S20 (expected-metrics list, option E of 5b, 2026-11-27, branch `feature/expected-metrics`; offline replay, cluster check and archive replay done); P9 deferred. Open: the other proposals of section 5 and the docs page (section 6).
 
 Goal: every run either does what was planned or leaves a failed (or at least a skipped/warning) test in
 the summary. A number in the summary that is wrong because something was missing must not pass silently.
@@ -148,7 +148,7 @@ Also found while preparing the runs (not a failing run): `-nbp` is silently igno
 | P3 | done (4c, S10) | - |
 | P4 | done (4c) | - |
 | P5 | done (S14) | - |
-| P6 | done (S20, option E of 5b); cluster check open | - |
+| P6 | done (S20, option E of 5b) | - |
 | P7 | done (S16) | - |
 | P8 | done (S17) | - |
 | P9 | `-nbp` and `-nbt` are accepted and silently ignored by TPC-H, TPC-DS and SSB (DBMSBenchmarker); no script or docs page passes them there | Deferred (user, 2026-11-25): DBMSBenchmarker may get multi-threading later. Semantics: elsewhere `-nbp`/`-nbt` split one client's load over pods (total constant), `-ne` multiplies whole clients; a DBMSBenchmarker stream (`numProcesses` 1) cannot be split, its parallel streams are `-ne`. So mapping `-nbp` to `-ne` is wrong. Options then: A refuse with that explanation (small, 3 entry scripts), C every entry script declares the base flags it uses (medium, ~40 flags) |
@@ -347,10 +347,17 @@ repetition has its own connection name).
   1 of 406; mariadb-1-1-1-1 benchmarker`, exit 1; `-rp` twice → 0 per-connection files left, same test lines
   both times, `report/metrics-check.csv` with 406 rows; published copy (configs, list, metric files only)
   passes, without the list fails (`list missing`). The folder's other failed test (`SQL warnings`) is old.
-- **Open:** cluster run (TPC-H `-nc 2 -ne 1,1` with `-m -ma -mc`, YCSB, Benchbase) to compare the rows with
-  the files `metrics.py` really writes. Not run: the local `cluster.config` has no `benchmarks` key in its
-  `dockers` (21 entries, 0 with `benchmarks`; `k8s-cluster.config` 24 of 27), so no entry script starts from
-  this checkout.
+- Cluster runs 2026-11-27, PostgreSQL, `-nc 2 -m -ma -mc -rst nvme -ks no`: TPC-H 1795790000 (`-ne 1,1`, storage reused,
+  loading inherited) passed with 408 rows, YCSB 1795790190 (workload a, storage reused) with 204, Benchbase
+  1795790234 (TPC-C, loaded) with 306; no other test failed. On copies of each: one per-connection file and
+  its aggregate removed → `missing: 1 of n`, exit 1; all files of repetition 2 removed → `missing: n/2 of n`
+  naming each repetition-2 connection and component, exit 1; list deleted → `list missing`, exit 1;
+  untouched → passed; `-rp` twice → same test line both times. The rows match the files `metrics.py` wrote.
+- Archive replay 2026-11-27: `bexhoma summary` on copies of all 545 local result folders with a
+  `queries.config`, once with `dev` and once with this branch: exit codes and all other test lines equal;
+  220 folders with monitoring get `skipped: ... (no expected-metrics list (older result))`, 325 get no line.
+  The one difference (1792953734, SSB) came from the replay running both variants on the same folder at the
+  same time (`summary` rewrites `queries.config` there); run one after the other both give the same 17 lines.
 
 ## 6. Later: docs page
 
