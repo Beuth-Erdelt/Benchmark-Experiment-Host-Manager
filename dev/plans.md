@@ -15,7 +15,6 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | Plan | State | Open |
 |---|---|---|
 | [ddl-parameters](plan-ddl-parameters.md) | open | M5 keys, 13b, catalog size, small items |
-| [silent-malfunctions](plan-silent-malfunctions.md) | open | P9, P12 rest |
 | [software-quality](plan-software-quality.md) | open | S4, S6, S7 blocking |
 | [fewer-kubectl-calls](plan-fewer-kubectl-calls.md) | open | M5, M15 |
 | [load-failure-and-sizing](plan-load-failure-and-sizing.md) | open | P2 tmpdir (decision c/d), A4 |
@@ -46,6 +45,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [mysql-storage-slowness](plan-mysql-storage-slowness.md) | done | template default (in load-failure-and-sizing) |
 | [oltp-storage-dbms](plan-oltp-storage-dbms.md) | done | - |
 | [reset-scripts](plan-reset-scripts.md) | done | optional: flush time at large SF |
+| [silent-malfunctions](plan-silent-malfunctions.md) | done | P9 is an issue, P11 in planned-disruptions |
 | [storage-class-sweep](plan-storage-class-sweep.md) | done | risks only |
 | [storage-remove-per-repetition](plan-storage-remove-per-repetition.md) | done | - |
 | [stream-metrics](plan-stream-metrics.md) | done | rest of #239 elsewhere |
@@ -68,16 +68,6 @@ says the cluster checks are open.
 - Optional: item 11, an obsolete "No curly braces" comment in many scripts.
 - Outside the plan: Python client calls do not wait out a cluster outage (`MaxRetryError`); old-named volumes
   from another machine's older bexhoma.
-
-### [silent-malfunctions](plan-silent-malfunctions.md)
-
-S1-S19 done, merged in #937; the docs page (section 6) is [docs/Malfunctions.md](../docs/Malfunctions.md).
-- **P6/P13:** done as S20 (option E: `bexhoma-metrics-expected.csv`, test `All expected metrics present`; also `Caught an error fetching` now counts as a missing metric); cluster check (TPC-H, YCSB, Benchbase) and replay of 545 archived folders done 2026-11-27
-  (fetch log check plus per-component data check, ~90 lines). Not decided.
-- **P9:** `-nbp`/`-nbt` are silently ignored by TPC-H, TPC-DS and SSB. Deferred (DBMSBenchmarker may get
-  multi-threading); then refuse (A) or declare used flags per entry script (C).
-- **P12 rest:** mapping `tpcc` to HammerDB for the `No summary` test.
-- P11 moved to [planned-disruptions](plan-planned-disruptions.md).
 
 ### [software-quality](plan-software-quality.md)
 
@@ -265,6 +255,11 @@ interaction with `-nc`/`-rsrp`.
 - [oltp-storage-dbms](plan-oltp-storage-dbms.md)
 - [reset-scripts](plan-reset-scripts.md): optional, watch the MySQL/MariaDB flush time at larger SF; YugabyteDB
   persist needs `yb-admin`.
+- [silent-malfunctions](plan-silent-malfunctions.md): S1-S19 merged in #937, S20 (P6/P13, expected-metrics
+  list, #952) on `feature/expected-metrics`, checked 2026-11-27; docs page
+  [docs/Malfunctions.md](../docs/Malfunctions.md). P9 (`-nbp`/`-nbt` ignored by TPC-H, TPC-DS, SSB) is an
+  issue; P11 is [planned-disruptions](plan-planned-disruptions.md); mapping `tpcc` to HammerDB (P12) will not
+  be done.
 - [storage-class-sweep](plan-storage-class-sweep.md): risks only (stale PVCs, placement warning).
 - [storage-remove-per-repetition](plan-storage-remove-per-repetition.md)
 - [stream-metrics](plan-stream-metrics.md): the rest of #239 is in metrics-pod-scope.
