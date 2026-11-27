@@ -160,13 +160,14 @@ class BenchmarkRunner:
         cfg.host.check_volumes(measured={cfg.pod_sut: (
             c['hostsystem'].get('volume_size'), c['hostsystem'].get('volume_used'))})
         if 'JDBC' in c:
+            # connections.config is read inside the DBMSBenchmarker pod, whose
+            # image keeps the drivers in jars/ relative to its working directory
+            jar_folder = './jars/'
             if isinstance(c['JDBC']['jar'], list):
                 for idx, jar_entry in enumerate(c['JDBC']['jar']):
-                    c['JDBC']['jar'][idx] = (
-                        cfg.experiment.cluster.config['benchmarker']['jarfolder'] + jar_entry)
+                    c['JDBC']['jar'][idx] = jar_folder + jar_entry
             elif isinstance(c['JDBC']['jar'], str):
-                c['JDBC']['jar'] = (
-                    cfg.experiment.cluster.config['benchmarker']['jarfolder'] + c['JDBC']['jar'])
+                c['JDBC']['jar'] = jar_folder + c['JDBC']['jar']
         cfg.logger.debug(f'BenchmarkRunner.run_pod(): {connection}')
         # connections.config, protocol.json and experiments.config are read and
         # rewritten by every connection: one configuration at a time
