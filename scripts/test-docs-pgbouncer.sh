@@ -69,7 +69,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnp $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_pgbouncer.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer  sf=1"
+report_result $? "YCSB PGBouncer  sf=1"
 
 
 ####################################################
@@ -130,7 +130,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnp $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_pgbouncer_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer  sf=32  nbp=16"
+report_result $? "YCSB PGBouncer  sf=32  nbp=16"
 
 
 # Application metrics (-ma): run in scripts/test-docs-appmetrics.sh, logs docs_ycsb_pgbouncer_appmetrics.log and docs_benchbase_pgbouncer_appmetrics.log
@@ -197,7 +197,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_pgbouncer_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer storage  sf=16  nbp=16  nc=2"
+report_result $? "YCSB PGBouncer storage  sf=16  nbp=16  nc=2"
 
 
 ####################################################
@@ -233,7 +233,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_newconn.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase new-connection PostgreSQL  sf=16  nbp=1,2"
+report_result $? "Benchbase new-connection PostgreSQL  sf=16  nbp=1,2"
 
 
 # Benchbase TPC-C: new connection per transaction, via the pool
@@ -270,7 +270,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_newconn_pool.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase new-connection PGBouncer  sf=16  nbp=1,2"
+report_result $? "Benchbase new-connection PGBouncer  sf=16  nbp=1,2"
 
 
 # Benchbase TPC-C: sweep of pooler pods and inbound connections, one configuration per combination
@@ -307,7 +307,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnp $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_pgbouncer_pool_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase PGBouncer pool sweep  sf=16  xnpp=1,2  xnpi=32,64"
+report_result $? "Benchbase PGBouncer pool sweep  sf=16  xnpp=1,2  xnpi=32,64"
 
 
 # YCSB: default pool size (no -xnpi/-xnpo) follows the loader threads of each configuration
@@ -354,7 +354,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnp $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_pgbouncer_pool_default.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer default pool  sf=1  nlt=16,64"
+report_result $? "YCSB PGBouncer default pool  sf=1  nlt=16,64"
 
 
 ###########################################
@@ -362,4 +362,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PGBouncer default pool  sf=1  nlt
 ###########################################
 
 
+report_total
 clean_logs

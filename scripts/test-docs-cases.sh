@@ -48,7 +48,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_compare.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H compare  sf=1"
+report_result $? "TPC-H compare  sf=1"
 
 
 ####################################################
@@ -86,7 +86,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_compare.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS compare  sf=1"
+report_result $? "TPC-DS compare  sf=1"
 
 
 ###########################################
@@ -94,4 +94,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS compare  sf=1"
 ###########################################
 
 
+report_total
 clean_logs

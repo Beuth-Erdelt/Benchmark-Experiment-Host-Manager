@@ -72,7 +72,7 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_pgduckdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PgDuckDB  sf=1"
+report_result $? "TPC-H PgDuckDB  sf=1"
 
 
 ####################################################
@@ -136,7 +136,7 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_pgduckdb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PgDuckDB monitoring  sf=10"
+report_result $? "TPC-H PgDuckDB monitoring  sf=10"
 
 
 ####################################################
@@ -202,7 +202,7 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_pgduckdb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PgDuckDB storage  sf=1  nc=2"
+report_result $? "TPC-H PgDuckDB storage  sf=1  nc=2"
 
 
 ####################################################
@@ -260,7 +260,7 @@ bexhoma tpch \
   --set deployment[bexhoma-deployment-pg-duck].container[dbms].maintenance_work_mem=2GB \
   run &>$LOG_DIR/docs_tpch_pgduckdb_postgresql_engine.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PgDuckDB PostgreSQL engine  sf=1"
+report_result $? "TPC-H PgDuckDB PostgreSQL engine  sf=1"
 
 
 #### TPC-H Refresh Stream (Example-TPC-H.md)
@@ -296,7 +296,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_pgduckdb_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PgDuckDB refresh  sf=1  ne=3"
+report_result $? "TPC-H PgDuckDB refresh  sf=1  ne=3"
 
 
 ###########################################
@@ -304,4 +304,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H PgDuckDB refresh  sf=1  ne=3"
 ###########################################
 
 
+report_total
 clean_logs

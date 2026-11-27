@@ -208,6 +208,17 @@ def ps_to_sh(ps_path: Path) -> str:
             i += 1
             continue
 
+        # status line after a bexhoma call: the exit code is $LASTEXITCODE in PS, $? in bash
+        if stripped.startswith('Write-ExperimentResult $LASTEXITCODE '):
+            output.append('report_result $? ' + stripped[len('Write-ExperimentResult $LASTEXITCODE '):])
+            i += 1
+            continue
+
+        if stripped == 'Write-ExperimentTotal':
+            output.append('report_total')
+            i += 1
+            continue
+
         m_sleep = _RE_SLEEP.match(stripped)
         if m_sleep:
             output.append(f'sleep {m_sleep.group(1)}')

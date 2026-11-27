@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 658s 
-* Code: 1794761138
+* Duration: 512s 
+* Code: 1795659706
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -14,7 +14,7 @@ TPC-H Queries SF=1
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -26,7 +26,6 @@ TPC-H Queries SF=1
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
-  * Results are validated against basic correctness requirements.
   * SUT requests 4 CPU and 128Gi RAM. RAM limit is 128Gi.
 
 ### Connections
@@ -36,10 +35,10 @@ TPC-H Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1111310
-  * datadisk:1974
+  * disk:676083
+  * datadisk:1962
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:661G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=8G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -49,13 +48,13 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794761138
+    * code:1795659706
 
 ### Ingestion
 * MariaDB-1: 50 of 50 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1794761138-5bf9b9cc8b-xfd4t: 0
+* bexhoma-sut-mariadb-1-1795659706-749668698-5rlkb: 0
 
 ### Workflow
 
@@ -73,7 +72,7 @@ TPC-H Queries SF=1
 
 | DBMS        |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MariaDB-1-1 |                1 |    1 |      111.00 |           4.00 |           45.00 |         15.00 |           34.00 |              8 |         0 |             | None           |             0 | False         |               32.43 | False               |
+| MariaDB-1-1 |                1 |    1 |       79.00 |           2.00 |           27.00 |         16.00 |           23.00 |              8 |         0 |             |                |             0 | False         |               45.57 | False               |
 
 ### Benchmarking
 
@@ -81,13 +80,13 @@ TPC-H Queries SF=1
 
 | connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |        117 |            1.17 |             3255.01 |            676.92 |          -1 |
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         93 |            1.00 |             3813.97 |            851.61 |           0 |
 
 #### Per Phase
 
 | DBMS          | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |        117 |            1.17 |             3255.01 |            676.92 |          -1 |
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         93 |            1.00 |             3813.97 |            851.61 |           0 |
 
 #### Query Completion per Phase
 
@@ -100,28 +99,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   mariadb-1-1-1-1-1 |
 |:----------------------------------------------------|--------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |             7635.62 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |              567.89 |
-| Shipping Priority (TPC-H Q3)                        |             2034.28 |
-| Order Priority Checking Query (TPC-H Q4)            |              502.48 |
-| Local Supplier Volume (TPC-H Q5)                    |             1077.02 |
-| Forecasting Revenue Change (TPC-H Q6)               |             1042.07 |
-| Volume Shipping Query (TPC-H Q7)                    |             1125.17 |
-| National Market Share (TPC-H Q8)                    |             2012.46 |
-| Product Type Profit Measure (TPC-H Q9)              |             1885.64 |
-| Returned Item Reporting Query (TPC-H Q10)           |              950.37 |
-| Important Stock Identification (TPC-H Q11)          |              134.79 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |             3498.76 |
-| Customer Distribution (TPC-H Q13)                   |             3292.87 |
-| Promotion Effect Query (TPC-H Q14)                  |            11439.05 |
-| Top Supplier Query (TPC-H Q15)                      |             2372.72 |
-| Parts/Supplier Relationship (TPC-H Q16)             |              207.74 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |               61.04 |
-| Large Volume Customer (TPC-H Q18)                   |             3402.68 |
-| Discounted Revenue (TPC-H Q19)                      |              113.84 |
-| Potential Part Promotion (TPC-H Q20)                |              275.20 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |            63551.52 |
-| Global Sales Opportunity Query (TPC-H Q22)          |              125.51 |
+| Pricing Summary Report (TPC-H Q1)                   |             5994.13 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |             1113.77 |
+| Shipping Priority (TPC-H Q3)                        |             1193.99 |
+| Order Priority Checking Query (TPC-H Q4)            |              301.20 |
+| Local Supplier Volume (TPC-H Q5)                    |              734.51 |
+| Forecasting Revenue Change (TPC-H Q6)               |              729.63 |
+| Volume Shipping Query (TPC-H Q7)                    |              863.81 |
+| National Market Share (TPC-H Q8)                    |             1415.23 |
+| Product Type Profit Measure (TPC-H Q9)              |             1397.45 |
+| Returned Item Reporting Query (TPC-H Q10)           |              922.07 |
+| Important Stock Identification (TPC-H Q11)          |              274.88 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |             2694.02 |
+| Customer Distribution (TPC-H Q13)                   |             2369.43 |
+| Promotion Effect Query (TPC-H Q14)                  |             9605.40 |
+| Top Supplier Query (TPC-H Q15)                      |             1635.49 |
+| Parts/Supplier Relationship (TPC-H Q16)             |              154.29 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |               59.09 |
+| Large Volume Customer (TPC-H Q18)                   |             2934.44 |
+| Discounted Revenue (TPC-H Q19)                      |              111.62 |
+| Potential Part Promotion (TPC-H Q20)                |              386.61 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |            46823.45 |
+| Global Sales Opportunity Query (TPC-H Q22)          |               92.97 |
 
 ### Errors (failed queries)
 
@@ -139,6 +138,8 @@ No warnings
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
@@ -147,3 +148,7 @@ No warnings
 * TEST passed: All active queries counted in the totals
 * TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

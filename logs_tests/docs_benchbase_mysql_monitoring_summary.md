@@ -3,14 +3,14 @@
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 810s 
-* Code: 1794694488
+* Duration: 800s 
+* Code: 1795675960
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [8]. Benchmarking runs for 5 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.4.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 1 processes (pods).
@@ -23,7 +23,6 @@ Benchbase Workload tpcc SF=16
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
-  * Results are validated against basic correctness requirements.
   * Deployment parameter overrides: [({'kind': 'deployment', 'workload': 'bexhoma-deployment-mysql', 'config': '', 'container': 'dbms', 'param': 'innodb_buffer_pool_size', 'target': 'container'}, '32G')].
   * Distributed DBMS uses 1 worker nodes, 0 replicas and 0 shards per node.
   * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
@@ -31,13 +30,14 @@ Benchbase Workload tpcc SF=16
 ### Connections
 * mysql-1-1-1-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1078665
-  * datadisk:34689
+  * disk:670178
+  * datadisk:34669
   * volume_size:1.8T
-  * volume_used:1.1T
+  * volume_used:655G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--local-infile=1', '--innodb-redo-log-capacity=32GB', '--innodb-io-capacity=400', '--innodb-io-capacity_max=2000', '--innodb-read-io-threads=8', '--innodb-write-io-threads=8', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-buffer-pool-instances=8', '--innodb-flush-method=O_DIRECT', '--innodb-flush-neighbors=0', '--skip-log-bin', '--innodb-change-buffer-max-size=50', '--tmpdir=/mysqltmp', '--ssl-ca=/etc/mysql/certs/ca.pem', '--ssl-cert=/etc/mysql/certs/server-cert.pem', '--ssl-key=/etc/mysql/certs/server-key.pem']
   * requests_cpu:4
@@ -47,14 +47,14 @@ Benchbase Workload tpcc SF=16
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794694488
+    * code:1795675960
     * TENANT_VOL:False
 
 ### Ingestion
 * MySQL-1: 1 of 1 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1794694488-ff6ff947d-rxbhg: 0
+* bexhoma-sut-mysql-1-1795675960-5fcc7fd6d4-hqjgh: 0
 
 ### Workflow
 
@@ -72,7 +72,7 @@ Benchbase Workload tpcc SF=16
 
 | DBMS      |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MySQL-1-1 |                1 |   16 |       79.00 |           3.00 |            0.00 |         73.00 |            3.00 |              1 |         1 |             |                |             0 | False         |              729.11 | False               |
+| MySQL-1-1 |                1 |   16 |       95.00 |           2.00 |            0.00 |         91.00 |            2.00 |              1 |         1 |             |                |             0 | False         |              606.32 | False               |
 
 ### Benchmarking
 
@@ -80,13 +80,13 @@ Benchbase Workload tpcc SF=16
 
 | connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |     8192 |          -1 | 300.00 |        0 |                        8192.52 |                     8114.58 |         0.00 |                                                      11133.00 |                                               5554.00 |
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |     8192 |          -1 | 300.00 |        0 |                        8191.86 |                     8110.89 |         0.00 |                                                      13171.00 |                                               6297.00 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:------------|:------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 |       160 |     8192 |          -1 | 300.00 |        0 |                        8192.52 |                     8114.58 |         0.00 |                                                      11133.00 |                                               5554.00 |
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 |       160 |     8192 |          -1 | 300.00 |        0 |                        8191.86 |                     8110.89 |         0.00 |                                                      13171.00 |                                               6297.00 |
 
 ### Monitoring
 
@@ -94,33 +94,33 @@ Benchbase Workload tpcc SF=16
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |       122.73 |      2.34 |           4.77 |                  6.84 |
+| mysql-1-1-1-1 |       160.17 |      2.75 |           4.77 |                  6.85 |
 
 ### Loading phase: component loader
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |       648.75 |     14.23 |           0.38 |                  0.38 |
+| mysql-1-1-1-1 |      1023.42 |     15.22 |           0.44 |                  0.44 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |      4212.50 |     14.90 |           6.79 |                 15.05 |
+| mysql-1-1-1-1 |      5070.04 |     17.96 |           6.79 |                 15.04 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |      3398.11 |     12.37 |           1.67 |                  1.67 |
+| mysql-1-1-1-1 |      2955.50 |     17.27 |           1.95 |                  1.95 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
+* CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 
@@ -132,11 +132,19 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Monitoring returned data
 * TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
 * TEST passed: Workflow as planned
+* TEST passed: Every pod ran for the configured time
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

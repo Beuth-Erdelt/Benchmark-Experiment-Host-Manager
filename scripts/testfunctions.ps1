@@ -106,6 +106,30 @@ function Test-LogOpenForWriting {
     catch [IO.IOException] { return $true }
 }
 
+$script:BEXHOMA_RUNS        = 0
+$script:BEXHOMA_RUNS_FAILED = 0
+
+function Write-ExperimentResult {
+    # Prints "[DONE] <label>" after a bexhoma call that returned 0 and "[FAIL] <label> (exit N)"
+    # otherwise. bexhoma returns 1 if a test of the summary failed or the run crashed; skipped
+    # tests and warnings do not fail. Pass $LASTEXITCODE right after the call: it holds the exit
+    # code of bexhoma also behind | Out-File. $? does not, in Windows PowerShell 2>&1 sets it to
+    # $false. Counts the calls for Write-ExperimentTotal.
+    param([int]$ExitCode, [string]$Label)
+    $script:BEXHOMA_RUNS++
+    if ($ExitCode -eq 0) {
+        Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] $Label"
+    } else {
+        $script:BEXHOMA_RUNS_FAILED++
+        Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [FAIL] $Label  (exit $ExitCode)"
+    }
+}
+
+function Write-ExperimentTotal {
+    # Prints how many of the bexhoma calls reported by Write-ExperimentResult failed.
+    Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [SUMMARY] $script:BEXHOMA_RUNS_FAILED of $script:BEXHOMA_RUNS experiments failed"
+}
+
 function Invoke-CleanLogs {
     # Strips kubectl token warnings from the logs and extracts their "## Show Summary" part
     # into <name>_summary.md. Off by default: runs only with $env:BEXHOMA_CLEAN_LOGS = '1'

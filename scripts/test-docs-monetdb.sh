@@ -57,7 +57,7 @@ bexhoma tpch \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_monetdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB  sf=1"
+report_result $? "TPC-H MonetDB  sf=1"
 
 
 ####################################################
@@ -106,7 +106,7 @@ bexhoma tpch \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_monetdb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB monitoring  sf=30"
+report_result $? "TPC-H MonetDB monitoring  sf=30"
 
 
 ####################################################
@@ -157,7 +157,7 @@ bexhoma tpch \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_monetdb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB storage  sf=1  nc=2"
+report_result $? "TPC-H MonetDB storage  sf=1  nc=2"
 
 
 ####################################################
@@ -212,7 +212,7 @@ bexhoma tpch \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_monetdb_sf100.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=1"
+report_result $? "TPC-H MonetDB power  sf=100  nc=1  ne=1"
 
 
 # TPC-H power test at SF 100, repeated on the loaded volume
@@ -260,7 +260,7 @@ bexhoma tpch \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_monetdb_sf100_repeated.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
+report_result $? "TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 
 
 # TPC-H throughput test at SF 100, on the loaded volume
@@ -308,7 +308,7 @@ bexhoma tpch \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_monetdb_sf100_throughput.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB throughput  sf=100  ne=1,1,3"
+report_result $? "TPC-H MonetDB throughput  sf=100  ne=1,1,3"
 
 
 ####################################################
@@ -350,7 +350,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_monetdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB simple  sf=3"
+report_result $? "TPC-DS MonetDB simple  sf=3"
 
 
 # TPC-DS monitoring at SF 3
@@ -391,7 +391,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_monetdb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB monitoring  sf=3"
+report_result $? "TPC-DS MonetDB monitoring  sf=3"
 
 
 # TPC-DS throughput test at SF 3, on persistent storage
@@ -436,7 +436,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_monetdb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=3  ne=1,2"
+report_result $? "TPC-DS MonetDB throughput  sf=3  ne=1,2"
 
 
 ####################################################
@@ -484,7 +484,7 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_tpcds_monetdb_sf30.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=1"
+report_result $? "TPC-DS MonetDB power  sf=30  nc=1  ne=1"
 
 
 # TPC-DS power test at SF 30, repeated on the loaded volume
@@ -525,7 +525,7 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_tpcds_monetdb_sf30_repeated.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
+report_result $? "TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
 
 
 # TPC-DS throughput test at SF 30, on the loaded volume
@@ -566,7 +566,7 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_tpcds_monetdb_sf30_throughput.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
+report_result $? "TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
 
 
 #### TPC-H Refresh Stream (Example-TPC-H.md)
@@ -603,7 +603,7 @@ bexhoma tpch \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_monetdb_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB refresh  sf=1  ne=3"
+report_result $? "TPC-H MonetDB refresh  sf=1  ne=3"
 
 
 ###########################################
@@ -611,4 +611,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MonetDB refresh  sf=1  ne=3"
 ###########################################
 
 
+report_total
 clean_logs

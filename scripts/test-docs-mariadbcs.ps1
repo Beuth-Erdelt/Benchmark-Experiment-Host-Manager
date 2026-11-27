@@ -33,7 +33,7 @@ bexhoma tpch `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadbcs.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDBCS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MariaDBCS  sf=1"
 
 
 ####################################################
@@ -56,7 +56,7 @@ bexhoma tpch `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadbcs_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDBCS monitoring  sf=10"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MariaDBCS monitoring  sf=10"
 
 
 ####################################################
@@ -85,7 +85,7 @@ bexhoma tpch `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class of the persistent volume #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadbcs_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDB MariaDBCS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MariaDB MariaDBCS  sf=1"
 
 
 ####################################################
@@ -113,7 +113,7 @@ bexhoma tpcds `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class of the persistent volume #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_mariadbcs.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MariaDBCS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MariaDBCS  sf=1"
 
 
 ####################################################
@@ -138,7 +138,7 @@ bexhoma ssb `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class of the persistent volume #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_mariadbcs.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB MariaDBCS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB MariaDBCS  sf=1"
 
 
 # SSB flat schema
@@ -159,7 +159,7 @@ bexhoma ssb `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class of the persistent volume #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ssb_mariadbcs_flat.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB MariaDBCS flat  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB MariaDBCS flat  sf=1"
 
 
 #### TPC-H Refresh Stream (Example-TPC-H.md)
@@ -181,7 +181,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadbcs_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDBCS refresh  sf=1  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MariaDBCS refresh  sf=1  ne=3"
 
 
 ###########################################
@@ -189,4 +189,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MariaDBCS ref
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

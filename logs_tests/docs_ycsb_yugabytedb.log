@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1794849409
-Experiment                    : starts at 2026-11-16 18:16:49.510927 (110880.7300304)
+Experiment                    : has code 1795701129
+Experiment                    : starts at 2026-11-26 14:52:09.387917 (962583.4710544)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
 Number of rows to insert is 1000000.
@@ -15,7 +15,7 @@ Factors for loading are [4].
 Factors for benchmarking are [4].
 Status is logged every 10s.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.18.
+Experiment uses bexhoma version 0.12.4.
 Experiment is limited to DBMS ['YugabyteDB'].
 Import is handled by 8 processes (pods).
 Loading is fixed to cl-worker38.
@@ -26,52 +26,51 @@ Benchmarking is tested with [64] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Maximum DBMS across the whole cluster is 10.
-Results are validated against basic correctness requirements.
 SUT requests 4 CPU and 16Gi RAM.
 Cluster monitoring            : is running
 YugabyteDB-1                  : will start now
 YugabyteDB-1                  : deployments ['sut']
 YugabyteDB-1                  : stateful sets []
 YugabyteDB-1                  : pvcs ['sut']
-YugabyteDB-1                  : name of SUT pods = bexhoma-sut-yugabytedb-1-1794849409
-YugabyteDB-1                  : name of SUT service = bexhoma-sut-yugabytedb-1-1794849409
-Loop pass                     : took 1.3s (1 kubectl calls 0.5s, 9 API requests 0.6s)
+YugabyteDB-1                  : name of SUT pods = bexhoma-sut-yugabytedb-1-1795701129
+YugabyteDB-1                  : name of SUT service = bexhoma-sut-yugabytedb-1-1795701129
+Loop pass                     : took 1.3s (1 kubectl calls 0.5s, 9 API requests 0.5s)
 - waiting 30s -               : done
 YugabyteDB-1                  : is not loaded yet
-YugabyteDB-1                  : will start loading but not before 2026-11-16 17:18:21 (that is in 60 secs)
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 16 API requests 0.5s)
+YugabyteDB-1                  : will start loading but not before 2026-11-26 13:53:42 (that is in 60 secs)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 16 API requests 0.7s)
 - waiting 30s -               : done
 YugabyteDB-1                  : is not loaded yet
-YugabyteDB-1                  : will start loading but not before 2026-11-16 17:18:21
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 13 API requests 0.4s)
+YugabyteDB-1                  : will start loading but not before 2026-11-26 13:53:42
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 13 API requests 0.7s)
 - waiting 30s -               : done
 YugabyteDB-1                  : is not loaded yet
 YugabyteDB-1                  : load durability relaxed, scripts []
-YugabyteDB-1                  : connect to pod bexhoma-sut-yugabytedb-1-1794849409-c9b5dc795-plw68 to load scripts
+YugabyteDB-1                  : connect to pod bexhoma-sut-yugabytedb-1-1795701129-6544cd846f-db2d7 to load scripts
 YugabyteDB-1                  : start asynch loading scripts of type schema
 YugabyteDB-1                  : waits for the Schema scripts (schema=True) before starting the loading jobs
-YugabyteDB-1                  : Schema scripts done after 4s
+YugabyteDB-1                  : Schema scripts done after 2s
 YugabyteDB-1                  : is loading
-Loop pass                     : took 9.3s (5 kubectl calls 2.7s, 35 API requests 2.5s)
+Loop pass                     : took 6.4s (5 kubectl calls 2.4s, 35 API requests 1.9s)
 - waiting 30s -               : done
 YugabyteDB-1                  : is loading
-Loop pass                     : took 4.4s (0 kubectl calls 0.0s, 34 API requests 1.0s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 35 API requests 1.5s)
 - waiting 30s -               : done
 YugabyteDB-1                  : is loading
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 34 API requests 1.2s)
+Loop pass                     : took 7.2s (10 kubectl calls 5.5s, 40 API requests 1.5s)
 - waiting 30s -               : done
 YugabyteDB-1                  : showing loader times (ycsb-loader)
 YugabyteDB-1                  : generator times (start/end per pod and container) []
-YugabyteDB-1                  : loader times (start/end per pod and container) [(1794849519, 1794849574), (1794849520, 1794849574), (1794849519, 1794849574), (1794849519, 1794849574), (1794849520, 1794849575), (1794849519, 1794849574), (1794849519, 1794849574), (1794849520, 1794849574)]
-YugabyteDB-1                  : total times (start/end per pod and container) [(1794849519, 1794849574), (1794849520, 1794849574), (1794849519, 1794849574), (1794849519, 1794849574), (1794849520, 1794849575), (1794849519, 1794849574), (1794849519, 1794849574), (1794849520, 1794849574)]
-YugabyteDB-1                  : loader timespan (first to last [s]) = 56
-YugabyteDB-1                  : connect to pod bexhoma-sut-yugabytedb-1-1794849409-c9b5dc795-plw68 to load scripts
+YugabyteDB-1                  : loader times (start/end per pod and container) [(1795701240, 1795701286), (1795701240, 1795701286), (1795701240, 1795701287), (1795701239, 1795701286), (1795701240, 1795701286), (1795701240, 1795701287), (1795701239, 1795701286), (1795701240, 1795701286)]
+YugabyteDB-1                  : total times (start/end per pod and container) [(1795701240, 1795701286), (1795701240, 1795701286), (1795701240, 1795701287), (1795701239, 1795701286), (1795701240, 1795701286), (1795701240, 1795701287), (1795701239, 1795701286), (1795701240, 1795701286)]
+YugabyteDB-1                  : loader timespan (first to last [s]) = 48
+YugabyteDB-1                  : connect to pod bexhoma-sut-yugabytedb-1-1795701129-6544cd846f-db2d7 to load scripts
 YugabyteDB-1                  : start asynch loading scripts of type index
 YugabyteDB-1                  : is loading
-Loop pass                     : took 11.6s (21 kubectl calls 9.1s, 62 API requests 2.3s)
+Loop pass                     : took 7.3s (11 kubectl calls 5.1s, 53 API requests 1.8s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-YugabyteDB-1-1794849409 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-YugabyteDB-1-1795701129 initialized to 1.
 YugabyteDB-1                  : benchmarks done 0 of 1. This will be client 1
 yugabytedb-1-1-1-1            : start benchmarking (benchmark_run=1)
 YugabyteDB-1                  : distributed system - get host info for worker yb-tserver-0
@@ -80,43 +79,43 @@ YugabyteDB-1                  : distributed system - get host info for worker yb
 YugabyteDB-1                  : distributed system - get host info for worker yb-master-0
 YugabyteDB-1                  : distributed system - get host info for worker yb-master-1
 YugabyteDB-1                  : distributed system - get host info for worker yb-master-2
-YugabyteDB-1                  : benchmarking results in folder D:\data\benchmarks/1794849409
-YugabyteDB-1                  : submitted benchmarker job in 52.6s (82 kubectl calls 41.8s, 118 API requests 9.5s)
-Loop pass                     : took 54.4s (83 kubectl calls 42.2s, 140 API requests 10.6s)
+YugabyteDB-1                  : benchmarking results in folder D:\data\benchmarks/1795701129
+YugabyteDB-1                  : submitted benchmarker job in 54.7s (82 kubectl calls 44.1s, 118 API requests 8.8s)
+Loop pass                     : took 56.5s (83 kubectl calls 44.6s, 140 API requests 10.0s)
 - waiting 30s -               : done
 YugabyteDB-1                  : has running benchmarks
 Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 21 API requests 1.3s)
 - waiting 30s -               : done
-yugabytedb-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1794849409/yugabytedb-1-1-1-1.config
+- waiting 2s -                : done
+yugabytedb-1-1-1-1            : wrote benchmarking_timespans to D:/data/benchmarks/1795701129/yugabytedb-1-1-1-1.config
 yugabytedb-1-1-1-1            : showing benchmarker times
-yugabytedb-1-1-1-1            : benchmarker timespan job from 1794849703 to 1794849767
-yugabytedb-1-1-1-1            : benchmarker timespan pods from 1794849705 to 1794849752
+yugabytedb-1-1-1-1            : benchmarker timespan job from 1795701421 to 1795701488
+yugabytedb-1-1-1-1            : benchmarker timespan pods from 1795701423 to 1795701470
 yugabytedb-1-1-1-1            : benchmarker timespan (start to end single container [s]) = 47
-yugabytedb-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1794849705, 1794849752)]
-yugabytedb-1-1-1-1            : found and updated times {'benchmarker': [(1794849705, 1794849752)]}
-Loop pass                     : took 3.7s (4 kubectl calls 2.6s, 24 API requests 1.0s)
+yugabytedb-1-1-1-1            : benchmarker times (start/end per pod and container) = [(1795701423, 1795701470)]
+yugabytedb-1-1-1-1            : found and updated times {'benchmarker': [(1795701423, 1795701470)]}
+Loop pass                     : took 6.4s (4 kubectl calls 2.3s, 25 API requests 1.3s)
 YugabyteDB-1                  : can be stopped
-YugabyteDB-1                  : had 0 restarts at worker bexhoma-sut-yugabytedb-1-1794849409-c9b5dc795-plw68
+YugabyteDB-1                  : had 0 restarts at worker bexhoma-sut-yugabytedb-1-1795701129-6544cd846f-db2d7
 YugabyteDB-1                  : had 0 restarts at worker yb-tserver-0
 YugabyteDB-1                  : had 0 restarts at worker yb-tserver-1
 YugabyteDB-1                  : had 0 restarts at worker yb-tserver-2
 YugabyteDB-1                  : had 0 restarts at worker yb-master-0
 YugabyteDB-1                  : had 0 restarts at worker yb-master-1
 YugabyteDB-1                  : had 0 restarts at worker yb-master-2
-Loop pass                     : took 6.0s (9 kubectl calls 3.8s, 47 API requests 2.0s)
-Experiment                    : ends at 2026-11-16 18:22:55.228832 (111246.4411862) - 365.71s total
+Loop pass                     : took 6.6s (9 kubectl calls 4.0s, 54 API requests 2.3s)
+Experiment                    : ends at 2026-11-26 14:58:16.947398 (962951.0232702) - 367.55s total
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow complete
 
 ## Show Summary
 
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 366s 
-* Code: 1794849409
+* Duration: 368s 
+* Code: 1795701129
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -129,7 +128,7 @@ YCSB SF=1
   * Factors for benchmarking are [4].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * Experiment is limited to DBMS ['YugabyteDB'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -140,7 +139,6 @@ YCSB SF=1
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
-  * Results are validated against basic correctness requirements.
   * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
@@ -150,52 +148,52 @@ YCSB SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1326651
+  * disk:641154
   * datadisk:39
   * volume_size:1.8T
-  * volume_used:1.3T
+  * volume_used:627G
   * cpu_list:0-223
   * requests_cpu:4
   * requests_memory:16Gi
   * yb-tserver 0
-    * RAM:1081853952000
-    * CPU:Intel(R) Xeon(R) Gold 6438Y+
-    * Cores:128
-    * host:6.8.0-137-generic
-    * node:cl-worker37
-    * disk:661788
-    * cpu_list:0-127
-  * yb-tserver 1
-    * RAM:1081742753792
+    * RAM:1081742733312
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:1406858
+    * disk:713037
     * cpu_list:0-127
-  * yb-tserver 2
+  * yb-tserver 1
     * RAM:2164173156352
     * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
     * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:1326690
+    * disk:641154
     * cpu_list:0-223
-  * yb-master 0
-    * RAM:1081853952000
+  * yb-tserver 2
+    * RAM:1081853997056
     * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:661981
+    * disk:238174
     * cpu_list:0-127
-  * yb-master 1
-    * RAM:1081742753792
+  * yb-master 0
+    * RAM:1081742733312
     * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:1406858
+    * disk:713037
+    * cpu_list:0-127
+  * yb-master 1
+    * RAM:1081853997056
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
+    * Cores:128
+    * host:6.8.0-137-generic
+    * node:cl-worker37
+    * disk:238174
     * cpu_list:0-127
   * yb-master 2
     * RAM:2164173156352
@@ -203,19 +201,19 @@ YCSB SF=1
     * Cores:224
     * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:1326690
+    * disk:641154
     * cpu_list:0-223
   * resources_total: 0.25 CPU, 0.5 GiB RAM requested in 1 pods
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794849409
+    * code:1795701129
 
 ### Ingestion
 * YugabyteDB-1: 8 of 8 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-yugabytedb-1-1794849409-c9b5dc795-plw68: 0
+* bexhoma-sut-yugabytedb-1-1795701129-6544cd846f-db2d7: 0
 * yb-tserver-0: 0
 * yb-tserver-1: 0
 * yb-tserver-2: 0
@@ -239,20 +237,20 @@ YCSB SF=1
 
 | connection           |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |   SF |   Throughput [SF/h] |
 |:---------------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|-----:|--------------------:|
-| yugabytedb-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2284.11 |                54726.00 |            125000.00 |                             16431.00 | 1.00 |               65.78 |
-| yugabytedb-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2310.96 |                54090.00 |            125000.00 |                             16623.00 | 1.00 |               66.56 |
-| yugabytedb-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2298.94 |                54373.00 |            125000.00 |                             16559.00 | 1.00 |               66.21 |
-| yugabytedb-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2323.07 |                53808.00 |            125000.00 |                             16447.00 | 1.00 |               66.90 |
-| yugabytedb-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2309.60 |                54122.00 |            125000.00 |                             16463.00 | 1.00 |               66.52 |
-| yugabytedb-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2288.41 |                54623.00 |            125000.00 |                             16543.00 | 1.00 |               65.91 |
-| yugabytedb-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2319.80 |                53884.00 |            125000.00 |                             16447.00 | 1.00 |               66.81 |
-| yugabytedb-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2303.81 |                54258.00 |            125000.00 |                             16543.00 | 1.00 |               66.35 |
+| yugabytedb-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2704.52 |                46219.00 |            125000.00 |                              9711.00 | 1.00 |               77.89 |
+| yugabytedb-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2755.06 |                45371.00 |            125000.00 |                             10127.00 | 1.00 |               79.35 |
+| yugabytedb-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2680.85 |                46627.00 |            125000.00 |                              9975.00 | 1.00 |               77.21 |
+| yugabytedb-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2713.32 |                46069.00 |            125000.00 |                              9903.00 | 1.00 |               78.14 |
+| yugabytedb-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2756.89 |                45341.00 |            125000.00 |                             10215.00 | 1.00 |               79.40 |
+| yugabytedb-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2724.74 |                45876.00 |            125000.00 |                             10167.00 | 1.00 |               78.47 |
+| yugabytedb-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2676.89 |                46696.00 |            125000.00 |                             10111.00 | 1.00 |               77.09 |
+| yugabytedb-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2712.38 |                46085.00 |            125000.00 |                             10183.00 | 1.00 |               78.12 |
 
 #### Per Run
 
 | DBMS           |   experiment_run |   threads |   target |   pod_count |   errors |   SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:---------------|-----------------:|----------:|---------:|------------:|---------:|-----:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| YugabyteDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |     0.00 | 1.00 |               65.78 |                        18438.70 |                54726.00 |           1000000.00 |                             16507.00 |
+| YugabyteDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |     0.00 | 1.00 |               77.09 |                        21724.64 |                46696.00 |           1000000.00 |                             10049.00 |
 
 ### Benchmarking
 
@@ -260,13 +258,13 @@ YCSB SF=1
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| yugabytedb-1-1-1-1-1 | yugabytedb-1-1-1 | yugabytedb-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    65536 |        0 |                        21067.71 |                47466.00 |             499968 |                           26783.00 |               500032 |                             39647.00 |
+| yugabytedb-1-1-1-1-1 | yugabytedb-1-1-1 | yugabytedb-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    65536 |        0 |                        21601.54 |                46293.00 |             498890 |                           43199.00 |               501110 |                             48799.00 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| yugabytedb-1-1-1 | yugabytedb-1-1-1 |                1 |        1 |               1 |           1 |        64 |    65536 |        0 |                        21067.71 |                47466.00 |             499968 |                           26783.00 |               500032 |                             39647.00 |
+| yugabytedb-1-1-1 | yugabytedb-1-1-1 |                1 |        1 |               1 |           1 |        64 |    65536 |        0 |                        21601.54 |                46293.00 |             498890 |                           43199.00 |               501110 |                             48799.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -276,8 +274,15 @@ YCSB SF=1
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
+* TEST passed: Execution Phase: every pod ran its configured operations
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

@@ -77,7 +77,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_postgresql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset PostgreSQL"
 
 
 #### YCSB Reset PGBouncer
@@ -105,7 +105,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_pgbouncer.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset PGBouncer"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset PGBouncer"
 
 
 #### YCSB Reset OrioleDB
@@ -130,7 +130,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_orioledb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset OrioleDB"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset OrioleDB"
 
 
 #### YCSB Reset MySQL
@@ -155,7 +155,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_mysql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset MySQL"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset MySQL"
 
 
 #### YCSB Reset MariaDB
@@ -180,7 +180,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_mariadb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset MariaDB"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset MariaDB"
 
 
 #### YCSB Reset Citus
@@ -208,7 +208,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_citus.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset Citus"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset Citus"
 
 
 #### YCSB Reset CockroachDB
@@ -235,7 +235,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_cockroachdb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset CockroachDB"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset CockroachDB"
 
 
 #### YCSB Reset TiDB
@@ -261,7 +261,7 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_tidb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset TiDB"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset TiDB"
 
 
 #### YCSB Reset Dragonfly
@@ -286,7 +286,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_dragonfly.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset Dragonfly"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset Dragonfly"
 
 
 #### YCSB Reset Dragonfly Replica
@@ -313,7 +313,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_dragonfly_replica.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset Dragonfly Replica"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset Dragonfly Replica"
 
 
 #### YCSB Reset Redis
@@ -338,7 +338,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_redis.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset Redis"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset Redis"
 
 
 #### YCSB Reset Redis Cluster
@@ -364,7 +364,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_redis_cluster.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset Redis Cluster"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset Redis Cluster"
 
 
 #### YCSB Reset YugabyteDB
@@ -391,7 +391,7 @@ bexhoma ycsb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_ycsb_yugabytedb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset YugabyteDB"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset YugabyteDB"
 
 Remove-YugabyteDB
 
@@ -421,7 +421,7 @@ bexhoma benchbase `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_benchbase_postgresql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset TPC-C PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "Benchbase reset TPC-C PostgreSQL"
 
 
 #### Benchbase Reset TPC-C PGBouncer
@@ -445,7 +445,7 @@ bexhoma benchbase `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_benchbase_pgbouncer.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset TPC-C PGBouncer"
+Write-ExperimentResult $LASTEXITCODE "Benchbase reset TPC-C PGBouncer"
 
 
 #### Benchbase Reset TPC-C MySQL
@@ -466,7 +466,7 @@ bexhoma benchbase `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_benchbase_mysql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset TPC-C MySQL"
+Write-ExperimentResult $LASTEXITCODE "Benchbase reset TPC-C MySQL"
 
 
 #### Benchbase Reset TPC-C MariaDB
@@ -487,7 +487,7 @@ bexhoma benchbase `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_benchbase_mariadb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset TPC-C MariaDB"
+Write-ExperimentResult $LASTEXITCODE "Benchbase reset TPC-C MariaDB"
 
 
 #### Benchbase Reset Twitter PostgreSQL
@@ -509,7 +509,7 @@ bexhoma benchbase `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_benchbase_twitter_postgresql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset Twitter PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "Benchbase reset Twitter PostgreSQL"
 
 
 #### Benchbase Reset TPC-C Citus
@@ -533,7 +533,7 @@ bexhoma benchbase `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_benchbase_citus.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset TPC-C Citus"
+Write-ExperimentResult $LASTEXITCODE "Benchbase reset TPC-C Citus"
 
 
 #### Benchbase Reset TPC-C CockroachDB
@@ -556,7 +556,7 @@ bexhoma benchbase `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_benchbase_cockroachdb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset TPC-C CockroachDB"
+Write-ExperimentResult $LASTEXITCODE "Benchbase reset TPC-C CockroachDB"
 
 
 #### Benchbase Reset TPC-C TiDB
@@ -578,7 +578,7 @@ bexhoma benchbase `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_benchbase_tidb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset TPC-C TiDB"
+Write-ExperimentResult $LASTEXITCODE "Benchbase reset TPC-C TiDB"
 
 
 #### Benchbase Reset TPC-C YugabyteDB
@@ -601,7 +601,7 @@ bexhoma benchbase `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_benchbase_yugabytedb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase reset TPC-C YugabyteDB"
+Write-ExperimentResult $LASTEXITCODE "Benchbase reset TPC-C YugabyteDB"
 
 Remove-YugabyteDB
 
@@ -630,7 +630,7 @@ bexhoma hammerdb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_hammerdb_postgresql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB reset PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "HammerDB reset PostgreSQL"
 
 
 #### HammerDB Reset MySQL
@@ -650,7 +650,7 @@ bexhoma hammerdb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_hammerdb_mysql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB reset MySQL"
+Write-ExperimentResult $LASTEXITCODE "HammerDB reset MySQL"
 
 
 #### HammerDB Reset MariaDB
@@ -670,7 +670,7 @@ bexhoma hammerdb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_hammerdb_mariadb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB reset MariaDB"
+Write-ExperimentResult $LASTEXITCODE "HammerDB reset MariaDB"
 
 
 #### HammerDB Reset Citus
@@ -693,7 +693,7 @@ bexhoma hammerdb `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_hammerdb_citus.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB reset Citus"
+Write-ExperimentResult $LASTEXITCODE "HammerDB reset Citus"
 
 
 
@@ -721,7 +721,7 @@ bexhoma tpch `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpch_postgresql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H reset PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "TPC-H reset PostgreSQL"
 
 
 #### TPC-H Reset PgDuckDB
@@ -742,7 +742,7 @@ bexhoma tpch `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpch_pgduckdb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H reset PgDuckDB"
+Write-ExperimentResult $LASTEXITCODE "TPC-H reset PgDuckDB"
 
 
 #### TPC-H Reset MonetDB
@@ -763,7 +763,7 @@ bexhoma tpch `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpch_monetdb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H reset MonetDB"
+Write-ExperimentResult $LASTEXITCODE "TPC-H reset MonetDB"
 
 
 #### TPC-H Reset MySQL
@@ -784,7 +784,7 @@ bexhoma tpch `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpch_mysql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H reset MySQL"
+Write-ExperimentResult $LASTEXITCODE "TPC-H reset MySQL"
 
 
 #### TPC-H Reset MariaDB
@@ -805,7 +805,7 @@ bexhoma tpch `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpch_mariadb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H reset MariaDB"
+Write-ExperimentResult $LASTEXITCODE "TPC-H reset MariaDB"
 
 
 #### TPC-H Reset Citus
@@ -829,7 +829,7 @@ bexhoma tpch `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpch_citus.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H reset Citus"
+Write-ExperimentResult $LASTEXITCODE "TPC-H reset Citus"
 
 
 #### TPC-H Reset PostgreSQL with Refresh Stream
@@ -851,7 +851,7 @@ bexhoma tpch `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpch_refresh_postgresql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H reset PostgreSQL with Refresh Stream"
+Write-ExperimentResult $LASTEXITCODE "TPC-H reset PostgreSQL with Refresh Stream"
 
 
 
@@ -880,7 +880,7 @@ bexhoma tpcds `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpcds_postgresql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS reset PostgreSQL"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS reset PostgreSQL"
 
 
 #### TPC-DS Reset MonetDB
@@ -902,7 +902,7 @@ bexhoma tpcds `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpcds_monetdb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS reset MonetDB"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS reset MonetDB"
 
 
 #### TPC-DS Reset MySQL
@@ -924,7 +924,7 @@ bexhoma tpcds `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpcds_mysql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS reset MySQL"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS reset MySQL"
 
 
 #### TPC-DS Reset MariaDB
@@ -946,7 +946,7 @@ bexhoma tpcds `
   -ar                           <# activate configured reset scripts before each round #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_reset_tpcds_mariadb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS reset MariaDB"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS reset MariaDB"
 
 
 
@@ -956,4 +956,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS reset MariaD
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

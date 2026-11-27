@@ -40,7 +40,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_orioledb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB OrioleDB  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB OrioleDB  sf=1"
 
 
 ####################################################
@@ -72,7 +72,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_orioledb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB OrioleDB monitoring  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB OrioleDB monitoring  sf=1"
 
 
 ####################################################
@@ -103,7 +103,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_orioledb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB OrioleDB storage  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB OrioleDB storage  sf=1"
 
 
 ####################################################
@@ -133,7 +133,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_orioledb_postgresql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB PostgreSQL vs OrioleDB  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB PostgreSQL vs OrioleDB  sf=1"
 
 
 ####################################################
@@ -158,7 +158,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tpcc_orioledb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase OrioleDB tpcc  sf=16"
+Write-ExperimentResult $LASTEXITCODE "Benchbase OrioleDB tpcc  sf=16"
 
 
 ####################################################
@@ -182,7 +182,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_orioledb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB OrioleDB  sf=16"
+Write-ExperimentResult $LASTEXITCODE "HammerDB OrioleDB  sf=16"
 
 
 ###########################################
@@ -190,4 +190,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB OrioleDB  
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

@@ -39,7 +39,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_ycsb_postgresql_start.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB start PostgreSQL"
+report_result $? "YCSB start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
@@ -69,7 +69,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_ycsb_postgresql_load.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB load PostgreSQL"
+report_result $? "YCSB load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
@@ -106,7 +106,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_run.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB run PostgreSQL"
+report_result $? "YCSB run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=ycsb
 kubectl delete all -l app=bexhoma,usecase=ycsb
 
@@ -135,7 +135,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_benchbase_postgresql_start.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase start PostgreSQL"
+report_result $? "Benchbase start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
 kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
@@ -163,7 +163,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_benchbase_postgresql_load.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase load PostgreSQL"
+report_result $? "Benchbase load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
 kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
@@ -198,7 +198,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_run.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase run PostgreSQL"
+report_result $? "Benchbase run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=benchbase_tpcc
 kubectl delete all -l app=bexhoma,usecase=benchbase_tpcc
 
@@ -227,7 +227,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_hammerdb_postgresql_start.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB start PostgreSQL"
+report_result $? "HammerDB start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
 kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
@@ -255,7 +255,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_hammerdb_postgresql_load.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB load PostgreSQL"
+report_result $? "HammerDB load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
 kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
@@ -290,7 +290,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_run.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB run PostgreSQL"
+report_result $? "HammerDB run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=hammerdb_tpcc
 kubectl delete all -l app=bexhoma,usecase=hammerdb_tpcc
 
@@ -319,7 +319,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_tpch_postgresql_start.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H start PostgreSQL"
+report_result $? "TPC-H start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-h
 kubectl delete all -l app=bexhoma,usecase=tpc-h
 
@@ -351,7 +351,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_tpch_postgresql_load.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H load PostgreSQL"
+report_result $? "TPC-H load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-h
 kubectl delete all -l app=bexhoma,usecase=tpc-h
 
@@ -390,7 +390,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_run.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H run PostgreSQL"
+report_result $? "TPC-H run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-h
 kubectl delete all -l app=bexhoma,usecase=tpc-h
 
@@ -419,7 +419,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT \
   start &>$LOG_DIR/docs_tpcds_postgresql_start.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS start PostgreSQL"
+report_result $? "TPC-DS start PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-ds
 kubectl delete all -l app=bexhoma,usecase=tpc-ds
 
@@ -451,7 +451,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD \
   load &>$LOG_DIR/docs_tpcds_postgresql_load.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS load PostgreSQL"
+report_result $? "TPC-DS load PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-ds
 kubectl delete all -l app=bexhoma,usecase=tpc-ds
 
@@ -490,7 +490,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql_run.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS run PostgreSQL"
+report_result $? "TPC-DS run PostgreSQL"
 kubectl get all -l app=bexhoma,usecase=tpc-ds
 kubectl delete all -l app=bexhoma,usecase=tpc-ds
 
@@ -500,4 +500,5 @@ kubectl delete all -l app=bexhoma,usecase=tpc-ds
 ###########################################
 
 
+report_total
 clean_logs

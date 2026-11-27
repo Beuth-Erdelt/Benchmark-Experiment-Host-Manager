@@ -47,7 +47,7 @@ bexhoma tpcds `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS PostgreSQL  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS PostgreSQL  sf=1"
 
 
 #### TCP-DS Monitoring (Example-TPC-DS.md)
@@ -82,7 +82,7 @@ bexhoma tpcds `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS monitoring  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS monitoring  sf=3"
 
 
 #### TCP-DS Throughput (Example-TPC-DS.md)
@@ -117,7 +117,7 @@ bexhoma tpcds `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_throughput.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS throughput  sf=1  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS throughput  sf=1  ne=1,2"
 
 
 #### TCP-DS Persistent Storage (Example-TPC-DS.md)
@@ -153,7 +153,7 @@ bexhoma tpcds `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS storage  sf=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS storage  sf=1  nc=2"
 
 
 ###########################################
@@ -199,7 +199,7 @@ bexhoma tpcds `
   --set deployment[bexhoma-deployment-postgres].container[dbms].maintenance_work_mem=2GB <# memory for index/vacuum maintenance #> `
   profiling 2>&1 | Out-File "$LOG_DIR\docs_tpcds_postgresql_profiling.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS profiling  sf=10  ne=1,1"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS profiling  sf=10  ne=1,1"
 
 
 ###########################################
@@ -207,4 +207,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS profiling  s
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

@@ -355,6 +355,7 @@ class ExperimentBase():
         """
         self.resolve_ddl_parameters()
         self.expand_resource_cells()
+        self.check_job_name_lengths()
         if self.args.mode == 'start':
             start = default_timer()
             start_datetime = str(datetime.now())
@@ -1369,6 +1370,21 @@ class ExperimentBase():
         :param configuration: Configuration object
         """
         self.configurations.append(configuration)
+
+    def check_job_name_lengths(self) -> None:
+        """Refuse configurations whose loading or benchmarker job names are too long.
+
+        Called by :meth:`process` before anything is started, after
+        :meth:`expand_resource_cells` has given the clones their names. Mode
+        ``start`` and ``summary`` create no jobs, ``load`` only loading jobs.
+
+        :raises ValueError: See :meth:`~bexhoma.configurations.base.SutConfiguration.check_job_name_lengths`.
+        """
+        mode = getattr(getattr(self, 'args', None), 'mode', None)
+        if mode in ('start', 'summary'):
+            return
+        for config in self.configurations:
+            config.check_job_name_lengths(benchmarking=mode != 'load')
 
     def resolve_ddl_parameters(self) -> None:
         """
@@ -3400,40 +3416,40 @@ class ExperimentBase():
                             print(f"{config.configuration:30s}: can be stopped")
                             app = self.cluster.appname
                             pod_restarts: dict[str, dict] = {}
-                            deployments = list(config.deployment_infos['deployment'].keys())
-                            for deployment in deployments:
-                                pods = self.cluster.get_pods(app, deployment, self.code, config.configuration)
-                                for pod in pods:
-                                    for container in config.deployment_infos['deployment'][deployment]['containers']:
-                                        self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
-                                    # one read of the restart counts for the previous logs, the summary and the snapshot
-                                    per_container = self.cluster.get_pod_restart_counts(pod)
-                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1, counts=per_container)
-                                    if not self.cluster.pod_description_exists(pod_name=pod):
-                                        self.cluster.logger.debug(f"Store description of pod {pod}")
-                                        self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
-                                    restarts = config.host.get_host_restarts(pod, counts=per_container)
-                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(
-                                        restarts, per_container, uid=self.cluster.get_pod_uid(pod))
-                                    summary = sut_restarts.format_restart_summary(restarts, per_container)
-                                    print(f"{config.configuration:30s}: had {summary} restarts at worker {pod}")
-                            statefulsets = list(config.deployment_infos['statefulset'].keys())
-                            for statefulset in statefulsets:
-                                pods = config.get_worker_pods(component=statefulset)
-                                for pod in pods:
-                                    for container in config.deployment_infos['statefulset'][statefulset]['containers']:
-                                        self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
-                                    # one read of the restart counts for the previous logs, the summary and the snapshot
-                                    per_container = self.cluster.get_pod_restart_counts(pod)
-                                    self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1, counts=per_container)
-                                    if not self.cluster.pod_description_exists(pod_name=pod):
-                                        self.cluster.logger.debug(f"Store description of pod {pod}")
-                                        self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
-                                    restarts = config.host.get_host_restarts(pod, counts=per_container)
-                                    pod_restarts[pod] = sut_restarts.restart_snapshot_entry(
-                                        restarts, per_container, uid=self.cluster.get_pod_uid(pod))
-                                    summary = sut_restarts.format_restart_summary(restarts, per_container)
-                                    print(f"{config.configuration:30s}: had {summary} restarts at worker {pod}")
+                            # the pods of the SUT's Deployments, StatefulSets and Jobs, each with the containers
+                            # and init containers of its manifest (deployment_infos)
+                            infos = config.deployment_infos
+                            pods_with_containers = []
+                            for deployment, info in infos.get('deployment', {}).items():
+                                for pod in self.cluster.get_pods(app, deployment, self.code, config.configuration):
+                                    pods_with_containers.append((pod, info))
+                            # a Job's pods carry the component label of a StatefulSet (e.g. CockroachDB's
+                            # cluster-init job, component=worker): found by the Job's name, they are kept
+                            # out of the StatefulSet's pods
+                            job_pods = []
+                            for info in infos.get('job', {}).values():
+                                for pod in self.cluster.get_job_pods(app=app, experiment=self.code, configuration=config.configuration, jobname=info['name']) or []:
+                                    job_pods.append((pod, info))
+                            job_pod_names = {pod for pod, _ in job_pods}
+                            for statefulset, info in infos.get('statefulset', {}).items():
+                                for pod in config.get_worker_pods(component=statefulset):
+                                    if pod not in job_pod_names:
+                                        pods_with_containers.append((pod, info))
+                            pods_with_containers.extend(job_pods)
+                            for pod, info in pods_with_containers:
+                                for container in info.get('containers', []) + info.get('init_containers', []):
+                                    self.cluster.store_pod_log(pod, container, number=config.num_experiment_to_apply_done+1)
+                                # one read of the restart counts for the previous logs, the summary and the snapshot
+                                per_container = self.cluster.get_pod_restart_counts(pod)
+                                self.cluster.store_previous_pod_logs(pod, number=config.num_experiment_to_apply_done+1, counts=per_container)
+                                if not self.cluster.pod_description_exists(pod_name=pod):
+                                    self.cluster.logger.debug(f"Store description of pod {pod}")
+                                    self.cluster.store_pod_description(pod_name=pod, number=config.num_experiment_to_apply_done+1)
+                                restarts = config.host.get_host_restarts(pod, counts=per_container)
+                                pod_restarts[pod] = sut_restarts.restart_snapshot_entry(
+                                    restarts, per_container, uid=self.cluster.get_pod_uid(pod))
+                                summary = sut_restarts.format_restart_summary(restarts, per_container)
+                                print(f"{config.configuration:30s}: had {summary} restarts at worker {pod}")
                             experiment_run = str(config.num_experiment_to_apply_done + 1)
                             restarts_filename = self.result_filename_local(
                                 f"bexhoma-sut-{config.configuration}-{self.code}-{experiment_run}-restarts.json".lower())
@@ -3608,11 +3624,15 @@ class ExperimentBase():
         directory = os.fsencode(self.path)
         #print(jobname)
         timing = []
-        self.cluster.logger.debug(f"Looking for files {jobname}*.{container}.log")
-        for file in os.listdir(directory):
+        # Kubernetes names a job's pods <jobname>-<5 characters> (same rule as
+        # SutConfiguration.job_pods_pattern()). A plain prefix match would let
+        # job ...-1 also take the logs of ...-10 to ...-19.
+        pattern_logfile = re.compile(
+            re.escape(jobname + "-") + "[a-z0-9]{5}" + re.escape(f".{container}.log"))
+        self.cluster.logger.debug(f"Looking for files {pattern_logfile.pattern}")
+        for file in sorted(os.listdir(directory)):
             filename = os.fsdecode(file)
-            #if filename.startswith("bexhoma-loading-"+jobname) and filename.endswith(".{container}.log".format(container=container)):
-            if filename.startswith(jobname) and filename.endswith(f".{container}.log"):
+            if pattern_logfile.fullmatch(filename):
                 self.cluster.logger.debug(f"Found jobcontainer file {filename}")
                 filename_local = self.result_filename_local(filename)
                 (timing_start, timing_end) = get_job_timing(filename_local)
@@ -3674,6 +3694,7 @@ class ExperimentBase():
             #print("timing_benchmarker", timing_benchmarker)
             if not timing_benchmarker:
                 print(f"{jobname:30s}: no timing data found for job {jobname}")
+                self._record_runtime_failure(f"Start and end times of job {jobname}")
                 return
             # Unzip the pairs into two separate lists: firsts and seconds
             firsts, seconds = zip(*timing_benchmarker)

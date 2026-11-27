@@ -43,7 +43,7 @@ bexhoma tpch \
   -rr 16Gi \
   run &>$LOG_DIR/docs_tpch_mariadbcs.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDBCS  sf=1"
+report_result $? "TPC-H MariaDBCS  sf=1"
 
 
 ####################################################
@@ -77,7 +77,7 @@ bexhoma tpch \
   -rr 64Gi \
   run &>$LOG_DIR/docs_tpch_mariadbcs_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDBCS monitoring  sf=10"
+report_result $? "TPC-H MariaDBCS monitoring  sf=10"
 
 
 ####################################################
@@ -121,7 +121,7 @@ bexhoma tpch \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_tpch_mariadbcs_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDB MariaDBCS  sf=1"
+report_result $? "TPC-H MariaDB MariaDBCS  sf=1"
 
 
 ####################################################
@@ -163,7 +163,7 @@ bexhoma tpcds \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_tpcds_mariadbcs.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS MariaDBCS  sf=1"
+report_result $? "TPC-DS MariaDBCS  sf=1"
 
 
 ####################################################
@@ -201,7 +201,7 @@ bexhoma ssb \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_ssb_mariadbcs.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDBCS  sf=1"
+report_result $? "SSB MariaDBCS  sf=1"
 
 
 # SSB flat schema
@@ -236,7 +236,7 @@ bexhoma ssb \
   -rst $BEXHOMA_STORAGE_CLASS \
   run &>$LOG_DIR/docs_ssb_mariadbcs_flat.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB MariaDBCS flat  sf=1"
+report_result $? "SSB MariaDBCS flat  sf=1"
 
 
 #### TPC-H Refresh Stream (Example-TPC-H.md)
@@ -272,7 +272,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mariadbcs_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDBCS refresh  sf=1  ne=3"
+report_result $? "TPC-H MariaDBCS refresh  sf=1  ne=3"
 
 
 ###########################################
@@ -280,4 +280,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MariaDBCS refresh  sf=1  ne=3"
 ###########################################
 
 
+report_total
 clean_logs

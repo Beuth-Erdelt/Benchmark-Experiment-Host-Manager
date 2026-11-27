@@ -61,7 +61,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/doc_tpch_testcase_cedardb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H CedarDB monitoring  sf=3"
+report_result $? "TPC-H CedarDB monitoring  sf=3"
 
 
 #### SSB normal schema
@@ -102,7 +102,7 @@ bexhoma ssb \
   -ks no \
   run &>$LOG_DIR/doc_ssb_testcase_cedardb_normal.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB CedarDB normal  sf=1"
+report_result $? "SSB CedarDB normal  sf=1"
 
 
 #### SSB flat schema
@@ -144,7 +144,7 @@ bexhoma ssb \
   -ks no \
   run &>$LOG_DIR/doc_ssb_testcase_cedardb_flat.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB CedarDB flat  sf=1"
+report_result $? "SSB CedarDB flat  sf=1"
 
 
 #### YCSB workload c
@@ -196,7 +196,7 @@ bexhoma ycsb \
   -ks no \
   run &>$LOG_DIR/doc_ycsb_testcase_cedardb_read.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CedarDB workload c  sf=1"
+report_result $? "YCSB CedarDB workload c  sf=1"
 
 
 #### YCSB workload a
@@ -249,7 +249,7 @@ bexhoma ycsb \
   -ks no \
   run &>$LOG_DIR/doc_ycsb_testcase_cedardb_update.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CedarDB workload a  sf=1"
+report_result $? "YCSB CedarDB workload a  sf=1"
 
 
 #### YCSB Scale Loading (Example-YCSB.md)
@@ -293,7 +293,7 @@ bexhoma ycsb \
   -ks no \
   run &>$LOG_DIR/doc_ycsb_testcase_cedardb_loading.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CedarDB loading  sf=1  nlp=1,8"
+report_result $? "YCSB CedarDB loading  sf=1  nlp=1,8"
 
 
 #### Benchbase tpcc
@@ -340,7 +340,7 @@ bexhoma benchbase \
   -ks no \
   run &>$LOG_DIR/doc_benchbase_testcase_tpcc_cedardb_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB tpcc  sf=16"
+report_result $? "Benchbase CedarDB tpcc  sf=16"
 
 
 #### Benchbase ycsb
@@ -387,7 +387,7 @@ bexhoma benchbase \
   -ks no \
   run &>$LOG_DIR/doc_benchbase_testcase_ycsb_cedardb_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB ycsb  sf=1"
+report_result $? "Benchbase CedarDB ycsb  sf=1"
 
 
 #### Benchbase chbenchmark
@@ -434,7 +434,7 @@ bexhoma benchbase \
   -ks no \
   run &>$LOG_DIR/doc_benchbase_testcase_chbenchmark_cedardb_simple.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CedarDB chbenchmark  sf=10"
+report_result $? "Benchbase CedarDB chbenchmark  sf=10"
 
 
 ####################################################
@@ -477,7 +477,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_cedardb_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H CedarDB refresh  sf=1  ne=3"
+report_result $? "TPC-H CedarDB refresh  sf=1  ne=3"
 
 
 ###########################################
@@ -485,4 +485,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H CedarDB refresh  sf=1  ne=3"
 ###########################################
 
 
+report_total
 clean_logs

@@ -38,7 +38,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_clickhouse.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H ClickHouse  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H ClickHouse  sf=1"
 
 
 ####################################################
@@ -69,7 +69,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_clickhouse_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H ClickHouse monitoring  sf=10"
+Write-ExperimentResult $LASTEXITCODE "TPC-H ClickHouse monitoring  sf=10"
 
 
 ####################################################
@@ -101,7 +101,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_clickhouse_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H ClickHouse  sf=10  nc=2"
+Write-ExperimentResult $LASTEXITCODE "TPC-H ClickHouse  sf=10  nc=2"
 
 
 ####################################################
@@ -135,7 +135,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_clickhouse_cluster.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H ClickHouseCluster  sf=10  nw=3  nc=2"
+Write-ExperimentResult $LASTEXITCODE "TPC-H ClickHouseCluster  sf=10  nw=3  nc=2"
 
 
 ####################################################
@@ -167,7 +167,7 @@ bexhoma tpcds `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_clickhouse.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS ClickHouse  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS ClickHouse  sf=3"
 
 
 # TPC-DS on ClickHouseCluster with 3 shards
@@ -196,7 +196,7 @@ bexhoma tpcds `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_clickhouse_cluster.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS ClickHouseCluster  sf=3  nw=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS ClickHouseCluster  sf=3  nw=3"
 
 
 ####################################################
@@ -222,7 +222,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_clickhouse_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H ClickHouse refresh  sf=1  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H ClickHouse refresh  sf=1  ne=3"
 
 
 #### TPC-H Refresh Stream on ClickHouseCluster (Example-ClickHouse.md)
@@ -247,7 +247,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_clickhouse_cluster_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H ClickHouseCluster refresh  sf=1  nw=3  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H ClickHouseCluster refresh  sf=1  nw=3  ne=3"
 
 
 ###########################################
@@ -255,4 +255,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H ClickHouseClu
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

@@ -42,7 +42,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_loading.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading  sf=1  nlp=1,8"
+Write-ExperimentResult $LASTEXITCODE "YCSB loading  sf=1  nlp=1,8"
 
 
 #### YCSB Scale Benchmarking (Example-YCSB.md)
@@ -66,7 +66,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_benchmarking.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB benchmarking  sf=1  nbp=1,8"
+Write-ExperimentResult $LASTEXITCODE "YCSB benchmarking  sf=1  nbp=1,8"
 
 
 #### YCSB Monitoring (Example-YCSB.md)
@@ -92,7 +92,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB monitoring  sf=3  nbp=1,8"
+Write-ExperimentResult $LASTEXITCODE "YCSB monitoring  sf=3  nbp=1,8"
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
@@ -118,7 +118,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB storage  sf=1  nbp=1,8  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB storage  sf=1  nbp=1,8  nc=2"
 
 
 #### YCSB Custom Loading Parameters (Example-YCSB.md)
@@ -140,7 +140,7 @@ bexhoma ycsb `
   --set deployment[bexhoma-deployment-postgres].container[dbms].effective_io_concurrency=64 <# override deployment configuration parameter #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_loading_patch.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB loading patch  sf=1  nlp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB loading patch  sf=1  nlp=1"
 
 
 #### YCSB Reset Script (Example-YCSB.md)
@@ -165,7 +165,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_reset.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB reset script  sf=1  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "YCSB reset script  sf=1  ne=1,2"
 
 
 ###########################################
@@ -198,7 +198,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_a.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload a  sf=10  nbp=1,8"
+Write-ExperimentResult $LASTEXITCODE "YCSB workload a  sf=10  nbp=1,8"
 
 
 #### YCSB Workload B (Example-YCSB.md)
@@ -226,7 +226,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_b.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload b  sf=10  nbp=1,8"
+Write-ExperimentResult $LASTEXITCODE "YCSB workload b  sf=10  nbp=1,8"
 
 
 #### YCSB Workload C (Example-YCSB.md)
@@ -254,7 +254,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_c.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload c  sf=10  nbp=1,8"
+Write-ExperimentResult $LASTEXITCODE "YCSB workload c  sf=10  nbp=1,8"
 
 
 #### YCSB Workload D (Example-YCSB.md)
@@ -283,7 +283,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_d.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload d  sf=10  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB workload d  sf=10  nbp=1"
 
 
 #### YCSB Workload E (Example-YCSB.md)
@@ -312,7 +312,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_e.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload e  sf=10  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB workload e  sf=10  nbp=1"
 
 
 #### YCSB Workload F (Example-YCSB.md)
@@ -340,7 +340,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_f.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload f  sf=10  nbp=1,8"
+Write-ExperimentResult $LASTEXITCODE "YCSB workload f  sf=10  nbp=1,8"
 
 
 #### YCSB Workload A uniform (Example-YCSB.md)
@@ -368,7 +368,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_a2.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload a2 (uniform)  sf=10  nbp=1,8"
+Write-ExperimentResult $LASTEXITCODE "YCSB workload a2 (uniform)  sf=10  nbp=1,8"
 
 
 #### YCSB Workload C uniform (Example-YCSB.md)
@@ -396,7 +396,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_wl_c2.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload c2 (uniform)  sf=10  nbp=1,8"
+Write-ExperimentResult $LASTEXITCODE "YCSB workload c2 (uniform)  sf=10  nbp=1,8"
 
 
 ###########################################
@@ -404,4 +404,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB workload c2 (u
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

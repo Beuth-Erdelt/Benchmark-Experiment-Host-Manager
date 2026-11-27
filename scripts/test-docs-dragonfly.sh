@@ -60,7 +60,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_dragonfly.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single  sf=1  nbp=1"
+report_result $? "YCSB Dragonfly single  sf=1  nbp=1"
 
 
 ####################################################
@@ -114,7 +114,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_dragonfly_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single monitoring  sf=3  nbp=1"
+report_result $? "YCSB Dragonfly single monitoring  sf=3  nbp=1"
 
 
 ####################################################
@@ -174,7 +174,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_dragonfly_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly single PVC  sf=1  nbp=1  nc=2"
+report_result $? "YCSB Dragonfly single PVC  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -234,7 +234,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_dragonfly_cluster.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3  sf=1  nbp=1"
+report_result $? "YCSB Dragonfly cluster 3  sf=1  nbp=1"
 
 
 # Variant cluster: 3 Dragonfly instances on persistent storage
@@ -291,7 +291,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_dragonfly_cluster_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 PVC  sf=1  nbp=1  nc=2"
+report_result $? "YCSB Dragonfly cluster 3 PVC  sf=1  nbp=1  nc=2"
 
 
 # Variant replication: 3 Dragonfly instances, 1 master and 2 replicas
@@ -342,7 +342,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_dragonfly_replica.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 replication  sf=1  nbp=1"
+report_result $? "YCSB Dragonfly cluster 3 replication  sf=1  nbp=1"
 
 
 ####################################################
@@ -404,7 +404,7 @@ bexhoma ycsb \
   --set "statefulset[bexhoma-worker].container[dbms].env.DFLY_proactor_threads=8" \
   run &>$LOG_DIR/docs_ycsb_dragonfly_cluster_settings.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 --set proactor_threads=8  sf=10  nbp=1"
+report_result $? "YCSB Dragonfly cluster 3 --set proactor_threads=8  sf=10  nbp=1"
 
 
 ###########################################
@@ -412,4 +412,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Dragonfly cluster 3 --set proacto
 ###########################################
 
 
+report_total
 clean_logs

@@ -84,7 +84,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_durable.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PostgreSQL durable"
+report_result $? "TPC-H durability PostgreSQL durable"
 
 
 #### TPC-H Durability PostgreSQL relaxed
@@ -115,7 +115,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PostgreSQL relaxed"
+report_result $? "TPC-H durability PostgreSQL relaxed"
 
 
 #### TPC-H Durability PostgreSQL unsafe
@@ -146,7 +146,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_unsafe.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PostgreSQL unsafe"
+report_result $? "TPC-H durability PostgreSQL unsafe"
 
 
 #### TPC-H Durability PostgreSQL unsafe on persistent storage
@@ -183,7 +183,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_unsafe_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PostgreSQL unsafe on storage"
+report_result $? "TPC-H durability PostgreSQL unsafe on storage"
 
 
 #### TPC-H Durability PostgreSQL relaxed with schema tenancy
@@ -218,7 +218,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_postgresql_tenants_schema.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PostgreSQL schema tenancy"
+report_result $? "TPC-H durability PostgreSQL schema tenancy"
 
 
 #### TPC-H Durability PgDuckDB unsafe
@@ -249,7 +249,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_pgduckdb_unsafe.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability PgDuckDB unsafe"
+report_result $? "TPC-H durability PgDuckDB unsafe"
 
 
 #### TPC-H Durability MySQL durable
@@ -284,7 +284,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mysql_durable.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability MySQL durable"
+report_result $? "TPC-H durability MySQL durable"
 
 
 #### TPC-H Durability MySQL relaxed
@@ -315,7 +315,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mysql_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability MySQL relaxed"
+report_result $? "TPC-H durability MySQL relaxed"
 
 
 #### TPC-H Durability MySQL unsafe
@@ -346,7 +346,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mysql_unsafe.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability MySQL unsafe"
+report_result $? "TPC-H durability MySQL unsafe"
 
 
 #### TPC-H Durability MariaDB relaxed
@@ -377,7 +377,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_mariadb_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability MariaDB relaxed"
+report_result $? "TPC-H durability MariaDB relaxed"
 
 
 #### TPC-H Durability Citus unsafe
@@ -410,7 +410,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpch_citus_unsafe.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H durability Citus unsafe"
+report_result $? "TPC-H durability Citus unsafe"
 
 
 
@@ -450,7 +450,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpcds_postgresql_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS durability PostgreSQL relaxed"
+report_result $? "TPC-DS durability PostgreSQL relaxed"
 
 
 #### TPC-DS Durability MySQL relaxed
@@ -483,7 +483,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpcds_mysql_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS durability MySQL relaxed"
+report_result $? "TPC-DS durability MySQL relaxed"
 
 
 #### TPC-DS Durability MySQL unsafe
@@ -516,7 +516,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_tpcds_mysql_unsafe.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS durability MySQL unsafe"
+report_result $? "TPC-DS durability MySQL unsafe"
 
 
 
@@ -564,7 +564,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_postgresql_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability PostgreSQL relaxed"
+report_result $? "YCSB durability PostgreSQL relaxed"
 
 
 #### YCSB Durability PGBouncer unsafe
@@ -605,7 +605,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_pgbouncer_unsafe.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability PGBouncer unsafe"
+report_result $? "YCSB durability PGBouncer unsafe"
 
 
 #### YCSB Durability OrioleDB durable
@@ -646,7 +646,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_orioledb_durable.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability OrioleDB durable"
+report_result $? "YCSB durability OrioleDB durable"
 
 
 #### YCSB Durability OrioleDB unsafe
@@ -687,7 +687,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_orioledb_unsafe.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability OrioleDB unsafe"
+report_result $? "YCSB durability OrioleDB unsafe"
 
 
 #### YCSB Durability MySQL relaxed
@@ -728,7 +728,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_mysql_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability MySQL relaxed"
+report_result $? "YCSB durability MySQL relaxed"
 
 
 #### YCSB Durability MySQL unsafe
@@ -769,7 +769,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_mysql_unsafe.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability MySQL unsafe"
+report_result $? "YCSB durability MySQL unsafe"
 
 
 #### YCSB Durability Citus relaxed
@@ -816,7 +816,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_ycsb_citus_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability Citus relaxed"
+report_result $? "YCSB durability Citus relaxed"
 
 
 #### YCSB Durability TiDB relaxed
@@ -861,7 +861,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   run &>$LOG_DIR/docs_durability_ycsb_tidb_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB durability TiDB relaxed"
+report_result $? "YCSB durability TiDB relaxed"
 
 
 
@@ -899,7 +899,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_postgresql_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB durability PostgreSQL relaxed"
+report_result $? "HammerDB durability PostgreSQL relaxed"
 
 
 #### HammerDB Durability MySQL relaxed
@@ -930,7 +930,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_mysql_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB durability MySQL relaxed"
+report_result $? "HammerDB durability MySQL relaxed"
 
 
 #### HammerDB Durability MySQL unsafe
@@ -961,7 +961,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_mysql_unsafe.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB durability MySQL unsafe"
+report_result $? "HammerDB durability MySQL unsafe"
 
 
 #### HammerDB Durability Citus relaxed
@@ -994,7 +994,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_hammerdb_citus_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB durability Citus relaxed"
+report_result $? "HammerDB durability Citus relaxed"
 
 
 
@@ -1034,7 +1034,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_postgresql_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability TPC-C PostgreSQL relaxed"
+report_result $? "Benchbase durability TPC-C PostgreSQL relaxed"
 
 
 #### Benchbase Durability TPC-C PGBouncer relaxed
@@ -1073,7 +1073,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_pgbouncer_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability TPC-C PGBouncer relaxed"
+report_result $? "Benchbase durability TPC-C PGBouncer relaxed"
 
 
 #### Benchbase Durability TPC-C MySQL relaxed
@@ -1106,7 +1106,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_mysql_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability TPC-C MySQL relaxed"
+report_result $? "Benchbase durability TPC-C MySQL relaxed"
 
 
 #### Benchbase Durability TPC-C MySQL unsafe
@@ -1139,7 +1139,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_mysql_unsafe.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability TPC-C MySQL unsafe"
+report_result $? "Benchbase durability TPC-C MySQL unsafe"
 
 
 #### Benchbase Durability TPC-C Citus relaxed
@@ -1178,7 +1178,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_citus_relaxed.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability TPC-C Citus relaxed"
+report_result $? "Benchbase durability TPC-C Citus relaxed"
 
 
 #### Benchbase Durability Twitter PostgreSQL unsafe
@@ -1213,7 +1213,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_durability_benchbase_twitter_postgresql_unsafe.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability Twitter PostgreSQL unsafe"
+report_result $? "Benchbase durability Twitter PostgreSQL unsafe"
 
 
 
@@ -1223,4 +1223,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase durability Twitter PostgreSQ
 ###########################################
 
 
+report_total
 clean_logs

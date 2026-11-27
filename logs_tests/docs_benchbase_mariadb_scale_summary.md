@@ -3,14 +3,14 @@
 ### Workload
 Benchbase Workload tpcc SF=16
 * Type: benchbase
-* Duration: 1882s 
-* Code: 1794773043
+* Duration: 1831s 
+* Code: 1795670726
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 16. Target is based on multiples of '1024'. Factors for benchmarking are [8]. Benchmarking runs for 2 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 1 processes (pods).
@@ -34,10 +34,10 @@ Benchbase Workload tpcc SF=16
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1089175
-  * datadisk:2565
+  * disk:622539
+  * datadisk:2556
   * volume_size:49G
-  * volume_used:2.6G
+  * volume_used:2.5G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -46,17 +46,17 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794773043
+    * code:1795670726
 * mariadb-1-1-2-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1053136
-  * datadisk:2919
+  * disk:623779
+  * datadisk:3004
   * volume_size:49G
-  * volume_used:2.9G
+  * volume_used:3.0G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -65,17 +65,17 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794773043
+    * code:1795670726
 * mariadb-1-1-3-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1054446
-  * datadisk:3366
+  * disk:627793
+  * datadisk:3246
   * volume_size:49G
-  * volume_used:3.3G
+  * volume_used:3.2G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -84,17 +84,17 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794773043
+    * code:1795670726
 * mariadb-1-1-4-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1059656
-  * datadisk:3726
+  * disk:632434
+  * datadisk:3622
   * volume_size:49G
-  * volume_used:3.7G
+  * volume_used:3.6G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -103,15 +103,15 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794773043
+    * code:1795670726
 * mariadb-1-2-1-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1066091
-  * datadisk:4063
+  * disk:634751
+  * datadisk:4027
   * volume_size:49G
   * volume_used:4.0G
   * cpu_list:0-223
@@ -122,15 +122,15 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794773043
+    * code:1795670726
 * mariadb-1-2-2-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1065328
-  * datadisk:4375
+  * disk:635309
+  * datadisk:4367
   * volume_size:49G
   * volume_used:4.3G
   * cpu_list:0-223
@@ -141,15 +141,15 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794773043
+    * code:1795670726
 * mariadb-1-2-3-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1065979
-  * datadisk:4695
+  * disk:636273
+  * datadisk:4683
   * volume_size:49G
   * volume_used:4.6G
   * cpu_list:0-223
@@ -160,17 +160,17 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794773043
+    * code:1795670726
 * mariadb-1-2-4-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1066950
-  * datadisk:5031
+  * disk:638248
+  * datadisk:4975
   * volume_size:49G
-  * volume_used:5.0G
+  * volume_used:4.9G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -179,7 +179,7 @@ Benchbase Workload tpcc SF=16
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794773043
+    * code:1795670726
 
 ### Reused Storage
 * loading skipped, loading times inherited from an earlier experiment: MariaDB-1
@@ -188,8 +188,8 @@ Benchbase Workload tpcc SF=16
 * MariaDB-1: loading values of the volume: script=Schema, indexing=Checks
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1794773043-5c66865cd9-4m75t: 0
-* bexhoma-sut-mariadb-1-1794773043-54479b4768-sw44n: 0
+* bexhoma-sut-mariadb-1-1795670726-5fbdf5f845-hkr8g: 0
+* bexhoma-sut-mariadb-1-1795670726-87cc9674-l4g8z: 0
 
 ### Workflow
 
@@ -221,8 +221,8 @@ Benchbase Workload tpcc SF=16
 
 | DBMS        |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MariaDB-1-1 |                1 |   16 |      103.00 |           4.00 |            0.00 |         94.00 |            5.00 |              0 |         1 |             | None           |             0 | False         |              559.22 | True                |
-| MariaDB-1-2 |                2 |   16 |      103.00 |           4.00 |            0.00 |         94.00 |            5.00 |              0 |         1 |             | None           |             0 | False         |              559.22 | True                |
+| MariaDB-1-1 |                1 |   16 |      108.00 |           2.00 |            0.00 |        101.00 |            5.00 |              0 |         1 |             | None           |             0 | False         |              533.33 | True                |
+| MariaDB-1-2 |                2 |   16 |      108.00 |           2.00 |            0.00 |        101.00 |            5.00 |              0 |         1 |             | None           |             0 | False         |              533.33 | True                |
 
 ### Benchmarking
 
@@ -230,37 +230,37 @@ Benchbase Workload tpcc SF=16
 
 | connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        4566.54 |                     4493.46 |         0.00 |                                                     102564.00 |                                              34174.00 |
-| mariadb-1-1-2-1-1 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        2420.60 |                     2387.05 |         0.00 |                                                     185608.00 |                                              65880.00 |
-| mariadb-1-1-2-1-2 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       2 |       160 |     8192 |          -1 | 120.00 |        0 |                        2403.28 |                     2370.28 |         0.00 |                                                     185970.00 |                                              66519.00 |
-| mariadb-1-1-3-1-1 | mariadb-1-1-3 | mariadb-1-1-3-1 |                1 |        3 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        2263.83 |                     2231.48 |         0.00 |                                                      98665.00 |                                              35005.00 |
-| mariadb-1-1-3-1-2 | mariadb-1-1-3 | mariadb-1-1-3-1 |                1 |        3 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        2253.02 |                     2220.47 |         0.00 |                                                      99017.00 |                                              35336.00 |
-| mariadb-1-1-4-1-1 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        1110.79 |                     1095.82 |         0.00 |                                                     202898.00 |                                              71683.00 |
-| mariadb-1-1-4-1-2 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        1085.70 |                     1070.67 |         0.00 |                                                     203565.00 |                                              73341.00 |
-| mariadb-1-1-4-1-3 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       3 |        80 |     4096 |          -1 | 120.00 |        0 |                        1101.67 |                     1086.50 |         0.00 |                                                     202910.00 |                                              72374.00 |
-| mariadb-1-1-4-1-4 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       4 |        80 |     4096 |          -1 | 120.00 |        0 |                        1110.85 |                     1095.58 |         0.00 |                                                     202270.00 |                                              71667.00 |
-| mariadb-1-2-1-1-1 | mariadb-1-2-1 | mariadb-1-2-1-1 |                2 |        1 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        3944.89 |                     3882.77 |         0.00 |                                                     117951.00 |                                              39568.00 |
-| mariadb-1-2-2-1-1 | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |        2 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        2074.85 |                     2044.79 |         0.00 |                                                     199999.00 |                                              76906.00 |
-| mariadb-1-2-2-1-2 | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |        2 |               1 |       2 |       160 |     8192 |          -1 | 120.00 |        0 |                        2055.98 |                     2026.77 |         0.00 |                                                     201266.00 |                                              77754.00 |
-| mariadb-1-2-3-1-1 | mariadb-1-2-3 | mariadb-1-2-3-1 |                2 |        3 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        2118.30 |                     2087.24 |         0.00 |                                                      95018.00 |                                              37505.00 |
-| mariadb-1-2-3-1-2 | mariadb-1-2-3 | mariadb-1-2-3-1 |                2 |        3 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        2106.09 |                     2075.01 |         0.00 |                                                      95333.00 |                                              37884.00 |
-| mariadb-1-2-4-1-1 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                         958.82 |                      945.67 |         0.00 |                                                     223231.00 |                                              83249.00 |
-| mariadb-1-2-4-1-2 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                         937.41 |                      924.40 |         0.00 |                                                     226801.00 |                                              85139.00 |
-| mariadb-1-2-4-1-3 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       3 |        80 |     4096 |          -1 | 120.00 |        0 |                         942.81 |                      929.39 |         0.00 |                                                     225754.00 |                                              84685.00 |
-| mariadb-1-2-4-1-4 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       4 |        80 |     4096 |          -1 | 120.00 |        0 |                         957.92 |                      944.97 |         0.00 |                                                     224443.00 |                                              83334.00 |
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        5737.37 |                     5645.31 |         0.00 |                                                      94767.00 |                                              27101.00 |
+| mariadb-1-1-2-1-1 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        1548.57 |                     1527.37 |         0.00 |                                                     459234.00 |                                             102953.00 |
+| mariadb-1-1-2-1-2 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       2 |       160 |     8192 |          -1 | 120.00 |        0 |                        1524.20 |                     1503.52 |         0.00 |                                                     459680.00 |                                             104872.00 |
+| mariadb-1-1-3-1-1 | mariadb-1-1-3 | mariadb-1-1-3-1 |                1 |        3 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        2283.01 |                     2249.59 |         0.00 |                                                      92808.00 |                                              34804.00 |
+| mariadb-1-1-3-1-2 | mariadb-1-1-3 | mariadb-1-1-3-1 |                1 |        3 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        2282.15 |                     2249.57 |         0.00 |                                                      92560.00 |                                              34962.00 |
+| mariadb-1-1-4-1-1 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        1120.12 |                     1104.53 |         0.00 |                                                     198876.00 |                                              71281.00 |
+| mariadb-1-1-4-1-2 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        1112.70 |                     1097.66 |         0.00 |                                                     199930.00 |                                              71858.00 |
+| mariadb-1-1-4-1-3 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       3 |        80 |     4096 |          -1 | 120.00 |        0 |                        1111.29 |                     1095.78 |         0.00 |                                                     199695.00 |                                              71940.00 |
+| mariadb-1-1-4-1-4 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       4 |        80 |     4096 |          -1 | 120.00 |        0 |                        1118.60 |                     1102.92 |         0.00 |                                                     199336.00 |                                              71394.00 |
+| mariadb-1-2-1-1-1 | mariadb-1-2-1 | mariadb-1-2-1-1 |                2 |        1 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        4358.23 |                     4287.80 |         0.00 |                                                     106951.00 |                                              35760.00 |
+| mariadb-1-2-2-1-1 | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |        2 |               1 |       1 |       160 |     8192 |          -1 | 120.00 |        0 |                        2032.81 |                     2004.40 |         0.00 |                                                     208037.00 |                                              78566.00 |
+| mariadb-1-2-2-1-2 | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |        2 |               1 |       2 |       160 |     8192 |          -1 | 120.00 |        0 |                        2006.29 |                     1978.19 |         0.00 |                                                     209780.00 |                                              79656.00 |
+| mariadb-1-2-3-1-1 | mariadb-1-2-3 | mariadb-1-2-3-1 |                2 |        3 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                        1883.75 |                     1856.62 |         0.00 |                                                     111719.00 |                                              42200.00 |
+| mariadb-1-2-3-1-2 | mariadb-1-2-3 | mariadb-1-2-3-1 |                2 |        3 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                        1893.09 |                     1866.13 |         0.00 |                                                     111294.00 |                                              42171.00 |
+| mariadb-1-2-4-1-1 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       1 |        80 |     4096 |          -1 | 120.00 |        0 |                         979.02 |                      966.17 |         0.00 |                                                     224888.00 |                                              80962.00 |
+| mariadb-1-2-4-1-2 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       2 |        80 |     4096 |          -1 | 120.00 |        0 |                         973.14 |                      959.57 |         0.00 |                                                     225762.00 |                                              82132.00 |
+| mariadb-1-2-4-1-3 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       3 |        80 |     4096 |          -1 | 120.00 |        0 |                         966.44 |                      953.71 |         0.00 |                                                     225727.00 |                                              82698.00 |
+| mariadb-1-2-4-1-4 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       4 |        80 |     4096 |          -1 | 120.00 |        0 |                         971.52 |                      958.47 |         0.00 |                                                     225834.00 |                                              82142.00 |
 
 #### Per Phase
 
 | DBMS          | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 |       160 |     8192 |          -1 | 120.00 |        0 |                        4566.54 |                     4493.46 |         0.00 |                                                     102564.00 |                                              34174.00 |
-| mariadb-1-1-2 | mariadb-1-1-2 |                1 |        2 |               1 |           2 |       320 |    16384 |          -1 | 120.00 |        0 |                        4823.88 |                     4757.33 |         0.00 |                                                     185970.00 |                                              66199.50 |
-| mariadb-1-1-3 | mariadb-1-1-3 |                1 |        3 |               1 |           2 |       160 |     8192 |          -1 | 120.00 |        0 |                        4516.85 |                     4451.95 |         0.00 |                                                      99017.00 |                                              35170.50 |
-| mariadb-1-1-4 | mariadb-1-1-4 |                1 |        4 |               1 |           4 |       320 |    16384 |          -1 | 120.00 |        0 |                        4409.01 |                     4348.57 |         0.00 |                                                     203565.00 |                                              72266.25 |
-| mariadb-1-2-1 | mariadb-1-2-1 |                2 |        1 |               1 |           1 |       160 |     8192 |          -1 | 120.00 |        0 |                        3944.89 |                     3882.77 |         0.00 |                                                     117951.00 |                                              39568.00 |
-| mariadb-1-2-2 | mariadb-1-2-2 |                2 |        2 |               1 |           2 |       320 |    16384 |          -1 | 120.00 |        0 |                        4130.83 |                     4071.56 |         0.00 |                                                     201266.00 |                                              77330.00 |
-| mariadb-1-2-3 | mariadb-1-2-3 |                2 |        3 |               1 |           2 |       160 |     8192 |          -1 | 120.00 |        0 |                        4224.39 |                     4162.25 |         0.00 |                                                      95333.00 |                                              37694.50 |
-| mariadb-1-2-4 | mariadb-1-2-4 |                2 |        4 |               1 |           4 |       320 |    16384 |          -1 | 120.00 |        0 |                        3796.96 |                     3744.42 |         0.00 |                                                     226801.00 |                                              84101.75 |
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 |       160 |     8192 |          -1 | 120.00 |        0 |                        5737.37 |                     5645.31 |         0.00 |                                                      94767.00 |                                              27101.00 |
+| mariadb-1-1-2 | mariadb-1-1-2 |                1 |        2 |               1 |           2 |       320 |    16384 |          -1 | 120.00 |        0 |                        3072.77 |                     3030.90 |         0.00 |                                                     459680.00 |                                             103912.50 |
+| mariadb-1-1-3 | mariadb-1-1-3 |                1 |        3 |               1 |           2 |       160 |     8192 |          -1 | 120.00 |        0 |                        4565.15 |                     4499.16 |         0.00 |                                                      92808.00 |                                              34883.00 |
+| mariadb-1-1-4 | mariadb-1-1-4 |                1 |        4 |               1 |           4 |       320 |    16384 |          -1 | 120.00 |        0 |                        4462.71 |                     4400.89 |         0.00 |                                                     199930.00 |                                              71618.25 |
+| mariadb-1-2-1 | mariadb-1-2-1 |                2 |        1 |               1 |           1 |       160 |     8192 |          -1 | 120.00 |        0 |                        4358.23 |                     4287.80 |         0.00 |                                                     106951.00 |                                              35760.00 |
+| mariadb-1-2-2 | mariadb-1-2-2 |                2 |        2 |               1 |           2 |       320 |    16384 |          -1 | 120.00 |        0 |                        4039.10 |                     3982.59 |         0.00 |                                                     209780.00 |                                              79111.00 |
+| mariadb-1-2-3 | mariadb-1-2-3 |                2 |        3 |               1 |           2 |       160 |     8192 |          -1 | 120.00 |        0 |                        3776.84 |                     3722.75 |         0.00 |                                                     111719.00 |                                              42185.50 |
+| mariadb-1-2-4 | mariadb-1-2-4 |                2 |        4 |               1 |           4 |       320 |    16384 |          -1 | 120.00 |        0 |                        3890.12 |                     3837.90 |         0.00 |                                                     225834.00 |                                              81983.50 |
 
 ### Monitoring
 
@@ -268,27 +268,27 @@ Benchbase Workload tpcc SF=16
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1 |      3285.78 |     36.08 |           3.54 |                  3.54 |
-| mariadb-1-1-2-1 |      1868.45 |     18.28 |           4.17 |                  4.18 |
-| mariadb-1-1-3-1 |      1357.35 |     15.80 |           4.40 |                  4.40 |
-| mariadb-1-1-4-1 |      1346.64 |     15.38 |           4.85 |                  4.85 |
-| mariadb-1-2-1-1 |      3486.42 |     31.51 |           4.90 |                  4.90 |
-| mariadb-1-2-2-1 |      1850.17 |     15.82 |           5.50 |                  5.50 |
-| mariadb-1-2-3-1 |      1316.33 |     14.74 |           5.69 |                  5.69 |
-| mariadb-1-2-4-1 |      1593.85 |     13.67 |           6.14 |                  6.14 |
+| mariadb-1-1-1-1 |      4347.08 |     37.16 |           3.62 |                  3.62 |
+| mariadb-1-1-2-1 |      1381.71 |     13.41 |           4.00 |                  4.00 |
+| mariadb-1-1-3-1 |      1848.77 |     16.53 |           4.43 |                  4.43 |
+| mariadb-1-1-4-1 |      1437.54 |     14.23 |           4.79 |                  4.79 |
+| mariadb-1-2-1-1 |      3338.82 |     36.33 |           4.87 |                  4.87 |
+| mariadb-1-2-2-1 |      1624.80 |     15.19 |           5.46 |                  5.47 |
+| mariadb-1-2-3-1 |      1535.38 |     13.58 |           5.70 |                  5.70 |
+| mariadb-1-2-4-1 |      1275.78 |     13.15 |           6.05 |                  6.05 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1 |       446.22 |      7.42 |           1.33 |                  1.33 |
-| mariadb-1-1-2-1 |       532.48 |      7.11 |           1.10 |                  1.10 |
-| mariadb-1-1-3-1 |       640.85 |      6.79 |           0.64 |                  0.64 |
-| mariadb-1-1-4-1 |       624.39 |      6.07 |           0.55 |                  0.55 |
-| mariadb-1-2-1-1 |       563.24 |      5.43 |           1.09 |                  1.09 |
-| mariadb-1-2-2-1 |       623.55 |      5.73 |           1.09 |                  1.09 |
-| mariadb-1-2-3-1 |       627.15 |      6.41 |           0.64 |                  0.64 |
-| mariadb-1-2-4-1 |       612.37 |      7.33 |           0.57 |                  0.57 |
+| mariadb-1-1-1-1 |       861.05 |      8.28 |           1.16 |                  1.16 |
+| mariadb-1-1-2-1 |       551.54 |      8.23 |           0.91 |                  0.91 |
+| mariadb-1-1-3-1 |       699.17 |      7.03 |           0.67 |                  0.67 |
+| mariadb-1-1-4-1 |       684.81 |      9.42 |           0.61 |                  0.61 |
+| mariadb-1-2-1-1 |       564.93 |      7.02 |           0.98 |                  0.98 |
+| mariadb-1-2-2-1 |       735.56 |      7.29 |           0.78 |                  0.78 |
+| mariadb-1-2-3-1 |       648.78 |      7.10 |           0.66 |                  0.66 |
+| mariadb-1-2-4-1 |       648.94 |      7.84 |           0.60 |                  0.60 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -331,9 +331,17 @@ Benchbase Workload tpcc SF=16
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Monitoring returned data
 * TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST skipped: efficiency (not computed: needs key-and-think time (-xkey) and the tpcc benchmark)
 * TEST passed: Workflow as planned
+* TEST passed: Every pod ran for the configured time
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

@@ -972,9 +972,10 @@ class SutConfiguration:
 
     @staticmethod
     def pods_pattern(configuration: str, experiment: str) -> str:
-        """Pod regex for ``{pods}``: every pod whose name contains ``<configuration>-<experiment>``.
+        """Pod regex for ``{pods}`` of workers: every pod whose name contains ``<configuration>-<experiment>``.
 
-        The pattern the cAdvisor templates had literally before ``{pods}``.
+        The pattern the cAdvisor templates had literally before ``{pods}``; the SUT
+        query set uses :meth:`deployment_pods_pattern`.
 
         :param configuration: Configuration name, or a regex group of worker names.
         :param experiment: Experiment code; empty for workers.
@@ -983,12 +984,98 @@ class SutConfiguration:
         """
         return f"(.*){configuration}-{experiment}(.*)"
 
+    @staticmethod
+    def sut_pods_pattern(app: str, configuration: str, experiment: str) -> str:
+        """Pod regex for ``{pods}``: the pods of this configuration's components.
+
+        ``<app>-<component>-<configuration>-<experiment>-…``: the SUT, its pool and its
+        jobs; the SUT query set falls back to it when no Deployments are known
+        (:meth:`deployment_pods_pattern`). Component names contain no ``-`` and Prometheus anchors the regex, so
+        a configuration whose name ends with this one (``xpg-1`` for ``pg-1``) does
+        not match.
+
+        :param app: App name, e.g. ``bexhoma``.
+        :param configuration: Configuration name, lower case.
+        :param experiment: Experiment code.
+        :return: The regex.
+        :rtype: str
+        """
+        return f"{app.lower()}-[a-z0-9]+-{configuration}-{experiment}-.*"
+
+    def deployment_pods_pattern(self) -> str:
+        """Pod regex for ``{pods}`` of the SUT query set: the pods of this configuration's Deployments.
+
+        ``(<deployment>|…)-.*`` with the names of :attr:`deployment_infos` (the SUT
+        and, e.g., its pool), so the configuration's loading and benchmarker jobs are
+        not counted as the SUT: their pods carry no ``dbms`` container, but the
+        network and "CPU Others" queries have no such filter. Without known
+        Deployments (a DBMS not deployed by bexhoma), :meth:`sut_pods_pattern` of
+        this configuration and experiment.
+
+        :return: The regex.
+        :rtype: str
+        """
+        names = sorted(
+            deployment['name'] for deployment in (self.deployment_infos or {}).get('deployment', {}).values()
+            if deployment.get('name'))
+        if not names:
+            return self.sut_pods_pattern(self.appname, self.configuration.lower(), self.get_experiment_name())
+        return f"({'|'.join(names)})-.*"
+
+    #: Longest name of a loading or benchmarker job. Kubernetes names a job's pods
+    #: ``<jobname>-<5 characters>`` and cuts ``<jobname>-`` to 58 characters first;
+    #: a longer job name would make jobs share their pod names, so it is refused
+    #: (:meth:`check_job_name_lengths`).
+    MAX_JOB_NAME = 57
+
+    def longest_job_names(self, loading: bool = True, benchmarking: bool = True) -> list:
+        """The longest loading and benchmarker job names this configuration creates.
+
+        The numbers at the end of a job name grow with the repetition, the client
+        round, the benchmark of a round and the loading (data) job, so the jobs
+        with the last numbers have the longest names.
+
+        :param loading: Include the loading job.
+        :param benchmarking: Include the benchmarker job (if there are rounds).
+        :return: Job names.
+        :rtype: list
+        """
+        experiment_run = str(max(1, int(self.num_experiment_to_apply)))
+        names = []
+        if loading:
+            names.append(self.generate_component_name(
+                component='loading', experiment_run=experiment_run, client='1',
+                benchmark_run=str(max(1, len(self.experiment_dict['loader'] or [])))))
+        rounds = self.experiment_dict['benchmarker'] or []
+        if benchmarking and rounds:
+            names.append(self.generate_component_name(
+                component='benchmarker', experiment_run=experiment_run, client=str(len(rounds)),
+                benchmark_run=str(max(1, max(len(entries) for entries in rounds)))))
+        return names
+
+    def check_job_name_lengths(self, loading: bool = True, benchmarking: bool = True) -> None:
+        """Refuse a configuration whose job names exceed :attr:`MAX_JOB_NAME` characters.
+
+        :param loading: Check the loading jobs.
+        :param benchmarking: Check the benchmarker jobs.
+        :raises ValueError: For a job name that is too long, with the name and how
+            many characters the configuration name must lose.
+        """
+        for name in self.longest_job_names(loading=loading, benchmarking=benchmarking):
+            if len(name) > self.MAX_JOB_NAME:
+                raise ValueError(
+                    f"{self.configuration}: job name {name} has {len(name)} characters, at most "
+                    f"{self.MAX_JOB_NAME} are allowed (Kubernetes cuts the pod names of longer jobs, "
+                    f"so jobs would share their pods). Shorten the configuration name by at least "
+                    f"{len(name) - self.MAX_JOB_NAME} characters")
+
     def job_pods_pattern(self, jobname: str, all_jobs_with_prefix: bool = False) -> str:
         """Pod regex for ``{pods}`` selecting the pods of one job.
 
-        Kubernetes names a job's pods ``<jobname>-<5 characters>`` and cuts
-        ``<jobname>-`` to 58 characters first. Prometheus anchors the regex, so
-        ``…-1-1`` does not match the pods of ``…-1-10``.
+        Kubernetes names a job's pods ``<jobname>-<5 characters>``; job names
+        are at most :attr:`MAX_JOB_NAME` characters, so the name is not cut.
+        Prometheus anchors the regex, so ``…-1-1`` does not match the pods of
+        ``…-1-10``.
 
         :param jobname: Job name, as :meth:`generate_component_name` gives it.
         :param all_jobs_with_prefix: Match every job whose name starts with
@@ -997,8 +1084,8 @@ class SutConfiguration:
         :rtype: str
         """
         if all_jobs_with_prefix:
-            return (jobname + "-")[:58] + ".+"
-        return (jobname + "-")[:58] + "[a-z0-9]{5}"
+            return jobname + "-.+"
+        return jobname + "-[a-z0-9]{5}"
 
     def monitoring_namespace(self) -> str:
         """Namespace for ``{namespace}`` in metric templates.
@@ -1027,7 +1114,7 @@ class SutConfiguration:
         :param schema: Database schema name.
         :param database: Database name.
         :param experiment: Experiment code; defaults to :attr:`code`.
-        :param pods: Pod regex for ``{pods}``; defaults to :meth:`pods_pattern`
+        :param pods: Pod regex for ``{pods}``; defaults to :meth:`deployment_pods_pattern`
             of this configuration (a job's own pods: :meth:`job_pods_pattern`).
         :return: Filled PromQL query string.
         :rtype: str
@@ -1037,7 +1124,7 @@ class SutConfiguration:
         configuration = self.configuration.lower()
         experiment_name = self.get_experiment_name()
         if pods is None:
-            pods = self.pods_pattern(configuration, experiment_name)
+            pods = self.deployment_pods_pattern()
         return metric.format(
             host=host,
             gpuid=gpuid,

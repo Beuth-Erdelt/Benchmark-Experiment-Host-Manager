@@ -45,7 +45,7 @@ bexhoma ycsb `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_tidb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB TiDB  sf=1  nbp=1"
 
 
 ####################################################
@@ -81,7 +81,7 @@ bexhoma ycsb `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_tidb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB TiDB  sf=1  nbp=1"
 
 
 # Application metrics (-ma): run in scripts/test-docs-appmetrics.ps1, logs docs_ycsb_tidb_appmetrics.log and docs_benchbase_tidb_appmetrics.log
@@ -122,7 +122,7 @@ bexhoma ycsb `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_tidb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB TiDB storage  sf=1  nbp=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB TiDB storage  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -152,7 +152,7 @@ bexhoma benchbase `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tidb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase TiDB  sf=16  nbp=1,2"
 
 
 # Benchbase TPC-C: on persistent storage
@@ -180,7 +180,7 @@ bexhoma benchbase `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes (PD and TiKV) #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tidb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB  sf=16  nbp=1,2  nc=2  nvme"
+Write-ExperimentResult $LASTEXITCODE "Benchbase TiDB  sf=16  nbp=1,2  nc=2  nvme"
 
 
 ###########################################
@@ -188,4 +188,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase TiDB  sf=
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

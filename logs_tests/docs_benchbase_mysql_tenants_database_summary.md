@@ -3,14 +3,14 @@
 ### Workload
 Benchbase Workload tpcc SF=1
 * Type: benchbase
-* Duration: 1178s 
-* Code: 1794855113
+* Duration: 1189s 
+* Code: 1795664594
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking has keying and thinking times activated. Benchmarking runs for 5 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * Experiment is limited to DBMS ['MySQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -30,11 +30,12 @@ Benchbase Workload tpcc SF=1
 ### Connections
 * mysql-1-1-1-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1268627
-  * datadisk:33226
+  * disk:622701
+  * datadisk:33234
   * volume_size:49G
   * volume_used:33G
   * cpu_list:0-223
@@ -46,17 +47,18 @@ Benchbase Workload tpcc SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794855113
+    * code:1795664594
     * TENANT_BY:database
     * TENANT_NUM:2
     * TENANT_VOL:False
 * mysql-1-1-2-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1269829
-  * datadisk:33238
+  * disk:627015
+  * datadisk:33242
   * volume_size:49G
   * volume_used:33G
   * cpu_list:0-223
@@ -68,7 +70,7 @@ Benchbase Workload tpcc SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794855113
+    * code:1795664594
     * TENANT_BY:database
     * TENANT_NUM:2
     * TENANT_VOL:False
@@ -77,7 +79,7 @@ Benchbase Workload tpcc SF=1
 * MySQL-1: 2 of 2 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1794855113-5cf97887c9-7ffw5: 0
+* bexhoma-sut-mysql-1-1795664594-796865fcf-bfg2w: 0
 
 ### Workflow
 
@@ -97,8 +99,8 @@ Benchbase Workload tpcc SF=1
 
 |                        |   experiment_run | type_tenants   | vol_tenants   |   num_tenants |   tenant_id |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads |   Throughput [SF/h] | loading_inherited   |
 |:-----------------------|-----------------:|:---------------|:--------------|--------------:|------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|--------------------:|:--------------------|
-| 1794855113-MySQL-1-1-0 |                1 | database       | False         |             2 |           0 |    1 |       20.00 |           3.00 |            0.00 |         20.00 |            3.00 |              2 |         1 |              180.00 | False               |
-| 1794855113-MySQL-1-1-1 |                1 | database       | False         |             2 |           1 |    1 |       19.00 |           3.00 |            0.00 |         19.00 |            3.00 |              2 |         1 |              189.47 | False               |
+| 1795664594-MySQL-1-1-0 |                1 | database       | False         |             2 |           0 |    1 |       21.00 |           3.00 |            0.00 |         21.00 |            3.00 |              2 |         1 |              171.43 | False               |
+| 1795664594-MySQL-1-1-1 |                1 | database       | False         |             2 |           1 |    1 |       19.00 |           3.00 |            0.00 |         19.00 |            3.00 |              2 |         1 |              189.47 | False               |
 
 ### Benchmarking
 
@@ -106,19 +108,19 @@ Benchbase Workload tpcc SF=1
 
 | connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.44 |                        0.44 |        91.68 |                                                      54946.00 |                                              21145.00 |
-| mysql-1-1-1-1-2 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       2 |        10 |     1024 |           1 | 300.00 |        0 |                           0.46 |                        0.45 |        94.48 |                                                      44942.00 |                                              19190.00 |
-| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.53 |                        0.53 |       110.58 |                                                      85011.00 |                                              30320.00 |
-| mysql-1-1-2-1-2 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       2 |        10 |     1024 |           1 | 300.00 |        0 |                           0.49 |                        0.49 |       103.58 |                                                      69356.00 |                                              26579.00 |
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.48 |                        0.48 |       100.08 |                                                      65110.00 |                                              22948.00 |
+| mysql-1-1-1-1-2 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       2 |        10 |     1024 |           1 | 300.00 |        0 |                           0.45 |                        0.45 |        93.78 |                                                      67979.00 |                                              22592.00 |
+| mysql-1-1-2-1-1 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.48 |                        0.47 |        99.38 |                                                      54226.00 |                                              21121.00 |
+| mysql-1-1-2-1-2 | mysql-1-1-2 | mysql-1-1-2-1 |                1 |        2 |               1 |       2 |        10 |     1024 |           1 | 300.00 |        0 |                           0.48 |                        0.48 |       100.78 |                                                      46693.00 |                                              20818.00 |
 
 #### Per Phase
 
 | DBMS          | phase       |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:--------------|:------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| mysql-1-1-1-0 | mysql-1-1-1 |                1 |        1 |               1 |           1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.44 |                        0.44 |        91.68 |                                                      54946.00 |                                              21145.00 |
-| mysql-1-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 |        10 |     1024 |           1 | 300.00 |        0 |                           0.46 |                        0.45 |        94.48 |                                                      44942.00 |                                              19190.00 |
-| mysql-1-1-2-0 | mysql-1-1-2 |                1 |        2 |               1 |           1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.53 |                        0.53 |       110.58 |                                                      85011.00 |                                              30320.00 |
-| mysql-1-1-2-1 | mysql-1-1-2 |                1 |        2 |               1 |           1 |        10 |     1024 |           1 | 300.00 |        0 |                           0.49 |                        0.49 |       103.58 |                                                      69356.00 |                                              26579.00 |
+| mysql-1-1-1-0 | mysql-1-1-1 |                1 |        1 |               1 |           1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.48 |                        0.48 |       100.08 |                                                      65110.00 |                                              22948.00 |
+| mysql-1-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 |        10 |     1024 |           1 | 300.00 |        0 |                           0.45 |                        0.45 |        93.78 |                                                      67979.00 |                                              22592.00 |
+| mysql-1-1-2-0 | mysql-1-1-2 |                1 |        2 |               1 |           1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.48 |                        0.47 |        99.38 |                                                      54226.00 |                                              21121.00 |
+| mysql-1-1-2-1 | mysql-1-1-2 |                1 |        2 |               1 |           1 |        10 |     1024 |           1 | 300.00 |        0 |                           0.48 |                        0.48 |       100.78 |                                                      46693.00 |                                              20818.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -128,6 +130,13 @@ Benchbase Workload tpcc SF=1
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: efficiency contains no 0 or NaN
 * TEST passed: Workflow as planned
+* TEST passed: Every pod ran for the configured time
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

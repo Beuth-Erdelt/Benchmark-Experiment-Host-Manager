@@ -3,14 +3,14 @@
 ### Workload
 Benchbase Workload tpcc SF=1
 * Type: benchbase
-* Duration: 1060s 
-* Code: 1794851952
+* Duration: 1007s 
+* Code: 1795661473
 * Benchbase runs a TPC-C experiment.
 * This experiment compares run time and resource consumption of Benchbase queries in different DBMS.
   * Benchbase data is generated and loaded using several threads. Loading uses a batch size of 128 rows per INSERT.
   * Benchmark is 'tpcc'. Scaling factor is 1. Target is based on multiples of '1024'. Factors for benchmarking are [1]. Benchmarking has keying and thinking times activated. Benchmarking runs for 5 minutes.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -32,7 +32,7 @@ Benchbase Workload tpcc SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1276314
+  * disk:622733
   * datadisk:637
   * volume_size:49G
   * volume_used:637M
@@ -45,7 +45,7 @@ Benchbase Workload tpcc SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794851952
+    * code:1795661473
     * TENANT_BY:schema
     * TENANT_NUM:2
     * TENANT_VOL:False
@@ -55,7 +55,7 @@ Benchbase Workload tpcc SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1273251
+  * disk:622528
   * datadisk:638
   * volume_size:49G
   * volume_used:638M
@@ -68,7 +68,7 @@ Benchbase Workload tpcc SF=1
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794851952
+    * code:1795661473
     * TENANT_BY:schema
     * TENANT_NUM:2
     * TENANT_VOL:False
@@ -77,7 +77,7 @@ Benchbase Workload tpcc SF=1
 * PostgreSQL-1: 2 of 2 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1794851952-dfbc9cbbb-m9fhq: 0
+* bexhoma-sut-postgresql-1-1795661473-fdd4fbd7b-2dkkk: 0
 
 ### Workflow
 
@@ -97,8 +97,8 @@ Benchbase Workload tpcc SF=1
 
 |                             |   experiment_run | type_tenants   | vol_tenants   |   num_tenants |   tenant_id |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads |   Throughput [SF/h] | loading_inherited   |
 |:----------------------------|-----------------:|:---------------|:--------------|--------------:|------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|--------------------:|:--------------------|
-| 1794851952-PostgreSQL-1-1-0 |                1 | schema         | False         |             2 |           0 |    1 |       24.00 |           4.00 |            0.00 |         24.00 |            5.00 |              2 |         1 |              150.00 | False               |
-| 1794851952-PostgreSQL-1-1-1 |                1 | schema         | False         |             2 |           1 |    1 |       24.00 |           4.00 |            0.00 |         24.00 |            5.00 |              2 |         1 |              150.00 | False               |
+| 1795661473-PostgreSQL-1-1-0 |                1 | schema         | False         |             2 |           0 |    1 |       24.00 |           5.00 |            0.00 |         24.00 |            5.00 |              2 |         1 |              150.00 | False               |
+| 1795661473-PostgreSQL-1-1-1 |                1 | schema         | False         |             2 |           1 |    1 |       25.00 |           5.00 |            0.00 |         25.00 |            5.00 |              2 |         1 |              144.00 | False               |
 
 ### Benchmarking
 
@@ -106,19 +106,19 @@ Benchbase Workload tpcc SF=1
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.48 |                        0.47 |        98.68 |                                                      22565.00 |                                              10275.00 |
-| postgresql-1-1-1-1-2 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       2 |        10 |     1024 |           1 | 300.00 |        0 |                           0.52 |                        0.52 |       109.88 |                                                      22167.00 |                                               9690.00 |
-| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.51 |                        0.51 |       107.78 |                                                      23269.00 |                                              10178.00 |
-| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 |        10 |     1024 |           1 | 300.00 |        0 |                           0.47 |                        0.47 |        97.98 |                                                      21805.00 |                                               9501.00 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.48 |                        0.48 |       100.78 |                                                      33232.00 |                                              16555.00 |
+| postgresql-1-1-1-1-2 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       2 |        10 |     1024 |           1 | 300.00 |        0 |                           0.51 |                        0.51 |       106.38 |                                                      30977.00 |                                              14527.00 |
+| postgresql-1-1-2-1-1 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.50 |                        0.50 |       105.68 |                                                      34755.00 |                                              16979.00 |
+| postgresql-1-1-2-1-2 | postgresql-1-1-2 | postgresql-1-1-2-1 |                1 |        2 |               1 |       2 |        10 |     1024 |           1 | 300.00 |        0 |                           0.53 |                        0.53 |       110.58 |                                                      35070.00 |                                              15949.00 |
 
 #### Per Phase
 
 | DBMS               | phase            |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   tenant_id |   time |   errors |   Throughput (requests/second) |   Goodput (requests/second) |   efficiency |   Latency Distribution.95th Percentile Latency (microseconds) |   Latency Distribution.Average Latency (microseconds) |
 |:-------------------|:-----------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|------------:|-------:|---------:|-------------------------------:|----------------------------:|-------------:|--------------------------------------------------------------:|------------------------------------------------------:|
-| postgresql-1-1-1-0 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.48 |                        0.47 |        98.68 |                                                      22565.00 |                                              10275.00 |
-| postgresql-1-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |        10 |     1024 |           1 | 300.00 |        0 |                           0.52 |                        0.52 |       109.88 |                                                      22167.00 |                                               9690.00 |
-| postgresql-1-1-2-0 | postgresql-1-1-2 |                1 |        2 |               1 |           1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.51 |                        0.51 |       107.78 |                                                      23269.00 |                                              10178.00 |
-| postgresql-1-1-2-1 | postgresql-1-1-2 |                1 |        2 |               1 |           1 |        10 |     1024 |           1 | 300.00 |        0 |                           0.47 |                        0.47 |        97.98 |                                                      21805.00 |                                               9501.00 |
+| postgresql-1-1-1-0 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.48 |                        0.48 |       100.78 |                                                      33232.00 |                                              16555.00 |
+| postgresql-1-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 |        10 |     1024 |           1 | 300.00 |        0 |                           0.51 |                        0.51 |       106.38 |                                                      30977.00 |                                              14527.00 |
+| postgresql-1-1-2-0 | postgresql-1-1-2 |                1 |        2 |               1 |           1 |        10 |     1024 |           0 | 300.00 |        0 |                           0.50 |                        0.50 |       105.68 |                                                      34755.00 |                                              16979.00 |
+| postgresql-1-1-2-1 | postgresql-1-1-2 |                1 |        2 |               1 |           1 |        10 |     1024 |           1 | 300.00 |        0 |                           0.53 |                        0.53 |       110.58 |                                                      35070.00 |                                              15949.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -128,6 +128,13 @@ Benchbase Workload tpcc SF=1
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Throughput (requests/second) contains no 0 or NaN
 * TEST passed: efficiency contains no 0 or NaN
 * TEST passed: Workflow as planned
+* TEST passed: Every pod ran for the configured time
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

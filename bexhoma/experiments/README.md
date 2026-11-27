@@ -183,7 +183,8 @@ Delegates to `extract_job_timing(jobname, container)`:
 
 ```python
 def extract_job_timing(self, jobname, container):
-    # Scans {path}/*.{container}.log for files whose name starts with jobname
+    # Scans {path} for files named exactly <jobname>-<5 characters>.{container}.log
+    # (process() refuses job names of more than 57 characters, which Kubernetes would cut)
     # From each file, regex-extracts:
     #   BEXHOMA_START:(\d+)   (Unix epoch, measured after sync barriers)
     #   BEXHOMA_END:(\d+)

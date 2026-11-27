@@ -2,8 +2,8 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1795529977
-Experiment                    : starts at 2026-11-24 15:19:37.221917 (791434.9386269)
+Experiment                    : has code 1795667757
+Experiment                    : starts at 2026-11-26 05:35:57.239402 (929212.0297841)
 Experiment                    : This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
 TPC-H (SF=1) data is loaded and benchmark is executed.
 Query ordering is Q1 - Q22.
@@ -11,7 +11,7 @@ All instances use the same query parameters.
 Timeout per query is 1800.
 Import sets indexes, constraints, statistics recomputation after loading.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.12.3.
+Experiment uses bexhoma version 0.12.4.
 Experiment is limited to DBMS ['MariaDB'].
 Import is handled by 1 processes (pods).
 Loading is fixed to cl-worker38.
@@ -23,7 +23,6 @@ Benchmarking is tested with [1] threads, split into [1] pods.
 Benchmarking is run as [1, 1] times the number of benchmarking pods.
 Number of tenants is 2, one container per tenant.
 Experiment is run once.
-Results are validated against basic correctness requirements.
 SUT requests 4 CPU and 16Gi RAM.
 Cluster monitoring            : is running
 MariaDB-1                     : will start now
@@ -31,58 +30,60 @@ MariaDB-1                     : deployments ['sut']
 MariaDB-1                     : stateful sets []
 MariaDB-1                     : pvcs ['sut']
 MariaDB-1                     : found labels on pvc = []
-MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1795529977
-MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1795529977
+MariaDB-1                     : name of SUT pods = bexhoma-sut-mariadb-1-1795667757
+MariaDB-1                     : name of SUT service = bexhoma-sut-mariadb-1-1795667757
 MariaDB-1                     : name of SUT PVC name = bexhoma-storage-ma-0-2-nvme-tpch-1
+MariaDB-1                     : storage bexhoma-storage-ma-0-2-nvme-tpch-1 should be removed
+- waiting 10s -               : done
+MariaDB-1                     : storage bexhoma-storage-ma-0-2-nvme-tpch-1 is gone
 MariaDB-2                     : will start now
 MariaDB-2                     : deployments ['sut']
 MariaDB-2                     : stateful sets []
 MariaDB-2                     : pvcs ['sut']
 MariaDB-2                     : found labels on pvc = []
-MariaDB-2                     : name of SUT pods = bexhoma-sut-mariadb-2-1795529977
-MariaDB-2                     : name of SUT service = bexhoma-sut-mariadb-2-1795529977
+MariaDB-2                     : name of SUT pods = bexhoma-sut-mariadb-2-1795667757
+MariaDB-2                     : name of SUT service = bexhoma-sut-mariadb-2-1795667757
 MariaDB-2                     : name of SUT PVC name = bexhoma-storage-ma-1-2-nvme-tpch-1
-Loop pass                     : took 3.0s (2 kubectl calls 2.1s, 16 API requests 0.7s)
+MariaDB-2                     : storage bexhoma-storage-ma-1-2-nvme-tpch-1 should be removed
+- waiting 10s -               : done
+MariaDB-2                     : storage bexhoma-storage-ma-1-2-nvme-tpch-1 is gone
+Loop pass                     : took 22.5s (2 kubectl calls 1.1s, 20 API requests 0.8s)
 - waiting 30s -               : done
 MariaDB-1                     : waits for health check to succeed
-MariaDB-2                     : waits for health check to succeed
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 28 API requests 0.8s)
-- waiting 30s -               : done
-MariaDB-1                     : waits for health check to succeed
-MariaDB-2                     : waits for health check to succeed
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 1.0s)
-- waiting 30s -               : done
-MariaDB-1                     : waits for health check to succeed
-MariaDB-2                     : waits for health check to succeed
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 28 API requests 1.1s)
-- waiting 30s -               : done
-MariaDB-1                     : waits for health check to succeed
-MariaDB-2                     : waits for health check to succeed
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 1.0s)
-- waiting 30s -               : done
-MariaDB-1                     : is not loaded yet
-MariaDB-1                     : will start loading but not before 2026-11-24 14:23:15 (that is in 60 secs)
 MariaDB-2                     : waits for health check to succeed
 Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 28 API requests 1.0s)
 - waiting 30s -               : done
+MariaDB-1                     : waits for health check to succeed
+MariaDB-2                     : waits for health check to succeed
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 28 API requests 0.9s)
+- waiting 30s -               : done
+MariaDB-1                     : waits for health check to succeed
+MariaDB-2                     : waits for health check to succeed
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 28 API requests 0.7s)
+- waiting 30s -               : done
+MariaDB-1                     : waits for health check to succeed
+MariaDB-2                     : waits for health check to succeed
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 28 API requests 1.1s)
+- waiting 30s -               : done
+- waiting 2s -                : done
 MariaDB-1                     : is not loaded yet
-MariaDB-1                     : will start loading but not before 2026-11-24 14:23:15
+MariaDB-1                     : will start loading but not before 2026-11-26 04:39:58 (that is in 60 secs)
 MariaDB-2                     : is not loaded yet
-MariaDB-2                     : will start loading but not before 2026-11-24 14:23:47 (that is in 60 secs)
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 25 API requests 1.0s)
+MariaDB-2                     : will start loading but not before 2026-11-26 04:39:58 (that is in 60 secs)
+Loop pass                     : took 4.0s (0 kubectl calls 0.0s, 29 API requests 1.2s)
 - waiting 30s -               : done
 MariaDB-1                     : is not loaded yet
-MariaDB-1                     : is loading
+MariaDB-1                     : will start loading but not before 2026-11-26 04:39:58
 MariaDB-2                     : is not loaded yet
-MariaDB-2                     : will start loading but not before 2026-11-24 14:23:47
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 23 API requests 0.8s)
+MariaDB-2                     : will start loading but not before 2026-11-26 04:39:58
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 22 API requests 1.0s)
 - waiting 30s -               : done
 MariaDB-1                     : is not loaded yet
 MariaDB-1                     : is loading
 MariaDB-2                     : is not loaded yet
 #### Starting to load
 MariaDB-1                     : load durability relaxed, scripts ['durability-relaxed.sh', 'restoredurability-relaxed.sh']
-MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1795529977-6d86496d8c-d2w7w to load scripts
+MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1795667757-665d86864c-wdfqf to load scripts
 MariaDB-1                     : list of pvcs ['bexhoma-storage-ma-0-2-nvme-tpch-1']
 MariaDB-1                     : will be labeling bexhoma-storage-ma-0-2-nvme-tpch-1
 MariaDB-1                     : start asynch loading scripts of type schema
@@ -90,7 +91,7 @@ MariaDB-1                     : runs scripts ['durability-relaxed.sh', 'initsche
 MariaDB-1                     : waits for the Schema scripts (schema=True) before starting the loading jobs
 MariaDB-1                     : Schema scripts done after 4s
 MariaDB-2                     : load durability relaxed, scripts ['durability-relaxed.sh', 'restoredurability-relaxed.sh']
-MariaDB-2                     : connect to pod bexhoma-sut-mariadb-2-1795529977-6566c889cd-mxvmf to load scripts
+MariaDB-2                     : connect to pod bexhoma-sut-mariadb-2-1795667757-7f694fdf98-h96l6 to load scripts
 MariaDB-2                     : list of pvcs ['bexhoma-storage-ma-1-2-nvme-tpch-1']
 MariaDB-2                     : will be labeling bexhoma-storage-ma-1-2-nvme-tpch-1
 MariaDB-2                     : start asynch loading scripts of type schema
@@ -98,44 +99,44 @@ MariaDB-2                     : runs scripts ['durability-relaxed.sh', 'initsche
 MariaDB-2                     : waits for the Schema scripts (schema=True) before starting the loading jobs
 MariaDB-2                     : Schema scripts done after 4s
 MariaDB-2                     : is loading
-Loop pass                     : took 23.2s (16 kubectl calls 8.0s, 70 API requests 6.8s)
+Loop pass                     : took 21.0s (16 kubectl calls 9.0s, 72 API requests 3.6s)
 - waiting 30s -               : done
 MariaDB-1                     : is loading
 MariaDB-2                     : is loading
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 38 API requests 1.4s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 38 API requests 1.5s)
 - waiting 30s -               : done
 MariaDB-1                     : showing loader times (tpch-loader)
-MariaDB-1                     : generator times (start/end per pod and container) [(1795530246, 1795530246)]
-MariaDB-1                     : loader times (start/end per pod and container) [(1795530255, 1795530309)]
-MariaDB-1                     : total times (start/end per pod and container) [(1795530246, 1795530246), (1795530255, 1795530309)]
-MariaDB-1                     : generator timespan (first to last [s]) = 0
-MariaDB-1                     : loader timespan (first to last [s]) = 54
-MariaDB-1                     : total timespan (first to last [s]) = 63
+MariaDB-1                     : generator times (start/end per pod and container) [(1795668017, 1795668022)]
+MariaDB-1                     : loader times (start/end per pod and container) [(1795668024, 1795668077)]
+MariaDB-1                     : total times (start/end per pod and container) [(1795668017, 1795668022), (1795668024, 1795668077)]
+MariaDB-1                     : generator timespan (first to last [s]) = 5
+MariaDB-1                     : loader timespan (first to last [s]) = 53
+MariaDB-1                     : total timespan (first to last [s]) = 60
 MariaDB-1                     : list of pvcs ['bexhoma-storage-ma-0-2-nvme-tpch-1']
 MariaDB-1                     : will be labeling bexhoma-storage-ma-0-2-nvme-tpch-1
 MariaDB-1                     : is loading
 MariaDB-2                     : showing loader times (tpch-loader)
-MariaDB-2                     : generator times (start/end per pod and container) [(1795530253, 1795530253)]
-MariaDB-2                     : loader times (start/end per pod and container) [(1795530255, 1795530309)]
-MariaDB-2                     : total times (start/end per pod and container) [(1795530253, 1795530253), (1795530255, 1795530309)]
+MariaDB-2                     : generator times (start/end per pod and container) [(1795668022, 1795668022)]
+MariaDB-2                     : loader times (start/end per pod and container) [(1795668025, 1795668077)]
+MariaDB-2                     : total times (start/end per pod and container) [(1795668022, 1795668022), (1795668025, 1795668077)]
 MariaDB-2                     : generator timespan (first to last [s]) = 0
-MariaDB-2                     : loader timespan (first to last [s]) = 54
-MariaDB-2                     : total timespan (first to last [s]) = 56
+MariaDB-2                     : loader timespan (first to last [s]) = 52
+MariaDB-2                     : total timespan (first to last [s]) = 55
 MariaDB-2                     : list of pvcs ['bexhoma-storage-ma-1-2-nvme-tpch-1']
 MariaDB-2                     : will be labeling bexhoma-storage-ma-1-2-nvme-tpch-1
 #### Starting to index
-MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1795529977-6d86496d8c-d2w7w to load scripts
+MariaDB-1                     : connect to pod bexhoma-sut-mariadb-1-1795667757-665d86864c-wdfqf to load scripts
 MariaDB-1                     : list of pvcs ['bexhoma-storage-ma-0-2-nvme-tpch-1']
 MariaDB-1                     : will be labeling bexhoma-storage-ma-0-2-nvme-tpch-1
 MariaDB-1                     : start asynch loading scripts of type index
 MariaDB-1                     : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql', 'restoredurability-relaxed.sh', 'checkschema-tpch.sql']
-MariaDB-2                     : connect to pod bexhoma-sut-mariadb-2-1795529977-6566c889cd-mxvmf to load scripts
+MariaDB-2                     : connect to pod bexhoma-sut-mariadb-2-1795667757-7f694fdf98-h96l6 to load scripts
 MariaDB-2                     : list of pvcs ['bexhoma-storage-ma-1-2-nvme-tpch-1']
 MariaDB-2                     : will be labeling bexhoma-storage-ma-1-2-nvme-tpch-1
 MariaDB-2                     : start asynch loading scripts of type index
 MariaDB-2                     : runs scripts ['initindexes-tpch.sql', 'initconstraints-tpch.sql', 'initstatistics-tpch.sql', 'restoredurability-relaxed.sh', 'checkschema-tpch.sql']
 MariaDB-2                     : is loading
-Loop pass                     : took 24.7s (42 kubectl calls 21.5s, 52 API requests 1.9s)
+Loop pass                     : took 23.6s (42 kubectl calls 20.6s, 52 API requests 1.9s)
 - waiting 30s -               : done
 MariaDB-1                     : list of pvcs ['bexhoma-storage-ma-0-2-nvme-tpch-1']
 MariaDB-1                     : will be labeling bexhoma-storage-ma-0-2-nvme-tpch-1
@@ -143,21 +144,21 @@ MariaDB-2                     : list of pvcs ['bexhoma-storage-ma-1-2-nvme-tpch-
 MariaDB-2                     : will be labeling bexhoma-storage-ma-1-2-nvme-tpch-1
 #### Starting round 1 of repetition 1
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1795529977 initialized to 1.
-Experiment                    : Benchmarker experiment counter bexhoma-benchmarker-podcount-exp-1795529977 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-1-1795667757 initialized to 1.
+Experiment                    : Benchmarker experiment counter bexhoma-benchmarker-podcount-exp-1795667757 initialized to 2.
 MariaDB-1                     : benchmarks done 0 of 1. This will be client 1
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-2-1795529977 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-MariaDB-2-1795667757 initialized to 1.
 MariaDB-2                     : benchmarks done 0 of 1. This will be client 1
 mariadb-1-1-1-1               : start benchmarking (benchmark_run=1)
 mariadb-2-1-1-1               : start benchmarking (benchmark_run=1)
-MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1795529977-6d86496d8c-d2w7w and write to pvc bexhoma-storage-ma-0-2-nvme-tpch-1
-MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1795529977
-MariaDB-2                     : get size via pod bexhoma-sut-mariadb-2-1795529977-6566c889cd-mxvmf and write to pvc bexhoma-storage-ma-1-2-nvme-tpch-1
-MariaDB-2                     : benchmarking results in folder D:\data\benchmarks/1795529977
-MariaDB-1                     : submitted benchmarker job in 8.5s (5 kubectl calls 3.6s, 25 API requests 3.5s)
-MariaDB-2                     : submitted benchmarker job in 12.5s (4 kubectl calls 5.0s, 24 API requests 4.7s)
-Experiment                    : submitted 2 benchmark rounds in 12.6s (2 at once; 9 kubectl calls 8.6s, 51 API requests 8.2s)
-Loop pass                     : took 18.1s (13 kubectl calls 10.3s, 91 API requests 11.9s)
+MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1795667757-665d86864c-wdfqf and write to pvc bexhoma-storage-ma-0-2-nvme-tpch-1
+MariaDB-2                     : get size via pod bexhoma-sut-mariadb-2-1795667757-7f694fdf98-h96l6 and write to pvc bexhoma-storage-ma-1-2-nvme-tpch-1
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1795667757
+MariaDB-2                     : benchmarking results in folder D:\data\benchmarks/1795667757
+MariaDB-1                     : submitted benchmarker job in 7.2s (5 kubectl calls 2.7s, 25 API requests 2.3s)
+MariaDB-2                     : submitted benchmarker job in 8.2s (4 kubectl calls 1.9s, 24 API requests 2.6s)
+Experiment                    : submitted 2 benchmark rounds in 8.2s (2 at once; 9 kubectl calls 4.6s, 51 API requests 4.9s)
+Loop pass                     : took 11.5s (13 kubectl calls 6.2s, 91 API requests 6.4s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 MariaDB-2                     : has running benchmarks
@@ -165,99 +166,95 @@ Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 38 API requests
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 MariaDB-2                     : has running benchmarks
-Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 34 API requests 1.3s)
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 34 API requests 1.3s)
 - waiting 30s -               : done
 - waiting 2s -                : done
 MariaDB-1                     : has running benchmarks
 MariaDB-2                     : has running benchmarks
-Loop pass                     : took 4.7s (0 kubectl calls 0.0s, 35 API requests 1.8s)
+Loop pass                     : took 4.4s (0 kubectl calls 0.0s, 35 API requests 1.6s)
 - waiting 30s -               : done
-mariadb-1-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1795529977/mariadb-1-1-1-1.config
+mariadb-1-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1795667757/mariadb-1-1-1-1.config
 mariadb-1-1-1-1               : showing benchmarker times
-mariadb-1-1-1-1               : benchmarker timespan job from 1795530380 to 1795530515
-mariadb-1-1-1-1               : benchmarker timespan pods from 1795530391 to 1795530478
-mariadb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 87
-mariadb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1795530391, 1795530478)]
-mariadb-2-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1795529977/mariadb-2-1-1-1.config
+mariadb-1-1-1-1               : benchmarker timespan job from 1795668145 to 1795668277
+mariadb-1-1-1-1               : benchmarker timespan pods from 1795668152 to 1795668241
+mariadb-1-1-1-1               : benchmarker timespan (start to end single container [s]) = 89
+mariadb-1-1-1-1               : benchmarker times (start/end per pod and container) = [(1795668152, 1795668241)]
+mariadb-1-1-1-1               : found and updated times {'benchmarker': [(1795668152, 1795668241)]}
+MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1795667757-665d86864c-wdfqf and write to pvc bexhoma-storage-ma-0-2-nvme-tpch-1
+mariadb-2-1-1-1               : wrote benchmarking_timespans to D:/data/benchmarks/1795667757/mariadb-2-1-1-1.config
 mariadb-2-1-1-1               : showing benchmarker times
-mariadb-2-1-1-1               : benchmarker timespan job from 1795530383 to 1795530515
-mariadb-2-1-1-1               : benchmarker timespan pods from 1795530390 to 1795530476
-mariadb-2-1-1-1               : benchmarker timespan (start to end single container [s]) = 86
-mariadb-2-1-1-1               : benchmarker times (start/end per pod and container) = [(1795530390, 1795530476)]
-mariadb-1-1-1-1               : found and updated times {'benchmarker': [(1795530391, 1795530478)]}
-mariadb-2-1-1-1               : found and updated times {'benchmarker': [(1795530390, 1795530476)]}
-MariaDB-2                     : get size via pod bexhoma-sut-mariadb-2-1795529977-6566c889cd-mxvmf and write to pvc bexhoma-storage-ma-1-2-nvme-tpch-1
-MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1795529977-6d86496d8c-d2w7w and write to pvc bexhoma-storage-ma-0-2-nvme-tpch-1
-Experiment                    : ended 2 benchmarker jobs in 1.8s (2 at once; 4 kubectl calls 1.8s, 24 API requests 1.5s)
-Loop pass                     : took 4.1s (6 kubectl calls 3.1s, 48 API requests 2.4s)
+mariadb-2-1-1-1               : benchmarker timespan job from 1795668146 to 1795668278
+mariadb-2-1-1-1               : benchmarker timespan pods from 1795668151 to 1795668241
+mariadb-2-1-1-1               : benchmarker timespan (start to end single container [s]) = 90
+mariadb-2-1-1-1               : benchmarker times (start/end per pod and container) = [(1795668151, 1795668241)]
+mariadb-2-1-1-1               : found and updated times {'benchmarker': [(1795668151, 1795668241)]}
+MariaDB-2                     : get size via pod bexhoma-sut-mariadb-2-1795667757-7f694fdf98-h96l6 and write to pvc bexhoma-storage-ma-1-2-nvme-tpch-1
+Experiment                    : ended 2 benchmarker jobs in 2.7s (2 at once; 4 kubectl calls 2.7s, 24 API requests 1.4s)
+Loop pass                     : took 4.9s (6 kubectl calls 3.8s, 48 API requests 2.5s)
 #### Starting round 2 of repetition 1
 Experiment                    : Reset experiment counter. This is first run of client number 2.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MariaDB-1-1795529977 initialized to 1.
-Experiment                    : Benchmarker experiment counter bexhoma-benchmarker-podcount-exp-1795529977 initialized to 2.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MariaDB-1-1795667757 initialized to 1.
+Experiment                    : Benchmarker experiment counter bexhoma-benchmarker-podcount-exp-1795667757 initialized to 2.
 MariaDB-1                     : benchmarks done 0 of 1. This will be client 2
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MariaDB-2-1795529977 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-2-MariaDB-2-1795667757 initialized to 1.
 MariaDB-2                     : benchmarks done 0 of 1. This will be client 2
 mariadb-1-1-2-1               : start benchmarking (benchmark_run=1)
 mariadb-2-1-2-1               : start benchmarking (benchmark_run=1)
-MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1795529977-6d86496d8c-d2w7w and write to pvc bexhoma-storage-ma-0-2-nvme-tpch-1
-MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1795529977
-MariaDB-2                     : get size via pod bexhoma-sut-mariadb-2-1795529977-6566c889cd-mxvmf and write to pvc bexhoma-storage-ma-1-2-nvme-tpch-1
-MariaDB-2                     : benchmarking results in folder D:\data\benchmarks/1795529977
-MariaDB-1                     : submitted benchmarker job in 5.0s (3 kubectl calls 1.6s, 14 API requests 1.1s)
-MariaDB-2                     : submitted benchmarker job in 6.6s (3 kubectl calls 2.0s, 14 API requests 1.2s)
-Experiment                    : submitted 2 benchmark rounds in 6.6s (2 at once; 6 kubectl calls 3.6s, 30 API requests 2.3s)
-Loop pass                     : took 8.2s (6 kubectl calls 3.6s, 68 API requests 4.0s)
+MariaDB-2                     : get size via pod bexhoma-sut-mariadb-2-1795667757-7f694fdf98-h96l6 and write to pvc bexhoma-storage-ma-1-2-nvme-tpch-1
+MariaDB-2                     : benchmarking results in folder D:\data\benchmarks/1795667757
+MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1795667757-665d86864c-wdfqf and write to pvc bexhoma-storage-ma-0-2-nvme-tpch-1
+MariaDB-1                     : benchmarking results in folder D:\data\benchmarks/1795667757
+MariaDB-2                     : submitted benchmarker job in 5.7s (3 kubectl calls 2.5s, 14 API requests 1.0s)
+MariaDB-1                     : submitted benchmarker job in 5.8s (3 kubectl calls 1.6s, 14 API requests 1.3s)
+Experiment                    : submitted 2 benchmark rounds in 5.9s (2 at once; 6 kubectl calls 4.1s, 30 API requests 2.4s)
+Loop pass                     : took 9.0s (6 kubectl calls 4.1s, 68 API requests 5.5s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 MariaDB-2                     : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 38 API requests 1.4s)
+Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 38 API requests 1.5s)
 - waiting 30s -               : done
 MariaDB-1                     : has running benchmarks
 MariaDB-2                     : has running benchmarks
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 34 API requests 1.3s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 34 API requests 1.0s)
 - waiting 30s -               : done
-MariaDB-1                     : has running benchmarks
 MariaDB-2                     : has running benchmarks
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 34 API requests 1.1s)
-- waiting 30s -               : done
-mariadb-2-1-2-1               : wrote benchmarking_timespans to D:/data/benchmarks/1795529977/mariadb-2-1-2-1.config
-mariadb-2-1-2-1               : showing benchmarker times
-mariadb-2-1-2-1               : benchmarker timespan job from 1795530525 to 1795530654
-mariadb-2-1-2-1               : benchmarker timespan pods from 1795530532 to 1795530621
-mariadb-2-1-2-1               : benchmarker timespan (start to end single container [s]) = 89
-mariadb-2-1-2-1               : benchmarker times (start/end per pod and container) = [(1795530532, 1795530621)]
-mariadb-1-1-2-1               : wrote benchmarking_timespans to D:/data/benchmarks/1795529977/mariadb-1-1-2-1.config
+mariadb-1-1-2-1               : wrote benchmarking_timespans to D:/data/benchmarks/1795667757/mariadb-1-1-2-1.config
 mariadb-1-1-2-1               : showing benchmarker times
-mariadb-1-1-2-1               : benchmarker timespan job from 1795530523 to 1795530654
-mariadb-1-1-2-1               : benchmarker timespan pods from 1795530533 to 1795530624
-mariadb-1-1-2-1               : benchmarker timespan (start to end single container [s]) = 91
-mariadb-1-1-2-1               : benchmarker times (start/end per pod and container) = [(1795530533, 1795530624)]
-mariadb-2-1-2-1               : found and updated times {'benchmarker': [(1795530532, 1795530621)]}
-mariadb-1-1-2-1               : found and updated times {'benchmarker': [(1795530533, 1795530624)]}
-MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1795529977-6d86496d8c-d2w7w and write to pvc bexhoma-storage-ma-0-2-nvme-tpch-1
-MariaDB-2                     : get size via pod bexhoma-sut-mariadb-2-1795529977-6566c889cd-mxvmf and write to pvc bexhoma-storage-ma-1-2-nvme-tpch-1
-Experiment                    : ended 2 benchmarker jobs in 2.5s (2 at once; 4 kubectl calls 1.8s, 24 API requests 1.5s)
-Loop pass                     : took 5.0s (6 kubectl calls 3.2s, 48 API requests 2.5s)
+mariadb-1-1-2-1               : benchmarker timespan job from 1795668288 to 1795668384
+mariadb-1-1-2-1               : benchmarker timespan pods from 1795668292 to 1795668376
+mariadb-1-1-2-1               : benchmarker timespan (start to end single container [s]) = 84
+mariadb-1-1-2-1               : benchmarker times (start/end per pod and container) = [(1795668292, 1795668376)]
+mariadb-1-1-2-1               : found and updated times {'benchmarker': [(1795668292, 1795668376)]}
+MariaDB-1                     : get size via pod bexhoma-sut-mariadb-1-1795667757-665d86864c-wdfqf and write to pvc bexhoma-storage-ma-0-2-nvme-tpch-1
+Loop pass                     : took 4.0s (4 kubectl calls 2.0s, 41 API requests 1.7s)
 MariaDB-1                     : can be stopped
-MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1795529977-6d86496d8c-d2w7w
+MariaDB-1                     : had 0 restarts at worker bexhoma-sut-mariadb-1-1795667757-665d86864c-wdfqf
+mariadb-2-1-2-1               : wrote benchmarking_timespans to D:/data/benchmarks/1795667757/mariadb-2-1-2-1.config
+mariadb-2-1-2-1               : showing benchmarker times
+mariadb-2-1-2-1               : benchmarker timespan job from 1795668287 to 1795668389
+mariadb-2-1-2-1               : benchmarker timespan pods from 1795668293 to 1795668378
+mariadb-2-1-2-1               : benchmarker timespan (start to end single container [s]) = 85
+mariadb-2-1-2-1               : benchmarker times (start/end per pod and container) = [(1795668293, 1795668378)]
+mariadb-2-1-2-1               : found and updated times {'benchmarker': [(1795668293, 1795668378)]}
+MariaDB-2                     : get size via pod bexhoma-sut-mariadb-2-1795667757-7f694fdf98-h96l6 and write to pvc bexhoma-storage-ma-1-2-nvme-tpch-1
+Loop pass                     : took 6.0s (7 kubectl calls 4.1s, 52 API requests 1.7s)
 MariaDB-2                     : can be stopped
-MariaDB-2                     : had 0 restarts at worker bexhoma-sut-mariadb-2-1795529977-6566c889cd-mxvmf
-Loop pass                     : took 5.0s (6 kubectl calls 2.5s, 54 API requests 2.3s)
-Experiment                    : ends at 2026-11-24 15:31:01.041921 (792118.7454411) - 683.81s total
+MariaDB-2                     : had 0 restarts at worker bexhoma-sut-mariadb-2-1795667757-7f694fdf98-h96l6
+Loop pass                     : took 2.6s (3 kubectl calls 1.2s, 33 API requests 1.2s)
+Experiment                    : ends at 2026-11-26 05:46:34.959415 (929849.7375181) - 637.71s total
 Experiment                    : join results...done!
 Experiment                    : build evaluation cube...done!
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow complete
 
 ## Show Summary
 
 ### Workload
 TPC-H Queries SF=1
 * Type: tpch
-* Duration: 684s 
-* Code: 1795529977
+* Duration: 638s 
+* Code: 1795667757
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=1) data is loaded and benchmark is executed.
@@ -266,7 +263,7 @@ TPC-H Queries SF=1
   * Timeout per query is 1800.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.12.3.
+  * Experiment uses bexhoma version 0.12.4.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 1 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -278,7 +275,6 @@ TPC-H Queries SF=1
   * Benchmarking is run as [1, 1] times the number of benchmarking pods.
   * Number of tenants is 2, one container per tenant.
   * Experiment is run once.
-  * Results are validated against basic correctness requirements.
   * SUT requests 4 CPU and 16Gi RAM.
 
 ### Connections
@@ -288,7 +284,7 @@ TPC-H Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1117058
+  * disk:667670
   * datadisk:1993
   * volume_size:49G
   * volume_used:2.0G
@@ -300,7 +296,7 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795529977
+    * code:1795667757
     * TENANT_BY:container
     * TENANT_NUM:2
 * mariadb-1-1-2-1-1 uses docker image mariadb:12.3.3
@@ -309,7 +305,7 @@ TPC-H Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1117551
+  * disk:667671
   * datadisk:1993
   * volume_size:49G
   * volume_used:2.0G
@@ -321,7 +317,7 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795529977
+    * code:1795667757
     * TENANT_BY:container
     * TENANT_NUM:2
 * mariadb-2-1-1-1-1 uses docker image mariadb:12.3.3
@@ -330,7 +326,7 @@ TPC-H Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1117058
+  * disk:667670
   * datadisk:1993
   * volume_size:49G
   * volume_used:2.0G
@@ -342,7 +338,7 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795529977
+    * code:1795667757
     * TENANT_BY:container
     * TENANT_NUM:2
     * TENANT:1
@@ -352,7 +348,7 @@ TPC-H Queries SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1117551
+  * disk:667671
   * datadisk:1993
   * volume_size:49G
   * volume_used:2.0G
@@ -364,7 +360,7 @@ TPC-H Queries SF=1
     * sut: 1 x, 4.0 CPU, 16.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795529977
+    * code:1795667757
     * TENANT_BY:container
     * TENANT_NUM:2
     * TENANT:1
@@ -374,8 +370,8 @@ TPC-H Queries SF=1
 * MariaDB-2: 8 of 8 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1795529977-6d86496d8c-d2w7w: 0
-* bexhoma-sut-mariadb-2-1795529977-6566c889cd-mxvmf: 0
+* bexhoma-sut-mariadb-1-1795667757-665d86864c-wdfqf: 0
+* bexhoma-sut-mariadb-2-1795667757-7f694fdf98-h96l6: 0
 
 ### Workflow
 
@@ -399,8 +395,8 @@ TPC-H Queries SF=1
 
 |                          |   experiment_run | type_tenants   | vol_tenants   |   num_tenants |   tenant_id |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads |   Throughput [SF/h] | loading_inherited   |
 |:-------------------------|-----------------:|:---------------|:--------------|--------------:|------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|--------------------:|:--------------------|
-| 1795529977-MariaDB-1-1-0 |                1 | container      | False         |             2 |           0 |    1 |       90.00 |           2.00 |            0.00 |         54.00 |           25.00 |              1 |         0 |               40.00 | False               |
-| 1795529977-MariaDB-2-1-1 |                1 | container      | False         |             2 |           1 |    1 |       82.00 |           2.00 |            0.00 |         54.00 |           24.00 |              1 |         0 |               43.90 | False               |
+| 1795667757-MariaDB-1-1-0 |                1 | container      | False         |             2 |           0 |    1 |       86.00 |           2.00 |            5.00 |         53.00 |           24.00 |              1 |         0 |               41.86 | False               |
+| 1795667757-MariaDB-2-1-1 |                1 | container      | False         |             2 |           1 |    1 |       81.00 |           2.00 |            0.00 |         52.00 |           24.00 |              1 |         0 |               44.44 | False               |
 
 ### Benchmarking
 
@@ -408,19 +404,19 @@ TPC-H Queries SF=1
 
 | connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         87 |            0.82 |             4365.78 |            910.34 |           0 |
-| mariadb-1-1-2-1-1 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         91 |            0.87 |             4139.03 |            870.33 |           0 |
-| mariadb-2-1-1-1-1 | mariadb-2-1-1 | mariadb-2-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         86 |            0.86 |             4188.66 |            920.93 |           1 |
-| mariadb-2-1-2-1-1 | mariadb-2-1-2 | mariadb-2-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         89 |            0.89 |             4047.92 |            889.89 |           1 |
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         89 |            0.91 |             3937.68 |            889.89 |           0 |
+| mariadb-1-1-2-1-1 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         84 |            0.84 |             4279.59 |            942.86 |           0 |
+| mariadb-2-1-1-1-1 | mariadb-2-1-1 | mariadb-2-1-1-1 |                1 |        1 |               1 |       1 | 1.00 |               22 |                  22 |         90 |            0.96 |             3768.26 |            880.00 |           1 |
+| mariadb-2-1-2-1-1 | mariadb-2-1-2 | mariadb-2-1-2-1 |                1 |        2 |               1 |       1 | 1.00 |               22 |                  22 |         85 |            0.84 |             4306.88 |            931.76 |           1 |
 
 #### Per Phase
 
 | DBMS            | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:----------------|:--------------|-----------------:|---------:|----------------:|------------:|-----:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mariadb-1-1-1_0 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         87 |            0.82 |             4365.78 |            910.34 |           0 |
-| mariadb-1-1-2_0 | mariadb-1-1-2 |                1 |        2 |               1 |           1 | 1.00 |               22 |                  22 |         91 |            0.87 |             4139.03 |            870.33 |           0 |
-| mariadb-2-1-1_1 | mariadb-2-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         86 |            0.86 |             4188.66 |            920.93 |           1 |
-| mariadb-2-1-2_1 | mariadb-2-1-2 |                1 |        2 |               1 |           1 | 1.00 |               22 |                  22 |         89 |            0.89 |             4047.92 |            889.89 |           1 |
+| mariadb-1-1-1_0 | mariadb-1-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         89 |            0.91 |             3937.68 |            889.89 |           0 |
+| mariadb-1-1-2_0 | mariadb-1-1-2 |                1 |        2 |               1 |           1 | 1.00 |               22 |                  22 |         84 |            0.84 |             4279.59 |            942.86 |           0 |
+| mariadb-2-1-1_1 | mariadb-2-1-1 |                1 |        1 |               1 |           1 | 1.00 |               22 |                  22 |         90 |            0.96 |             3768.26 |            880.00 |           1 |
+| mariadb-2-1-2_1 | mariadb-2-1-2 |                1 |        2 |               1 |           1 | 1.00 |               22 |                  22 |         85 |            0.84 |             4306.88 |            931.76 |           1 |
 
 #### Query Completion per Phase
 
@@ -436,28 +432,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   mariadb-1-1-1-1-1 |   mariadb-1-1-2-1-1 |   mariadb-2-1-1-1-1 |   mariadb-2-1-2-1-1 |
 |:----------------------------------------------------|--------------------:|--------------------:|--------------------:|--------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |             7019.30 |             5802.21 |             6855.00 |             6242.21 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |              341.25 |              342.38 |              362.66 |              816.45 |
-| Shipping Priority (TPC-H Q3)                        |             1184.14 |             1969.58 |             1182.39 |             1230.62 |
-| Order Priority Checking Query (TPC-H Q4)            |              275.45 |              324.72 |              306.22 |              286.81 |
-| Local Supplier Volume (TPC-H Q5)                    |              739.87 |              771.00 |              764.51 |              762.36 |
-| Forecasting Revenue Change (TPC-H Q6)               |              880.51 |              789.19 |             2183.89 |             1043.08 |
-| Volume Shipping Query (TPC-H Q7)                    |             1849.75 |             1406.95 |              815.59 |             1214.95 |
-| National Market Share (TPC-H Q8)                    |             1386.05 |             1383.73 |             1430.83 |             1470.35 |
-| Product Type Profit Measure (TPC-H Q9)              |             1339.58 |             1350.49 |             1440.43 |             1380.07 |
-| Returned Item Reporting Query (TPC-H Q10)           |              710.69 |              715.38 |              670.03 |             1322.41 |
-| Important Stock Identification (TPC-H Q11)          |               94.89 |              158.58 |              121.90 |              106.78 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |             2669.92 |             3193.09 |             2559.61 |             2976.68 |
-| Customer Distribution (TPC-H Q13)                   |             2877.94 |             2644.74 |             2377.87 |             2358.66 |
-| Promotion Effect Query (TPC-H Q14)                  |             8451.90 |            10595.68 |             8454.07 |            10909.52 |
-| Top Supplier Query (TPC-H Q15)                      |             2486.70 |             1648.15 |             2063.23 |             1641.01 |
-| Parts/Supplier Relationship (TPC-H Q16)             |              147.10 |              152.15 |              150.34 |              147.52 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |               42.72 |               43.38 |               47.54 |               43.28 |
-| Large Volume Customer (TPC-H Q18)                   |             2318.48 |             3503.43 |             2395.89 |             3621.57 |
-| Discounted Revenue (TPC-H Q19)                      |               72.95 |               74.03 |              102.93 |               72.85 |
-| Potential Part Promotion (TPC-H Q20)                |              158.64 |              167.14 |              215.71 |              161.89 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |            49124.80 |            50013.49 |            46789.60 |            48370.59 |
-| Global Sales Opportunity Query (TPC-H Q22)          |               91.11 |               95.44 |               91.70 |               91.78 |
+| Pricing Summary Report (TPC-H Q1)                   |             6642.92 |             5666.21 |             6823.98 |             5524.81 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |              324.53 |              330.41 |              396.59 |              323.02 |
+| Shipping Priority (TPC-H Q3)                        |             2133.27 |             1147.78 |             2248.20 |             1119.70 |
+| Order Priority Checking Query (TPC-H Q4)            |              277.04 |              334.85 |              286.26 |              295.38 |
+| Local Supplier Volume (TPC-H Q5)                    |              729.10 |              866.43 |              737.66 |              728.52 |
+| Forecasting Revenue Change (TPC-H Q6)               |              797.65 |              814.36 |              750.79 |              730.72 |
+| Volume Shipping Query (TPC-H Q7)                    |             1147.79 |             1041.26 |             1270.60 |              895.57 |
+| National Market Share (TPC-H Q8)                    |             1339.79 |             1861.04 |             1465.23 |             2085.49 |
+| Product Type Profit Measure (TPC-H Q9)              |             1334.49 |             1587.37 |             1497.13 |             1359.26 |
+| Returned Item Reporting Query (TPC-H Q10)           |             1299.65 |              662.63 |             1292.49 |              690.13 |
+| Important Stock Identification (TPC-H Q11)          |              268.84 |              102.43 |              307.95 |               91.94 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |             2552.00 |             2390.71 |             2572.61 |             2601.33 |
+| Customer Distribution (TPC-H Q13)                   |             2614.95 |             2310.17 |             3189.48 |             2276.64 |
+| Promotion Effect Query (TPC-H Q14)                  |             9996.62 |             9241.38 |             9032.95 |             8391.29 |
+| Top Supplier Query (TPC-H Q15)                      |             1988.96 |             2370.47 |             1642.29 |             1877.84 |
+| Parts/Supplier Relationship (TPC-H Q16)             |              164.98 |              156.57 |              267.54 |              320.35 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |               44.74 |               43.56 |               56.63 |               70.74 |
+| Large Volume Customer (TPC-H Q18)                   |             2966.08 |             2477.02 |             3316.05 |             2360.91 |
+| Discounted Revenue (TPC-H Q19)                      |               93.78 |               82.86 |               77.69 |               86.83 |
+| Potential Part Promotion (TPC-H Q20)                |              220.39 |              209.94 |              164.11 |              197.81 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |            47383.61 |            47574.82 |            47631.78 |            48290.19 |
+| Global Sales Opportunity Query (TPC-H Q22)          |               92.04 |              124.22 |               92.11 |               92.40 |
 
 ### Errors (failed queries)
 
@@ -475,6 +471,8 @@ No warnings
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN
@@ -483,3 +481,7 @@ No warnings
 * TEST passed: All active queries counted in the totals
 * TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

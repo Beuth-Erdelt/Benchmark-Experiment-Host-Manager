@@ -42,7 +42,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mysql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MySQL simple  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MySQL simple  sf=1"
 
 
 ####################################################
@@ -75,7 +75,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mysql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MySQL monitoring  sf=10"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MySQL monitoring  sf=10"
 
 
 # Application metrics (-ma): run in scripts/test-docs-appmetrics.ps1, logs docs_<benchmark>_mysql_appmetrics.log
@@ -114,7 +114,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mysql_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MySQL throughput  sf=10  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MySQL throughput  sf=10  ne=1,2"
 
 
 # Persistent storage: TPC-H on MySQL on a RAM disk
@@ -141,7 +141,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mysql_ramdisk.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MySQL ramdisk  sf=10"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MySQL ramdisk  sf=10"
 
 
 ####################################################
@@ -172,7 +172,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_mysql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL simple  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MySQL simple  sf=1"
 
 
 # TPC-DS monitoring on MySQL
@@ -205,7 +205,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_mysql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL monitoring  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MySQL monitoring  sf=3"
 
 
 # TPC-DS throughput test on MySQL, on persistent storage
@@ -242,7 +242,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_mysql_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MySQL throughput  sf=3  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MySQL throughput  sf=3  ne=1,2"
 
 
 ####################################################
@@ -271,7 +271,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_mysql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MySQL simple  sf=16"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MySQL simple  sf=16"
 
 
 # Benchbase TPC-C: persistent storage
@@ -297,7 +297,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_mysql_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MySQL persistency  sf=16  nc=2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MySQL persistency  sf=16  nc=2"
 
 
 # Benchbase TPC-C: monitoring
@@ -323,7 +323,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_mysql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MySQL monitoring  sf=16"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MySQL monitoring  sf=16"
 
 
 # Benchbase TPC-C: scaling the clients, on the volume of the persistent storage run
@@ -350,7 +350,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_mysql_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MySQL complex  sf=16  nc=2  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MySQL complex  sf=16  nc=2  ne=1,2"
 
 
 ####################################################
@@ -377,7 +377,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_mysql.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB MySQL simple  sf=16"
+Write-ExperimentResult $LASTEXITCODE "HammerDB MySQL simple  sf=16"
 
 
 # HammerDB TPC-C: monitoring, on persistent storage
@@ -403,7 +403,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_mysql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB MySQL monitoring  sf=16"
+Write-ExperimentResult $LASTEXITCODE "HammerDB MySQL monitoring  sf=16"
 
 
 # HammerDB TPC-C: scaling the clients, on the volume of the monitoring run
@@ -429,7 +429,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_mysql_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB MySQL complex  sf=16  nc=2  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "HammerDB MySQL complex  sf=16  nc=2  ne=1,2"
 
 
 ####################################################
@@ -461,7 +461,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_mysql_loading.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MySQL loader scaling  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB MySQL loader scaling  sf=1"
 
 
 # YCSB: persistent storage, loads the volume for the following runs
@@ -490,7 +490,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_mysql_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MySQL persistency  sf=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB MySQL persistency  sf=1  nc=2"
 
 
 # YCSB: scaling the benchmarker, on the loaded volume
@@ -518,7 +518,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_mysql_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MySQL scaling  sf=1  nc=2  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "YCSB MySQL scaling  sf=1  nc=2  ne=1,2"
 
 
 # YCSB: workload E, on the loaded volume
@@ -546,7 +546,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_mysql_workload_e.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MySQL workload e  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB MySQL workload e  sf=1"
 
 
 # YCSB: monitoring, on the loaded volume
@@ -576,7 +576,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_mysql_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB MySQL monitoring  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB MySQL monitoring  sf=1"
 
 
 #### TPC-H Refresh Stream (Example-TPC-H.md)
@@ -598,7 +598,7 @@ bexhoma tpch `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mysql_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MySQL refresh  sf=1  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MySQL refresh  sf=1  ne=3"
 
 
 ###########################################
@@ -606,4 +606,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MySQL refresh
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

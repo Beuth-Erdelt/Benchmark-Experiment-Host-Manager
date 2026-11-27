@@ -57,7 +57,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_orioledb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB OrioleDB  sf=1"
+report_result $? "YCSB OrioleDB  sf=1"
 
 
 ####################################################
@@ -107,7 +107,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_orioledb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB OrioleDB monitoring  sf=1"
+report_result $? "YCSB OrioleDB monitoring  sf=1"
 
 
 ####################################################
@@ -155,7 +155,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_orioledb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB OrioleDB storage  sf=1"
+report_result $? "YCSB OrioleDB storage  sf=1"
 
 
 ####################################################
@@ -201,7 +201,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_orioledb_postgresql.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB PostgreSQL vs OrioleDB  sf=1"
+report_result $? "YCSB PostgreSQL vs OrioleDB  sf=1"
 
 
 ####################################################
@@ -237,7 +237,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_tpcc_orioledb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase OrioleDB tpcc  sf=16"
+report_result $? "Benchbase OrioleDB tpcc  sf=16"
 
 
 ####################################################
@@ -271,7 +271,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_orioledb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB OrioleDB  sf=16"
+report_result $? "HammerDB OrioleDB  sf=16"
 
 
 ###########################################
@@ -279,4 +279,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB OrioleDB  sf=16"
 ###########################################
 
 
+report_total
 clean_logs

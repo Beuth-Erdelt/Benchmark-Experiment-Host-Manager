@@ -3,8 +3,8 @@
 ### Workload
 YCSB SF=1
 * Type: ycsb
-* Duration: 2271s 
-* Code: 1794793881
+* Duration: 2245s 
+* Code: 1795691035
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -17,7 +17,7 @@ YCSB SF=1
   * Factors for benchmarking are [1].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 8 processes (pods).
@@ -40,8 +40,8 @@ YCSB SF=1
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1053194
-  * datadisk:1847
+  * disk:636131
+  * datadisk:1855
   * volume_size:49G
   * volume_used:1.9G
   * cpu_list:0-223
@@ -52,15 +52,15 @@ YCSB SF=1
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794793881
+    * code:1795691035
 * mariadb-1-1-2-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1053397
-  * datadisk:1847
+  * disk:636135
+  * datadisk:1855
   * volume_size:49G
   * volume_used:1.9G
   * cpu_list:0-223
@@ -71,7 +71,7 @@ YCSB SF=1
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794793881
+    * code:1795691035
 
 ### Reused Storage
 * loading skipped, loading times inherited from an earlier experiment: MariaDB-1
@@ -81,7 +81,7 @@ YCSB SF=1
 * MariaDB-1: loading values of the volume: script=Schema, indexing=Checks, insert_order=hashed
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1794793881-555b48d55c-gzrfx: 0
+* bexhoma-sut-mariadb-1-1795691035-54cd548cdb-x47wv: 0
 
 ### Workflow
 
@@ -101,22 +101,22 @@ YCSB SF=1
 
 | connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |     1024 |        0 |                         1023.55 |               976996.00 |             500182 |                            1179.00 |               499818 |                              3899.00 |
-| mariadb-1-1-2-1-1 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       1 |         8 |      128 |        0 |                          127.96 |               976904.00 |              62588 |                            1223.00 |                62412 |                              3723.00 |
-| mariadb-1-1-2-1-2 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       2 |         8 |      128 |        0 |                          127.96 |               976894.00 |              62441 |                            1315.00 |                62559 |                              3875.00 |
-| mariadb-1-1-2-1-3 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       3 |         8 |      128 |        0 |                          127.95 |               976914.00 |              62370 |                            1241.00 |                62630 |                              3751.00 |
-| mariadb-1-1-2-1-4 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       4 |         8 |      128 |        0 |                          127.96 |               976900.00 |              62291 |                            1216.00 |                62709 |                              3749.00 |
-| mariadb-1-1-2-1-5 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       5 |         8 |      128 |        0 |                          127.96 |               976871.00 |              62542 |                            1225.00 |                62458 |                              3839.00 |
-| mariadb-1-1-2-1-6 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       6 |         8 |      128 |        0 |                          127.95 |               976935.00 |              62506 |                            1217.00 |                62494 |                              3711.00 |
-| mariadb-1-1-2-1-7 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       7 |         8 |      128 |        0 |                          127.95 |               976909.00 |              62533 |                            1234.00 |                62467 |                              3865.00 |
-| mariadb-1-1-2-1-8 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       8 |         8 |      128 |        0 |                          127.96 |               976900.00 |              62560 |                            1252.00 |                62440 |                              3849.00 |
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |     1024 |        0 |                         1023.54 |               976997.00 |             500951 |                            1223.00 |               499049 |                              3515.00 |
+| mariadb-1-1-2-1-1 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       1 |         8 |      128 |        0 |                          127.96 |               976873.00 |              62536 |                            1269.00 |                62464 |                              4099.00 |
+| mariadb-1-1-2-1-2 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       2 |         8 |      128 |        0 |                          127.95 |               976922.00 |              62431 |                            1239.00 |                62569 |                              3941.00 |
+| mariadb-1-1-2-1-3 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       3 |         8 |      128 |        0 |                          127.95 |               976923.00 |              62166 |                            1245.00 |                62834 |                              4057.00 |
+| mariadb-1-1-2-1-4 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       4 |         8 |      128 |        0 |                          127.95 |               976916.00 |              62704 |                            1239.00 |                62296 |                              4087.00 |
+| mariadb-1-1-2-1-5 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       5 |         8 |      128 |        0 |                          127.95 |               976907.00 |              62677 |                            1264.00 |                62323 |                              4223.00 |
+| mariadb-1-1-2-1-6 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       6 |         8 |      128 |        0 |                          127.95 |               976910.00 |              62477 |                            1241.00 |                62523 |                              4175.00 |
+| mariadb-1-1-2-1-7 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       7 |         8 |      128 |        0 |                          127.95 |               976917.00 |              62696 |                            1213.00 |                62304 |                              3985.00 |
+| mariadb-1-1-2-1-8 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       8 |         8 |      128 |        0 |                          127.96 |               976892.00 |              62334 |                            1245.00 |                62666 |                              3979.00 |
 
 #### Per Phase
 
 | DBMS          | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 |        64 |     1024 |        0 |                         1023.55 |               976996.00 |             500182 |                            1179.00 |               499818 |                              3899.00 |
-| mariadb-1-1-2 | mariadb-1-1-2 |                1 |        2 |               1 |           8 |        64 |     1024 |        0 |                         1023.64 |               976935.00 |             499831 |                            1315.00 |               500169 |                              3875.00 |
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 |        64 |     1024 |        0 |                         1023.54 |               976997.00 |             500951 |                            1223.00 |               499049 |                              3515.00 |
+| mariadb-1-1-2 | mariadb-1-1-2 |                1 |        2 |               1 |           8 |        64 |     1024 |        0 |                         1023.64 |               976923.00 |             500021 |                            1269.00 |               499979 |                              4223.00 |
 
 ### Monitoring
 
@@ -124,15 +124,15 @@ YCSB SF=1
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1 |       188.28 |      0.23 |           2.45 |                  2.45 |
-| mariadb-1-1-2-1 |       193.85 |      0.25 |           2.45 |                  2.45 |
+| mariadb-1-1-1-1 |       195.39 |      0.28 |           2.45 |                  2.45 |
+| mariadb-1-1-2-1 |       201.47 |      0.27 |           2.45 |                  2.45 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1 |       310.83 |      0.39 |           0.20 |                  0.20 |
-| mariadb-1-1-2-1 |       387.58 |      1.07 |           0.10 |                  0.10 |
+| mariadb-1-1-1-1 |       295.41 |      0.59 |           0.19 |                  0.19 |
+| mariadb-1-1-2-1 |       363.20 |      0.65 |           0.10 |                  0.10 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -151,9 +151,17 @@ YCSB SF=1
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Monitoring returned data
 * TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
+* TEST passed: Execution Phase: every pod ran its configured operations
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

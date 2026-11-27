@@ -61,7 +61,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single  sf=1  nbp=1"
+report_result $? "YCSB Cassandra single  sf=1  nbp=1"
 
 
 ####################################################
@@ -117,7 +117,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single monitoring  sf=3  nbp=1"
+report_result $? "YCSB Cassandra single monitoring  sf=3  nbp=1"
 
 
 ####################################################
@@ -177,7 +177,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra single PVC  sf=1  nbp=1  nc=2"
+report_result $? "YCSB Cassandra single PVC  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -236,7 +236,7 @@ bexhoma ycsb \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_cluster.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3  sf=1  nbp=1"
+report_result $? "YCSB Cassandra cluster 3  sf=1  nbp=1"
 
 
 # Variant replication: 3 Cassandra nodes and replication factor 3
@@ -292,7 +292,7 @@ bexhoma ycsb \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_replica.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3 replication 3  sf=1  nbp=1"
+report_result $? "YCSB Cassandra cluster 3 replication 3  sf=1  nbp=1"
 
 
 # Variant replication: 3 Cassandra nodes, replication factor 3 and persistent storage
@@ -352,7 +352,7 @@ bexhoma ycsb \
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_cassandra_replica_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3 replication 3 PVC  sf=1  nbp=1  nc=2"
+report_result $? "YCSB Cassandra cluster 3 replication 3 PVC  sf=1  nbp=1  nc=2"
 
 
 ###########################################
@@ -360,4 +360,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB Cassandra cluster 3 replication 3
 ###########################################
 
 
+report_total
 clean_logs

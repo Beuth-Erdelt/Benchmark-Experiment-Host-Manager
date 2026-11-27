@@ -198,6 +198,7 @@ def _configuration(storage_class, cluster, pvcs=("pvc-1",)) -> SutConfiguration:
     cfg.deployment_infos = {"deployment": {"sut": {"pvc": list(pvcs)}}, "statefulset": {}}
     cfg.configuration = "PostgreSQL-1"
     cfg.code = "1791727283"
+    cfg.appname = "bexhoma"
     return cfg
 
 

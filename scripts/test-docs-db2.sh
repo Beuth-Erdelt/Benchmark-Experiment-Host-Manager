@@ -66,7 +66,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_db2_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DB2 storage  sf=1"
+report_result $? "TPC-H DB2 storage  sf=1"
 
 
 #### TPC-H refresh stream
@@ -101,7 +101,7 @@ bexhoma tpch \
   -ks no \
   run &>$LOG_DIR/docs_tpch_db2_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DB2 refresh  sf=1  ne=3"
+report_result $? "TPC-H DB2 refresh  sf=1  ne=3"
 
 
 #### TPC-DS with all post-load steps, persistent storage, reset
@@ -142,7 +142,7 @@ bexhoma tpcds \
   -ks no \
   run &>$LOG_DIR/docs_tpcds_db2_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS DB2 storage  sf=1"
+report_result $? "TPC-DS DB2 storage  sf=1"
 
 
 #### YCSB workload a, persistent storage, reset
@@ -193,7 +193,7 @@ bexhoma ycsb \
   -ks no \
   run &>$LOG_DIR/docs_ycsb_db2_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DB2 workload a  sf=1"
+report_result $? "YCSB DB2 workload a  sf=1"
 
 
 #### YCSB workload e (scans with LIMIT)
@@ -238,7 +238,7 @@ bexhoma ycsb \
   -ks no \
   run &>$LOG_DIR/docs_ycsb_db2_workload_e.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DB2 workload e  sf=1"
+report_result $? "YCSB DB2 workload e  sf=1"
 
 
 #### Benchbase tpcc (profile db2 of the bexhoma image, the only Benchbase benchmark with a Db2 config)
@@ -283,7 +283,7 @@ bexhoma benchbase \
   -ks no \
   run &>$LOG_DIR/docs_benchbase_tpcc_db2_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DB2 tpcc  sf=16"
+report_result $? "Benchbase DB2 tpcc  sf=16"
 
 
 ###########################################
@@ -291,4 +291,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DB2 tpcc  sf=16"
 ###########################################
 
 
+report_total
 clean_logs

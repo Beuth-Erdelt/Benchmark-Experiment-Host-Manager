@@ -46,7 +46,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase scale  sf=16  nbp=1,2"
+report_result $? "Benchbase scale  sf=16  nbp=1,2"
 
 
 #### Benchbase Monitoring (Example-Benchbase.md)
@@ -79,7 +79,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase monitoring  sf=16  nbp=1,2"
+report_result $? "Benchbase monitoring  sf=16  nbp=1,2"
 
 
 #### Benchbase Persistent Storage (Example-Benchbase.md)
@@ -114,7 +114,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase storage  sf=16  nbp=1  nc=2"
+report_result $? "Benchbase storage  sf=16  nbp=1  nc=2"
 
 
 #### Benchbase Reset Script (Example-Benchbase.md)
@@ -145,7 +145,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_reset.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase reset script  sf=4  nc=2"
+report_result $? "Benchbase reset script  sf=4  nc=2"
 
 
 #### Benchbase Unlimited Target and Warmup (Example-Benchbase.md)
@@ -174,7 +174,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_unlimited.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase unlimited target + warmup  sf=4  nbp=1,2"
+report_result $? "Benchbase unlimited target + warmup  sf=4  nbp=1,2"
 
 
 #### Benchbase Keying and Thinking Time (Example-Benchbase.md)
@@ -223,7 +223,7 @@ bexhoma benchbase \
   --set deployment[bexhoma-deployment-postgres].container[dbms].max_connections=2000 \
   run &>$LOG_DIR/docs_benchbase_postgresql_keytime.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase keytime  sf=160  nbp=1,2,5,10"
+report_result $? "Benchbase keytime  sf=160  nbp=1,2,5,10"
 
 
 ###########################################
@@ -231,4 +231,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase keytime  sf=160  nbp=1,2,5,1
 ###########################################
 
 
+report_total
 clean_logs

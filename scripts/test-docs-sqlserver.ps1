@@ -45,7 +45,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_sqlserver_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H SQLServer storage  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H SQLServer storage  sf=1"
 
 
 #### TPC-H refresh stream
@@ -68,7 +68,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_sqlserver_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H SQLServer refresh  sf=1  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H SQLServer refresh  sf=1  ne=3"
 
 
 #### YCSB workload a, persistent storage, reset
@@ -98,7 +98,7 @@ bexhoma ycsb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_sqlserver_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB SQLServer workload a  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB SQLServer workload a  sf=1"
 
 
 #### Benchbase tpcc (the only Benchbase benchmark with a SQL Server config)
@@ -125,7 +125,7 @@ bexhoma benchbase `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_tpcc_sqlserver_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase SQLServer tpcc  sf=16"
+Write-ExperimentResult $LASTEXITCODE "Benchbase SQLServer tpcc  sf=16"
 
 
 #### HammerDB TPC-C
@@ -148,7 +148,7 @@ bexhoma hammerdb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_hammerdb_sqlserver.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB SQLServer  sf=16"
+Write-ExperimentResult $LASTEXITCODE "HammerDB SQLServer  sf=16"
 
 
 ###########################################
@@ -156,4 +156,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB SQLServer 
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

@@ -42,7 +42,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_dragonfly.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly single  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Dragonfly single  sf=1  nbp=1"
 
 
 ####################################################
@@ -76,7 +76,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_dragonfly_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly single monitoring  sf=3  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Dragonfly single monitoring  sf=3  nbp=1"
 
 
 ####################################################
@@ -113,7 +113,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_dragonfly_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly single PVC  sf=1  nbp=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB Dragonfly single PVC  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -150,7 +150,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_dragonfly_cluster.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly cluster 3  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Dragonfly cluster 3  sf=1  nbp=1"
 
 
 # Variant cluster: 3 Dragonfly instances on persistent storage
@@ -183,7 +183,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_dragonfly_cluster_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly cluster 3 PVC  sf=1  nbp=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB Dragonfly cluster 3 PVC  sf=1  nbp=1  nc=2"
 
 
 # Variant replication: 3 Dragonfly instances, 1 master and 2 replicas
@@ -213,7 +213,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_dragonfly_replica.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly cluster 3 replication  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Dragonfly cluster 3 replication  sf=1  nbp=1"
 
 
 ####################################################
@@ -251,7 +251,7 @@ bexhoma ycsb `
   --set "statefulset[bexhoma-worker].container[dbms].env.DFLY_proactor_threads=8" <# 8 io threads per worker instead of 16 (template) #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_dragonfly_cluster_settings.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly cluster 3 --set proactor_threads=8  sf=10  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Dragonfly cluster 3 --set proactor_threads=8  sf=10  nbp=1"
 
 
 ###########################################
@@ -259,4 +259,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Dragonfly clus
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

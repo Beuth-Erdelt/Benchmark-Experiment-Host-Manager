@@ -41,7 +41,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_monetdb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MonetDB  sf=1"
 
 
 ####################################################
@@ -73,7 +73,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_monetdb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB monitoring  sf=30"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MonetDB monitoring  sf=30"
 
 
 ####################################################
@@ -106,7 +106,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_monetdb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB storage  sf=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MonetDB storage  sf=1  nc=2"
 
 
 ####################################################
@@ -141,7 +141,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_monetdb_sf100.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB power  sf=100  nc=1  ne=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MonetDB power  sf=100  nc=1  ne=1"
 
 
 # TPC-H power test at SF 100, repeated on the loaded volume
@@ -170,7 +170,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_monetdb_sf100_repeated.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 
 
 # TPC-H throughput test at SF 100, on the loaded volume
@@ -199,7 +199,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_monetdb_sf100_throughput.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB throughput  sf=100  ne=1,1,3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MonetDB throughput  sf=100  ne=1,1,3"
 
 
 ####################################################
@@ -228,7 +228,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB simple  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MonetDB simple  sf=3"
 
 
 # TPC-DS monitoring at SF 3
@@ -254,7 +254,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB monitoring  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MonetDB monitoring  sf=3"
 
 
 # TPC-DS throughput test at SF 3, on persistent storage
@@ -282,7 +282,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB throughput  sf=3  ne=1,2"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MonetDB throughput  sf=3  ne=1,2"
 
 
 ####################################################
@@ -313,7 +313,7 @@ bexhoma tpcds `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_sf30.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB power  sf=30  nc=1  ne=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MonetDB power  sf=30  nc=1  ne=1"
 
 
 # TPC-DS power test at SF 30, repeated on the loaded volume
@@ -338,7 +338,7 @@ bexhoma tpcds `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_sf30_repeated.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
 
 
 # TPC-DS throughput test at SF 30, on the loaded volume
@@ -363,7 +363,7 @@ bexhoma tpcds `
   -rst $BEXHOMA_STORAGE_CLASS   <# storage class for persistent volumes #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpcds_monetdb_sf30_throughput.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS MonetDB throughput  sf=30  ne=1,1,3"
 
 
 #### TPC-H Refresh Stream (Example-TPC-H.md)
@@ -386,7 +386,7 @@ bexhoma tpch `
   -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_monetdb_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB refresh  sf=1  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MonetDB refresh  sf=1  ne=3"
 
 
 ###########################################
@@ -394,4 +394,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MonetDB refre
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

@@ -69,7 +69,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_databaseservice.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService ingestion  sf=1  nbp=1"
+report_result $? "YCSB DatabaseService ingestion  sf=1  nbp=1"
 
 
 #### YCSB Execution (Example-CloudDatabase.md)
@@ -114,7 +114,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_databaseservice_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService execution skip-load  sf=1  nbp=1"
+report_result $? "YCSB DatabaseService execution skip-load  sf=1  nbp=1"
 
 # delete database service placeholder
 kubectl delete deployment bexhoma-deployment-postgres
@@ -175,7 +175,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_databaseservice_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB DatabaseService storage  sf=5  nbp=1"
+report_result $? "YCSB DatabaseService storage  sf=5  nbp=1"
 
 
 
@@ -221,7 +221,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_databaseservice.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DatabaseService  sf=16  nbp=1,2"
+report_result $? "Benchbase DatabaseService  sf=16  nbp=1,2"
 
 # no PVC, skip loading
 # -dbms DatabaseService         DBMS under test
@@ -249,7 +249,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_databaseservice_execution.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
+report_result $? "Benchbase DatabaseService skip-load  sf=16  nbp=1,2"
 
 
 
@@ -301,7 +301,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_databaseservice.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService  sf=3"
+report_result $? "TPC-H DatabaseService  sf=3"
 
 
 #### TPC-H Monitoring (Example-CloudDatabase.md) — no PVC, skip loading
@@ -336,7 +336,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_databaseservice_execution.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService skip-load  sf=3"
+report_result $? "TPC-H DatabaseService skip-load  sf=3"
 
 
 # delete database service placeholder
@@ -387,7 +387,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_databaseservice_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC ingestion  sf=3"
+report_result $? "TPC-H DatabaseService PVC ingestion  sf=3"
 
 
 #### TPC-H Monitoring (Example-CloudDatabase.md) — with PVC, execution only
@@ -424,7 +424,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_databaseservice_storage_execution.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService PVC execution  sf=3"
+report_result $? "TPC-H DatabaseService PVC execution  sf=3"
 
 
 # delete database service placeholder
@@ -471,7 +471,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_databaseservice_refresh.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H DatabaseService refresh  sf=1  ne=3"
+report_result $? "TPC-H DatabaseService refresh  sf=1  ne=3"
 
 
 # delete database service placeholder
@@ -484,4 +484,5 @@ kubectl delete svc bexhoma-service
 ###########################################
 
 
+report_total
 clean_logs

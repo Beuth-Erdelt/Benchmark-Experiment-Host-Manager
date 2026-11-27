@@ -48,7 +48,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB scale  sf=16  nbp=1,2"
+report_result $? "HammerDB scale  sf=16  nbp=1,2"
 
 
 #### HammerDB Monitoring (Example-HammerDB.md)
@@ -85,7 +85,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB monitoring  sf=48  nbp=1,2"
+report_result $? "HammerDB monitoring  sf=48  nbp=1,2"
 
 
 #### HammerDB Transaction Counter (Example-HammerDB.md)
@@ -126,7 +126,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_timeseries.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB transaction counter  sf=16  nbp=1,2"
+report_result $? "HammerDB transaction counter  sf=16  nbp=1,2"
 
 
 #### HammerDB Persistent Storage (Example-HammerDB.md)
@@ -167,7 +167,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB storage  sf=16  nbp=1  nc=2"
+report_result $? "HammerDB storage  sf=16  nbp=1  nc=2"
 
 
 #### HammerDB Keying and Thinking Time (Example-HammerDB.md)
@@ -214,7 +214,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_keytime.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB keytime  sf=32  nbp=1,2  nc=2"
+report_result $? "HammerDB keytime  sf=32  nbp=1,2  nc=2"
 
 
 ###########################################
@@ -222,4 +222,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB keytime  sf=32  nbp=1,2  nc=2
 ###########################################
 
 
+report_total
 clean_logs

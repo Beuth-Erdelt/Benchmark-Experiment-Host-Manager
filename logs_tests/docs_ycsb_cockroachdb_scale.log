@@ -2,11 +2,11 @@ Data Directory                : is running
 Result Directory              : is running
 Dashboard                     : is running
 Message Queue                 : is running
-Experiment                    : has code 1794695948
-Experiment                    : starts at 2026-11-14 23:39:10.176357 (332491.0010748)
+Experiment                    : has code 1795671005
+Experiment                    : starts at 2026-11-26 06:30:05.937519 (932460.6649801)
 Experiment                    : This experiment compares run time and resource consumption of YCSB queries.
 Workload is 'A'.
-Number of rows to insert is 1000000.
+Number of rows to insert is 10000000.
 Ordering of inserts is hashed.
 Number of operations is 10000000.
 Batch size is ''.
@@ -15,7 +15,7 @@ Factors for loading are [4].
 Factors for benchmarking are [4].
 Status is logged every 10s.
 Load durability is relaxed (-xld; restored after the load).
-Experiment uses bexhoma version 0.11.17.
+Experiment uses bexhoma version 0.12.4.
 System metrics are monitored by a cluster-wide installation.
 Experiment is limited to DBMS ['CockroachDB'].
 Import is handled by 8 processes (pods).
@@ -29,230 +29,255 @@ Benchmarking is tested with [64] threads, split into [1] pods.
 Benchmarking is run as [1] times the number of benchmarking pods.
 Experiment is run once.
 Maximum DBMS across the whole cluster is 10.
-Results are validated against basic correctness requirements.
 Distributed DBMS uses 3 worker nodes, 3 replicas and 0 shards per node.
 SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 Cluster monitoring            : is running
-CockroachDB-1                 : has to wait - 1 running and 0 pending pods of dbms CockroachDB: max is 1 pods per dbms
-Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 10 API requests 0.5s)
-- waiting 30s -               : done
 CockroachDB-1                 : will start now
 CockroachDB-1                 : deployments ['sut']
 CockroachDB-1                 : stateful sets ['worker']
 CockroachDB-1                 : pvcs []
-CockroachDB-1                 : name of SUT pods = bexhoma-sut-cockroachdb-1-1794695948
-CockroachDB-1                 : name of SUT service = bexhoma-sut-cockroachdb-1-1794695948
-CockroachDB-1                 : name of worker pods = bx-w-cr-1-1794695948
-CockroachDB-1                 : name of worker service headless = bx-w-cr-1-1794695948
+CockroachDB-1                 : name of SUT pods = bexhoma-sut-cockroachdb-1-1795671005
+CockroachDB-1                 : name of SUT service = bexhoma-sut-cockroachdb-1-1795671005
+CockroachDB-1                 : name of worker pods = bx-w-cr-1-1795671005
+CockroachDB-1                 : name of worker service headless = bx-w-cr-1-1795671005
 Command failed!
 Return code: 1
-Command: kubectl --context oidc_ds_cluster create -f D:/data/benchmarks/1794695948/bexhoma-sut-cockroachdb-1-1794695948-1.yml
-Raw output (bytes): b'service/bexhoma-sut-cockroachdb-1-1794695948 created\nservice/bx-w-cr-1-1794695948 created\nstatefulset.apps/bx-w-cr-1-1794695948 created\njob.batch/bx-w-cr-1-1794695948 created\ndeployment.apps/bexhoma-sut-cockroachdb-1-1794695948 created\nError from server (AlreadyExists): error when creating "D:/data/benchmarks/1794695948/bexhoma-sut-cockroachdb-1-1794695948-1.yml": poddisruptionbudgets.policy "bexhoma-worker" already exists\n'
+Command: kubectl --context oidc_ds_cluster create -f D:/data/benchmarks/1795671005/bexhoma-sut-cockroachdb-1-1795671005-1.yml
+Raw output (bytes): b'service/bexhoma-sut-cockroachdb-1-1795671005 created\nservice/bx-w-cr-1-1795671005 created\nstatefulset.apps/bx-w-cr-1-1795671005 created\njob.batch/bx-w-cr-1-1795671005 created\ndeployment.apps/bexhoma-sut-cockroachdb-1-1795671005 created\nError from server (AlreadyExists): error when creating "D:/data/benchmarks/1795671005/bexhoma-sut-cockroachdb-1-1795671005-1.yml": poddisruptionbudgets.policy "bexhoma-worker" already exists\n'
 Decoded with utf-8:
-service/bexhoma-sut-cockroachdb-1-1794695948 created
-service/bx-w-cr-1-1794695948 created
-statefulset.apps/bx-w-cr-1-1794695948 created
-job.batch/bx-w-cr-1-1794695948 created
-deployment.apps/bexhoma-sut-cockroachdb-1-1794695948 created
-Error from server (AlreadyExists): error when creating "D:/data/benchmarks/1794695948/bexhoma-sut-cockroachdb-1-1794695948-1.yml": poddisruptionbudgets.policy "bexhoma-worker" already exists
+service/bexhoma-sut-cockroachdb-1-1795671005 created
+service/bx-w-cr-1-1795671005 created
+statefulset.apps/bx-w-cr-1-1795671005 created
+job.batch/bx-w-cr-1-1795671005 created
+deployment.apps/bexhoma-sut-cockroachdb-1-1795671005 created
+Error from server (AlreadyExists): error when creating "D:/data/benchmarks/1795671005/bexhoma-sut-cockroachdb-1-1795671005-1.yml": poddisruptionbudgets.policy "bexhoma-worker" already exists
 
-Loop pass                     : took 2.3s (1 kubectl calls 1.3s, 11 API requests 0.6s)
+Loop pass                     : took 1.4s (1 kubectl calls 0.7s, 11 API requests 0.5s)
 - waiting 30s -               : done
-CockroachDB-1                 : worker pods found: ['bx-w-cr-1-1794695948-0', 'bx-w-cr-1-1794695948-1', 'bx-w-cr-1-1794695948-2', 'bx-w-cr-1-1794695948-765pc']
-CockroachDB-1                 : worker pods found (only stateful set pods): ['bx-w-cr-1-1794695948-0', 'bx-w-cr-1-1794695948-1', 'bx-w-cr-1-1794695948-2']
-CockroachDB-1                 : found 0 / 3 running workers (component worker)
-CockroachDB-1                 : waits for health check of workers to succeed
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 23 API requests 0.8s)
-- waiting 30s -               : done
-CockroachDB-1                 : worker pods found: ['bx-w-cr-1-1794695948-0', 'bx-w-cr-1-1794695948-1', 'bx-w-cr-1-1794695948-2', 'bx-w-cr-1-1794695948-765pc']
-CockroachDB-1                 : worker pods found (only stateful set pods): ['bx-w-cr-1-1794695948-0', 'bx-w-cr-1-1794695948-1', 'bx-w-cr-1-1794695948-2']
+CockroachDB-1                 : worker pods found: ['bx-w-cr-1-1795671005-0', 'bx-w-cr-1-1795671005-1', 'bx-w-cr-1-1795671005-2', 'bx-w-cr-1-1795671005-qpv6j']
+CockroachDB-1                 : worker pods found (only stateful set pods): ['bx-w-cr-1-1795671005-0', 'bx-w-cr-1-1795671005-1', 'bx-w-cr-1-1795671005-2']
 CockroachDB-1                 : found 3 / 3 running workers (component worker)
 CockroachDB-1                 : is not loaded yet
-CockroachDB-1                 : will start loading but not before 2026-11-14 22:42:46 (that is in 120 secs)
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 20 API requests 0.7s)
+CockroachDB-1                 : will start loading but not before 2026-11-26 05:32:38 (that is in 120 secs)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 23 API requests 0.7s)
 - waiting 30s -               : done
 CockroachDB-1                 : is not loaded yet
-CockroachDB-1                 : will start loading but not before 2026-11-14 22:42:46
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 13 API requests 0.4s)
+CockroachDB-1                 : will start loading but not before 2026-11-26 05:32:38
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 13 API requests 0.5s)
 - waiting 30s -               : done
 CockroachDB-1                 : is not loaded yet
-CockroachDB-1                 : will start loading but not before 2026-11-14 22:42:46
-Loop pass                     : took 0.4s (0 kubectl calls 0.0s, 13 API requests 0.3s)
+CockroachDB-1                 : will start loading but not before 2026-11-26 05:32:38
+Loop pass                     : took 0.5s (0 kubectl calls 0.0s, 13 API requests 0.4s)
 - waiting 30s -               : done
 CockroachDB-1                 : is not loaded yet
-CockroachDB-1                 : will start loading but not before 2026-11-14 22:42:46
-Loop pass                     : took 5.5s (0 kubectl calls 0.0s, 13 API requests 0.4s)
+CockroachDB-1                 : will start loading but not before 2026-11-26 05:32:38
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 13 API requests 0.5s)
 - waiting 30s -               : done
 CockroachDB-1                 : is not loaded yet
 CockroachDB-1                 : load durability relaxed, scripts []
-CockroachDB-1                 : connect to pod bexhoma-sut-cockroachdb-1-1794695948-55c5d5487d-sntdn to load scripts
+CockroachDB-1                 : connect to pod bexhoma-sut-cockroachdb-1-1795671005-86b795c775-czltn to load scripts
 CockroachDB-1                 : start asynch loading scripts of type schema
 CockroachDB-1                 : waits for the Schema scripts (schema=True) before starting the loading jobs
-CockroachDB-1                 : Schema scripts done after 6s
+CockroachDB-1                 : Schema scripts done after 4s
 CockroachDB-1                 : is loading
-Loop pass                     : took 14.9s (5 kubectl calls 5.7s, 36 API requests 2.4s)
+Loop pass                     : took 9.2s (5 kubectl calls 2.3s, 36 API requests 2.8s)
 - waiting 30s -               : done
 CockroachDB-1                 : is loading
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 34 API requests 1.2s)
+Loop pass                     : took 1.8s (0 kubectl calls 0.0s, 35 API requests 1.4s)
 - waiting 30s -               : done
 CockroachDB-1                 : is loading
-Loop pass                     : took 2.1s (0 kubectl calls 0.0s, 34 API requests 1.2s)
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 35 API requests 1.3s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 35 API requests 1.3s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 35 API requests 1.1s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 35 API requests 1.1s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 35 API requests 1.2s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 35 API requests 1.1s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 35 API requests 1.2s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 35 API requests 1.1s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 35 API requests 1.1s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 35 API requests 1.1s)
+- waiting 30s -               : done
+Exception when calling BatchV1Api->list_namespaced_job: (401)
+Reason: Unauthorized
+HTTP response headers: HTTPHeaderDict({'Audit-Id': 'c3266124-bebd-4caf-a8db-7beddf7283f9', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Thu, 26 Nov 2026 05:39:05 GMT', 'Content-Length': '129'})
+HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
+
+
+
+Create new access token
+- waiting 2s -                : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 4.2s (0 kubectl calls 0.0s, 36 API requests 1.2s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 35 API requests 1.2s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 35 API requests 1.1s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 35 API requests 1.0s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 35 API requests 1.0s)
+- waiting 30s -               : done
+CockroachDB-1                 : is loading
+Loop pass                     : took 8.4s (14 kubectl calls 6.2s, 42 API requests 1.1s)
 - waiting 30s -               : done
 CockroachDB-1                 : showing loader times (ycsb-loader)
 CockroachDB-1                 : generator times (start/end per pod and container) []
-CockroachDB-1                 : loader times (start/end per pod and container) [(1794696198, 1794696253), (1794696199, 1794696253), (1794696198, 1794696253), (1794696198, 1794696253), (1794696199, 1794696253), (1794696199, 1794696254), (1794696198, 1794696253), (1794696198, 1794696253)]
-CockroachDB-1                 : total times (start/end per pod and container) [(1794696198, 1794696253), (1794696199, 1794696253), (1794696198, 1794696253), (1794696198, 1794696253), (1794696199, 1794696253), (1794696199, 1794696254), (1794696198, 1794696253), (1794696198, 1794696253)]
-CockroachDB-1                 : loader timespan (first to last [s]) = 56
-CockroachDB-1                 : connect to pod bexhoma-sut-cockroachdb-1-1794695948-55c5d5487d-sntdn to load scripts
+CockroachDB-1                 : loader times (start/end per pod and container) [(1795671178, 1795671702), (1795671177, 1795671700), (1795671177, 1795671700), (1795671178, 1795671702), (1795671178, 1795671701), (1795671178, 1795671704), (1795671178, 1795671702), (1795671178, 1795671708)]
+CockroachDB-1                 : total times (start/end per pod and container) [(1795671178, 1795671702), (1795671177, 1795671700), (1795671177, 1795671700), (1795671178, 1795671702), (1795671178, 1795671701), (1795671178, 1795671704), (1795671178, 1795671702), (1795671178, 1795671708)]
+CockroachDB-1                 : loader timespan (first to last [s]) = 531
+CockroachDB-1                 : connect to pod bexhoma-sut-cockroachdb-1-1795671005-86b795c775-czltn to load scripts
 CockroachDB-1                 : start asynch loading scripts of type index
 CockroachDB-1                 : is loading
-Loop pass                     : took 29.4s (24 kubectl calls 26.1s, 62 API requests 2.3s)
-- waiting 30s -               : done
-Experiment         - waiting 30s -               : done
-CockroachDB-1                 : is loading
-Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 34 API requests 1.5s)
-- waiting 30s -               : done
-CockroachDB-1                 : is loading
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 34 API requests 1.4s)
-- waiting 30s -               : done
-CockroachDB-1                 : is loading
-Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 34 API requests 1.5s)
-- waiting 30s -               : done
-CockroachDB-1                 : is loading
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 34 API requests 1.3s)
-- waiting 30s -               : done
-CockroachDB-1                 : is loading
-Loop pass                     : took 2.3s (0 kubectl calls 0.0s, 34 API requests 1.5s)
-- waiting 30s -               : done
-CockroachDB-1                 : is loading
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 34 API requests 1.4s)
-- waiting 30s -               : done
-CockroachDB-1                 : is loading
-Loop pass                     : took 11.3s (0 kubectl calls 0.0s, 34 API requests 1.9s)
-- waiting 30s -               : done
-CockroachDB-1                 : showing loader times (ycsb-loader)
-CockroachDB-1                 : generator times (start/end per pod and container) []
-CockroachDB-1                 : loader times (start/end per pod and container) [(1794698312, 1794698868), (1794698313, 1794698867), (1794698312, 1794698868), (1794698313, 1794698866), (1794698313, 1794698866), (1794698312, 1794698869), (1794698312, 1794698868), (1794698312, 1794698866)]
-CockroachDB-1                 : total times (start/end per pod and container) [(1794698312, 1794698868), (1794698313, 1794698867), (1794698312, 1794698868), (1794698313, 1794698866), (1794698313, 1794698866), (1794698312, 1794698869), (1794698312, 1794698868), (1794698312, 1794698866)]
-CockroachDB-1                 : loader timespan (first to last [s]) = 557
-CockroachDB-1                 : connect to pod bexhoma-sut-cockroachdb-1-1794698093-55dd585f64-lxccf to load scripts
-CockroachDB-1                 : start asynch loading scripts of type index
-CockroachDB-1                 : is loading
-Loop pass                     : took 31.1s (24 kubectl calls 26.1s, 62 API requests 2.8s)
+Loop pass                     : took 6.7s (10 kubectl calls 4.7s, 49 API requests 1.7s)
 - waiting 30s -               : done
 Experiment                    : Reset experiment counter. This is first run of client number 1.
-Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-CockroachDB-1-1794698093 initialized to 1.
+Experiment                    : Round pod counter bexhoma-benchmarker-podcount-round-1-1-CockroachDB-1-1795671005 initialized to 1.
 CockroachDB-1                 : benchmarks done 0 of 1. This will be client 1
 cockroachdb-1-1-1-1           : start benchmarking (benchmark_run=1)
-CockroachDB-1                 : worker pods found: ['bx-w-cr-1-1794698093-0', 'bx-w-cr-1-1794698093-1', 'bx-w-cr-1-1794698093-2']
-CockroachDB-1                 : worker pods found (only stateful set pods): ['bx-w-cr-1-1794698093-0', 'bx-w-cr-1-1794698093-1', 'bx-w-cr-1-1794698093-2']
-CockroachDB-1                 : distributed system - get host info for worker bx-w-cr-1-1794698093-0
-CockroachDB-1                 : distributed system - get host info for worker bx-w-cr-1-1794698093-1
-CockroachDB-1                 : distributed system - get host info for worker bx-w-cr-1-1794698093-2
+CockroachDB-1                 : worker pods found: ['bx-w-cr-1-1795671005-0', 'bx-w-cr-1-1795671005-1', 'bx-w-cr-1-1795671005-2']
+CockroachDB-1                 : worker pods found (only stateful set pods): ['bx-w-cr-1-1795671005-0', 'bx-w-cr-1-1795671005-1', 'bx-w-cr-1-1795671005-2']
+CockroachDB-1                 : distributed system - get host info for worker bx-w-cr-1-1795671005-0
+CockroachDB-1                 : distributed system - get host info for worker bx-w-cr-1-1795671005-1
+CockroachDB-1                 : distributed system - get host info for worker bx-w-cr-1-1795671005-2
 cockroachdb-1-1-1-1           : needs monitoring (common metrics) for deployment sut
 cockroachdb-1-1-1-1           : needs monitoring (custom metrics) for stateful set worker
-CockroachDB-1                 : benchmarking results in folder D:\data\benchmarks/1794698093
-CockroachDB-1                 : submitted benchmarker job in 13.3s (4 kubectl calls 4.5s, 70 API requests 7.7s)
+CockroachDB-1                 : benchmarking results in folder D:\data\benchmarks/1795671005
+CockroachDB-1                 : submitted benchmarker job in 11.6s (4 kubectl calls 2.5s, 70 API requests 8.0s)
 cockroachdb-1-1-1-1           : needs monitoring (common metrics) for deployment sut
 cockroachdb-1-1-1-1           : needs monitoring (custom metrics) for stateful set worker
 cockroachdb-1-1-1-1           : collecting metrics of data injector at connection cockroachdb-1-1-1-1
-cockroachdb-1-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-cr-1-1794698093-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-cr-1-1794698093-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-cockroachdb-1-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-cockroachdb-1-1794698093-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-cockroachdb-1-1794698093-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+cockroachdb-1-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-cr-1-1795671005-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-cr-1-1795671005-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+cockroachdb-1-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-loading-cockroachdb-1-1795671005-1-.+", namespace="perdelt", container="sensor"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-loading-cockroachdb-1-1795671005-1-.+", namespace="perdelt", container="sensor"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 cockroachdb-1-1-1-1           : WARNING metric missing for loader: CPU Throttling Rate [s/s]
 cockroachdb-1-1-1-1           : WARNING metric missing for loader: CPU Throttled Time [s]
 cockroachdb-1-1-1-1           : WARNING metric missing for workerloading: CPU Throttling Rate [s/s]
 cockroachdb-1-1-1-1           : WARNING metric missing for workerloading: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.4s, 0 API requests 0.0s)
-Loop pass                     : took 23.7s (10 kubectl calls 15.9s, 92 API requests 9.4s)
+Experiment                    : fetched 2 metric sets in 4s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 7.1s, 0 API requests 0.0s)
+Loop pass                     : took 17.8s (10 kubectl calls 10.3s, 92 API requests 8.8s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 21 API requests 1.2s)
+Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 21 API requests 1.0s)
+- waiting 30s -               : done
+- waiting 2s -                : done
+CockroachDB-1                 : has running benchmarks
+Loop pass                     : took 3.9s (0 kubectl calls 0.0s, 20 API requests 1.0s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 19 API requests 0.9s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 19 API requests 1.1s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 19 API requests 1.1s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.5s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 19 API requests 1.0s)
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 8.2s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.5s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.6s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.6s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 19 API requests 0.7s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 19 API requests 1.0s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+CockroachDB-1                 : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+- waiting 30s -               : done
+CockroachDB-1                 : has running benchmarks
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 19 API requests 0.5s)
+- waiting 30s -               : done
+CockroachDB-1                 : has running benchmarks
+Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+- waiting 30s -               : done
+CockroachDB-1                 : has running benchmarks
+Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.5s)
+- waiting 30s -               : done
+CockroachDB-1                 : has running benchmarks
+Loop pass                     : took 0.6s (0 kubectl calls 0.0s, 19 API requests 0.5s)
+- waiting 30s -               : done
+CockroachDB-1                 : has running benchmarks
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
 Loop pass                     : took 0.8s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.6s)
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+Loop pass                     : took 0.9s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.5s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 8.2s (0 kubectl calls 0.0s, 19 API requests 0.8s)
+Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 19 API requests 1.0s)
 - waiting 30s -               : done
 CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 19 API requests 0.7s)
+Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 19 API requests 0.9s)
 - waiting 30s -               : done
-CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 19 API requests 0.7s)
-- waiting 30s -               : done
-CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 19 API requests 0.8s)
-- waiting 30s -               : done
-CockroachDB-1                 : has running benchmarks
-Loop pass                     : took 1.1s (0 kubectl calls 0.0s, 19 API requests 0.6s)
-- waiting 30s -               : done
-cockroachdb-1-1-1-1           : wrote benchmarking_timespans to D:/data/benchmarks/1794698093/cockroachdb-1-1-1-1.config
+cockroachdb-1-1-1-1           : wrote benchmarking_timespans to D:/data/benchmarks/1795671005/cockroachdb-1-1-1-1.config
 cockroachdb-1-1-1-1           : showing benchmarker times
-cockroachdb-1-1-1-1           : benchmarker timespan job from 1794698974 to 1794699656
-cockroachdb-1-1-1-1           : benchmarker timespan pods from 1794698976 to 1794699623
-cockroachdb-1-1-1-1           : benchmarker timespan (start to end single container [s]) = 647
-cockroachdb-1-1-1-1           : benchmarker times (start/end per pod and container) = [(1794698976, 1794699623)]
-cockroachdb-1-1-1-1           : found and updated times {'benchmarker': [(1794698976, 1794699623)]}
+cockroachdb-1-1-1-1           : benchmarker timespan job from 1795671792 to 1795672576
+cockroachdb-1-1-1-1           : benchmarker timespan pods from 1795671794 to 1795672551
+cockroachdb-1-1-1-1           : benchmarker timespan (start to end single container [s]) = 757
+cockroachdb-1-1-1-1           : benchmarker times (start/end per pod and container) = [(1795671794, 1795672551)]
+cockroachdb-1-1-1-1           : found and updated times {'benchmarker': [(1795671794, 1795672551)]}
 cockroachdb-1-1-1-1           : needs monitoring (common metrics) for deployment sut
 cockroachdb-1-1-1-1           : needs monitoring (custom metrics) for stateful set worker
 cockroachdb-1-1-1-1           : collecting execution metrics of worker at connection cockroachdb-1-1-1-1
 cockroachdb-1-1-1-1           : collecting metrics of benchmarker at connection cockroachdb-1-1-1-1
-cockroachdb-1-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-cr-1-1794698093-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-cr-1-1794698093-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-cockroachdb-1-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-cockroachdb-1-1794698093-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-cockroachdb-1-1794698093-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
-cockroachdb-1-1-1-1           : WARNING metric missing for workerbenchmarking: CPU Throttling Rate [s/s]
-cockroachdb-1-1-1-1           : WARNING metric missing for workerbenchmarking: CPU Throttled Time [s]
+cockroachdb-1-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"(.*)bx-w-cr-1-1795671005-(.*)", namespace="perdelt", container="dbms"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"(.*)bx-w-cr-1-1795671005-(.*)", namespace="perdelt", container="dbms"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
+cockroachdb-1-1-1-1           : example metric {'type': 'cluster', 'active': True, 'metric': 'gauge', 'query': '(sum(max((container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-cockroachdb-1-1795671005-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"} and (time() - timestamp(container_memory_working_set_bytes{pod=~"bexhoma-benchmarker-cockroachdb-1-1795671005-1-1-1-[a-z0-9]{5}", namespace="perdelt", container="dbmsbenchmarker"})) < 90)) by (instance)))/1024/1024', 'title': 'Memory Usage, Working Set [MiB]'}
 cockroachdb-1-1-1-1           : WARNING metric missing for benchmarker: CPU Throttling Rate [s/s]
 cockroachdb-1-1-1-1           : WARNING metric missing for benchmarker: CPU Throttled Time [s]
-Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 9.5s, 0 API requests 0.0s)
-Loop pass                     : took 13.0s (9 kubectl calls 15.2s, 24 API requests 0.9s)
+cockroachdb-1-1-1-1           : WARNING metric missing for workerbenchmarking: CPU Throttling Rate [s/s]
+cockroachdb-1-1-1-1           : WARNING metric missing for workerbenchmarking: CPU Throttled Time [s]
+Experiment                    : fetched 2 metric sets in 6s (2 at once, 0 repeated, 0 follow-up actions; 4 kubectl calls 10.2s, 0 API requests 0.0s)
+Loop pass                     : took 11.4s (9 kubectl calls 13.9s, 24 API requests 1.1s)
 CockroachDB-1                 : can be stopped
-CockroachDB-1                 : had 0 restarts at worker bexhoma-sut-cockroachdb-1-1794698093-55dd585f64-lxccf
-CockroachDB-1                 : worker pods found: ['bx-w-cr-1-1794698093-0', 'bx-w-cr-1-1794698093-1', 'bx-w-cr-1-1794698093-2']
-CockroachDB-1                 : worker pods found (only stateful set pods): ['bx-w-cr-1-1794698093-0', 'bx-w-cr-1-1794698093-1', 'bx-w-cr-1-1794698093-2']
-CockroachDB-1                 : had 0 restarts at worker bx-w-cr-1-1794698093-0
-CockroachDB-1                 : had 0 restarts at worker bx-w-cr-1-1794698093-1
-CockroachDB-1                 : had 0 restarts at worker bx-w-cr-1-1794698093-2
-Loop pass                     : took 12.3s (9 kubectl calls 10.3s, 41 API requests 1.5s)
-Experiment                    : ends at 2026-11-15 00:41:18.700247 (336219.4512037) - 1583.44s total
+CockroachDB-1                 : had 0 restarts at worker bexhoma-sut-cockroachdb-1-1795671005-86b795c775-czltn
+CockroachDB-1                 : worker pods found: ['bx-w-cr-1-1795671005-0', 'bx-w-cr-1-1795671005-1', 'bx-w-cr-1-1795671005-2']
+CockroachDB-1                 : worker pods found (only stateful set pods): ['bx-w-cr-1-1795671005-0', 'bx-w-cr-1-1795671005-1', 'bx-w-cr-1-1795671005-2']
+CockroachDB-1                 : had 0 restarts at worker bx-w-cr-1-1795671005-0
+CockroachDB-1                 : had 0 restarts at worker bx-w-cr-1-1795671005-1
+CockroachDB-1                 : had 0 restarts at worker bx-w-cr-1-1795671005-2
+Loop pass                     : took 6.8s (9 kubectl calls 4.6s, 45 API requests 1.9s)
+Experiment                    : ends at 2026-11-26 06:56:32.344479 (934047.0412441) - 1586.38s total
 Experiment                    : transforming metrics for loading
 Experiment                    : transforming metrics for loading completed
 Experiment                    : transforming metrics for benchmarking
@@ -272,15 +297,14 @@ Experiment                    : transforming metrics for benchmarker completed
 Experiment                    : downloading partial results
 Experiment                    : uploading full results
 Experiment                    : uploading workload file
-Result workflow complete
 
 ## Show Summary
 
 ### Workload
 YCSB SF=10
 * Type: ycsb
-* Duration: 1584s 
-* Code: 1794698093
+* Duration: 1587s 
+* Code: 1795671005
 * YCSB driver runs the experiment.
 * This experiment compares run time and resource consumption of YCSB queries.
   * Workload is 'A'.
@@ -293,7 +317,7 @@ YCSB SF=10
   * Factors for benchmarking are [4].
   * Status is logged every 10s.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.4.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['CockroachDB'].
   * Import is handled by 8 processes (pods).
@@ -307,52 +331,55 @@ YCSB SF=10
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
-  * Results are validated against basic correctness requirements.
   * Distributed DBMS uses 3 worker nodes, 3 replicas and 0 shards per node.
   * SUT requests 4 CPU and 64Gi RAM. RAM limit is 64Gi.
 
 ### Connections
 * cockroachdb-1-1-1-1 uses docker image cockroachdb/cockroach:v24.2.4
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1055111
+  * disk:634021
   * cpu_list:0-223
   * args:['-c', 'while true; do echo hello; sleep 10;done']
   * requests_cpu:4
   * requests_memory:64Gi
   * limits_memory:64Gi
   * worker 0
-    * RAM:1081853952000
+    * RAM:1081853997056
+    * CPU:Intel(R) Xeon(R) Gold 6438Y+
     * Cores:128
     * host:6.8.0-137-generic
     * node:cl-worker37
-    * disk:677891
-    * datadisk:11678
+    * disk:660665
+    * datadisk:11682
     * cpu_list:0-127
   * worker 1
-    * RAM:1081742753792
+    * RAM:1081742733312
+    * CPU:AMD EPYC 7502 32-Core Processor
     * Cores:128
     * host:6.8.0-146-generic
     * node:cl-worker29
-    * disk:1392776
-    * datadisk:11465
+    * disk:715212
+    * datadisk:11473
     * cpu_list:0-127
   * worker 2
     * RAM:2164173156352
+    * CPU:INTEL(R) XEON(R) PLATINUM 8570
     * Cores:224
     * host:6.8.0-147-generic
     * node:cl-worker36
-    * disk:1055111
-    * datadisk:11457
+    * disk:634021
+    * datadisk:11474
     * cpu_list:0-223
   * resources_total: 12.25 CPU, 192.5 GiB RAM requested in 4 pods
     * worker: 3 x, 12.0 CPU, 192.0 GiB RAM
     * sut: 1 x, 0.25 CPU, 0.5 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794698093
+    * code:1795671005
     * BEXHOMA_REPLICAS:3
     * BEXHOMA_WORKERS:3
 
@@ -360,10 +387,10 @@ YCSB SF=10
 * CockroachDB-1: 8 of 8 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-cockroachdb-1-1794698093-55dd585f64-lxccf: 0
-* bx-w-cr-1-1794698093-0: 0
-* bx-w-cr-1-1794698093-1: 0
-* bx-w-cr-1-1794698093-2: 0
+* bexhoma-sut-cockroachdb-1-1795671005-86b795c775-czltn: 0
+* bx-w-cr-1-1795671005-0: 0
+* bx-w-cr-1-1795671005-1: 0
+* bx-w-cr-1-1795671005-2: 0
 
 ### Workflow
 
@@ -381,20 +408,20 @@ YCSB SF=10
 
 | connection            |   experiment_run |   threads |   target |   pod_count |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |    SF |   Throughput [SF/h] |
 |:----------------------|-----------------:|----------:|---------:|------------:|---------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|------:|--------------------:|
-| cockroachdb-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2251.11 |               555282.00 |           1250000.00 |                             12815.00 | 10.00 |               64.83 |
-| cockroachdb-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2262.73 |               552430.00 |           1250000.00 |                             12903.00 | 10.00 |               65.17 |
-| cockroachdb-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2256.35 |               553992.00 |           1250000.00 |                             12735.00 | 10.00 |               64.98 |
-| cockroachdb-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2245.89 |               556573.00 |           1250000.00 |                             12799.00 | 10.00 |               64.68 |
-| cockroachdb-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2256.92 |               553851.00 |           1250000.00 |                             12855.00 | 10.00 |               65.00 |
-| cockroachdb-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2260.67 |               552933.00 |           1250000.00 |                             12839.00 | 10.00 |               65.11 |
-| cockroachdb-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2249.05 |               555789.00 |           1250000.00 |                             12879.00 | 10.00 |               64.77 |
-| cockroachdb-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2249.51 |               555677.00 |           1250000.00 |                             12615.00 | 10.00 |               64.79 |
+| cockroachdb-1-1-0-1-1 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2392.17 |               522538.00 |           1250000.00 |                             10431.00 | 10.00 |               68.89 |
+| cockroachdb-1-1-0-1-2 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2362.47 |               529108.00 |           1250000.00 |                             10423.00 | 10.00 |               68.04 |
+| cockroachdb-1-1-0-1-3 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2384.66 |               524184.00 |           1250000.00 |                             10479.00 | 10.00 |               68.68 |
+| cockroachdb-1-1-0-1-4 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2386.86 |               523701.00 |           1250000.00 |                             10511.00 | 10.00 |               68.74 |
+| cockroachdb-1-1-0-1-5 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2393.42 |               522265.00 |           1250000.00 |                             10519.00 | 10.00 |               68.93 |
+| cockroachdb-1-1-0-1-6 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2379.20 |               525387.00 |           1250000.00 |                             10375.00 | 10.00 |               68.52 |
+| cockroachdb-1-1-0-1-7 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2385.86 |               523921.00 |           1250000.00 |                             10407.00 | 10.00 |               68.71 |
+| cockroachdb-1-1-0-1-8 |             1.00 |      8.00 |  8192.00 |        8.00 |     0.00 |                         2393.98 |               522144.00 |           1250000.00 |                             10583.00 | 10.00 |               68.95 |
 
 #### Per Run
 
 | DBMS            |   experiment_run |   threads |   target |   pod_count |   errors |    SF |   Throughput [SF/h] |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [INSERT].Return=OK |   [INSERT].99thPercentileLatency(us) |
 |:----------------|-----------------:|----------:|---------:|------------:|---------:|------:|--------------------:|--------------------------------:|------------------------:|---------------------:|-------------------------------------:|
-| CockroachDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |     0.00 | 10.00 |               64.68 |                        18032.24 |               556573.00 |          10000000.00 |                             12805.00 |
+| CockroachDB-1-1 |             1.00 |     64.00 | 65536.00 |        8.00 |     0.00 | 10.00 |               68.04 |                        19078.61 |               529108.00 |          10000000.00 |                             10466.00 |
 
 ### Benchmarking
 
@@ -402,13 +429,13 @@ YCSB SF=10
 
 | connection            | phase             | job                 |   experiment_run |   client |   benchmark_run |   child |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:----------------------|:------------------|:--------------------|-----------------:|---------:|----------------:|--------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| cockroachdb-1-1-1-1-1 | cockroachdb-1-1-1 | cockroachdb-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    65536 |        0 |                        15485.70 |               645757.00 |            4999515 |                            6043.00 |              5000485 |                            101567.00 |
+| cockroachdb-1-1-1-1-1 | cockroachdb-1-1-1 | cockroachdb-1-1-1-1 |                1 |        1 |               1 |       1 |        64 |    65536 |        0 |                        13214.44 |               756748.00 |            5001973 |                            6727.00 |              4998027 |                            151807.00 |
 
 #### Per Phase
 
 | DBMS              | phase             |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   target |   errors |   [OVERALL].Throughput(ops/sec) |   [OVERALL].RunTime(ms) |   [READ].Return=OK |   [READ].99thPercentileLatency(us) |   [UPDATE].Return=OK |   [UPDATE].99thPercentileLatency(us) |
 |:------------------|:------------------|-----------------:|---------:|----------------:|------------:|----------:|---------:|---------:|--------------------------------:|------------------------:|-------------------:|-----------------------------------:|---------------------:|-------------------------------------:|
-| cockroachdb-1-1-1 | cockroachdb-1-1-1 |                1 |        1 |               1 |           1 |        64 |    65536 |        0 |                        15485.70 |               645757.00 |            4999515 |                            6043.00 |              5000485 |                            101567.00 |
+| cockroachdb-1-1-1 | cockroachdb-1-1-1 |                1 |        1 |               1 |           1 |        64 |    65536 |        0 |                        13214.44 |               756748.00 |            5001973 |                            6727.00 |              4998027 |                            151807.00 |
 
 ### Monitoring
 
@@ -416,25 +443,25 @@ YCSB SF=10
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |     21246.91 |     46.57 |          22.15 |                 53.14 |
+| cockroachdb-1-1-1-1 |     21196.13 |     45.42 |          23.31 |                 57.14 |
 
 ### Loading phase: component loader
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |      1018.96 |      2.74 |           0.10 |                  0.10 |
+| cockroachdb-1-1-1-1 |       982.88 |      2.15 |           0.10 |                  0.10 |
 
 ### Benchmarking phase: component worker
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |     22204.04 |     39.26 |          24.44 |                 67.66 |
+| cockroachdb-1-1-1-1 |     24020.72 |     36.58 |          23.17 |                 64.58 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS                |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------------|-------------:|----------:|---------------:|----------------------:|
-| cockroachdb-1-1-1-1 |       784.82 |      1.57 |           0.34 |                  0.34 |
+| cockroachdb-1-1-1-1 |       832.55 |      1.75 |           0.33 |                  0.33 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection cockroachdb-1-1-1-1 (bexhoma-metrics-cockroachdb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -454,13 +481,21 @@ YCSB SF=10
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Loading phase: component worker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component worker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Monitoring returned data
 * TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Loading Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Loading Phase: all rows inserted
 * TEST passed: Execution Phase: [OVERALL].Throughput(ops/sec) contains no 0 or NaN
 * TEST passed: Workflow as planned
 * TEST passed: Execution Phase: contains no FAILED column
+* TEST passed: Execution Phase: every pod ran its configured operations
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

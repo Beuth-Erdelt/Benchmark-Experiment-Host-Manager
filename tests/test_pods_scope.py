@@ -28,6 +28,7 @@ import pandas as pd
 from bexhoma import missing_metrics
 from bexhoma.configurations.base import SutConfiguration
 from bexhoma.configurations.metrics import MetricsCollector
+from bexhoma.experiments.base import ExperimentBase
 from bexhoma.monitoring_math import counter_total, read_connections, scoped_job_connections
 
 __all__ = []
@@ -99,10 +100,40 @@ class FormattingTest(unittest.TestCase):
 
     query = 'm{{pod=~"{pods}", namespace="{namespace}"}}'
 
-    def test_default_is_the_old_pattern(self) -> None:
+    def test_without_deployments_the_component_pattern(self) -> None:
         cfg = _configuration()
         self.assertEqual(cfg.set_metric_of_config_default(self.query, host='', gpuid='', schema='', database=''),
-                         'm{pod=~"(.*)postgresql-1-1792334082(.*)", namespace="perdelt"}')
+                         'm{pod=~"bexhoma-[a-z0-9]+-postgresql-1-1792334082-.*", namespace="perdelt"}')
+
+    def test_sut_pattern_excludes_configurations_ending_with_this_one(self) -> None:
+        """#940: PG-1 and XPG-1 in one experiment."""
+        pattern = SutConfiguration.sut_pods_pattern('bexhoma', 'pg-1', '1792334082')
+        for pod in ('bexhoma-sut-pg-1-1792334082-6d9f7c8b5-x7k2p', 'bexhoma-pool-pg-1-1792334082-5f8d9-qp9nt'):
+            with self.subTest(pod):
+                self.assertTrue(re.fullmatch(pattern, pod))
+        for pod in ('bexhoma-sut-xpg-1-1792334082-6d9f7c8b5-x7k2p', 'bexhoma-sut-x-pg-1-1792334082-6d9f7c8b5-x7k2p',
+                    'bexhoma-sut-pg-1-17923340821-6d9f7c8b5-x7k2p', 'bx-w-pg-1-1792334082-0'):
+            with self.subTest(pod):
+                self.assertFalse(re.fullmatch(pattern, pod))
+
+    def test_sut_and_pool_deployments_without_their_jobs(self) -> None:
+        """The SUT query set selects the configuration's Deployments, not its loading and benchmarker jobs."""
+        cfg = _configuration()
+        code = '1792334082'
+        cfg.deployment_infos = {"deployment": {
+            "sut": {"name": f"bexhoma-sut-postgresql-1-{code}", "pvc": []},
+            "pool": {"name": f"bexhoma-pool-postgresql-1-{code}", "pvc": []}}, "statefulset": {}}
+        query = cfg.set_metric_of_config_default(self.query, host='', gpuid='', schema='', database='')
+        pattern = f"(bexhoma-pool-postgresql-1-{code}|bexhoma-sut-postgresql-1-{code})-.*"
+        self.assertEqual(query, f'm{{pod=~"{pattern}", namespace="perdelt"}}')
+        for pod in (f'bexhoma-sut-postgresql-1-{code}-6d9f7c8b5-x7k2p', f'bexhoma-pool-postgresql-1-{code}-5f8d9-qp9nt'):
+            with self.subTest(pod):
+                self.assertTrue(re.fullmatch(pattern, pod))
+        for pod in (f'bexhoma-loading-postgresql-1-{code}-1-1-1-qp9nt',
+                    f'bexhoma-benchmarker-postgresql-1-{code}-1-1-1-qp9nt',
+                    f'bexhoma-sut-xpostgresql-1-{code}-6d9f7c8b5-x7k2p'):
+            with self.subTest(pod):
+                self.assertFalse(re.fullmatch(pattern, pod))
 
     def test_job_pods(self) -> None:
         cfg = _configuration()
@@ -166,11 +197,104 @@ class JobPatternTest(unittest.TestCase):
                                                     benchmark_run='1')
             self.assertFalse(re.fullmatch(pattern, name + '-x7k2p'))
 
-    def test_long_job_names_are_cut_like_kubernetes(self) -> None:
-        jobname = 'bexhoma-benchmarker-' + 'a' * 50 + '-1-1-1'
+    def test_longest_job_name_is_not_cut(self) -> None:
+        jobname = 'bexhoma-benchmarker-' + 'a' * 31 + '-1-1-1'
+        self.assertEqual(len(jobname), SutConfiguration.MAX_JOB_NAME)
         pattern = self.cfg.job_pods_pattern(jobname)
-        self.assertTrue(re.fullmatch(pattern, (jobname + '-')[:58] + 'qp9nt'))
-        self.assertLessEqual(len((jobname + '-')[:58] + 'qp9nt'), 63)
+        self.assertTrue(re.fullmatch(pattern, jobname + '-qp9nt'))
+        self.assertEqual(len(jobname + '-qp9nt'), 63)
+
+
+class JobTimingTest(unittest.TestCase):
+    """The timing of a job reads the logs of its own pods only (issue #939)."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, ignore_errors=True)
+        self.experiment = types.SimpleNamespace(
+            path=self.tmp, cluster=types.SimpleNamespace(logger=mock.Mock()),
+            result_filename_local=lambda name: os.path.join(self.tmp, name),
+            _record_runtime_failure=mock.Mock())
+
+    def log(self, filename: str, start: int, end: int) -> None:
+        with open(os.path.join(self.tmp, filename), 'w') as f:
+            f.write(f"BEXHOMA_START:{start}\nBEXHOMA_END:{end}\n")
+
+    def timing(self, jobname: str, container: str) -> list:
+        return ExperimentBase.extract_job_timing(self.experiment, jobname, container)
+
+    def test_job_1_does_not_take_the_logs_of_job_10(self) -> None:
+        job = 'bexhoma-loading-postgresql-1-1792334082-1-1'
+        self.log(f'{job}-1-x7k2p.sensor.log', 100, 200)
+        self.log(f'{job}-1-a1b2c.sensor.log', 110, 210)
+        self.log(f'{job}-10-qp9nt.sensor.log', 500, 900)
+        self.log(f'{job}-1-x7k2p.datagenerator.log', 50, 90)
+        self.log(f'{job}-1-x7k2p.sensor.previous.log', 1, 2)
+        self.log(f'{job}-1.describe.job.log', 1, 2)
+        self.assertEqual(sorted(self.timing(f'{job}-1', 'sensor')), [(100, 200), (110, 210)])
+        self.assertEqual(self.timing(f'{job}-10', 'sensor'), [(500, 900)])
+        self.assertEqual(self.timing(f'{job}-1', 'datagenerator'), [(50, 90)])
+        self.experiment._record_runtime_failure.assert_not_called()
+
+    def test_benchmarker_of_one_round(self) -> None:
+        job = 'bexhoma-benchmarker-postgresql-1-1792334082-1-1'
+        self.log(f'{job}-1-qp9nt.dbmsbenchmarker.log', 100, 200)
+        self.log(f'{job}-11-abcde.dbmsbenchmarker.log', 300, 400)
+        self.assertEqual(self.timing(f'{job}-1', 'dbmsbenchmarker'), [(100, 200)])
+
+    def test_longest_job_name(self) -> None:
+        job = 'bexhoma-benchmarker-' + 'a' * 31 + '-1-1-1'
+        self.log(f'{job}-qp9nt.dbmsbenchmarker.log', 100, 200)
+        self.assertEqual(self.timing(job, 'dbmsbenchmarker'), [(100, 200)])
+
+
+class JobNameLengthTest(unittest.TestCase):
+    """Job names longer than Kubernetes keeps in pod names are refused before the experiment starts (#938)."""
+
+    def setUp(self) -> None:
+        self.cfg = _configuration()
+        self.cfg.num_experiment_to_apply = 1
+        self.cfg.experiment_dict = {'loader': [], 'benchmarker': [[{'name': 'tpch'}]]}
+
+    def test_longest_names_take_the_last_numbers(self) -> None:
+        self.cfg.num_experiment_to_apply = 3
+        self.cfg.experiment_dict = {'loader': [{}] * 12, 'benchmarker': [[{}], [{}] * 10, [{}]]}
+        self.assertEqual(self.cfg.longest_job_names(), [
+            'bexhoma-loading-postgresql-1-1792334082-3-1-12',
+            'bexhoma-benchmarker-postgresql-1-1792334082-3-3-10'])
+
+    def test_without_rounds_only_the_loading_job(self) -> None:
+        self.cfg.experiment_dict['benchmarker'] = []
+        self.assertEqual(self.cfg.longest_job_names(), ['bexhoma-loading-postgresql-1-1792334082-1-1-1'])
+
+    def test_names_of_the_test_logs_pass(self) -> None:
+        self.cfg.configuration = 'ClickHouseCluster-1'
+        self.cfg.check_job_name_lengths()
+
+    def test_long_configuration_name_is_refused(self) -> None:
+        self.cfg.configuration = 'ClickHouseCluster-1-abcd'
+        with self.assertRaisesRegex(ValueError, r'ClickHouseCluster-1-abcd: job name '
+                                    r'bexhoma-benchmarker-clickhousecluster-1-abcd-1792334082-1-1-1 has 61 '
+                                    r'characters, at most 57 .* by at least 4 characters'):
+            self.cfg.check_job_name_lengths()
+
+    def test_loading_alone(self) -> None:
+        self.cfg.configuration = 'ClickHouseCluster-1-abcd'
+        self.cfg.check_job_name_lengths(benchmarking=False)
+        self.cfg.configuration = 'ClickHouseCluster-1-abcdefg'
+        with self.assertRaisesRegex(ValueError, 'bexhoma-loading-'):
+            self.cfg.check_job_name_lengths(benchmarking=False)
+
+    def test_experiment_checks_by_mode(self) -> None:
+        self.cfg.configuration = 'ClickHouseCluster-1-abcd'
+        for mode, refused in (('run', True), ('load', False), ('start', False), ('summary', False)):
+            with self.subTest(mode):
+                experiment = types.SimpleNamespace(args=types.SimpleNamespace(mode=mode), configurations=[self.cfg])
+                if refused:
+                    with self.assertRaises(ValueError):
+                        ExperimentBase.check_job_name_lengths(experiment)
+                else:
+                    ExperimentBase.check_job_name_lengths(experiment)
 
 
 class FetchQuerySetTest(unittest.TestCase):

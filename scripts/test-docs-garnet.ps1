@@ -42,7 +42,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_garnet.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Garnet single  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Garnet single  sf=1  nbp=1"
 
 
 ####################################################
@@ -75,7 +75,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_garnet_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Garnet single monitoring  sf=3  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Garnet single monitoring  sf=3  nbp=1"
 
 
 ####################################################
@@ -111,7 +111,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_garnet_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Garnet single PVC  sf=1  nbp=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB Garnet single PVC  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -146,7 +146,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_garnet_cluster.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Garnet cluster 3  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Garnet cluster 3  sf=1  nbp=1"
 
 
 # Variant replication: 3 Garnet instances with 1 replica each
@@ -177,7 +177,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_garnet_replica.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Garnet cluster 3 replication  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB Garnet cluster 3 replication  sf=1  nbp=1"
 
 
 #### Variants
@@ -208,7 +208,7 @@ bexhoma ycsb `
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_garnet_cluster_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Garnet cluster 3 single PVC  sf=3  nbp=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB Garnet cluster 3 single PVC  sf=3  nbp=1  nc=2"
 
 
 ###########################################
@@ -216,4 +216,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB Garnet cluster
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

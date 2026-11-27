@@ -42,7 +42,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_tpch_testcase_cedardb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H CedarDB monitoring  sf=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H CedarDB monitoring  sf=3"
 
 
 #### SSB normal schema
@@ -68,7 +68,7 @@ bexhoma ssb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ssb_testcase_cedardb_normal.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB CedarDB normal  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB CedarDB normal  sf=1"
 
 
 #### SSB flat schema
@@ -94,7 +94,7 @@ bexhoma ssb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ssb_testcase_cedardb_flat.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] SSB CedarDB flat  sf=1"
+Write-ExperimentResult $LASTEXITCODE "SSB CedarDB flat  sf=1"
 
 
 #### YCSB workload c
@@ -125,7 +125,7 @@ bexhoma ycsb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_cedardb_read.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CedarDB workload c  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB CedarDB workload c  sf=1"
 
 
 #### YCSB workload a
@@ -157,7 +157,7 @@ bexhoma ycsb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_cedardb_update.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CedarDB workload a  sf=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB CedarDB workload a  sf=1"
 
 
 #### YCSB Scale Loading (Example-YCSB.md)
@@ -184,7 +184,7 @@ bexhoma ycsb `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_ycsb_testcase_cedardb_loading.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CedarDB loading  sf=1  nlp=1,8"
+Write-ExperimentResult $LASTEXITCODE "YCSB CedarDB loading  sf=1  nlp=1,8"
 
 
 #### Benchbase tpcc
@@ -213,7 +213,7 @@ bexhoma benchbase `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_tpcc_cedardb_simple.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CedarDB tpcc  sf=16"
+Write-ExperimentResult $LASTEXITCODE "Benchbase CedarDB tpcc  sf=16"
 
 
 #### Benchbase ycsb
@@ -241,7 +241,7 @@ bexhoma benchbase `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_ycsb_cedardb_simple.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CedarDB ycsb  sf=1"
+Write-ExperimentResult $LASTEXITCODE "Benchbase CedarDB ycsb  sf=1"
 
 
 #### Benchbase chbenchmark
@@ -270,7 +270,7 @@ bexhoma benchbase `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\doc_benchbase_testcase_chbenchmark_cedardb_simple.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CedarDB chbenchmark  sf=10"
+Write-ExperimentResult $LASTEXITCODE "Benchbase CedarDB chbenchmark  sf=10"
 
 
 ####################################################
@@ -298,7 +298,7 @@ bexhoma tpch `
   -ks no                        <# remove the SUT at the end #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_cedardb_refresh.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H CedarDB refresh  sf=1  ne=3"
+Write-ExperimentResult $LASTEXITCODE "TPC-H CedarDB refresh  sf=1  ne=3"
 
 
 ###########################################
@@ -306,4 +306,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H CedarDB refre
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

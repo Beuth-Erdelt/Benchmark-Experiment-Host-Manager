@@ -41,7 +41,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_tenants_schema.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 bexhoma tpch `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -64,7 +64,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_tenants_database.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 $BEXHOMA_NUM_TENANTS_LOADER = 16
 
@@ -89,7 +89,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_tenants_database_multiload.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT database multiload  tenants=$BEXHOMA_NUM_TENANTS  loaders=$BEXHOMA_NUM_TENANTS_LOADER  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MT database multiload  tenants=$BEXHOMA_NUM_TENANTS  loaders=$BEXHOMA_NUM_TENANTS_LOADER  sf=1"
 
 bexhoma tpch `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -111,7 +111,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_postgresql_tenants_container.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -143,7 +143,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_tenants_schema.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 bexhoma benchbase `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -166,7 +166,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_tenants_database.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 bexhoma benchbase `
   -dbms PostgreSQL              <# DBMS under test #> `
@@ -190,7 +190,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_tenants_container.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -224,7 +224,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_mysql_tenants_database.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT MySQL database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MT MySQL database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 bexhoma benchbase `
   -dbms MySQL                   <# DBMS under test #> `
@@ -248,7 +248,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_mysql_tenants_container.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "Benchbase MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 bexhoma tpch `
   -dbms MySQL                   <# DBMS under test #> `
@@ -269,7 +269,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mysql_tenants_container.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 bexhoma tpch `
   -dbms MariaDB                 <# DBMS under test #> `
@@ -290,7 +290,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_tpch_mariadb_tenants_container.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT MariaDB container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+Write-ExperimentResult $LASTEXITCODE "TPC-H MT MariaDB container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 ###########################################
@@ -298,4 +298,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H MT MariaDB co
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

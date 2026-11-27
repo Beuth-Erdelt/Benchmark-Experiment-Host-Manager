@@ -46,7 +46,7 @@ bexhoma ycsb `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_cockroachdb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB  sf=1  nw=3"
+Write-ExperimentResult $LASTEXITCODE "YCSB CockroachDB  sf=1  nw=3"
 
 
 ####################################################
@@ -83,7 +83,7 @@ bexhoma ycsb `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_cockroachdb_monitoring.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB CockroachDB ingestion  sf=1  nbp=1"
 
 
 # Application metrics (-ma): run in scripts/test-docs-appmetrics.ps1, logs docs_ycsb_cockroachdb_appmetrics.log and docs_benchbase_cockroachdb_appmetrics.log
@@ -125,7 +125,7 @@ bexhoma ycsb `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_cockroachdb_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
+Write-ExperimentResult $LASTEXITCODE "YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -162,7 +162,7 @@ bexhoma ycsb `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_cockroachdb_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB CockroachDB scale  sf=10  nbp=1"
+Write-ExperimentResult $LASTEXITCODE "YCSB CockroachDB scale  sf=10  nbp=1"
 
 
 ####################################################
@@ -191,7 +191,7 @@ bexhoma benchbase `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_cockroachdb.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CockroachDB simple  sf=16  nbp=1,2"
+Write-ExperimentResult $LASTEXITCODE "Benchbase CockroachDB simple  sf=16  nbp=1,2"
 
 
 # Benchbase TPC-C: scaling the clients, with application metrics
@@ -218,7 +218,7 @@ bexhoma benchbase `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_cockroachdb_scale.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CockroachDB complex  sf=128  nbp=1,2,4,8"
+Write-ExperimentResult $LASTEXITCODE "Benchbase CockroachDB complex  sf=128  nbp=1,2,4,8"
 
 
 # Benchbase TPC-C: scaling the clients, on persistent storage
@@ -247,7 +247,7 @@ bexhoma benchbase `
   -rnw $BEXHOMA_NODES_WORKER    <# schedule worker pods on these nodes (joined by '+') #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_cockroachdb_scale_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase CockroachDB storage  sf=128  nbp=1,2,4,8"
+Write-ExperimentResult $LASTEXITCODE "Benchbase CockroachDB storage  sf=128  nbp=1,2,4,8"
 
 
 ###########################################
@@ -255,4 +255,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase Cockroach
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

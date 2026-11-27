@@ -153,7 +153,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_yugabytedb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB  sf=1  nbp=1"
+report_result $? "YCSB YugabyteDB  sf=1  nbp=1"
 
 # remove YugabyteDB installation
 remove_yugabytedb no
@@ -209,7 +209,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB ingestion  sf=1  nbp=1"
+report_result $? "YCSB YugabyteDB ingestion  sf=1  nbp=1"
 
 # Execution only (-sl): on the data loaded by the monitoring run before (same installation)
 # -dbms YugabyteDB              DBMS under test
@@ -253,7 +253,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_execution.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
+report_result $? "YCSB YugabyteDB execution skip-load  sf=1  nbp=1"
 
 # remove YugabyteDB installation
 remove_yugabytedb no
@@ -302,7 +302,7 @@ bexhoma ycsb \
   -ms $BEXHOMA_MS \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_appmetrics.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB appmetrics  sf=1  nbp=1"
+report_result $? "YCSB YugabyteDB appmetrics  sf=1  nbp=1"
 
 # remove YugabyteDB installation
 remove_yugabytedb no
@@ -364,7 +364,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
+report_result $? "YCSB YugabyteDB dummy PVC  sf=1  nbp=1"
 
 # remove YugabyteDB installation
 remove_yugabytedb no
@@ -408,7 +408,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_yugabytedb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB simple  sf=16  nbp=1,2"
+report_result $? "Benchbase YugabyteDB simple  sf=16  nbp=1,2"
 
 # remove YugabyteDB installation
 remove_yugabytedb no
@@ -451,7 +451,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_yugabytedb_keytime.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
+report_result $? "Benchbase YugabyteDB complex  sf=128  nbp=1,2,5,10"
 
 # remove YugabyteDB installation
 remove_yugabytedb no
@@ -488,7 +488,7 @@ bexhoma benchbase \
   -ms $BEXHOMA_MS \
   run &>$LOG_DIR/docs_benchbase_yugabytedb_appmetrics.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
+report_result $? "Benchbase YugabyteDB appmetrics  sf=16  nbp=1,2"
 
 # remove YugabyteDB installation
 remove_yugabytedb no
@@ -501,4 +501,5 @@ sleep 30
 ###########################################
 
 
+report_total
 clean_logs

@@ -19,6 +19,7 @@
     ./Evaluators.md
     ./Collectors.md
     ./Modularity.md
+    ./Malfunctions.md
     ./Environment.md
     ./Prepare-Testbeds.md
     ./Example-YCSB.md
@@ -58,7 +59,6 @@
     ./Tool.md
     ./TestCases.md
     ./CONTRIBUTING.md
-    ./Malfunctions.md
     ./FAIR4RS.md
     ./Publishing-Results.md
     ./Test-Reset.md

@@ -68,7 +68,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_1.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
+report_result $? "Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
 # -dbms PostgreSQL              DBMS under test
@@ -114,7 +114,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_2.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
+report_result $? "Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
 
 #### Benchbase Monitoring (Example-Benchbase.md)
 # -dbms PostgreSQL              DBMS under test
@@ -156,7 +156,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_3.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase collector 3/3  sf=16  nbp=4,8  nbf=20"
+report_result $? "Benchbase collector 3/3  sf=16  nbp=4,8  nbf=20"
 
 
 
@@ -213,7 +213,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_schema.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size)
@@ -260,7 +260,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_database.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size)
@@ -307,7 +307,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_collector_tenants_container.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -358,7 +358,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_1.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 1/3  sf=3"
+report_result $? "TPC-H collector 1/3  sf=3"
 
 # -dbms PostgreSQL              DBMS under test
 # -sf 6                         scaling factor (controls database size in GB)
@@ -399,7 +399,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_2.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 2/3  sf=6"
+report_result $? "TPC-H collector 2/3  sf=6"
 
 
 
@@ -438,7 +438,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_3.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H collector 3/3  sf=6"
+report_result $? "TPC-H collector 3/3  sf=6"
 
 
 
@@ -496,7 +496,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_schema.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
+report_result $? "TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # -dbms PostgreSQL              DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
@@ -545,7 +545,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_database.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
+report_result $? "TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 # -dbms PostgreSQL              DBMS under test
 # -sf 3                         scaling factor (controls database size in GB)
@@ -596,7 +596,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_collector_tenants_container.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
+report_result $? "TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 
 
 ###########################################
@@ -652,7 +652,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_1.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 1/3  nbp=1,8  nbf=2"
+report_result $? "YCSB collector 1/3  nbp=1,8  nbf=2"
 
 
 #### YCSB Monitoring (Example-YCSB.md)
@@ -703,7 +703,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_2.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 2/3  nbp=1,8  nbf=3"
+report_result $? "YCSB collector 2/3  nbp=1,8  nbf=3"
 
 #### YCSB Monitoring (Example-YCSB.md)
 # -dbms PostgreSQL              DBMS under test
@@ -749,7 +749,7 @@ bexhoma ycsb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_postgresql_collector_3.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB collector 3/3  nbp=1,8  nbf=3"
+report_result $? "YCSB collector 3/3  nbp=1,8  nbf=3"
 
 
 
@@ -797,7 +797,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_collector_1.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
+report_result $? "HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
 # -dbms PostgreSQL              DBMS under test
@@ -837,7 +837,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_collector_2.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
+report_result $? "HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
 
 #### HammerDB Monitoring (Example-HammerDB.md)
 # -dbms PostgreSQL              DBMS under test
@@ -873,7 +873,7 @@ bexhoma hammerdb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hammerdb_postgresql_collector_3.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] HammerDB collector 3/3  sf=16  nbp=1,2  nbt=32"
+report_result $? "HammerDB collector 3/3  sf=16  nbp=1,2  nbt=32"
 
 
 ###########################################
@@ -928,7 +928,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql_collector_1.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS collector 1/3  sf=1  ne=1,2"
+report_result $? "TPC-DS collector 1/3  sf=1  ne=1,2"
 
 #### TPC-DS collector, Test 2: SF=3, fresh PVC (Example-Collectors.md)
 # -dbms PostgreSQL              DBMS under test
@@ -976,7 +976,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql_collector_2.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS collector 2/3  sf=3  ne=1,2"
+report_result $? "TPC-DS collector 2/3  sf=3  ne=1,2"
 
 #### TPC-DS collector, Test 3: SF=3, reuse PVC (Example-Collectors.md)
 # -dbms PostgreSQL              DBMS under test
@@ -1022,7 +1022,7 @@ bexhoma tpcds \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpcds_postgresql_collector_3.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-DS collector 3/3  sf=3  reuse PVC"
+report_result $? "TPC-DS collector 3/3  sf=3  reuse PVC"
 
 
 
@@ -1076,7 +1076,7 @@ bexhoma ssb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ssb_postgresql_collector_1.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB collector 1/3  sf=1  star schema"
+report_result $? "SSB collector 1/3  sf=1  star schema"
 
 #### SSB collector, Test 2: SF=3, flat schema, fresh PVC (Example-Collectors.md)
 # -dbms PostgreSQL              DBMS under test
@@ -1123,7 +1123,7 @@ bexhoma ssb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ssb_postgresql_collector_2.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB collector 2/3  sf=3  flat schema"
+report_result $? "SSB collector 2/3  sf=3  flat schema"
 
 #### SSB collector, Test 3: SF=1, star schema, reuse PVC (Example-Collectors.md)
 # -dbms PostgreSQL              DBMS under test
@@ -1167,7 +1167,7 @@ bexhoma ssb \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ssb_postgresql_collector_3.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] SSB collector 3/3  sf=1  reuse PVC"
+report_result $? "SSB collector 3/3  sf=1  reuse PVC"
 
 
 
@@ -1218,7 +1218,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_collector.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 1/4  fio  nbp=1,2"
+report_result $? "Hardware collector 1/4  fio  nbp=1,2"
 
 #### Hardware collector, Test 2: sysbench, nbt=1,2 (Example-Collectors.md)
 # -dbms Hardware                hardware target to test
@@ -1249,7 +1249,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sysbench_collector.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 2/4  sysbench  nbt=1,2"
+report_result $? "Hardware collector 2/4  sysbench  nbt=1,2"
 
 #### Hardware collector, Test 3: sockperf, nbp=1,2 (Example-Collectors.md)
 # -dbms Hardware                hardware target to test
@@ -1282,7 +1282,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_collector.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 3/4  sockperf  nbp=1,2"
+report_result $? "Hardware collector 3/4  sockperf  nbp=1,2"
 
 #### Hardware collector, Test 4: netperf, nbp=1,2 (Example-Collectors.md)
 # -dbms Hardware                hardware target to test
@@ -1309,7 +1309,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_netperf_collector.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 4/4  netperf  nbp=1,2"
+report_result $? "Hardware collector 4/4  netperf  nbp=1,2"
 
 
 ###########################################
@@ -1317,4 +1317,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Hardware collector 4/4  netperf  nbp=1
 ###########################################
 
 
+report_total
 clean_logs

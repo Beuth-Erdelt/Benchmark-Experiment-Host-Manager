@@ -162,12 +162,14 @@ The cAdvisor queries in `k8s-cluster.config` handle this in two ways:
 
   | Query set | `{pods}` | Used for |
   |---|---|---|
-  | `metrics` | `(.*)<configuration>-<experiment>(.*)` | the SUT and other deployments |
+  | `metrics` | `(<deployment>\|...)-.*`, e.g. `(bexhoma-pool-pg-1-<experiment>\|bexhoma-sut-pg-1-<experiment>)-.*` | the SUT and the other Deployments of the configuration (e.g. a pool), not its loading and benchmarker jobs. Without Deployments of bexhoma: `bexhoma-[a-z0-9]+-<configuration>-<experiment>-.*` |
   | `metrics_benchmarker` | `<benchmarker job name>-[a-z0-9]{5}` | the benchmarker job of exactly this connection |
   | `metrics_loading` | `bexhoma-loading-<configuration>-<experiment>-<run>-.+` | all loading jobs of this repetition (loader, data generator) |
   | `metrics_<statefulset>` | `(.*)<worker name>-(.*)` | workers |
 
   The job names are those of the job manifests, so a job's queries see only its own pods, whatever the gap to the previous round.
+  The SUT's network and "CPU Others" queries have no `container="dbms"` filter; results of bexhoma v0.12.3 and earlier also count the configuration's loading and benchmarker pods.
+  A pool (e.g. PGBouncer) belongs to the SUT: every request passes through it. It has no `dbms` container, so it adds only to network and "CPU Others", and traffic between pool and DBMS counts on both sides.
   Several benchmarker jobs in one round each get their own row instead of the sum of all of them.
 - **Stale series filter**: every instant selector `X` is written `(X and (time() - timestamp(X)) < 90)`, which drops a series whose newest sample is older than 90 s.
   This keeps the previous SUT pod out of the next repetition, which starts minutes later.
@@ -177,6 +179,7 @@ The cAdvisor queries in `k8s-cluster.config` handle this in two ways:
 `{namespace}` keeps pods of other namespaces out: worker pod names carry no experiment code.
 
 A scoped job's counter starts at 0 before its first scrape, so its first value counts as growth: a loader with a single scrape gets its CPU total instead of 0.
+What a job pod does after its last scrape is lost: its counter totals are too low by up to one scrape interval of work per pod (see [Malfunctions](Malfunctions.md#not-noticed)).
 Whether a connection is scoped is read from its stored queries (its job query set differs from `metrics`); with a literal pod pattern in `cluster.config`, the job query sets equal `metrics` and the rule is `max - min`, without a message.
 The scoped queries are the cAdvisor metric definitions of `k8s-cluster.config`.
 

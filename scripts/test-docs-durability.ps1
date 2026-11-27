@@ -73,7 +73,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpch_postgresql_durable.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H durability PostgreSQL durable"
+Write-ExperimentResult $LASTEXITCODE "TPC-H durability PostgreSQL durable"
 
 
 #### TPC-H Durability PostgreSQL relaxed
@@ -94,7 +94,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpch_postgresql_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H durability PostgreSQL relaxed"
+Write-ExperimentResult $LASTEXITCODE "TPC-H durability PostgreSQL relaxed"
 
 
 #### TPC-H Durability PostgreSQL unsafe
@@ -115,7 +115,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpch_postgresql_unsafe.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H durability PostgreSQL unsafe"
+Write-ExperimentResult $LASTEXITCODE "TPC-H durability PostgreSQL unsafe"
 
 
 #### TPC-H Durability PostgreSQL unsafe on persistent storage
@@ -139,7 +139,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpch_postgresql_unsafe_storage.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H durability PostgreSQL unsafe on storage"
+Write-ExperimentResult $LASTEXITCODE "TPC-H durability PostgreSQL unsafe on storage"
 
 
 #### TPC-H Durability PostgreSQL relaxed with schema tenancy
@@ -162,7 +162,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpch_postgresql_tenants_schema.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H durability PostgreSQL schema tenancy"
+Write-ExperimentResult $LASTEXITCODE "TPC-H durability PostgreSQL schema tenancy"
 
 
 #### TPC-H Durability PgDuckDB unsafe
@@ -183,7 +183,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpch_pgduckdb_unsafe.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H durability PgDuckDB unsafe"
+Write-ExperimentResult $LASTEXITCODE "TPC-H durability PgDuckDB unsafe"
 
 
 #### TPC-H Durability MySQL durable
@@ -206,7 +206,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpch_mysql_durable.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H durability MySQL durable"
+Write-ExperimentResult $LASTEXITCODE "TPC-H durability MySQL durable"
 
 
 #### TPC-H Durability MySQL relaxed
@@ -227,7 +227,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpch_mysql_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H durability MySQL relaxed"
+Write-ExperimentResult $LASTEXITCODE "TPC-H durability MySQL relaxed"
 
 
 #### TPC-H Durability MySQL unsafe
@@ -248,7 +248,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpch_mysql_unsafe.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H durability MySQL unsafe"
+Write-ExperimentResult $LASTEXITCODE "TPC-H durability MySQL unsafe"
 
 
 #### TPC-H Durability MariaDB relaxed
@@ -269,7 +269,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpch_mariadb_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H durability MariaDB relaxed"
+Write-ExperimentResult $LASTEXITCODE "TPC-H durability MariaDB relaxed"
 
 
 #### TPC-H Durability Citus unsafe
@@ -291,7 +291,7 @@ bexhoma tpch `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpch_citus_unsafe.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-H durability Citus unsafe"
+Write-ExperimentResult $LASTEXITCODE "TPC-H durability Citus unsafe"
 
 
 
@@ -320,7 +320,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpcds_postgresql_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS durability PostgreSQL relaxed"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS durability PostgreSQL relaxed"
 
 
 #### TPC-DS Durability MySQL relaxed
@@ -342,7 +342,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpcds_mysql_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS durability MySQL relaxed"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS durability MySQL relaxed"
 
 
 #### TPC-DS Durability MySQL unsafe
@@ -364,7 +364,7 @@ bexhoma tpcds `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_tpcds_mysql_unsafe.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] TPC-DS durability MySQL unsafe"
+Write-ExperimentResult $LASTEXITCODE "TPC-DS durability MySQL unsafe"
 
 
 
@@ -396,7 +396,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_postgresql_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability PostgreSQL relaxed"
+Write-ExperimentResult $LASTEXITCODE "YCSB durability PostgreSQL relaxed"
 
 
 #### YCSB Durability PGBouncer unsafe
@@ -421,7 +421,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_pgbouncer_unsafe.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability PGBouncer unsafe"
+Write-ExperimentResult $LASTEXITCODE "YCSB durability PGBouncer unsafe"
 
 
 #### YCSB Durability OrioleDB durable
@@ -446,7 +446,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_orioledb_durable.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability OrioleDB durable"
+Write-ExperimentResult $LASTEXITCODE "YCSB durability OrioleDB durable"
 
 
 #### YCSB Durability OrioleDB unsafe
@@ -471,7 +471,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_orioledb_unsafe.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability OrioleDB unsafe"
+Write-ExperimentResult $LASTEXITCODE "YCSB durability OrioleDB unsafe"
 
 
 #### YCSB Durability MySQL relaxed
@@ -496,7 +496,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_mysql_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability MySQL relaxed"
+Write-ExperimentResult $LASTEXITCODE "YCSB durability MySQL relaxed"
 
 
 #### YCSB Durability MySQL unsafe
@@ -521,7 +521,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_mysql_unsafe.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability MySQL unsafe"
+Write-ExperimentResult $LASTEXITCODE "YCSB durability MySQL unsafe"
 
 
 #### YCSB Durability Citus relaxed
@@ -549,7 +549,7 @@ bexhoma ycsb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_citus_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability Citus relaxed"
+Write-ExperimentResult $LASTEXITCODE "YCSB durability Citus relaxed"
 
 
 #### YCSB Durability TiDB relaxed
@@ -575,7 +575,7 @@ bexhoma ycsb `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_ycsb_tidb_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] YCSB durability TiDB relaxed"
+Write-ExperimentResult $LASTEXITCODE "YCSB durability TiDB relaxed"
 
 
 
@@ -602,7 +602,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_hammerdb_postgresql_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB durability PostgreSQL relaxed"
+Write-ExperimentResult $LASTEXITCODE "HammerDB durability PostgreSQL relaxed"
 
 
 #### HammerDB Durability MySQL relaxed
@@ -622,7 +622,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_hammerdb_mysql_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB durability MySQL relaxed"
+Write-ExperimentResult $LASTEXITCODE "HammerDB durability MySQL relaxed"
 
 
 #### HammerDB Durability MySQL unsafe
@@ -642,7 +642,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_hammerdb_mysql_unsafe.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB durability MySQL unsafe"
+Write-ExperimentResult $LASTEXITCODE "HammerDB durability MySQL unsafe"
 
 
 #### HammerDB Durability Citus relaxed
@@ -663,7 +663,7 @@ bexhoma hammerdb `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_hammerdb_citus_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] HammerDB durability Citus relaxed"
+Write-ExperimentResult $LASTEXITCODE "HammerDB durability Citus relaxed"
 
 
 
@@ -691,7 +691,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_benchbase_postgresql_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase durability TPC-C PostgreSQL relaxed"
+Write-ExperimentResult $LASTEXITCODE "Benchbase durability TPC-C PostgreSQL relaxed"
 
 
 #### Benchbase Durability TPC-C PGBouncer relaxed
@@ -715,7 +715,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_benchbase_pgbouncer_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase durability TPC-C PGBouncer relaxed"
+Write-ExperimentResult $LASTEXITCODE "Benchbase durability TPC-C PGBouncer relaxed"
 
 
 #### Benchbase Durability TPC-C MySQL relaxed
@@ -736,7 +736,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_benchbase_mysql_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase durability TPC-C MySQL relaxed"
+Write-ExperimentResult $LASTEXITCODE "Benchbase durability TPC-C MySQL relaxed"
 
 
 #### Benchbase Durability TPC-C MySQL unsafe
@@ -757,7 +757,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_benchbase_mysql_unsafe.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase durability TPC-C MySQL unsafe"
+Write-ExperimentResult $LASTEXITCODE "Benchbase durability TPC-C MySQL unsafe"
 
 
 #### Benchbase Durability TPC-C Citus relaxed
@@ -781,7 +781,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_benchbase_citus_relaxed.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase durability TPC-C Citus relaxed"
+Write-ExperimentResult $LASTEXITCODE "Benchbase durability TPC-C Citus relaxed"
 
 
 #### Benchbase Durability Twitter PostgreSQL unsafe
@@ -803,7 +803,7 @@ bexhoma benchbase `
   -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
   run 2>&1 | Out-File "$LOG_DIR\docs_durability_benchbase_twitter_postgresql_unsafe.log" -Encoding utf8
 
-Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase durability Twitter PostgreSQL unsafe"
+Write-ExperimentResult $LASTEXITCODE "Benchbase durability Twitter PostgreSQL unsafe"
 
 
 
@@ -813,4 +813,5 @@ Write-Host "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') [DONE] Benchbase durabilit
 ###########################################
 
 
+Write-ExperimentTotal
 Invoke-CleanLogs

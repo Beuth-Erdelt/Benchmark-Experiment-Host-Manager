@@ -3,14 +3,14 @@
 ### Workload
 HammerDB Workload SF=16 (warehouses for TPC-C)
 * Type: hammerdb
-* Duration: 2993s 
-* Code: 1794776720
+* Duration: 2836s 
+* Code: 1795674239
 * HammerDB runs the benchmark.
 * This experiment compares run time and resource consumption of TPC-C queries in different DBMS.
   * TPC-C data is generated and loaded using several threads.
   * Scaling factor (i.e., number of warehouses) is 16. Benchmarking runs for 2 minutes. Ramp-up period is 2 minutes before measurements begin.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.18.
+  * Experiment uses bexhoma version 0.12.4.
   * System metrics are monitored by a cluster-wide installation.
   * Experiment is limited to DBMS ['MariaDB'].
   * Import is handled by 1 processes (pods).
@@ -33,8 +33,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1053146
-  * datadisk:2476
+  * disk:661607
+  * datadisk:2498
   * volume_size:49G
   * volume_used:2.5G
   * cpu_list:0-223
@@ -45,15 +45,15 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794776720
+    * code:1795674239
 * mariadb-1-1-2-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1074259
-  * datadisk:2901
+  * disk:662765
+  * datadisk:2875
   * volume_size:49G
   * volume_used:2.9G
   * cpu_list:0-223
@@ -64,17 +64,17 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794776720
+    * code:1795674239
 * mariadb-1-1-3-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1094033
-  * datadisk:3505
+  * disk:628201
+  * datadisk:3437
   * volume_size:49G
-  * volume_used:3.5G
+  * volume_used:3.4G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -83,17 +83,17 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794776720
+    * code:1795674239
 * mariadb-1-1-4-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1077768
-  * datadisk:3965
+  * disk:629785
+  * datadisk:3878
   * volume_size:49G
-  * volume_used:3.9G
+  * volume_used:3.8G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -102,17 +102,17 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794776720
+    * code:1795674239
 * mariadb-1-2-1-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1079188
-  * datadisk:4621
+  * disk:632956
+  * datadisk:4160
   * volume_size:49G
-  * volume_used:4.6G
+  * volume_used:4.1G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -121,17 +121,17 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794776720
+    * code:1795674239
 * mariadb-1-2-2-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1076178
-  * datadisk:5050
+  * disk:667251
+  * datadisk:4606
   * volume_size:49G
-  * volume_used:5.0G
+  * volume_used:4.5G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -140,17 +140,17 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794776720
+    * code:1795674239
 * mariadb-1-2-3-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1091402
-  * datadisk:5653
+  * disk:670760
+  * datadisk:5197
   * volume_size:49G
-  * volume_used:5.6G
+  * volume_used:5.1G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -159,17 +159,17 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794776720
+    * code:1795674239
 * mariadb-1-2-4-1 uses docker image mariadb:12.3.3
   * RAM:2164173156352
   * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1091351
-  * datadisk:6086
+  * disk:636759
+  * datadisk:5598
   * volume_size:49G
-  * volume_used:6.0G
+  * volume_used:5.5G
   * cpu_list:0-223
   * args:['--max_connections=1500', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin', '--innodb-read-io-threads=64', '--innodb-write-io-threads=64', '--innodb-use-native-aio=0', '--innodb-buffer-pool-size=32G', '--innodb-io-capacity=200', '--innodb-io-capacity-max=1000', '--innodb-log-buffer-size=1G', '--tmp-table-size=1G', '--max-heap-table-size=1G']
   * requests_cpu:4
@@ -178,7 +178,7 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
   * resources_total: 4.0 CPU, 64.0 GiB RAM requested in 1 pods
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * eval_parameters
-    * code:1794776720
+    * code:1795674239
 
 ### Reused Storage
 * loading skipped, loading times inherited from an earlier experiment: MariaDB-1
@@ -187,8 +187,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * MariaDB-1: loading values of the volume: script=Schema, indexing=Checks
 
 ### SUT Container Restarts
-* bexhoma-sut-mariadb-1-1794776720-56595df9c8-h8gkl: 0
-* bexhoma-sut-mariadb-1-1794776720-7d4dc6bff9-vbqgn: 0
+* bexhoma-sut-mariadb-1-1795674239-7648779df9-62mf6: 0
+* bexhoma-sut-mariadb-1-1795674239-b5c899666-d7clw: 0
 
 ### Workflow
 
@@ -220,8 +220,8 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS        |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MariaDB-1-1 |                1 |   16 |       65.00 |           5.00 |            0.00 |         55.00 |            5.00 |              0 |         8 |             | None           |             0 | False         |              886.15 | True                |
-| MariaDB-1-2 |                2 |   16 |       65.00 |           5.00 |            0.00 |         55.00 |            5.00 |              0 |         8 |             | None           |             0 | False         |              886.15 | True                |
+| MariaDB-1-1 |                1 |   16 |       60.00 |           3.00 |            0.00 |         55.00 |            2.00 |              0 |         8 |             | None           |             0 | False         |              960.00 | True                |
+| MariaDB-1-2 |                2 |   16 |       60.00 |           3.00 |            0.00 |         55.00 |            2.00 |              0 |         8 |             | None           |             0 | False         |              960.00 | True                |
 
 ### Benchmarking
 
@@ -229,37 +229,37 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | connection        | phase         | job             |   experiment_run |   client |   benchmark_run |   child |   threads |   NOPM |    TPM |   efficiency |   duration |   errors |
 |:------------------|:--------------|:----------------|-----------------:|---------:|----------------:|--------:|----------:|-------:|-------:|-------------:|-----------:|---------:|
-| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |        16 | 101384 | 236116 |         0.00 |          2 |        0 |
-| mariadb-1-1-2-1-1 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       1 |        16 | 149725 | 346828 |         0.00 |          2 |        0 |
-| mariadb-1-1-2-1-2 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       2 |        16 | 149562 | 346472 |         0.00 |          2 |        0 |
-| mariadb-1-1-3-1-1 | mariadb-1-1-3 | mariadb-1-1-3-1 |                1 |        3 |               1 |       1 |         8 | 110986 | 257824 |         0.00 |          2 |        0 |
-| mariadb-1-1-3-1-2 | mariadb-1-1-3 | mariadb-1-1-3-1 |                1 |        3 |               1 |       2 |         8 | 110770 | 257219 |         0.00 |          2 |        0 |
-| mariadb-1-1-4-1-1 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       1 |         8 | 166950 | 387565 |         0.00 |          2 |        0 |
-| mariadb-1-1-4-1-2 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       2 |         8 | 166952 | 387498 |         0.00 |          2 |        0 |
-| mariadb-1-1-4-1-3 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       3 |         8 | 166943 | 387463 |         0.00 |          2 |        0 |
-| mariadb-1-1-4-1-4 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       4 |         8 | 166926 | 387498 |         0.00 |          2 |        0 |
-| mariadb-1-2-1-1-1 | mariadb-1-2-1 | mariadb-1-2-1-1 |                2 |        1 |               1 |       1 |        16 | 107876 | 251079 |         0.00 |          2 |        0 |
-| mariadb-1-2-2-1-1 | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |        2 |               1 |       1 |        16 | 148155 | 344432 |         0.00 |          2 |        0 |
-| mariadb-1-2-2-1-2 | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |        2 |               1 |       2 |        16 | 147892 | 343769 |         0.00 |          2 |        0 |
-| mariadb-1-2-3-1-1 | mariadb-1-2-3 | mariadb-1-2-3-1 |                2 |        3 |               1 |       1 |         8 | 111182 | 258497 |         0.00 |          2 |        0 |
-| mariadb-1-2-3-1-2 | mariadb-1-2-3 | mariadb-1-2-3-1 |                2 |        3 |               1 |       2 |         8 | 110928 | 258044 |         0.00 |          2 |        0 |
-| mariadb-1-2-4-1-1 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       1 |         8 |  27432 |  63884 |         0.00 |          2 |        0 |
-| mariadb-1-2-4-1-2 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       2 |         8 |  27323 |  63641 |         0.00 |          2 |        0 |
-| mariadb-1-2-4-1-3 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       3 |         8 |  27390 |  63782 |         0.00 |          2 |        0 |
-| mariadb-1-2-4-1-4 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       4 |         8 |  27455 |  63943 |         0.00 |          2 |        0 |
+| mariadb-1-1-1-1-1 | mariadb-1-1-1 | mariadb-1-1-1-1 |                1 |        1 |               1 |       1 |        16 |  91323 | 211863 |         0.00 |          2 |        0 |
+| mariadb-1-1-2-1-1 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       1 |        16 | 142930 | 331074 |         0.00 |          2 |        0 |
+| mariadb-1-1-2-1-2 | mariadb-1-1-2 | mariadb-1-1-2-1 |                1 |        2 |               1 |       2 |        16 | 142661 | 330428 |         0.00 |          2 |        0 |
+| mariadb-1-1-3-1-1 | mariadb-1-1-3 | mariadb-1-1-3-1 |                1 |        3 |               1 |       1 |         8 | 107098 | 248334 |         0.00 |          2 |        0 |
+| mariadb-1-1-3-1-2 | mariadb-1-1-3 | mariadb-1-1-3-1 |                1 |        3 |               1 |       2 |         8 | 107014 | 248153 |         0.00 |          2 |        0 |
+| mariadb-1-1-4-1-1 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       1 |         8 |  51058 | 119097 |         0.00 |          2 |        0 |
+| mariadb-1-1-4-1-2 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       2 |         8 |  51683 | 120600 |         0.00 |          2 |        0 |
+| mariadb-1-1-4-1-3 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       3 |         8 |  51835 | 120947 |         0.00 |          2 |        0 |
+| mariadb-1-1-4-1-4 | mariadb-1-1-4 | mariadb-1-1-4-1 |                1 |        4 |               1 |       4 |         8 |  51409 | 119949 |         0.00 |          2 |        0 |
+| mariadb-1-2-1-1-1 | mariadb-1-2-1 | mariadb-1-2-1-1 |                2 |        1 |               1 |       1 |        16 | 109324 | 253203 |         0.00 |          2 |        0 |
+| mariadb-1-2-2-1-1 | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |        2 |               1 |       1 |        16 | 148032 | 343860 |         0.00 |          2 |        0 |
+| mariadb-1-2-2-1-2 | mariadb-1-2-2 | mariadb-1-2-2-1 |                2 |        2 |               1 |       2 |        16 | 147802 | 343412 |         0.00 |          2 |        0 |
+| mariadb-1-2-3-1-1 | mariadb-1-2-3 | mariadb-1-2-3-1 |                2 |        3 |               1 |       1 |         8 |  98731 | 228447 |         0.00 |          2 |        0 |
+| mariadb-1-2-3-1-2 | mariadb-1-2-3 | mariadb-1-2-3-1 |                2 |        3 |               1 |       2 |         8 |  98941 | 228939 |         0.00 |          2 |        0 |
+| mariadb-1-2-4-1-1 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       1 |         8 | 149793 | 347558 |         0.00 |          2 |        0 |
+| mariadb-1-2-4-1-2 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       2 |         8 | 149803 | 347613 |         0.00 |          2 |        0 |
+| mariadb-1-2-4-1-3 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       3 |         8 | 149773 | 347584 |         0.00 |          2 |        0 |
+| mariadb-1-2-4-1-4 | mariadb-1-2-4 | mariadb-1-2-4-1 |                2 |        4 |               1 |       4 |         8 | 149873 | 347762 |         0.00 |          2 |        0 |
 
 #### Per Phase
 
 | DBMS          | phase         |   experiment_run |   client |   benchmark_run |   pod_count |   threads |   efficiency |      NOPM |       TPM |   duration |   errors |
 |:--------------|:--------------|-----------------:|---------:|----------------:|------------:|----------:|-------------:|----------:|----------:|-----------:|---------:|
-| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 |        16 |         0.00 | 101384.00 | 236116.00 |          2 |        0 |
-| mariadb-1-1-2 | mariadb-1-1-2 |                1 |        2 |               1 |           2 |        32 |         0.00 | 149643.50 | 346650.00 |          2 |        0 |
-| mariadb-1-1-3 | mariadb-1-1-3 |                1 |        3 |               1 |           2 |        16 |         0.00 | 110878.00 | 257521.50 |          2 |        0 |
-| mariadb-1-1-4 | mariadb-1-1-4 |                1 |        4 |               1 |           4 |        32 |         0.00 | 166942.75 | 387506.00 |          2 |        0 |
-| mariadb-1-2-1 | mariadb-1-2-1 |                2 |        1 |               1 |           1 |        16 |         0.00 | 107876.00 | 251079.00 |          2 |        0 |
-| mariadb-1-2-2 | mariadb-1-2-2 |                2 |        2 |               1 |           2 |        32 |         0.00 | 148023.50 | 344100.50 |          2 |        0 |
-| mariadb-1-2-3 | mariadb-1-2-3 |                2 |        3 |               1 |           2 |        16 |         0.00 | 111055.00 | 258270.50 |          2 |        0 |
-| mariadb-1-2-4 | mariadb-1-2-4 |                2 |        4 |               1 |           4 |        32 |         0.00 |  27400.00 |  63812.50 |          2 |        0 |
+| mariadb-1-1-1 | mariadb-1-1-1 |                1 |        1 |               1 |           1 |        16 |         0.00 |  91323.00 | 211863.00 |          2 |        0 |
+| mariadb-1-1-2 | mariadb-1-1-2 |                1 |        2 |               1 |           2 |        32 |         0.00 | 142795.50 | 330751.00 |          2 |        0 |
+| mariadb-1-1-3 | mariadb-1-1-3 |                1 |        3 |               1 |           2 |        16 |         0.00 | 107056.00 | 248243.50 |          2 |        0 |
+| mariadb-1-1-4 | mariadb-1-1-4 |                1 |        4 |               1 |           4 |        32 |         0.00 |  51496.25 | 120148.25 |          2 |        0 |
+| mariadb-1-2-1 | mariadb-1-2-1 |                2 |        1 |               1 |           1 |        16 |         0.00 | 109324.00 | 253203.00 |          2 |        0 |
+| mariadb-1-2-2 | mariadb-1-2-2 |                2 |        2 |               1 |           2 |        32 |         0.00 | 147917.00 | 343636.00 |          2 |        0 |
+| mariadb-1-2-3 | mariadb-1-2-3 |                2 |        3 |               1 |           2 |        16 |         0.00 |  98836.00 | 228693.00 |          2 |        0 |
+| mariadb-1-2-4 | mariadb-1-2-4 |                2 |        4 |               1 |           4 |        32 |         0.00 | 149810.50 | 347629.25 |          2 |        0 |
 
 ### Monitoring
 
@@ -267,27 +267,27 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1 |      1146.84 |      5.26 |           3.37 |                  3.38 |
-| mariadb-1-1-2-1 |      1841.53 |      8.73 |           4.02 |                  4.03 |
-| mariadb-1-1-3-1 |      1207.75 |      5.43 |           4.48 |                  4.48 |
-| mariadb-1-1-4-1 |      1761.40 |      8.30 |           5.12 |                  5.12 |
-| mariadb-1-2-1-1 |      1128.58 |      5.49 |           5.42 |                  5.42 |
-| mariadb-1-2-2-1 |      1861.65 |      8.54 |           6.11 |                  6.11 |
-| mariadb-1-2-3-1 |      1149.55 |      5.40 |           6.53 |                  6.54 |
-| mariadb-1-2-4-1 |      1270.86 |      8.11 |           6.89 |                  6.89 |
+| mariadb-1-1-1-1 |      1115.29 |      4.92 |           3.36 |                  3.37 |
+| mariadb-1-1-2-1 |      1822.76 |      8.14 |           3.98 |                  3.99 |
+| mariadb-1-1-3-1 |      1062.80 |      4.98 |           4.39 |                  4.39 |
+| mariadb-1-1-4-1 |      1110.37 |      7.84 |           4.71 |                  4.71 |
+| mariadb-1-2-1-1 |      1297.89 |      5.83 |           5.00 |                  5.01 |
+| mariadb-1-2-2-1 |      1959.19 |      8.81 |           5.64 |                  5.64 |
+| mariadb-1-2-3-1 |      1353.88 |      5.85 |           6.05 |                  6.05 |
+| mariadb-1-2-4-1 |      2046.26 |      9.14 |           6.64 |                  6.65 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS            |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:----------------|-------------:|----------:|---------------:|----------------------:|
-| mariadb-1-1-1-1 |       370.27 |      1.73 |           0.08 |                  0.08 |
-| mariadb-1-1-2-1 |       343.20 |      1.85 |           0.08 |                  0.08 |
-| mariadb-1-1-3-1 |       235.55 |      1.48 |           0.05 |                  0.05 |
-| mariadb-1-1-4-1 |       533.64 |      2.60 |           0.05 |                  0.05 |
-| mariadb-1-2-1-1 |       249.94 |      1.54 |           0.08 |                  0.08 |
-| mariadb-1-2-2-1 |       324.25 |      1.87 |           0.08 |                  0.08 |
-| mariadb-1-2-3-1 |       288.21 |      1.64 |           0.05 |                  0.05 |
-| mariadb-1-2-4-1 |       166.62 |      1.20 |           0.05 |                  0.05 |
+| mariadb-1-1-1-1 |       324.28 |      1.47 |           0.08 |                  0.08 |
+| mariadb-1-1-2-1 |       461.69 |      2.20 |           0.08 |                  0.08 |
+| mariadb-1-1-3-1 |       300.29 |      1.43 |           0.05 |                  0.05 |
+| mariadb-1-1-4-1 |       256.89 |      2.06 |           0.05 |                  0.05 |
+| mariadb-1-2-1-1 |       205.59 |      0.96 |           0.08 |                  0.08 |
+| mariadb-1-2-2-1 |       282.44 |      1.36 |           0.08 |                  0.08 |
+| mariadb-1-2-3-1 |       128.02 |      0.63 |           0.05 |                  0.05 |
+| mariadb-1-2-4-1 |       327.44 |      1.49 |           0.05 |                  0.05 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection mariadb-1-1-1-1 (bexhoma-metrics-mariadb-1-1-1-1-benchmarker.log, expected: series exists only while non-zero)
@@ -330,9 +330,18 @@ HammerDB Workload SF=16 (warehouses for TPC-C)
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Monitoring returned data
 * TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: NOPM contains no 0 or NaN
 * TEST skipped: efficiency (not computed: needs key-and-think time (-xkey))
 * TEST passed: Workflow as planned
+* TEST passed: No virtual user FINISHED FAILED
+* TEST passed: Every pod ran for the configured time
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

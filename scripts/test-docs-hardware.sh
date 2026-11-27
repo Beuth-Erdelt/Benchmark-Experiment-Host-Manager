@@ -61,7 +61,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_depth_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 1. Hardware fio depth sweep  rw=randread,randwrite  iodepth=1..128"
+report_result $? "1. Hardware fio depth sweep  rw=randread,randwrite  iodepth=1..128"
 
 
 #### 2. Hardware fio block-size sweep at fixed queue depth (throughput curve)
@@ -107,7 +107,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_blocksize_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 2. Hardware fio block-size sweep  rw=randread,randwrite  iodepth=64  bs=4k..1M"
+report_result $? "2. Hardware fio block-size sweep  rw=randread,randwrite  iodepth=64  bs=4k..1M"
 
 
 
@@ -164,7 +164,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_random_page_cost.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 3. Hardware fio random_page_cost calibration  rw=read,randread  iodepth=64"
+report_result $? "3. Hardware fio random_page_cost calibration  rw=read,randread  iodepth=64"
 
 
 
@@ -223,7 +223,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_wal_sync_fsync.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 4. Hardware fio WAL sync-write fsync  bs=8k  iodepth=1"
+report_result $? "4. Hardware fio WAL sync-write fsync  bs=8k  iodepth=1"
 
 
 ###########################################
@@ -274,7 +274,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_depth_sweep_refine.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 1. Hardware fio depth sweep refine  rw=randread,randwrite  iodepth=64,80,96,112,128"
+report_result $? "1. Hardware fio depth sweep refine  rw=randread,randwrite  iodepth=64,80,96,112,128"
 
 
 #### 6. Hardware fio numjobs sweep at fixed queue depth (elbow check) (Example-Hardware.md)
@@ -320,7 +320,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_numjobs_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 2. Hardware fio numjobs sweep  rw=randread,randwrite  iodepth=64  numjobs=1..16"
+report_result $? "2. Hardware fio numjobs sweep  rw=randread,randwrite  iodepth=64  numjobs=1..16"
 
 
 #### 7. Hardware fio depth sweep at PostgreSQL's page size (8k) (Example-Hardware.md)
@@ -365,7 +365,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_depth_sweep_8k.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 3. Hardware fio depth sweep 8k  rw=randread,randwrite  iodepth=1..128"
+report_result $? "3. Hardware fio depth sweep 8k  rw=randread,randwrite  iodepth=1..128"
 
 
 #### 8. Hardware fio WAL sync-write latency (fdatasync) (Example-Hardware.md)
@@ -416,7 +416,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_wal_sync_fdatasync.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 4. Hardware fio WAL sync-write fdatasync  bs=8k  iodepth=1"
+report_result $? "4. Hardware fio WAL sync-write fdatasync  bs=8k  iodepth=1"
 
 
 #### 9. Hardware fio WAL group-commit scaling (Example-Hardware.md)
@@ -468,7 +468,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_wal_group_commit.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 5. Hardware fio WAL group commit  bs=8k  iodepth=1  backends=1..32"
+report_result $? "5. Hardware fio WAL group commit  bs=8k  iodepth=1  backends=1..32"
 
 
 #### 10. Hardware fio WAL record-size sweep (Example-Hardware.md)
@@ -518,7 +518,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_wal_record_size.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 6. Hardware fio WAL record size  bs=1k..64k  iodepth=1"
+report_result $? "6. Hardware fio WAL record size  bs=1k..64k  iodepth=1"
 
 
 #### 11. Hardware fio checkpoint writeback bandwidth (Example-Hardware.md)
@@ -564,7 +564,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_checkpoint_writeback.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 7. Hardware fio checkpoint writeback  bs=1M..16M  iodepth=4,16"
+report_result $? "7. Hardware fio checkpoint writeback  bs=1M..16M  iodepth=4,16"
 
 
 #### 12. Hardware fio OLTP/WAL contention proxy (Example-Hardware.md)
@@ -618,7 +618,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_fio_oltp_wal_contention_proxy.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 8. Hardware fio OLTP/WAL contention proxy  randrw 70/30  bs=8k  iodepth=64"
+report_result $? "8. Hardware fio OLTP/WAL contention proxy  randrw 70/30  bs=8k  iodepth=64"
 
 
 ###########################################
@@ -680,7 +680,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sysbench_cpu_quota_calibration.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 5. Hardware sysbench CPU quota calibration  lc=2  threads=1,2,4,8"
+report_result $? "5. Hardware sysbench CPU quota calibration  lc=2  threads=1,2,4,8"
 
 
 #### 14. Sysbench harness-overhead sweep (-nbp)
@@ -719,7 +719,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sysbench_nbp_overhead_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 6. Hardware sysbench nbp overhead sweep  lc=2  threads=4  pods=1,2,4"
+report_result $? "6. Hardware sysbench nbp overhead sweep  lc=2  threads=4  pods=1,2,4"
 
 
 #### 15. Sysbench shared-SUT saturation sweep (-ne)
@@ -759,7 +759,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sysbench_ne_saturation_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 7. Hardware sysbench ne saturation sweep  lc=2  threads=2  clients=1,2,4,8"
+report_result $? "7. Hardware sysbench ne saturation sweep  lc=2  threads=2  clients=1,2,4,8"
 
 
 #### 16. Sysbench co-located noisy-neighbor test (-mtn/-mtb container)
@@ -808,7 +808,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sysbench_noisy_neighbor.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 8. Hardware sysbench noisy-neighbor test  lc=2  threads=2  tenants=4"
+report_result $? "8. Hardware sysbench noisy-neighbor test  lc=2  threads=2  tenants=4"
 
 
 
@@ -868,7 +868,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_query_latency.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 9. Hardware netperf PostgreSQL query round-trip latency  protocol=tcp  nbt=1"
+report_result $? "9. Hardware netperf PostgreSQL query round-trip latency  protocol=tcp  nbt=1"
 
 
 #### 18. Netperf PostgreSQL concurrent-connection scaling (TCP_RR, -nbt sweep)
@@ -908,7 +908,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_connection_scaling_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 10. Hardware netperf PostgreSQL connection scaling  protocol=tcp  nbt=1,8,16,32,64"
+report_result $? "10. Hardware netperf PostgreSQL connection scaling  protocol=tcp  nbt=1,8,16,32,64"
 
 
 #### 19. Netperf PostgreSQL pod-count scaling at fixed total concurrency (TCP_RR, -nbp sweep)
@@ -945,7 +945,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_netperf_postgresql_pod_scaling_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 11. Hardware netperf PostgreSQL pod scaling  protocol=tcp  nbp=1,2  nbt=64"
+report_result $? "11. Hardware netperf PostgreSQL pod scaling  protocol=tcp  nbp=1,2  nbt=64"
 
 
 ###########################################
@@ -1015,7 +1015,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_pod_scaling_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 12. Hardware sockperf pod scaling sweep  mode=ul  protocol=tcp  msgsize=64  mps=max  nbp=1,2,4,8,16"
+report_result $? "12. Hardware sockperf pod scaling sweep  mode=ul  protocol=tcp  msgsize=64  mps=max  nbp=1,2,4,8,16"
 
 
 #### 21. Sockperf PostgreSQL simple-query round-trip latency (ping-pong, TCP)
@@ -1054,7 +1054,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_query_latency.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 13. Hardware sockperf PostgreSQL query round-trip latency  mode=pp  protocol=tcp  msgsize=64"
+report_result $? "13. Hardware sockperf PostgreSQL query round-trip latency  mode=pp  protocol=tcp  msgsize=64"
 
 
 #### 22. Sockperf PostgreSQL streaming/bulk throughput (WAL sender/COPY, TCP, 8k)
@@ -1094,7 +1094,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_streaming_throughput.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 14. Hardware sockperf PostgreSQL streaming throughput  mode=ul  protocol=tcp  msgsize=8192"
+report_result $? "14. Hardware sockperf PostgreSQL streaming throughput  mode=ul  protocol=tcp  msgsize=8192"
 
 
 #### 23. Sockperf PostgreSQL query latency under concurrent connections (ping-pong, TCP, -nbp sweep)
@@ -1138,7 +1138,7 @@ bexhoma hardware \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_postgresql_latency_scaling_sweep.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 15. Hardware sockperf PostgreSQL query latency under concurrency  mode=pp  protocol=tcp  msgsize=64  nbp=1,2,4,8,16"
+report_result $? "15. Hardware sockperf PostgreSQL query latency under concurrency  mode=pp  protocol=tcp  msgsize=64  nbp=1,2,4,8,16"
 
 
 
@@ -1148,4 +1148,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] 15. Hardware sockperf PostgreSQL query
 ###########################################
 
 
+report_total
 clean_logs

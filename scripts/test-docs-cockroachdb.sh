@@ -68,7 +68,7 @@ bexhoma ycsb \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_cockroachdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB  sf=1  nw=3"
+report_result $? "YCSB CockroachDB  sf=1  nw=3"
 
 
 ####################################################
@@ -128,7 +128,7 @@ bexhoma ycsb \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_cockroachdb_monitoring.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB ingestion  sf=1  nbp=1"
+report_result $? "YCSB CockroachDB ingestion  sf=1  nbp=1"
 
 
 # Application metrics (-ma): run in scripts/test-docs-appmetrics.sh, logs docs_ycsb_cockroachdb_appmetrics.log and docs_benchbase_cockroachdb_appmetrics.log
@@ -195,7 +195,7 @@ bexhoma ycsb \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_cockroachdb_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
+report_result $? "YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
 
 
 ####################################################
@@ -255,7 +255,7 @@ bexhoma ycsb \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_ycsb_cockroachdb_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] YCSB CockroachDB scale  sf=10  nbp=1"
+report_result $? "YCSB CockroachDB scale  sf=10  nbp=1"
 
 
 ####################################################
@@ -299,7 +299,7 @@ bexhoma benchbase \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_cockroachdb.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB simple  sf=16  nbp=1,2"
+report_result $? "Benchbase CockroachDB simple  sf=16  nbp=1,2"
 
 
 # Benchbase TPC-C: scaling the clients, with application metrics
@@ -344,7 +344,7 @@ bexhoma benchbase \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_cockroachdb_scale.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB complex  sf=128  nbp=1,2,4,8"
+report_result $? "Benchbase CockroachDB complex  sf=128  nbp=1,2,4,8"
 
 
 # Benchbase TPC-C: scaling the clients, on persistent storage
@@ -393,7 +393,7 @@ bexhoma benchbase \
   -rnw $BEXHOMA_NODES_WORKER \
   run &>$LOG_DIR/docs_benchbase_cockroachdb_scale_storage.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB storage  sf=128  nbp=1,2,4,8"
+report_result $? "Benchbase CockroachDB storage  sf=128  nbp=1,2,4,8"
 
 
 ###########################################
@@ -401,4 +401,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase CockroachDB storage  sf=128 
 ###########################################
 
 
+report_total
 clean_logs

@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=10
 * Type: tpch
-* Duration: 2478s 
-* Code: 1794653069
+* Duration: 1285s 
+* Code: 1795664514
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=10) data is loaded and benchmark is executed.
@@ -14,7 +14,7 @@ TPC-H Queries SF=10
   * Data transfer volume per query is also measured.
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
-  * Experiment uses bexhoma version 0.11.17.
+  * Experiment uses bexhoma version 0.12.4.
   * System metrics are monitored by a cluster-wide installation.
   * Application metrics are monitored by sidecar containers.
   * Experiment is limited to DBMS ['MySQL'].
@@ -28,17 +28,17 @@ TPC-H Queries SF=10
   * Benchmarking is run as [1] times the number of benchmarking pods.
   * Experiment is run once.
   * Maximum DBMS across the whole cluster is 10.
-  * Results are validated against basic correctness requirements.
   * SUT requests 4 CPU and 128Gi RAM. RAM limit is 128Gi.
 
 ### Connections
 * mysql-1-1-1-1-1 uses docker image mysql:9.7.2
   * RAM:2164173156352
+  * CPU:INTEL(R) XEON(R) PLATINUM 8570
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1192441
-  * datadisk:51317
+  * disk:624636
+  * datadisk:51245
   * volume_size:129G
   * volume_used:51G
   * cpu_list:0-223
@@ -50,13 +50,13 @@ TPC-H Queries SF=10
     * sut: 1 x, 4.0 CPU, 128.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1794653069
+    * code:1795664514
 
 ### Ingestion
 * MySQL-1: 50 of 50 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-mysql-1-1794653069-694765b8cc-kmdp2: 0
+* bexhoma-sut-mysql-1-1795664514-559777d4b9-cwg8n: 0
 
 ### Workflow
 
@@ -74,7 +74,7 @@ TPC-H Queries SF=10
 
 | DBMS      |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:----------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| MySQL-1-1 |                1 |   10 |      487.00 |           3.00 |           19.00 |        273.00 |          185.00 |              8 |         0 |             | None           |             0 | False         |               73.92 | False               |
+| MySQL-1-1 |                1 |   10 |      277.00 |           3.00 |           18.00 |        118.00 |          131.00 |              8 |         0 |             |                |             0 | False         |              129.96 | False               |
 
 ### Benchmarking
 
@@ -82,13 +82,13 @@ TPC-H Queries SF=10
 
 | connection      | phase       | job           |   experiment_run |   client |   benchmark_run |   child |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:----------------|:------------|:--------------|-----------------:|---------:|----------------:|--------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 | 10.00 |               22 |                  22 |       1542 |           20.80 |             1738.72 |            513.62 |          -1 |
+| mysql-1-1-1-1-1 | mysql-1-1-1 | mysql-1-1-1-1 |                1 |        1 |               1 |       1 | 10.00 |               22 |                  22 |        580 |           10.85 |             3374.96 |           1365.52 |           0 |
 
 #### Per Phase
 
 | DBMS        | phase       |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:------------|:------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               22 |                  22 |       1542 |           20.80 |             1738.72 |            513.62 |          -1 |
+| mysql-1-1-1 | mysql-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               22 |                  22 |        580 |           10.85 |             3374.96 |           1365.52 |           0 |
 
 #### Query Completion per Phase
 
@@ -101,28 +101,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   mysql-1-1-1-1-1 |
 |:----------------------------------------------------|------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |          75487.51 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |           1146.55 |
-| Shipping Priority (TPC-H Q3)                        |          24109.77 |
-| Order Priority Checking Query (TPC-H Q4)            |           5214.38 |
-| Local Supplier Volume (TPC-H Q5)                    |          12691.29 |
-| Forecasting Revenue Change (TPC-H Q6)               |          11546.97 |
-| Volume Shipping Query (TPC-H Q7)                    |          11291.19 |
-| National Market Share (TPC-H Q8)                    |          32445.40 |
-| Product Type Profit Measure (TPC-H Q9)              |          34556.03 |
-| Returned Item Reporting Query (TPC-H Q10)           |          12460.54 |
-| Important Stock Identification (TPC-H Q11)          |           2656.59 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |          24939.15 |
-| Customer Distribution (TPC-H Q13)                   |         108874.11 |
-| Promotion Effect Query (TPC-H Q14)                  |          23559.67 |
-| Top Supplier Query (TPC-H Q15)                      |         834173.58 |
-| Parts/Supplier Relationship (TPC-H Q16)             |          16272.60 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |          15638.09 |
-| Large Volume Customer (TPC-H Q18)                   |          70473.72 |
-| Discounted Revenue (TPC-H Q19)                      |          13973.59 |
-| Potential Part Promotion (TPC-H Q20)                |          43134.68 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |         159465.74 |
-| Global Sales Opportunity Query (TPC-H Q22)          |           1462.08 |
+| Pricing Summary Report (TPC-H Q1)                   |          63883.01 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |            591.26 |
+| Shipping Priority (TPC-H Q3)                        |          21336.52 |
+| Order Priority Checking Query (TPC-H Q4)            |           5529.77 |
+| Local Supplier Volume (TPC-H Q5)                    |          14039.20 |
+| Forecasting Revenue Change (TPC-H Q6)               |          13942.61 |
+| Volume Shipping Query (TPC-H Q7)                    |          12354.63 |
+| National Market Share (TPC-H Q8)                    |          33705.28 |
+| Product Type Profit Measure (TPC-H Q9)              |          32819.93 |
+| Returned Item Reporting Query (TPC-H Q10)           |          14846.43 |
+| Important Stock Identification (TPC-H Q11)          |           2712.90 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |          18796.53 |
+| Customer Distribution (TPC-H Q13)                   |          59698.82 |
+| Promotion Effect Query (TPC-H Q14)                  |          16212.07 |
+| Top Supplier Query (TPC-H Q15)                      |         185279.41 |
+| Parts/Supplier Relationship (TPC-H Q16)             |           2863.30 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |           2283.21 |
+| Large Volume Customer (TPC-H Q18)                   |          17959.65 |
+| Discounted Revenue (TPC-H Q19)                      |           1273.68 |
+| Potential Part Promotion (TPC-H Q20)                |           3690.91 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |          44807.85 |
+| Global Sales Opportunity Query (TPC-H Q22)          |           1033.68 |
 
 ### Errors (failed queries)
 
@@ -138,7 +138,7 @@ No warnings
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |      2286.88 |      7.47 |          59.39 |                 59.39 |
+| mysql-1-1-1-1 |      1134.56 |      7.79 |          59.97 |                 59.97 |
 
 ### Loading phase: component data generator
 
@@ -150,30 +150,30 @@ No warnings
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |        35.13 |      0.17 |           0.01 |                  1.28 |
+| mysql-1-1-1-1 |        28.71 |      0.73 |           0.01 |                  1.14 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |      1537.21 |      1.18 |          60.31 |                 60.31 |
+| mysql-1-1-1-1 |       573.54 |      1.06 |          60.24 |                 60.24 |
 
 ### Benchmarking phase: component benchmarker
 
 | DBMS          |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:--------------|-------------:|----------:|---------------:|----------------------:|
-| mysql-1-1-1-1 |        21.55 |      0.58 |           0.38 |                  0.38 |
+| mysql-1-1-1-1 |        23.23 |      0.37 |           0.37 |                  0.37 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* Memory Usage, Working Set [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization [CPUs] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttling Rate [s/s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Memory Usage incl. Page Cache [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Utilization [CPUs] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Utilization Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU User Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* Memory Usage, Working Set [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU Throttled Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU User Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
+* CPU Utilization Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * CPU System Time [s] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
 * Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection mysql-1-1-1-1 (bexhoma-metrics-mysql-1-1-1-1-datagenerator.log, expected: data pre-existing)
@@ -188,13 +188,13 @@ No warnings
 
 | DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
 |:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
-| mysql-1-1-1-1 |                                  1.00 |                             1.57 |                            0.01 |                            0.10 |                              0.00 |
+| mysql-1-1-1-1 |                                  1.00 |                             1.63 |                            0.01 |                            0.06 |                              0.00 |
 
 #### Benchmarking phase: SUT deployment
 
 | DBMS          |   InnoDB Buffer Pool Hit Ratio [0..1] |   Queries Per Second [queries/s] |   Connection Usage Ratio [0..1] |   Slow Queries Rate [queries/s] |   InnoDB Log Waits Rate [waits/s] |
 |:--------------|--------------------------------------:|---------------------------------:|--------------------------------:|--------------------------------:|----------------------------------:|
-| mysql-1-1-1-1 |                                  0.99 |                             1.57 |                            0.00 |                            0.04 |                              0.00 |
+| mysql-1-1-1-1 |                                  1.00 |                             1.92 |                            0.00 |                            0.07 |                              0.00 |
 
 ### Tests
 * TEST passed: Loading measured in this experiment
@@ -204,11 +204,14 @@ No warnings
 * TEST passed: Loading completed without failures
 * TEST passed: No SUT container restarts
 * TEST skipped: SUT data survived container restarts (no restarts)
+* TEST passed: SUT pods not replaced
+* TEST passed: Host information complete
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
 * TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
+* TEST passed: Monitoring returned data
 * TEST skipped: Monitoring metrics missing (data pre-existing; series exists only while non-zero)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
@@ -218,3 +221,7 @@ No warnings
 * TEST passed: All active queries counted in the totals
 * TEST skipped: EXPLAIN captured for every active query (-se/--store-explain not used)
 * TEST passed: Workflow as planned
+* TEST passed: Results of all benchmarker pods
+* TEST passed: Benchmarker pods without errors
+
+Test successful!

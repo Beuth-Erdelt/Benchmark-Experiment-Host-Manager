@@ -56,7 +56,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_tenants_schema.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
@@ -93,7 +93,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_tenants_database.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 BEXHOMA_NUM_TENANTS_LOADER=16
 # -dbms PostgreSQL              DBMS under test
@@ -131,7 +131,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_tenants_database_multiload.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT database multiload  tenants=$BEXHOMA_NUM_TENANTS  loaders=$BEXHOMA_NUM_TENANTS_LOADER  sf=1"
+report_result $? "TPC-H MT database multiload  tenants=$BEXHOMA_NUM_TENANTS  loaders=$BEXHOMA_NUM_TENANTS_LOADER  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
@@ -166,7 +166,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_postgresql_tenants_container.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "TPC-H MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -214,7 +214,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_tenants_schema.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size)
@@ -253,7 +253,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_tenants_database.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms PostgreSQL              DBMS under test
 # -sf 1                         scaling factor (controls database size)
@@ -294,7 +294,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_postgresql_tenants_container.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "Benchbase MT container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 
@@ -346,7 +346,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql_tenants_database.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "Benchbase MT MySQL database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms MySQL                   DBMS under test
 # -sf 1                         scaling factor (controls database size)
@@ -387,7 +387,7 @@ bexhoma benchbase \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_mysql_tenants_container.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] Benchbase MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "Benchbase MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms MySQL                   DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
@@ -420,7 +420,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mysql_tenants_container.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "TPC-H MT MySQL container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 # -dbms MariaDB                 DBMS under test
 # -sf 1                         scaling factor (controls database size in GB)
@@ -453,7 +453,7 @@ bexhoma tpch \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_tpch_mariadb_tenants_container.log
 
-echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT MariaDB container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
+report_result $? "TPC-H MT MariaDB container  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 
 
 ###########################################
@@ -461,4 +461,5 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') [DONE] TPC-H MT MariaDB container  tenants=$B
 ###########################################
 
 
+report_total
 clean_logs
