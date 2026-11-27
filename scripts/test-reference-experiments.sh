@@ -52,7 +52,6 @@ reference_tpch_postgresql_monitoring() {
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -78,7 +77,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -337,7 +335,6 @@ reference_ycsb_postgresql_monitoring() {
 # -nbp 1,8                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -357,7 +354,6 @@ bexhoma ycsb \
   -nbp 1,8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -373,7 +369,6 @@ reference_benchbase_postgresql_run() {
 # -nbp 8                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -ss                           skip data generation (assume data exists)
 # -lr 64Gi                      RAM limit for the SUT container
@@ -389,7 +384,6 @@ bexhoma benchbase \
   -nbp 8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -ss \
   -lr 64Gi \
@@ -408,7 +402,6 @@ reference_hammerdb_postgresql_run() {
 # -nbp 1                        benchmarking pod counts to sweep (comma-separated)
 # -nbt 64                       threads per benchmarking pod (virtual users)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -ss                           skip data generation (assume data exists)
 # -lr 64Gi                      RAM limit for the SUT container
@@ -424,7 +417,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -ss \
   -lr 64Gi \
@@ -446,7 +438,6 @@ reference_benchbase_postgresql_appmetrics() {
 # -nbt 160                      threads per benchmarking pod
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -462,7 +453,6 @@ bexhoma benchbase \
   -nbt 160 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

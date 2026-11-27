@@ -281,7 +281,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 3600 \
   -lc 16 \
@@ -1043,7 +1042,7 @@ The database is located in another shared disk of storageClass shared (`-rst`) a
 
 The script also runs a power test (`-ne` set to 1) with timeout 1200s (`-t`) and data transfer activated (`-xdt`) once (`-nc` set to 1).
 To avoid conflicts with other experiments, it runs at most 1 DBMS at a time (`-ms`).
-Monitoring is activated (`-m`) for all components (`-mc`).
+Monitoring is activated (`-m`) for the SUT.
 The components, that is the SUT (`-rnn`) and the loader (`-rnl`) and the benchmark driver (`-rnb`), are fixed to specific nodes in the cluster.
 
 ```bash
@@ -1066,7 +1065,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 3600 \
   -lc 16 \
@@ -1380,7 +1378,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 3600 \
   -lc 16 \
@@ -1674,7 +1671,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 3600 \
   -lc 16 \
@@ -2233,7 +2229,6 @@ bexhoma tpcds \
   -nbp 1 \
   -xii -xic -xis \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 128Gi \
   -rr 128Gi \
@@ -2550,7 +2545,6 @@ bexhoma tpcds \
   -nbp 1 \
   -xii -xic -xis \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 128Gi \
   -rr 128Gi \
@@ -3017,7 +3011,7 @@ Storage is cleaned if it has existed (`-rsr`).
 
 The script also runs a power test (`-ne` set to 1) with timeout 14400s (`-t`) and data transfer activated (`-xdt`) once (`-nc` set to 1).
 To avoid conflicts with other experiments, it runs at most 1 DBMS at a time (`-ms`).
-Monitoring is activated (`-m`) for all components (`-mc`).
+Monitoring is activated (`-m`) for the SUT.
 A node is requested that has 900Gi RAM (`-rr`), the RAM limit is 1024Gi (`-lr`).
 
 ```bash
@@ -3040,7 +3034,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 1024Gi \
@@ -3382,7 +3375,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 1024Gi \
@@ -3753,7 +3745,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 1024Gi \

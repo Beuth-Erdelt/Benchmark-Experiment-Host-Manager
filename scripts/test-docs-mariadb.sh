@@ -79,7 +79,6 @@ report_result $? "TPC-H MariaDB simple  sf=1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 128Gi                     RAM limit for the SUT container
@@ -99,7 +98,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 128Gi \
@@ -129,7 +127,6 @@ report_result $? "TPC-H MariaDB monitoring  sf=1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 128Gi                     RAM limit for the SUT container
@@ -151,7 +148,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 128Gi \
@@ -176,7 +172,6 @@ report_result $? "TPC-H MariaDB throughput  sf=1  ne=1,2"
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -ma                           collect metrics for the whole experiment
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 128Gi                     RAM limit for the SUT container
@@ -195,7 +190,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 128Gi \
@@ -267,7 +261,6 @@ report_result $? "TPC-DS MariaDB simple  sf=1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 128Gi                     RAM limit for the SUT container
@@ -287,7 +280,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 128Gi \
@@ -312,7 +304,6 @@ report_result $? "TPC-DS MariaDB monitoring  sf=1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 128Gi                     RAM limit for the SUT container
@@ -334,7 +325,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 128Gi \
@@ -446,7 +436,6 @@ report_result $? "Benchbase MariaDB persistency  sf=16  nc=2"
 # -nbp 1                        number of benchmarking pods
 # -nbt 160                      total benchmarking threads
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -466,7 +455,6 @@ bexhoma benchbase \
   -nbp 1 \
   -nbt 160 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
@@ -489,7 +477,6 @@ report_result $? "Benchbase MariaDB monitoring  sf=16"
 # -nbp 1,2                      number of benchmarking pods
 # -nbt 160                      total benchmarking threads
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -510,7 +497,6 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 160 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
@@ -572,7 +558,6 @@ report_result $? "HammerDB MariaDB simple  sf=16"
 # -nbp 1                        number of benchmarking pods
 # -nbt 16                       total benchmarking threads
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -592,7 +577,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 16 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
@@ -616,7 +600,6 @@ report_result $? "HammerDB MariaDB monitoring  sf=16"
 # -nbp 1,2                      number of benchmarking pods
 # -nbt 16                       total benchmarking threads
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -636,7 +619,6 @@ bexhoma hammerdb \
   -nbp 1,2 \
   -nbt 16 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \
@@ -856,7 +838,6 @@ report_result $? "YCSB MariaDB workload e  sf=1"
 # -nbp 1,8                      number of benchmarking pods
 # -nbt 64                       total benchmarking threads
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -880,7 +861,6 @@ bexhoma ycsb \
   -nbp 1,8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G \

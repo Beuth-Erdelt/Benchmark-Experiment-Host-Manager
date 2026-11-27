@@ -269,7 +269,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -455,7 +454,7 @@ YCSB SF=3
 ### Application Metrics
 
 Collecting application metrics for Valkey is supported for a cluster (`-nw`).
-It is activated by `-m -mc -ma`.
+It is activated by `-m -ma`.
 A `redis_exporter` sidecar in every worker pod exposes the metrics on port 9121; Valkey uses the metric set `redis` of [Redis](Example-Redis.md#application-metrics).
 Prometheus discovers the worker pods only, so a single host has no application metrics.
 See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
@@ -479,7 +478,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -761,7 +759,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -1016,7 +1013,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -1252,7 +1248,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -1787,7 +1782,6 @@ bexhoma ycsb \
   -nwr 1 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \

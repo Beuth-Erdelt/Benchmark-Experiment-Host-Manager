@@ -897,7 +897,6 @@ bexhoma ycsb \
   -nbp 1,8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1944,7 +1943,6 @@ bexhoma ycsb \
   -nbp 1,8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -2193,7 +2191,6 @@ bexhoma ycsb \
   -nbp 1,8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -2442,7 +2439,6 @@ bexhoma ycsb \
   -nbp 1,8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -2700,7 +2696,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xio hashed \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -2916,7 +2911,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xio ordered \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -3126,7 +3120,6 @@ bexhoma ycsb \
   -nbp 1,8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -3376,7 +3369,6 @@ bexhoma ycsb \
   -nbp 1,8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -3626,7 +3618,6 @@ bexhoma ycsb \
   -nbp 1,8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \

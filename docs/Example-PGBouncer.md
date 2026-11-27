@@ -318,7 +318,6 @@ bexhoma ycsb \
   -xnpo 64 \
   -xop 16 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -565,7 +564,7 @@ YCSB SF=32
 ### Application Metrics
 
 Collecting application metrics for PGBouncer is supported.
-It can be activated by `-m -mc -ma`.
+It can be activated by `-m -ma`.
 Prometheus scrapes a `postgres_exporter` (port 9187) next to PostgreSQL and a `pgbouncer_exporter` (port 9127) next to each PgBouncer pod.
 See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
@@ -589,7 +588,6 @@ bexhoma ycsb \
   -xop 16 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -899,7 +897,6 @@ bexhoma ycsb \
   -xnpo 64 \
   -xop 16 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1643,7 +1640,6 @@ bexhoma benchbase \
   -xconn \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT \

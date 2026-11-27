@@ -364,7 +364,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 1 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -666,7 +665,7 @@ YCSB SF=1
 ### Application Metrics
 
 Collecting application metrics for TiDB is supported.
-It can be activated by `-m -mc -ma`.
+It can be activated by `-m -ma`.
 Metrics are defined per component: the tidb-server pods (SUT deployment), PD and TiKV.
 See [example configuration](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) for the definitions and [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
@@ -691,7 +690,6 @@ bexhoma ycsb \
   -xop 1 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
@@ -1061,7 +1059,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 1 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1637,7 +1634,6 @@ bexhoma benchbase \
   -xnpd 3 \
   -nwr 3 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -2050,7 +2046,6 @@ bexhoma benchbase \
   -xnpd 3 \
   -nwr 3 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -2746,7 +2741,6 @@ bexhoma benchbase \
   -xnpd 3 \
   -nwr 3 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \

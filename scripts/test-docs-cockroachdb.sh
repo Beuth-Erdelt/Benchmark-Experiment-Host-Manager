@@ -93,7 +93,6 @@ report_result $? "YCSB CockroachDB  sf=1  nw=3"
 # -nwr 3                        number of worker node replicas
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -119,7 +118,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -156,7 +154,6 @@ report_result $? "YCSB CockroachDB ingestion  sf=1  nbp=1"
 # -nwr 3                        number of worker node replicas
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -184,7 +181,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 1 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -220,7 +216,6 @@ report_result $? "YCSB CockroachDB storage  sf=1  nbp=1  nc=2"
 # -nwr 3                        number of worker node replicas
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -246,7 +241,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -314,7 +308,6 @@ report_result $? "Benchbase CockroachDB simple  sf=16  nbp=1,2"
 # -nwr 3                        number of worker node replicas
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -335,7 +328,6 @@ bexhoma benchbase \
   -nwr 3 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -359,7 +351,6 @@ report_result $? "Benchbase CockroachDB complex  sf=128  nbp=1,2,4,8"
 # -nwr 3                        number of worker node replicas
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -382,7 +373,6 @@ bexhoma benchbase \
   -nwr 3 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \

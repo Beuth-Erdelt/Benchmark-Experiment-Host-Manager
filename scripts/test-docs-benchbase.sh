@@ -58,7 +58,6 @@ report_result $? "Benchbase scale  sf=16  nbp=1,2"
 # -nbp 1,2                      benchmarking pod counts to sweep (comma-separated)
 # -nbt 160                      threads per benchmarking pod
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -73,7 +72,6 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 160 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -189,7 +187,6 @@ report_result $? "Benchbase unlimited target + warmup  sf=4  nbp=1,2"
 # -nbt 1600                     threads per benchmarking pod
 # -xkey                         simulate user think time and keying delays
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
@@ -212,7 +209,6 @@ bexhoma benchbase \
   -nbt 1600 \
   -xkey \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 128Gi \
   -rr 128Gi \

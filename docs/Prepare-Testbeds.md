@@ -160,7 +160,6 @@ bexhoma ycsb \
   -dbms PostgreSQL \
   -xwl c \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -240,7 +239,6 @@ bexhoma ycsb \
   -nlp 8 \
   -nlt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -373,7 +371,7 @@ Key parameters:
 - `-nlt 64`: 64 loader threads in total, 64/8 = 8 per pod
 
 The summary's **Loading** table shows aggregate throughput across all loader pods.
-The **Ingestion** tables show how much CPU and RAM the SUT and loader consumed.
+The **Ingestion** tables show how much CPU and RAM the SUT consumed.
 
 ### Start DBMS and Load Data and Run Workload
 
@@ -388,7 +386,6 @@ bexhoma ycsb \
   -nbp 8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -ss \
   -lr 64Gi \
@@ -596,7 +593,6 @@ Configurations are numbered sequentially per DBMS — `PostgreSQL-1`, `PostgreSQ
 bexhoma benchbase \
   -dbms PostgreSQL \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -675,7 +671,6 @@ bexhoma benchbase \
   -nlp 8 \
   -nlt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -808,7 +803,6 @@ bexhoma benchbase \
   -nbp 8 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -ss \
   -lr 64Gi \
@@ -994,7 +988,6 @@ Configurations are numbered sequentially per DBMS — `PostgreSQL-1`, `PostgreSQ
 bexhoma hammerdb \
   -dbms PostgreSQL \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1071,7 +1064,6 @@ bexhoma hammerdb \
   -nlp 1 \
   -nlt 1 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1204,7 +1196,6 @@ bexhoma hammerdb \
   -nbp 1 \
   -nbt 64 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -ss \
   -lr 64Gi \
@@ -1379,7 +1370,6 @@ After loading, the DBMSBenchmarker tool runs the 22 queries and records per-quer
 bexhoma tpch \
   -dbms PostgreSQL \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1457,7 +1447,6 @@ bexhoma tpch \
   -nlt 1 \
   -xii -xic -xis \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1610,7 +1599,6 @@ bexhoma tpch \
   -nbt 64 \
   -xii -xic -xis \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -ss \
   -lr 64Gi \
@@ -1869,7 +1857,6 @@ Its structure mirrors TPC-H: `dbgen2` generates data, a loader imports it, DBMSB
 bexhoma tpcds \
   -dbms PostgreSQL \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1944,7 +1931,6 @@ bexhoma tpcds \
   -nlt 1 \
   -xii -xic -xis \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -2084,7 +2070,6 @@ bexhoma tpcds \
   -nbt 64 \
   -xii -xic -xis \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -ss \
   -lr 64Gi \

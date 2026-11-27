@@ -60,7 +60,6 @@ report_result $? "HammerDB scale  sf=16  nbp=1,2"
 # -nbt 16                       threads per benchmarking pod (virtual users)
 # -xlat                         collect per-operation latency histograms
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -77,7 +76,6 @@ bexhoma hammerdb \
   -nbt 16 \
   -xlat \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -182,7 +180,6 @@ report_result $? "HammerDB storage  sf=16  nbp=1  nc=2"
 # -xkey                         simulate user think time and keying delays
 # -xlat                         collect per-operation latency histograms
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -204,7 +201,6 @@ bexhoma hammerdb \
   -xkey \
   -xlat \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \

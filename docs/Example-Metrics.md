@@ -38,7 +38,6 @@ bexhoma benchbase \
   -nbt 160 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -46,7 +45,7 @@ bexhoma benchbase \
 ```
 
 This
-* activates monitoring (`-m`) cluster-wide (`-mc`)
+* activates monitoring (`-m`)
 * starts a clean instance of PostgreSQL (`-dbms`)
   * with a sidecar container for monitoring (`-ma`)
   * data directory inside a Docker container
@@ -296,7 +295,6 @@ bexhoma hammerdb \
   -xlat \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -527,7 +525,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -792,7 +789,6 @@ bexhoma tpcds \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -1138,7 +1134,6 @@ bexhoma ycsb \
   -nbt 64 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1490,7 +1485,6 @@ bexhoma benchbase \
   -nbt 160 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1498,7 +1492,7 @@ bexhoma benchbase \
 ```
 
 This
-* activates monitoring (`-m`) cluster-wide (`-mc`)
+* activates monitoring (`-m`)
 * starts a clean instance of MySQL (`-dbms`)
   * with a sidecar container for monitoring (`-ma`)
   * data directory inside a Docker container
@@ -1742,7 +1736,6 @@ bexhoma hammerdb \
   -xlat \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
@@ -1973,7 +1966,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -2233,7 +2225,6 @@ bexhoma tpcds \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 128Gi \
@@ -2573,7 +2564,6 @@ bexhoma ycsb \
   -nbt 64 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
@@ -2922,7 +2912,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -3170,7 +3159,6 @@ bexhoma benchbase \
   -nwr 3 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -3471,7 +3459,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_redis_appmetrics.log
@@ -3766,7 +3753,6 @@ bexhoma ycsb \
   -xop 1 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
@@ -4127,7 +4113,6 @@ bexhoma benchbase \
   -xnpd 3 \
   -nwr 3 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
@@ -4552,7 +4537,6 @@ bexhoma ycsb \
   -xop 16 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -4854,7 +4838,6 @@ bexhoma benchbase \
   -xconn \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT \
@@ -5160,7 +5143,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_appmetrics.log
 ```
@@ -5443,7 +5425,6 @@ bexhoma benchbase \
   -nbt 16 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   run &>$LOG_DIR/docs_benchbase_yugabytedb_appmetrics.log
 ```

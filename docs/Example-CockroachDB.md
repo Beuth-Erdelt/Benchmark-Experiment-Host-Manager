@@ -315,7 +315,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -540,7 +539,7 @@ Test successful!
 ### Application Metrics
 
 Collecting application metrics for CockroachDB is supported.
-It can be activated by `-m -mc -ma`.
+It can be activated by `-m -ma`.
 Prometheus discovers the worker pods and scrapes the built-in endpoint of CockroachDB (`/_status/vars`, port 8080), with the metric set `cockroachdb` of [cluster.config](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config).
 See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
@@ -563,7 +562,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -820,7 +818,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 1 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1216,7 +1213,6 @@ bexhoma ycsb \
   -nwr 3 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1684,7 +1680,6 @@ bexhoma benchbase \
   -nwr 3 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -2110,7 +2105,6 @@ bexhoma benchbase \
   -nwr 3 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -2560,7 +2554,6 @@ bexhoma benchbase \
   -nwr 3 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

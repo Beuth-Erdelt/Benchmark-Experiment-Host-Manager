@@ -59,7 +59,6 @@ report_result $? "TPC-H MariaDBCS  sf=1"
 # -nlp 8                        number of data loader pods (MariaDBCS always uses 1)
 # -xis                          run ANALYZE after data load
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -71,7 +70,6 @@ bexhoma tpch \
   -nlp 8 \
   -xis \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \

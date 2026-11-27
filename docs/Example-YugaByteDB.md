@@ -402,7 +402,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_monitoring.log
@@ -651,7 +650,7 @@ Test successful!
 ### Application Metrics
 
 Collecting application metrics for YugabyteDB is supported.
-It can be activated by `-m -mc -ma`.
+It can be activated by `-m -ma`.
 Prometheus discovers the master pods (port 7000) and the tserver pods (port 9000) and scrapes the native endpoint `/prometheus-metrics` of YugabyteDB, with the metric sets `yb-master` and `yb-tserver`.
 See [Metrics](Example-Metrics.md) for application metrics of all DBMS.
 
@@ -672,7 +671,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   run &>$LOG_DIR/docs_ycsb_yugabytedb_appmetrics.log
 ```
@@ -966,7 +964,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -sl \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1186,7 +1183,6 @@ bexhoma ycsb \
   -nbt 64 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rsr \
   -rss 50Gi \
@@ -1567,7 +1563,6 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 16 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_yugabytedb.log
@@ -1888,7 +1883,6 @@ bexhoma benchbase \
   -xkey \
   -xli 30 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_benchbase_yugabytedb_keytime.log
@@ -2375,7 +2369,6 @@ bexhoma benchbase \
   -nbt 16 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   run &>$LOG_DIR/docs_benchbase_yugabytedb_appmetrics.log
 ```

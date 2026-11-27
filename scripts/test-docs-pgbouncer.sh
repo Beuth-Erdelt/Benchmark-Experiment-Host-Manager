@@ -95,7 +95,6 @@ report_result $? "YCSB PGBouncer  sf=1"
 # -xnpo 64                      maximum outgoing connections per PGBouncer instance
 # -xop 16                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -122,7 +121,6 @@ bexhoma ycsb \
   -xnpo 64 \
   -xop 16 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -159,7 +157,6 @@ report_result $? "YCSB PGBouncer  sf=32  nbp=16"
 # -xnpo 64                      maximum outgoing connections per PGBouncer instance
 # -xop 16                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -187,7 +184,6 @@ bexhoma ycsb \
   -xnpo 64 \
   -xop 16 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \

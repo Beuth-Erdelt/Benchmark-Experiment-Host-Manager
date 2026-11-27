@@ -508,7 +508,6 @@ bexhoma hammerdb \
   -nbt 16 \
   -xlat \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1167,7 +1166,6 @@ bexhoma hammerdb \
   -xkey \
   -xlat \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \

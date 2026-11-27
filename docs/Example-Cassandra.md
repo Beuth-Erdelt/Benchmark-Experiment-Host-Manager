@@ -280,7 +280,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -485,7 +484,7 @@ YCSB SF=3
 ### Application Metrics
 
 Collecting application metrics for Cassandra is supported and included in the run above, for a single node and for a cluster.
-It is activated by `-m -mc -ma`.
+It is activated by `-m -ma`.
 A [cassandra_exporter](https://github.com/criteo/cassandra_exporter) sidecar next to each node reads JMX on `127.0.0.1:7199` and exposes the metrics on port 8080.
 The request rates need a phase longer than the scrape interval of 30 s; they show 0 for shorter ones.
 The metric set `cassandra` in [cluster.config](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) contains:
@@ -535,7 +534,6 @@ bexhoma ycsb \
   -xop 5 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -814,7 +812,6 @@ bexhoma ycsb \
   -xop 5 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -1082,7 +1079,6 @@ bexhoma ycsb \
   -xop 5 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -1353,7 +1349,6 @@ bexhoma ycsb \
   -xop 5 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 16Gi \
   -rr 16Gi \

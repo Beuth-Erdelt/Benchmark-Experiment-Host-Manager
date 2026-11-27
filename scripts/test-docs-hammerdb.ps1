@@ -51,7 +51,6 @@ bexhoma hammerdb `
   -nbt 16                       <# threads per benchmarking pod (virtual users) #> `
   -xlat                         <# collect per-operation latency histograms #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -127,7 +126,6 @@ bexhoma hammerdb `
   -xkey                         <# simulate user think time and keying delays #> `
   -xlat                         <# collect per-operation latency histograms #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `

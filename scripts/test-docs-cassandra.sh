@@ -85,7 +85,6 @@ report_result $? "YCSB Cassandra single  sf=1  nbp=1"
 # -xop 10                       number of operations for the benchmark phase (in millions), longer than the scrape interval
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
@@ -109,7 +108,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -141,7 +139,6 @@ report_result $? "YCSB Cassandra single monitoring  sf=3  nbp=1"
 # -xop 5                        number of operations for the benchmark phase (in millions), longer than the scrape interval
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
@@ -167,7 +164,6 @@ bexhoma ycsb \
   -xop 5 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -202,7 +198,6 @@ report_result $? "YCSB Cassandra single PVC  sf=1  nbp=1  nc=2"
 # -xop 5                        number of operations for the benchmark phase (in millions), longer than the scrape interval
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
@@ -227,7 +222,6 @@ bexhoma ycsb \
   -xop 5 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -257,7 +251,6 @@ report_result $? "YCSB Cassandra cluster 3  sf=1  nbp=1"
 # -xop 5                        number of operations for the benchmark phase (in millions), longer than the scrape interval
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
@@ -283,7 +276,6 @@ bexhoma ycsb \
   -xop 5 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 16Gi \
   -rr 16Gi \
@@ -313,7 +305,6 @@ report_result $? "YCSB Cassandra cluster 3 replication 3  sf=1  nbp=1"
 # -xop 5                        number of operations for the benchmark phase (in millions), longer than the scrape interval
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           flush and wait for compactions before each benchmarking round
 # -lr 16Gi                      RAM limit for the SUT container
 # -rr 16Gi                      RAM requested for the SUT container
@@ -341,7 +332,6 @@ bexhoma ycsb \
   -xop 5 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 16Gi \
   -rr 16Gi \

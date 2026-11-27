@@ -552,7 +552,6 @@ bexhoma benchbase \
   -nbp 1,2 \
   -nbt 160 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1313,7 +1312,6 @@ bexhoma benchbase \
   -nbt 1600 \
   -xkey \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 128Gi \
   -rr 128Gi \

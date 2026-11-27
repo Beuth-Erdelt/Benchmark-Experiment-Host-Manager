@@ -266,7 +266,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -469,7 +468,7 @@ YCSB SF=3
 ### Application Metrics
 
 Collecting application metrics for Dragonfly is supported and included in the run above.
-It is activated by `-m -mc -ma`.
+It is activated by `-m -ma`.
 Dragonfly exposes its metrics natively at `/metrics` on port 6379, so no exporter sidecar is needed.
 The metric set `dragonfly` in [cluster.config](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config) contains:
 
@@ -515,7 +514,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -814,7 +812,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -ar \
   -lr 64Gi \
@@ -1093,7 +1090,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -1473,7 +1469,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ar \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -1821,7 +1816,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -ar \
   -lr 64Gi \

@@ -267,7 +267,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -471,7 +470,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 10 \
   -m \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -709,7 +707,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 10 \
   -m \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -962,7 +959,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 10 \
   -m \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -1296,7 +1292,6 @@ bexhoma ycsb \
   -nwr 1 \
   -xop 10 \
   -m \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \

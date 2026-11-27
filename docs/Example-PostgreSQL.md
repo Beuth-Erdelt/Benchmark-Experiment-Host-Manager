@@ -280,7 +280,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -520,7 +519,7 @@ Test successful!
 ### Application Metrics
 
 Collecting application metrics for PostgreSQL is supported.
-It can be activated by `-m -mc -ma`: a `postgres_exporter` (blackbox) next to PostgreSQL exposes the metric set `postgresql` of [cluster.config](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config).
+It can be activated by `-m -ma`: a `postgres_exporter` (blackbox) next to PostgreSQL exposes the metric set `postgresql` of [cluster.config](https://github.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/blob/master/k8s-cluster.config).
 See [Metrics](Example-Metrics.md) for application metrics of all DBMS and benchmarks.
 
 ```bash
@@ -533,7 +532,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -1034,7 +1032,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \

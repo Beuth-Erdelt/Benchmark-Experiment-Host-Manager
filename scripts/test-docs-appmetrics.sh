@@ -30,7 +30,6 @@ source ./scripts/testfunctions.sh
 # -nbt 160                      threads per benchmarking pod
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -46,7 +45,6 @@ bexhoma benchbase \
   -nbt 160 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -70,7 +68,6 @@ report_result $? "Benchbase PostgreSQL appmetrics  sf=16  nbp=1,2"
 # -nbt 64                       threads per benchmarking pod
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -91,7 +88,6 @@ bexhoma ycsb \
   -nbt 64 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -111,7 +107,6 @@ report_result $? "YCSB PostgreSQL appmetrics  sf=3  nbp=1,8"
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 64Gi                      RAM limit for the SUT container
@@ -128,7 +123,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -150,7 +144,6 @@ report_result $? "TPC-H PostgreSQL appmetrics  sf=3"
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 64Gi                      RAM limit for the SUT container
@@ -167,7 +160,6 @@ bexhoma tpcds \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -188,7 +180,6 @@ report_result $? "TPC-DS PostgreSQL appmetrics  sf=3"
 # -xlat                         collect per-operation latency histograms
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -204,7 +195,6 @@ bexhoma hammerdb \
   -xlat \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -228,7 +218,6 @@ report_result $? "HammerDB PostgreSQL appmetrics  sf=16  nbp=1,2"
 # -nbt 160                      threads per benchmarking pod
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -244,7 +233,6 @@ bexhoma benchbase \
   -nbt 160 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -268,7 +256,6 @@ report_result $? "Benchbase MySQL appmetrics  sf=16  nbp=1,2"
 # -nbt 64                       threads per benchmarking pod
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -291,7 +278,6 @@ bexhoma ycsb \
   -nbt 64 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
@@ -313,7 +299,6 @@ report_result $? "YCSB MySQL appmetrics  sf=3  nbp=1,8"
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 64Gi                      RAM limit for the SUT container
@@ -331,7 +316,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -354,7 +338,6 @@ report_result $? "TPC-H MySQL appmetrics  sf=3"
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       query timeout in seconds
 # -lr 128Gi                     RAM limit for the SUT container
@@ -373,7 +356,6 @@ bexhoma tpcds \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 128Gi \
@@ -396,7 +378,6 @@ report_result $? "TPC-DS MySQL appmetrics  sf=3"
 # -xlat                         collect per-operation latency histograms
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G buffer pool fitting the RAM limit (template: 8G)
@@ -414,7 +395,6 @@ bexhoma hammerdb \
   -xlat \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   --set deployment[bexhoma-deployment-mysql].container[dbms].innodb_buffer_pool_size=32G \
@@ -447,7 +427,6 @@ report_result $? "HammerDB MySQL appmetrics  sf=16  nbp=1,2"
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -472,7 +451,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -494,7 +472,6 @@ report_result $? "YCSB CockroachDB appmetrics  sf=10  nbp=1"
 # -nwr 3                        number of worker node replicas
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -513,7 +490,6 @@ bexhoma benchbase \
   -nwr 3 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -545,7 +521,6 @@ report_result $? "Benchbase CockroachDB appmetrics  sf=16  nbp=1,2"
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnl $BEXHOMA_NODE_LOAD       schedule loader pods on this node
@@ -568,7 +543,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_ycsb_redis_appmetrics.log
@@ -600,7 +574,6 @@ report_result $? "YCSB Redis appmetrics  sf=3  nbp=1"
 # -xop 1                        number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
@@ -624,7 +597,6 @@ bexhoma ycsb \
   -xop 1 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
@@ -645,7 +617,6 @@ report_result $? "YCSB TiDB appmetrics  sf=1  nbp=1"
 # -xnpd 3                       number of PD (Placement Driver) nodes
 # -nwr 3                        number of worker node replicas
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnw $BEXHOMA_NODES_WORKER    schedule worker pods on these nodes (joined by '+')
@@ -662,7 +633,6 @@ bexhoma benchbase \
   -xnpd 3 \
   -nwr 3 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnw $BEXHOMA_NODES_WORKER \
@@ -694,7 +664,6 @@ report_result $? "Benchbase TiDB appmetrics  sf=16  nbp=1,2"
 # -xop 16                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -719,7 +688,6 @@ bexhoma ycsb \
   -xop 16 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -744,7 +712,6 @@ report_result $? "YCSB PGBouncer appmetrics  sf=16  nbp=16"
 # -xconn                        use a new connection per transaction
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -762,7 +729,6 @@ bexhoma benchbase \
   -xconn \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT \

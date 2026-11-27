@@ -4140,7 +4140,6 @@ bexhoma hardware \
   -nbp 1 \
   -nbt 1,2,4,8 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lc 2 \
   -rc 2 \
@@ -4149,7 +4148,7 @@ bexhoma hardware \
 ```
 
 The Per Phase table lists one row per thread count, with `hardware_sysbench_cpu_events_per_sec`
-and the `-mc` CPU usage columns being the ones to compare across rows; the thread count is used as
+and the `-m` CPU usage columns being the ones to compare across rows; the thread count is used as
 a fixed parameter in commands 14-16.
 
 ##### Show results
@@ -4351,7 +4350,6 @@ bexhoma hardware \
   -nbp 1,2,4 \
   -nbt 4 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lc 2 \
   -rc 2 \
@@ -4544,7 +4542,6 @@ bexhoma hardware \
   -nbp 1 \
   -nbt 2 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lc 2 \
   -rc 2 \
@@ -4769,7 +4766,6 @@ bexhoma hardware \
   -nbp 1 \
   -nbt 2 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lc 2 \
   -rc 2 \
@@ -5577,6 +5573,7 @@ bexhoma hardware \
   -nbp 1,2,4,8,16 \
   -nbt 1 \
   -m \
+  -mc \
   -ms $BEXHOMA_MS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_pod_scaling_sweep.log

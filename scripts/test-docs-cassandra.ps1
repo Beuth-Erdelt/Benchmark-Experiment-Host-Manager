@@ -68,7 +68,6 @@ bexhoma ycsb `
   -xop 10                       <# number of operations for the benchmark phase (in millions), longer than the scrape interval #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ar                           <# flush and wait for compactions before each benchmarking round #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
@@ -103,7 +102,6 @@ bexhoma ycsb `
   -xop 5                        <# number of operations for the benchmark phase (in millions), longer than the scrape interval #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ar                           <# flush and wait for compactions before each benchmarking round #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
@@ -141,7 +139,6 @@ bexhoma ycsb `
   -xop 5                        <# number of operations for the benchmark phase (in millions), longer than the scrape interval #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ar                           <# flush and wait for compactions before each benchmarking round #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
@@ -173,7 +170,6 @@ bexhoma ycsb `
   -xop 5                        <# number of operations for the benchmark phase (in millions), longer than the scrape interval #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ar                           <# flush and wait for compactions before each benchmarking round #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `
@@ -205,7 +201,6 @@ bexhoma ycsb `
   -xop 5                        <# number of operations for the benchmark phase (in millions), longer than the scrape interval #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect application-level metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ar                           <# flush and wait for compactions before each benchmarking round #> `
   -lr 16Gi                      <# RAM limit for the SUT container #> `
   -rr 16Gi                      <# RAM requested for the SUT container #> `

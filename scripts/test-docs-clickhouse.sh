@@ -70,7 +70,6 @@ report_result $? "TPC-H ClickHouse  sf=1"
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lc 16                        CPU limit for the SUT container
 # -lr 64Gi                      RAM limit for the SUT container
@@ -90,7 +89,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lc 16 \
   -lr 64Gi \

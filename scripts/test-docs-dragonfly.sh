@@ -84,7 +84,6 @@ report_result $? "YCSB Dragonfly single  sf=1  nbp=1"
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -107,7 +106,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -138,7 +136,6 @@ report_result $? "YCSB Dragonfly single monitoring  sf=3  nbp=1"
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -164,7 +161,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -199,7 +195,6 @@ report_result $? "YCSB Dragonfly single PVC  sf=1  nbp=1  nc=2"
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
@@ -225,7 +220,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -ar \
   -lr 64Gi \
@@ -254,7 +248,6 @@ report_result $? "YCSB Dragonfly cluster 3  sf=1  nbp=1"
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -281,7 +274,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ar \
   -lr 64Gi \
   -rr 64Gi \
@@ -312,7 +304,6 @@ report_result $? "YCSB Dragonfly cluster 3 PVC  sf=1  nbp=1  nc=2"
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -336,7 +327,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ar \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -367,7 +357,6 @@ report_result $? "YCSB Dragonfly cluster 3 replication  sf=1  nbp=1"
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -ar                           run save-snapshot.sh (SAVE) before each benchmarking round
 # -lr 64Gi                      RAM limit for the SUT container
@@ -394,7 +383,6 @@ bexhoma ycsb \
   -xop 10 \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -ar \
   -lr 64Gi \
