@@ -403,18 +403,14 @@ class Kubernetes():
         self.port = None
         self.storage_classes = []
 
+        # The given context, otherwise the current one of the kubeconfig
         if context is None:
             try:
                 context = kubernetes_config.list_kube_config_contexts()[1]['name']
-                self.contextdata = self.config['credentials']['k8s']['context'][context]
-                self.host = 'localhost'
-                self.port = self.contextdata['port']
-                self.namespace = self.contextdata['namespace']
-                self.appname = self.config['credentials']['k8s']['appname']
-                self.yamlfolder = yamlfolder
-                self.storage_classes = self.contextdata.get('storage_classes', [])
-            except Exception:
-                print("WARN: No Kubernetes context found")
+            except (kubernetes_config.ConfigException, OSError) as e:
+                print(f"WARN: No current Kubernetes context found in kubeconfig: {e}")
+        if context is not None:
+            self._read_context_config(context)
 
         self.context = context
         self.experiments = []
@@ -457,6 +453,31 @@ class Kubernetes():
         if connect:
             self.cluster_access()
         self.experiments = []
+
+    def _read_context_config(self, context):
+        """
+        Read the settings of a context from ``credentials.k8s`` in ``cluster.config``.
+
+        Sets ``contextdata``, ``port``, ``namespace``, ``appname`` and
+        ``storage_classes``. Missing entries keep their defaults and print a
+        warning naming what is missing.
+
+        :param context: kubectl context name.
+        """
+        config_k8s = self.config.get('credentials', {}).get('k8s', {})
+        contexts = config_k8s.get('context', {})
+        if context not in contexts:
+            print(f"WARN: Kubernetes context {context} not found in {self.clusterconfig} "
+                  f"(credentials.k8s.context has: {', '.join(contexts) or 'none'})")
+            return
+        self.contextdata = contexts[context]
+        for key in ('port', 'namespace'):
+            if key not in self.contextdata:
+                print(f"WARN: Kubernetes context {context} in {self.clusterconfig} has no '{key}'")
+        self.port = self.contextdata.get('port', self.port)
+        self.namespace = self.contextdata.get('namespace', self.namespace)
+        self.appname = config_k8s.get('appname', self.appname)
+        self.storage_classes = self.contextdata.get('storage_classes', [])
 
     def cluster_access(self):
         """
@@ -2886,7 +2907,7 @@ class Kubernetes():
         config_k8s = self.config['credentials']['k8s']
         if 'service_monitoring' in config_k8s['monitor']:
             url = config_k8s['monitor']['service_monitoring'].format(
-                namespace=self.contextdata['namespace'], service="monitoring"
+                namespace=self.namespace, service="monitoring"
             )
             query = "sum(node_memory_MemTotal_bytes)"
             safe_query = urllib.parse.quote_plus(query)
