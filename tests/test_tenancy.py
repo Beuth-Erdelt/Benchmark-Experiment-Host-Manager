@@ -102,10 +102,17 @@ class SelectionTest(unittest.TestCase):
 
 
 def _refused(script: str, *argv: str) -> tuple:
-    """Run the script's ``__main__`` and return the exit code and what it printed to stderr."""
+    """Run the script's ``__main__`` and return the exit code and what it printed to stderr.
+
+    A script that is not refused must not reach the real cluster: creating a Kubernetes
+    or AWS object fails the test instead of starting an experiment.
+    """
     stderr = io.StringIO()
+    reached = AssertionError(f'{script} {" ".join(argv)} reached the cluster before refusing')
     with (
         mock.patch.object(sys, 'argv', [script, 'run', *argv]),
+        mock.patch('bexhoma.clusters.Kubernetes', side_effect=reached),
+        mock.patch('bexhoma.clusters.AWS', side_effect=reached),
         contextlib.redirect_stdout(io.StringIO()),
         contextlib.redirect_stderr(stderr),
     ):
