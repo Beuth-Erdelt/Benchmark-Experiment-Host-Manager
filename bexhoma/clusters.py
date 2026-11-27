@@ -400,7 +400,8 @@ class Kubernetes():
         self.yamlfolder = yamlfolder
         self.contextdata = {}
         self.host = 'localhost'
-        self.port = None
+        # Local base port for port-forwards to the SUT (the remote port is the service's port-dbms)
+        self.port = 9091
         self.storage_classes = []
 
         # The given context, otherwise the current one of the kubeconfig
@@ -3212,9 +3213,34 @@ class Kubernetes():
             fullcommand = f'port-forward pod/{pod_dashboard} 8050:8050 8888:8888 --address 0.0.0.0'
             self.kubectl(fullcommand)
 
+    @staticmethod
+    def find_free_local_port(base_port, tries=100, address='0.0.0.0'):
+        """
+        Return the first local port from ``base_port`` on that can be bound.
+
+        Tries ``base_port``, ``base_port+1``, ... so that several port-forwards
+        (several DBMS, several clusters) can run at the same time.
+
+        :param base_port: First port to try (the context's ``port``).
+        :param tries: Number of ports to try.
+        :param address: Local address the port-forward listens on.
+        :return: Free port number, or ``None`` if none of the ports is free.
+        """
+        for port in range(int(base_port), int(base_port) + tries):
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                try:
+                    s.bind((address, port))
+                    return port
+                except OSError:
+                    continue
+        return None
+
     def forward_sut_port(self, experiment='', configuration=''):
         """
         Forward the SUT master service port to localhost.
+
+        The local port is the first free one from the context's ``port`` on,
+        the remote port is the service's ``port-dbms``.
 
         :param experiment: Filter by experiment code (optional).
         :param configuration: Filter by DBMS configuration name (optional).
@@ -3229,8 +3255,12 @@ class Kubernetes():
         )
         if pods_master:
             pod_master = pods_master[0]
-            print(f"Connect to {pod_master}")
-            fullcommand = f'port-forward svc/{pod_master} {self.port} --address 0.0.0.0'
+            port = self.find_free_local_port(self.port)
+            if port is None:
+                print(f"ERROR: No free local port from {self.port} on")
+                return
+            print(f"Connect to {pod_master} via localhost:{port}")
+            fullcommand = f'port-forward svc/{pod_master} {port}:port-dbms --address 0.0.0.0'
             self.kubectl(fullcommand)
 
     def add_to_messagequeue(self, queue, data):

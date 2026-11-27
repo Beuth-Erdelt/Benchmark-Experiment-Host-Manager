@@ -605,21 +605,10 @@ scrape_configs:
         :rtype: str
         """
         cfg = self._config
-        context = cfg.experiment.cluster.context
-        app = cfg.appname
-        component = 'sut'
-        experiment = cfg.get_experiment_name()
-        configuration = cfg.configuration
         name = cfg.generate_component_name(
-            app=app, component=component,
-            experiment=experiment, configuration=configuration)
-        ports = cfg.experiment.cluster.get_ports_of_service(
-            app=app, component=component,
-            experiment=experiment, configuration=configuration)
-        forward = ['kubectl', f'--context {context}',
-                   'port-forward', 'service/' + name]
-        forward.extend(ports)
-        return " ".join(forward)
+            app=cfg.appname, component='sut',
+            experiment=cfg.get_experiment_name(), configuration=cfg.configuration)
+        return cfg.experiment.generate_port_forward(name)
 
     def start_sut(
         self,
