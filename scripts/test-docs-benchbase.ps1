@@ -70,6 +70,8 @@ bexhoma benchbase `
   -m                            <# collect SUT resource metrics #> `
   -mc                           <# collect metrics of loader and benchmarker #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
   -rsr                          <# delete and recreate the PVC at experiment start, so the loader is measured #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `

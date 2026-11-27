@@ -90,6 +90,8 @@ report_result $? "Benchbase monitoring  sf=16  nbp=1,2"
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics of loader and benchmarker
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
+# -lr 64Gi                      RAM limit for the SUT container
+# -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start, so the loader is measured
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -105,6 +107,8 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
+  -lr 64Gi \
+  -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \

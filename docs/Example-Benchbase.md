@@ -772,6 +772,8 @@ bexhoma benchbase \
   -m \
   -mc \
   -ms $BEXHOMA_MS \
+  -lr 64Gi \
+  -rr 64Gi \
   -rsr \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
