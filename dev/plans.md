@@ -19,7 +19,6 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [load-failure-and-sizing](plan-load-failure-and-sizing.md) | open | P2 tmpdir (decision c/d), A4 |
 | [dbms-generic-verification](plan-dbms-generic-verification.md) | done | 2 side findings, aliases deferred |
 | [research-software](plan-research-software.md) | open | Zenodo 2/2a/20, step 18, R3, I1 |
-| [ceph-pool-metrics](plan-ceph-pool-metrics.md) | open | lag decision, text summary |
 | [observe-per-query-metrics](plan-observe-per-query-metrics.md) | open | refresh, staleness, application metrics |
 | [ssb](plan-ssb.md) | open | multi-tenancy |
 | [explicit-rounds](plan-explicit-rounds.md) | planned | C1-C4, then #925 |
@@ -38,6 +37,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [session-parameters](plan-session-parameters.md) | parked | S1-S3 |
 | [planned-disruptions](plan-planned-disruptions.md) | parked | all, until a benchmark needs it |
 | [848-no-silent-load-failures](plan-848-no-silent-load-failures.md) | done | - |
+| [ceph-pool-metrics](plan-ceph-pool-metrics.md) | done | risks only |
 | [docs-dbms-pages](plan-docs-dbms-pages.md) | done | one unreferenced log |
 | [keep-sut](plan-keep-sut.md) | done | default of `load` (optional) |
 | [metrics-pod-scope](plan-metrics-pod-scope.md) | done | - |
@@ -104,13 +104,6 @@ Steps 1, 2b, 3-17, 19 done (v0.12.0, v0.12.1).
   A/B/C, split of generic spec vs. catalog, one or two DOIs, how the proposal describes the validator.
 - **R3:** CI tests only Python 3.10 and 3.12.
 - **I1:** result folder formats (pickle, Python literals) come from DBMS-Benchmarker.
-
-### [ceph-pool-metrics](plan-ceph-pool-metrics.md)
-
-M1-M5 done (v0.11.3).
-- **Lag decision:** Ceph counters lag 1-2 min behind the phase windows; a per-metric `shift` in
-  DBMS-Benchmarker or document the lag. Measure the lag first.
-- The text summary (`bexhoma summary`) has no Ceph tables (the agent report has).
 
 ### [observe-per-query-metrics](plan-observe-per-query-metrics.md)
 
@@ -236,6 +229,8 @@ interaction with `-nc`/`-rsrp`.
 ## Done
 
 - [848-no-silent-load-failures](plan-848-no-silent-load-failures.md): v0.11.14 (#868).
+- [ceph-pool-metrics](plan-ceph-pool-metrics.md): v0.11.3; the 1-2 min counter lag is documented only
+  (decided 2026-11-28). Risks only: short phases on a fresh volume, CephFS pool level, no OSD scope.
 - [docs-dbms-pages](plan-docs-dbms-pages.md): left over, delete or keep
   `logs_tests/test_tpcds_testcase_compare_summary.md` (v0.10.0, unreferenced).
 - [keep-sut](plan-keep-sut.md): optional, whether `load` should default to not keeping SUTs.
