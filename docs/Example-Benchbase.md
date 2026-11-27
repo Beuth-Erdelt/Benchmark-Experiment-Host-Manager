@@ -759,7 +759,7 @@ This is too coarse for such a quick example.
 
 To get an impression of the resources the clients need, `-mc` also monitors the components outside the SUT.
 This run sweeps the number of terminals of one benchmarker pod (`-nbt 40,80,160,320`) without a throughput target (`-xtb 0`), so every terminal sends as fast as the SUT answers.
-The loader of Benchbase starts one thread per processor it sees, independent of `-nlt`: `-nlt` sets the terminals, which only matter for benchmarking. A loader pod without CPU limit therefore uses the cores of its node.
+Benchbase loads with one pod. `-nlt` sets the number of its loader threads; the default `-nlt 0` lets Benchbase start one thread per processor it sees, so a loader pod without CPU limit uses the cores of its node. For TPC-C, a loader thread loads one warehouse at a time, so more threads than warehouses (`-sf`) have no effect.
 
 ```bash
 bexhoma benchbase \

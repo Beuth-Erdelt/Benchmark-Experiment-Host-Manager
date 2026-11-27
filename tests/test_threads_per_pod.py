@@ -68,6 +68,12 @@ class EntryScriptsTest(unittest.TestCase):
                 self.assertEqual(code, 2)
                 self.assertIn('4 threads on 8 pods', stderr)
 
+    def test_benchbase_loader_threads_at_least_zero(self) -> None:
+        """Benchbase's -nlt 0 (default) means one loader thread per processor; negative values are refused."""
+        code, stderr = _refused('benchbase.py', '-dbms', 'PostgreSQL', '-nlt', '-1')
+        self.assertEqual(code, 2)
+        self.assertIn('at least 0', stderr)
+
     def test_hardware_tools_with_threads_are_checked(self) -> None:
         for tool in ('fio', 'sysbench', 'netperf'):
             with self.subTest(tool=tool):

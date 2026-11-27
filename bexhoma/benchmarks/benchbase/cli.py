@@ -104,15 +104,21 @@ def main() -> None:
     parser.add_argument('-xbt',   '--xbenchmark-type', help='Benchbase benchmark suite to run', default='tpcc', choices=['tpcc', 'twitter', 'chbenchmark', 'ycsb', 'auctionmark', 'epinions', 'hyadapt', 'noop', 'otmetrics', 'resourcestresser', 'seats', 'sibench', 'smallbank', 'tatp', 'voter', 'wikipedia'], dest='benchmark')
     parser.add_argument('-xtb',   '--xtarget-base', help='base ops-per-second target; multiply by -xnbf factors to get per-pod target (0 = unlimited)', default="1024", dest='target_base')
     parser.add_argument('-xwu',   '--xwarmup', help='warmup in seconds before the measured benchmark duration (not part of the results)', default=0, dest='warmup')
-    parser.set_defaults(num_worker=1)
+    # -nlt is BenchBase's loaderThreads of the one loader pod; 0 = one thread per processor it sees
+    parser.set_defaults(num_worker=1, num_loading_threads="0")
     # evaluate args
     args = parser.parse_args()
     reason = tenancy_error('benchbase', args)
     if reason:
         parser.error(reason)
-    for threads, pods, threads_option, pods_option in (
-            (args.num_loading_threads, args.num_loading_pods, '-nlt', '-nlp'),
-            (args.num_benchmarking_threads, args.num_benchmarking_pods, '-nbt', '-nbp')):
+    loading_values = [value for value in str(args.num_loading_threads).split(',') if value]
+    if not all(value.isdigit() for value in loading_values):
+        parser.error(f"-nlt {args.num_loading_threads} must be comma-separated integers of at least 0 "
+                     f"(0 = one loader thread per processor)")
+    checks = [(args.num_benchmarking_threads, args.num_benchmarking_pods, '-nbt', '-nbp')]
+    if all(int(value) > 0 for value in loading_values):
+        checks.append((args.num_loading_threads, args.num_loading_pods, '-nlt', '-nlp'))
+    for threads, pods, threads_option, pods_option in checks:
         reason = threads_per_pod_error(threads, pods, threads_option, pods_option)
         if reason:
             parser.error(reason)
@@ -198,6 +204,7 @@ def main() -> None:
     # remove running dbms
     #experiment.clean()
     experiment.prepare_testbed(command_args)
+    num_loading_threads = experiment.get_parameter_as_list('num_loading_threads')
     num_benchmarking_pods = experiment.get_parameter_as_list('num_benchmarking_pods')
     num_benchmarking_threads = experiment.get_parameter_as_list('num_benchmarking_threads')
     num_benchmarking_target_factors = experiment.get_parameter_as_list('num_benchmarking_target_factors')
@@ -243,22 +250,22 @@ def main() -> None:
     ##############
     ### add configs of dbms to be tested
     ##############
-    for loading_threads in [1]:                 # always maximum
-        for loading_pods in [1]:                # always only 1 pod
+    for loading_threads in num_loading_threads:     # 0 = one thread per processor
+        for loading_pods in [1]:                    # BenchBase loads with a single pod
             loading_threads_per_pod = int(loading_threads/loading_pods)
             # every DBMS that can run Benchbase (or the ones named by -dbms), as declared in cluster.config
             for docker in selected_dockers(cluster.dockers, 'benchbase', args.dbms, args):
                 entry = benchmark_entry(cluster.dockers, docker, 'benchbase')
                 # a DBMS behind a connection pooler gets a configuration per pooler setting
                 for pooling in pooling_variants(entry, num_pooling_pods,
-                                                num_pooling_in or [int(loading_threads)],
-                                                num_pooling_out or [int(loading_threads)]):
+                                                num_pooling_in or [1],
+                                                num_pooling_out or [1]):
                     # a DBMS in the multi-tenant variants gets one configuration per tenant (container-tenancy)
                     for tenant in tenant_ids(experiment, entry):
                         tenants = tenant_parameters(experiment, entry, tenant, storage_prefix(cluster.dockers, docker))
                         config = build_configuration(
                             experiment, docker, 'benchbase', args,
-                            loading_parameters={'BENCHBASE_TERMINALS': loading_threads_per_pod, **tenants.get('loading', {})},
+                            loading_parameters={'BENCHBASE_LOADER_THREADS': loading_threads_per_pod, **tenants.get('loading', {})},
                             storage_configuration=tenants.get('storage'),
                             context=context, pooling=pooling or None)
                         pods = loading_pods * tenants.get('tenants_per_job', 1)
