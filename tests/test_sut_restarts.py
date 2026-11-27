@@ -109,7 +109,7 @@ class ParseDescribeLogTest(unittest.TestCase):
 
 
 class RestartCountsTest(unittest.TestCase):
-    """kubectl merges stderr into stdout, so warning lines surround the counts."""
+    """Should warning lines ever surround the counts, they are dropped."""
 
     _KLOG = "E0928 10:11:12.123456   1234 memcache.go:265] couldn't get current server API group list\n"
 

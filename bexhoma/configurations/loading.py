@@ -840,12 +840,10 @@ class LoadingCoordinator:
                         if num_data_jobs > 1:
                             new_ready = int(pod_labels[pod].get('num_data_jobs_ready', 0)) + 1
                             is_last_data_job = new_ready >= num_data_jobs
-                            done_label = (
-                                f' data_job_{data_job_idx}_done=True'
-                                if data_job_idx is not None else ''
-                            )
-                            cfg.experiment.cluster.kubectl(
-                                f'label pods {pod} --overwrite num_data_jobs={num_data_jobs} num_data_jobs_ready={new_ready}{done_label}')
+                            job_labels = {'num_data_jobs': num_data_jobs, 'num_data_jobs_ready': new_ready}
+                            if data_job_idx is not None:
+                                job_labels[f'data_job_{data_job_idx}_done'] = True
+                            cfg.experiment.cluster.label_pod(pod, job_labels)
                             # Per-entry data_job_{i}_done labels (written above, persisted on the
                             # pod, and read back here from the labels fetched at the top of this
                             # iteration) let us name exactly which entries remain, rather than just
@@ -951,23 +949,22 @@ class LoadingCoordinator:
                         cfg.experiment.cluster.logger.debug(cfg.time_loading_start)
                         cfg.experiment.cluster.logger.debug(cfg.time_loading_end)
                         cfg.experiment.cluster.logger.debug(cfg.time_loading)
-                        data_label = ' data=True' if is_last_data_job else ''
-                        fullcommand = (
-                            'label pods ' + pod_sut
-                            + f' --overwrite time_loading_end="{cfg.time_loading_end}" time_loading_start="{cfg.time_loading_start}"'
-                              f' time_ingested={loader_time} time_loading={cfg.time_loading} time_generated={generator_time}{data_label}')
-                        cfg.experiment.cluster.kubectl(fullcommand)
+                        time_labels = {
+                            'time_loading_end': cfg.time_loading_end,
+                            'time_loading_start': cfg.time_loading_start,
+                            'time_ingested': loader_time,
+                            'time_loading': cfg.time_loading,
+                            'time_generated': generator_time,
+                        }
+                        if is_last_data_job:
+                            time_labels['data'] = True
+                        cfg.experiment.cluster.label_pod(pod_sut, time_labels)
                         use_storage = cfg.use_storage()
                         use_ramdisk = cfg.use_ramdisk()
                         if use_storage and not use_ramdisk:
                             volume = self.get_volume_to_label()
                             if volume:
-                                fullcommand = (
-                                    'label pvc ' + volume
-                                    + f' --overwrite time_loading_end="{cfg.time_loading_end}"'
-                                      f' time_loading_start="{cfg.time_loading_start}" time_ingested={loader_time}'
-                                      f' time_loading={cfg.time_loading} time_generated={generator_time}{data_label}')
-                                cfg.experiment.cluster.kubectl(fullcommand)
+                                cfg.experiment.cluster.label_pvc(volume, time_labels)
                     if is_last_data_job and len(cfg.indexscript):
                         if cfg.tenant_per == 'container' and not cfg.loading_finished:
                             cfg.tenant_ready_to_index = True
@@ -1020,8 +1017,7 @@ class LoadingCoordinator:
             if cfg.loading_finished and pod_labels[pod].get('loaded') != 'True':
                 # the phase is over for the pod either way; the volume is marked
                 # loaded only after a clean load, so a failed one is never reused
-                cfg.experiment.cluster.kubectl(
-                    f'label pod {pod} --overwrite loaded=True')
+                cfg.experiment.cluster.label_pod(pod, {'loaded': True})
                 self.check_sut_restarts_during_loading(pod)
                 script_errors = loading_script_errors(pod_labels[pod])
                 failed = bool(cfg.loading_failed or script_errors)
@@ -1031,8 +1027,7 @@ class LoadingCoordinator:
                             cfg.loading_failed
                             + [f"failed {phase} scripts: {count}"
                                for phase, count in script_errors.items()])))
-                    cfg.experiment.cluster.kubectl(
-                        f'label pod {pod} --overwrite loading_failed=True')
+                    cfg.experiment.cluster.label_pod(pod, {'loading_failed': True})
                 use_storage = cfg.use_storage()
                 use_ramdisk = cfg.use_ramdisk()
                 # an inherited volume keeps the labels of the load that filled it
@@ -1041,11 +1036,10 @@ class LoadingCoordinator:
                     if volume:
                         # what the volume holds: DDL and loading values, shape (see
                         # SutConfiguration.volume_parameter_labels); a reuse reads them
-                        labels = ''.join(f' {key}={value}'
-                                         for key, value in cfg.volume_parameter_labels().items())
-                        status = 'loaded=False loading_failed=True' if failed else 'loaded=True'
-                        cfg.experiment.cluster.kubectl(
-                            f'label pvc {volume} --overwrite {status}{labels}')
+                        labels = ({'loaded': False, 'loading_failed': True} if failed
+                                  else {'loaded': True})
+                        labels.update(cfg.volume_parameter_labels())
+                        cfg.experiment.cluster.label_pvc(volume, labels)
             if 'time_loading_start' in pod_labels[pod]:
                 cfg.time_loading_start = int(pod_labels[pod]['time_loading_start'])
             if 'time_loading_end' in pod_labels[pod]:
@@ -1291,8 +1285,8 @@ class LoadingCoordinator:
             self._report_reset(script_type, elapsed_workers)
             cfg.pod_sut = cfg.experiment.cluster.get_pods(
                 component='sut', configuration=cfg.configuration, experiment=cfg.code)[0]
-            cfg.experiment.cluster.kubectl(
-                f'label pod {cfg.pod_sut} --overwrite {script_type}=True time_{script_type}={elapsed_workers}')
+            cfg.experiment.cluster.label_pod(
+                cfg.pod_sut, {script_type: True, f'time_{script_type}': elapsed_workers})
             return elapsed_workers
         self.prepare_init_dbms(scripts)
         pods = cfg.experiment.cluster.get_pods(
@@ -1351,8 +1345,8 @@ class LoadingCoordinator:
                         fh.write(content)
         elapsed = int(default_timer() - t_start) + elapsed_workers
         self._report_reset(script_type, elapsed)
-        cfg.experiment.cluster.kubectl(
-            f'label pod {cfg.pod_sut} --overwrite {script_type}=True time_{script_type}={elapsed}')
+        cfg.experiment.cluster.label_pod(
+            cfg.pod_sut, {script_type: True, f'time_{script_type}': elapsed})
         return elapsed
 
     def load_data(

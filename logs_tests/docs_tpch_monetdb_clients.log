@@ -68,14 +68,6 @@ Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 43 API requests
 MonetDB-1                     : is loading
 Loop pass                     : took 1.9s (0 kubectl calls 0.0s, 43 API requests 1.4s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '445c45d2-c07e-42f8-b8cb-be01e9c3eb75', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 27 Nov 2026 13:14:30 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MonetDB-1                     : is loading
 Loop pass                     : took 4.7s (0 kubectl calls 0.0s, 44 API requests 1.4s)
@@ -134,14 +126,6 @@ Loop pass                     : took 1.2s (0 kubectl calls 0.0s, 35 API requests
 MonetDB-1                     : is loading
 Loop pass                     : took 1.7s (0 kubectl calls 0.0s, 35 API requests 1.2s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '21d4cebe-611e-419e-9f2a-7d1a8829b48d', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 27 Nov 2026 13:24:33 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MonetDB-1                     : is loading
 Loop pass                     : took 4.9s (0 kubectl calls 0.0s, 36 API requests 1.6s)
@@ -230,14 +214,6 @@ Loop pass                     : took 1.3s (0 kubectl calls 0.0s, 35 API requests
 MonetDB-1                     : is loading
 Loop pass                     : took 1.4s (0 kubectl calls 0.0s, 35 API requests 1.0s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '95b05e98-3193-4000-b548-432281631a30', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 27 Nov 2026 13:39:48 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MonetDB-1                     : is loading
 Loop pass                     : took 4.6s (0 kubectl calls 0.0s, 36 API requests 1.2s)
@@ -296,14 +272,6 @@ Loop pass                     : took 5.6s (9 kubectl calls 3.9s, 37 API requests
 MonetDB-1                     : is loading
 Loop pass                     : took 2.7s (3 kubectl calls 1.3s, 32 API requests 0.9s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': '0dbee5f9-962a-49f9-970d-8ed647ab6890', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 27 Nov 2026 13:49:58 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MonetDB-1                     : is loading
 Loop pass                     : took 6.0s (3 kubectl calls 1.3s, 32 API requests 1.1s)
@@ -405,14 +373,6 @@ Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 15 API requests
 MonetDB-1                     : is loading
 Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 15 API requests 0.5s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'aa3ac337-e4ad-412a-9da2-2e19854513fa', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 27 Nov 2026 14:05:13 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MonetDB-1                     : is loading
 Loop pass                     : took 4.1s (0 kubectl calls 0.0s, 16 API requests 0.8s)
@@ -584,14 +544,6 @@ Loop pass                     : took 0.7s (0 kubectl calls 0.0s, 19 API requests
 MonetDB-1                     : has running benchmarks
 Loop pass                     : took 1.0s (0 kubectl calls 0.0s, 19 API requests 0.8s)
 - waiting 30s -               : done
-Exception when calling CoreV1Api->list_namespaced_pod for get_pods: (401)
-Reason: Unauthorized
-HTTP response headers: HTTPHeaderDict({'Audit-Id': 'dcb4c000-6e13-43df-99f8-1ff79b990096', 'Cache-Control': 'no-cache, private', 'Content-Type': 'application/json', 'Date': 'Fri, 27 Nov 2026 14:30:43 GMT', 'Content-Length': '129'})
-HTTP response body: {"kind":"Status","apiVersion":"v1","metadata":{},"status":"Failure","message":"Unauthorized","reason":"Unauthorized","code":401}
-
-
-
-Create new access token
 - waiting 2s -                : done
 MonetDB-1                     : has running benchmarks
 Loop pass                     : took 3.7s (0 kubectl calls 0.0s, 20 API requests 0.7s)

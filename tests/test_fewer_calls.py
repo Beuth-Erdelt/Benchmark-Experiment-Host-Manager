@@ -450,13 +450,13 @@ class HostProbeTest(unittest.TestCase):
         probe._config.code = '42'
         probe._config.deployment_infos['deployment']['sut']['pvc'] = ['pvc-1']
         probe._config.experiment.cluster.get_pods = mock.Mock(return_value=['sut-0'])
-        probe._config.experiment.cluster.kubectl = mock.Mock(return_value='labeled')
+        probe._config.experiment.cluster.label_pvc = mock.Mock(return_value=True)
         with mock.patch('builtins.print'):
             probe.check_volumes(measured={'sut-0': ('100G', '55G')})
             probe.check_volumes()
         self.assertEqual(commands, ['df -hP /data'])
-        probe._config.experiment.cluster.kubectl.assert_called_once_with(
-            'label pvc pvc-1 --overwrite volume_size="100G" volume_used="55G"')
+        probe._config.experiment.cluster.label_pvc.assert_called_once_with(
+            'pvc-1', {'volume_size': '100G', 'volume_used': '55G'})
 
     def test_restarts_from_already_read_counts(self) -> None:
         probe, _ = _probe({})
