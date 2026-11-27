@@ -370,4 +370,4 @@ This means:
 
 ## Example Runs
 
-[Example: Testing Collectors](Example-Collectors.md) runs Benchbase, TPC-H, YCSB and HammerDB with `-m` and `-ma` (the first run of each benchmark also with `-mc`) and shows the monitoring tables, the missing-metric report and the application metrics of each run.
+[Example: Testing Collectors](Example-Collectors.md) runs Benchbase, TPC-H, YCSB and HammerDB with `-m`, `-ma` and `-mc` together and shows the monitoring tables, the missing-metric report and the application metrics of each run.

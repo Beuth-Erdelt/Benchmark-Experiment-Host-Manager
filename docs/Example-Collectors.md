@@ -2,10 +2,10 @@
 
 <img src="https://raw.githubusercontent.com/Beuth-Erdelt/Benchmark-Experiment-Host-Manager/master/docs/workflow-sketch-simple.png"/>
 
-This page shows examples for running benchmarks with the three monitoring options:
+This page shows examples for running benchmarks with all three monitoring options active simultaneously:
 * `-m`: system metrics of the SUT (system under test), collected by a cluster-wide Prometheus installation
 * `-ma`: application metrics collected by sidecar containers attached to the SUT pod
-* `-mc`: metrics of the other components (loader, data generator, benchmarker), in the first experiment of each benchmark group
+* `-mc`: system metrics of the other components (loader, data generator, benchmarker), collected by the same installation
 
 The script `scripts/test-docs-collector.sh` runs 28 experiments covering Benchbase TPC-C, TPC-H, YCSB, and HammerDB — each in single-tenant and multi-tenant configurations — as well as TPC-DS, SSB and Hardware. Each benchmark group runs three experiments: two with a fresh persistent volume (`-rsr`) to test data generation and loading, and a third that reuses the existing volume to test repeated benchmarking runs. TPC-DS runs 22 of its 99 queries (`-xaq`), SSB's second experiment uses the flat schema (`-xsv flat`), and Hardware runs one experiment per tool (fio, sysbench, sockperf, netperf), since each tool has its own result columns.
 
@@ -358,6 +358,7 @@ bexhoma benchbase \
   -xli 10 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -679,6 +680,7 @@ bexhoma benchbase \
   -xli 10 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -1010,6 +1012,7 @@ bexhoma benchbase \
   -xkey \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -1359,6 +1362,7 @@ bexhoma benchbase \
   -xkey \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -1705,6 +1709,7 @@ bexhoma benchbase \
   -xkey \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -2670,6 +2675,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -3085,6 +3091,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 60Gi \
@@ -3521,6 +3528,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -4023,6 +4031,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -4520,6 +4529,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -5454,6 +5464,7 @@ bexhoma ycsb \
   -xop 1 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -rsr \
   -rss 50Gi \
@@ -5795,6 +5806,7 @@ bexhoma ycsb \
   -xop 8 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -6435,6 +6447,7 @@ bexhoma hammerdb \
   -xlat \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -rsr \
   -rss 50Gi \
@@ -6727,6 +6740,7 @@ bexhoma hammerdb \
   -xlat \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -7505,6 +7519,7 @@ bexhoma tpcds \
   -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -7966,6 +7981,7 @@ bexhoma tpcds \
   -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -8837,6 +8853,7 @@ bexhoma ssb \
   -xii -xis \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -9269,6 +9286,7 @@ bexhoma ssb \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -9850,6 +9868,7 @@ bexhoma hardware \
   -nbp 1 \
   -nbt 1,2 \
   -m \
+  -mc \
   -ms $BEXHOMA_MS \
   -lc 2 \
   -rc 2 \
@@ -9860,7 +9879,7 @@ bexhoma hardware \
 This
 * runs the CPU and memory tests of sysbench (`-xht sysbench`) for 60 seconds each (`-xtd 60`)
 * uses 1 pod with 1, then 2 threads (`-nbp 1 -nbt 1,2`)
-* limits the SUT container to 2 CPUs (`-lc 2 -rc 2`)
+* limits the SUT container to 2 CPUs (`-lc 2 -rc 2`) and also collects metrics of the other components (`-mc`)
 
 The result looks something like
 

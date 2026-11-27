@@ -82,6 +82,7 @@ report_result $? "Benchbase collector 1/3  sf=16  nbp=1,2  nbf=16"
 # -xli 10                       log status to stdout every x seconds
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -103,6 +104,7 @@ bexhoma benchbase \
   -xli 10 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -126,6 +128,7 @@ report_result $? "Benchbase collector 2/3  sf=16  nbp=4,8  nbf=20"
 # -xli 10                       log status to stdout every x seconds
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
@@ -145,6 +148,7 @@ bexhoma benchbase \
   -xli 10 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -175,6 +179,7 @@ BEXHOMA_NUM_TENANTS=2
 # -xkey                         simulate user think time and keying delays
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -197,6 +202,7 @@ bexhoma benchbase \
   -xkey \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -220,6 +226,7 @@ report_result $? "Benchbase MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 # -xkey                         simulate user think time and keying delays
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -242,6 +249,7 @@ bexhoma benchbase \
   -xkey \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -265,6 +273,7 @@ report_result $? "Benchbase MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=1"
 # -xkey                         simulate user think time and keying delays
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -287,6 +296,7 @@ bexhoma benchbase \
   -xkey \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -361,6 +371,7 @@ report_result $? "TPC-H collector 1/3  sf=3"
 # -xis                          run ANALYZE after data load
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -379,6 +390,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -402,6 +414,7 @@ report_result $? "TPC-H collector 2/3  sf=6"
 # -xis                          run ANALYZE after data load
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 60Gi                     size of the persistent volume claim
@@ -418,6 +431,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 60Gi \
@@ -448,6 +462,7 @@ BEXHOMA_NUM_TENANTS=2
 # -xis                          run ANALYZE after data load
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -470,6 +485,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -495,6 +511,7 @@ report_result $? "TPC-H MT schema  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 # -xis                          run ANALYZE after data load
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -517,6 +534,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -543,6 +561,7 @@ report_result $? "TPC-H MT database  tenants=$BEXHOMA_NUM_TENANTS  sf=3"
 # -xis                          run ANALYZE after data load
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -566,6 +585,7 @@ bexhoma tpch \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -651,6 +671,7 @@ report_result $? "YCSB collector 1/3  nbp=1,8  nbf=2"
 # -xop 1                        scaling factor for operations (number of operations x 100000)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
@@ -674,6 +695,7 @@ bexhoma ycsb \
   -xop 1 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -rsr \
   -rss 50Gi \
@@ -699,6 +721,7 @@ report_result $? "YCSB collector 2/3  nbp=1,8  nbf=3"
 # -xop 8                        scaling factor for operations (number of operations x 100000)
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -720,6 +743,7 @@ bexhoma ycsb \
   -xop 8 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -786,6 +810,7 @@ report_result $? "HammerDB collector 1/3  sf=16  nbp=1,2  nbt=16"
 # -xlat                         collect per-operation latency histograms
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rsr                          delete and recreate the PVC at experiment start
 # -rss 50Gi                     size of the persistent volume claim
@@ -804,6 +829,7 @@ bexhoma hammerdb \
   -xlat \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -rsr \
   -rss 50Gi \
@@ -824,6 +850,7 @@ report_result $? "HammerDB collector 2/3  sf=16  nbp=1,2  nbt=32"
 # -xlat                         collect per-operation latency histograms
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rss 50Gi                     size of the persistent volume claim
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
@@ -840,6 +867,7 @@ bexhoma hammerdb \
   -xlat \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -rss 50Gi \
   -rnn $BEXHOMA_NODE_SUT -rnl $BEXHOMA_NODE_LOAD -rnb $BEXHOMA_NODE_BENCHMARK \
@@ -915,6 +943,7 @@ report_result $? "TPC-DS collector 1/3  sf=1  ne=1,2"
 # -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 22 of the 99 queries, as many as TPC-H has
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       per-query timeout in seconds
 # -lr 64Gi                      RAM limit for the SUT container
@@ -936,6 +965,7 @@ bexhoma tpcds \
   -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -961,6 +991,7 @@ report_result $? "TPC-DS collector 2/3  sf=3  ne=1,2"
 # -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 22 of the 99 queries, as many as TPC-H has
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       per-query timeout in seconds
 # -lr 64Gi                      RAM limit for the SUT container
@@ -981,6 +1012,7 @@ bexhoma tpcds \
   -xaq 1,3,7,13,19,25,34,42,43,46,48,52,55,59,63,68,73,79,89,96,98,99 \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -1058,6 +1090,7 @@ report_result $? "SSB collector 1/3  sf=1  star schema"
 # -xis                          run ANALYZE after data load
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       per-query timeout in seconds
 # -lr 64Gi                      RAM limit for the SUT container
@@ -1079,6 +1112,7 @@ bexhoma ssb \
   -xii -xis \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -1103,6 +1137,7 @@ report_result $? "SSB collector 2/3  sf=3  flat schema"
 # -xis                          run ANALYZE after data load
 # -m                            collect SUT resource metrics
 # -ma                           collect application-level metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 1200                       per-query timeout in seconds
 # -lr 64Gi                      RAM limit for the SUT container
@@ -1122,6 +1157,7 @@ bexhoma ssb \
   -xii -xic -xis \
   -m \
   -ma \
+  -mc \
   -ms $BEXHOMA_MS \
   -t 1200 \
   -lr 64Gi \
@@ -1192,6 +1228,7 @@ report_result $? "Hardware collector 1/4  fio  nbp=1,2"
 # -nbp 1                        benchmarking pod count
 # -nbt 1,2                      threads per benchmarking pod to sweep (comma-separated)
 # -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lc 2                         CPU limit for the SUT container
 # -rc 2                         CPU request for the SUT container, matches -lc
@@ -1205,6 +1242,7 @@ bexhoma hardware \
   -nbp 1 \
   -nbt 1,2 \
   -m \
+  -mc \
   -ms $BEXHOMA_MS \
   -lc 2 \
   -rc 2 \
