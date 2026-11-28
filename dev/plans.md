@@ -18,7 +18,6 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [load-failure-and-sizing](plan-load-failure-and-sizing.md) | open | P2 tmpdir (decision c/d), A4 |
 | [dbms-generic-verification](plan-dbms-generic-verification.md) | done | 2 side findings, aliases deferred |
 | [research-software](plan-research-software.md) | open | Zenodo 2/2a/20, step 18, R3, I1 |
-| [observe-per-query-metrics](plan-observe-per-query-metrics.md) | open | refresh, staleness, application metrics |
 | [explicit-rounds](plan-explicit-rounds.md) | planned | C1-C4, then #925 |
 | [experiment-yaml-source-of-truth](plan-experiment-yaml-source-of-truth.md) | planned | W1-W11, Q1-Q7 |
 | [pgduckdb-force-execution](plan-pgduckdb-force-execution.md) | planned | all (P1, "for later") |
@@ -40,6 +39,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [fewer-kubectl-calls](plan-fewer-kubectl-calls.md) | done | M15 is issue #963 |
 | [keep-sut](plan-keep-sut.md) | done | default of `load` (optional) |
 | [metrics-pod-scope](plan-metrics-pod-scope.md) | done | - |
+| [observe-per-query-metrics](plan-observe-per-query-metrics.md) | done | rest is issues #964-#970 |
 | [mysql-storage-slowness](plan-mysql-storage-slowness.md) | done | template default (in load-failure-and-sizing) |
 | [oltp-storage-dbms](plan-oltp-storage-dbms.md) | done | - |
 | [reset-scripts](plan-reset-scripts.md) | done | optional: flush time at large SF |
@@ -95,14 +95,6 @@ Steps 1, 2b, 3-17, 19 done (v0.12.0, v0.12.1).
   A/B/C, split of generic spec vs. catalog, one or two DOIs, how the proposal describes the validator.
 - **R3:** CI tests only Python 3.10 and 3.12.
 - **I1:** result folder formats (pickle, Python literals) come from DBMS-Benchmarker.
-
-### [observe-per-query-metrics](plan-observe-per-query-metrics.md)
-
-Node occupancy, `monitoring:` section and `observe.metrics` for hardware metrics done.
-- Refresh `environment.yml` on every agent start.
-- Staleness check: `source_sha256` is written but never compared.
-- Application metrics in the catalog: wait for the catalog split.
-- `cluster.config`: `tikv_store_size_bytes` defined twice; network/filesystem queries active although skipped.
 
 ## Planned
 
@@ -226,6 +218,11 @@ interaction with `-nc`/`-rsrp`.
 - [metrics-pod-scope](plan-metrics-pod-scope.md)
 - [mysql-storage-slowness](plan-mysql-storage-slowness.md): the template default of 8G is a separate decision
   (load-failure-and-sizing).
+- [observe-per-query-metrics](plan-observe-per-query-metrics.md): node occupancy, `monitoring:` section and
+  `observe.metrics` for hardware metrics done. The rest is tracked as issues (2026-11-28): #964 staleness check,
+  #965 refresh selected sections of `environment.yml` (no auto refresh by the agent), #966 own cAdvisor
+  disk/network metrics, #967 `current_load`, #968 application metrics in the catalog, #969 summary order,
+  #970 result contract. The `tikv_store_size_bytes` duplicate is fixed in `k8s-cluster.config`.
 - [oltp-storage-dbms](plan-oltp-storage-dbms.md)
 - [reset-scripts](plan-reset-scripts.md): optional, watch the MySQL/MariaDB flush time at larger SF; YugabyteDB
   persist needs `yb-admin`.

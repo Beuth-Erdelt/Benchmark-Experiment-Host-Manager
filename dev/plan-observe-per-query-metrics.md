@@ -1,6 +1,15 @@
 # Plan: per-query monitoring selection in the agent contract (`observe.metrics`)
 
-Status: **partly implemented** (2026-10-09). Done in `bexhoma/environment.py`
+Status: **done as a plan** (2026-11-28). The open items are issues #964-#970, and the issues are the
+current state: #964 staleness check, #965 refresh selected sections of `environment.yml` (decided: no
+automatic refresh by the agent; sections such as the fio baseline survive a refresh that does not name
+them), #966 own cAdvisor disk/network metrics, #967 `current_load` (decided: optional section, off by
+default), #968 application metrics in the catalog, #969 summary order, #970 result contract. The
+sections "Refresh environment.yml on every local agent start" and the network/filesystem item under
+"Check in cluster.config first" below are superseded by #965 and #966; the `tikv_store_size_bytes`
+duplicate is fixed in `k8s-cluster.config`.
+
+Earlier status: **partly implemented** (2026-10-09). Done in `bexhoma/environment.py`
 (environment contract 1.2.0): node occupancy from Prometheus (section "Node
 occupancy from Prometheus") and the `monitoring:` section with the hardware
 metrics (`title`, `kind`, `active`, `required`, `available`, `source_sha256`).
