@@ -15,7 +15,6 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | Plan | State | Open |
 |---|---|---|
 | [ddl-parameters](plan-ddl-parameters.md) | open | M5 keys, 13b, catalog size, small items |
-| [load-failure-and-sizing](plan-load-failure-and-sizing.md) | open | P2 tmpdir (decision c/d), A4 |
 | [dbms-generic-verification](plan-dbms-generic-verification.md) | done | 2 side findings, aliases deferred |
 | [research-software](plan-research-software.md) | open | Zenodo 2/2a/20, step 18, R3, I1 |
 | [explicit-rounds](plan-explicit-rounds.md) | planned | C1-C4, then #925 |
@@ -38,6 +37,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [docs-dbms-pages](plan-docs-dbms-pages.md) | done | one unreferenced log |
 | [fewer-kubectl-calls](plan-fewer-kubectl-calls.md) | done | M15 is issue #963 |
 | [keep-sut](plan-keep-sut.md) | done | default of `load` (optional) |
+| [load-failure-and-sizing](plan-load-failure-and-sizing.md) | done | P2 (and A4) is issue #971 |
 | [metrics-pod-scope](plan-metrics-pod-scope.md) | done | - |
 | [observe-per-query-metrics](plan-observe-per-query-metrics.md) | done | rest is issues #964-#970 |
 | [mysql-storage-slowness](plan-mysql-storage-slowness.md) | done | template default (in load-failure-and-sizing) |
@@ -68,14 +68,6 @@ says the cluster checks are open.
 - Optional: item 11, an obsolete "No curly braces" comment in many scripts.
 - Outside the plan: Python client calls do not wait out a cluster outage (`MaxRetryError`); old-named volumes
   from another machine's older bexhoma.
-
-### [load-failure-and-sizing](plan-load-failure-and-sizing.md)
-
-P1, P3-P6 done.
-- **P2:** MySQL `/mysqltmp` is a memory `emptyDir` (32Gi); decide c (data volume) or d (container `/tmp`).
-- **A4:** a start check of buffer pool vs. container limit, a candidate guard.
-- Later options for the template's buffer pool default (A1/A2/A4/A5), also asked by
-  [mysql-storage-slowness](plan-mysql-storage-slowness.md).
 
 ### [dbms-generic-verification](plan-dbms-generic-verification.md)
 
@@ -215,6 +207,10 @@ interaction with `-nc`/`-rsrp`.
   all tenants side by side) is issue #963; M5 will not be done, kubectl stays (decided 2026-11-28); the
   optional O1-O3 continue in [shorter-phase-gaps](plan-shorter-phase-gaps.md).
 - [keep-sut](plan-keep-sut.md): optional, whether `load` should default to not keeping SUTs.
+- [load-failure-and-sizing](plan-load-failure-and-sizing.md): P1 (8G buffer pool), P3-P6 and the loader
+  barrier timeout done (P3/P4 via #848, P5 and the timeout via #929). P2 (MySQL `/mysqltmp` out of the memory
+  budget, decide c or d) and the optional A4 guard (buffer pool vs. limit) are issue #971 (2026-11-28). Later
+  options for the buffer pool default (A1/A2/A5) stay in the plan.
 - [metrics-pod-scope](plan-metrics-pod-scope.md)
 - [mysql-storage-slowness](plan-mysql-storage-slowness.md): the template default of 8G is a separate decision
   (load-failure-and-sizing).

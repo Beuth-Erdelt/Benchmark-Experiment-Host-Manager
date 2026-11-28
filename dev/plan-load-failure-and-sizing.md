@@ -1,6 +1,6 @@
 # Plan: failed loads are detected, MySQL/MariaDB sizing fits the container
 
-Status: **parked 2026-10-22, partly done since.** Checked 2026-11-22:
+Status: **done 2026-11-28.** P2 (and the optional A4 guard) is issue #971. Checked 2026-11-22, updated 2026-11-28:
 - P1 done: option A3 committed (`8a530999`), cluster check passed 2026-10-22 (section 3).
 - P3 and P4 done by [plan-848-no-silent-load-failures.md](plan-848-no-silent-load-failures.md) (W2, W4, W7;
   released in v0.11.14): loaders exit 1 on any unit that fails, script errors fail the test
@@ -8,11 +8,11 @@ Status: **parked 2026-10-22, partly done since.** Checked 2026-11-22:
   refused before reuse, a SUT restart during loading is a `loading_failed` reason, the index `upload_file` error
   aborts with diagnostics. Decided there (open decision 3 below): no PVC is deleted automatically.
 - P6 done: #709 is closed with a comment.
-- Still open: **P2** (`/mysqltmp` is still `emptyDir` `medium: Memory`, `sizeLimit: 32Gi`; the TPC-DS storage
+- Moved to issue #971: **P2** (`/mysqltmp` is still `emptyDir` `medium: Memory`, `sizeLimit: 32Gi`; the TPC-DS storage
   runs raise it by `--set ...volume[mysqltmp].sizeLimit`). A4 (start check pool vs. limit) is still a
   candidate guard.
-- Done 2026-11-23 on branch `small-corrections` (local, not pushed; no cluster run yet): P5 in 7e98b8b7, the
-  barrier timeout in 270d5342.
+- Done 2026-11-23: P5 and the barrier timeout, merged via #929 (squash commit d94fc1e3, on dev and master;
+  no dedicated cluster run of the timeout yet).
   - **P5**, decided as proposed (drop): MySQL's tpch/tpcds entries no longer declare `per_loading_threads`
     (no extra `MYSQL_LOADING_*` env, no configuration per `-nlt` value). Any DBMS without it now prints
     "<DBMS>: the loader does not use loading threads, ignoring -nlt N" (`system_builder.loading_variants`,
@@ -219,8 +219,8 @@ MySQL with 8G vs. the 10G run 1792540834 (same nodes, `-xld relaxed`): 970 s vs.
 ## 4. Open decisions (user)
 
 1. P1: decided A3 (static 8G) on 2026-10-22; A1/A2/A4/A5 kept as later options.
-2. P2: tmpdir: a and b rejected 2026-11-24; c (data volume) or d (container `/tmp`)? **Open.**
+2. P2: tmpdir: a and b rejected 2026-11-24; c (data volume) or d (container `/tmp`)? Open in issue #971.
 3. P4: ~~on a failed load, delete the PVC always, or only with `-xld unsafe` / `-rsr`?~~ Decided in #848 W7:
    never delete automatically; a failed or unfinished volume is refused with "remove it (-rsr)".
 4. P5: implement `-nlt` for MySQL/MariaDB or drop it? **Dropped** 2026-11-23 (bexhoma reports it as ignored).
-5. Order: ~~P4 + P3 first~~ done (#848); P5 and the loader barrier timeout done 2026-11-23; left: P2.
+5. Order: ~~P4 + P3 first~~ done (#848); P5 and the loader barrier timeout done 2026-11-23; P2 is issue #971.
