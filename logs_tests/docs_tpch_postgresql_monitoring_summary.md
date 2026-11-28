@@ -3,8 +3,8 @@
 ### Workload
 TPC-H Queries SF=10
 * Type: tpch
-* Duration: 837s 
-* Code: 1795626874
+* Duration: 806s 
+* Code: 1795801089
 * This includes the reading queries of TPC-H.
 * This experiment compares run time and resource consumption of TPC-H queries in different DBMS.
   * TPC-H (SF=10) data is loaded and benchmark is executed.
@@ -15,7 +15,7 @@ TPC-H Queries SF=10
   * Import sets indexes, constraints, statistics recomputation after loading.
   * Load durability is relaxed (-xld; restored after the load).
   * Experiment uses bexhoma version 0.12.4.
-  * System metrics are monitored by a cluster-wide installation.
+  * System metrics are monitored by a cluster-wide installation for the SUT.
   * Experiment is limited to DBMS ['PostgreSQL'].
   * Import is handled by 8 processes (pods).
   * Loading is fixed to cl-worker38.
@@ -37,10 +37,10 @@ TPC-H Queries SF=10
   * Cores:224
   * host:6.8.0-147-generic
   * node:cl-worker36
-  * disk:1249900
+  * disk:778339
   * datadisk:27209
   * volume_size:1.8T
-  * volume_used:1.2T
+  * volume_used:761G
   * cpu_list:0-223
   * args:['-c', 'max_connections=640', '-c', 'max_worker_processes=6', '-c', 'max_parallel_workers=4', '-c', 'max_parallel_workers_per_gather=2', '-c', 'max_parallel_maintenance_workers=4', '-c', 'shared_buffers=20GB', '-c', 'effective_cache_size=48GB', '-c', 'work_mem=1GB', '-c', 'maintenance_work_mem=2GB', '-c', 'autovacuum=off', '-c', 'wal_level=minimal', '-c', 'max_wal_senders=0', '-c', 'max_wal_size=32GB', '-c', 'checkpoint_timeout=1h', '-c', 'checkpoint_completion_target=1.0', '-c', 'lock_timeout=30s', '-c', 'idle_in_transaction_session_timeout=30000', '-c', 'random_page_cost=1.1', '-c', 'effective_io_concurrency=200', '-c', 'io_method=io_uring']
   * requests_cpu:4
@@ -50,13 +50,13 @@ TPC-H Queries SF=10
     * sut: 1 x, 4.0 CPU, 64.0 GiB RAM
   * load_durability: relaxed
   * eval_parameters
-    * code:1795626874
+    * code:1795801089
 
 ### Ingestion
 * PostgreSQL-1: 50 of 50 units ok
 
 ### SUT Container Restarts
-* bexhoma-sut-postgresql-1-1795626874-b5c457bfd-c98d4: 0
+* bexhoma-sut-postgresql-1-1795801089-6f8c4d6bbc-d2f8j: 0
 
 ### Workflow
 
@@ -74,7 +74,7 @@ TPC-H Queries SF=10
 
 | DBMS           |   experiment_run |   SF |   time_load |   time_preload |   time_generate |   time_ingest |   time_postload |   loading_pods |   threads | tenant_id   | type_tenants   |   num_tenants | vol_tenants   |   Throughput [SF/h] | loading_inherited   |
 |:---------------|-----------------:|-----:|------------:|---------------:|----------------:|--------------:|----------------:|---------------:|----------:|:------------|:---------------|--------------:|:--------------|--------------------:|:--------------------|
-| PostgreSQL-1-1 |                1 |   10 |      390.00 |           2.00 |           26.00 |         94.00 |          251.00 |              8 |         0 |             |                |             0 | False         |               92.31 | False               |
+| PostgreSQL-1-1 |                1 |   10 |      343.00 |           3.00 |           13.00 |         86.00 |          230.00 |              8 |         0 |             |                |             0 | False         |              104.96 | False               |
 
 ### Benchmarking
 
@@ -82,13 +82,13 @@ TPC-H Queries SF=10
 
 | connection           | phase            | job                |   experiment_run |   client |   benchmark_run |   child |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:---------------------|:-----------------|:-------------------|-----------------:|---------:|----------------:|--------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 10.00 |               22 |                  22 |        144 |            3.69 |            10036.20 |           5500.00 |           0 |
+| postgresql-1-1-1-1-1 | postgresql-1-1-1 | postgresql-1-1-1-1 |                1 |        1 |               1 |       1 | 10.00 |               22 |                  22 |        115 |            2.95 |            12646.33 |           6886.96 |           0 |
 
 #### Per Phase
 
 | DBMS             | phase            |   experiment_run |   client |   benchmark_run |   pod_count |    SF |   num_of_queries |   num_of_executions |   time [s] |   Geo Times [s] |   Power@Size [~Q/h] |   Throughput@Size |   tenant_id |
 |:-----------------|:-----------------|-----------------:|---------:|----------------:|------------:|------:|-----------------:|--------------------:|-----------:|----------------:|--------------------:|------------------:|------------:|
-| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               22 |                  22 |        144 |            3.69 |            10036.20 |           5500.00 |           0 |
+| postgresql-1-1-1 | postgresql-1-1-1 |                1 |        1 |               1 |           1 | 10.00 |               22 |                  22 |        115 |            2.95 |            12646.33 |           6886.96 |           0 |
 
 #### Query Completion per Phase
 
@@ -101,28 +101,28 @@ Pods that completed each query, out of the pods the phase ran (`completed/pods`)
 ### Latency of Timer Execution [ms]
 | Queries                                             |   postgresql-1-1-1-1-1 |
 |:----------------------------------------------------|-----------------------:|
-| Pricing Summary Report (TPC-H Q1)                   |               11170.09 |
-| Minimum Cost Supplier Query (TPC-H Q2)              |                2468.17 |
-| Shipping Priority (TPC-H Q3)                        |                4392.98 |
-| Order Priority Checking Query (TPC-H Q4)            |                1974.05 |
-| Local Supplier Volume (TPC-H Q5)                    |                3363.43 |
-| Forecasting Revenue Change (TPC-H Q6)               |                2347.22 |
-| Volume Shipping Query (TPC-H Q7)                    |                4284.91 |
-| National Market Share (TPC-H Q8)                    |                1828.50 |
-| Product Type Profit Measure (TPC-H Q9)              |                9081.18 |
-| Returned Item Reporting Query (TPC-H Q10)           |                7731.13 |
-| Important Stock Identification (TPC-H Q11)          |                 812.35 |
-| Shipping Modes and Order Priority (TPC-H Q12)       |                3825.29 |
-| Customer Distribution (TPC-H Q13)                   |                9226.20 |
-| Promotion Effect Query (TPC-H Q14)                  |               21951.95 |
-| Top Supplier Query (TPC-H Q15)                      |                2509.35 |
-| Parts/Supplier Relationship (TPC-H Q16)             |                1412.75 |
-| Small-Quantity-Order Revenue (TPC-H Q17)            |                7518.30 |
-| Large Volume Customer (TPC-H Q18)                   |               29691.47 |
-| Discounted Revenue (TPC-H Q19)                      |                 318.58 |
-| Potential Part Promotion (TPC-H Q20)                |                3475.30 |
-| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                3904.69 |
-| Global Sales Opportunity Query (TPC-H Q22)          |                 715.72 |
+| Pricing Summary Report (TPC-H Q1)                   |               11177.77 |
+| Minimum Cost Supplier Query (TPC-H Q2)              |                2190.27 |
+| Shipping Priority (TPC-H Q3)                        |                4680.08 |
+| Order Priority Checking Query (TPC-H Q4)            |                2131.00 |
+| Local Supplier Volume (TPC-H Q5)                    |                3041.38 |
+| Forecasting Revenue Change (TPC-H Q6)               |                2123.26 |
+| Volume Shipping Query (TPC-H Q7)                    |                3273.82 |
+| National Market Share (TPC-H Q8)                    |                1652.58 |
+| Product Type Profit Measure (TPC-H Q9)              |                7443.92 |
+| Returned Item Reporting Query (TPC-H Q10)           |                6527.14 |
+| Important Stock Identification (TPC-H Q11)          |                 812.80 |
+| Shipping Modes and Order Priority (TPC-H Q12)       |                3283.78 |
+| Customer Distribution (TPC-H Q13)                   |                8202.07 |
+| Promotion Effect Query (TPC-H Q14)                  |               16259.52 |
+| Top Supplier Query (TPC-H Q15)                      |                2288.54 |
+| Parts/Supplier Relationship (TPC-H Q16)             |                1581.49 |
+| Small-Quantity-Order Revenue (TPC-H Q17)            |                 641.74 |
+| Large Volume Customer (TPC-H Q18)                   |               23212.09 |
+| Discounted Revenue (TPC-H Q19)                      |                 302.07 |
+| Potential Part Promotion (TPC-H Q20)                |                2730.05 |
+| Suppliers Who Kept Orders Waiting Query (TPC-H Q21) |                3408.62 |
+| Global Sales Opportunity Query (TPC-H Q22)          |                 442.57 |
 
 ### Errors (failed queries)
 
@@ -138,42 +138,17 @@ No warnings
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |       536.75 |      2.78 |           5.67 |                 21.34 |
-
-### Loading phase: component data generator
-
-| DBMS               | CPU [CPUs]   |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|:-------------|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 | n/a          |         0 |           0.00 |                  0.00 |
-
-### Loading phase: component loader
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |       106.71 |      2.27 |           0.00 |                  0.99 |
+| postgresql-1-1-1-1 |       472.62 |      2.74 |           6.92 |                 20.96 |
 
 ### Benchmarking phase: SUT deployment
 
 | DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
 |:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |       281.70 |      2.90 |          19.49 |                 35.84 |
-
-### Benchmarking phase: component benchmarker
-
-| DBMS               |   CPU [CPUs] |   Max CPU |   Max RAM [Gb] |   Max RAM Cached [Gb] |
-|:-------------------|-------------:|----------:|---------------:|----------------------:|
-| postgresql-1-1-1-1 |        18.17 |      0.51 |           0.34 |                  0.34 |
+| postgresql-1-1-1-1 |       206.96 |      2.97 |          15.87 |                 31.80 |
 
 ### Missing Monitoring Metrics
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-benchmarking.log, expected: series exists only while non-zero)
-* CPU Utilization [CPUs] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* Filesystem Read Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* Filesystem Write Total, Largest Device (RAID Counted Once) [MiB] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-datagenerator.log, expected: data pre-existing)
-* CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
-* CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loader.log, expected: series exists only while non-zero)
 * CPU Throttling Rate [s/s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 * CPU Throttled Time [s] for connection postgresql-1-1-1-1 (bexhoma-metrics-postgresql-1-1-1-1-loading.log, expected: series exists only while non-zero)
 
@@ -188,12 +163,9 @@ No warnings
 * TEST passed: SUT pods not replaced
 * TEST passed: Host information complete
 * TEST passed: Loading phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST skipped: Loading phase: component data generator contains 0 or NaN in CPU [CPUs] (data pre-existing)
-* TEST passed: Loading phase: component loader contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Benchmarking phase: SUT deployment contains no 0 or NaN in CPU [CPUs]
-* TEST passed: Benchmarking phase: component benchmarker contains no 0 or NaN in CPU [CPUs]
 * TEST passed: Monitoring returned data
-* TEST skipped: Monitoring metrics missing (data pre-existing; series exists only while non-zero)
+* TEST skipped: Monitoring metrics missing (series exists only while non-zero)
 * TEST passed: Geo Times [s] contains no 0 or NaN
 * TEST passed: Power@Size [~Q/h] contains no 0 or NaN
 * TEST passed: Throughput@Size contains no 0 or NaN

@@ -265,7 +265,6 @@ bexhoma tpch \
   -nlp 8 \
   -xis \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \

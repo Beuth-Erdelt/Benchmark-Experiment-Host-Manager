@@ -256,9 +256,11 @@ class GeneratorMarkerTest(unittest.TestCase):
                                 text.index('I do nothing'))
                 self.assertIn('staging_raw=$destination_raw/.staging-${HOSTNAME:-$$}', text)
                 self.assertIn('Another pod completed $destination_raw meanwhile, discarding this copy', text)
-                # files are deleted only on an explicit recreate, never because the marker is missing
-                self.assertEqual(text.count('rm -f "$destination_raw"/'), 1)
+                # no generator deletes the data files of the destination, not even on a recreate (-xrd):
+                # the atomic move replaces them, so a loader of another configuration never misses a file
+                self.assertEqual(text.count('rm -f "$destination_raw"/'), 0)
                 self.assertNotIn('rm -r $destination_raw', text)
+                self.assertIn('the move replaces the files', text)
 
 
 class RuntimeGapsTest(unittest.TestCase):

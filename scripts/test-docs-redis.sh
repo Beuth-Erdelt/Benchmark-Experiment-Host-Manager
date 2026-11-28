@@ -23,7 +23,7 @@ source ./scripts/testfunctions.sh
 # Main example: single host Redis, quick, without monitoring
 # -dbms Redis                   DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -71,7 +71,7 @@ report_result $? "YCSB Redis single  sf=1  nbp=1"
 # Monitoring: single host Redis, at least 1 minute of benchmarking
 # -dbms Redis                   DBMS under test
 # -sf 3                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -83,7 +83,6 @@ report_result $? "YCSB Redis single  sf=1  nbp=1"
 # -nbt 128                      threads per benchmarking pod
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -105,7 +104,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -126,7 +124,7 @@ report_result $? "YCSB Redis single monitoring  sf=3  nbp=1"
 # Persistent storage: single host Redis
 # -dbms Redis                   DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -138,7 +136,6 @@ report_result $? "YCSB Redis single monitoring  sf=3  nbp=1"
 # -nbt 128                      threads per benchmarking pod
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -162,7 +159,6 @@ bexhoma ycsb \
   -nbt 128 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -182,7 +178,7 @@ report_result $? "YCSB Redis single PVC  sf=1  nbp=1  nc=2"
 # Variant cluster: 3 Redis instances
 # -dbms Redis                   DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -195,7 +191,6 @@ report_result $? "YCSB Redis single PVC  sf=1  nbp=1  nc=2"
 # -nw 3                         number of worker nodes in the cluster
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -218,7 +213,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \
@@ -231,7 +225,7 @@ report_result $? "YCSB Redis cluster 3  sf=1  nbp=1"
 # Variant cluster: 3 Redis instances on persistent storage
 # -dbms Redis                   DBMS under test
 # -sf 3                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -244,7 +238,6 @@ report_result $? "YCSB Redis cluster 3  sf=1  nbp=1"
 # -nw 3                         number of worker nodes in the cluster
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rsr                          delete and recreate the PVC at experiment start
@@ -269,7 +262,6 @@ bexhoma ycsb \
   -nw 3 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rsr \
@@ -284,7 +276,7 @@ report_result $? "YCSB Redis cluster 3 PVC  sf=3  nbp=1  nc=2"
 # Variant replication: 3 Redis instances with 1 replica each
 # -dbms Redis                   DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 12                      loading throughput target as a multiple of the base ops/s
@@ -298,7 +290,6 @@ report_result $? "YCSB Redis cluster 3 PVC  sf=3  nbp=1  nc=2"
 # -nwr 1                        number of worker node replicas
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -lr 64Gi                      RAM limit for the SUT container
 # -rr 64Gi                      RAM requested for the SUT container
 # -rss 50Gi                     size of the persistent volume claim
@@ -322,7 +313,6 @@ bexhoma ycsb \
   -nwr 1 \
   -xop 10 \
   -m \
-  -mc \
   -lr 64Gi \
   -rr 64Gi \
   -rss 50Gi \

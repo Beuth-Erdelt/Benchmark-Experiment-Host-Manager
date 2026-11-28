@@ -74,7 +74,6 @@ bexhoma ycsb `
   -xnpo 64                      <# pool size (outgoing connections) #> `
   -xop 16                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -115,7 +114,6 @@ bexhoma ycsb `
   -xnpo 64                      <# pool size (outgoing connections) #> `
   -xop 16                       <# number of operations for the benchmark phase (in millions) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -207,7 +205,7 @@ Write-ExperimentResult $LASTEXITCODE "Benchbase PGBouncer pool sweep  sf=16  xnp
 bexhoma ycsb `
   -dbms PGBouncer               <# DBMS under test #> `
   -sf 1                         <# scaling factor (number of records in millions) #> `
-  -xwl c                        <# YCSB workload template (c = 100%% read) #> `
+  -xwl c                        <# YCSB workload template (c = 100% read) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 4                       <# throughput target as a multiple of the base ops/s #> `
   -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `

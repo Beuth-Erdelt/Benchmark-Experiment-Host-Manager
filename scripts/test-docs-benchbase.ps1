@@ -50,7 +50,6 @@ bexhoma benchbase `
   -nbp 1,2                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 160                      <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -59,6 +58,29 @@ bexhoma benchbase `
   run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_monitoring.log" -Encoding utf8
 
 Write-ExperimentResult $LASTEXITCODE "Benchbase monitoring  sf=16  nbp=1,2"
+
+#### Benchbase client resources (Example-Benchbase.md)
+bexhoma benchbase `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 16                        <# scaling factor (controls database size) #> `
+  -xsd 5                        <# benchmark duration in minutes #> `
+  -xtb 0                        <# no throughput target, every terminal runs as fast as it can #> `
+  -nbp 1                        <# one benchmarking pod #> `
+  -nbt "40,80,160,320"          <# terminals to sweep (comma-separated) #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics of loader and benchmarker #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -lr 64Gi                      <# RAM limit for the SUT container #> `
+  -rr 64Gi                      <# RAM requested for the SUT container #> `
+  -rsr                          <# delete and recreate the PVC at experiment start, so the loader is measured #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_benchbase_postgresql_clients.log" -Encoding utf8
+
+Write-ExperimentResult $LASTEXITCODE "Benchbase clients  sf=16  nbt=40,80,160,320"
+
 
 
 #### Benchbase Persistent Storage (Example-Benchbase.md)
@@ -135,7 +157,6 @@ bexhoma benchbase `
   -nbt 1600                     <# threads per benchmarking pod #> `
   -xkey                         <# simulate user think time and keying delays #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
   -rr 128Gi                     <# RAM requested for the SUT container #> `

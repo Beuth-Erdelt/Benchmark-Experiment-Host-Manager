@@ -174,7 +174,7 @@ class LoadingMetricsOncePerRepetitionTest(unittest.TestCase):
 
     def runner(self):
         self.metrics = mock.Mock()
-        cluster = SimpleNamespace(get_service_endpoints=lambda service_name: ['x'], monitor_cluster_exists=True)
+        cluster = SimpleNamespace(monitor_cluster_active=True)
         self.cfg = SimpleNamespace(
             num_experiment_to_apply_done=0, loading_metrics_fetched={}, monitoring_sut=True,
             deployment_infos={'deployment': {'sut': {'containers': ['dbms']}}},

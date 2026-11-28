@@ -651,6 +651,7 @@ report_result $? "SSB MariaDB  sf=1"
 # -xii                          create indexes after data load
 # -xic                          add primary and foreign keys after data load
 # -xis                          run statistics after data load
+# -xrd                          generate the raw data again, so the data generator is measured
 # -m                            collect SUT resource metrics
 # -mc                           collect metrics for all cluster nodes
 # -ms 1                         one DBMS at a time, so the metrics of one SUT are not disturbed by another
@@ -667,6 +668,7 @@ bexhoma ssb \
   -sf 10 \
   -nlp 8 \
   -xii -xic -xis \
+  -xrd \
   -m \
   -mc \
   -ms 1 \

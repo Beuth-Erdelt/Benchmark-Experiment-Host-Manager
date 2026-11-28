@@ -74,7 +74,7 @@ remove_yugabytedb() {
 #### YCSB Reset PostgreSQL
 # -dbms PostgreSQL              VACUUM ANALYZE, CHECKPOINT, pg_stat_reset*
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -115,7 +115,7 @@ report_result $? "YCSB reset PostgreSQL"
 #### YCSB Reset PGBouncer
 # -dbms PGBouncer               reset of PostgreSQL, through the pooler
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -162,7 +162,7 @@ report_result $? "YCSB reset PGBouncer"
 #### YCSB Reset OrioleDB
 # -dbms OrioleDB                reset of PostgreSQL; VACUUM has nothing to remove on OrioleDB tables
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -203,7 +203,7 @@ report_result $? "YCSB reset OrioleDB"
 #### YCSB Reset MySQL
 # -dbms MySQL                   ANALYZE TABLE, then reset-flush.sh (dirty pages, FLUSH STATUS)
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -244,7 +244,7 @@ report_result $? "YCSB reset MySQL"
 #### YCSB Reset MariaDB
 # -dbms MariaDB                 ANALYZE TABLE, then reset-flush.sh (dirty pages, FLUSH STATUS)
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -285,7 +285,7 @@ report_result $? "YCSB reset MariaDB"
 #### YCSB Reset Citus
 # -dbms Citus                   CHECKPOINT and pg_stat_reset* on coordinator and every worker
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -332,7 +332,7 @@ report_result $? "YCSB reset Citus"
 #### YCSB Reset CockroachDB
 # -dbms CockroachDB             ANALYZE, crdb_internal.reset_sql_stats(), persist n/a
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -377,7 +377,7 @@ report_result $? "YCSB reset CockroachDB"
 #### YCSB Reset TiDB
 # -dbms TiDB                    ANALYZE TABLE, FLUSH STATUS, persist n/a
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 1                       loading throughput target as a multiple of the base ops/s
@@ -422,7 +422,7 @@ report_result $? "YCSB reset TiDB"
 #### YCSB Reset Dragonfly
 # -dbms Dragonfly               SAVE and CONFIG RESETSTAT in the SUT pod
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -463,7 +463,7 @@ report_result $? "YCSB reset Dragonfly"
 #### YCSB Reset Dragonfly Replica
 # -dbms Dragonfly               SAVE and CONFIG RESETSTAT on every worker
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -508,7 +508,7 @@ report_result $? "YCSB reset Dragonfly Replica"
 #### YCSB Reset Redis
 # -dbms Redis                   SAVE and CONFIG RESETSTAT in the SUT pod
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -549,7 +549,7 @@ report_result $? "YCSB reset Redis"
 #### YCSB Reset Redis Cluster
 # -dbms Redis                   SAVE and CONFIG RESETSTAT on every cluster node
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -594,7 +594,7 @@ install_yugabytedb
 
 # -dbms YugabyteDB              ANALYZE, reset-counters.sh on every tserver, persist n/a
 # -sf 1                         scaling factor
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute the throughput target
 # -xnbf 1                       benchmarking throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s

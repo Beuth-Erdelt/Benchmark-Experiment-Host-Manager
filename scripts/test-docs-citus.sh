@@ -23,7 +23,7 @@ source ./scripts/testfunctions.sh
 # Main example: YCSB on Citus with 3 workers, quick, without monitoring
 # -dbms Citus                   DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -81,7 +81,7 @@ report_result $? "YCSB Citus  sf=1  nw=3"
 # Monitoring: YCSB on Citus with 3 workers
 # -dbms Citus                   DBMS under test
 # -sf 5                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -96,7 +96,6 @@ report_result $? "YCSB Citus  sf=1  nw=3"
 # -nws 48                       number of shards per worker node
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
@@ -123,7 +122,6 @@ bexhoma ycsb \
   -nws 48 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -146,7 +144,7 @@ sleep 30
 
 # -dbms Citus                   DBMS under test
 # -sf 1                         scaling factor (number of records in millions)
-# -xwl a                        YCSB workload template (a = 50%% read / 50%% update)
+# -xwl a                        YCSB workload template (a = 50% read / 50% update)
 # -xtb 16384                    base ops/s used to compute throughput targets (2^14)
 # -xnbf 4                       throughput target as a multiple of the base ops/s
 # -xnlf 4                       loading throughput target as a multiple of the base ops/s
@@ -161,7 +159,6 @@ sleep 30
 # -nws 48                       number of shards per worker node
 # -xop 10                       number of operations for the benchmark phase (in millions)
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
@@ -190,7 +187,6 @@ bexhoma ycsb \
   -nws 48 \
   -xop 10 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -265,7 +261,6 @@ sleep 30
 # -nwr 1                        number of worker node replicas
 # -nws 48                       number of shards per worker node
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
@@ -288,7 +283,6 @@ bexhoma benchbase \
   -nwr 1 \
   -nws 48 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -317,7 +311,6 @@ report_result $? "Benchbase Citus scale  sf=128  nbp=1,2,4,8"
 # -xkey                         simulate user think time and keying delays
 # -xli 30                       log status to stdout every x seconds
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
@@ -344,7 +337,6 @@ bexhoma benchbase \
   -xkey \
   -xli 30 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -425,7 +417,6 @@ sleep 30
 # -nws 48                       number of shards per worker node
 # -xlat                         collect per-operation latency histograms
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
@@ -451,7 +442,6 @@ bexhoma hammerdb \
   -nws 48 \
   -xlat \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -483,7 +473,6 @@ sleep 30
 # -nws 48                       number of shards per worker node
 # -xlat                         collect per-operation latency histograms
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 64Gi                      RAM limit for the SUT and worker containers
 # -rr 64Gi                      RAM requested for the SUT and worker containers
@@ -509,7 +498,6 @@ bexhoma hammerdb \
   -nws 48 \
   -xlat \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 64Gi \
   -rr 64Gi \
@@ -593,7 +581,6 @@ sleep 30
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
 # -lr 64Gi                      RAM limit for the SUT and worker containers
@@ -618,7 +605,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 64Gi \
@@ -649,7 +635,6 @@ sleep 30
 # -xcol                         use columnar storage for tables
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
 # -lr 64Gi                      RAM limit for the SUT and worker containers
@@ -674,7 +659,6 @@ bexhoma tpch \
   -xcol \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 64Gi \

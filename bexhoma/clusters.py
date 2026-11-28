@@ -170,10 +170,42 @@ MESSAGEQUEUE_FILL_MAX_ATTEMPTS = 3
 #: :meth:`Kubernetes.upload_file` uses between its retries.
 MESSAGEQUEUE_FILL_RETRY_SECONDS = 10
 
+#: Returned by :meth:`Kubernetes._call_api` when a request could not be
+#: answered through the API (no client, or the API keeps failing): the caller
+#: then asks kubectl as before.
+API_NOT_CALLED = object()
+
 #: Returned by :meth:`Kubernetes._read_pod` when the Pod could not be read
-#: through the API (no client, or the API keeps failing): the caller then
-#: asks kubectl as before.
-POD_NOT_READ = object()
+#: through the API; the same sentinel as :data:`API_NOT_CALLED`.
+POD_NOT_READ = API_NOT_CALLED
+
+#: Encodings tried, in this order, to decode the bytes of an API reply.
+OUTPUT_ENCODINGS = ("utf-8", "latin1", "cp1252")
+
+
+def decode_output(raw: bytes) -> str:
+    """
+    Decode the bytes of an API reply.
+
+    :param raw: Raw bytes.
+    :return: Text decoded with the first of :data:`OUTPUT_ENCODINGS` that fits.
+    """
+    for encoding in OUTPUT_ENCODINGS:
+        try:
+            return raw.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    return raw.decode("utf-8", errors="replace")
+
+
+def label_arguments(labels: dict) -> str:
+    """
+    Render labels as the ``key="value"`` arguments of ``kubectl label``.
+
+    :param labels: Label name to value.
+    :return: Space-separated arguments.
+    """
+    return " ".join(f'{key}="{value}"' for key, value in labels.items())
 
 
 def is_cluster_connection_error(output: str, include_interrupted: bool = True) -> bool:
@@ -432,6 +464,7 @@ class Kubernetes():
         self.workload = {}
         self.monitoring_active = True
         self.monitor_app_active = True
+        # True with -mc: fetch system metrics of all components, not only of the SUT
         self.monitor_cluster_active = False
         # True if cAdvisors and Prometheus run independently of bexhoma
         self.monitor_cluster_exists = False
@@ -716,12 +749,84 @@ class Kubernetes():
 
     def delete_deployment(self, deployment):
         """
-        Delete a Kubernetes Deployment by name.
+        Delete a Kubernetes Deployment by name, with its ReplicaSets and Pods.
 
         :param deployment: Name of the Deployment to delete.
         """
         self.logger.debug('Kubernetes.delete_deployment()')
-        self.kubectl('delete deployment ' + deployment)
+        result = self._call_api(
+            'AppsV1Api->delete_namespaced_deployment',
+            lambda: self.v1apps.delete_namespaced_deployment(
+                name=deployment, namespace=self.namespace,
+                body=kubernetes_client.V1DeleteOptions(propagation_policy='Background')),
+            client='v1apps')
+        if result is API_NOT_CALLED:
+            self.kubectl('delete deployment ' + deployment)
+
+    def delete_secrets(self, label_selector):
+        """
+        Delete all Secrets matching a label selector.
+
+        :param label_selector: Label selector, e.g. ``experiment=123,component=tls``.
+        """
+        self.logger.debug(f'Kubernetes.delete_secrets({label_selector})')
+        result = self._call_api(
+            'CoreV1Api->delete_collection_namespaced_secret',
+            lambda: self.v1core.delete_collection_namespaced_secret(
+                namespace=self.namespace, label_selector=label_selector))
+        if result is API_NOT_CALLED:
+            self.kubectl('delete secret -l ' + label_selector)
+
+    def label_pod(self, pod, labels):
+        """
+        Set labels of a Pod, overwriting existing values.
+
+        :param pod: Name of the Pod.
+        :param labels: Label name to value; values are written as strings.
+        :return: ``True`` if the labels were written, ``None`` otherwise.
+        """
+        return self._label_object('pod', pod, labels)
+
+    def label_pvc(self, pvc, labels):
+        """
+        Set labels of a PersistentVolumeClaim, overwriting existing values.
+
+        :param pvc: Name of the PVC.
+        :param labels: Label name to value; values are written as strings.
+        :return: ``True`` if the labels were written, ``None`` otherwise.
+        """
+        return self._label_object('pvc', pvc, labels)
+
+    def _label_object(self, kind, name, labels):
+        """
+        Patch the labels of a Pod or PVC, like ``kubectl label --overwrite``.
+
+        :param kind: ``pod`` or ``pvc``.
+        :param name: Name of the object.
+        :param labels: Label name to value.
+        :return: ``True`` if the labels were written, ``None`` otherwise.
+        """
+        self.logger.debug(f'Kubernetes.label_{kind}({name}, {labels})')
+        if not labels:
+            return True
+        body = {'metadata': {'labels': {key: str(value) for key, value in labels.items()}}}
+        if kind == 'pod':
+            api_name = 'CoreV1Api->patch_namespaced_pod'
+
+            def call():
+                return self.v1core.patch_namespaced_pod(name=name, namespace=self.namespace, body=body)
+        else:
+            api_name = 'CoreV1Api->patch_namespaced_persistent_volume_claim'
+
+            def call():
+                return self.v1core.patch_namespaced_persistent_volume_claim(
+                    name=name, namespace=self.namespace, body=body)
+        result = self._call_api(api_name, call, definitive=(400, 404, 422))
+        if result is API_NOT_CALLED:
+            if self.kubectl(f'label {kind} {name} --overwrite {label_arguments(labels)}') is None:
+                return None
+            return True
+        return None if result is None else True
 
     def get_deployments(self, app='', component='', experiment='', configuration=''):
         """
@@ -868,6 +973,44 @@ class Kubernetes():
                 app=app, nodegroup_type=nodegroup_type, nodegroup_name=nodegroup_name
             )
 
+    def _call_api(self, name, call, client='v1core', definitive=(404,), attempts=3):
+        """
+        Send one request through the Kubernetes API; the caller falls back to kubectl.
+
+        An API error is retried with a new access token. A status in
+        ``definitive`` is the answer itself (e.g. 404: the object does not
+        exist), on which kubectl would fail as well.
+
+        :param name: API method, for messages.
+        :param call: Function without arguments that sends the request; it
+            looks the client up when called, so a retry uses the new one.
+        :param client: Attribute holding the API client the request needs.
+        :param definitive: HTTP statuses returned as ``None`` without a retry.
+        :param attempts: API errors tolerated before giving up.
+        :return: The reply; ``None`` for a status in ``definitive``;
+            :data:`API_NOT_CALLED` if there is no API client or the API keeps
+            failing, so the caller falls back to kubectl.
+        """
+        if getattr(self, client, None) is None:
+            return API_NOT_CALLED
+        try:
+            return call()
+        except ApiException as e:
+            if e.status in definitive:
+                return None
+            print(f"Exception when calling {name}: {e}\n")
+        except Exception as e:
+            # a connection error the client's own retries did not overcome;
+            # kubectl waits for the cluster to come back
+            print(f"Exception when calling {name}: {e}\n")
+            return API_NOT_CALLED
+        if attempts <= 1:
+            return API_NOT_CALLED
+        print("Create new access token")
+        self.cluster_access()
+        self.wait(2)
+        return self._call_api(name, call, client=client, definitive=definitive, attempts=attempts - 1)
+
     def _read_pod(self, pod, attempts=3):
         """
         Read one Pod through the API.
@@ -878,21 +1021,12 @@ class Kubernetes():
             :data:`POD_NOT_READ` if there is no API client or the API keeps
             failing, so the caller falls back to kubectl.
         """
-        v1core = getattr(self, 'v1core', None)
-        if v1core is None or not pod:
+        if not pod:
             return POD_NOT_READ
-        try:
-            return v1core.read_namespaced_pod(name=pod, namespace=self.namespace)
-        except ApiException as e:
-            if e.status == 404:
-                return None
-            print(f"Exception when calling CoreV1Api->read_namespaced_pod: {e}\n")
-            if attempts <= 1:
-                return POD_NOT_READ
-            print("Create new access token")
-            self.cluster_access()
-            self.wait(2)
-            return self._read_pod(pod, attempts - 1)
+        return self._call_api(
+            'CoreV1Api->read_namespaced_pod',
+            lambda: self.v1core.read_namespaced_pod(name=pod, namespace=self.namespace),
+            attempts=attempts)
 
     def get_pod_uid(self, pod) -> str:
         """
@@ -2394,15 +2528,30 @@ class Kubernetes():
 
     def pod_log(self, pod, container='', previous=False):
         """
-        Return the ``kubectl logs --tail=-1`` output for a given Pod or container.
+        Return the whole log of a given Pod or container.
+
+        Read through the API (``read_namespaced_pod_log``), with
+        ``kubectl logs --tail=-1`` as fallback.
 
         :param pod: Name of the Pod.
         :param container: Container name within the Pod (optional).
         :param previous: Return the log of the container's previous,
             terminated instance (``--previous``) instead of the running one.
             Only that log says why a restarted container died.
-        :return: kubectl output string.
+        :return: The log; ``None`` if it cannot be read (Pod or container
+            gone, no previous instance, or kubectl failed).
         """
+        def read_log():
+            kwargs = {'container': container} if container else {}
+            # the raw reply, decoded here: the client would fail on a log that is not UTF-8
+            return self.v1core.read_namespaced_pod_log(
+                name=pod, namespace=self.namespace, previous=previous, _preload_content=False, **kwargs)
+
+        response = self._call_api('CoreV1Api->read_namespaced_pod_log', read_log, definitive=(400, 404))
+        if response is None:
+            return None
+        if response is not API_NOT_CALLED:
+            return decode_output(response.data)
         if container:
             fullcommand = 'logs ' + pod + ' --container=' + container
         else:
@@ -2939,15 +3088,16 @@ class Kubernetes():
 
     def start_monitoring_cluster(self, app='', component='monitoring'):
         """
-        Start cluster-level monitoring (Prometheus + node exporters) if not healthy.
+        Make sure cluster-wide system metrics exist: a preinstalled Prometheus, or else the cAdvisor daemonset.
 
         Waits up to 100 seconds for an existing Prometheus to become healthy before
         deploying the daemonset.  Manifest template: ``daemonsettemplate-monitoring.yml``.
+        The daemonset is scraped by the per-experiment Prometheus.
+        Used by ``-m`` and ``-mc`` alike; :attr:`monitor_cluster_active` tells them apart.
 
         :param app: App name (unused; kept for API consistency).
         :param component: Component label.  Defaults to ``monitoring``.
         """
-        self.monitor_cluster_active = True
         self.monitor_cluster_exists = self.is_monitoring_healthy()
         if self.monitor_cluster_exists:
             return
@@ -3460,6 +3610,17 @@ class Kubernetes():
         :return: List of endpoint IP strings, or ``[]`` on error.
         """
         self.logger.debug(f"get_service_endpoints({service_name})")
+        endpoints = self._call_api(
+            'CoreV1Api->read_namespaced_endpoints',
+            lambda: self.v1core.read_namespaced_endpoints(name=service_name, namespace=self.namespace))
+        if endpoints is None:
+            return []
+        if endpoints is not API_NOT_CALLED:
+            endpoints_list = [address.ip
+                              for subset in (endpoints.subsets or [])
+                              for address in (subset.addresses or [])]
+            self.logger.debug(f"endpoints: {endpoints_list}")
+            return endpoints_list
         endpoints_raw = self.kubectl(
             "get endpoints -o jsonpath=\"{range .items[*]}{.metadata.name},"
             "{.subsets[*].addresses[*].ip}{'\\n'}{end}\""

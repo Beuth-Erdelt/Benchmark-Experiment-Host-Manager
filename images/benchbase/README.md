@@ -166,6 +166,7 @@ Pods always synchronise before starting: each pod increments the Redis counter
 * `BENCHBASE_TIME`: Benchmark duration in seconds. Substituted into the XML config.
 * `BENCHBASE_WARMUP`: Warmup in seconds before the measured `BENCHBASE_TIME` (default `0`). Transactions in the warmup are not part of the results. Substituted into the XML config.
 * `BENCHBASE_TERMINALS`: Number of simulated client terminals (threads). Substituted into the XML config.
+* `BENCHBASE_LOADER_THREADS`: Ignored by the benchmarker; the element is removed from the XML config when it is `0` (default).
 * `BENCHBASE_BATCHSIZE`: Batch size for grouped query submission. Substituted into the XML config.
 * `BENCHBASE_ISOLATION`: Transaction isolation level (e.g. `TRANSACTION_SERIALIZABLE`, `TRANSACTION_READ_COMMITTED`). Substituted into the XML config.
 * `BENCHBASE_STATUS_INTERVAL`: When set to a positive integer, passes `--interval-monitor <N>` to Benchbase, logging a status line every N milliseconds. Empty disables interval monitoring.
@@ -233,7 +234,8 @@ An experiment-level sync barrier on `bexhoma-benchmarker-podcount-<EXPERIMENT>` 
 * `BENCHBASE_TARGET`: Target throughput. `0` is replaced by `unlimited`. Substituted into the XML config (not meaningful for the load phase).
 * `BENCHBASE_TIME`: Benchmark duration in seconds. Substituted into the XML config (not meaningful for the load phase).
 * `BENCHBASE_WARMUP`: Warmup in seconds. Substituted into the XML config (not meaningful for the load phase).
-* `BENCHBASE_TERMINALS`: Number of simulated client terminals. Substituted into the XML config.
+* `BENCHBASE_TERMINALS`: Number of simulated client terminals. Substituted into the XML config (not meaningful for the load phase).
+* `BENCHBASE_LOADER_THREADS`: Number of loader threads (BenchBase `loaderThreads`), set from `-nlt`. `0` (default) removes the element from the XML config, so BenchBase starts one thread per processor it sees. Each thread loads whole units of the benchmark (for TPC-C one warehouse), so more threads than units have no effect.
 * `BENCHBASE_BATCHSIZE`: Batch size for grouped query submission. Substituted into the XML config.
 * `BENCHBASE_ISOLATION`: Transaction isolation level. Substituted into the XML config.
 * `BENCHBASE_STATUS_INTERVAL`: When set to a positive integer, passes `--interval-monitor <N>` to Benchbase. Empty disables interval monitoring.
@@ -262,6 +264,7 @@ replaced by `sed` at container startup:
 | `BENCHBASE_WARMUP` | Warmup in seconds (only templates with `BENCHBASE_TIME`) |
 | `BENCHBASE_TARGET` | Target throughput (`unlimited` for `0`) |
 | `BENCHBASE_TERMINALS` | Number of client terminals |
+| `BENCHBASE_LOADER_THREADS` | Number of loader threads; the whole `<loaderThreads>` element is removed for `0` |
 | `BENCHBASE_BATCHSIZE` | Batch size |
 | `BENCHBASE_ISOLATION` | Transaction isolation level |
 | `BENCHBASE_NEWCONNPERTXN` | New connection per transaction flag |

@@ -316,7 +316,7 @@ tracks how many of them have finished via a `num_data_jobs_ready` label on the S
 incremented once per finished Job. Only the Job whose increment reaches `num_data_jobs`
 (`len(experiment_dict['loader'])`) writes the terminal `data=True` label and triggers the
 index-phase kickoff; earlier finishers only clean up their own pods/logs. This is safe without
-Redis (a plain `kubectl label --overwrite`) because a single orchestrator process is the only
+Redis (a plain label patch, `cluster.label_pod()`) because a single orchestrator process is the only
 writer of that label — unlike the pod-to-pod counters above, which coordinate genuinely
 independent processes and therefore need Redis's atomic `decr`.
 

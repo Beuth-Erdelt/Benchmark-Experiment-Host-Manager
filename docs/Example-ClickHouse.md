@@ -284,7 +284,6 @@ bexhoma tpch \
   -xdt \
   -m \
   -ma \
-  -mc \
   -ms $BEXHOMA_MS \
   -lc 16 \
   -lr 64Gi \

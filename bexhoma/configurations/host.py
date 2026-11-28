@@ -275,22 +275,20 @@ class HostProbe:
         return stdout.replace('\n', '')
 
     def get_host_restarts(self, pod_sut: str = '', counts: Optional[dict] = None) -> str:
-        """Return the container restart counts for the SUT pod via kubectl.
+        """Return the container restart counts for the SUT pod.
 
         :param pod_sut: Optional pod name override; defaults to current SUT pod.
         :param counts: Restart counts per container if already read
-            (``cluster.get_pod_restart_counts()``); then no kubectl call is made.
-        :return: Restart count string from kubectl jsonpath output.
+            (``cluster.get_pod_restart_counts()``); then the pod is not read again.
+        :return: Space-separated restart counts, ``""`` if unknown.
         :rtype: str
         """
         self._config.logger.debug('HostProbe.get_host_restarts()')
-        if counts:
-            return sut_restarts.clean_restart_counts(" ".join(str(count) for count in counts.values()))
-        if len(pod_sut) == 0:
-            pod_sut = self._config.pod_sut
-        result = self._config.experiment.cluster.kubectl(
-            'get pods/' + pod_sut + ' -o jsonpath="{.status.containerStatuses[*].restartCount}"')
-        return sut_restarts.clean_restart_counts(result)
+        if not counts:
+            if len(pod_sut) == 0:
+                pod_sut = self._config.pod_sut
+            counts = self._config.experiment.cluster.get_pod_restart_counts(pod_sut)
+        return sut_restarts.clean_restart_counts(" ".join(str(count) for count in counts.values()))
 
     def get_host_node(self) -> str:
         """Return the node name the SUT pod is scheduled on.
@@ -419,7 +417,7 @@ class HostProbe:
 
         Iterates over all tracked deployments and stateful sets, calls
         ``get_host_volume()`` per pod, and writes the result as labels on the
-        associated PVC via ``kubectl label``. The labels are shown by
+        associated PVC (``cluster.label_pvc()``). The labels are shown by
         ``bexperiments`` (status of volumes); a label is not written again
         when it already has these values.
 
@@ -470,8 +468,8 @@ class HostProbe:
         written = self.__dict__.setdefault('_pvc_labels_written', {})
         if written.get(pvc) == (size, used):
             return
-        fullcommand = f'label pvc {pvc} --overwrite volume_size="{size}" volume_used="{used}"'
-        if self._config.experiment.cluster.kubectl(fullcommand) is not None:
+        labels = {'volume_size': size, 'volume_used': used}
+        if self._config.experiment.cluster.label_pvc(pvc, labels) is not None:
             written[pvc] = (size, used)
 
     def get_host_all(self, component: str = 'sut', kind: str = 'deployment') -> dict:

@@ -4,7 +4,7 @@ Last recorded runs of the examples in `docs/`, one row per log in `logs_tests/`.
 Nothing is run to create this page: it is read from the committed logs by `scripts/demo-runs.py`,
 so it shows what the runs looked like when they were recorded, not whether the current code still passes.
 
-**401 passed, 0 failed, 1 warn, 0 unchecked** (402 runs)
+**406 passed, 0 failed, 1 warn, 0 unchecked** (407 runs)
 
 | Status | Log | Page | Date | Version | Duration | Failed tests / warnings |
 |---|---|---|---|---|---|---|
@@ -33,10 +33,11 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_pgbouncer_newconn.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 1555s |  |
 | passed | docs_benchbase_pgbouncer_newconn_pool.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 1531s |  |
 | passed | docs_benchbase_pgbouncer_pool_sweep.log | Example-PGBouncer.md | 2026-11-22 | 0.12.2 | 665s |  |
-| passed | docs_benchbase_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-25 | 0.12.4 | 967s |  |
+| passed | docs_benchbase_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-27 | 0.12.4 | 963s |  |
 | passed | docs_benchbase_postgresql_auctionmark_simple.log | Example-Benchbase-Others.md | 2026-11-26 | 0.12.4 | 406s |  |
 | passed | docs_benchbase_postgresql_chbenchmark_scale.log | Example-Benchbase-Others.md | 2026-11-25 | 0.12.4 | 7197s |  |
 | passed | docs_benchbase_postgresql_chbenchmark_simple.log | Example-Benchbase-Others.md | 2026-11-25 | 0.12.4 | 2455s |  |
+| passed | docs_benchbase_postgresql_clients.log | Example-Benchbase.md | 2026-11-27 | 0.12.4 | 1693s |  |
 | passed | docs_benchbase_postgresql_collector_1.log | Example-Collectors.md | 2026-11-01 | 0.11.12 | 1850s |  |
 | passed | docs_benchbase_postgresql_collector_2.log | Example-Collectors.md | 2026-11-01 | 0.11.12 | 1880s |  |
 | passed | docs_benchbase_postgresql_collector_3.log | Example-Collectors.md | 2026-11-01 | 0.11.12 | 1992s |  |
@@ -52,7 +53,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_benchbase_postgresql_otmetrics_simple.log | Example-Benchbase-Others.md | 2026-11-26 | 0.12.4 | 401s |  |
 | passed | docs_benchbase_postgresql_reset.log | Example-Benchbase.md | 2026-11-25 | 0.12.4 | 876s |  |
 | passed | docs_benchbase_postgresql_resourcestresser_simple.log | Example-Benchbase-Others.md | 2026-11-26 | 0.12.4 | 413s |  |
-| passed | docs_benchbase_postgresql_run.log | Prepare-Testbeds.md | 2026-11-19 | 0.12.0 | 571s |  |
+| passed | docs_benchbase_postgresql_run.log | Prepare-Testbeds.md | 2026-11-27 | 0.12.4 | 603s |  |
 | passed | docs_benchbase_postgresql_scale.log | Example-Benchbase.md | 2026-11-25 | 0.12.4 | 1002s |  |
 | passed | docs_benchbase_postgresql_seats_simple.log | Example-Benchbase-Others.md | 2026-11-26 | 0.12.4 | 404s |  |
 | passed | docs_benchbase_postgresql_sibench_simple.log | Example-Benchbase-Others.md | 2026-11-26 | 0.12.4 | 409s |  |
@@ -125,13 +126,14 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_hammerdb_mysql_scale.log | Example-MySQL.md | 2026-11-26 | 0.12.4 | 2965s |  |
 | passed | docs_hammerdb_orioledb.log | Example-OrioleDB.md | 2026-11-23 | 0.12.3 | 765s |  |
 | passed | docs_hammerdb_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-25 | 0.12.4 | 1338s |  |
+| passed | docs_hammerdb_postgresql_clients.log | Example-HammerDB.md | 2026-11-27 | 0.12.4 | 2133s |  |
 | passed | docs_hammerdb_postgresql_collector_1.log | Example-Collectors.md | 2026-11-04 | 0.11.12 | 2414s |  |
 | passed | docs_hammerdb_postgresql_collector_2.log | Example-Collectors.md | 2026-11-04 | 0.11.12 | 2438s |  |
 | passed | docs_hammerdb_postgresql_collector_3.log | Example-Collectors.md | 2026-11-04 | 0.11.12 | 2555s |  |
 | passed | docs_hammerdb_postgresql_keytime.log | Example-HammerDB.md | 2026-11-26 | 0.12.4 | 7407s |  |
 | passed | docs_hammerdb_postgresql_load.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 278s |  |
 | passed | docs_hammerdb_postgresql_monitoring.log | Example-HammerDB.md | 2026-11-25 | 0.12.4 | 1408s |  |
-| passed | docs_hammerdb_postgresql_run.log | Prepare-Testbeds.md | 2026-11-19 | 0.12.0 | 719s |  |
+| passed | docs_hammerdb_postgresql_run.log | Prepare-Testbeds.md | 2026-11-27 | 0.12.4 | 691s |  |
 | passed | docs_hammerdb_postgresql_scale.log | Example-HammerDB.md | 2026-11-25 | 0.12.4 | 1196s |  |
 | passed | docs_hammerdb_postgresql_start.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 141s |  |
 | passed | docs_hammerdb_postgresql_storage.log | Example-HammerDB.md | 2026-11-25 | 0.12.4 | 1435s |  |
@@ -147,7 +149,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_hardware_fio_random_page_cost.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 256s |  |
 | passed | docs_hardware_fio_wal_group_commit.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 867s |  |
 | passed | docs_hardware_fio_wal_record_size.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 570s |  |
-| passed | docs_hardware_fio_wal_sync_fdatasync.log | Example-Hardware.md | 2026-11-19 | 0.12.0 | 152s |  |
+| passed | docs_hardware_fio_wal_sync_fdatasync.log | Example-Hardware.md | 2026-11-27 | 0.12.4 | 152s |  |
 | passed | docs_hardware_fio_wal_sync_fsync.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 157s |  |
 | passed | docs_hardware_netperf_collector.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 219s |  |
 | passed | docs_hardware_netperf_postgresql_connection_scaling_sweep.log | Example-Hardware.md | 2026-11-17 | 0.11.18 | 563s |  |
@@ -213,7 +215,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_ssb_monitoring.log | Example-SSB.md | 2026-10-25 | 0.11.9 | 400s |  |
 | passed | docs_ssb_mysql.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 598s |  |
 | passed | docs_ssb_pgduckdb.log | Example-SSB.md | 2026-11-13 | 0.11.17 | 426s |  |
-| passed | docs_ssb_postgresql.log | Example-SSB.md | 2026-11-19 | 0.12.0 | 359s |  |
+| passed | docs_ssb_postgresql.log | Example-SSB.md | 2026-11-27 | 0.12.4 | 319s |  |
 | passed | docs_ssb_postgresql_collector_1.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 705s |  |
 | passed | docs_ssb_postgresql_collector_2.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 856s |  |
 | passed | docs_ssb_postgresql_collector_3.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 540s |  |
@@ -228,6 +230,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpcds_mariadb_storage.log | Example-MariaDB.md | 2026-11-26 | 0.12.4 | 2416s |  |
 | passed | docs_tpcds_mariadbcs.log | Example-MariaDBCS.md | 2026-11-04 | 0.11.12 | 1708s |  |
 | passed | docs_tpcds_monetdb.log | Example-MonetDB.md | 2026-11-26 | 0.12.4 | 682s |  |
+| passed | docs_tpcds_monetdb_clients.log | Example-TPC-DS.md | 2026-11-27 | 0.12.4 | 4740s |  |
 | passed | docs_tpcds_monetdb_monitoring.log | Example-MonetDB.md | 2026-11-26 | 0.12.4 | 673s |  |
 | passed | docs_tpcds_monetdb_sf30.log | Example-MonetDB.md | 2026-11-26 | 0.12.4 | 2705s |  |
 | passed | docs_tpcds_monetdb_sf30_repeated.log | Example-MonetDB.md | 2026-11-26 | 0.12.4 | 3502s |  |
@@ -237,7 +240,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpcds_mysql_appmetrics.log | Example-Metrics.md | 2026-11-25 | 0.12.4 | 2573s |  |
 | passed | docs_tpcds_mysql_monitoring.log | Example-MySQL.md | 2026-11-26 | 0.12.4 | 2429s |  |
 | passed | docs_tpcds_mysql_storage.log | Example-MySQL.md | 2026-11-26 | 0.12.4 | 4392s |  |
-| passed | docs_tpcds_postgresql.log | Example-TPC-DS.md | 2026-11-19 | 0.12.0 | 632s |  |
+| passed | docs_tpcds_postgresql.log | Example-TPC-DS.md | 2026-11-27 | 0.12.4 | 666s |  |
 | passed | docs_tpcds_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-25 | 0.12.4 | 1489s |  |
 | passed | docs_tpcds_postgresql_collector_1.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 914s |  |
 | passed | docs_tpcds_postgresql_collector_2.log | Example-Collectors.md | 2026-11-21 | 0.12.2 | 1050s |  |
@@ -276,6 +279,7 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpch_mariadbcs_refresh.log | Example-MariaDBCS.md | 2026-11-16 | 0.11.18 | 324s |  |
 | passed | docs_tpch_mariadbcs_storage.log | Example-MariaDBCS.md | 2026-11-16 | 0.11.18 | 1155s |  |
 | passed | docs_tpch_monetdb.log | Example-MonetDB.md | 2026-11-26 | 0.12.4 | 301s |  |
+| passed | docs_tpch_monetdb_clients.log | Example-TPC-H.md | 2026-11-27 | 0.12.4 | 5650s |  |
 | passed | docs_tpch_monetdb_monitoring.log | Example-MonetDB.md | 2026-11-26 | 0.12.4 | 1669s |  |
 | passed | docs_tpch_monetdb_refresh.log | Example-MonetDB.md | 2026-11-26 | 0.12.4 | 302s |  |
 | passed | docs_tpch_monetdb_sf100.log | Example-MonetDB.md | 2026-11-14 | 0.11.17 | 4554s |  |
@@ -304,12 +308,12 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_tpch_postgresql_collector_tenants_schema.log | Example-Collectors.md | 2026-11-02 | 0.11.12 | 1515s |  |
 | passed | docs_tpch_postgresql_fractional.log | Example-TPC-H.md | 2026-11-25 | 0.12.4 | 604s |  |
 | passed | docs_tpch_postgresql_load.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 326s |  |
-| passed | docs_tpch_postgresql_monitoring.log | Example-PostgreSQL.md | 2026-11-25 | 0.12.4 | 837s |  |
+| passed | docs_tpch_postgresql_monitoring.log | Example-PostgreSQL.md | 2026-11-27 | 0.12.4 | 806s |  |
 | passed | docs_tpch_postgresql_ramdisk.log | Example-PostgreSQL.md | 2026-11-25 | 0.12.4 | 437s |  |
-| passed | docs_tpch_postgresql_refresh.log | Example-TPC-H.md | 2026-11-25 | 0.12.4 | 401s |  |
+| passed | docs_tpch_postgresql_refresh.log | Example-TPC-H.md | 2026-11-27 | 0.12.4 | 457s |  |
 | passed | docs_tpch_postgresql_run.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 361s |  |
 | passed | docs_tpch_postgresql_start.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 174s |  |
-| passed | docs_tpch_postgresql_storage.log | Example-PostgreSQL.md | 2026-11-25 | 0.12.4 | 666s |  |
+| passed | docs_tpch_postgresql_storage.log | Example-PostgreSQL.md | 2026-11-27 | 0.12.4 | 691s |  |
 | passed | docs_tpch_postgresql_subset.log | Example-TPC-H.md | 2026-11-25 | 0.12.4 | 737s |  |
 | passed | docs_tpch_postgresql_tenants_container.log | Example-Multi-Tenant.md | 2026-11-26 | 0.12.4 | 421s |  |
 | passed | docs_tpch_postgresql_tenants_database.log | Example-Multi-Tenant.md | 2026-11-26 | 0.12.4 | 386s |  |
@@ -368,13 +372,14 @@ so it shows what the runs looked like when they were recorded, not whether the c
 | passed | docs_ycsb_pgbouncer_storage.log | Example-PGBouncer.md | 2026-11-16 | 0.11.18 | 1129s |  |
 | passed | docs_ycsb_postgresql_appmetrics.log | Example-Metrics.md | 2026-11-25 | 0.12.4 | 757s |  |
 | passed | docs_ycsb_postgresql_benchmarking.log | Example-YCSB.md | 2026-11-25 | 0.12.4 | 574s |  |
+| passed | docs_ycsb_postgresql_clients.log | Example-YCSB.md | 2026-11-27 | 0.12.4 | 796s |  |
 | passed | docs_ycsb_postgresql_collector_1.log | Example-Collectors.md | 2026-11-02 | 0.11.12 | 874s |  |
 | passed | docs_ycsb_postgresql_collector_2.log | Example-Collectors.md | 2026-11-02 | 0.11.12 | 958s |  |
 | passed | docs_ycsb_postgresql_collector_3.log | Example-Collectors.md | 2026-11-02 | 0.11.12 | 1519s |  |
 | passed | docs_ycsb_postgresql_load.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 358s |  |
 | passed | docs_ycsb_postgresql_loading.log | Example-YCSB.md | 2026-11-25 | 0.12.4 | 414s |  |
 | passed | docs_ycsb_postgresql_loading_patch.log | Example-YCSB.md | 2026-11-25 | 0.12.4 | 375s |  |
-| passed | docs_ycsb_postgresql_monitoring.log | Example-YCSB.md | 2026-11-25 | 0.12.4 | 818s |  |
+| passed | docs_ycsb_postgresql_monitoring.log | Example-YCSB.md | 2026-11-27 | 0.12.4 | 779s |  |
 | passed | docs_ycsb_postgresql_reset.log | Example-YCSB.md | 2026-11-25 | 0.12.4 | 2724s |  |
 | passed | docs_ycsb_postgresql_run.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 501s |  |
 | passed | docs_ycsb_postgresql_start.log | Prepare-Testbeds.md | 2026-11-13 | 0.11.17 | 170s |  |

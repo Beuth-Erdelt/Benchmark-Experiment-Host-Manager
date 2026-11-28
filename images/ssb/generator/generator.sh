@@ -89,14 +89,14 @@ fi
 # destination (same file system) and moves the finished files in with mv (atomic rename);
 # .complete is written after the move. A loader never sees a half-written file, and no pod
 # deletes files of another pod. dbgen is deterministic, so all copies are equal.
-# Recreate removes only files: with one pod the folder is /data/ssb/SF<SF> itself, which also
-# holds flat/ and the <N>/<child> folders of other splits.
+# Recreate (STORE_RAW_DATA_RECREATE, -xrd) deletes nothing: it generates again and the move
+# replaces the files atomically, so a loader of another configuration that reads them meanwhile
+# keeps reading complete files (equal content, dbgen is deterministic).
 if [ -f "$destination_raw/.complete" ]
 then
 	if test $STORE_RAW_DATA_RECREATE -gt 0
 	then
-		echo "Recreate raw folder"
-		rm -f "$destination_raw"/*.tbl* "$destination_raw"/.complete
+		echo "Recreate raw folder: generate again, the move replaces the files"
 	else
 		echo "Raw folder exists, I do nothing"
 		DURATION_SCRIPT=$((SECONDS-SECONDS_START_SCRIPT))

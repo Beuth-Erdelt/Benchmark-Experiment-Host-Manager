@@ -77,7 +77,6 @@ report_result $? "TPC-H MonetDB  sf=1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 3600                       query timeout in seconds
 # -lc 16                        CPU limit for the SUT container
@@ -96,7 +95,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 3600 \
   -lc 16 \
@@ -177,7 +175,6 @@ report_result $? "TPC-H MonetDB storage  sf=1  nc=2"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 3600                       query timeout in seconds
 # -lc 16                        CPU limit for the SUT container
@@ -199,7 +196,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 3600 \
   -lc 16 \
@@ -227,7 +223,6 @@ report_result $? "TPC-H MonetDB power  sf=100  nc=1  ne=1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 3600                       query timeout in seconds
 # -lc 16                        CPU limit for the SUT container
@@ -248,7 +243,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 3600 \
   -lc 16 \
@@ -275,7 +269,6 @@ report_result $? "TPC-H MonetDB power  sf=100  nc=2  ne=1,1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 3600                       query timeout in seconds
 # -lc 16                        CPU limit for the SUT container
@@ -296,7 +289,6 @@ bexhoma tpch \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 3600 \
   -lc 16 \
@@ -365,7 +357,6 @@ report_result $? "TPC-DS MonetDB simple  sf=3"
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
@@ -383,7 +374,6 @@ bexhoma tpcds \
   -nbp 1 \
   -xii -xic -xis \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 128Gi \
   -rr 128Gi \
@@ -406,7 +396,6 @@ report_result $? "TPC-DS MonetDB monitoring  sf=3"
 # -xic                          enforce constraints after data load
 # -xis                          run ANALYZE after data load
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lr 128Gi                     RAM limit for the SUT container
 # -rr 128Gi                     RAM requested for the SUT container
@@ -426,7 +415,6 @@ bexhoma tpcds \
   -nbp 1 \
   -xii -xic -xis \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lr 128Gi \
   -rr 128Gi \
@@ -456,7 +444,6 @@ report_result $? "TPC-DS MonetDB throughput  sf=3  ne=1,2"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
 # -lr 1024Gi                    RAM limit for the SUT container
@@ -474,7 +461,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 1024Gi \
@@ -499,7 +485,6 @@ report_result $? "TPC-DS MonetDB power  sf=30  nc=1  ne=1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
 # -lr 1024Gi                    RAM limit for the SUT container
@@ -516,7 +501,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 1024Gi \
@@ -540,7 +524,6 @@ report_result $? "TPC-DS MonetDB power  sf=30  nc=2  ne=1,1"
 # -xis                          run ANALYZE after data load
 # -xdt                          also measure data transfer volume per query
 # -m                            collect SUT resource metrics
-# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -t 14400                      query timeout in seconds
 # -lr 1024Gi                    RAM limit for the SUT container
@@ -557,7 +540,6 @@ bexhoma tpcds \
   -xii -xic -xis \
   -xdt \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -t 14400 \
   -lr 1024Gi \

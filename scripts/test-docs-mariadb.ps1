@@ -64,7 +64,6 @@ bexhoma tpch `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
@@ -97,7 +96,6 @@ bexhoma tpch `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
@@ -125,7 +123,6 @@ bexhoma tpch `
   -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
   -ma                           <# collect metrics for the whole experiment #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
@@ -185,7 +182,6 @@ bexhoma tpcds `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
@@ -213,7 +209,6 @@ bexhoma tpcds `
   -xis                          <# run ANALYZE after data load #> `
   -xdt                          <# also measure data transfer volume per query #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -t 1200                       <# query timeout in seconds #> `
   -lr 128Gi                     <# RAM limit for the SUT container #> `
@@ -296,7 +291,6 @@ bexhoma benchbase `
   -nbp 1                        <# number of benchmarking pods #> `
   -nbt 160                      <# total benchmarking threads #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
@@ -322,7 +316,6 @@ bexhoma benchbase `
   -nbp 1,2                      <# number of benchmarking pods #> `
   -nbt 160                      <# total benchmarking threads #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
@@ -374,7 +367,6 @@ bexhoma hammerdb `
   -nbp 1                        <# number of benchmarking pods #> `
   -nbt 16                       <# total benchmarking threads #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
@@ -401,7 +393,6 @@ bexhoma hammerdb `
   -nbp 1,2                      <# number of benchmarking pods #> `
   -nbt 16                       <# total benchmarking threads #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `
@@ -548,7 +539,6 @@ bexhoma ycsb `
   -nbp 1,8                      <# number of benchmarking pods #> `
   -nbt 64                       <# total benchmarking threads #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   --set deployment[bexhoma-deployment-mariadb].container[dbms].innodb_buffer_pool_size=32G <# buffer pool fitting the RAM limit (template: 8G) #> `

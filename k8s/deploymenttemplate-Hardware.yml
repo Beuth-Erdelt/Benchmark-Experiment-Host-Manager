@@ -19,7 +19,6 @@ metadata:
 spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 22}
-  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   # sockperf server pool (SOCKPERF_BASE_PORT..+SOCKPERF_NUM_SERVERS-1, see
   # images/hardware/sut/Dockerfile); one TCP + one UDP entry per port so
   # run_sockperf.sh can pick either protocol without a separate port range.
@@ -419,53 +418,9 @@ spec:
         # HARDWARE_TEST_DIR (images/hardware/benchmarker) points inside this path
         - {mountPath: /database, name: benchmark-storage-volume}
         - {mountPath: /dev/shm, name: dshm}
-      - name: cadvisor
-        image: gcr.io/cadvisor/cadvisor:v0.47.0
-        args: ["--port", "9300", "--storage_duration", "20m0s", "--docker_only", "true", "--disable_metrics", "disk,network,tcp,advtcp,udp,sched,process,hugetlb", "--application_metrics_count_limit", "30", "--housekeeping_interval", "5s"]
-        ports:
-        - containerPort: 9300
-          name: http
-          protocol: TCP
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-        resources:
-          requests: {cpu: 150m, memory: 200Mi}
-          limits: {cpu: 16000m, memory: 128Gi}
-        volumeMounts:
-        - name: rootfs
-          mountPath: /rootfs
-          readOnly: true
-        - name: var-run
-          mountPath: /var/run
-          readOnly: true
-        - name: sys
-          mountPath: /sys
-          readOnly: true
-        - name: docker
-          mountPath: /var/lib/docker
-          readOnly: true
-        - name: disk
-          mountPath: /dev/disk
-          readOnly: true
       volumes:
       - name: benchmark-storage-volume
         persistentVolumeClaim: {claimName: bexhoma-storage}
-      - name: rootfs
-        hostPath:
-          path: /
-      - name: var-run
-        hostPath:
-          path: /var/run
-      - name: sys
-        hostPath:
-          path: /sys
-      - name: docker
-        hostPath:
-          path: /var/lib/docker
-      - name: disk
-        hostPath:
-          path: /dev/disk
       - name: dshm
         emptyDir:
           medium: Memory

@@ -9,15 +9,17 @@ Metrics are fetched from Prometheus after each phase completes and are included 
 
 Three CLI flags control how deeply bexhoma monitors an experiment:
 
-| Flag | Scope | What is deployed |
+| Flag | Scope | What is collected |
 |---|---|---|
 | (none) | No monitoring | No metrics are collected |
-| `-m` | SUT only | cAdvisor sidecar in the SUT pod + per-experiment Prometheus |
-| `-mc` | All components | cAdvisor DaemonSet on every node + per-experiment Prometheus |
-| `-ma` | Application metrics | DBMS-specific exporter sidecar (e.g., pgexporter) + same Prometheus |
+| `-m` | SUT only | System metrics of the SUT and its workers |
+| `-mc` | All components | System metrics of the SUT, its workers, the loader, the data generator and the benchmarker |
+| `-ma` | Application metrics | DBMS-internal metrics from an exporter sidecar (e.g., pgexporter) in the SUT pod |
 
-`-m` and `-mc` cover hardware metrics (CPU, memory, network, disk). Network and disk metrics need a preinstalled Prometheus whose exporters report them: the cAdvisor bexhoma installs itself runs with `--disable_metrics disk,network,...` (see below).
+`-m` and `-mc` cover hardware metrics (CPU, memory, network, disk) and use the same cluster-wide source (see [Prometheus and cAdvisor Provisioning](#prometheus-and-cadvisor-provisioning)); they differ only in which components' metrics are fetched.
+Network and disk metrics need a preinstalled Prometheus whose exporters report them: the cAdvisor bexhoma installs itself runs with `--disable_metrics disk,network,...` (see below).
 `-ma` adds DBMS-internal statistics (buffer pool hits, query rates, replication lag, etc.) scraped from an exporter sidecar.
+Sidecar containers in the SUT pod are only used for application metrics, never for system metrics.
 `-ma` is experimental.
 
 Which hardware metrics are collected is decided by each metric's `active` flag in `cluster.config` (see [Config](Config.md)).
@@ -40,26 +42,18 @@ No additional components are installed.
 
 ### Auto-Installed Prometheus
 
-If no preinstalled Prometheus is reachable, bexhoma installs the required components automatically:
+If no preinstalled Prometheus is reachable, bexhoma installs the required components automatically, for `-m` and `-mc` alike:
 
-| Monitoring mode | cAdvisor | Prometheus |
+| Component | Scope | Template file |
 |---|---|---|
-| `-m` | Sidecar container in the SUT pod | One per experiment |
-| `-mc` | DaemonSet on every cluster node | One per experiment |
+| cAdvisor DaemonSet | One pod on every cluster node, shared by all experiments | `k8s/daemonsettemplate-monitoring.yml` |
+| Prometheus server | One per experiment, removed during the cleanup phase | `k8s/deploymenttemplate-bexhoma-prometheus.yml` |
 
-All installed components are labelled with the experiment code and removed during the cleanup phase.
-The per-experiment Prometheus is configured at startup to scrape the cAdvisor instances bexhoma just deployed.
-
-#### Kubernetes manifest templates
-
-| Component | Template file |
-|---|---|
-| cAdvisor sidecar (per SUT) | `k8s/deploymenttemplate-PostgreSQL.yml` (and equivalents for other DBMS) |
-| cAdvisor DaemonSet (cluster-wide) | `k8s/daemonsettemplate-monitoring.yml` |
-| Prometheus server | `k8s/deploymenttemplate-bexhoma-prometheus.yml` |
-
-cAdvisor runs in a container named `cadvisor` with a service port named `port-monitoring` on port 9300.
+The per-experiment Prometheus is configured at startup to scrape the cAdvisor pods of the DaemonSet.
+cAdvisor runs in a container named `cadvisor` behind the headless service `bexhoma-service-monitoring-default` on port 9300.
 Prometheus runs with a service port named `port-prometheus` on port 9090.
+
+With a preinstalled Prometheus, the per-experiment Prometheus is only started for `-ma`, to scrape the exporter sidecars.
 
 ---
 

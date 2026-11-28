@@ -84,7 +84,6 @@ bexhoma ycsb `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -rss 50Gi                     <# size of the persistent volume claim #> `
   -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
@@ -93,6 +92,33 @@ bexhoma ycsb `
   run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_monitoring.log" -Encoding utf8
 
 Write-ExperimentResult $LASTEXITCODE "YCSB monitoring  sf=3  nbp=1,8"
+
+#### YCSB client resources (Example-YCSB.md)
+bexhoma ycsb `
+  -dbms PostgreSQL              <# DBMS under test #> `
+  -sf 10                        <# scaling factor (number of records in millions) #> `
+  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
+  -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
+  -xnbf 4                       <# throughput target as a multiple of the base ops/s #> `
+  -xnlf 4                       <# loading throughput target as a multiple of the base ops/s #> `
+  -nc 1                         <# number of repeated runs per configuration #> `
+  -ne 1                         <# parallel client counts to sweep (comma-separated) #> `
+  -nlp 8                        <# number of data loader pods #> `
+  -nlt 64                       <# threads per loader pod #> `
+  -nbp "1,8"                    <# benchmarking pod counts to sweep (comma-separated) #> `
+  -nbt 64                       <# threads per benchmarking pod #> `
+  -m                            <# collect SUT resource metrics #> `
+  -mc                           <# collect metrics of loader and benchmarker #> `
+  -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
+  -rsr                          <# delete and recreate the PVC at experiment start, so the loader is measured #> `
+  -rss 50Gi                     <# size of the persistent volume claim #> `
+  -rnn $BEXHOMA_NODE_SUT        <# schedule SUT pod on this node #> `
+  -rnl $BEXHOMA_NODE_LOAD       <# schedule loader pods on this node #> `
+  -rnb $BEXHOMA_NODE_BENCHMARK  <# schedule benchmarker pods on this node #> `
+  run 2>&1 | Out-File "$LOG_DIR\docs_ycsb_postgresql_clients.log" -Encoding utf8
+
+Write-ExperimentResult $LASTEXITCODE "YCSB clients  sf=10  nbp=1,8"
+
 
 
 #### YCSB Persistent Storage (Example-YCSB.md)
@@ -125,7 +151,7 @@ Write-ExperimentResult $LASTEXITCODE "YCSB storage  sf=1  nbp=1,8  nc=2"
 bexhoma ycsb `
   -dbms PostgreSQL              <# DBMS under test #> `
   -sf 1                         <# scaling factor (number of records in millions) #> `
-  -xwl a                        <# YCSB workload template (a = 50%% read / 50%% update) #> `
+  -xwl a                        <# YCSB workload template (a = 50% read / 50% update) #> `
   -xtb 16384                    <# base ops/s used to compute throughput targets (2^14) #> `
   -xnbf 2                       <# throughput target as a multiple of the base ops/s #> `
   -xnlf 1                       <# loading throughput target as a multiple of the base ops/s #> `
@@ -188,7 +214,6 @@ bexhoma ycsb `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -216,7 +241,6 @@ bexhoma ycsb `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -244,7 +268,6 @@ bexhoma ycsb `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -273,7 +296,6 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -xio hashed                   <# index order strategy (hashed / ordered) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -302,7 +324,6 @@ bexhoma ycsb `
   -nbt 64                       <# threads per benchmarking pod #> `
   -xio ordered                  <# index order strategy (hashed / ordered) #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -330,7 +351,6 @@ bexhoma ycsb `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -358,7 +378,6 @@ bexhoma ycsb `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `
@@ -386,7 +405,6 @@ bexhoma ycsb `
   -nbp 1,8                      <# benchmarking pod counts to sweep (comma-separated) #> `
   -nbt 64                       <# threads per benchmarking pod #> `
   -m                            <# collect SUT resource metrics #> `
-  -mc                           <# collect metrics for all cluster nodes #> `
   -ms $BEXHOMA_MS               <# max simultaneous DBMS configurations #> `
   -lr 64Gi                      <# RAM limit for the SUT container #> `
   -rr 64Gi                      <# RAM requested for the SUT container #> `

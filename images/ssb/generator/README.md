@@ -19,7 +19,7 @@ See [images/ssb/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experiment-
 4. If `BEXHOMA_SYNCH_GENERATE=1`: sync on `bexhoma-generator-podcount-job-<CONNECTION>-<EXPERIMENT>-<DATA_JOB>`.
    Before the check for existing data, so a pod that exits early still checks in.
 5. Exit early if the folder holds `.complete` and `STORE_RAW_DATA_RECREATE=0`. With recreate,
-   remove its `.tbl` files and `.complete` (files only: with one pod the folder holds other splits too).
+   generate again without deleting anything: the move replaces the files atomically.
 6. Generate into the staging folder `<destination>/.staging-<pod name>`:
    normal: `dbgen -T l [-C <N> -S <child>]`; child 1 also `dbgen -T c`, `-T s`, `-T p`, `-T d`.
    flat: lineorder chunk (reused from the normal folder if complete), full customer/supplier/part

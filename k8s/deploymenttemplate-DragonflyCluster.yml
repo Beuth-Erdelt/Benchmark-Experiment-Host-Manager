@@ -19,7 +19,6 @@ metadata:
 spec:
   ports:
   - {port: 9091, protocol: TCP, name: port-dbms, targetPort: 6379}
-  - {port: 9300, protocol: TCP, name: port-monitoring, targetPort: 9300}
   - {port: 16379, protocol: TCP, name: port-bus, targetPort: 16379}
   selector: {app: bexhoma, component: worker, configuration: default, experiment: default}
   #  statefulset.kubernetes.io/pod-name: bexhoma-worker-0

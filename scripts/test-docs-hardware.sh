@@ -636,7 +636,7 @@ report_result $? "8. Hardware fio OLTP/WAL contention proxy  randrw 70/30  bs=8k
 # -xtd 60 caps each of run_sysbench.sh's two phases (CPU, then memory) at 60s
 # (see images/hardware/benchmarker/run_sysbench.sh); without it, sysbench
 # falls back to its own short built-in default and a round can finish before
-# -m/-mc's Prometheus scrape interval ever samples it, showing no monitoring
+# -m's Prometheus scrape interval ever samples it, showing no monitoring
 # data at all. Total round length is therefore roughly up to 2x60s (memory
 # can finish earlier if its 10G transfers before the time limit) plus SSH/pod
 # overhead - about 1-2 minutes per round, the "duration" column in the result
@@ -648,18 +648,17 @@ report_result $? "8. Hardware fio OLTP/WAL contention proxy  randrw 70/30  bs=8k
 # bursting). Sweeps sysbench's own thread count (-nbt) at fixed -nbp 1: events
 # per second should roughly double from 1->2 threads, then flatten for 4 and 8
 # (a 2-core cgroup can't run more concurrent CPU-bound threads than it has
-# cores), and -mc's CPU utilization for this SUT container should plateau at
+# cores), and -m's CPU utilization for this SUT container should plateau at
 # ~2 cores from -nbt=2 onward. The threads-per-pod value found here where
 # events/sec first plateaus is the "saturation point" used as a fixed
 # parameter in commands 6-8.
 # -dbms Hardware                hardware target(s) to test
 # -xht sysbench                 benchmark tool: sysbench (CPU/memory)
-# -xtd 60                       seconds per phase (CPU, then memory); long enough for -m/-mc to sample
+# -xtd 60                       seconds per phase (CPU, then memory); long enough for -m to sample
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count, fixed
 # -nbt 1,2,4,8                  sysbench --threads to sweep (comma-separated)
 # -m                            collect SUT resource metrics
-# -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lc 2                         CPU limit for the SUT pod: calibration ceiling
 # -rc 2                         CPU request for the SUT pod, matches -lc
@@ -673,7 +672,6 @@ bexhoma hardware \
   -nbp 1 \
   -nbt 1,2,4,8 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lc 2 \
   -rc 2 \
@@ -693,12 +691,11 @@ report_result $? "5. Hardware sysbench CPU quota calibration  lc=2  threads=1,2,
 # (extra SSH sessions, extra pod-sync latency), not a hardware/cgroup finding.
 # -dbms Hardware                hardware target(s) to test
 # -xht sysbench                 benchmark tool: sysbench (CPU/memory)
-# -xtd 60                       seconds per phase (CPU, then memory); long enough for -m/-mc to sample
+# -xtd 60                       seconds per phase (CPU, then memory); long enough for -m to sample
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1,2,4                    benchmarking pod counts to sweep (comma-separated)
 # -nbt 4                        total sysbench threads, fixed, split across -nbp
 # -m                            collect SUT resource metrics
-# -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lc 2                         CPU limit for the SUT pod, fixed
 # -rc 2                         CPU request for the SUT pod, matches -lc
@@ -712,7 +709,6 @@ bexhoma hardware \
   -nbp 1,2,4 \
   -nbt 4 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lc 2 \
   -rc 2 \
@@ -733,12 +729,11 @@ report_result $? "6. Hardware sysbench nbp overhead sweep  lc=2  threads=4  pods
 # curve for a single shared cgroup, the baseline command 8 compares against.
 # -dbms Hardware                hardware target(s) to test
 # -xht sysbench                 benchmark tool: sysbench (CPU/memory)
-# -xtd 60                       seconds per phase (CPU, then memory); long enough for -m/-mc to sample
+# -xtd 60                       seconds per phase (CPU, then memory); long enough for -m to sample
 # -ne 1,2,4,8                   parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count, fixed
 # -nbt 2                        threads per benchmarking pod, fixed at the saturation point
 # -m                            collect SUT resource metrics
-# -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lc 2                         CPU limit for the SUT pod, fixed
 # -rc 2                         CPU request for the SUT pod, matches -lc
@@ -752,7 +747,6 @@ bexhoma hardware \
   -nbp 1 \
   -nbt 2 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lc 2 \
   -rc 2 \
@@ -778,12 +772,11 @@ report_result $? "7. Hardware sysbench ne saturation sweep  lc=2  threads=2  cli
 # quotas don't cover (shared LLC, memory bandwidth).
 # -dbms Hardware                hardware target(s) to test
 # -xht sysbench                 benchmark tool: sysbench (CPU/memory)
-# -xtd 60                       seconds per phase (CPU, then memory); long enough for -m/-mc to sample
+# -xtd 60                       seconds per phase (CPU, then memory); long enough for -m to sample
 # -ne 1                         parallel client counts to sweep (comma-separated)
 # -nbp 1                        benchmarking pod count per tenant, fixed
 # -nbt 2                        threads per benchmarking pod, fixed at the saturation point
 # -m                            collect SUT resource metrics
-# -mc                           collect node-level cluster metrics (CPU throttling)
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -lc 2                         CPU limit per tenant SUT pod
 # -rc 2                         CPU request per tenant SUT pod, matches -lc
@@ -799,7 +792,6 @@ bexhoma hardware \
   -nbp 1 \
   -nbt 2 \
   -m \
-  -mc \
   -ms $BEXHOMA_MS \
   -lc 2 \
   -rc 2 \
@@ -996,6 +988,7 @@ report_result $? "11. Hardware netperf PostgreSQL pod scaling  protocol=tcp  nbp
 # -nbp 1,2,4,8,16               benchmarking pod counts to sweep, capped at the server pool size
 # -nbt 1                        threads per benchmarking pod, fixed (unused by sockperf, one process per pod)
 # -m                            collect SUT resource metrics
+# -mc                           collect metrics for all cluster nodes
 # -ms $BEXHOMA_MS               max simultaneous DBMS configurations
 # -rnn $BEXHOMA_NODE_SUT        schedule SUT pod on this node
 # -rnb $BEXHOMA_NODE_BENCHMARK  schedule benchmarker pod(s) on this node
@@ -1011,6 +1004,7 @@ bexhoma hardware \
   -nbp 1,2,4,8,16 \
   -nbt 1 \
   -m \
+  -mc \
   -ms $BEXHOMA_MS \
   -rnn $BEXHOMA_NODE_SUT -rnb $BEXHOMA_NODE_BENCHMARK \
   run &>$LOG_DIR/docs_hardware_sockperf_pod_scaling_sweep.log

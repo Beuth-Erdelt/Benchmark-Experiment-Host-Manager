@@ -13,7 +13,7 @@ See [images/tpcds/README.md](https://github.com/Beuth-Erdelt/Benchmark-Experimen
    empty rather than defaulting to a fixed child index, since another pod may already own it.
 2. Write child index to `/tmp/tpcds/BEXHOMA_CHILD` (loaders read this file).
 3. If `BEXHOMA_SYNCH_GENERATE=1`: sync on `bexhoma-generator-podcount-job-<CONNECTION>-<EXPERIMENT>-<DATA_JOB>`. This comes before the check for existing data, so a pod that finds its data complete still checks in; otherwise the pods of the job that do generate wait for it forever.
-4. Determine destination: `/data/tpcds/SF<SF>[/<N>/<child>]` or `/tmp/tpcds/SF<SF>/<N>/<child>`. Exit early if the folder has the completion marker `.bexhoma_generated` and `STORE_RAW_DATA_RECREATE=0`. With `STORE_RAW_DATA_RECREATE=1` the `.dat` files and the marker are removed (only the files, not the subfolders of split data). `.dat` files without the marker are left over from a generator that failed or was killed (or from an image before the marker): they are not reused and are replaced in step 7.
+4. Determine destination: `/data/tpcds/SF<SF>[/<N>/<child>]` or `/tmp/tpcds/SF<SF>/<N>/<child>`. Exit early if the folder has the completion marker `.bexhoma_generated` and `STORE_RAW_DATA_RECREATE=0`. With `STORE_RAW_DATA_RECREATE=1` the data is generated again and nothing is deleted first: the move in step 7 replaces the files atomically, so a loader of another configuration that reads them meanwhile keeps reading complete files. `.dat` files without the marker are left over from a generator that failed or was killed (or from an image before the marker): they are not reused and are replaced in step 7.
 5. Run `dsdgen -dir <staging> -scale <SF>` (single pod) or `dsdgen -dir <staging> -scale <SF> -parallel <N> -child <i>` (multi-pod) in the staging folder `<destination>/.staging-<pod name>`.
 6. If `TRANSFORM_RAW_DATA=1`: convert `customer.dat` from ISO-8859-1 to UTF-8 via `iconv`, then strip trailing `|` from all `.dat` files via `sed 's/.$//' -i`.
 7. Move the `.dat` files into the destination with `mv` (atomic rename on the same file system), then write `.bexhoma_generated`. If another pod wrote the marker meanwhile, discard this copy. The staging folder is removed on every exit, also when a step fails or the pod is stopped.
@@ -36,7 +36,7 @@ No multi-tenant logic in the TPC-DS generator (unlike the TPC-H generator).
 ### Data storage
 
 * `STORE_RAW_DATA`: `1` = store generated files persistently under `/data/tpcds/SF<SF>/<NUM_PODS>/<CHILD>/`; `0` = store locally under `/tmp/tpcds/SF<SF>/<NUM_PODS>/<CHILD>/`. Default: `0`.
-* `STORE_RAW_DATA_RECREATE`: `1` = delete and regenerate data even if the destination folder already exists; `0` = skip generation and exit early if the folder exists. Default: `0`.
+* `STORE_RAW_DATA_RECREATE`: `1` = regenerate data even if the destination folder already exists, replacing the files atomically; `0` = skip generation and exit early if the folder exists. Default: `0`.
 * `TRANSFORM_RAW_DATA`: `1` = converts `customer.dat` from ISO-8859-1 to UTF-8 using `iconv`, then strips the trailing `|` delimiter from every `.dat` line via `sed 's/.$//' -i`. Default: `1`.
 
 ### Redis message queue

@@ -19,7 +19,9 @@ component. That code leaves its output in the result folder:
 In such older results both processes may fetch the same metric for the same
 connection, so a gap is reported once. Some gaps are expected and carry the reason in
 ``expected``: an optional component whose data was pre-existing (the data
-generator then exits before the first scrape), and a metric that
+generator then exits before the first scrape, so its CPU utilization is missing
+too; a generator with CPU data ran, e.g. with ``-xrd``, and its gaps are judged
+like those of any component), and a metric that
 ``cluster.config`` marks ``sparse`` because its series only exists while the
 value is non-zero (e.g. backends waiting on locks, or CPU throttling of a
 container without a CPU limit), so no data means 0. ``sparse_components``
@@ -281,7 +283,8 @@ def collect_missing_metrics(
 
     :param result_dir: The experiment's result folder.
     :param optional_components: Component types whose gaps mean the data was
-        pre-existing (the experiment's ``optional_monitoring_components``).
+        pre-existing (the experiment's ``optional_monitoring_components``), as long
+        as the reference metric of ``activity_dependent`` is missing for them too.
     :param scrape_interval: Scrape interval of the cluster Prometheus in
         seconds; with it, a gap in a fetch whose window is shorter than
         :func:`~bexhoma.monitoring_math.min_measurable_window` is expected,
@@ -318,11 +321,10 @@ def collect_missing_metrics(
         window = _WINDOW.search(text) if _FETCH_LOG.match(path.name) else None
         too_short = (scrape_interval is not None and window is not None)
         for entry in parse_missing_metrics(text, path.name):
+            # gaps of optional components (pre-existing data) are decided below, once all gaps are known
             if entry.failed:
                 # no reason excuses a request that failed: the zeros are not a measurement
                 pass
-            elif entry.component in optional:
-                entry = replace(entry, expected=EXPECTED_DATA_PREEXISTING)
             elif entry.title in sparse or (entry.title, entry.component) in sparse_components:
                 entry = replace(entry, expected=EXPECTED_SPARSE)
             elif too_short:
@@ -354,11 +356,32 @@ def collect_missing_metrics(
     # looks up its parent name.
     missing_pairs = {(entry.title, entry.connection, entry.component) for entry in found}
 
-    def reference_missing(entry: MissingMetric) -> bool:
+    def names_of(entry: MissingMetric) -> set:
         names = {entry.connection}
         if not _FETCH_LOG.match(entry.source):
             names.add(entry.connection.rsplit("-", 1)[0])
-        return any((activity[entry.title], name, entry.component) in missing_pairs for name in names)
+        return names
+
+    def reference_missing(entry: MissingMetric) -> bool:
+        return any((activity[entry.title], name, entry.component) in missing_pairs for name in names_of(entry))
+
+    # A gap of an optional component (the data generator) means pre-existing data only when
+    # the component left no trace: its reference metric (CPU utilization) is missing too.
+    # With data for it, the pods ran (e.g. the data was generated again, -xrd), and the gap
+    # is judged like any other. Without a reference metric in connections.config, every gap
+    # of an optional component counts as pre-existing data.
+    references = set(activity.values())
+
+    def did_not_run(entry: MissingMetric) -> bool:
+        return not references or any(
+            (reference, name, entry.component) in missing_pairs
+            for reference in references for name in names_of(entry))
+    found = [
+        replace(entry, expected=EXPECTED_DATA_PREEXISTING)
+        if entry.component in optional and not entry.failed and did_not_run(entry)
+        else entry
+        for entry in found
+    ]
     return [
         replace(entry, warning=WARNING_NO_ACTIVITY)
         if not entry.expected and not entry.failed and entry.title in activity and not reference_missing(entry)

@@ -103,3 +103,6 @@ class StubCluster:
 
     def start_messagequeue(self) -> None:
         """No-op: real implementation deploys the message-queue pod."""
+
+    def start_monitoring_cluster(self) -> None:
+        """No-op: real implementation finds a cluster Prometheus or deploys the cAdvisor daemonset."""

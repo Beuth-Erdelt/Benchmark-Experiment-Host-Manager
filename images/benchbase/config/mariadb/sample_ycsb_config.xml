@@ -18,6 +18,7 @@
     <!-- <fieldSize>8</fieldSize> -->
 
     <!-- The workload -->
+    <loaderThreads>BENCHBASE_LOADER_THREADS</loaderThreads>
     <terminals>BENCHBASE_TERMINALS</terminals>
     <works>
         <work>

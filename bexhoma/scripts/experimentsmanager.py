@@ -182,7 +182,7 @@ def manage():
             experiment.stop_benchmarker()
             cluster.kubectl('delete all -l experiment='+args.experiment)
             # "all" does not include Secrets (TLS material of the SUTs)
-            cluster.kubectl('delete secret -l experiment='+args.experiment+',component=tls')
+            cluster.delete_secrets('experiment='+args.experiment+',component=tls')
     elif args.mode == 'summary':
         if args.experiment is not None:
             # -fe re-evaluates by executing a command inside the running dashboard pod,

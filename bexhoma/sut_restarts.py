@@ -49,14 +49,15 @@ _COUNTS_LINE = re.compile(r"^\d+(\s+\d+)*$")
 
 def clean_restart_counts(output: str | None) -> str:
     """
-    Extract the per-container restart counts from raw kubectl output.
+    Extract the per-container restart counts from raw output.
 
-    ``cluster.kubectl()`` merges stderr into stdout, so client-side warnings
-    (klog lines such as ``E0928 10:11:12.123 1234 memcache.go:265] ...``)
-    can surround the jsonpath result. Only a line made up entirely of
-    integers is the result; the last such line wins.
+    A safeguard: ``cluster.kubectl()`` keeps stderr apart from stdout, but
+    should client-side warnings (klog lines such as
+    ``E0928 10:11:12.123 1234 memcache.go:265] ...``) ever surround the
+    counts, only a line made up entirely of integers is the result; the last
+    such line wins.
 
-    :param output: Raw kubectl output, possibly ``None`` on failure.
+    :param output: Raw output, possibly ``None`` on failure.
     :return: Space-separated restart counts, or ``""`` if none were found.
     :rtype: str
     """
