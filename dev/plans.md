@@ -20,7 +20,6 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [dbms-generic-verification](plan-dbms-generic-verification.md) | done | 2 side findings, aliases deferred |
 | [research-software](plan-research-software.md) | open | Zenodo 2/2a/20, step 18, R3, I1 |
 | [observe-per-query-metrics](plan-observe-per-query-metrics.md) | open | refresh, staleness, application metrics |
-| [ssb](plan-ssb.md) | open | multi-tenancy |
 | [explicit-rounds](plan-explicit-rounds.md) | planned | C1-C4, then #925 |
 | [experiment-yaml-source-of-truth](plan-experiment-yaml-source-of-truth.md) | planned | W1-W11, Q1-Q7 |
 | [pgduckdb-force-execution](plan-pgduckdb-force-execution.md) | planned | all (P1, "for later") |
@@ -46,6 +45,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [reset-scripts](plan-reset-scripts.md) | done | optional: flush time at large SF |
 | [silent-malfunctions](plan-silent-malfunctions.md) | done | P9 is an issue, P11 in planned-disruptions |
 | [software-quality](plan-software-quality.md) | done | rest is issues #957-#960 |
+| [ssb](plan-ssb.md) | done | multi-tenancy is issue #961 |
 | [storage-class-sweep](plan-storage-class-sweep.md) | done | risks only |
 | [storage-remove-per-repetition](plan-storage-remove-per-repetition.md) | done | - |
 | [stream-metrics](plan-stream-metrics.md) | done | rest of #239 elsewhere |
@@ -112,11 +112,6 @@ Node occupancy, `monitoring:` section and `observe.metrics` for hardware metrics
 - Staleness check: `source_sha256` is written but never compared.
 - Application metrics in the catalog: wait for the catalog split.
 - `cluster.config`: `tikv_store_size_bytes` defined twice; network/filesystem queries active although skipped.
-
-### [ssb](plan-ssb.md)
-
-Done for all DBMS incl. ClickHouseCluster and MariaDB ColumnStore.
-- **Multi-tenancy:** `-mtn` is still refused for SSB.
 
 ## Planned
 
@@ -248,6 +243,8 @@ interaction with `-nc`/`-rsrp`.
 - [software-quality](plan-software-quality.md): S1, S2, S3, S5, S7 merged (#931, #933). The rest is tracked
   as issues: #957 (S7 blocking), #958 (S4 argument check), #959 (S6 split `work_benchmark_list()`), #960
   (long lines, star imports, E402, shadowed built-ins, type checks).
+- [ssb](plan-ssb.md): done for all DBMS incl. ClickHouseCluster and MariaDB ColumnStore (v0.11.9).
+  Multi-tenancy (`-mtn`, refused today) is issue #961: container tenancy first, then schema/database.
 - [storage-class-sweep](plan-storage-class-sweep.md): risks only (stale PVCs, placement warning).
 - [storage-remove-per-repetition](plan-storage-remove-per-repetition.md)
 - [stream-metrics](plan-stream-metrics.md): the rest of #239 is in metrics-pod-scope.
