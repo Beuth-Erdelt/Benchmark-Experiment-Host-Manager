@@ -1,9 +1,11 @@
 # Plan: research software (FAIR4RS, citability, release gate)
 
-Status: **mostly done.** Planned 2026-11-12, consolidated 2026-11-18, written down here 2026-11-25. DBMS-Benchmarker
-is complete (v0.16.0, Zenodo 10.5281/zenodo.24354090). Bexhoma: steps 1, 3-17, 19 done (released in v0.12.0 and
-v0.12.1). Open: **2, 2a, 20** (Zenodo, deliberately last), **18** (deferred), and two FAIR4RS points (R3 Python
-versions, I1 result formats). The self-assessment with its open points is [docs/FAIR4RS.md](../docs/FAIR4RS.md).
+Status: **done; the rest are issues.** Planned 2026-11-12, consolidated 2026-11-18, written down here 2026-11-25.
+DBMS-Benchmarker is complete (v0.16.0, Zenodo 10.5281/zenodo.24354090). Bexhoma: steps 1, 3-17, 19 done (released
+in v0.12.0 and v0.12.1). Since 2026-11-28 the open points are issues in milestone "Research software: Zenodo and
+FAIR4RS" (label `research-software`), and the issues are the current state: #972 (2a), #973 (2), #974 (20),
+#975 (R3 Python versions), #976 (I1 result formats). **18** stays deferred: everything touching the contract is
+for later. The self-assessment with its open points is [docs/FAIR4RS.md](../docs/FAIR4RS.md).
 
 Goal: the "Research software" section of the DFG proposal is true for Bexhoma and DBMS-Benchmarker: CI and
 coverage, Zenodo DOIs, CITATION.cff, a release gate, contract, validator and result format released separately,
@@ -37,8 +39,8 @@ third-party licences documented, written authorship rules.
 | # | Step | State |
 |---|---|---|
 | 1 | `CITATION.cff` (ORCID, preferred citation TPCTC 2021) | done |
-| 2 | Zenodo: `.zenodo.json`, GitHub integration, concept DOI badge in README | **open, last** |
-| 2a | `.gitattributes`: `export-ignore` for `dev/`, `TPCTC23/`, `notebooks/` (release zip ~175 MB -> ~70 MB; images/ and logs_tests/ stay); check on the first archived release that Zenodo's zip honours it | **open, with 2** |
+| 2 | Zenodo: `.zenodo.json`, GitHub integration, concept DOI badge in README | **issue #973** |
+| 2a | `.gitattributes`: `export-ignore` for `dev/`, `TPCTC23/`, `notebooks/` (release zip ~175 MB -> ~70 MB; images/ and logs_tests/ stay); check on the first archived release that Zenodo's zip honours it | **issue #972** |
 | 2b | `dev/validations/` -> `tests/validations/` (before 2a, else the archive loses the test inputs) | done |
 | 3 | `codemeta.json`, SPDX `AGPL-3.0-or-later` and docs URL in `pyproject.toml` | done |
 | 4 | release notes instead of a CHANGELOG (decision above) | done |
@@ -57,7 +59,7 @@ third-party licences documented, written authorship rules.
 | 17 | performance table of the reference set for release notes (`demo-runs.py --performance-table`), no thresholds | done |
 | 18 | contract specifications, validator, result format as separately versioned packages with their own DOIs | **deferred** |
 | 19 | model provenance in trajectories, reports and `agent_summary.yml` | done |
-| 20 | experiment specifications in a Zenodo community; the rule part is done (Publishing-Results.md) | **open, with 2** |
+| 20 | experiment specifications in a Zenodo community; the rule part is done (Publishing-Results.md) | **issue #974** |
 
 ## Open
 

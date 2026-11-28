@@ -15,7 +15,6 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | Plan | State | Open |
 |---|---|---|
 | [ddl-parameters](plan-ddl-parameters.md) | open | M5 keys, 13b, catalog size, small items |
-| [research-software](plan-research-software.md) | open | Zenodo 2/2a/20, step 18, R3, I1 |
 | [explicit-rounds](plan-explicit-rounds.md) | planned | C1-C4, then #925 |
 | [experiment-yaml-source-of-truth](plan-experiment-yaml-source-of-truth.md) | planned | W1-W11, Q1-Q7 |
 | [pgduckdb-force-execution](plan-pgduckdb-force-execution.md) | planned | all (P1, "for later") |
@@ -43,6 +42,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [mysql-storage-slowness](plan-mysql-storage-slowness.md) | done | template default (in load-failure-and-sizing) |
 | [oltp-storage-dbms](plan-oltp-storage-dbms.md) | done | - |
 | [reset-scripts](plan-reset-scripts.md) | done | optional: flush time at large SF |
+| [research-software](plan-research-software.md) | done | Zenodo + FAIR4RS are issues #972-#976; step 18 deferred |
 | [silent-malfunctions](plan-silent-malfunctions.md) | done | P9 is an issue, P11 in planned-disruptions |
 | [software-quality](plan-software-quality.md) | done | rest is issues #957-#960 |
 | [ssb](plan-ssb.md) | done | multi-tenancy is issue #961 |
@@ -68,17 +68,6 @@ says the cluster checks are open.
 - Optional: item 11, an obsolete "No curly braces" comment in many scripts.
 - Outside the plan: Python client calls do not wait out a cluster outage (`MaxRetryError`); old-named volumes
   from another machine's older bexhoma.
-
-### [research-software](plan-research-software.md)
-
-Steps 1, 2b, 3-17, 19 done (v0.12.0, v0.12.1).
-- **2, 2a, 20 (last):** `.gitattributes` export-ignore, `.zenodo.json`, GitHub integration, DOI badge, DOI in
-  `CITATION.cff`/`codemeta.json`, a Zenodo community for experiment specifications. Open question: archive
-  every release or only minor ones (recommended: every release).
-- **18 (deferred):** contract specs, validator, result format as separate packages with DOIs; decide option
-  A/B/C, split of generic spec vs. catalog, one or two DOIs, how the proposal describes the validator.
-- **R3:** CI tests only Python 3.10 and 3.12.
-- **I1:** result folder formats (pickle, Python literals) come from DBMS-Benchmarker.
 
 ## Planned
 
@@ -218,6 +207,11 @@ interaction with `-nc`/`-rsrp`.
 - [oltp-storage-dbms](plan-oltp-storage-dbms.md)
 - [reset-scripts](plan-reset-scripts.md): optional, watch the MySQL/MariaDB flush time at larger SF; YugabyteDB
   persist needs `yb-admin`.
+- [research-software](plan-research-software.md): steps 1, 2b, 3-17, 19 done (v0.12.0, v0.12.1). The rest is
+  tracked as issues in milestone "Research software: Zenodo and FAIR4RS", label `research-software`
+  (2026-11-28): #972 export-ignore (2a), #973 Zenodo archive + DOI (2), #974 Zenodo community (20), #975 R3
+  Python versions, #976 I1 result formats. Step 18 (separate contract packages, everything touching the
+  contract) is deferred by the user and stays in the plan.
 - [silent-malfunctions](plan-silent-malfunctions.md): S1-S19 merged in #937, S20 (P6/P13, expected-metrics
   list, #952) on `feature/expected-metrics`, checked 2026-11-27; docs page
   [docs/Malfunctions.md](../docs/Malfunctions.md). P9 (`-nbp`/`-nbt` ignored by TPC-H, TPC-DS, SSB) is an
