@@ -15,7 +15,6 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | Plan | State | Open |
 |---|---|---|
 | [ddl-parameters](plan-ddl-parameters.md) | open | M5 keys, 13b, catalog size, small items |
-| [dbms-generic-verification](plan-dbms-generic-verification.md) | done | 2 side findings, aliases deferred |
 | [research-software](plan-research-software.md) | open | Zenodo 2/2a/20, step 18, R3, I1 |
 | [explicit-rounds](plan-explicit-rounds.md) | planned | C1-C4, then #925 |
 | [experiment-yaml-source-of-truth](plan-experiment-yaml-source-of-truth.md) | planned | W1-W11, Q1-Q7 |
@@ -34,6 +33,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [planned-disruptions](plan-planned-disruptions.md) | parked | all, until a benchmark needs it |
 | [848-no-silent-load-failures](plan-848-no-silent-load-failures.md) | done | - |
 | [ceph-pool-metrics](plan-ceph-pool-metrics.md) | done | risks only |
+| [dbms-generic-verification](plan-dbms-generic-verification.md) | done | - |
 | [docs-dbms-pages](plan-docs-dbms-pages.md) | done | one unreferenced log |
 | [fewer-kubectl-calls](plan-fewer-kubectl-calls.md) | done | M15 is issue #963 |
 | [keep-sut](plan-keep-sut.md) | done | default of `load` (optional) |
@@ -68,14 +68,6 @@ says the cluster checks are open.
 - Optional: item 11, an obsolete "No curly braces" comment in many scripts.
 - Outside the plan: Python client calls do not wait out a cluster outage (`MaxRetryError`); old-named volumes
   from another machine's older bexhoma.
-
-### [dbms-generic-verification](plan-dbms-generic-verification.md)
-
-Done 2026-11-24; left over:
-- RF2 row counts: the MySQL refresh loader prints none for RF2, the ClickHouse loader none for RF1 or RF2.
-- Db2 loaders write chunk files and `SYSTET*.log` into the shared data folder; fix: `/tmp` and
-  `LOGDIR '/tmp'`.
-- Deferred ("for the future"): 1.4 aliases, check that anonymized summaries reveal no DBMS.
 
 ### [research-software](plan-research-software.md)
 
@@ -201,6 +193,10 @@ interaction with `-nc`/`-rsrp`.
 - [848-no-silent-load-failures](plan-848-no-silent-load-failures.md): v0.11.14 (#868).
 - [ceph-pool-metrics](plan-ceph-pool-metrics.md): v0.11.3; the 1-2 min counter lag is documented only
   (decided 2026-11-28). Risks only: short phases on a fresh volume, CephFS pool level, no OSD scope.
+- [dbms-generic-verification](plan-dbms-generic-verification.md): done 2026-11-24. The side findings (RF2 row
+  counts for MySQL/MariaDB, Db2 load logs off the data volume) are fixed in b275ad8c (#937); ClickHouse prints
+  file counts only (no extra query in the stream); no cluster run with rebuilt images recorded. 1.4 aliases
+  and the check that anonymized summaries reveal no DBMS were dropped 2026-11-28 (not pursued for a long time).
 - [docs-dbms-pages](plan-docs-dbms-pages.md): left over, delete or keep
   `logs_tests/test_tpcds_testcase_compare_summary.md` (v0.10.0, unreferenced).
 - [fewer-kubectl-calls](plan-fewer-kubectl-calls.md): M0-M4, M6-M14 (v0.11.6). M15 (repetition boundaries of

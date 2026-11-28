@@ -131,7 +131,7 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
   `docs_ycsb_dragonfly_cluster.log` (0.11.13): `TEST warning: Monitoring metrics missing (Filesystem Read/Write
   Total ... of workerloading: no activity seen, the pods were scraped)`. The proposal is dropped.
 
-## 6. Deferred
+## 6. Dropped (2026-11-28, not pursued for a long time)
 
 - 1.4 Aliases (user: "for the future"): an existing multi-DBMS summary and one anonymized DBMSBenchmarker
   dashboard show only architecture aliases (General-D, Columnwise-A, ...), never "DBMS A1", nothing reveals a
@@ -155,8 +155,17 @@ the entry script's `__main__` with a `Kubernetes` constructor that fails the tes
 1 (done) → 3 (code done; verified by 2.1) → 2 → 7 (done) → 4 → 5 after decisions.
 
 
-## 8. Side findings of the refresh run (2026-11-24), not fixed
+## 8. Side findings of the refresh run (2026-11-24)
 
+Both fixed in b275ad8c (#937, 2026-11-25); no cluster run with rebuilt images recorded yet.
+- MySQL (and MariaDB): RF2 prints `SELECT ROW_COUNT()` after each `DELETE` (printed only, not checked: a set
+  applied again deletes nothing). ClickHouse prints the rows of each RF1 file and the order keys of `delete.K`;
+  real counts would need an extra `count()` query inside the measured stream, so none is sent.
+- Db2: `load.py` writes its chunks to the container's temp folder and runs there, `rf2.py` sends a copy of the
+  delete file from there, so the `SYSTET*.log` files land in the container, not on `/data`. Only one chunk
+  (20000 lines, a few MB) exists at a time and is removed after loading; the logs stay until the pod ends.
+
+Findings as recorded on 2026-11-24:
 - RF2 row counts: only the PostgreSQL refresh loader prints them (`DELETE 6005`, `DELETE 1500`). The MySQL loader
   runs RF2 without `SELECT ROW_COUNT()` (RF1 has it), the ClickHouse loader prints no counts for RF1 or RF2
   (lightweight `DELETE` reports none). Note for the 1.1 check: RF2 deletes other orders than RF1 inserts, so only
