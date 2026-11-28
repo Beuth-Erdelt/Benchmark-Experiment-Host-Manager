@@ -1,11 +1,16 @@
 # Plan: fewer kubectl calls when a benchmark round starts
 
-Status: M0-M4 and M7-M14 implemented and committed 2026-10-18 (`9152423e`,
+Status: **DONE 2026-11-28.** M15 is issue #963; M5 will not be done (decided
+2026-11-28: the other execs stay on kubectl); the optional O1-O3 continue in
+[plan-shorter-phase-gaps.md](plan-shorter-phase-gaps.md). History below.
+
+M0-M4 and M7-M14 implemented and committed 2026-10-18 (`9152423e`,
 `7ebfc8dd`), unit tests in `tests/test_fewer_calls.py`; cluster check done
 (see "Cluster check"). M6 implemented and committed 2026-10-19 (`f3d8f6bb`,
 then the exec client pool and the init pod fix), cluster check done: tenancy_8 88.8 ->
 78.7 min, SUT idle between rounds 212 -> 114 s (see "M6: result"). M15
-(repetition boundaries side by side) planned 2026-10-19, not implemented. M5
+(repetition boundaries side by side) planned 2026-10-19, not implemented;
+moved to issue #963 on 2026-11-28 (the issue is the current state). M5
 and the optional section not done. Checked 2026-11-22: still so (no
 `_stop_repetition`; `execute_command_in_pod_api()` is used only by the host
 probes and the Redis message queue); released in v0.11.6. The optional
@@ -263,6 +268,9 @@ so 16 fetches go from about 19 s to about 10 s. Check dashboard pod CPU/RAM with
 8 metrics.py processes (pandas import each).
 
 ### M5 (optional) - exec through the Python client
+
+**Not done, decided 2026-11-28:** kubectl stays as it is for all execs
+except the host probes and the Redis message queue.
 
 `execute_command_in_pod()` via `kubernetes.stream.stream(connect_get_namespaced_pod_exec, ...)`
 instead of a kubectl subprocess. Measured: 0.26 s per exec with M14, 0.75 s

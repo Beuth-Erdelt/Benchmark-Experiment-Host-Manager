@@ -15,7 +15,6 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | Plan | State | Open |
 |---|---|---|
 | [ddl-parameters](plan-ddl-parameters.md) | open | M5 keys, 13b, catalog size, small items |
-| [fewer-kubectl-calls](plan-fewer-kubectl-calls.md) | open | M5, M15 |
 | [load-failure-and-sizing](plan-load-failure-and-sizing.md) | open | P2 tmpdir (decision c/d), A4 |
 | [dbms-generic-verification](plan-dbms-generic-verification.md) | done | 2 side findings, aliases deferred |
 | [research-software](plan-research-software.md) | open | Zenodo 2/2a/20, step 18, R3, I1 |
@@ -38,6 +37,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [848-no-silent-load-failures](plan-848-no-silent-load-failures.md) | done | - |
 | [ceph-pool-metrics](plan-ceph-pool-metrics.md) | done | risks only |
 | [docs-dbms-pages](plan-docs-dbms-pages.md) | done | one unreferenced log |
+| [fewer-kubectl-calls](plan-fewer-kubectl-calls.md) | done | M15 is issue #963 |
 | [keep-sut](plan-keep-sut.md) | done | default of `load` (optional) |
 | [metrics-pod-scope](plan-metrics-pod-scope.md) | done | - |
 | [mysql-storage-slowness](plan-mysql-storage-slowness.md) | done | template default (in load-failure-and-sizing) |
@@ -68,15 +68,6 @@ says the cluster checks are open.
 - Optional: item 11, an obsolete "No curly braces" comment in many scripts.
 - Outside the plan: Python client calls do not wait out a cluster outage (`MaxRetryError`); old-named volumes
   from another machine's older bexhoma.
-
-### [fewer-kubectl-calls](plan-fewer-kubectl-calls.md)
-
-M0-M4, M6-M14 done (v0.11.6).
-- **M5 (optional):** exec through the Python client instead of kubectl; check the token plugin and token
-  lifetime with the admins first.
-- **M15:** handle the four repetition-boundary passes (stop SUTs, start SUTs, start loading, loading end)
-  of all tenants side by side; about 23 of 79 min of tenancy_8.
-- The optional O1-O3 continue in [shorter-phase-gaps](plan-shorter-phase-gaps.md).
 
 ### [load-failure-and-sizing](plan-load-failure-and-sizing.md)
 
@@ -228,6 +219,9 @@ interaction with `-nc`/`-rsrp`.
   (decided 2026-11-28). Risks only: short phases on a fresh volume, CephFS pool level, no OSD scope.
 - [docs-dbms-pages](plan-docs-dbms-pages.md): left over, delete or keep
   `logs_tests/test_tpcds_testcase_compare_summary.md` (v0.10.0, unreferenced).
+- [fewer-kubectl-calls](plan-fewer-kubectl-calls.md): M0-M4, M6-M14 (v0.11.6). M15 (repetition boundaries of
+  all tenants side by side) is issue #963; M5 will not be done, kubectl stays (decided 2026-11-28); the
+  optional O1-O3 continue in [shorter-phase-gaps](plan-shorter-phase-gaps.md).
 - [keep-sut](plan-keep-sut.md): optional, whether `load` should default to not keeping SUTs.
 - [metrics-pod-scope](plan-metrics-pod-scope.md)
 - [mysql-storage-slowness](plan-mysql-storage-slowness.md): the template default of 8G is a separate decision
