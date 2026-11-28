@@ -41,6 +41,7 @@ class _FakeMetrics:
 
     def __init__(self, outputs=None, delay=0.2):
         self.registered = []
+        self.expected = []
         self.calls = []
         self.outputs = list(outputs or [])
         self.delay = delay
@@ -52,6 +53,9 @@ class _FakeMetrics:
     def register(self, component_type, title, optional=False):
         self.registered.append(component_type)
         self.register_threads.add(threading.get_ident())
+
+    def expect(self, connection, component, component_type, metrics_type, time_start, time_end):
+        self.expected.append((connection, component_type))
 
     def fetch(self, register=True, upload=True, **kwargs):
         with self.lock:
@@ -70,7 +74,8 @@ def _config(metrics):
 
 
 def _task(connection, component_type='benchmarking'):
-    return dict(connection=connection, component_type=component_type, title='t')
+    return dict(connection=connection, component_type=component_type, title='t', component='sut',
+                metrics_type='metrics', time_start=0, time_end=1)
 
 
 class MetricFetchBatchTest(unittest.TestCase):
@@ -99,6 +104,8 @@ class MetricFetchBatchTest(unittest.TestCase):
         batch = MetricFetchBatch()
         batch.add_fetch(_config(metrics), **_task('a', 'loading'))
         self.assertEqual(metrics.registered, ['loading'])
+        # the expected metrics are written down when queuing, before the fetch can fail
+        self.assertEqual(metrics.expected, [('a', 'loading')])
         self.assertEqual(metrics.register_threads, {threading.get_ident()})
 
     def test_one_worker_runs_one_by_one(self):

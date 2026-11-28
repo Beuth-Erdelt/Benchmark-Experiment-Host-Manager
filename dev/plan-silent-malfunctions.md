@@ -3,7 +3,7 @@
 Status: **implemented on branch silent-malfunctions, cluster-tested 2026-11-24 (section 4c) with the
 rebuilt images.** S1-S9 done (section 4), plus S10 (end marker of scripts) and S11 (aborted summary checks
 the scripts) found by the cluster tests. P1 done as S12 (2026-11-25: exit code, `-tr` removed), P2 as S13
-(UID at the end of a repetition), P5 as S14 (HammerDB run complete), P12 as S15 (`No summary` fails), P7 as S16 (pipes in scripts), P8 as S17 (missing DBMSBenchmarker child named), P10 as S18 (replaced SUT pod not loaded again), P14 as S19 (runtime failures stored); P9 deferred. Open: the other proposals of section 5 and the docs page (section 6).
+(UID at the end of a repetition), P5 as S14 (HammerDB run complete), P12 as S15 (`No summary` fails), P7 as S16 (pipes in scripts), P8 as S17 (missing DBMSBenchmarker child named), P10 as S18 (replaced SUT pod not loaded again), P14 as S19 (runtime failures stored); P6/P13 as S20 (expected-metrics list, option E of 5b, 2026-11-27, branch `feature/expected-metrics`; offline replay, cluster check and archive replay done); **Plan finished (2026-11-28).** P9 is a separate issue (refuse `-nbp`/`-nbt` in TPC-H/TPC-DS/SSB, option A), P11 is `dev/plan-planned-disruptions.md`, the `tpcc` mapping of P12 will not be done. The docs page (section 6) is `docs/Malfunctions.md`.
 
 Goal: every run either does what was planned or leaves a failed (or at least a skipped/warning) test in
 the summary. A number in the summary that is wrong because something was missing must not pass silently.
@@ -133,6 +133,7 @@ Added after the cluster tests:
 | S17 (P8) | DBMSBenchmarker `Results of all benchmarker pods` names the missing child numbers of a job (`postgresql-1-1-3-1 (3 of 4, missing child 3)`), from the entries' names (`<job>-<child>`). Reduced from the proposal: since S3 a retried pod exits when the child queue is empty, so a duplicate child cannot happen any more and pod names in the entries are not needed. Checked on 1795449026 with one entry left out |
 | S18 (P10) | A SUT pod replaced after its loading started is not loaded again: the new pod has no labels, so it looked "not loaded yet" and bexhoma started the schema scripts again (run B, 1795557106, lines 109-111) while old loader jobs could still write through the service. `LoadingCoordinator.start_exec()` keeps the first UID of the repetition (`sut_pod_uid_at_loading_start`, cleared by `reset_sut()` between repetitions) and, for a different UID, calls `fail_loading_fatally("SUT pod ... replaced during loading|during benchmarking (n rounds submitted) (UID a -> b); it is not loaded again")`. The same happens during benchmarking: every loop pass runs `loader.check()`, which takes the state from the pod labels, so a replacement pod looked unloaded and was loaded again while benchmarker pods ran. A repetition with an inherited volume writes the labels into the pod template, so a replacement keeps them and is not reloaded (S6/S13 report it): the experiment aborts with diagnostics. Also found: before, the second start overwrote the UID, so after a successful second load S6 saw only the new pod and passed. The abort ends the repetition before its restart snapshot (S13), so S18 writes it with the new pod and its UID (`store_replaced_pod_snapshot()`); `SUT pods not replaced` then fails too. Cluster run E (2026-11-25, 1795612329, `logs_tests/local/silent_disrupt_ycsb_sut_deleted_benchmarking.log`): YCSB, SUT pod deleted 30 s after both benchmarker pods ran: `replaced during benchmarking (1 round submitted) (UID 15201c7a-... -> 4620404a-...); it is not loaded again`, abort, `Tests failed: 3 of 14`. That run had the code before the snapshot: `SUT pods not replaced` passed; replayed with the snapshot it fails, `bexhoma summary` exits 1 |
 | S19 (P14) | Runtime failures are stored in `bexhoma-runtime-failures.json` in the result folder. Every failure found while running goes through `_record_runtime_failure()` (before, four places appended to `_runtime_test_results` directly: loading abort, image pull wait, benchmark start abort, failed benchmarking job); it writes the file (atomic, once per reason; not without an existing result folder, so stand-ins write nothing). The summaries start from `runtime_test_results()`, memory and file merged. Replay on run E with the stored abort reason: `bexhoma summary` shows it, `Tests failed: 4 of 17`, exit 1 |
+| S20 (P6, P13) | Option E of 5b. Every queued (or direct) fetch writes its expected metric files to `bexhoma-metrics-expected.csv` (local only; the count in `queries.config` as `monitoring_expected_metrics`); `copy_fetched()` adds the copies. Test `All expected metrics present`: each row present as its file or, after `-rp`, as a column of the aggregate; presence only, never values; a connection that loaded or was benchmarked without any row of a base component is `not fetched`; older results skipped; a removed list fails. `report/metrics-check.csv` with `-rp`. Found on the way: a Prometheus request that raises is zero-filled and logged as `Caught an error fetching`, which `No monitoring metrics missing` did not match; now parsed and never excused. Offline replay, cluster check and archive replay done (5b, E, 2026-11-27) |
 
 Not reproduced: a kubectl stream that breaks while the pod keeps running (S1/S10 cover it by exit code and marker).
 Also found while preparing the runs (not a failing run): `-nbp` is silently ignored by TPC-H/TPC-DS
@@ -147,14 +148,14 @@ Also found while preparing the runs (not a failing run): `-nbp` is silently igno
 | P3 | done (4c, S10) | - |
 | P4 | done (4c) | - |
 | P5 | done (S14) | - |
-| P6 | Monitoring: (case 1) a component's fetch never ran, or (case 2, P13) it ran and failed; neither fails a test, see 5b | Options and costs in 5b; recommended E (expected-metrics list, 2026-11-27) |
+| P6 | done (S20, option E of 5b) | - |
 | P7 | done (S16) | - |
 | P8 | done (S17) | - |
 | P9 | `-nbp` and `-nbt` are accepted and silently ignored by TPC-H, TPC-DS and SSB (DBMSBenchmarker); no script or docs page passes them there | Deferred (user, 2026-11-25): DBMSBenchmarker may get multi-threading later. Semantics: elsewhere `-nbp`/`-nbt` split one client's load over pods (total constant), `-ne` multiplies whole clients; a DBMSBenchmarker stream (`numProcesses` 1) cannot be split, its parallel streams are `-ne`. So mapping `-nbp` to `-ne` is wrong. Options then: A refuse with that explanation (small, 3 entry scripts), C every entry script declares the base flags it uses (medium, ~40 flags) |
 | P10 | done (S18) | - |
 | P11 | Benchmarks that terminate pods or containers on purpose (e.g. time to recover) fail the replacement and restart tests, and since S18 a replaced SUT pod aborts the experiment | Separate plan: `dev/plan-planned-disruptions.md` (not started, deliberately later) |
 | P12 | done (S15); mapping `tpcc` to HammerDB not done | - |
-| P13 | Monitoring fetch failed (case 2 of P6): see 5b | part of 5b |
+| P13 | done (S20, with P6) | - |
 | P14 | done (S19) | - |
 
 ### 5b. Monitoring fetches (P6, P13)
@@ -188,7 +189,12 @@ Facts: each fetch is queued in `MetricFetchBatch`; the component is registered i
 
 Earlier recommendation: A + C now; D later if the per-connection gap matters. Replaced by E (user, 2026-11-27).
 
-#### E. Expected-metrics list, checked against the result folder (recommended)
+#### E. Expected-metrics list, checked against the result folder (implemented as S20)
+
+Implemented 2026-11-27 (`bexhoma/expected_metrics.py`, `MetricsCollector.expect()`, test
+`All expected metrics present` in `show_summary_monitoring()`, docs `Monitoring.md#expected-metrics`,
+`Malfunctions.md`, `AgentReport.md`). Where the implementation differs from the text below, a line marked
+**Implemented:** says so.
 
 Check the result instead of the logs: bexhoma writes down every metric it fetches, the summary checks that
 each one is in the result folder. Three rules (user, 2026-11-27):
@@ -228,6 +234,14 @@ postgresql-1-1-1024-2,loading,metrics,total_cpu_util,1795553600,1795553900,copy
 - Uploaded with `connections.config` at the end of every batch, only because `-fe` downloads the pod folder
   over the local one and an older list in the pod would overwrite the newer local one. The check never
   needs the pod's copy.
+  **Implemented:** not uploaded during the run at all. The only full download of a run is in
+  `evaluate_results()`, followed by the full upload; a list the pod never had cannot overwrite the local one,
+  and the final upload brings it to the pod. No extra API call.
+- **Implemented:** rows also when a fetch runs without a batch (`fetch(register=True)` calls `expect()`), and
+  a `configuration` column (for the E3 rule). The rows follow DBMSBenchmarker's `fetchMetric()`, which writes
+  no file for: an inactive connection or one without `prometheus_url`, a metric with `active` false, a metric
+  whose `component` is another one, and an application metric outside a `*loading*`/`*benchmarking*`
+  component type when `prometheus_url_application` is set (`expected_metric_names()`).
 
 **E2. Check per row** (pure function on a folder, next to `missing_metrics`). A row is present when either:
 
@@ -245,6 +259,14 @@ No exceptions are needed for short windows or optional components: `metrics.py` 
 metric it queried, also when Prometheus returned nothing (zero-filled). To be confirmed in E5 for a query
 that fails with an HTTP error or an exception inside `metrics.py`; if no file is written then, that is
 exactly the case to catch.
+**Implemented:** read in DBMSBenchmarker (`monitor.metrics._getMetrics`): a request that raises (Prometheus
+unreachable, HTTP error, no JSON) is caught, logged as `Caught an error fetching <label>: <error>` with a
+traceback, and the window is zero-filled, so a file **is** written and E sees it as present. That case went
+past `No monitoring metrics missing` too (it matched only `Metrics missing for`): `missing_metrics` now also
+parses that line, as `failed=True`, never excused by a reason (sparse, short phase, optional component) and
+never a warning; the summary marks it `request failed`. No such line in the archive (`C:\data\benchmarks`),
+so older summaries do not change. An exception outside `_getMetrics` (e.g. reading the config) ends
+`metrics.py` before the file is written: missing, as intended.
 
 **E3. Fetch never queued (case 1).** The list cannot see a fetch that was never queued, so a second source
 the fetch code does not write: the phase times in `connections.config`.
@@ -256,6 +278,9 @@ the fetch code does not write: the phase times in `connections.config`.
   expensive part).
 
 A missing row is status `not fetched`.
+**Implemented:** a type is required only when other connections of the same configuration have rows of it
+(a configuration without SUT monitoring has no `benchmarking` rows anywhere). Left: a type that no
+connection of a configuration fetched.
 
 **E4. Test and `bexhoma summary`.** One test: `All expected metrics present` (`missing: n of m`, up to 5
 examples). When the fetch log `bexhoma-metrics-{connection}-{component}.log` is in the folder, its last lines
@@ -282,6 +307,8 @@ test lines as the run's own summary, on the run folder, on a folder cleaned by `
   folder really lost data and E reports it as `missing`.
 - Aborted experiment: `show_summary_aborted()` records the test too (as S11); rows exist only for phases that
   ended.
+  **Implemented:** not recorded there. An experiment without results is not downloaded (`evaluate_results()`
+  only uploads), so its metric CSVs are only in the pod and every row would look missing.
 - Exit code: a `missing`, `not fetched` or `list missing` row fails the test → `tests_outcome()` 1.
 
 **E5. Verification.**
@@ -303,7 +330,38 @@ Cost: ~110 lines + tests, no image change, no extra API calls. Left: an extra co
 queued; a stale file of an earlier fetch with the same connection name (not possible today: every
 repetition has its own connection name).
 
-## 6. Later: docs page
+**Verification done (2026-11-27):**
 
-When everything is done: a page in `docs/` that lists all mechanisms that catch errors (tests, labels,
-markers, exit codes, logs), without history or plans (see memory `feedback_docs_content_rules`).
+- `tests/test_expected_metrics.py` (23 tests): the cases above, each also after a stand-in of
+  `transform_monitoring_results()`; parallel `record()` from 20 threads; `MetricsCollector.expect()` and
+  `copy_fetched()`; the summary test line (skipped, failed with log lines, list missing, no test without
+  monitoring). `tests/test_missing_metrics.py`: `Caught an error fetching` parsed and never excused.
+  `tests/test_metric_fetching.py`: rows written when queuing.
+- Full suite (without the two agent modules): the same failures as on `dev` before the change (all from the
+  local `cluster.config`, whose `dockers` have no `benchmarks` key yet, so `-dbms` has no choices), plus 23
+  new tests passing.
+- Replay with `bexperiments summary` on copies of 1793529751 (MariaDB/ColumnStore TPC-H, 406 per-connection
+  files; scratchpad, `cluster.config` pointing there; the list built from the files present): older folder
+  skipped; complete list passed; one file deleted while the pod's aggregate still had its column → present
+  (the data is in the folder); file and aggregate column removed (what a failed fetch leaves) → `missing:
+  1 of 406; mariadb-1-1-1-1 benchmarker`, exit 1; `-rp` twice → 0 per-connection files left, same test lines
+  both times, `report/metrics-check.csv` with 406 rows; published copy (configs, list, metric files only)
+  passes, without the list fails (`list missing`). The folder's other failed test (`SQL warnings`) is old.
+- Cluster runs 2026-11-27, PostgreSQL, `-nc 2 -m -ma -mc -rst nvme -ks no`: TPC-H 1795790000 (`-ne 1,1`, storage reused,
+  loading inherited) passed with 408 rows, YCSB 1795790190 (workload a, storage reused) with 204, Benchbase
+  1795790234 (TPC-C, loaded) with 306; no other test failed. On copies of each: one per-connection file and
+  its aggregate removed → `missing: 1 of n`, exit 1; all files of repetition 2 removed → `missing: n/2 of n`
+  naming each repetition-2 connection and component, exit 1; list deleted → `list missing`, exit 1;
+  untouched → passed; `-rp` twice → same test line both times. The rows match the files `metrics.py` wrote.
+- Archive replay 2026-11-27: `bexhoma summary` on copies of all 545 local result folders with a
+  `queries.config`, once with `dev` and once with this branch: exit codes and all other test lines equal;
+  220 folders with monitoring get `skipped: ... (no expected-metrics list (older result))`, 325 get no line.
+  The one difference (1792953734, SSB) came from the replay running both variants on the same folder at the
+  same time (`summary` rewrites `queries.config` there); run one after the other both give the same 17 lines.
+
+## 6. Docs page
+
+Done: `docs/Malfunctions.md` ("Concept: Run Integrity") lists all mechanisms that catch errors (tests,
+labels, markers, exit codes, logs) and what is not noticed, without history or plans (see memory
+`feedback_docs_content_rules`). Keep it in step when P9 or P11 change behavior: an ignored `-nbp`/`-nbt`
+is not listed under "Not noticed" yet.

@@ -15,15 +15,11 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | Plan | State | Open |
 |---|---|---|
 | [ddl-parameters](plan-ddl-parameters.md) | open | M5 keys, 13b, catalog size, small items |
-| [silent-malfunctions](plan-silent-malfunctions.md) | open | P6/P13 monitoring fetches, P9, P12 rest |
-| [software-quality](plan-software-quality.md) | open | S4, S6, S7 blocking |
 | [fewer-kubectl-calls](plan-fewer-kubectl-calls.md) | open | M5, M15 |
 | [load-failure-and-sizing](plan-load-failure-and-sizing.md) | open | P2 tmpdir (decision c/d), A4 |
 | [dbms-generic-verification](plan-dbms-generic-verification.md) | done | 2 side findings, aliases deferred |
 | [research-software](plan-research-software.md) | open | Zenodo 2/2a/20, step 18, R3, I1 |
-| [ceph-pool-metrics](plan-ceph-pool-metrics.md) | open | lag decision, text summary |
 | [observe-per-query-metrics](plan-observe-per-query-metrics.md) | open | refresh, staleness, application metrics |
-| [ssb](plan-ssb.md) | open | multi-tenancy |
 | [explicit-rounds](plan-explicit-rounds.md) | planned | C1-C4, then #925 |
 | [experiment-yaml-source-of-truth](plan-experiment-yaml-source-of-truth.md) | planned | W1-W11, Q1-Q7 |
 | [pgduckdb-force-execution](plan-pgduckdb-force-execution.md) | planned | all (P1, "for later") |
@@ -40,12 +36,16 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [session-parameters](plan-session-parameters.md) | parked | S1-S3 |
 | [planned-disruptions](plan-planned-disruptions.md) | parked | all, until a benchmark needs it |
 | [848-no-silent-load-failures](plan-848-no-silent-load-failures.md) | done | - |
+| [ceph-pool-metrics](plan-ceph-pool-metrics.md) | done | risks only |
 | [docs-dbms-pages](plan-docs-dbms-pages.md) | done | one unreferenced log |
 | [keep-sut](plan-keep-sut.md) | done | default of `load` (optional) |
 | [metrics-pod-scope](plan-metrics-pod-scope.md) | done | - |
 | [mysql-storage-slowness](plan-mysql-storage-slowness.md) | done | template default (in load-failure-and-sizing) |
 | [oltp-storage-dbms](plan-oltp-storage-dbms.md) | done | - |
 | [reset-scripts](plan-reset-scripts.md) | done | optional: flush time at large SF |
+| [silent-malfunctions](plan-silent-malfunctions.md) | done | P9 is an issue, P11 in planned-disruptions |
+| [software-quality](plan-software-quality.md) | done | rest is issues #957-#960 |
+| [ssb](plan-ssb.md) | done | multi-tenancy is issue #961 |
 | [storage-class-sweep](plan-storage-class-sweep.md) | done | risks only |
 | [storage-remove-per-repetition](plan-storage-remove-per-repetition.md) | done | - |
 | [stream-metrics](plan-stream-metrics.md) | done | rest of #239 elsewhere |
@@ -68,26 +68,6 @@ says the cluster checks are open.
 - Optional: item 11, an obsolete "No curly braces" comment in many scripts.
 - Outside the plan: Python client calls do not wait out a cluster outage (`MaxRetryError`); old-named volumes
   from another machine's older bexhoma.
-
-### [silent-malfunctions](plan-silent-malfunctions.md)
-
-S1-S19 done, merged in #937; the docs page (section 6) is [docs/Malfunctions.md](../docs/Malfunctions.md).
-- **P6/P13:** a monitoring fetch that never ran or failed fails no test. Options A-E in 5b, recommended E (list of expected metric files checked against the CSVs, also by `bexhoma summary`)
-  (fetch log check plus per-component data check, ~90 lines). Not decided.
-- **P9:** `-nbp`/`-nbt` are silently ignored by TPC-H, TPC-DS and SSB. Deferred (DBMSBenchmarker may get
-  multi-threading); then refuse (A) or declare used flags per entry script (C).
-- **P12 rest:** mapping `tpcc` to HammerDB for the `No summary` test.
-- P11 moved to [planned-disruptions](plan-planned-disruptions.md).
-
-### [software-quality](plan-software-quality.md)
-
-S1, S2, S3, S5, S7 done (#931, #933).
-- **S4:** one argument check (`argument_error()`) used by `main()` and the catalog paths, so a catalog
-  experiment with invalid tenancy or a 0-thread split is refused.
-- **S6:** split `work_benchmark_list()` into phase handlers and remove the legacy `benchmark_list` path; needs
-  cluster runs.
-- **S7 blocking:** diff coverage is reported but `continue-on-error`; make it fail.
-- S2 left out long lines (E501).
 
 ### [fewer-kubectl-calls](plan-fewer-kubectl-calls.md)
 
@@ -125,13 +105,6 @@ Steps 1, 2b, 3-17, 19 done (v0.12.0, v0.12.1).
 - **R3:** CI tests only Python 3.10 and 3.12.
 - **I1:** result folder formats (pickle, Python literals) come from DBMS-Benchmarker.
 
-### [ceph-pool-metrics](plan-ceph-pool-metrics.md)
-
-M1-M5 done (v0.11.3).
-- **Lag decision:** Ceph counters lag 1-2 min behind the phase windows; a per-metric `shift` in
-  DBMS-Benchmarker or document the lag. Measure the lag first.
-- The text summary (`bexhoma summary`) has no Ceph tables (the agent report has).
-
 ### [observe-per-query-metrics](plan-observe-per-query-metrics.md)
 
 Node occupancy, `monitoring:` section and `observe.metrics` for hardware metrics done.
@@ -139,11 +112,6 @@ Node occupancy, `monitoring:` section and `observe.metrics` for hardware metrics
 - Staleness check: `source_sha256` is written but never compared.
 - Application metrics in the catalog: wait for the catalog split.
 - `cluster.config`: `tikv_store_size_bytes` defined twice; network/filesystem queries active although skipped.
-
-### [ssb](plan-ssb.md)
-
-Done for all DBMS incl. ClickHouseCluster and MariaDB ColumnStore.
-- **Multi-tenancy:** `-mtn` is still refused for SSB.
 
 ## Planned
 
@@ -256,6 +224,8 @@ interaction with `-nc`/`-rsrp`.
 ## Done
 
 - [848-no-silent-load-failures](plan-848-no-silent-load-failures.md): v0.11.14 (#868).
+- [ceph-pool-metrics](plan-ceph-pool-metrics.md): v0.11.3; the 1-2 min counter lag is documented only
+  (decided 2026-11-28). Risks only: short phases on a fresh volume, CephFS pool level, no OSD scope.
 - [docs-dbms-pages](plan-docs-dbms-pages.md): left over, delete or keep
   `logs_tests/test_tpcds_testcase_compare_summary.md` (v0.10.0, unreferenced).
 - [keep-sut](plan-keep-sut.md): optional, whether `load` should default to not keeping SUTs.
@@ -265,6 +235,16 @@ interaction with `-nc`/`-rsrp`.
 - [oltp-storage-dbms](plan-oltp-storage-dbms.md)
 - [reset-scripts](plan-reset-scripts.md): optional, watch the MySQL/MariaDB flush time at larger SF; YugabyteDB
   persist needs `yb-admin`.
+- [silent-malfunctions](plan-silent-malfunctions.md): S1-S19 merged in #937, S20 (P6/P13, expected-metrics
+  list, #952) on `feature/expected-metrics`, checked 2026-11-27; docs page
+  [docs/Malfunctions.md](../docs/Malfunctions.md). P9 (`-nbp`/`-nbt` ignored by TPC-H, TPC-DS, SSB) is an
+  issue; P11 is [planned-disruptions](plan-planned-disruptions.md); mapping `tpcc` to HammerDB (P12) will not
+  be done.
+- [software-quality](plan-software-quality.md): S1, S2, S3, S5, S7 merged (#931, #933). The rest is tracked
+  as issues: #957 (S7 blocking), #958 (S4 argument check), #959 (S6 split `work_benchmark_list()`), #960
+  (long lines, star imports, E402, shadowed built-ins, type checks).
+- [ssb](plan-ssb.md): done for all DBMS incl. ClickHouseCluster and MariaDB ColumnStore (v0.11.9).
+  Multi-tenancy (`-mtn`, refused today) is issue #961: container tenancy first, then schema/database.
 - [storage-class-sweep](plan-storage-class-sweep.md): risks only (stale PVCs, placement warning).
 - [storage-remove-per-repetition](plan-storage-remove-per-repetition.md)
 - [stream-metrics](plan-stream-metrics.md): the rest of #239 is in metrics-pod-scope.

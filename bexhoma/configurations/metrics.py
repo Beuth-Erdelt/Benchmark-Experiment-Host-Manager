@@ -6,7 +6,7 @@ import os
 import shutil
 from typing import TYPE_CHECKING, Optional
 
-from bexhoma import ceph_storage, missing_metrics
+from bexhoma import ceph_storage, expected_metrics, missing_metrics
 from bexhoma.monitoring_math import JOB_QUERY_SETS
 
 if TYPE_CHECKING:
@@ -406,7 +406,8 @@ class MetricsCollector:
             when the connection has one.
         :param pod_dashboard: Name of the dashboard pod to run metrics.py in.
         :param optional: When True, the component is added to ``optional_monitoring_components``.
-        :param register: Register the component first (see :meth:`register`); a
+        :param register: Register the component and its expected metrics first (see
+            :meth:`register`, :meth:`expect`); a
             :class:`~bexhoma.metric_fetching.MetricFetchBatch` does that when queuing.
         :param upload: Upload ``connections.config`` afterwards, which ``metrics.py``
             may have overwritten in the pod; a batch uploads it once at its end.
@@ -415,6 +416,7 @@ class MetricsCollector:
         cfg = self._config
         if register:
             self.register(component_type, title, optional)
+            self.expect(connection, component, component_type, metrics_type, time_start, time_end)
         config_folder = '/results/' + cfg.code
         monitoring = cfg.benchmark.dbms[connection].connectiondata['monitoring']
         if metrics_type == 'metrics' and JOB_QUERY_SETS.get(component_type) in monitoring:
@@ -472,6 +474,43 @@ class MetricsCollector:
             if component_type not in optional_components:
                 optional_components.append(component_type)
 
+    def _record_expected(self, rows: list) -> None:
+        """Add rows to the result folder's expected-metrics list and keep its size in the workload."""
+        if not rows:
+            return
+        cfg = self._config
+        count = expected_metrics.record(cfg.path, rows)
+        cfg.experiment.workload[expected_metrics.WORKLOAD_KEY] = count
+
+    def expect(self, connection: str, component: str, component_type: str, metrics_type: str,
+               time_start: int, time_end: int) -> None:
+        """Write down the metric files a fetch is going to produce (see :mod:`bexhoma.expected_metrics`).
+
+        Called when the fetch is queued (or, without a batch, when it starts), so a
+        fetch that later fails or is lost still has its rows. Only the local result
+        folder is written; the list reaches the dashboard pod with the final upload.
+
+        :param connection: dbmsbenchmarker connection name.
+        :param component: ``component`` of the fetch.
+        :param component_type: Monitoring component type.
+        :param metrics_type: ``metrics_type`` of the fetch.
+        :param time_start: Start of the window.
+        :param time_end: End of the window.
+        """
+        cfg = self._config
+        try:
+            connectiondata = cfg.benchmark.dbms[connection].connectiondata
+        except (AttributeError, KeyError):
+            return
+        monitoring = connectiondata.get('monitoring') or {}
+        set_name = expected_metrics.query_set(monitoring, metrics_type, component_type)
+        names = expected_metrics.expected_metric_names(connectiondata, metrics_type, component, component_type)
+        self._record_expected([
+            dict(connection=connection, configuration=getattr(cfg, 'configuration', ''),
+                 component_type=component_type,
+                 metrics_type=set_name, metric=name, time_start=time_start, time_end=time_end, source='fetch')
+            for name in names])
+
     def copy_fetched(self, source: str, target: str, component_types: list, pod_dashboard: str) -> None:
         """Reuse metrics already fetched for another connection of the same window.
 
@@ -488,6 +527,11 @@ class MetricsCollector:
         :param pod_dashboard: Name of the dashboard pod.
         """
         cfg = self._config
+        # the copies are expected like fetched files: the script copies only what exists
+        self._record_expected([
+            dict(row, connection=target, source='copy')
+            for row in (expected_metrics.read(cfg.path) or [])
+            if row['connection'] == source and row['component_type'] in component_types])
         script = cfg.experiment.ensure_copy_metrics_script()
         cmd = 'sh /results/{code}/{script} /results/{code} {source} {target} {types}'.format(
             code=cfg.code, script=script, source=source, target=target, types=' '.join(component_types))

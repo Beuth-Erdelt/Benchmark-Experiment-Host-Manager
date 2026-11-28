@@ -1,14 +1,15 @@
 # Plan: Ceph storage placeholders for monitoring
 
-Status: **implemented** (2026-10-11, branch `feature/storage-class-sweep`),
-M1–M5, released in v0.11.3. First cluster run 2026-10-15/16 (1792091105,
-1792099970, 1792116019, 1792123892): CSVs filled and plausible. Checked
-2026-11-22: the agent report has the Ceph Storage tables
-(`report_writer._build_ceph_storage_section`, `monitoring.md`); the text
-summary of the experiment log (`bexhoma summary`) still has none. YugabyteDB's
-chart PVCs are covered since OLTP WP9 (`pvc_selector`). Still open: the lag
-decision (below). Queries below were run against the
-reference cluster's Prometheus on 2026-10-11.
+Status: **done** (2026-11-28). Implemented 2026-10-11 (branch
+`feature/storage-class-sweep`), M1–M5, released in v0.11.3. First cluster run
+2026-10-15/16 (1792091105, 1792099970, 1792116019, 1792123892): CSVs filled
+and plausible. Checked 2026-11-22: the agent report has the Ceph Storage tables
+(`report_writer._build_ceph_storage_section`, `monitoring.md`). The text
+summary (`bexhoma summary`) shows only CPU/RAM by design, so no Ceph table
+there. YugabyteDB's chart PVCs are covered since OLTP WP9 (`pvc_selector`).
+Lag decision (user, 2026-11-28): the lag is documented only, not corrected.
+Queries below were run against the reference cluster's Prometheus on
+2026-10-11.
 
 Where it landed: `bexhoma/ceph_storage.py` (pure helpers shared by all
 parts), `clusters.py` (`get_storage_class_info`, `get_pvc_rbd_image`,
@@ -26,8 +27,8 @@ resolved only when some query uses them, so a cluster config without Ceph
 metrics makes no extra calls. Catalog 1.11.0 and result contract 1.10.0 are
 unreleased, so their additions were folded in; `environment.yml` moved
 1.4.0 -> 1.5.0 so files with the new fields can be told apart. The handbook
-got no example (optional in M5). The lag (open decision below) is
-documented, not corrected.
+got no example (optional in M5). The lag is documented, not corrected
+(decided 2026-11-28, see below).
 
 ## Goal
 
@@ -415,7 +416,10 @@ metrics. Both are open points below.
 
 ## Risks and open points
 
-- **Lag versus window (open decision).** Phase windows are not widened
+- **Lag versus window (decided 2026-11-28: documented only).** The lag is
+  stated in `docs/Monitoring.md`, the report's Ceph Storage section, both
+  contracts and the `k8s-cluster.config` comment; no correction. Background:
+  phase windows are not widened
   (`extend: 20` and `shift` never took effect; since 2026-10-18 both are
   read and default to 0, see `dev/plan-metrics-pod-scope.md` M1b decision
   6; a global `shift` would move all metrics, not only Ceph's); the Ceph counters lag 1–2 minutes. Options: a per-metric

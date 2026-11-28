@@ -1,8 +1,18 @@
 # Plan: software quality: lint, docs checks, shared argument checks, CI
 
-Status: written 2026-11-22. **S1, S3, S5, S7 done 2026-11-23**, merged in #931 (CI on `dev` green, the
-Python 3.10 job passes, diff coverage reported 74% on the PR). **S2 done 2026-11-24** on branch
-`software-quality-s2` (not pushed), except long lines. Open: S4, S6, and S7's blocking switch.
+Status: written 2026-11-22. **Done as a plan 2026-11-28**: what is left is tracked as issues.
+- **S1, S3, S5, S7 done 2026-11-23**, merged in #931 (CI on `dev` green, the Python 3.10 job passes, diff
+  coverage reported 74% on the PR).
+- **S2 done 2026-11-24**, merged in #933, except long lines.
+- Issues for the rest:
+  - #957: S7's blocking switch (remove `continue-on-error` from the diff-coverage step).
+  - #958: S4, one argument check; found on the way: `ssb/cli.py` runs neither check in `main()`, and
+    `agent/harness/submit.py` drops the exit code of `run()`.
+  - #959: S6, split `work_benchmark_list()`.
+  - #960: smaller leftovers: E501, star imports (F403/F405, 49 `noqa`), imports below code (E402, 28),
+    shadowed built-ins (A001/A002, 8, needs a decision), type checks.
+The text below is the plan as written; the issues are the current state.
+
 S2 as done (5 commits):
 - step 1: `__all__` of `experiments/base.py` named three classes that do not exist (star import raised);
   `.format()` arguments no template used (no placeholder was lost); `not in`/`is not`; 18 calls of the

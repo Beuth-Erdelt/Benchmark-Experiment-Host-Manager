@@ -62,6 +62,30 @@ class ParseMissingMetricsTest(unittest.TestCase):
         self.assertEqual(entry.component, "benchmarking")
 
 
+class FailedRequestTest(unittest.TestCase):
+    """A request that raised (Prometheus unreachable, HTTP error) is zero-filled too, and never excused."""
+
+    _ERROR = ('ERROR:root:Caught an error fetching CPU Throttle (sum(rate(x[1m]))) for connection pg-1: '
+              "HTTPConnectionPool(host='x', port=9090): Max retries exceeded (Caused by NewConnectionError(...))")
+
+    def test_parsed_as_failed(self) -> None:
+        [entry] = missing_metrics.parse_missing_metrics(self._ERROR + "\nTraceback (most recent call last):\n")
+        self.assertEqual((entry.title, entry.query, entry.connection, entry.failed),
+                         ("CPU Throttle", "sum(rate(x[1m]))", "pg-1", True))
+        [entry] = missing_metrics.parse_missing_metrics(_LINE_CONNECTION)
+        self.assertFalse(entry.failed)
+
+    def test_not_excused_by_sparse_or_optional(self) -> None:
+        connections = [{"name": "pg-1", "monitoring": {"metrics": {
+            "throttle": {"title": "CPU Throttle", "sparse": True}}}}]
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            result_dir = Path(tmp_dir)
+            (result_dir / "connections.config").write_text(repr(connections))
+            (result_dir / missing_metrics.fetch_log_name("pg-1", "datagenerator")).write_text(self._ERROR)
+            [entry] = missing_metrics.collect_missing_metrics(result_dir, ["datagenerator"])
+        self.assertEqual((entry.expected, entry.warning, entry.failed), ("", "", True))
+
+
 class CollectMissingMetricsTest(unittest.TestCase):
     """Both the dashboard-pod fetch logs and the benchmarker pod logs are scanned."""
 

@@ -61,12 +61,18 @@ class MetricFetchBatch:
         return len(self.fetches) + len(self.after)
 
     def add_fetch(self, config: Any, **kwargs: Any) -> None:
-        """Queue ``config.metrics.fetch(**kwargs)``; the component is registered now, in this thread.
+        """Queue ``config.metrics.fetch(**kwargs)``; the component and its expected metrics are registered now.
+
+        The expected metrics (:mod:`bexhoma.expected_metrics`) are written down when
+        queuing, so a fetch that fails, or a batch that never runs, leaves rows the
+        summary does not find in the result folder.
 
         :param config: Configuration whose collector fetches.
         :param kwargs: Arguments of :meth:`MetricsCollector.fetch`.
         """
         config.metrics.register(kwargs['component_type'], kwargs['title'], kwargs.get('optional', False))
+        config.metrics.expect(kwargs['connection'], kwargs['component'], kwargs['component_type'],
+                              kwargs['metrics_type'], kwargs['time_start'], kwargs['time_end'])
         with self._lock:
             self.fetches.append((config, kwargs))
 

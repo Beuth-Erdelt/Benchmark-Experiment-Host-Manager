@@ -92,6 +92,7 @@ Failed operations of YCSB are an exception: they fail the test `Execution Phase:
 | A metric is missing | Prometheus returns no data for a query | The metric is filled with zeros and looks like an idle component | The fetch reports each missing metric. Test `No monitoring metrics missing`; gaps with a known reason are skipped (a phase shorter than the scrape interval, pre-existing data, a series that exists only while non-zero) |
 | Disk I/O of a component is missing | The container did no disk I/O, so there is no series | Plausible for an in-memory DBMS, suspicious for one on disk | A warning, when CPU of the same component has data (its pods were scraped); otherwise a failed test |
 | No monitoring data at all | Monitoring did not work in this run | No resource numbers for the run | Test `Monitoring returned data` |
+| A metric fetch fails or never runs | The dashboard pod is gone, the connection to it breaks, the fetch ends with an exception, or a code path skips the fetch | A connection or component is missing from the monitoring tables while the others are there | Every fetch writes down the metric files it is going to produce (`bexhoma-metrics-expected.csv`); each one must be in the result folder, and a connection that loaded or was benchmarked must have loading or benchmarking metrics. Test `All expected metrics present`, see [Monitoring](Monitoring.md#expected-metrics) |
 | CPU of a component is zero | The component was not measured, or idle | Resource numbers per component are wrong | Test `... contains no 0 or NaN in CPU [CPUs]`, skipped for phases too short to be measured |
 | A required metric is switched off | `-mm` switches off CPU or memory metrics | Core resource numbers are missing | `-mm` refuses to switch off the required metrics (CPU utilization and time, memory with and without cache) |
 | A job's metrics include other pods | A loader or benchmarker query selects pods of other jobs | Resource numbers of one job include another's | Each job's queries select only its own pods, by the pod names Kubernetes gives them (see below for the limits) |
@@ -120,8 +121,7 @@ Pods of similar names:
 
 Monitoring:
 
-* one component without any data, while others have data;
-* a fetch of metrics that failed before it queried anything;
+* a fetch that was never queued for a component other than the SUT, the loaders and the benchmarkers (data generator, workers, pool), or for every connection of a configuration: there is nothing to compare it with;
 * a required metric switched off in the cluster configuration itself (`active: False`): it is not fetched, so it is not reported as missing; only `-mm` is checked;
 * zeros in other columns than CPU (memory, network, disk) are not tested; only a missing series is.
 * the last seconds of a job pod: Prometheus scrapes every `scrape_interval` (30 s), and a loader or benchmarker pod usually ends between two scrapes. What it did after its last scrape (CPU seconds, network and disk bytes) is never recorded, so the job's counter totals are too low by up to one scrape interval of work per pod. Pods that work fastest at the end lose most: in a TPC-DS SF10 loading of PostgreSQL with 8 loader pods, the loaders' network transmit missed about 2,000 of 12,450 MiB (16%) that the SUT received. The SUT's counters are complete, since its pod lives through the whole phase.

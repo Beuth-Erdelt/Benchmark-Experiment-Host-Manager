@@ -279,6 +279,7 @@ The `type` field must be `application` so bexhoma routes queries to `service_mon
 ## Missing Metrics
 
 When Prometheus returns no data for a query, dbmsbenchmarker does not fail: it logs `Metrics missing for <title> (<query>)` and stores a series of zeros, which would otherwise read like a measured idle component.
+When the request itself fails (Prometheus unreachable, an HTTP error), it logs `Caught an error fetching <title> (<query>): <error>` and stores zeros as well; such a gap is always unexpected, none of the reasons below excuses it, and the summary marks it `request failed`.
 Bexhoma scans the metric-fetch logs (`bexhoma-metrics-*.log`) and the benchmarker pod logs for these lines and reports each gap once, even when both processes logged it.
 
 Some gaps are expected, and their zeros are correct:
@@ -297,6 +298,24 @@ Some gaps need judgement, and their zeros are probably correct:
 
 The test `No monitoring metrics missing` fails only on unexpected gaps. When every remaining gap needs judgement it is a warning (`* TEST warning: Monitoring metrics missing (...)`, naming the metrics and components), and when every gap is expected it is recorded as skipped, with the reasons.
 The report lists all gaps in `monitoring.md`'s Missing Metrics, with an `expected` and a `warning` column, and counts expected gaps, gaps that need judgement and unexpected gaps separately in `index.md`'s Health Summary (see [AgentReport](AgentReport.md)).
+
+## Expected Metrics
+
+A fetch that fails before it queries Prometheus (the dashboard pod is gone, the connection breaks, `metrics.py` ends with an exception) logs no `Metrics missing for` line, and a fetch that never runs logs nothing at all.
+So every fetch writes down, when it is queued, the metric files it is going to produce: `bexhoma-metrics-expected.csv` in the result folder, one row per connection, component and metric, with the window and whether the files are fetched or copied from another connection (the loading metrics of a repetition are fetched once).
+Metrics that are switched off (`active: False`, or a storage placeholder that cannot be resolved), application metrics of another component, and application metrics outside the loading and benchmarking phases of the SUT get no row, as DBMSBenchmarker writes no file for them.
+The number of rows is stored in `queries.config` (`monitoring_expected_metrics`).
+
+The test `All expected metrics present` checks each row against the result folder:
+
+* A row is present when its file `query_<component>_metric_<metric>_<connection>.csv` exists, or, after `-rp` merged these files into `query_<component>_metric_<metric>.csv` and deleted them, when that file has a column for the connection.
+* Only presence is checked, never values: a metric that is 0 or NaN over the whole window can be correct (e.g. the number of vacuums when none ran). Values are judged by `No monitoring metrics missing` (above) and the CPU test per component.
+* A connection that loaded (not from a reused volume, not with loading switched off) must have rows for `loading` and `loader`, one with a benchmarker job that ran must have rows for `benchmarking` and `benchmarker`, when other connections of the same configuration have rows of that type. Otherwise it is listed as `not fetched`.
+
+A failed test names the connection and component of each gap, and the summary prints the last lines of the fetch log (`bexhoma-metrics-<connection>-<component>.log`) when it is in the folder; with `-rp`, `report/metrics-check.csv` gives the status of every row.
+
+The check reads only the result folder, never the dashboard pod (which may have deleted the results), so `bexhoma summary` gives the same tests on the folder of the run, on a folder cleaned by `-rp`, and on a published copy. It needs `queries.config`, `connections.config`, `bexhoma-metrics-expected.csv` and the metric files (at least the merged ones); the fetch logs are optional.
+Results from before the list are skipped (`no expected-metrics list (older result)`). A folder whose `queries.config` records a list that is no longer there fails (`list missing`), so removing the list does not switch the test off.
 
 ---
 
