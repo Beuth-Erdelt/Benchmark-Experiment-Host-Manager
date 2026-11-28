@@ -4423,8 +4423,9 @@ class ExperimentBase():
                 self._record_skipped_test(f"{label} ({result.skipped})")
             return
         if result.list_missing:
-            self._record_test(False, "{} (list missing: {} although queries.config records {} rows)".format(
-                label, expected_metrics.FILENAME, self.workload.get(expected_metrics.WORKLOAD_KEY)))
+            rows = self.workload.get(expected_metrics.WORKLOAD_KEY)
+            self._record_test(False, f"{label} (list missing: {expected_metrics.FILENAME} "
+                                     f"although queries.config records {rows} rows)")
             return
         if not result.rows:
             return
