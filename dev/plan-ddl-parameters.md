@@ -1,10 +1,16 @@
 # Plan: DDL parameters (placeholders in init scripts)
 
+**2026-11-28: DONE, the open items are issues now; the issues are the current state.** M5: #977
+(`covering_indexes`, `projections`, `pk_order`), #978 (`string_type`, `numeric_type`), #979 (`primary_keys`,
+`distribution_key`), #980 (`tablespace_index`, `hash_partitions`). 13b: #981 (ClickHouse post-load scripts), #982
+(reporting A/B/C), #983 (missing checkschema scripts). Item 11: #984. M4 leftovers: #985. `MaxRetryError`: #986.
+Not an issue: the catalog size limit (later plan on the contract), the old-named volumes (other machine).
+
 **2026-11-24, branch silent-malfunctions: M4 done** (57038443 MySQL, b4aa99a4 MariaDB, 3c159c7b PostgreSQL
 and catalog 1.14.0, 73890dc4 ClickHouse, Citus/YugabyteDB see M4 below). Every new key and value was run on a
 local container of the template's image (MySQL 9.7.2, MariaDB 12.3.3, PostgreSQL 18, ClickHouse 26.8.34.13,
-the ClickHouseCluster scripts against a one-node local cluster), no cluster run yet. Open: M5, the cluster
-checks listed under M4.
+the ClickHouseCluster scripts against a one-node local cluster). Cluster checks done 2026-11-25 (see M4
+below; two TPC-H checks red only by a DiskPressure eviction). Open: M5, rest of 13b, catalog margin.
 
 Status (2026-10-30): **M1, M1b, M2 committed (04a57300); M2b, M2c and the
 data-defining parameters committed (8616163b); M3 and `requires` committed
@@ -29,10 +35,10 @@ one experiment per value with `--set` on the same `-rst` PVC).
 
 | # | Item | Kind | Section |
 |---|---|---|---|
-| M4 | **Done 2026-11-24** (see M4 below); cluster checks open. Was: rest of the priority B keys. Not started: PostgreSQL `partition_by` (primary keys must contain the partition column), YugabyteDB `colocated` (BenchBase TPC-C now has its own database `benchbase`, created by initschema, so the key is one placeholder in `CREATE DATABASE`, not added yet). Done for one benchmark only, others open: `row_format` (YCSB; TPC-H, TPC-DS, SSB open), `stats_sample_pages` and MySQL `histograms` (TPC-H; TPC-DS, SSB open), PostgreSQL `index_method` (TPC-H; TPC-DS open), ClickHouse keys (TPC-H; TPC-DS, SSB open), Citus `fillfactor` (YCSB). Left out with a reason: ClickHouseCluster `sharding_key`, `codec` value `delta_zstd` (numeric columns only); `collation` stays YCSB only (decision 2026-10-30) | open | [Milestones](#milestones) |
+| M4 | **Done 2026-11-24** (see M4 below); cluster checks done 2026-11-25, all keys work; optional: rerun 1795611403 (TPC-H MySQL+MariaDB) and 1795611419 (TPC-H PostgreSQL+PgDuckDB), red only by a DiskPressure eviction on cl-worker25; `partition_by` untested on PgDuckDB/OrioleDB partitioned tables. Was: rest of the priority B keys. Not started: PostgreSQL `partition_by` (primary keys must contain the partition column), YugabyteDB `colocated` (BenchBase TPC-C now has its own database `benchbase`, created by initschema, so the key is one placeholder in `CREATE DATABASE`, not added yet). Done for one benchmark only, others open: `row_format` (YCSB; TPC-H, TPC-DS, SSB open), `stats_sample_pages` and MySQL `histograms` (TPC-H; TPC-DS, SSB open), PostgreSQL `index_method` (TPC-H; TPC-DS open), ClickHouse keys (TPC-H; TPC-DS, SSB open), Citus `fillfactor` (YCSB). Left out with a reason: ClickHouseCluster `sharding_key`, `codec` value `delta_zstd` (numeric columns only); `collation` stays YCSB only (decision 2026-10-30) | done | [Milestones](#milestones) |
 | M5 | Not started: `covering_indexes`, `projections`, `pk_order`; results change: `string_type`, `numeric_type`; script variant: `primary_keys`, `distribution_key` (probably the Citus join limit of item 14); BenchBase creates the PostgreSQL TPC-C schema, so not by scripts: `hash_partitions`; more than scripts: `tablespace_index` | open | [More candidates](#more-candidates-not-yet-prioritized) |
-| – | Catalog at its margin: at most 53,990 characters (LF-counted; test keeps 2,000 below the 56,000 limit), now 53,975. Next key for PostgreSQL needs a shorter catalog or a higher limit | decision | [Milestones](#milestones) |
-| – | Docs rerun: TPC-H cluster logs in docs/Example-ClickHouse.md are from the old all-distributed layout | open | – |
+| – | Catalog at its margin: 53,718 characters (LF-counted, catalog 1.14.0, 2026-11-24) of the 56,000 limit; test margin lowered to 500 (51650340, "until the contract is split"). Next key for PostgreSQL needs a shorter catalog or a higher limit | decision | [Milestones](#milestones) |
+| – | Docs rerun: TPC-H cluster logs in docs/Example-ClickHouse.md were from the old all-distributed layout; rerun `docs_tpch_clickhouse_cluster` 2026-11-05 (`-xdim replicated`) | done | – |
 | – | Cluster check of the `-schema` variants of the PostgreSQL scripts (tenancy): 1793387505, 1793387532, 1793387564 | done | – |
 | 11 | ~30 scripts still say "No curly braces: bexhoma may fill it with str.format()"; obsolete, harmless (durability copies are compared byte by byte) | optional | – |
 | 13b | Decided 2026-11-24: skip with a notice. Done (fea4aecc): `notice_missing_post_load_scripts()` prints at the start, per configuration, the requested steps (indexes, constraints, statistics) without a script; loading skips them and the summary lists them ("Init Scripts Not in Folder"); test tests/test_post_load_notice.py. Still open: (ClickHouse/ClickHouseCluster constraints, indexes, statistics in TPC-H, TPC-DS, SSB); decide whether missing `.sql` and `.sh` scripts are reported alike (options A/B/C, see below); missing check scripts: `checkschema-tpch` for DatabaseService, PgDuckDB, `checkschema-ycsb` for DatabaseService | open | [Init scripts](#init-scripts-without-errors-item-13) |

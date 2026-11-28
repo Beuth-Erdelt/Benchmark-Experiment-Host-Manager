@@ -14,7 +14,6 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 
 | Plan | State | Open |
 |---|---|---|
-| [ddl-parameters](plan-ddl-parameters.md) | open | M5 keys, 13b, catalog size, small items |
 | [explicit-rounds](plan-explicit-rounds.md) | planned | C1-C4, then #925 |
 | [experiment-yaml-source-of-truth](plan-experiment-yaml-source-of-truth.md) | planned | W1-W11, Q1-Q7 |
 | [pgduckdb-force-execution](plan-pgduckdb-force-execution.md) | planned | all (P1, "for later") |
@@ -33,6 +32,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 | [848-no-silent-load-failures](plan-848-no-silent-load-failures.md) | done | - |
 | [ceph-pool-metrics](plan-ceph-pool-metrics.md) | done | risks only |
 | [dbms-generic-verification](plan-dbms-generic-verification.md) | done | - |
+| [ddl-parameters](plan-ddl-parameters.md) | done | rest is issues #977-#986; catalog size for a later contract plan |
 | [docs-dbms-pages](plan-docs-dbms-pages.md) | done | one unreferenced log |
 | [fewer-kubectl-calls](plan-fewer-kubectl-calls.md) | done | M15 is issue #963 |
 | [keep-sut](plan-keep-sut.md) | done | default of `load` (optional) |
@@ -52,22 +52,7 @@ State of every `plan-*.md` in `dev/`, checked 2026-11-26 against the plan texts 
 
 ## Open
 
-### [ddl-parameters](plan-ddl-parameters.md)
-
-M1-M4 done, M4 cluster-checked 2026-11-25 and merged in #937. The status header at the top of the plan still
-says the cluster checks are open.
-- **M5:** keys not started: `covering_indexes`, `projections`, `pk_order`; keys that change results
-  (`string_type`, `numeric_type`); script variants (`primary_keys`, `distribution_key`); `hash_partitions`
-  (BenchBase creates the PostgreSQL TPC-C schema); `tablespace_index`.
-- **13b:** missing post-load scripts are skipped with a notice (done); open: the ClickHouse/ClickHouseCluster
-  constraints, indexes and statistics, whether missing `.sql` and `.sh` are reported alike (A/B/C), and the
-  missing check scripts (`checkschema-tpch` for DatabaseService and PgDuckDB, `checkschema-ycsb` for
-  DatabaseService).
-- **Catalog size:** the next PostgreSQL key needs a shorter catalog or a higher limit (decision).
-- **Docs rerun:** the TPC-H cluster logs in Example-ClickHouse.md are from the old layout.
-- Optional: item 11, an obsolete "No curly braces" comment in many scripts.
-- Outside the plan: Python client calls do not wait out a cluster outage (`MaxRetryError`); old-named volumes
-  from another machine's older bexhoma.
+None.
 
 ## Planned
 
@@ -186,6 +171,10 @@ interaction with `-nc`/`-rsrp`.
   counts for MySQL/MariaDB, Db2 load logs off the data volume) are fixed in b275ad8c (#937); ClickHouse prints
   file counts only (no extra query in the stream); no cluster run with rebuilt images recorded. 1.4 aliases
   and the check that anonymized summaries reveal no DBMS were dropped 2026-11-28 (not pursued for a long time).
+- [ddl-parameters](plan-ddl-parameters.md): M1-M4 done (M4 cluster-checked 2026-11-25, merged in #937), ClickHouse
+  docs rerun done 2026-11-05. The rest is issues (2026-11-28): M5 keys #977-#980, 13b #981-#983, item 11 #984,
+  M4 leftovers #985, `MaxRetryError` #986. The catalog size limit is left for a later plan on the contract; the
+  old-named volumes need the new bexhoma on the other machine.
 - [docs-dbms-pages](plan-docs-dbms-pages.md): left over, delete or keep
   `logs_tests/test_tpcds_testcase_compare_summary.md` (v0.10.0, unreferenced).
 - [fewer-kubectl-calls](plan-fewer-kubectl-calls.md): M0-M4, M6-M14 (v0.11.6). M15 (repetition boundaries of
